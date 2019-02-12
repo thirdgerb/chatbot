@@ -9,6 +9,7 @@ namespace Commune\Chatbot\Framework\Intent;
 
 
 use Commune\Chatbot\Contracts\ChatbotApp;
+use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Intent\Matcher\CommandMatcher;
 use Commune\Chatbot\Framework\Intent\Matcher\RegexMatcher;
@@ -112,19 +113,18 @@ class IntentFactory
     {
         $entities = null;
 
-        foreach($this->matchers as $matcher) {
-            /**
-             * @var Matcher $matcher
-             */
-            $entities = $matcher($message);
-            if (isset($entities)) {
-                break;
+        if (!empty($this->matchers)) {
+            foreach($this->matchers as $matcher) {
+                /**
+                 * @var Matcher $matcher
+                 */
+                $entities = call_user_func($matcher, $message);
+                if (isset($entities)) {
+                    return $this->wrapIntent($entities, $message);
+                }
             }
         }
 
-        if (isset($entities)) {
-            return $this->wrapIntent($entities, $message);
-        }
         return null;
     }
 

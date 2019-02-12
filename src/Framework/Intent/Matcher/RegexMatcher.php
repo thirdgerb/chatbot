@@ -37,7 +37,7 @@ class RegexMatcher extends Matcher
 
     public function match(Message $message): ? array
     {
-        $text = $message->getText();
+        $text = $message->getTrimText();
         if ($text == $this->pattern) {
             return [];
         }

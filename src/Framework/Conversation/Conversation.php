@@ -183,7 +183,6 @@ class Conversation
     /*-------- intent ----------*/
 
 
-
     public function getPossibleIntents() : array
     {
         return $this->possibleIntents;
@@ -228,4 +227,6 @@ class Conversation
     {
         return $this->isCloseSession;
     }
+
+
 }

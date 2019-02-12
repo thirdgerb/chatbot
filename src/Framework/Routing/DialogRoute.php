@@ -226,12 +226,13 @@ class DialogRoute
         }
 
         // matcher
+        $message = $conversation->getMessage();
         foreach ($availableRoutes as $route) {
             /**
              * @var IntentRoute $route
              */
             $intentFactory = $route->getIntentFactory();
-            $intent = isset($intentFactory) ? $intentFactory->match($conversation->getMessage()) : null;
+            $intent = isset($intentFactory) ? $intentFactory->match($message) : null;
             if (isset($intent)) {
                 return $this->matched($route, $intent, $conversation);
             }

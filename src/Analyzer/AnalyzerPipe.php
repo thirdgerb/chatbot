@@ -8,6 +8,7 @@ use Commune\Chatbot\Framework\ChatbotPipe;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Input\StringInput;
 
 class AnalyzerPipe implements ChatbotPipe
 {
@@ -52,11 +53,12 @@ class AnalyzerPipe implements ChatbotPipe
         }
 
         $commandText = (string) substr($text, strlen($this->commandMark));
+        $input = new StringInput($commandText);
         foreach ($this->commands as $command) {
             /**
              * @var AnalyzerCommand $command
              */
-            if ($input = $command->match($commandText)) {
+            if ($command->match($input)) {
                 return $command->handle($input, $conversation);
             }
         }

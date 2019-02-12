@@ -7,6 +7,8 @@
 
 namespace Commune\Chatbot\Framework\Message;
 
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class Message
@@ -68,6 +70,20 @@ abstract class Message
     public function getVerbosityName() : string
     {
         return $this->verbosity;
+    }
+
+
+    /**
+     * @var InputInterface
+     */
+    protected $commandInput;
+
+    public function getCommandInput() : InputInterface
+    {
+        if (!isset($this->commandInput)) {
+            $this->commandInput = new StringInput($this->getTrimText());
+        }
+        return $this->commandInput;
     }
 
 

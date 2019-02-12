@@ -34,17 +34,15 @@ abstract class AnalyzerCommand
         $this->options = $options;
     }
 
-    public function match(string $text) : ? InputInterface
+    public function match(InputInterface $input) : bool
     {
-        $input = new StringInput($text);
-
         if ($this->name !== $input->getFirstArgument()) {
-            return null;
+            return false;
         }
 
         $defined = count($this->arguments);
         $args = count($input->getArguments());
-        return $defined === $args ? $input : null;
+        return $defined === $args;
     }
 
     abstract public function handle(InputInterface $input, Conversation $conversation): Conversation;
