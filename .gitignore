@@ -1,0 +1,5 @@
+!.gitignore
+.idea/
+composer.lock
+vendor/
+tmp.log
