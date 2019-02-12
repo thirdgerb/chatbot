@@ -2,6 +2,7 @@
 
 开发中.
 
+可以执行 ``` php demo/test.php ``` 做测试.
 
 
 ## 目标feature
