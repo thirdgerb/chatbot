@@ -15,6 +15,7 @@ use Commune\Chatbot\Framework\Message\Message;
 
 interface ChatDriver
 {
+    public function fetchIdOrCreateChat(Conversation $conversation) : string;
 
     public function fetchSessionIdOfChat(string $chatId) : string;
 

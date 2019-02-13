@@ -52,7 +52,7 @@ class ChatPipe implements ChatbotPipe
     {
         $conversation = $this->completeConversation($conversation);
 
-        $chatId = $conversation->getId();
+        $chatId = $this->driver->fetchIdOrCreateChat($conversation);
         $this->driver->pushIncomingMessage(
             $chatId,
             $conversation->getIncomingMessage()

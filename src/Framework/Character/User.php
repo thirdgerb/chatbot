@@ -13,27 +13,32 @@ class User
     /**
      * @var string
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      */
-    private $name;
+    protected $avatar;
+    
+    /**
+     * @var string
+     */
+    protected $name;
 
     /**
      * @var string
      */
-    private $originId;
+    protected $originId;
 
     /**
      * @var Platform
      */
-    private $platform;
+    protected $platform;
 
     /**
      * @var array
      */
-    private $origin;
+    protected $origin;
 
     /**
      * User constructor.
@@ -48,7 +53,8 @@ class User
         string $name,
         string $originId,
         Platform $platform,
-        array $origin
+        array $origin = [],
+        string $avatar = ''
     )
     {
         $this->id = $id;
@@ -56,6 +62,7 @@ class User
         $this->originId = $originId;
         $this->platform = $platform;
         $this->origin = $origin;
+        $this->avatar = $avatar;
     }
 
 
@@ -73,6 +80,11 @@ class User
     public function getName(): string
     {
         return $this->name;
+    }
+    
+    public function getAvatar() : string
+    {
+        return $this->avatar;
     }
 
     /**
@@ -104,8 +116,9 @@ class User
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
             'originId' => $this->originId,
+            'name' => $this->name,
+            'avatar' => $this->avatar,
             'platform' => $this->platform->toArray(),
             'origin' => $this->origin,
         ];

@@ -18,6 +18,7 @@ use Commune\Chatbot\Framework\Message\Text;
 
 class ChatDriverDemo implements ChatDriver
 {
+    
 
     protected $sessionIds = [];
 
@@ -44,6 +45,12 @@ class ChatDriverDemo implements ChatDriver
         }
         return $this->sessionIds[$chatId];
     }
+
+    public function fetchIdOrCreateChat(Conversation $conversation): string
+    {
+        return $conversation->getChatId();
+    }
+
 
     public function closeSession(string $chatId)
     {

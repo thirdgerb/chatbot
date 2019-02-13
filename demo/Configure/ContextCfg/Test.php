@@ -54,10 +54,6 @@ class Test extends ContextCfg
             ->info('go backward')
             ->backward();
 
-        $route->hearsRegex('test redirect if')
-            ->redirectIf([
-
-            ]);
     }
 
     public function created(Context $context)

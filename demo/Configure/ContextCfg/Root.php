@@ -26,7 +26,6 @@ class Root extends ContextCfg
 
         $route->hearsRegex('test')
             ->info('go test')
-            ->error('go test !!!!!!!!!!')
             ->to(Test::class);
     }
 
