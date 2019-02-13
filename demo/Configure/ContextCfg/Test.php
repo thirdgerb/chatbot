@@ -36,10 +36,13 @@ class Test extends ContextCfg
     public function routing(DialogRoute $route)
     {
         $route->prepared()
-            ->actingWhile(function(Context $context) {
-                return $context['q1']['answer'] === 'back';
-            })->info('由于回答为back, 回退到前一个单元.')
-                ->backward();
+            ->redirectIf(function(Context $context) {
+                $back = $context['q1']['answer'] === 'back';
+                if ($back) {
+                    $context->info('由于输入为back, 将会返回上一单元');
+                }
+                return $back;
+            })->backward();
 
         $route->fallback()
             ->action(function(Context $context, IntentData $intent){
