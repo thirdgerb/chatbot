@@ -1,6 +1,13 @@
 
 ## 更新记录
 
+## 2019年2月13日 13:30 更新
+
+1. 优化重做了 context 和 contextData 的事件, 两套事件相互独立
+2. director 现在根据contextData 的状态来决定启动事件
+3. 优化了IntentRoute 的api, 方便理解
+4. 修复了IntentRoute 存在的bug
+5. 清理了Root 和 Test 两个context 的debug信息, 方便测试.
 
 ### 2019年2月12日
 
