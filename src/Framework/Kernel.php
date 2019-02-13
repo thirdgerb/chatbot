@@ -16,6 +16,7 @@ use Commune\Chatbot\Contracts\ServerDriver;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Conversation\IncomingMessage;
 use Commune\Chatbot\Contracts\ChatbotApp;
+use Commune\Chatbot\Framework\Exceptions\ChatbotException;
 use Psr\Log\LoggerInterface;
 use Commune\Chatbot\Framework\Support\Pipeline;
 
@@ -80,7 +81,7 @@ class Kernel implements ChatbotKernel
     public function bootstrap()
     {
         if (! $this->booted) {
-            foreach ($this->app->getBootstrappers() as $bootstrapper) {
+            foreach ($this->app->getConfig(ChatbotApp::RUNTIME_BOOTSTRAPPERS) as $bootstrapper) {
                 $this->app->make($bootstrapper)->bootstrap($this->app);
             }
             $this->booted = true;
@@ -137,7 +138,7 @@ class Kernel implements ChatbotKernel
         if (!isset($this->pipeline)) {
             $this->pipeline = new Pipeline(
                 $this->app,
-                $this->app->getRuntimePipes(),
+                $this->app->getConfig(ChatbotApp::RUNTIME_PIPES, []),
                 function(Conversation $conversation){
                     return $conversation;
                 }

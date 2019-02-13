@@ -16,6 +16,7 @@ use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Directing\History;
 use Commune\Chatbot\Framework\Directing\Location;
+use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Routing\Router;
 use Psr\Log\LoggerInterface;
 
@@ -92,7 +93,11 @@ class Session
         if (!isset($this->history)) {
             $id = $this->conversation->getSessionId();
             $history = $this->driver->loadHistory($id);
-            $root = $this->app->getRootContext();
+            $root = $this->app->getConfig(ChatbotApp::CONTEXT_ROOT);
+            if (empty($root)) {
+                //todo
+                throw new ConfigureException();
+            }
             $this->history = $history ? : new History(
                 $this->scope->getChatId(),
                 $this->scope->getSessionId(),

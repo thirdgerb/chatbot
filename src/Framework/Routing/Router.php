@@ -11,7 +11,6 @@ use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Context\ContextCfg;
 use Commune\Chatbot\Framework\Conversation\Scope;
-use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Routing\Predefined\MissMatchIR;
 use Commune\Chatbot\Framework\Intent\IntentFactory;
 

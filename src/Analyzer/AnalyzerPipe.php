@@ -26,7 +26,7 @@ class AnalyzerPipe implements ChatbotPipe
 
     protected function bootstrap()
     {
-        $commands = $this->app->getAnalyzerCommands();
+        $commands = $this->app->getConfig(ChatbotApp::RUNTIME_ANALYZERS, []);
 
         foreach ($commands as $commandName) {
 
@@ -38,11 +38,15 @@ class AnalyzerPipe implements ChatbotPipe
             $this->commands[] = $command;
         }
 
-        $this->commandMark = $this->app->getAnalyzerMark();
+        $this->commandMark = $this->app->getConfig(ChatbotApp::RUNTIME_COMMAND_MARK, '/');
     }
 
     public function handle(Conversation $conversation, \Closure $next): Conversation
     {
+        if (!$this->app->isSupervisor($conversation->getSender())) {
+            return $next($conversation);
+        }
+
         if (empty($this->commands)) {
             return $next($conversation);
         }

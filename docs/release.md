@@ -1,14 +1,18 @@
 
 ## 更新记录
 
-## 2019年2月13日 16:30 更新
+## 20190213 v4 更新
+
+-   把获取配置的方式从方法改成了 $app->getConfig(常量名). 这样可扩展.
+
+## 20190213 v3 更新
 
 -   实现了 choice 方法,  运行令人满意
 -   增加了lang 常量. 方便未来替换文本.
 -   增加了一些辅助类.
 -   给 intentRoute 也增加了 ask, confirm, choose 三剑客.
 
-## 2019年2月13日 15:30 更新
+## 20190213 v2 更新
 
 -   把IntentData 更名为Intent
 -   增加了 RedirectionBreak, 用异常方式从context 跳转出去
@@ -18,7 +22,7 @@
 -   实现了 confirmation. 下一个要实现的是choice
 -   实现了 director 的 then 方法, 按逻辑实现跳转.
 
-## 2019年2月13日 13:30 更新
+## 20190213 v1 更新
 
 1. 优化重做了 context 和 contextData 的事件, 两套事件相互独立
 2. director 现在根据contextData 的状态来决定启动事件

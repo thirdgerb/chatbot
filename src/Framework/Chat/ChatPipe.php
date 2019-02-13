@@ -106,9 +106,6 @@ class ChatPipe implements ChatbotPipe
 
         } catch (ChatbotException $e) {
 
-            if ($incomingMessage) {
-                $this->driver->pushIncomingMessage($chatId, $incomingMessage);
-            }
             //todo
             $this->log->error("", ['exp' => $e]);
             $conversation->reply($this->driver->replyWhenException($e));

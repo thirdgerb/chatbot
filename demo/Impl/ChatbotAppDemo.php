@@ -13,6 +13,7 @@ use Commune\Chatbot\Analyzer\Commands;
 use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Contracts\ExceptionHandler;
 use Commune\Chatbot\Contracts\ServerDriver;
+use Commune\Chatbot\Framework\Character\User;
 use Commune\Chatbot\Framework\Chat\ChatPipe;
 use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\HostPipe;
@@ -67,12 +68,13 @@ class ChatbotAppDemo implements ChatbotApp
                     Commands\History::class,
                     Commands\Scope::class,
                 ],
+                'command_mark' => '/',
             ],
 
 
             'contexts' => [
                 'root' => ContextCfg\Root::class,
-                'classes' => [
+                'preload' => [
                     ContextCfg\Root::class,
                     ContextCfg\Test::class
                 ]
@@ -80,9 +82,18 @@ class ChatbotAppDemo implements ChatbotApp
 
             'messages' => [
                 'miss_match_message' => 'miss match',
+                'exceptions' => [
+                    0 => 'unexpected exception occur',
+                ],
             ],
         ];
     }
+
+    public function isSupervisor(User $sender): bool
+    {
+        return true;
+    }
+
 
     public function getServerDriver(): ServerDriver
     {
@@ -95,40 +106,6 @@ class ChatbotAppDemo implements ChatbotApp
         return $this->make(ExceptionHandler::class);
     }
 
-    public function getMissMatchMessage(): string
-    {
-        return Arr::get($this->config, 'messages.miss_match_message');
-    }
-
-    public function getRootContext(): string
-    {
-        return Arr::get($this->config, 'contexts.root');
-    }
-
-    public function getDirectorMaxTicks(): int
-    {
-        return Arr::get($this->config, 'runtime.direct_max_ticks', 10);
-    }
-
-    public function getRuntimePipes(): array
-    {
-        return Arr::get($this->config, 'runtime.pipes');
-    }
-
-    public function getBootstrappers(): array
-    {
-        return Arr::get($this->config, 'runtime.bootstrappers');
-    }
-
-    public function getContextConfigs(): array
-    {
-        return Arr::get($this->config, 'contexts.classes');
-    }
-
-    public function getAnalyzerCommands(): array
-    {
-        return Arr::get($this->config, 'runtime.analyzers');
-    }
 
     public function getIntentDefaultRoute(Router $router): IntentRoute
     {
@@ -160,9 +137,9 @@ class ChatbotAppDemo implements ChatbotApp
         return $this->app->has($id);
     }
 
-    public function getAnalyzerMark(): string
+    public function getConfig(string $configConstantName, $default = null)
     {
-        return '/';
+        return Arr::get($this->config, $configConstantName, $default);
     }
 
 

@@ -8,7 +8,7 @@
 namespace Commune\Chatbot\Framework\Exceptions;
 
 
-class ConfigureException extends ChatbotException
+class ConfigureException extends \RuntimeException
 {
 
 }

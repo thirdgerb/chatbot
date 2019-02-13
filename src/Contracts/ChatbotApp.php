@@ -7,12 +7,33 @@
 
 namespace Commune\Chatbot\Contracts;
 
+use Commune\Chatbot\Framework\Character\User;
 use Commune\Chatbot\Framework\Routing\IntentRoute;
 use Commune\Chatbot\Framework\Routing\Router;
 use Psr\Container\ContainerInterface;
 
 interface ChatbotApp extends ContainerInterface
 {
+    /*----- config name const -----*/
+
+    /*----- config.messages -----*/
+
+    const MESSAGES_MISSMATCH = 'messages.miss_match_message';
+
+    const MESSAGES_EXCEPTIONS = 'messages.exceptions';
+
+    /*----- config.context -----*/
+
+    const CONTEXT_ROOT = 'contexts.root';
+    const CONTEXT_PRELOAD = 'contexts.preload';
+
+    /*----- config.runtime -----*/
+
+    const RUNTIME_MAX_DIRECT = 'runtime.direct_max_ticks';
+    const RUNTIME_PIPES = 'runtime.pipes';
+    const RUNTIME_BOOTSTRAPPERS = 'runtime.bootstrappers';
+    const RUNTIME_ANALYZERS = 'runtime.analyzers';
+    const RUNTIME_COMMAND_MARK = 'runtime.command_mark';
 
     /**
      * Resolve the given type from the container.
@@ -29,23 +50,20 @@ interface ChatbotApp extends ContainerInterface
 
     public function getExceptionHandler() : ExceptionHandler;
 
+    public function isSupervisor(User $sender) : bool;
+
     /*------ configure -------*/
 
-    public function getMissMatchMessage() : string;
+    /**
+     * @param string $configConstantName
+     * @param mixed $default
+     * @return mixed
+     */
+    public function getConfig(string $configConstantName, $default = null);
 
-    public function getRootContext() : string;
-
-    public function getDirectorMaxTicks() : int;
-
-    public function getRuntimePipes() : array;
-
-    public function getBootstrappers() : array;
-
-    public function getContextConfigs() : array;
-
-    public function getAnalyzerCommands() : array;
-
-    public function getAnalyzerMark() : string;
+    /*------ intent -------*/
 
     public function getIntentDefaultRoute(Router $router): IntentRoute;
+
+
 }

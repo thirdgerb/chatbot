@@ -81,7 +81,7 @@ class Director
         $this->router = $router;
         $this->log = $app->make(LoggerInterface::class);
         $this->tick = 0;
-        $this->maxTicks = $app->getDirectorMaxTicks();
+        $this->maxTicks = $app->getConfig(ChatbotApp::RUNTIME_MAX_DIRECT, 10);
         $this->scope = $this->session->getConversation()->getScope();
     }
 
