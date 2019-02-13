@@ -8,12 +8,14 @@
 namespace Commune\Chatbot\Framework\Context\Predefined;
 
 
+use Commune\Chatbot\Framework\Constants\Lang;
 use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Context\ContextCfg;
 use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Routing\DialogRoute;
 use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Message\Questions\Choose;
+use Commune\Chatbot\Framework\Support\TypeTransfer;
 use Illuminate\Support\Str;
 
 class Choice extends ContextCfg
@@ -30,12 +32,19 @@ class Choice extends ContextCfg
     const PROPS = [
         'question' => '',
         'choices' => [],
-        'default' => '',
+        'default' => 0,
     ];
 
     public function prepared(Context $context)
     {
-        $context->reply(new Choose($context['question'], $context['choices'], $this['default']));
+
+        $context->reply(new Choose($context['question'], $context['choices'], $this->defaultChoice($context)));
+    }
+
+    protected function defaultChoice(Context $context)
+    {
+        $choices = $context['choices'];
+        return $choices[$context['default']] ?? $choices[0];
     }
 
     public function routing(DialogRoute $route)
@@ -46,12 +55,11 @@ class Choice extends ContextCfg
 
                 $choices = $context['choices'];
 
-                $choice = '';
+                $choice = null;
 
                 if (is_numeric($text) && array_key_exists($text, $choices)) {
                     $choice = $choices[$text];
                 } elseif(trim($text) === '') {
-                    $choice = $choices[$context['default']] ?? $choices[0];
 
                     foreach($choices as $index => $val) {
                         if (Str::startsWith($val, $text)) {
@@ -61,14 +69,21 @@ class Choice extends ContextCfg
                     }
                 }
 
-                if ($choice) {
+                if (isset($choice)) {
                     $context['choice'] = $choice;
                     $context['fulfill'] = true;
                 } else {
-                    $context->warn('wrong input');
+                    $context->warn(Lang::WRONG_INPUT);
+                    $this->prepared($context);
                 }
             })->redirectIf(['fulfill' => true])
                 ->intended();
     }
+
+    public function toString(Context $context) : string
+    {
+        return TypeTransfer::toString($context['choice']);
+    }
+
 
 }

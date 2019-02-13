@@ -1,13 +1,22 @@
 
 ## 更新记录
 
+## 2019年2月13日 16:30 更新
+
+-   实现了 choice 方法,  运行令人满意
+-   增加了lang 常量. 方便未来替换文本.
+-   增加了一些辅助类.
+-   给 intentRoute 也增加了 ask, confirm, choose 三剑客.
+
 ## 2019年2月13日 15:30 更新
 
 -   把IntentData 更名为Intent
 -   增加了 RedirectionBreak, 用异常方式从context 跳转出去
 -   测试了回调逻辑, 很好使. 还是需要评估, 跳转允许在action中实现, 还是只能靠route 去定义. 主要是route没有上下文.
+-   目前action 如果return location 就跳转, 暂时用这种方法
 -   context 增加了format 功能, 方便格式化文本.
 -   实现了 confirmation. 下一个要实现的是choice
+-   实现了 director 的 then 方法, 按逻辑实现跳转.
 
 ## 2019年2月13日 13:30 更新
 

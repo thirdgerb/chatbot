@@ -14,6 +14,7 @@ use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Routing\DialogRoute;
 use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Message\Questions\Confirm;
+use Commune\Chatbot\Framework\Support\TypeTransfer;
 use Illuminate\Support\Str;
 
 class Confirmation extends ContextCfg
@@ -49,6 +50,10 @@ class Confirmation extends ContextCfg
             })->intended();
     }
 
+    public function toString(Context $context) : string
+    {
+        return TypeTransfer::toString($context['confirmation']);
+    }
 
 
 }

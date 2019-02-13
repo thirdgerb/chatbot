@@ -7,12 +7,15 @@
 
 namespace Commune\Chatbot\Framework\Message;
 
+use Commune\Chatbot\Framework\Support\ArrayAbleToJson;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class Message
+abstract class Message implements \JsonSerializable
 {
+    use ArrayAbleToJson;
+
     const VERBOSE = 'v';
     const VERY_VERBOSE = 'vv';
     const DEBUG = 'vvv';
@@ -71,7 +74,6 @@ abstract class Message
     {
         return $this->verbosity;
     }
-
 
     /**
      * @var InputInterface

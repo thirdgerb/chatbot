@@ -8,12 +8,15 @@
 namespace Commune\Chatbot\Framework\Intent;
 
 
+use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Exceptions\ChatbotException;
 use Commune\Chatbot\Framework\Message\Message;
+use Commune\Chatbot\Framework\Support\ArrayAbleToJson;
 use Illuminate\Support\Arr;
 
-class Intent implements \ArrayAccess
+class Intent implements \ArrayAccess, \JsonSerializable
 {
+    use ArrayAbleToJson;
 
     /**
      * @var array | \ArrayAccess
@@ -59,9 +62,18 @@ class Intent implements \ArrayAccess
         return $this->id;
     }
 
-    public function getEntities() : array
+    public function getEntities()
     {
+        if (is_object($this->entities) && method_exists($this->entities, 'toArray')) {
+            return $this->entities->toArray();
+        }
+
         return $this->entities;
+    }
+
+    public function toContext() : ? Context
+    {
+        return $this->entities instanceof Context ? $this->entities : null;
     }
 
     public function toArray() : array
@@ -99,13 +111,4 @@ class Intent implements \ArrayAccess
         throw new \BadMethodCallException();
     }
 
-    public function toString()
-    {
-        return json_encode($this->toArray(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    }
-
-    public function __toString()
-    {
-        return $this->toString();
-    }
 }

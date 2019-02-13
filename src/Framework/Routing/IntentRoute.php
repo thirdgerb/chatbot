@@ -8,6 +8,8 @@
 namespace Commune\Chatbot\Framework\Routing;
 
 
+use Commune\Chatbot\Framework\Context\Predefined\Answer;
+use Commune\Chatbot\Framework\Directing\Location;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Support\Pipeline;
 use Commune\Chatbot\Framework\Context\Context;
@@ -225,7 +227,7 @@ class IntentRoute
 
     public function reply(Message $message)
     {
-        $action = function(Context $context, Intent $intent) use ($message){
+        $action = function(Context $context) use ($message){
             $context->reply($message);
         };
         $this->pushAction($action);
@@ -235,7 +237,7 @@ class IntentRoute
 
     public function info(string $message, string $verbose = Message::NORMAL)
     {
-        $this->pushAction(function(Context $context, Intent $intent) use ($message, $verbose){
+        $this->pushAction(function(Context $context) use ($message, $verbose){
             $context->info($message, $verbose);
         });
         return $this;
@@ -276,17 +278,19 @@ class IntentRoute
         return $this;
     }
 
+
+
     public function intended() : self
     {
-        $this->setRedirect(function(Director $director, Context $context) {
+        $this->setRedirect(function(Director $director) {
             return $director->intended();
         });
         return $this;
     }
 
-    public function guest(string $contextName, array $props, string $callback = null) : self
+    public function guest(string $contextName, array $props = [], string $callback = null) : self
     {
-        $this->setRedirect(function(Director $director, Context $context) use ($contextName, $props, $callback){
+        $this->setRedirect(function(Director $director) use ($contextName, $props, $callback){
             $location = $director->makeLocation($contextName, $props);
             return $director->guest($location, null, $callback);
         });
@@ -295,7 +299,7 @@ class IntentRoute
 
     public function home() : self
     {
-        $this->setRedirect(function(Director $director, Context $context){
+        $this->setRedirect(function(Director $director){
             return $director->home();
         });
         return $this;
@@ -303,29 +307,75 @@ class IntentRoute
 
     public function forward() : self
     {
-        $this->setRedirect(function(Director $director, Context $contextk){
+        $this->setRedirect(function(Director $director){
             return $director->forward();
         });
         return $this;
     }
 
-    public function through(callable $factory) : self
+    public function backward() : self
     {
-        $this->setRedirect(function(Director $director, Context $context) use ($factory) {
-            $location = $factory($context);
+        $this->setRedirect(function(Director $director){
+            return $director->backward();
+        });
+        return $this;
+    }
+
+    public function then(callable $factory) : self
+    {
+        $this->setRedirect(function(Director $director, Context $context, Intent $intent) use ($factory) {
+            $location = $factory($context, $intent);
+            return $director->to($location);
+        });
+        return $this;
+    }
+
+    public function ask(string $callbackRoute, string $question, string $default = null, array $fields)
+    {
+        $this->setRedirect(function (
+            Director $director,
+            Context $context
+        ) use ($callbackRoute, $question, $default, $fields){
+            if (!empty($fields)) {
+                $question = $context->format($question, $fields);
+            }
+            $location = $context->ask($callbackRoute, $question, $default);
+            return $director->to($location);
+        });
+        return $this;
+    }
+
+    public function confirm(string $callbackRoute, string $question, string $default = null, array $fields)
+    {
+        $this->setRedirect(function (
+            Director $director,
+            Context $context
+        ) use ($callbackRoute, $question, $default, $fields){
+            if (!empty($fields)) {
+                $question = $context->format($question, $fields);
+            }
+            $location = $context->confirm($callbackRoute, $question, $default);
             return $director->to($location);
         });
         return $this;
     }
 
 
-    public function backward() : self
+    public function choose(string $callbackRoute, string $question, array $choices, int $default = 0, array $fields)
     {
-        $this->setRedirect(function(Director $director, Context $context){
-            return $director->backward();
+        $this->setRedirect(function (
+            Director $director,
+            Context $context
+        ) use ($callbackRoute, $question, $choices, $default, $fields){
+            if (!empty($fields)) {
+                $question = $context->format($question, $fields);
+            }
+            $location = $context->choose($callbackRoute, $question, $choices, $default);
+            return $director->to($location);
         });
         return $this;
     }
+
 
 
 
@@ -376,8 +426,11 @@ class IntentRoute
         // 意图获取.
         $intent = $conversation->getMatchedIntent();
         foreach ($this->actions[$actionIndex] as $action) {
-            call_user_func($action,$context, $intent);
+            $location = call_user_func($action,$context, $intent);
             //是否有上下文的重定向.
+            if (isset($location) && $location instanceof  Location) {
+                return $director->to($location);
+            }
         }
 
         // redirectCondition
@@ -396,7 +449,7 @@ class IntentRoute
         }
 
         $redirect = $this->redirects[$actionIndex][$redirectIndex];
-        return call_user_func($redirect,$director, $context);
+        return call_user_func($redirect, $director, $context, $intent);
 
     }
 

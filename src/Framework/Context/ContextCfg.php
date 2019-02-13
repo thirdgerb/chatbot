@@ -70,6 +70,10 @@ abstract class ContextCfg
 
     public function canceled(Context  $context) {}
 
+    public function toString(Context $context) : string
+    {
+        return $context->toJson();
+    }
 
     /*------ validate ------*/
 
@@ -151,8 +155,5 @@ abstract class ContextCfg
         sort($this->scopeTypes);
         return $this->scopeTypes;
     }
-
-
-
 
 }

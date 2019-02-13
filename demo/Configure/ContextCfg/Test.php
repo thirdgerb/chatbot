@@ -60,7 +60,7 @@ class Test extends ContextCfg
 
         $route->hearsRegex('test format')
             ->action(function (Context $context, Intent $intent) {
-                $context->info($context->format('测试format: {}', 'q1.answer'));
+                $context->info($context->format('测试format: {}', ['q1.answer']));
             });
     }
 

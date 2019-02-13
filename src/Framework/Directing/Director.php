@@ -232,7 +232,7 @@ class Director
                 break;
         }
 
-        if ($dependency = $context->depending()) {
+        if ($dependency = $context->initDepending()) {
             $context->fireEvent(ContextCfg::DEPENDING);
             return $this->guest($dependency, $location);
         }

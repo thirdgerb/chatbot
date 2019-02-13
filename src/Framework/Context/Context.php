@@ -12,13 +12,13 @@ use Commune\Chatbot\Framework\Character\Platform;
 use Commune\Chatbot\Framework\Character\Recipient;
 use Commune\Chatbot\Framework\Character\User;
 use Commune\Chatbot\Framework\Context\Predefined\Answer;
+use Commune\Chatbot\Framework\Context\Predefined\Choice;
 use Commune\Chatbot\Framework\Context\Predefined\Confirmation;
-use Commune\Chatbot\Framework\Directing\RedirectionBreak;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Conversation\Talkable;
-use Commune\Chatbot\Framework\Support\ArrayWrapper;
+use Commune\Chatbot\Framework\Support\ArrayAbleToJson;
 use Commune\Chatbot\Framework\Directing\Location;
 use Commune\Chatbot\Framework\Session\Session;
 use Commune\Chatbot\Framework\Intent\Intent;
@@ -26,9 +26,10 @@ use Commune\Chatbot\Framework\Message\Message;
 use Commune\Chatbot\Framework\Message\Text;
 use Illuminate\Support\Arr;
 
-class Context implements Talkable,\ArrayAccess
+class Context implements Talkable,\ArrayAccess, \JsonSerializable
 {
 
+    use ArrayAbleToJson;
     /**
      * @var ContextData
      */
@@ -205,7 +206,7 @@ class Context implements Talkable,\ArrayAccess
 
     /*------- depending -------*/
 
-    public function depending() : ? Location
+    public function initDepending() : ? Location
     {
         foreach ($this->config->getDependsSchema() as $name => $val) {
             $depend = $this->getDepend($name);
@@ -308,14 +309,15 @@ class Context implements Talkable,\ArrayAccess
         return $value;
     }
 
-    public function toJson() : string
+    public function toJson(int $option = null) : string
     {
-        return json_encode($this->toArray(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $option = $option ?? JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
+        return json_encode($this->toArray(), $option);
     }
 
     public function toString() : string
     {
-        return $this->toJson();
+        return $this->config->toString($this);
     }
 
     public function __toString()
@@ -325,7 +327,7 @@ class Context implements Talkable,\ArrayAccess
 
     /*------- talk -------*/
 
-    public function format(string $temp, ... $fields)
+    public function format(string $temp, array $fields)
     {
         $params = [];
         foreach ($fields as $field) {
@@ -369,7 +371,7 @@ class Context implements Talkable,\ArrayAccess
         $this->conversation->reply($message);
     }
 
-    public function ask(string $callbackRouteName, string $question, string $default = null)
+    public function ask(string $callbackRouteName, string $question, string $default = null) : Location
     {
         $intended = $this->getLocation();
         $intended->setCallback($callbackRouteName);
@@ -378,11 +380,11 @@ class Context implements Talkable,\ArrayAccess
             'default' => $default
         ]);
         $answer->setIntended($intended);
-        throw new RedirectionBreak($answer);
+        return $answer;
     }
 
 
-    public function confirm(string $callbackRouteName, string $question, string $default = 'yes')
+    public function confirm(string $callbackRouteName, string $question, string $default = 'yes') : Location
     {
         $intended = $this->getLocation();
         $intended->setCallback($callbackRouteName);
@@ -391,8 +393,29 @@ class Context implements Talkable,\ArrayAccess
             'default' => $default
         ]);
         $answer->setIntended($intended);
-        throw new RedirectionBreak($answer);
+        return $answer;
     }
 
+    public function choose(string $callbackRouteName, string $question, array $choices, int $default = 0) : Location
+    {
+        $intended = $this->getLocation();
+        $intended->setCallback($callbackRouteName);
+        $to = new Location(Choice::class, [
+            'question' => $question,
+            'choices' => $choices,
+            'default' => $default,
+        ]);
+        $to->setIntended($intended);
+        return $to;
+    }
+
+    public function depend(string $callbackRouteName, string $contextName, array $props = []) : Location
+    {
+        $intended = $this->getLocation();
+        $intended->setCallback($callbackRouteName);
+        $to = new Location($contextName, $props);
+        $to->setIntended($intended);
+        return $to;
+    }
 
 }

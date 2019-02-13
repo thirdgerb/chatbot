@@ -17,6 +17,10 @@ class Root extends ContextCfg
 {
     const SCOPE = [Scope::SESSION];
 
+    const DATA = [
+        'testing' => 'abc'
+    ];
+
     public function routing(DialogRoute $route)
     {
         $route->fallback()
@@ -30,13 +34,43 @@ class Root extends ContextCfg
 
         $route->hearsRegex('test callback')
             ->action(function(Context $context, Intent $intent){
-                $context->ask('sayAnswer', '测试回调逻辑, 请输入回答');
+                return $context->ask('sayAnswer', '测试回调逻辑, 请输入回答');
             });
 
         $route->hearsRegex('test confirm')
             ->action(function(Context $context, Intent $intentData){
-                $context->confirm('sayConfirm', '测试确认功能, 请尝试回答括号里的内容', 'true');
+                return $context->confirm('sayConfirm', '测试确认功能, 请尝试回答括号里的内容', 'true');
             });
+
+        $route->hearsRegex('test then')
+            ->info('测试 then 的回调逻辑')
+            ->then(function(Context $context, Intent $intent) {
+                return $context->ask(
+                    'sayAnswer',
+                    '用来确认回调成功的问题, 意图为:'.$intent->getId(),
+                    '回调成功'
+                );
+            });
+
+        $route->hearsRegex('test choice')
+            ->info('测试 选择功能 + 选择路由')
+            ->choose(
+                'sayChoice',
+                '测试选择题加模板 {}',
+                    [
+                        '选项1',
+                        '选项2',
+                        '选项3',
+                    ],
+                    2,
+                    ['testing']
+                );
+
+        $route->callback('sayChoice')
+            ->action(function (Context $context, Intent $intent){
+                $context->info('选择为: '. $intent->toContext()->toString());
+            });
+
 
         $route->callback('sayAnswer')
             ->callSelfMethod('sayAnswer');
@@ -47,6 +81,7 @@ class Root extends ContextCfg
                 $message.= $intent['confirmation'] ? 'true' : 'false';
                 $context->info( $message);
             });
+
     }
 
     public function prepared(Context $context)
