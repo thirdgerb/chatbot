@@ -57,10 +57,12 @@ class Context implements Talkable,\ArrayAccess
 
     public function fireEvent(string $name)
     {
-        if (!method_exists($this->config, $name)) {
+        if (!in_array($name, ContextCfg::EVENTS)) {
             //todo
             throw new \BadMethodCallException();
         }
+
+        $this->data->listenContextEvent($name);
         call_user_func([$this->config, $name], $this);
     }
 
@@ -101,6 +103,11 @@ class Context implements Talkable,\ArrayAccess
     public function getLocation() : Location
     {
         return new Location($this->getName(), $this->data->getProps(), $this->data->getId());
+    }
+
+    public function getDataStatus() : int
+    {
+        return $this->data->getStatus();
     }
 
     /*--------- conversation ----------*/

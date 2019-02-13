@@ -8,6 +8,7 @@
 namespace Commune\Chatbot\Framework\Directing;
 
 use Commune\Chatbot\Contracts\ChatbotApp;
+use Commune\Chatbot\Framework\Context\ContextData;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Context\ContextCfg;
@@ -96,19 +97,15 @@ class Director
             $current = $this->history->current();
             $this->debug($current);
 
-            $context = $this->fetchContext($current);
-            $context->fireEvent(ContextCfg::WAKED_HOOK);
-            $dialogRoute = $this->router->getDialogRoute($context->getName());
-            $intentRoute = $dialogRoute->match($context, $this->conversation);
-            return $intentRoute->run($context, $this->conversation, $this);
+            return $this->startDialog($current, function(Context $context){
+                $dialogRoute = $this->router->getDialogRoute($context->getName());
+                $intentRoute = $dialogRoute->match($context, $this->conversation);
+                return $intentRoute->run($context, $this->conversation, $this);
+            });
 
         } catch (TooManyDirectingException $e) {
             $this->history->flush();
             throw $e;
-        } catch (\Exception $e) {
-            $this->log->error($e->getMessage());
-            //todo
-            return $this->failed();
         }
     }
 
@@ -121,7 +118,7 @@ class Director
             $last = $intended;
         }
         $context = $this->fetchContext($last);
-        $context->fireEvent(ContextCfg::CANCELED_HOOK);
+        $context->fireEvent(ContextCfg::CANCELED);
         return $this->backward();
     }
 
@@ -134,7 +131,7 @@ class Director
             $last = $intended;
         }
         $context = $this->fetchContext($last);
-        $context->fireEvent(ContextCfg::FAILED_HOOK);
+        $context->fireEvent(ContextCfg::FAILED);
         return $this->backward();
     }
 
@@ -156,18 +153,14 @@ class Director
     {
         $this->ticks();
         $location = $this->history->forward();
-        $context = $this->fetchContext($location);
-        $context->fireEvent(ContextCfg::RESTORED_HOOK);
-        return $this->conversation;
+        return $this->startDialog($location);
     }
 
     public function backward() : Conversation
     {
         $this->ticks();
         $location = $this->history->backward();
-        $context = $this->fetchContext($location);
-        $context->fireEvent(ContextCfg::RESTORED_HOOK);
-        return $this->conversation;
+        return $this->startDialog($location);
     }
 
     public function guest(Location $to, Location $from = null, string $callback = null) : Conversation
@@ -218,15 +211,32 @@ class Director
 
     /*--------- status ----------*/
 
-    protected function startDialog(Location $location) : Conversation
+    protected function startDialog(Location $location, \Closure $callback = null) : Conversation
     {
         $context = $this->fetchContext($location);
 
-        $context->fireEvent(ContextCfg::CREATED_HOOK);
+        switch($context->getDataStatus()) {
+            case ContextData::CREATED :
+                $context->fireEvent(ContextCfg::CREATING);
+                break;
+            case ContextData::WAKED :
+                $context->fireEvent(ContextCfg::WAKING);
+                break;
+            case ContextData::DEAD :
+                $context->fireEvent(ContextCfg::RESTORING);
+                break;
+        }
 
         if ($dependency = $context->depending()) {
+            $context->fireEvent(ContextCfg::DEPENDING);
             return $this->guest($dependency, $location);
         }
+
+        // 在这个环节回调.
+        if (isset($callback)) {
+            return $callback($context);
+        }
+
         $dialogRoute = $this->router->getDialogRoute($context->getName());
         $preparedRoute = $dialogRoute->prepared();
         return $preparedRoute->run($context, $this->conversation, $this);

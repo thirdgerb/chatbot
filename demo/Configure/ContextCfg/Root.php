@@ -21,32 +21,22 @@ class Root extends ContextCfg
     {
         $route->fallback()
             ->action(function(Context $context, IntentData $intent){
-                $context->info('receive:' .$intent->getMessage()->getText());
+                $context->info('收到输入:' .$intent->getMessage()->getText());
             }) ;
 
         $route->hearsRegex('test')
-            ->info('go test')
+            ->info('进入test单元')
             ->to(Test::class);
-    }
-
-    public function created(Context $context)
-    {
-        $context->info(static::class . '::initial');
-    }
-
-    public function waked(Context $context)
-    {
-        $context->info(static::class . '::wake');
     }
 
     public function prepared(Context $context)
     {
-        $context->info(static::class . '::prepared');
+        $context->info('你好, 这里是测试根目录. 请输入/h 查看可用指令.');
     }
 
-    public function restored(Context $context)
+    public function waking(Context $context)
     {
-        $context->info(static::class . '::restored');
+        $this->prepared($context);
     }
 
 

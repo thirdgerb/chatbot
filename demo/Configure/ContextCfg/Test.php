@@ -22,23 +22,24 @@ class Test extends ContextCfg
         'q1' => [
             Answer::class,
             [
-                'question' => '请输入q1做测试',
-                'default' => 'q1'
+                'question' => 'test 依赖当前问题的答案, 请输入回答. 输入back会返回上一页',
+                'default' => 'back'
             ]
         ],
     ];
 
     public function prepared(Context $context)
     {
-        $context->info('now test, answer is :'. $context['q1']['answer']);
+        $context->info('进入test语境. 依赖回答为: '. $context['q1']['answer']);
     }
 
     public function routing(DialogRoute $route)
     {
         $route->prepared()
-            ->redirectIf(function(Context $context) {
+            ->actingWhile(function(Context $context) {
                 return $context['q1']['answer'] === 'back';
-            })->backward();
+            })->info('由于回答为back, 回退到前一个单元.')
+                ->backward();
 
         $route->fallback()
             ->action(function(Context $context, IntentData $intent){
@@ -54,16 +55,6 @@ class Test extends ContextCfg
             ->info('go backward')
             ->backward();
 
-    }
-
-    public function created(Context $context)
-    {
-        $context->info(static::class. '::initial');
-    }
-
-    public function waked(Context $context)
-    {
-        $context->info(static::class. '::wake');
     }
 
 }

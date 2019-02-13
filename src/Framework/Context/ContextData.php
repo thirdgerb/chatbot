@@ -12,31 +12,43 @@ use Commune\Chatbot\Framework\Conversation\Scope;
 
 class ContextData
 {
+
+    const CREATED = 1;
+    const WAKED = 2;
+    const FUNCTION = 3;
+    const SLEEP = 4;
+    const DEAD = 5;
+
     /**
      * @var string
      */
-    private $id;
+    protected $id;
+
+    /**
+     * @var int
+     */
+    protected $status;
 
     /**
      * @var array
      */
-    private $scope = [];
+    protected $scope = [];
 
-    private $depends = [];
+    protected $depends = [];
 
-    private $props = [];
+    protected $props = [];
 
-    private $data = [];
+    protected $data = [];
 
     /**
      * @var bool
      */
-    private $needSave;
+    protected $needSave;
 
     /**
      * @var string
      */
-    private $contextName;
+    protected $contextName;
 
     public function __construct(
         string $id,
@@ -53,15 +65,16 @@ class ContextData
         $this->data = $this->getDefaultData($definedData);
         $this->props = $this->generateProps($definedProps, $props);
         $this->needSave = true;
+        $this->status = self::CREATED;
     }
 
 
-    private function getDefaultData(array $definedData) : array
+    protected function getDefaultData(array $definedData) : array
     {
         return $definedData;
     }
 
-    private function generateProps(array $definedProps, array $props) : array
+    protected function generateProps(array $definedProps, array $props) : array
     {
         return $props + $definedProps;
     }
@@ -103,6 +116,27 @@ class ContextData
     public function needSave() : bool
     {
         return $this->needSave;
+    }
+
+    public function getStatus() : int
+    {
+        return $this->status;
+    }
+
+    public function listenContextEvent(string $contextEvent)
+    {
+        switch ($contextEvent) {
+            case ContextCfg::CREATING :
+            case ContextCfg::WAKING :
+            case ContextCfg::RESTORING :
+                $this->status = self::FUNCTION;
+                break;
+            case ContextCfg::PREPARED :
+            case ContextCfg::FAILED :
+            case ContextCfg::CANCELED :
+                $this->status = self::DEAD;
+                break;
+        }
     }
 
     /**
@@ -196,12 +230,27 @@ class ContextData
 
     public function __sleep()
     {
-        return ['id', 'scope', 'depends', 'props', 'data'];
+        if ($this->status === self::FUNCTION) {
+            $this->status = self::SLEEP;
+        }
+
+        return [
+            'id',
+            'status',
+            'scope',
+            'depends',
+            'props',
+            'contextName',
+            'data',
+        ];
     }
 
     public function __wakeup()
     {
         $this->needSave = false;
+        if ($this->status === self::SLEEP) {
+            $this->status = self::WAKED;
+        }
     }
 
 }

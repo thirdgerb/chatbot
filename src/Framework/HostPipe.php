@@ -10,6 +10,7 @@ namespace Commune\Chatbot\Framework;
 
 use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Contracts\SessionDriver;
+use Commune\Chatbot\Framework\Exceptions\ConversationException;
 use Commune\Chatbot\Framework\Exceptions\HostException;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Directing\Director;
@@ -49,9 +50,10 @@ class HostPipe implements ChatbotPipe
 
     public function handle(Conversation $conversation, \Closure $next) : Conversation
     {
-        try {
 
-            $session = $this->makeSession($conversation);
+        $session = $this->makeSession($conversation);
+
+        try {
 
             $director = new Director($this->app, $session, $this->router);
 
@@ -61,10 +63,17 @@ class HostPipe implements ChatbotPipe
 
             return $next($conversation);
 
+        } catch (ConversationException $e) {
+
+            return $e->getConversation();
+
         } catch (\Exception $e) {
             //todo
             $this->log->error('host error');
             throw new HostException('test', 0, $e);
+
+        } finally {
+            $session->save();
         }
     }
 

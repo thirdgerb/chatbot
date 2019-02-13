@@ -103,7 +103,7 @@ class DialogRoute
             /**
              * @var IntentRoute $route
              */
-            if ($route->available($context)) {
+            if ($route->isAvailable($context)) {
                 $result[] = $route;
             }
         }
@@ -151,6 +151,13 @@ class DialogRoute
         return $intent;
     }
 
+    public function name(string $intentId) : IntentRoute
+    {
+        $intentRoute = new IntentRoute($this->app, $this->router, $intentId);
+        $this->addIntentRoute($intentRoute);
+        return $intentRoute;
+    }
+
     public function hearsCommand(string $signature) : IntentRoute
     {
         $id = md5($signature);
@@ -173,7 +180,7 @@ class DialogRoute
         return $intent;
     }
 
-    private function addIntentRoute(IntentRoute $route)
+    protected function addIntentRoute(IntentRoute $route)
     {
         $this->intentRoutes[$route->getId()] = $route;
     }

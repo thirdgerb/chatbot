@@ -33,29 +33,43 @@ abstract class ContextCfg
         //'valueName',
     ];
 
-    const CREATED_HOOK = 'created';
-    const WAKED_HOOK = 'waked';
-    const PREPARED_HOOK = 'prepared';
-    const RESTORED_HOOK = 'restored';
-    const FAILED_HOOK = 'failed';
-    const CANCELED_HOOK = 'canceled';
+    const CREATING = 'creating';
+    const WAKING = 'waking';
+    const DEPENDING = 'depending';
+    const RESTORING  = 'restoring';
+    const PREPARED = 'prepared';
+    const FAILED = 'failed';
+    const CANCELED = 'canceled';
+
+    const EVENTS = [
+        self::CREATING,
+        self::WAKING,
+        self::DEPENDING,
+        self::RESTORING,
+        self::PREPARED,
+        self::FAILED,
+        self::CANCELED,
+    ];
 
 
     private $scopeTypes;
 
     abstract public function routing(DialogRoute $route);
 
-    public function created(Context  $context) {}
+    public function creating(Context  $context) {}
 
-    public function waked(Context  $context) {}
+    public function depending(Context $context) {}
+
+    public function restoring(Context  $context) {}
+
+    public function waking(Context  $context) {}
 
     public function prepared(Context  $context) {}
-
-    public function restored(Context  $context) {}
 
     public function failed(Context  $context) {}
 
     public function canceled(Context  $context) {}
+
 
     /*------ validate ------*/
 

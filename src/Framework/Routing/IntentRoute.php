@@ -44,7 +44,7 @@ class IntentRoute
 
     /*----- 运算属性 -----*/
 
-    protected $availableConditions = [];
+    protected $availableCondition;
 
     protected $actionConditions = [];
 
@@ -66,7 +66,7 @@ class IntentRoute
         $this->id = $id ?? static::class ;
         $this->app = $app;
         $this->router = $router;
-        $this->matcher = $matcher;
+        $this->matcher = $matcher ? : new IntentFactory();
     }
 
     /**
@@ -78,7 +78,7 @@ class IntentRoute
     }
 
 
-    public function getIntentFactory() : ? IntentFactory
+    public function getIntentFactory() : IntentFactory
     {
         return $this->matcher;
     }
@@ -153,13 +153,13 @@ class IntentRoute
      * @param string|array|callable $condition
      * @return self
      */
-    public function onlyIf($condition) : self
+    public function availableWhen($condition) : self
     {
-        $this->availableConditions[] = $this->warpCondition($condition);
+        $this->availableCondition = $this->warpCondition($condition);
         return $this;
     }
 
-    public function when($condition) : self
+    public function actingWhile($condition) : self
     {
         $this->actionConditions[] = $this->warpCondition($condition);
         return $this;
@@ -178,7 +178,10 @@ class IntentRoute
 
     protected function pushAction(\Closure $action)
     {
-        $index = $this->maxIndexOf($this->actions);
+        $index = $this->maxIndexOf($this->actionConditions);
+        if (!isset($this->actionConditions[$index])) {
+            $this->actionConditions[$index] = null;
+        }
         if (!isset($this->actions[$index])) {
             $this->actions[$index] = [];
         }
@@ -186,7 +189,12 @@ class IntentRoute
         $this->redirectConditions[$index] = [];
     }
 
-
+    public function setRedirect(\Closure $redirect)
+    {
+        $actionIndex = $this->maxIndexOf($this->actions);
+        $redirectIndex = $this->maxIndexOf($this->redirectConditions[$actionIndex]);
+        $this->redirects[$actionIndex][$redirectIndex] = $redirect;
+    }
 
 
     /*------- actions -------*/
@@ -319,29 +327,18 @@ class IntentRoute
         return $this;
     }
 
-    public function setRedirect(\Closure $redirect)
-    {
-        $actionIndex = $this->maxIndexOf($this->actions);
-        $redirectIndex = $this->maxIndexOf($this->redirectConditions[$actionIndex]);
-        $this->redirects[$actionIndex][$redirectIndex] = $redirect;
-    }
 
 
 
     /*------- 运行逻辑 -------*/
 
-    public function available(Context $context) :bool
+    public function isAvailable(Context $context) :bool
     {
-        if (empty($this->availableConditions)) {
+        if (empty($this->availableCondition)) {
             return true;
         }
 
-        foreach($this->availableConditions as $condition) {
-            if (!$condition($context)) {
-                return false;
-            }
-        }
-        return true;
+        return call_user_func($this->availableCondition, $context);
     }
 
     public function run(
@@ -412,9 +409,12 @@ class IntentRoute
 
         foreach($conditions as $index => $condition) {
             /**
+             * 为null 表示无条件为真.
+             * 否则为callable
+             *
              * @var callable $condition
              */
-            if ($condition($context)) {
+            if (is_null($condition) || $condition($context)) {
                 return $index;
             }
         }
