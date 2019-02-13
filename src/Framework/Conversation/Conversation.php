@@ -11,7 +11,7 @@ namespace Commune\Chatbot\Framework\Conversation;
 use Commune\Chatbot\Framework\Character\Platform;
 use Commune\Chatbot\Framework\Character\Recipient;
 use Commune\Chatbot\Framework\Character\User;
-use Commune\Chatbot\Framework\Intent\IntentData;
+use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Message\Message;
 
 class Conversation
@@ -37,7 +37,7 @@ class Conversation
     protected $possibleIntents = [];
 
     /**
-     * @var IntentData
+     * @var Intent
      */
     protected $matchedIntent;
 
@@ -189,9 +189,9 @@ class Conversation
     }
 
     /**
-     * @return IntentData
+     * @return Intent
      */
-    public function getMatchedIntent(): ? IntentData
+    public function getMatchedIntent(): ? Intent
     {
         if (isset($this->matchedIntent)) {
             return $this->matchedIntent;
@@ -200,15 +200,15 @@ class Conversation
         return $this->defaultIntent();
     }
 
-    public function defaultIntent() : IntentData
+    public function defaultIntent() : Intent
     {
-        return new IntentData($this->getMessage());
+        return new Intent($this->getMessage());
     }
 
     /**
-     * @param IntentData $matchedIntent
+     * @param Intent $matchedIntent
      */
-    public function setMatchedIntent(IntentData $matchedIntent): void
+    public function setMatchedIntent(Intent $matchedIntent): void
     {
         $this->matchedIntent = $matchedIntent;
     }

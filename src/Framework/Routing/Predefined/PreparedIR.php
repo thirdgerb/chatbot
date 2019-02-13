@@ -12,7 +12,7 @@ use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Routing\IntentRoute;
 use Commune\Chatbot\Framework\Routing\Router;
-use Commune\Chatbot\Framework\Intent\IntentData;
+use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Intent\IntentFactory;
 
 class PreparedIR extends IntentRoute
@@ -22,7 +22,7 @@ class PreparedIR extends IntentRoute
         $id .= ':prepared';
         parent::__construct($app, $router, $id, $matcher);
 
-        $this->action(function(Context $context, IntentData $intent){
+        $this->action(function(Context $context, Intent $intent){
             $context->fireEvent('prepared');
         });
     }

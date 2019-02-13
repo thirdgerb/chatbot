@@ -109,7 +109,7 @@ class IntentFactory
     }
 
 
-    public function match(Message $message) : ? IntentData
+    public function match(Message $message) : ? Intent
     {
         $entities = null;
 
@@ -128,13 +128,13 @@ class IntentFactory
         return null;
     }
 
-    public function defaultIntent(Message $message) : IntentData
+    public function defaultIntent(Message $message) : Intent
     {
         return $this->wrapIntent($this->defaultEntities, $message);
     }
 
     protected function wrapIntent(array $entities, $message)
     {
-        return new IntentData($message, $entities, $this->intentName);
+        return new Intent($message, $entities, $this->intentName);
     }
 }

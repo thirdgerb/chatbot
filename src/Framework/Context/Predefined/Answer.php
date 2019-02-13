@@ -12,7 +12,7 @@ use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Context\ContextCfg;
 use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Routing\DialogRoute;
-use Commune\Chatbot\Framework\Intent\IntentData;
+use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Message\Questions\Ask;
 
 class Answer extends ContextCfg
@@ -39,7 +39,7 @@ class Answer extends ContextCfg
     public function routing(DialogRoute $route)
     {
         $route->fallback()
-            ->action(function(Context $context, IntentData $intent){
+            ->action(function(Context $context, Intent $intent){
                 $text = $intent->getMessage()->getText();
                 $text = !empty($text) ? $text : $context['default'];
                 $context['answer'] = $text;

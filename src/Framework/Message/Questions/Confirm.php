@@ -13,16 +13,21 @@ use Commune\Chatbot\Framework\Message\Text;
 class Confirm extends Text
 {
 
-    private $question;
+    /**
+     * @var string 
+     */
+    protected $question;
 
-    private $default;
+    /**
+     * @var string 
+     */
+    protected $default;
 
-    public function __construct(string $question, bool $default = true)
+    public function __construct(string $question, string $default = 'yes')
     {
         $this->question = $question;
         $this->default = $default;
-        $defaultInfo = $default ? '是' : '否';
-        parent::__construct("$question : [$defaultInfo]");
+        parent::__construct("$question : [$default]");
     }
 
     /**
@@ -34,11 +39,14 @@ class Confirm extends Text
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function isDefault(): bool
+    public function getDefault(): string
     {
         return $this->default;
     }
+
+
+    
 
 }

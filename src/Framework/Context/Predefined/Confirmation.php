@@ -12,7 +12,7 @@ use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Context\ContextCfg;
 use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Routing\DialogRoute;
-use Commune\Chatbot\Framework\Intent\IntentData;
+use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Message\Questions\Confirm;
 use Illuminate\Support\Str;
 
@@ -24,55 +24,29 @@ class Confirmation extends ContextCfg
 
     const DATA = [
         'confirmation' => null,
-        'fulfill' => false,
     ];
 
     const PROPS = [
         'question' => '',
-        'default' => true
+        'default' => ''
     ];
 
     public function prepared(Context $context)
     {
-        $context->reply(new Confirm($context['question'], $this['default']));
+        $context->reply(new Confirm($context['question'], $context['default']));
     }
 
 
     public function routing(DialogRoute $route)
     {
         $route->fallback()
-            ->action(function(Context $context, IntentData $intent){
-                $text = $intent->getMessage()->getText();
+            ->action(function(Context $context, Intent $intent){
+                $text = $intent->getMessage()->getTrimText();
 
-                $choices = $context['choices'];
+                $default = $context['default'];
+                $context['confirmation'] = $text === '' || Str::startsWith($default, $text);
 
-
-                $choice = null;
-                if (is_numeric($text) && array_key_exists($text, $choices)) {
-
-                    $choice = $choices[$text];
-
-                } elseif(trim($text) === '') {
-
-                    $choice = $choices[$context['default']] ?? $choices[0];
-
-                    foreach($choices as $index => $val) {
-                        if (Str::startsWith($val, $text)) {
-                            $choice = $val;
-                            break;
-                        }
-                    }
-                }
-
-                if (isset($choice)) {
-                    $context['choice'] = $choice;
-                    $context['fulfill'] = true;
-                } else {
-                    $context->warn('wrong input');
-                    $this->prepared($context);
-                }
-            })->redirectIf(['fulfill' => true])
-                ->intended();
+            })->intended();
     }
 
 

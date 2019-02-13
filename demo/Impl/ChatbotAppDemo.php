@@ -16,7 +16,7 @@ use Commune\Chatbot\Contracts\ServerDriver;
 use Commune\Chatbot\Framework\Chat\ChatPipe;
 use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\HostPipe;
-use Commune\Chatbot\Framework\Intent\IntentData;
+use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Routing\IntentRoute;
 use Commune\Chatbot\Framework\Routing\Router;
 use Commune\Chatbot\Demo\Configure\ContextCfg;
@@ -135,7 +135,7 @@ class ChatbotAppDemo implements ChatbotApp
         if (!isset($this->defIntentRoute)) {
             $this->defIntentRoute = new IntentRoute($this, $router);
             $this->defIntentRoute
-                ->action(function (Context $context, IntentData $intent) {
+                ->action(function (Context $context, Intent $intent) {
                     $context->error('miss match intent : ' . $intent);
                 })
                 ->home();

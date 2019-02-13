@@ -14,7 +14,7 @@ use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Routing\Predefined\FallbackIR;
 use Commune\Chatbot\Framework\Routing\Predefined\PreparedIR;
-use Commune\Chatbot\Framework\Intent\IntentData;
+use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Intent\IntentFactory;
 
 class DialogRoute
@@ -151,7 +151,7 @@ class DialogRoute
         return $intent;
     }
 
-    public function name(string $intentId) : IntentRoute
+    public function callback(string $intentId) : IntentRoute
     {
         $intentRoute = new IntentRoute($this->app, $this->router, $intentId);
         $this->addIntentRoute($intentRoute);
@@ -225,7 +225,7 @@ class DialogRoute
             }
 
             /**
-             * @var IntentData $firstIntent
+             * @var Intent $firstIntent
              */
             $firstIntent = reset($possibleIntents);
             $defaultRoute = $this->router->defaultRouteOfIntent($firstIntent->getId());
@@ -259,7 +259,7 @@ class DialogRoute
         return $this->router->getMissMatchIntentRoute();
     }
 
-    protected function matched(IntentRoute $route, IntentData $intent, Conversation $conversation) : IntentRoute
+    protected function matched(IntentRoute $route, Intent $intent, Conversation $conversation) : IntentRoute
     {
         $conversation->setMatchedIntent($intent);
         return $route;

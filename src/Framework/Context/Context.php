@@ -11,6 +11,9 @@ namespace Commune\Chatbot\Framework\Context;
 use Commune\Chatbot\Framework\Character\Platform;
 use Commune\Chatbot\Framework\Character\Recipient;
 use Commune\Chatbot\Framework\Character\User;
+use Commune\Chatbot\Framework\Context\Predefined\Answer;
+use Commune\Chatbot\Framework\Context\Predefined\Confirmation;
+use Commune\Chatbot\Framework\Directing\RedirectionBreak;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Conversation\Scope;
@@ -18,7 +21,7 @@ use Commune\Chatbot\Framework\Conversation\Talkable;
 use Commune\Chatbot\Framework\Support\ArrayWrapper;
 use Commune\Chatbot\Framework\Directing\Location;
 use Commune\Chatbot\Framework\Session\Session;
-use Commune\Chatbot\Framework\Intent\IntentData;
+use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Message\Message;
 use Commune\Chatbot\Framework\Message\Text;
 use Illuminate\Support\Arr;
@@ -66,7 +69,7 @@ class Context implements Talkable,\ArrayAccess
         call_user_func([$this->config, $name], $this);
     }
 
-    public function callConfigMethod(string $method, IntentData $intent)
+    public function callConfigMethod(string $method, Intent $intent)
     {
         if (!method_exists($this->config, $method)) {
             //todo
@@ -251,12 +254,13 @@ class Context implements Talkable,\ArrayAccess
 
     public function offsetGet($offset)
     {
-        $data = $this->get($offset);
-
-        if (isset($data) && Arr::accessible($data)) {
-            return new ArrayWrapper($data, $this, $offset);
-        }
-        return $data;
+//        $data = $this->get($offset);
+//
+//        if (isset($data) && Arr::accessible($data)) {
+//            return new ArrayWrapper($data, $this, $offset);
+//        }
+//        return $data;
+        return $this->get($offset);
     }
 
     public function offsetSet($offset, $value)
@@ -321,6 +325,23 @@ class Context implements Talkable,\ArrayAccess
 
     /*------- talk -------*/
 
+    public function format(string $temp, ... $fields)
+    {
+        $params = [];
+        foreach ($fields as $field) {
+            $val = $this->fetch($field);
+            if (is_null($val)) {
+                $val = 'null';
+            } elseif (is_bool($val)) {
+                $val = $val ? 'true' : 'false';
+            }
+            $params[] = $val;
+        }
+
+        $temp = str_replace('{}', '%s', $temp);
+        array_unshift($params, $temp);
+        return call_user_func_array('sprintf', $params);
+    }
 
     public function say(string $text, int $style, string $verbose = Message::NORMAL)
     {
@@ -332,7 +353,6 @@ class Context implements Talkable,\ArrayAccess
     {
         $this->say($message, Text::INFO, $verbose);
     }
-
 
     public function warn(string $message, string $verbose = Message::NORMAL)
     {
@@ -349,8 +369,30 @@ class Context implements Talkable,\ArrayAccess
         $this->conversation->reply($message);
     }
 
+    public function ask(string $callbackRouteName, string $question, string $default = null)
+    {
+        $intended = $this->getLocation();
+        $intended->setCallback($callbackRouteName);
+        $answer = new Location(Answer::class, [
+            'question' => $question,
+            'default' => $default
+        ]);
+        $answer->setIntended($intended);
+        throw new RedirectionBreak($answer);
+    }
 
 
+    public function confirm(string $callbackRouteName, string $question, string $default = 'yes')
+    {
+        $intended = $this->getLocation();
+        $intended->setCallback($callbackRouteName);
+        $answer = new Location(Confirmation::class, [
+            'question' => $question,
+            'default' => $default
+        ]);
+        $answer->setIntended($intended);
+        throw new RedirectionBreak($answer);
+    }
 
 
 }

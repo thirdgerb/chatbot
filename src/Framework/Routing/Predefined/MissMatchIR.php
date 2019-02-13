@@ -12,7 +12,7 @@ use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Routing\IntentRoute;
 use Commune\Chatbot\Framework\Routing\Router;
-use Commune\Chatbot\Framework\Intent\IntentData;
+use Commune\Chatbot\Framework\Intent\Intent;
 
 class MissMatchIR extends IntentRoute
 {
@@ -23,7 +23,7 @@ class MissMatchIR extends IntentRoute
 
         $message = $app->getMissMatchMessage();
 
-        $this->action(function(Context $context, IntentData $intent) use ($message){
+        $this->action(function(Context $context, Intent $intent) use ($message){
             $context->info($message);
         })->backward();
     }

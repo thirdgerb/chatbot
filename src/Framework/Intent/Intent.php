@@ -12,7 +12,7 @@ use Commune\Chatbot\Framework\Exceptions\ChatbotException;
 use Commune\Chatbot\Framework\Message\Message;
 use Illuminate\Support\Arr;
 
-class IntentData
+class Intent implements \ArrayAccess
 {
 
     /**

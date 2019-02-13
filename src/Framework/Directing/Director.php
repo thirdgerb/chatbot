@@ -16,7 +16,7 @@ use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Routing\Router;
 use Commune\Chatbot\Framework\Session\Session;
-use Commune\Chatbot\Framework\Intent\IntentData;
+use Commune\Chatbot\Framework\Intent\Intent;
 use Psr\Log\LoggerInterface;
 
 class Director
@@ -97,11 +97,16 @@ class Director
             $current = $this->history->current();
             $this->debug($current);
 
-            return $this->startDialog($current, function(Context $context){
+            return $this->startDialog($current, function (Context $context) {
                 $dialogRoute = $this->router->getDialogRoute($context->getName());
                 $intentRoute = $dialogRoute->match($context, $this->conversation);
                 return $intentRoute->run($context, $this->conversation, $this);
             });
+        } catch (RedirectionBreak $e) {
+
+            $location = $e->getRedirection();
+            $this->history->to($location);
+            return $this->startDialog($location);
 
         } catch (TooManyDirectingException $e) {
             $this->history->flush();
@@ -199,7 +204,7 @@ class Director
             throw new ConfigureException();
         }
 
-        $callbackIntent = new IntentData(
+        $callbackIntent = new Intent(
             $this->conversation->getMessage(),
             $this->fetchContext($current), // 将回调对象当成入参
             $current->getContextName()

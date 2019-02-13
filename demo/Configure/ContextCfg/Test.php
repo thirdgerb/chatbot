@@ -11,7 +11,7 @@ use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Context\ContextCfg;
 use Commune\Chatbot\Framework\Context\Predefined\Answer;
 use Commune\Chatbot\Framework\Conversation\Scope;
-use Commune\Chatbot\Framework\Intent\IntentData;
+use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Routing\DialogRoute;
 
 class Test extends ContextCfg
@@ -45,12 +45,12 @@ class Test extends ContextCfg
             })->backward();
 
         $route->fallback()
-            ->action(function(Context $context, IntentData $intent){
+            ->action(function(Context $context, Intent $intent){
                 $context->info('test:' .$intent->getMessage()->getText());
             }) ;
 
         $route->hearsRegex('hello')
-            ->action(function (Context $context, IntentData $intent) {
+            ->action(function (Context $context, Intent $intent) {
                 $context->info("hello world");
             });
 
@@ -58,6 +58,12 @@ class Test extends ContextCfg
             ->info('go backward')
             ->backward();
 
+        $route->hearsRegex('test format')
+            ->action(function (Context $context, Intent $intent) {
+                $context->info($context->format('测试format: {}', 'q1.answer'));
+            });
     }
+
+
 
 }

@@ -13,7 +13,7 @@ use Commune\Chatbot\Framework\Support\Pipeline;
 use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Directing\Director;
-use Commune\Chatbot\Framework\Intent\IntentData;
+use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Framework\Intent\IntentFactory;
 use Commune\Chatbot\Framework\Message\Message;
@@ -201,7 +201,7 @@ class IntentRoute
 
     public function controller(string $controllerName, string $method) : self
     {
-        $this->pushAction(function(Context $context, IntentData $intent) use ($controllerName, $method) {
+        $this->pushAction(function(Context $context, Intent $intent) use ($controllerName, $method) {
             $controller = $this->app->make($controllerName);
             return $controller->{$method}($context, $intent);
         });
@@ -215,9 +215,9 @@ class IntentRoute
     }
 
     //todo
-    public function call(string $method) : self
+    public function callSelfMethod(string $method) : self
     {
-        $this->pushAction(function(Context $context, IntentData $intent) use ($method){
+        $this->pushAction(function(Context $context, Intent $intent) use ($method){
             $context->callConfigMethod($method, $intent);
         });
         return $this;
@@ -225,7 +225,7 @@ class IntentRoute
 
     public function reply(Message $message)
     {
-        $action = function(Context $context, IntentData $intent) use ($message){
+        $action = function(Context $context, Intent $intent) use ($message){
             $context->reply($message);
         };
         $this->pushAction($action);
@@ -233,26 +233,26 @@ class IntentRoute
     }
 
 
-    final public function info(string $message, string $verbose = Message::NORMAL)
+    public function info(string $message, string $verbose = Message::NORMAL)
     {
-        $this->pushAction(function(Context $context, IntentData $intent) use ($message, $verbose){
+        $this->pushAction(function(Context $context, Intent $intent) use ($message, $verbose){
             $context->info($message, $verbose);
         });
         return $this;
     }
 
 
-    final public function warn(string $message, string $verbose = Message::NORMAL)
+    public function warn(string $message, string $verbose = Message::NORMAL)
     {
-        $this->pushAction(function(Context $context, IntentData $intent) use ($message, $verbose){
+        $this->pushAction(function(Context $context, Intent $intent) use ($message, $verbose){
             $context->warn($message, $verbose);
         });
         return $this;
     }
 
-    final public function error(string $message, string $verbose = Message::NORMAL)
+    public function error(string $message, string $verbose = Message::NORMAL)
     {
-        $this->pushAction(function(Context $context, IntentData $intent) use ($message, $verbose){
+        $this->pushAction(function(Context $context, Intent $intent) use ($message, $verbose){
             $context->error($message, $verbose);
         });
         return $this;
