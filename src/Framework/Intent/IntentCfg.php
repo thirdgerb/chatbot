@@ -2,7 +2,7 @@
 
 /**
  * Class IntentCfg
- * @package Commune\Chatbot\Configure
+ * @package Commune\Chatbot\Framework\Intent
  */
 
 namespace Commune\Chatbot\Framework\Intent;
@@ -12,18 +12,16 @@ use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Framework\Routing\IntentRoute;
 use Commune\Chatbot\Framework\Routing\Router;
 
-class IntentCfg
+abstract class IntentCfg
 {
-    const ENTITIES = [];
+    const SIGNATURE = '';
 
     const DESCRIPTION = '';
 
-    const SIGNATURE = '';
+    const ALIAS = [
+    ];
 
     const REGEX = [
-        // regex,
-        // entityKey1,
-        // entityKey2,
     ];
 
     const EXAMPLES = [];
@@ -32,10 +30,24 @@ class IntentCfg
     {
     }
 
-    public function defaultRoute(ChatbotApp $app, Router $router) : IntentRoute
+    final public function getIntentName() : string
     {
-        return $app->getIntentDefaultRoute($router);
+        return static::class;
     }
 
+    public function defaultRoute(ChatbotApp $app, Router $router) : ? IntentRoute
+    {
+        return null;
+    }
+
+    final public function getSignature() : string
+    {
+        return static::SIGNATURE;
+    }
+
+    final public function getDescription() : string
+    {
+        return static::DESCRIPTION;
+    }
 
 }

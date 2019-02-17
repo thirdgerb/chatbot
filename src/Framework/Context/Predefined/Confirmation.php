@@ -9,27 +9,16 @@ namespace Commune\Chatbot\Framework\Context\Predefined;
 
 
 use Commune\Chatbot\Framework\Context\Context;
-use Commune\Chatbot\Framework\Context\ContextCfg;
-use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Routing\DialogRoute;
 use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Message\Questions\Confirm;
-use Commune\Chatbot\Framework\Support\TypeTransfer;
 use Illuminate\Support\Str;
 
-class Confirmation extends ContextCfg
+class Confirmation extends Question
 {
-    const SCOPE = [
-        Scope::MESSAGE
-    ];
-
-    const DATA = [
-        'confirmation' => null,
-    ];
-
     const PROPS = [
         'question' => '',
-        'default' => ''
+        'default' => 'yes'
     ];
 
     public function prepared(Context $context)
@@ -41,18 +30,17 @@ class Confirmation extends ContextCfg
     public function routing(DialogRoute $route)
     {
         $route->fallback()
-            ->action(function(Context $context, Intent $intent){
-                $text = $intent->getMessage()->getTrimText();
-
-                $default = $context['default'];
-                $context['confirmation'] = $text === '' || Str::startsWith($default, $text);
-
-            })->intended();
+            ->action()
+            ->callSelf('fallback')
+                ->redirect()
+                ->intended();
     }
 
-    public function toString(Context $context) : string
+    public function fallback(Context $context, Intent $intent)
     {
-        return TypeTransfer::toString($context['confirmation']);
+        $text = $intent->getMessage()->getTrimText();
+        $default = $context['default'];
+        $context['result'] = $result = $text === '' || Str::startsWith($default, $text);
     }
 
 

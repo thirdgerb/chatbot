@@ -11,6 +11,8 @@ use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Context\ContextCfg;
 use Commune\Chatbot\Framework\Conversation\Scope;
+use Commune\Chatbot\Framework\Intent\Intent;
+use Commune\Chatbot\Framework\Intent\IntentCfg;
 use Commune\Chatbot\Framework\Routing\Predefined\MissMatchIR;
 use Commune\Chatbot\Framework\Intent\IntentFactory;
 
@@ -21,7 +23,7 @@ class Router
 
     protected $dialogRoutes = [];
 
-    protected $intentMatchers = [];
+    protected $intentConfigs = [];
 
     protected $contextConfigs = [];
 
@@ -52,24 +54,41 @@ class Router
         $this->app = $app;
     }
 
-    /*------- intent -------*/
 
-    public function addIntentMatcher(string $intentName)
+    /*------- intentCfg -------*/
+
+    /**
+     * @param string $intentCfgName
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    public function loadIntentConfig(string $intentCfgName) : IntentCfg
     {
-        $matcher = IntentFactory::makeByIntent($intentName);
-
-        if (isset($matcher)) {
-            $this->intentMatchers[$intentName] = $matcher;
+        if (isset($this->intentConfigs[$intentCfgName])) {
+            return $this->intentConfigs[$intentCfgName];
         }
+
+        if (!class_exists($intentCfgName)) {
+            //todo
+            throw new ConfigureException();
+        }
+
+        $r = new \ReflectionClass($intentCfgName);
+        if (!$r->isSubclassOf(IntentCfg::class)) {
+            throw new ConfigureException();
+        }
+
+        $this->intentConfigs[$intentCfgName] = $config = $this->app->make($intentCfgName);
+        return $config;
     }
 
-    public function getIntentFactory(string $intentName) : ? IntentFactory
+    public function hasIntentConfig(string $intentId)
     {
-        if (!isset($this->intentMatchers[$intentName])) {
-            $this->addIntentMatcher($intentName);
-        }
-        return $this->intentMatchers[$intentName] ?? null;
+        return isset($this->intentConfigs[$intentId]);
     }
+
+
+    /*------- intentRoute -------*/
 
     public function getMissMatchIntentRoute() : MissMatchIR
     {
@@ -79,15 +98,23 @@ class Router
         return $this->missMatchRoute;
     }
 
-    public function defaultRouteOfIntent(string $intentId) : IntentRoute
+    /**
+     * @param Intent $intent
+     * @return IntentRoute
+     * @throws \ReflectionException
+     */
+    public function defaultRouteOfIntent(Intent $intent) : IntentRoute
     {
-        $factory = $this->getIntentFactory($intentId);
-
-        if (isset($factory)) {
-            return $factory->defaultRoute($this->app, $this);
+        $defaultRoute = null;
+        if ($this->hasIntentConfig($intent->getId())) {
+            /**
+             * @var IntentCfg $intentCfg
+             */
+            $intentCfg = $this->loadIntentConfig($intent->getId());
+            $defaultRoute = $intentCfg->defaultRoute($this->app, $this);
         }
 
-        return $this->getMissMatchIntentRoute();
+        return $defaultRoute ??  $this->getMissMatchIntentRoute();
     }
 
     /*------- dialogue -------*/

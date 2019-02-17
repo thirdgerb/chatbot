@@ -123,7 +123,7 @@ class ContextData
         return $this->status;
     }
 
-    public function listenContextEvent(string $contextEvent)
+    public function handleContextEvent(string $contextEvent)
     {
         switch ($contextEvent) {
             case ContextCfg::CREATING :

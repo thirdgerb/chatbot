@@ -9,6 +9,9 @@ namespace Commune\Chatbot\Framework\Directing;
 
 use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Framework\Context\ContextData;
+use Commune\Chatbot\Framework\Directing\SpecialLocations\Intending;
+use Commune\Chatbot\Framework\Directing\SpecialLocations\Replace;
+use Commune\Chatbot\Framework\Directing\SpecialLocations\Guesting;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Context\ContextCfg;
@@ -17,6 +20,7 @@ use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Routing\Router;
 use Commune\Chatbot\Framework\Session\Session;
 use Commune\Chatbot\Framework\Intent\Intent;
+use Commune\Chatbot\Framework\Support\ChatbotUtils;
 use Psr\Log\LoggerInterface;
 
 class Director
@@ -67,6 +71,11 @@ class Director
     protected $conversation;
 
     /**
+     * @var Location
+     */
+    protected $lastLocation;
+
+    /**
      * Director constructor.
      * @param ChatbotApp $app
      * @param Session $session
@@ -85,6 +94,14 @@ class Director
         $this->scope = $this->session->getConversation()->getScope();
     }
 
+    /**
+     * @return Conversation
+     */
+    public function getConversation(): Conversation
+    {
+        return $this->conversation;
+    }
+
     public function makeLocation(string $contextName, array $props)  : Location
     {
         $id = $this->router->getContextId($contextName, $this->scope);
@@ -94,9 +111,8 @@ class Director
     public function dispatch() : Conversation
     {
         try {
+            $this->ticks();
             $current = $this->history->current();
-            $this->debug($current);
-
             return $this->startDialog($current, function (Context $context) {
                 $dialogRoute = $this->router->getDialogRoute($context->getName());
                 $intentRoute = $dialogRoute->match($context, $this->conversation);
@@ -116,14 +132,13 @@ class Director
 
     public function cancel() : Conversation
     {
-        $this->ticks();
         $current = $this->history->current();
         $last = $current;
         while($intended = $last->getIntended()) {
             $last = $intended;
         }
         $context = $this->fetchContext($last);
-        $context->fireEvent(ContextCfg::CANCELED);
+        $this->fireContextEvent($context, ContextCfg::CANCELED);
         return $this->backward();
     }
 
@@ -136,7 +151,7 @@ class Director
             $last = $intended;
         }
         $context = $this->fetchContext($last);
-        $context->fireEvent(ContextCfg::FAILED);
+        $this->fireContextEvent($context, ContextCfg::FAILED);
         return $this->backward();
     }
 
@@ -146,6 +161,7 @@ class Director
         $location = $this->history->home();
         return $this->startDialog($location);
     }
+
 
     public function to(Location $location) : Conversation
     {
@@ -175,44 +191,86 @@ class Director
         if (!$from) {
             $from = $this->history->current();
         }
-        $from->setCallback($callback);
-        $to->setIntended($from);
+
+        if ($callback) {
+            $to->setCallbackIntentId($callback);
+        }
+
+        $to->pushIntended($from);
         $this->history->setCurrent($to);
         return $this->startDialog($to);
     }
 
-    public function intended() : Conversation
+    public function repeat() : Conversation
+    {
+        $current = $this->history->getCurrent();
+        return $this->startDialog($current);
+    }
+
+    public function replace(Location $replace) : Conversation
     {
         $this->ticks();
+        $this->history->setCurrent($replace);
+        return $this->startDialog($replace);
+    }
+
+    public function intended(Intent $callbackIntent = null) : Conversation
+    {
+        // count redirection
+        $this->ticks();
+
+        // if current not has callback location, backward
         $current = $this->history->current();
         $intended = $current->getIntended();
         if (!isset($intended)) {
             return $this->backward();
         }
-        $this->history->setCurrent($intended);
-        $callback = $intended->getCallback();
 
+        // replace current by intended
+        $this->history->setCurrent($intended);
+
+        // has no callback intent, then just start dialog
+        $callback = $current->getCallbackIntentId();
         if (!isset($callback)) {
             return $this->startDialog($intended);
         }
 
-        $intendedContext = $this->fetchContext($intended);
-        $intendedDialogRoute = $this->router->getDialogRoute($intendedContext->getName());
-        $callbackRoute = $intendedDialogRoute->getIntentRoute($callback);
+        // if has callback intent, fetch the intentRoute and run
+        return $this->startDialog($intended, function(Context $intendedContext) use ($callback, $current) {
+            $intendedDialogRoute = $this->router->getDialogRoute($intendedContext->getName());
+            $callbackRoute = $intendedDialogRoute->getIntentRoute($callback);
 
-        if (empty($callbackRoute)) {
-            throw new ConfigureException();
-        }
+            if (empty($callbackRoute)) {
+                throw new ConfigureException();
+            }
 
-        $callbackIntent = new Intent(
-            $this->conversation->getMessage(),
-            $this->fetchContext($current), // 将回调对象当成入参
-            $current->getContextName()
-        );
-        $this->conversation->setMatchedIntent($callbackIntent);
-        return $callbackRoute->run($intendedContext, $this->conversation, $this);
+            // if not defined callback intent, make context data as callback intent
+            if (!isset($callbackIntent)) {
+                //todo
+                $callbackIntent = $this->fetchContext($current)->toIntent(); // 将回调对象当成入参
+            }
+            $this->conversation->setMatchedIntent($callbackIntent);
+            return $callbackRoute->run($intendedContext, $this->conversation, $this);
+        });
     }
 
+    public function handleLocation(Location $location) : Conversation
+    {
+        if ($location instanceof Guesting) {
+            return $this->guest($location);
+        }
+
+        if ($location instanceof Intending) {
+            $intent = $location->getPredefinedIntent();
+            return $this->intended($intent);
+        }
+
+        if ($location instanceof Replace) {
+            return $this->replace($location);
+        }
+
+        return $this->to($location);
+    }
 
     /*--------- status ----------*/
 
@@ -222,18 +280,18 @@ class Director
 
         switch($context->getDataStatus()) {
             case ContextData::CREATED :
-                $context->fireEvent(ContextCfg::CREATING);
+                $this->fireContextEvent($context, ContextCfg::CREATING);
                 break;
             case ContextData::WAKED :
-                $context->fireEvent(ContextCfg::WAKING);
+                $this->fireContextEvent($context, ContextCfg::WAKING);
                 break;
             case ContextData::DEAD :
-                $context->fireEvent(ContextCfg::RESTORING);
+                $this->fireContextEvent($context, ContextCfg::RESTORING);
                 break;
         }
 
         if ($dependency = $context->initDepending()) {
-            $context->fireEvent(ContextCfg::DEPENDING);
+            $this->fireContextEvent($context, ContextCfg::DEPENDING);
             return $this->guest($dependency, $location);
         }
 
@@ -247,8 +305,12 @@ class Director
         return $preparedRoute->run($context, $this->conversation, $this);
     }
 
+    public function fetchCurrentContext() : Context
+    {
+        return $this->fetchContext($this->history->current());
+    }
 
-    protected function fetchContext(Location $location) : Context
+    public function fetchContext(Location $location) : Context
     {
         $context = $this->session->fetchContextByLocation($location);
         $locationId = $location->getContextId();
@@ -260,9 +322,8 @@ class Director
 
     protected function ticks()
     {
-        //var_dump(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]);
+        $this->debug();
         $this->tick++;
-
         if ($this->tick > $this->maxTicks) {
             //todo
             $this->log->error($message = 'too match redirection : '.$this->tick);
@@ -270,10 +331,25 @@ class Director
         }
     }
 
-    protected function debug(Location $location)
+    protected function debug()
     {
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-        $func = $backtrace[1]['function'];
-        $this->log->debug('Host Director run '.$func.' with '.$location);
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+        $func = $backtrace[2]['function'];
+        $this->log->debug('Host Director run ' . $func, $backtrace[2]);
+    }
+
+    protected function fireContextEvent(Context $context, string $event)
+    {
+        if (!in_array($event, ContextCfg::EVENTS)) {
+            //todo
+            throw new ConfigureException();
+        }
+
+
+        $data = $this->session->fetchContextDataById($context->getId());
+        $data->handleContextEvent($event);
+
+        $config = $this->router->loadContextConfig($data->getContextName());
+        call_user_func([$config, $event], $context);
     }
 }

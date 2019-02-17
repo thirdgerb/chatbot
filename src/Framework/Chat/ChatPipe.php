@@ -10,15 +10,14 @@ namespace Commune\Chatbot\Framework\Chat;
 use Commune\Chatbot\Framework\ChatbotPipe;
 use Commune\Chatbot\Contracts\ChatDriver;
 use Commune\Chatbot\Contracts\IdGenerator;
-use Psr\Log\LoggerInterface;
 use Commune\Chatbot\Framework\Exceptions\ChatbotException;
-use Commune\Chatbot\Framework\Exceptions\UnexpectedException;
+use Psr\Log\LoggerInterface;
+use Commune\Chatbot\Framework\Exceptions\ChatbotPipeException;
 use Commune\Chatbot\Framework\Exceptions\TooBusyException;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 
 class ChatPipe implements ChatbotPipe
 {
-
     /**
      * @var ChatDriver
      */
@@ -50,11 +49,13 @@ class ChatPipe implements ChatbotPipe
 
     public function handle(Conversation $conversation, \Closure $next) : Conversation
     {
+        $chatId = $this->driver->fetchIdOrCreateChat($conversation);
+        
         $conversation = $this->completeConversation($conversation);
 
-        $chatId = $this->driver->fetchIdOrCreateChat($conversation);
         $this->driver->pushIncomingMessage(
             $chatId,
+            $conversation->getSessionId(),
             $conversation->getIncomingMessage()
         );
 
@@ -83,6 +84,7 @@ class ChatPipe implements ChatbotPipe
                  * @var Conversation $replyConversation
                  */
                 $replyConversation = $next($newConversation);
+
                 $this->driver->saveReplies($replyConversation);
                 $conversation->mergeReplies($replyConversation);
 
@@ -105,17 +107,12 @@ class ChatPipe implements ChatbotPipe
             return $conversation;
 
         } catch (ChatbotException $e) {
-
-            //todo
-            $this->log->error("", ['exp' => $e]);
-            $conversation->reply($this->driver->replyWhenException($e));
-
-            return $conversation;
+            throw $e;
 
         } catch (\Exception $e) {
             //todo
-            $message = "";
-            throw new UnexpectedException($message, null, $e);
+            $message = "chat bot failure";
+            throw new ChatbotPipeException($message, null, $e);
 
         } finally {
             $this->driver->unlockChat($chatId);

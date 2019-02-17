@@ -30,14 +30,14 @@ class Test extends ContextCfg
 
     public function prepared(Context $context)
     {
-        $context->info('进入test语境. 依赖回答为: '. $context['q1']['answer']);
+        $context->info('进入test语境. 依赖回答为: '. $context['q1']['result']);
     }
 
     public function routing(DialogRoute $route)
     {
         $route->prepared()
-            ->redirectIf(function(Context $context) {
-                $back = $context['q1']['answer'] === 'back';
+            ->redirect(function(Context $context) {
+                $back = $context['q1']['result'] === 'back';
                 if ($back) {
                     $context->info('由于输入为back, 将会返回上一单元');
                 }
@@ -45,21 +45,26 @@ class Test extends ContextCfg
             })->backward();
 
         $route->fallback()
-            ->action(function(Context $context, Intent $intent){
+            ->action()
+            ->call(function(Context $context, Intent $intent){
                 $context->info('test:' .$intent->getMessage()->getText());
             }) ;
 
-        $route->hearsRegex('hello')
-            ->action(function (Context $context, Intent $intent) {
+        $route->hears('hello')
+            ->action()
+            ->call(function (Context $context, Intent $intent) {
                 $context->info("hello world");
             });
 
-        $route->hearsRegex('back')
+        $route->hears('back')
+            ->action()
             ->info('go backward')
-            ->backward();
+                ->redirect()
+                ->backward();
 
-        $route->hearsRegex('test format')
-            ->action(function (Context $context, Intent $intent) {
+        $route->hears('test format')
+            ->action()
+            ->call(function (Context $context, Intent $intent) {
                 $context->info($context->format('测试format: {}', ['q1.answer']));
             });
     }

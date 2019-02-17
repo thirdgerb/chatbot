@@ -8,11 +8,13 @@
 namespace Commune\Chatbot\Demo\Impl;
 
 
-use Commune\Chatbot\Analyzer\AnalyzerPipe;
-use Commune\Chatbot\Analyzer\Commands;
+use Commune\Chatbot\Command\AnalyzerPipe;
+use Commune\Chatbot\Command\Commands;
+use Commune\Chatbot\Command\UserCommandPipe;
 use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Contracts\ExceptionHandler;
 use Commune\Chatbot\Contracts\ServerDriver;
+use Commune\Chatbot\Framework\Bootstrap\PreloadContextConfig;
 use Commune\Chatbot\Framework\Character\User;
 use Commune\Chatbot\Framework\Chat\ChatPipe;
 use Commune\Chatbot\Framework\Context\Context;
@@ -54,21 +56,31 @@ class ChatbotAppDemo implements ChatbotApp
             'runtime' => [
                 'direct_max_ticks' => 30,
                 'bootstrappers' => [
+                    PreloadContextConfig::class,
                 ],
                 'pipes' => [
                     ChatPipe::class,
                     AnalyzerPipe::class,
+                    UserCommandPipe::class,
                     HostPipe::class
                 ],
                 'analyzers' => [
-                    Commands\Location::class,
+                    Commands\Locate::class,
+                    Commands\ShowContext::class,
+                    Commands\History::class,
+                    Commands\Scoping::class,
+                ],
+                'analyzer_mark' => '/',
+                'commands' => [
+                    Commands\Quit::class,
                     Commands\WhoAmI::class,
                     Commands\Where::class,
-                    Commands\Quit::class,
-                    Commands\History::class,
-                    Commands\Scope::class,
+                    Commands\Backward::class,
+                    Commands\Forward::class,
+                    Commands\Cancel::class,
+                    Commands\Repeat::class,
                 ],
-                'command_mark' => '/',
+                'command_mark' => '.',
             ],
 
 
@@ -85,6 +97,7 @@ class ChatbotAppDemo implements ChatbotApp
                 'exceptions' => [
                     0 => 'unexpected exception occur',
                 ],
+                'ask_intent_argument' => '请输入{key}({desc}):'
             ],
         ];
     }
@@ -92,6 +105,11 @@ class ChatbotAppDemo implements ChatbotApp
     public function isSupervisor(User $sender): bool
     {
         return true;
+    }
+
+    public function getContainer(): Container
+    {
+        return $this->app;
     }
 
 
@@ -112,7 +130,7 @@ class ChatbotAppDemo implements ChatbotApp
         if (!isset($this->defIntentRoute)) {
             $this->defIntentRoute = new IntentRoute($this, $router);
             $this->defIntentRoute
-                ->action(function (Context $context, Intent $intent) {
+                ->call(function (Context $context, Intent $intent) {
                     $context->error('miss match intent : ' . $intent);
                 })
                 ->home();

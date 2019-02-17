@@ -76,14 +76,20 @@ class ServerDriverDemo implements ServerDriver
                         $style = 'error';
                         break;
                     case Text::INFO:
-                    default:
                         $style = 'info';
+                        break;
+                    default:
+                        $style = '';
                 }
 
                 $text = $reply->getText();
 
+
                 $lines = explode("\n", $text);
                 foreach($lines as $line) {
+                    if ($style) {
+                        $line = "$line";
+                    }
                     $this->write($line);
                 }
             }
@@ -97,7 +103,7 @@ class ServerDriverDemo implements ServerDriver
 
     public function error(\Exception $e)
     {
-        $this->write(get_class($e) . ':' . $e->getMessage());
+        $this->write($e->getMessage());
         $this->close();
     }
 

@@ -6,7 +6,7 @@ use Commune\Chatbot\Contracts\IdGenerator;
 use Commune\Chatbot\Contracts\SessionDriver;
 use Commune\Chatbot\Framework\Kernel;
 use Commune\Chatbot\Framework\Chat\ChatPipe;
-use Commune\Chatbot\Analyzer\AnalyzerPipe;
+use Commune\Chatbot\Command\AnalyzerPipe;
 use Commune\Chatbot\Framework\HostPipe;
 use Commune\Chatbot\Demo\Impl\ChatDriverDemo;
 use Commune\Chatbot\Contracts\ExceptionHandler;

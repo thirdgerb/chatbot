@@ -7,7 +7,11 @@
 
 namespace Commune\Chatbot\Framework\Directing;
 
-class Location
+use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Support\ChatbotUtils;
+use Illuminate\Contracts\Support\Arrayable;
+
+class Location implements Arrayable, \JsonSerializable
 {
     /**
      * @var string
@@ -32,7 +36,7 @@ class Location
     /**
      * @var string
      */
-    private $callback;
+    private $intentId;
 
 
     public function __construct(string $contextName, array $props = [], string $id = null)
@@ -42,12 +46,12 @@ class Location
         $this->contextId = $id;
     }
 
-    public function through(string $contextName, array $props, string $callback = null) : Location
+    public function through(string $contextName, array $props, string $callback = null): Location
     {
         $guest = new Location($contextName, $props);
-        $guest->setCallback($callback);
+        $guest->setCallbackIntentId($callback);
 
-        $guest->setIntended($this);
+        $guest->pushIntended($this);
         return $guest;
     }
 
@@ -77,26 +81,35 @@ class Location
 
     /*------- intend -------*/
 
-    public function setIntended(Location $intended)
+    public function equals(Location $location): bool
     {
-        //需要避免循环, 死循环.
+        return $this->contextName == $location->getContextName()
+            && $this->contextId == $location->getContextId();
+    }
+
+    public function pushIntended(Location $intended)
+    {
+        if ($this->equals($intended)) {
+            //
+            throw new ConfigureException();
+        }
         $this->intended = $intended;
     }
 
     /**
      * @return string | null
      */
-    public function getCallback(): ? string
+    public function getCallbackIntentId(): ? string
     {
-        return $this->callback;
+        return $this->intentId;
     }
 
     /**
      * @param string $callback
      */
-    public function setCallback(string $callback = null): void
+    public function setCallbackIntentId(string $callback = null): void
     {
-        $this->callback = $callback;
+        $this->intentId = $callback;
     }
 
     /**
@@ -116,9 +129,31 @@ class Location
         return $this->intended;
     }
 
-    public function toString() : string
+    public function toArray() : array
     {
-        return 'location:{name='.$this->contextName.';id='.$this->contextId.';}';
+        $intended = $this->getIntended();
+        return [
+            'name' => $this->getContextName(),
+            'id' => $this->getContextId(),
+            'props' => $this->getProps(),
+            'callback' => $this->getCallbackIntentId(),
+            'intended' => isset($intended) ? $intended->toArray() : null
+        ];
+    }
+
+    public function toJson(int $option = ChatbotUtils::JSON_OPTION) : string
+    {
+        return json_encode($this->toArray(), $option);
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->toJson();
+    }
+
+    public function toString(): string
+    {
+        return $this->toJson();
     }
 
     public function __toString()

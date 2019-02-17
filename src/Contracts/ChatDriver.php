@@ -32,7 +32,7 @@ interface ChatDriver
 
     /*--------- 消息管理 ----------*/
 
-    public function pushIncomingMessage(string $chatId, IncomingMessage $message);
+    public function pushIncomingMessage(string $chatId, string $sessionId, IncomingMessage $message);
 
     public function popIncomingMessage(string $chatId) : ? IncomingMessage;
 

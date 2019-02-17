@@ -27,7 +27,7 @@ class Confirm extends Text
     {
         $this->question = $question;
         $this->default = $default;
-        parent::__construct("$question : [$default]");
+        parent::__construct("$question: [$default]");
     }
 
     /**

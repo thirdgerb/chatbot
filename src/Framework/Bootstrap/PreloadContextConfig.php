@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * Class Preloader
+ * @package Commune\Chatbot\Framework\Bootstrap
+ */
+
+namespace Commune\Chatbot\Framework\Bootstrap;
+
+
+use Commune\Chatbot\Contracts\ChatbotApp;
+use Commune\Chatbot\Framework\Routing\Router;
+
+class PreloadContextConfig
+{
+    /**
+     * @var Router
+     */
+    protected $router;
+
+    /**
+     * PreloadContextConfig constructor.
+     * @param Router $router
+     */
+    public function __construct(Router $router)
+    {
+        $this->router = $router;
+    }
+
+
+    public function bootstrap(ChatbotApp $app)
+    {
+        $this->preloadContexts($app);
+        $this->preloadCommands($app);
+
+    }
+
+    protected function preloadCommands(ChatbotApp $app)
+    {
+        $c1 = $app->getConfig(ChatbotApp::RUNTIME_ANALYZERS);
+        $c2 = $app->getConfig(ChatbotApp::RUNTIME_USER_COMMANDS);
+
+        $commands = array_unique(array_merge($c1, $c2));
+
+        foreach($commands as $commandName) {
+            $app->getContainer()->singleton($commandName);
+        }
+    }
+
+    protected function preloadContexts(ChatbotApp $app)
+    {
+        $rootContext = $app->getConfig(ChatbotApp::CONTEXT_ROOT);
+        $contextConfigs = $app->getConfig(ChatbotApp::CONTEXT_PRELOAD);
+        array_unshift($contextConfigs, $rootContext);
+
+        $ioc = $app->getContainer();
+
+        foreach($contextConfigs as $contextCfgName) {
+            $ioc->singleton($contextCfgName);
+            $this->router->loadContextConfig($contextCfgName);
+        }
+
+    }
+}

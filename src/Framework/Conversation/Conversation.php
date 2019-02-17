@@ -11,8 +11,11 @@ namespace Commune\Chatbot\Framework\Conversation;
 use Commune\Chatbot\Framework\Character\Platform;
 use Commune\Chatbot\Framework\Character\Recipient;
 use Commune\Chatbot\Framework\Character\User;
+use Commune\Chatbot\Framework\Intent\Predefined\ArrayIntent;
 use Commune\Chatbot\Framework\Intent\Intent;
+use Commune\Chatbot\Framework\Intent\Predefined\MsgCmdIntent;
 use Commune\Chatbot\Framework\Message\Message;
+use Illuminate\Support\Collection;
 
 class Conversation
 {
@@ -145,6 +148,28 @@ class Conversation
         return $this->incomingMessage->getCreateAt();
     }
 
+    /*-------- get special info ----------*/
+
+    /**
+     * @var string
+     */
+    protected $trimText;
+
+    public function getTrimText() : string
+    {
+        return $this->trimText ?? $this->trimText = $this->getMessage()->getTrimText();
+    }
+
+    /**
+     * @var string
+     */
+    protected $messageType;
+
+    public function getMessageType() : string
+    {
+        return $this->messageType ?? $this->messageType = get_class($this->getMessage());
+    }
+
 
     /*-------- scope ----------*/
 
@@ -183,9 +208,14 @@ class Conversation
     /*-------- intent ----------*/
 
 
-    public function getPossibleIntents() : array
+    public function getPossibleIntents() : Collection
     {
-        return $this->possibleIntents;
+        return new Collection($this->possibleIntents);
+    }
+
+    public function addPossibleIntent(Intent $intent)
+    {
+        $this->possibleIntents[] = $intent;
     }
 
     /**
@@ -202,7 +232,7 @@ class Conversation
 
     public function defaultIntent() : Intent
     {
-        return new Intent($this->getMessage());
+        return new ArrayIntent(static::class, $this->getMessage());
     }
 
     /**
@@ -228,5 +258,16 @@ class Conversation
         return $this->isCloseSession;
     }
 
+    protected $msgCmdIntent;
+
+    public function getCommandIntent() : ? MsgCmdIntent
+    {
+        return $this->msgCmdIntent;
+    }
+
+    public function setCommandIntent(MsgCmdIntent $intent)
+    {
+        $this->msgCmdIntent = $intent;
+    }
 
 }

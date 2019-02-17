@@ -72,7 +72,7 @@ class ChatDriverDemo implements ChatDriver
     {
     }
 
-    public function pushIncomingMessage(string $chatId, IncomingMessage $message)
+    public function pushIncomingMessage(string $chatId, string $sessionId, IncomingMessage $message)
     {
         $array = $this->incomingMessages[$chatId] ?? [];
         $array[] = $message;
@@ -102,7 +102,7 @@ class ChatDriverDemo implements ChatDriver
 
     public function replyWhenException(ChatbotException $e): Message
     {
-        return new Text(get_class($e) . ':' . $e->getMessage());
+        return new Text(strval($e));
     }
 
 }

@@ -114,80 +114,80 @@ class DialogRoute
 
     /*--------- 创建路由 ---------*/
 
-    public function prepared() : IntentRoute
+    public function prepared() : PreparedIR
     {
         if (!isset($this->preparedRoute)) {
             $this->preparedRoute = new PreparedIR(
                 $this->app,
-                $this->router,
-                static::class
+                $this->router
             );
         }
         return $this->preparedRoute;
     }
 
-    public function fallback() :  IntentRoute
+    public function fallback() :  FallbackIR
     {
         $this->fallbackRoute = new FallbackIR(
             $this->app,
-            $this->router,
-            static::class
+            $this->router
         );
 
         return $this->fallbackRoute;
     }
 
+    public function name(string $intentId) : IntentRoute
+    {
+        // 无法匹配和产生数据的.
+        $intentRoute = new IntentRoute($this->app, $this->router, $intentId);
+        return $this->addIntentRoute($intentRoute);
+    }
+
+
+    /**
+     * @param string $intentName
+     * @return IntentRoute
+     * @throws \ReflectionException
+     */
     public function hearsIntent(string $intentName) : IntentRoute
     {
-        $matcher = $this->router->getIntentFactory($intentName);
-
-        if (!isset($matcher)) {
-            //todo
-            throw new ConfigureException();
-        }
-
-        $intent = new IntentRoute($this->app, $this->router, $intentName, $matcher);
-        $this->addIntentRoute($intent);
-        return $intent;
+        $intentCfg  = $this->router->loadIntentConfig($intentName);
+        $intentRoute = new IntentRoute($this->app, $this->router, $intentName);
+        $intentRoute->hearsIntent($intentCfg);
+        return $this->addIntentRoute($intentRoute);
     }
 
-    public function callback(string $intentId) : IntentRoute
+    public function hearsCommand(string $signature, string $description = '') : IntentRoute
     {
-        $intentRoute = new IntentRoute($this->app, $this->router, $intentId);
-        $this->addIntentRoute($intentRoute);
-        return $intentRoute;
+        $factory = new IntentFactory();
+        $factory->setCommand($signature);
+        $intentRoute = new IntentRoute($this->app, $this->router, $factory->getCommandName(), $description, $factory);
+        return $this->addIntentRoute($intentRoute);
     }
 
-    public function hearsCommand(string $signature) : IntentRoute
+    /**
+     * 精确匹配
+     * @param string $exactly
+     * @param string $description
+     * @return IntentRoute
+     */
+    public function hears(string $exactly, string $description = '') : IntentRoute
     {
-        $id = md5($signature);
-
-        $matcher = new IntentFactory();
-        $matcher->addCommand($signature);
-        $intent = new IntentRoute($this->app, $this->router, $id, $matcher);
-        $this->addIntentRoute($intent);
-        return $intent;
+        $intentRoute = new IntentRoute($this->app, $this->router, $exactly, $description);
+        $intentRoute->exactly($exactly);
+        return $this->addIntentRoute($intentRoute);
     }
 
-    public function hearsRegex(...$regex) : IntentRoute
-    {
-        $id = md5(json_encode($regex));
-
-        $matcher = new IntentFactory();
-        $matcher->addRegex($regex);
-        $intent = new IntentRoute($this->app, $this->router, $id, $matcher);
-        $this->addIntentRoute($intent);
-        return $intent;
-    }
-
-    protected function addIntentRoute(IntentRoute $route)
-    {
-        $this->intentRoutes[$route->getId()] = $route;
-    }
 
     public function getIntentRoute(string $intentId) : ? IntentRoute
     {
         return $this->intentRoutes[$intentId] ?? null;
+    }
+
+
+    protected function addIntentRoute(IntentRoute $route) : IntentRoute
+    {
+        $this->intentRoutes[$route->getId()] = $route;
+        return $route;
     }
 
 
@@ -200,62 +200,71 @@ class DialogRoute
             throw new \RuntimeException();
         }
 
-        // available
-        $availableRoutes = $this->availableRoutes($context);
-
-        if (empty($availableRoutes)) {
-            return $this->dialogMissMatched($conversation);
-        }
-
+        // 检查是否有预设好的意图.
         $possibleIntents = $conversation->getPossibleIntents();
+        $hasPossibleIntent = !$possibleIntents->isEmpty();
+        $possibleIntentNames = $possibleIntents->map(function($item){
+            /**
+             * @var Intent $item
+             */
+            return $item->getId();
+        });
 
-        // possible
-        if (!empty($possibleIntents)) {
-            $possibleIntentNames = array_keys($possibleIntents);
+        foreach ($this->intentRoutes as $intentRoute) {
+            /**
+             * @var IntentRoute $intentRoute
+             */
 
-            foreach($availableRoutes as $route) {
-                /**
-                 * @var IntentRoute $route
-                 */
-                $listenTo = $route->getListenIntent();
-                if (in_array($listenTo, $possibleIntentNames)) {
+            if (! $intentRoute->isAvailable($context)) {
+                break;
+            }
+
+            // 检查possible
+            if ($hasPossibleIntent) {
+                $listenTo = $intentRoute->getListenIntent();
+                if (isset($listenTo) && $possibleIntentNames->contains($listenTo)) {
                     $intent = $possibleIntents[$listenTo];
-                    return $this->matched($route, $intent, $conversation);
+                    return $this->matched($intentRoute, $intent, $conversation);
+                }
+
+            //没有预设好的意图时, 才单个检查.
+            } else {
+                // 单个检查
+                $intentFactory = $intentRoute->getIntentFactory();
+                $intent = isset($intentFactory) ? $intentFactory->match($conversation) : null;
+                if (isset($intent)) {
+                    return $this->matched($intentRoute, $intent, $conversation);
                 }
             }
-
-            /**
-             * @var Intent $firstIntent
-             */
-            $firstIntent = reset($possibleIntents);
-            $defaultRoute = $this->router->defaultRouteOfIntent($firstIntent->getId());
-            return $this->matched($defaultRoute, $firstIntent, $conversation);
         }
 
-        // matcher
-        $message = $conversation->getMessage();
-        foreach ($availableRoutes as $route) {
-            /**
-             * @var IntentRoute $route
-             */
-            $intentFactory = $route->getIntentFactory();
-            $intent = isset($intentFactory) ? $intentFactory->match($message) : null;
-            if (isset($intent)) {
-                return $this->matched($route, $intent, $conversation);
-            }
-        }
 
+        // 没有任何命中的时候才跳出.
         return $this->dialogMissMatched($conversation);
     }
 
 
     protected function dialogMissMatched(Conversation $conversation) : IntentRoute
     {
-        $conversation->setMatchedIntent($conversation->defaultIntent());
+        // 语境的fallback 优先于预设意图.
         if (isset($this->fallbackRoute)) {
+            $conversation->setMatchedIntent($conversation->defaultIntent());
             return $this->fallbackRoute;
         }
 
+        // 有预设好意图时, 执行该意图预设好的方法.
+        $possibleIntents = $conversation->getPossibleIntents();
+        if (!$possibleIntents->isEmpty()) {
+            /**
+             * 获取优先级最高的意图
+             * @var Intent $firstIntent
+             */
+            $firstIntent = reset($possibleIntents);
+            $defaultRoute = $this->router->defaultRouteOfIntent($firstIntent);
+            return $this->matched($defaultRoute, $firstIntent, $conversation);
+        }
+
+        $conversation->setMatchedIntent($conversation->defaultIntent());
         return $this->router->getMissMatchIntentRoute();
     }
 

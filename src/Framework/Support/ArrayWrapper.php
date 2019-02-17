@@ -7,11 +7,12 @@
 
 namespace Commune\Chatbot\Framework\Support;
 
-use Commune\Chatbot\Framework\Exceptions\ChatbotException;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
-class ArrayWrapper implements \ArrayAccess
+class ArrayWrapper extends Collection
 {
+
     /**
      * @var ArrayWrapper
      */
@@ -24,12 +25,6 @@ class ArrayWrapper implements \ArrayAccess
 
 
     /**
-     * @var array|\ArrayAccess
-     */
-    protected $data;
-
-
-    /**
      * ArrayWrapper constructor.
      * @param array|\ArrayAccess $data
      * @param string $prevKey
@@ -38,55 +33,47 @@ class ArrayWrapper implements \ArrayAccess
     public function __construct(
         $data,
         \ArrayAccess $prev = null,
-        string $prevKey = null
+        $prevKey = null
     )
     {
         if (!Arr::accessible($data)) {
             //todo
-            throw new ChatbotException();
+            throw new \InvalidArgumentException();
         }
-        $this->data = $data;
+
+        parent::__construct($data);
         $this->prev = $prev;
         $this->prevKey = $prevKey;
     }
 
-    public function offsetExists($offset)
-    {
-        return isset($this->data[$offset]);
-    }
-
     public function offsetGet($offset)
     {
-        if (isset($this->data[$offset])) {
-            $val = $this->data[$offset];
-            return is_array($val) ? new ArrayWrapper($val, $this, $offset) : $val;
-        }
-        return null;
+            $val = $this->get($offset);
+            if (!isset($val)) {
+                return null;
+            }
+            return Arr::accessible($val)
+                ? new ArrayWrapper($val, $this, $offset)
+                : $val;
     }
 
     public function offsetSet($offset, $value)
     {
-        if (isset($offset)) {
-            $this->data[$offset] = $value;
-        } else {
-            $this->data[] = $value;
-        }
-
-        if ($this->prev) {
-            $this->prev[$this->prevKey] = $this->data;
-        } elseif(isset($this->prevKey)) {
-            $this->prev->offsetSet($this->prevKey, $this->data);
-        }
+        parent::offsetSet($offset, $value);
+        $this->refreshPrev();
     }
 
     public function offsetUnset($offset)
     {
-        unset($this->data[$offset]);
+        parent::offsetUnset($offset);
+        $this->refreshPrev();
     }
 
-    public function toArray() : array
+    protected function refreshPrev()
     {
-        return $this->data;
+        if (isset($this->prev)) {
+            $this->prev[$this->prevKey] = $this->data;
+        }
     }
 
 }

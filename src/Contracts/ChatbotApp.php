@@ -10,6 +10,7 @@ namespace Commune\Chatbot\Contracts;
 use Commune\Chatbot\Framework\Character\User;
 use Commune\Chatbot\Framework\Routing\IntentRoute;
 use Commune\Chatbot\Framework\Routing\Router;
+use Illuminate\Contracts\Container\Container;
 use Psr\Container\ContainerInterface;
 
 interface ChatbotApp extends ContainerInterface
@@ -18,9 +19,10 @@ interface ChatbotApp extends ContainerInterface
 
     /*----- config.messages -----*/
 
-    const MESSAGES_MISSMATCH = 'messages.miss_match_message';
-
+    const MESSAGES_MISS_MATCH = 'messages.miss_match_message';
     const MESSAGES_EXCEPTIONS = 'messages.exceptions';
+
+    const MESSAGES_ASK_INTENT_ARGUMENT = 'messages.ask_intent_argument';
 
     /*----- config.context -----*/
 
@@ -33,7 +35,9 @@ interface ChatbotApp extends ContainerInterface
     const RUNTIME_PIPES = 'runtime.pipes';
     const RUNTIME_BOOTSTRAPPERS = 'runtime.bootstrappers';
     const RUNTIME_ANALYZERS = 'runtime.analyzers';
-    const RUNTIME_COMMAND_MARK = 'runtime.command_mark';
+    const RUNTIME_ANALYZER_MARK = 'runtime.analyzer_mark';
+    const RUNTIME_USER_COMMANDS = 'runtime.commands';
+    const RUNTIME_USER_COMMAND_MARK = 'runtime.command_mark';
 
     /**
      * Resolve the given type from the container.
@@ -43,6 +47,8 @@ interface ChatbotApp extends ContainerInterface
      * @return mixed
      */
     public function make($abstract, array $parameters = []);
+    
+    public function getContainer() : Container;
 
     public function getChatbotConfig() : array;
 

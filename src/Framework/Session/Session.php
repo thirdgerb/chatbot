@@ -204,7 +204,6 @@ class Session
         return $this->contextsData[$id] = $this->driver->fetchContextDataById($id);
     }
 
-
     /*------ conversation -------*/
 
     public function getConversation() : Conversation

@@ -8,7 +8,7 @@
 namespace Commune\Chatbot\Framework\Exceptions;
 
 
-class UnexpectedException extends ChatbotException
+class ChatbotPipeException extends ChatbotException
 {
 
 }

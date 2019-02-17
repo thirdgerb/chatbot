@@ -1,27 +1,37 @@
 <?php
 
 /**
- * Class IntentData
+ * Class IntentInterface
  * @package Commune\Chatbot\Framework\Intent
  */
 
 namespace Commune\Chatbot\Framework\Intent;
 
 
-use Commune\Chatbot\Framework\Context\Context;
-use Commune\Chatbot\Framework\Exceptions\ChatbotException;
 use Commune\Chatbot\Framework\Message\Message;
-use Commune\Chatbot\Framework\Support\ArrayAbleToJson;
-use Illuminate\Support\Arr;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Collection;
+use Illuminate\Support\MessageBag;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
-class Intent implements \ArrayAccess, \JsonSerializable
+/**
+ * Class Intent
+ * @see \Symfony\Component\Console\Input
+ * @package Commune\Chatbot\Framework\Intent
+ */
+abstract class Intent implements \ArrayAccess, Arrayable
 {
-    use ArrayAbleToJson;
 
     /**
-     * @var array | \ArrayAccess
+     * @var IntentDefinition
      */
-    protected $entities = [];
+    protected $definition;
+
+    /**
+     * @var Collection
+     */
+    protected $entities;
 
     /**
      * @var Message
@@ -29,24 +39,79 @@ class Intent implements \ArrayAccess, \JsonSerializable
     protected $message;
 
     /**
+     * id 标记数据的来源.
+     * 来源:
+     * - Context  id 是 Context::class
+     * - MsgCmdIntent id 是 commandName
+     * - IntentFactory id 是IntentCfg 或者 commandName, 是命令名
+     * - IntentCfg id 是 intentCfg::class
+     * - Conversation 是 Conversation::class
+     *
      * @var string
      */
     protected $id;
 
+    protected $parsed;
+
+    protected $tokens = [];
+    /**
+     * @var MessageBag
+     */
+    protected $errors;
 
     public function __construct(
+        string $id,
         Message $message,
-        $entities = [],
-        string $id = ''
+        array $entities = []
     )
     {
+        // set default value
+        $this->id = empty($id) ? self::class : $id;
         $this->message = $message;
-        if (!Arr::accessible($entities)) {
-            //todo
-            throw new ChatbotException();
+        $this->entities = new Collection($entities);
+        $this->errors = new MessageBag();
+        $this->definition = new IntentDefinition([]);
+    }
+
+    abstract protected function parse(array $tokens);
+
+    public function bind(IntentDefinition $definition)
+    {
+        $this->definition = $definition;
+        $this->entities = new Collection();
+        $this->errors = new MessageBag();
+
+        $this->parse($this->tokens);
+    }
+
+    public function dependingArguments() : array
+    {
+        $result = [];
+
+        $arguments = $this->definition->getArguments();
+        if (!isset($arguments)) {
+            return $result;
         }
-        $this->entities = $entities;
-        $this->id = $id;
+
+        foreach ($arguments as $argument) {
+            /**
+             * @var InputArgument $argument
+             */
+            if (!$this->has($argument->getName())) {
+                $result[] = $argument;
+            }
+        }
+        return $result;
+    }
+
+    public function getErrors() : array
+    {
+        return $this->errors->toArray();
+    }
+
+    public function getId() : string
+    {
+        return $this->id;
     }
 
     /**
@@ -57,37 +122,14 @@ class Intent implements \ArrayAccess, \JsonSerializable
         return $this->message;
     }
 
-    public function getId() : string
+    public function get(string $entityName, $default = null)
     {
-        return $this->id;
+        return $this->entities->get($entityName, $default);
     }
 
-    public function getEntities()
+    public function has(string $name) : bool
     {
-        if (is_object($this->entities) && method_exists($this->entities, 'toArray')) {
-            return $this->entities->toArray();
-        }
-
-        return $this->entities;
-    }
-
-    public function toContext() : ? Context
-    {
-        return $this->entities instanceof Context ? $this->entities : null;
-    }
-
-    public function toArray() : array
-    {
-        return [
-            'id' => $this->getId(),
-            'message' => $this->getMessage()->toArray(),
-            'entities' => $this->getEntities(),
-        ];
-    }
-
-    public function get(string $entityName) : ? string
-    {
-        return $this->entities[$entityName] ?? null;
+        return $this->entities->has($name);
     }
 
     public function offsetExists($offset)
@@ -103,12 +145,90 @@ class Intent implements \ArrayAccess, \JsonSerializable
 
     public function offsetSet($offset, $value)
     {
-        throw new \BadMethodCallException();
+        throw new \BadMethodCallException('intent can not set value');
+        //$this->entities[$offset] = $value;
     }
 
     public function offsetUnset($offset)
     {
-        throw new \BadMethodCallException();
+        throw new \BadMethodCallException('intent can not unset value');
+        //unset($this->entities[$offset]);
     }
 
+    public function toArray()
+    {
+        return $this->entities->toArray();
+    }
+
+    public function getEntities() : array
+    {
+        return $this->entities->toArray();
+    }
+
+    public function getArgument(string $name)
+    {
+        if ($this->definition->hasArgument($name)) {
+            return $this->get($name);
+        }
+        return null;
+    }
+
+    public function getOption(string $name)
+    {
+        if ($this->definition->hasOption($name)) {
+            return $this->get("--$name");
+        }
+        return null;
+    }
+
+    public function getArguments() : array
+    {
+        $arguments = $this->definition->getArguments();
+        if (!isset($arguments)) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($arguments as $argument) {
+            /**
+             * @var InputArgument $argument
+             */
+            $name = $argument->getName();
+            $result[$name] = $this->get($name);
+        }
+        return $result;
+    }
+
+    public function getOptions() : array
+    {
+        $options = $this->definition->getOptions();
+        if (!isset($options)) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($options as $option) {
+            /**
+             * @var InputOption $option
+             */
+            $name = '--'.$option->getName();
+            $result[$name] = $this->get($name);
+        }
+        return $result;
+    }
+
+
+
+    public function __sleep()
+    {
+        return ['id', 'message', 'tokens'];
+    }
+
+
+    public function __wakeup()
+    {
+        $this->entities = new Collection($this->tokens);
+        $this->errors = new MessageBag();
+        $this->definition = new IntentDefinition();
+    }
 }

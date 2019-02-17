@@ -9,6 +9,9 @@ namespace Commune\Chatbot\Framework\Context;
 
 
 use Commune\Chatbot\Framework\Conversation\Scope;
+use Commune\Chatbot\Framework\Intent\Predefined\ArrayIntent;
+use Commune\Chatbot\Framework\Intent\Intent;
+use Commune\Chatbot\Framework\Message\Message;
 use Commune\Chatbot\Framework\Routing\DialogRoute;
 
 abstract class ContextCfg
@@ -16,6 +19,8 @@ abstract class ContextCfg
     const SCOPE = [
         Scope::SESSION
     ];
+
+    const DESCRIPTION = '';
 
     const DEPENDS = [
 
@@ -75,59 +80,85 @@ abstract class ContextCfg
         return $context->toJson();
     }
 
+    public function toIntent(Context $context, Message $message) : Intent
+    {
+        return new ArrayIntent(
+            $context->getId(),
+            $message,
+            $context->getData()
+        );
+    }
+
     /*------ validate ------*/
 
-    final public function validate() :bool
+    public function validateDepend(string $key, Context $depend, Context $self) : bool
     {
-        //todo 未来要实现自检流程. 抛出配置异常.
+        if (method_exists($this, $method = 'validate'.ucfirst($key))) {
+            return call_user_func([$this, $method], $depend, $self);
+        }
         return true;
     }
 
+    public function getPropsForDepend(string $name, Context $self) : array
+    {
+        if (method_exists($this, $method = 'prop'.ucfirst($name))) {
+            return call_user_func([$this, $method], $self);
+        }
+        return [];
+    }
+
+
+
     /*------ schema ------*/
 
-    final public function dataSchemaExists(string $name) : bool
+    public function dataSchemaExists(string $name) : bool
     {
         return array_key_exists($name, static::DATA);
     }
-    final public function getDataSchema() : array
+
+    public function getDataSchema() : array
     {
         return static::DATA;
     }
 
-    final public function propsSchemaExists(string $name) : bool
+    public function propsSchemaExists(string $name) : bool
     {
         return array_key_exists($name, static::PROPS);
     }
 
-    final public function getPropsSchema() : array
+    public function getPropsSchema() : array
     {
         return static::PROPS;
     }
 
-    final public function mutatorSchemaExists(string $name) : bool
+    public function mutatorSchemaExists(string $name) : bool
     {
         return array_key_exists($name, static::MUTATOR);
     }
 
-    final public function dependsSchemaExists(string $name) : bool
+    public function dependsSchemaExists(string $name) : bool
     {
         return array_key_exists($name, static::DEPENDS);
     }
 
-    final public function getDependsSchema() : array
+    public function getDependsSchema() : array
     {
         return static::DEPENDS;
     }
 
-    final public function getDependOfSchema(string $name) :array
+    public function getDependOfSchema(string $name) :array
     {
         return static::DEPENDS[$name] ?? [];
     }
 
+    public function getDescription(Context $context) : string
+    {
+        return 'at ' . static::DESCRIPTION;
+    }
 
     /*------ getter ------*/
 
-    final public function getter(Context $context, string $name)
+    public function getter(Context $context, string $name)
     {
         $method = 'get'.ucfirst($name);
         if (method_exists($this, $method)) {
@@ -136,7 +167,7 @@ abstract class ContextCfg
         return null;
     }
 
-    final public function setter(Context $context, string $name, $value)
+    public function setter(Context $context, string $name, $value)
     {
         $method = 'set'.ucfirst($name);
         if (method_exists($this, $method)) {
@@ -146,7 +177,7 @@ abstract class ContextCfg
 
     /*------ 属性 ------*/
 
-    final public function getScopeTypes() : array
+    public function getScopeTypes() : array
     {
         if (isset($this->scopeTypes)) {
             return $this->scopeTypes;

@@ -11,12 +11,15 @@ namespace Commune\Chatbot\Framework;
 use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Contracts\SessionDriver;
 use Commune\Chatbot\Framework\Exceptions\ConversationException;
-use Commune\Chatbot\Framework\Exceptions\HostException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotHostException;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Directing\Director;
+use Commune\Chatbot\Framework\Intent\Predefined\MsgCmdIntent;
 use Commune\Chatbot\Framework\Routing\Router;
 use Commune\Chatbot\Framework\Session\Session;
+use Commune\Chatbot\Framework\Support\ChatbotUtils;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Input\StringInput;
 
 class HostPipe implements ChatbotPipe
 {
@@ -50,7 +53,6 @@ class HostPipe implements ChatbotPipe
 
     public function handle(Conversation $conversation, \Closure $next) : Conversation
     {
-
         $session = $this->makeSession($conversation);
 
         try {
@@ -70,7 +72,7 @@ class HostPipe implements ChatbotPipe
         } catch (\Exception $e) {
             //todo
             $this->log->error('host error');
-            throw new HostException('test', 0, $e);
+            throw new ChatbotHostException(get_class($e) . ':' . $e->getMessage(), 0, $e);
 
         } finally {
             $session->save();

@@ -14,10 +14,13 @@ use Commune\Chatbot\Framework\Character\User;
 use Commune\Chatbot\Framework\Context\Predefined\Answer;
 use Commune\Chatbot\Framework\Context\Predefined\Choice;
 use Commune\Chatbot\Framework\Context\Predefined\Confirmation;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Context\Predefined\FulfillIntent;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Conversation\Talkable;
+use Commune\Chatbot\Framework\Directing\SpecialLocations\Guesting;
+use Commune\Chatbot\Framework\Directing\SpecialLocations\Replace;
+use Commune\Chatbot\Framework\Routing\IntentRoute;
 use Commune\Chatbot\Framework\Support\ArrayAbleToJson;
 use Commune\Chatbot\Framework\Directing\Location;
 use Commune\Chatbot\Framework\Session\Session;
@@ -50,6 +53,10 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
      */
     protected  $config;
 
+    /**
+     * @var string
+     */
+    protected $currentRouteId;
 
     public function __construct(ContextData $data, Session $session, ContextCfg $config)
     {
@@ -59,24 +66,13 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
         $this->config = $config;
     }
 
-    public function fireEvent(string $name)
-    {
-        if (!in_array($name, ContextCfg::EVENTS)) {
-            //todo
-            throw new \BadMethodCallException();
-        }
-
-        $this->data->listenContextEvent($name);
-        call_user_func([$this->config, $name], $this);
-    }
-
-    public function callConfigMethod(string $method, Intent $intent)
+    public function callConfigMethod(string $method, Intent $intent) : ? Location
     {
         if (!method_exists($this->config, $method)) {
             //todo
             throw new \BadMethodCallException();
         }
-        call_user_func([$this->config, $method], $this, $intent);
+        return call_user_func([$this->config, $method], $this, $intent);
     }
 
     /*------- 特殊值 --------*/
@@ -84,6 +80,11 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
     public function getName() : string
     {
         return $this->data->getContextName();
+    }
+
+    public function getDescription() : string
+    {
+        return $this->config->getDescription($this) ? : $this->data->getContextName();
     }
 
 
@@ -106,7 +107,8 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
 
     public function getLocation() : Location
     {
-        return new Location($this->getName(), $this->data->getProps(), $this->data->getId());
+        $location =  new Location($this->getName(), $this->data->getProps(), $this->data->getId());
+        return $location;
     }
 
     public function getDataStatus() : int
@@ -171,6 +173,16 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
         return null;
     }
 
+    public function getProps() : array
+    {
+        return $this->data->getProps();
+    }
+
+    public function getData() : array
+    {
+        return $this->data->getData();
+    }
+
 
 
     /*------- setter -------*/
@@ -183,7 +195,7 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
             $this->config->setter($this, $name, $value);
         } else {
             //todo
-            throw new \BadMethodCallException();
+            throw new \BadMethodCallException("context key $name have no setter ");
         }
     }
 
@@ -209,21 +221,23 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
     public function initDepending() : ? Location
     {
         foreach ($this->config->getDependsSchema() as $name => $val) {
+            $contextName = $val[0] ?? '';
+            $definedProps = $val[1] ?? null;
             $depend = $this->getDepend($name);
-            if (!isset($depend)) {
-                $id = $this->data->getDependencyId($name);
-                $contextName = $val[0] ?? '';
-                $definedProps = $val[1] ?? null;
 
-                if (!isset($definedProps)) {
-                    $props = [];
-                } elseif (is_array($definedProps)) {
+            if (!isset($depend)) {
+                $validDepend = false;
+            } else {
+                $validDepend = $this->config->validateDepend($name, $depend, $this);
+            }
+
+            if (!$validDepend) {
+                $id = $this->data->getDependencyId($name);
+
+                if (is_array($definedProps)) {
                     $props = $definedProps;
-                } elseif (is_string($definedProps) && method_exists($this, $definedProps)) {
-                    $props = $this->{$definedProps} ();
                 } else {
-                    //todo
-                    throw new ConfigureException();
+                    $props = $this->config->getPropsForDepend($name, $this);
                 }
                 return new Location($contextName, $props, $id);
             }
@@ -249,18 +263,12 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
 
     public function offsetExists($offset)
     {
-        $val = $this->get($offset);
+        $val = $this->offsetGet($offset);
         return isset($val);
     }
 
     public function offsetGet($offset)
     {
-//        $data = $this->get($offset);
-//
-//        if (isset($data) && Arr::accessible($data)) {
-//            return new ArrayWrapper($data, $this, $offset);
-//        }
-//        return $data;
         return $this->get($offset);
     }
 
@@ -320,12 +328,23 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
         return $this->config->toString($this);
     }
 
+    /**
+     * 转义为Intent, 方便回调处理
+     * @return Intent
+     */
+    public function toIntent() : Intent
+    {
+        return $this->config->toIntent($this, $this->conversation->getMessage());
+    }
+
     public function __toString()
     {
         return $this->toString();
     }
 
     /*------- talk -------*/
+
+
 
     public function format(string $temp, array $fields)
     {
@@ -347,7 +366,7 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
 
     public function say(string $text, int $style, string $verbose = Message::NORMAL)
     {
-        $message = new Text($text, Text::INFO, $verbose);
+        $message = new Text("$text", Text::INFO, $verbose);
         $this->conversation->reply($message);
     }
 
@@ -371,51 +390,123 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
         $this->conversation->reply($message);
     }
 
+    /*--------- direct -----------*/
+
+    /**
+     * 回调方法生成一个新的历史节点.
+     *
+     * @param string $callbackRouteName
+     * @param string $question
+     * @param string|null $default
+     * @return Location
+     */
     public function ask(string $callbackRouteName, string $question, string $default = null) : Location
     {
         $intended = $this->getLocation();
-        $intended->setCallback($callbackRouteName);
-        $answer = new Location(Answer::class, [
+        $to = new Guesting(Answer::class, [
             'question' => $question,
             'default' => $default
         ]);
-        $answer->setIntended($intended);
-        return $answer;
+        $to->setCallbackIntentId($callbackRouteName);
+        $to->pushIntended($intended);
+        return $to;
     }
 
 
     public function confirm(string $callbackRouteName, string $question, string $default = 'yes') : Location
     {
         $intended = $this->getLocation();
-        $intended->setCallback($callbackRouteName);
-        $answer = new Location(Confirmation::class, [
+        $to = new Guesting(Confirmation::class, [
             'question' => $question,
             'default' => $default
         ]);
-        $answer->setIntended($intended);
-        return $answer;
+        $to->setCallbackIntentId($callbackRouteName);
+        $to->pushIntended($intended);
+        return $to;
     }
 
     public function choose(string $callbackRouteName, string $question, array $choices, int $default = 0) : Location
     {
         $intended = $this->getLocation();
-        $intended->setCallback($callbackRouteName);
-        $to = new Location(Choice::class, [
+        $to = new Guesting(Choice::class, [
             'question' => $question,
             'choices' => $choices,
             'default' => $default,
         ]);
-        $to->setIntended($intended);
+        $to->setCallbackIntentId($callbackRouteName);
+        $to->pushIntended($intended);
         return $to;
     }
 
-    public function depend(string $callbackRouteName, string $contextName, array $props = []) : Location
+    public function intentAsk(
+        Intent $intent,
+        string $key,
+        string $question,
+        string $default = null
+    ) : Location
     {
+        return $this->fulfillIntent($intent, [
+            $key => ['ask', $question, $default],
+        ]);
+    }
+
+
+    public function intentChoose(
+        Intent $intent,
+        string $key,
+        string $question,
+        array $choices,
+        int $default = 0
+    ) : Location
+    {
+        return $this->fulfillIntent($intent, [
+            $key => ['choose', $question, $choices, $default]
+        ]);
+    }
+
+    public function intentConfirm(
+        Intent $intent,
+        string $key,
+        string $question,
+        string $default = 'yes'
+    ) : Location
+    {
+        return $this->fulfillIntent($intent,  [
+            $key => ['confirm', $question, $default]
+        ]);
+    }
+
+    protected function fulfillIntent(Intent $intent, array $questions) : Location
+    {
+        $props = [
+            'intentId' => $intent->getId(),
+            'intentEntities' => $intent->getEntities(),
+            'questions' => $questions,
+        ];
+
+
+        $replace = new Replace(
+            FulfillIntent::class,
+            $props
+        );
+
         $intended = $this->getLocation();
-        $intended->setCallback($callbackRouteName);
-        $to = new Location($contextName, $props);
-        $to->setIntended($intended);
-        return $to;
+        $replace->pushIntended($intended);
+        $replace->setCallbackIntentId($this->getCurrentRouteId());
+        return $replace;
+    }
+
+
+    /*------- 状态, context 在哪个Intent下激活 --------*/
+
+    public function setCurrentRouteId(IntentRoute $intentRoute)
+    {
+        $this->currentRouteId = $intentRoute->getId();
+    }
+
+    public function getCurrentRouteId() : ? string
+    {
+        return $this->currentRouteId;
     }
 
 }

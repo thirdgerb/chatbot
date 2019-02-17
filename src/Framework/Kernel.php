@@ -16,7 +16,6 @@ use Commune\Chatbot\Contracts\ServerDriver;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Conversation\IncomingMessage;
 use Commune\Chatbot\Contracts\ChatbotApp;
-use Commune\Chatbot\Framework\Exceptions\ChatbotException;
 use Psr\Log\LoggerInterface;
 use Commune\Chatbot\Framework\Support\Pipeline;
 
@@ -119,7 +118,12 @@ class Kernel implements ChatbotKernel
             /**
              * @var Conversation $replyConversation
              */
+            $start = microtime(true);
+
             $replyConversation = $this->getPipeline()->send($conversation);
+
+            $end = microtime(true);
+            $this->runtimeLog($start, $end, $conversation);
 
             $driver->reply($replyConversation);
 
@@ -130,6 +134,7 @@ class Kernel implements ChatbotKernel
         } catch (\Exception $e) {
             $this->expHandler->handle($e);
             $driver->error($e);
+            $driver->close();
         }
     }
 
@@ -146,6 +151,22 @@ class Kernel implements ChatbotKernel
         }
 
         return $this->pipeline;
+    }
+
+    protected function runtimeLog($start, $end, Conversation $conversation)
+    {
+        $chatId = $conversation->getChatId();
+        $sessionId = $conversation->getSessionId();
+        $msgId = $conversation->getIncomingMessage()->getId();
+
+        $this->log->info(
+            'runtime count.fulfill in '
+            . ceil(($end-$start) * 1000000)
+            . ' us; '
+            . " chatId:$chatId,"
+            . " sessionId:$sessionId,"
+            . " msgId:$msgId,"
+        );
     }
 
 }

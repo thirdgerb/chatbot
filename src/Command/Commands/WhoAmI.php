@@ -5,21 +5,22 @@
  * @package Commune\Chatbot\Analyzer\Commands
  */
 
-namespace Commune\Chatbot\Analyzer\Commands;
+namespace Commune\Chatbot\Command\Commands;
 
 
-use Commune\Chatbot\Analyzer\AnalyzerCommand;
+use Commune\Chatbot\Command\Command;
 use Commune\Chatbot\Framework\Conversation\Conversation;
+use Commune\Chatbot\Framework\Intent\Predefined\MsgCmdIntent;
 use Commune\Chatbot\Framework\Message\Text;
-use Symfony\Component\Console\Input\InputInterface;
 
-class WhoAmI extends AnalyzerCommand
+class WhoAmI extends Command
 {
     protected $signature = 'whoami';
 
     protected $description = 'test';
 
-    public function handle(InputInterface $input, Conversation $conversation): Conversation
+
+    protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
     {
         $user = $conversation->getSender();
         $conversation->reply(new Text($user->toJson()));

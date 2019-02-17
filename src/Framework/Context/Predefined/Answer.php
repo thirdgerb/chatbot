@@ -9,24 +9,12 @@ namespace Commune\Chatbot\Framework\Context\Predefined;
 
 
 use Commune\Chatbot\Framework\Context\Context;
-use Commune\Chatbot\Framework\Context\ContextCfg;
-use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Routing\DialogRoute;
 use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Message\Questions\Ask;
-use Commune\Chatbot\Framework\Support\TypeTransfer;
 
-class Answer extends ContextCfg
+class Answer extends Question
 {
-    const SCOPE = [
-        Scope::MESSAGE
-    ];
-
-    const DATA = [
-        'answer' => '',
-        'fulfill' => false
-    ];
-
     const PROPS = [
         'question' => '',
         'default' => ''
@@ -40,17 +28,17 @@ class Answer extends ContextCfg
     public function routing(DialogRoute $route)
     {
         $route->fallback()
-            ->action(function(Context $context, Intent $intent){
-                $text = $intent->getMessage()->getText();
-                $text = !empty($text) ? $text : $context['default'];
-                $context['answer'] = $text;
-            })
-            ->intended();
+            ->action()
+                ->callSelf('fallback')
+                ->redirect()
+                    ->intended();
     }
 
-    public function toString(Context $context) : string
+    public function fallback(Context $context, Intent $intent)
     {
-        return TypeTransfer::toString($context['answer']);
+        $text = $intent->getMessage()->getText();
+        $text = !empty($text) ? $text : $context['default'];
+        $context['result'] = $text;
     }
 
 

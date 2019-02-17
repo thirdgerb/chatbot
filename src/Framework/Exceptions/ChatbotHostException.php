@@ -8,7 +8,7 @@
 namespace Commune\Chatbot\Framework\Exceptions;
 
 
-class HostException extends ChatbotException
+class ChatbotHostException extends ChatbotException
 {
 
 }
