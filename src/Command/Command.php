@@ -28,12 +28,11 @@ use Psr\Log\LoggerInterface;
  */
 abstract class Command
 {
+    const SINGLETON = true;
 
     protected $signature = '';
 
     protected $description = '';
-
-    protected $singleton = true;
 
     protected $name;
 
@@ -77,11 +76,6 @@ abstract class Command
         $this->name = $name;
         $this->definition->addArguments($arguments);
         $this->definition->addOptions($options);
-    }
-
-    public function isSingleton() : bool
-    {
-        return $this->singleton;
     }
 
     public function match(MsgCmdIntent $input) : bool

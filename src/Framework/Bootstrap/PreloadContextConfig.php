@@ -8,7 +8,9 @@
 namespace Commune\Chatbot\Framework\Bootstrap;
 
 
+use Commune\Chatbot\Command\Command;
 use Commune\Chatbot\Contracts\ChatbotApp;
+use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Routing\Router;
 
 class PreloadContextConfig
@@ -28,6 +30,10 @@ class PreloadContextConfig
     }
 
 
+    /**
+     * @param ChatbotApp $app
+     * @throws \ReflectionException
+     */
     public function bootstrap(ChatbotApp $app)
     {
         $this->preloadContexts($app);
@@ -35,6 +41,10 @@ class PreloadContextConfig
 
     }
 
+    /**
+     * @param ChatbotApp $app
+     * @throws \ReflectionException
+     */
     protected function preloadCommands(ChatbotApp $app)
     {
         $c1 = $app->getConfig(ChatbotApp::RUNTIME_ANALYZERS);
@@ -42,8 +52,20 @@ class PreloadContextConfig
 
         $commands = array_unique(array_merge($c1, $c2));
 
+        $ioc = $app->getContainer();
         foreach($commands as $commandName) {
-            $app->getContainer()->singleton($commandName);
+
+            $r = new \ReflectionClass($commandName);
+            if (!$r->isSubclassOf(Command::class)) {
+                //todo
+                throw new ConfigureException();
+            }
+            if ($r->getConstant('SINGLETON')) {
+                $ioc->singleton($commandName);
+            } else {
+                $ioc->bind($commandName, $commandName);
+            }
+
         }
     }
 
