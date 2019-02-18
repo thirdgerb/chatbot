@@ -28,6 +28,7 @@ use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Message\Message;
 use Commune\Chatbot\Framework\Message\Text;
 use Illuminate\Support\Arr;
+use Psr\Log\LoggerInterface;
 
 class Context implements Talkable,\ArrayAccess, \JsonSerializable
 {
@@ -58,12 +59,18 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
      */
     protected $currentRouteId;
 
-    public function __construct(ContextData $data, Session $session, ContextCfg $config)
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    public function __construct(ContextData $data, Session $session, ContextCfg $config, LoggerInterface $logger)
     {
         $this->data = $data;
         $this->session = $session;
         $this->conversation = $session->getConversation();
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     public function callConfigMethod(string $method, Intent $intent) : ? Location
@@ -77,6 +84,10 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
 
     /*------- 特殊值 --------*/
 
+    public function logger() : LoggerInterface
+    {
+        return $this->logger;
+    }
     public function getName() : string
     {
         return $this->data->getContextName();

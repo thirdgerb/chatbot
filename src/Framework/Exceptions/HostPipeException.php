@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Class ChatFailureException
+ * Class UnexpectedException
  * @package Commune\Chatbot\Framework\Exceptions
  */
 
 namespace Commune\Chatbot\Framework\Exceptions;
 
 
-class ChatbotPipeException extends \RuntimeException
+class HostPipeException extends ChatbotPipeException
 {
 
 }

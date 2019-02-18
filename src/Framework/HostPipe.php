@@ -8,9 +8,12 @@
 namespace Commune\Chatbot\Framework;
 
 
+use Commune\Chatbot\Framework\Exceptions\ChatbotException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotPipeException;
 use Commune\Chatbot\Framework\Exceptions\ConversationException;
 use Commune\Chatbot\Framework\Exceptions\ChatbotHostException;
 use Commune\Chatbot\Framework\Conversation\Conversation;
+use Commune\Chatbot\Framework\Exceptions\HostPipeException;
 use Psr\Log\LoggerInterface;
 
 class HostPipe implements ChatbotPipe
@@ -52,11 +55,13 @@ class HostPipe implements ChatbotPipe
         } catch (ConversationException $e) {
 
             return $e->getConversation();
+        } catch (ChatbotPipeException $e) {
+            //透传
+            throw $e;
 
         } catch (\Exception $e) {
             //todo
-            $this->log->error('host error');
-            throw new ChatbotHostException(get_class($e) . ':' . $e->getMessage(), 0, $e);
+            throw new HostPipeException('host pipe unexpected exception : ' . $e->getMessage(), 0, $e);
 
         } finally {
             $session->save();

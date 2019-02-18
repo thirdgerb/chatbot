@@ -50,7 +50,7 @@ class ChatPipe implements ChatbotPipe
     public function handle(Conversation $conversation, \Closure $next) : Conversation
     {
         $chatId = $this->driver->fetchIdOrCreateChat($conversation);
-        
+
         $conversation = $this->completeConversation($conversation);
 
         $this->driver->pushIncomingMessage(
@@ -103,19 +103,22 @@ class ChatPipe implements ChatbotPipe
 
             $this->driver->flushAwaitIncomingMessages($chatId);
             $conversation->reply($this->driver->replyWhenTooBusy());
-
+            $this->driver->unlockChat($chatId);
             return $conversation;
 
-        } catch (ChatbotException $e) {
+        } catch (ChatbotPipeException $e) {
+
+            $this->driver->closeSession($chatId);
+            $this->driver->unlockChat($chatId);
             throw $e;
 
         } catch (\Exception $e) {
             //todo
             $message = "chat bot failure";
-            throw new ChatbotPipeException($message, null, $e);
-
-        } finally {
+            $this->driver->closeSession($chatId);
             $this->driver->unlockChat($chatId);
+
+            throw new ChatbotPipeException($message, null, $e);
         }
     }
 

@@ -93,12 +93,16 @@ class Session
         if (!isset($this->history)) {
             $id = $this->conversation->getSessionId();
             $history = $this->driver->loadHistory($id);
+
+            if (isset($history)) {
+                return $this->history = $history;
+            }
             $root = $this->app->getConfig(ChatbotApp::CONTEXT_ROOT);
             if (empty($root)) {
                 //todo
                 throw new ConfigureException();
             }
-            $this->history = $history ? : new History(
+            $this->history =  new History(
                 $this->scope->getChatId(),
                 $this->scope->getSessionId(),
                 new Location($root, [], $this->makeContextId($root))
@@ -192,7 +196,7 @@ class Session
     {
         $name = $data->getContextName();
         $config = $this->router->loadContextConfig($name);
-        return new Context($data, $this, $config);
+        return new Context($data, $this, $config, $this->log);
     }
 
     public function fetchContextDataById(string $id) : ? ContextData
@@ -236,4 +240,12 @@ class Session
         }
     }
 
+    public function __destruct()
+    {
+        $this->log->debug('session destruct.', [
+            'chatId' => $this->conversation->getChatId(),
+            'sessionId' => $this->conversation->getSessionId(),
+            'messageId' => $this->conversation->getIncomingMessage()->getId(),
+        ]);
+    }
 }
