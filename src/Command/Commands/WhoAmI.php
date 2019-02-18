@@ -19,8 +19,7 @@ class WhoAmI extends Command
 
     protected $description = 'test';
 
-
-    protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
+    protected function handleIntent(MsgCmdIntent $intent,\Closure $next,  Conversation $conversation): Conversation
     {
         $user = $conversation->getSender();
         $conversation->reply(new Text($user->toJson()));

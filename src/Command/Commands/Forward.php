@@ -19,7 +19,7 @@ class Forward extends Command
     protected $description = 'forward to last context';
 
 
-    protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
+    protected function handleIntent(MsgCmdIntent $intent,\Closure $next,  Conversation $conversation): Conversation
     {
         $director = $this->hostDriver->getDirector($this->hostDriver->getSession($conversation));
         return $director->forward();

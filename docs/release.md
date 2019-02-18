@@ -8,6 +8,8 @@
 -   拆分出了HostDriver模块, 用于多个地方依赖注入, 操作Host 相关的模块.
 -   修改了调试用的demo
 -   修复了一处bug, Intent 在自动fulfill 过程中 ask 的default 参数没有获取到.
+-   commandPipe 里的command 允许使用管道的 $next
+-   简化了 IntentRoute 的 match 方式.
 
 ### 20190217 v1 更新
 

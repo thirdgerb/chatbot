@@ -19,7 +19,7 @@ class Repeat extends Command
     protected $description = 'repeat current context';
 
 
-    protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
+    protected function handleIntent(MsgCmdIntent $intent,\Closure $next,  Conversation $conversation): Conversation
     {
         $director = $this->hostDriver->getDirector($session = $this->hostDriver->getSession($conversation));
         return $director->repeat();

@@ -18,7 +18,7 @@ class Quit extends Command
 
     protected $description = 'quit session';
 
-    protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
+    protected function handleIntent(MsgCmdIntent $intent,\Closure $next,  Conversation $conversation): Conversation
     {
         $conversation->closeSession();
         return $conversation;

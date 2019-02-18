@@ -102,12 +102,6 @@ class IntentRoute
         return $this->intentFactory->getIntentName();
     }
 
-
-    public function getIntentFactory() : IntentFactory
-    {
-        return $this->intentFactory;
-    }
-
     public function getId() : string
     {
         return $this->id;
@@ -261,6 +255,11 @@ class IntentRoute
     final public static function beTrue() : bool
     {
         return true;
+    }
+
+    public function match(Conversation $conversation) : ? Intent
+    {
+        return isset($this->intentFactory) ? $this->intentFactory->match($conversation) : null;
     }
 
     public function run(

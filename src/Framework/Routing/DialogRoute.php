@@ -9,7 +9,6 @@ namespace Commune\Chatbot\Framework\Routing;
 
 
 use Commune\Chatbot\Contracts\ChatbotApp;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Routing\Predefined\FallbackIR;
@@ -230,8 +229,7 @@ class DialogRoute
             //没有预设好的意图时, 才单个检查.
             } else {
                 // 单个检查
-                $intentFactory = $intentRoute->getIntentFactory();
-                $intent = isset($intentFactory) ? $intentFactory->match($conversation) : null;
+                $intent = $intentRoute->match($conversation);
                 if (isset($intent)) {
                     return $this->matched($intentRoute, $intent, $conversation);
                 }

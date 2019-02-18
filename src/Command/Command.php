@@ -64,9 +64,9 @@ abstract class Command
         return $this->name === $input->getCommandName();
     }
 
-    abstract protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation;
+    abstract protected function handleIntent(MsgCmdIntent $intent, \Closure $next, Conversation $conversation): Conversation;
 
-    public function handle(MsgCmdIntent $intent, Conversation $conversation): Conversation
+    public function handle(MsgCmdIntent $intent, \Closure $next, Conversation $conversation): Conversation
     {
         $intent->bind($this->definition);
         $errors = $intent->getErrors();
@@ -79,7 +79,7 @@ abstract class Command
             return $conversation;
         }
 
-        return $this->handleIntent($intent, $conversation);
+        return $this->handleIntent($intent, $next, $conversation);
     }
 
 }

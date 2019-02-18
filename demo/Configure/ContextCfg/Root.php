@@ -88,6 +88,8 @@ class Root extends ContextCfg
         $route->hearsCommand('test:cmd 
             {arg1=123 : 用来测试的参数arg1}
             ')
+            ->exactly('cmd')
+            ->exactly('testCmd')
             ->action()
             ->call(function(Context $context, Intent $intent) {
                 $context->info('命中命令: test:cmd');
@@ -132,7 +134,7 @@ class Root extends ContextCfg
 
     public function sayAnswer(Context $context, Intent $intent)
     {
-        $context->info('回答是 : '. $intent['result']);
+        $context->info('命中回答回调. 回答是 : '. $intent['result']);
     }
 
 

@@ -21,7 +21,7 @@ class Scoping extends Command
 
 
 
-    protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
+    protected function handleIntent(MsgCmdIntent $intent,\Closure $next,  Conversation $conversation): Conversation
     {
         $scope = $conversation->getScope();
         $json = json_encode($scope->toMap(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);

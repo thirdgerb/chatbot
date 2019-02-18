@@ -20,7 +20,7 @@ class ShowContext extends Command
     protected $description = '';
 
 
-    protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
+    protected function handleIntent(MsgCmdIntent $intent,\Closure $next,  Conversation $conversation): Conversation
     {
         $session = $this->hostDriver->getSession($conversation);
 

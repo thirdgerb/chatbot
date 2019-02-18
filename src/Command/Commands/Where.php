@@ -19,7 +19,7 @@ class Where extends Command
 
     protected $description = 'show where i am';
 
-    protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
+    protected function handleIntent(MsgCmdIntent $intent,\Closure $next,  Conversation $conversation): Conversation
     {
         $context = $this->hostDriver->getDirector($this->hostDriver->getSession($conversation))->fetchCurrentContext();
         $conversation->reply(new Text($context->getDescription()));
