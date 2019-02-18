@@ -81,7 +81,7 @@ abstract class CommandPipe implements ChatbotPipe
              * @var Command $command
              */
             if ($command->match($messageCommand)) {
-                return $command->handle($messageCommand, $conversation);
+                return $command->handle($messageCommand, $next, $conversation);
             }
         }
 

@@ -14,7 +14,7 @@ use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\HostDriver;
 use Commune\Chatbot\Framework\Routing\Router;
 
-class PreloadContextConfig
+class PreloadContextConfig implements Bootstrapper
 {
     /**
      * @var Router
@@ -37,11 +37,27 @@ class PreloadContextConfig
      */
     public function bootstrap(ChatbotApp $app)
     {
+
+        $this->registerPipes($app);
+
         // 必要, 方便各处获取 host 相关的组件.
-        $app->getContainer()->singleton(HostDriver::class);
+        $ioc = $app->getContainer();
+
+        // host Driver
+        $ioc->singleton(HostDriver::class);
 
         $this->preloadContexts($app);
         $this->preloadCommands($app);
+
+    }
+
+    protected function registerPipes(ChatbotApp $app)
+    {
+        $ioc = $app->getContainer();
+
+        foreach($app->getConfig(ChatbotApp::RUNTIME_PIPES) as $pipeName) {
+            $ioc->singleton($pipeName);
+        }
     }
 
     /**

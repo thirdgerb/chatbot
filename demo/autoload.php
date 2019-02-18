@@ -25,10 +25,6 @@ $app->singleton(\Psr\Log\LoggerInterface::class, function(){
 
 $app->singleton(\Commune\Chatbot\Contracts\ChatbotApp::class, \Commune\Chatbot\Demo\Impl\ChatbotAppDemo::class);
 
-$app->singleton(ChatPipe::class);
-$app->singleton(AnalyzerPipe::class);
-$app->singleton(HostPipe::class);
-
 $app->singleton(ChatbotKernel::class, Kernel::class);
 $app->singleton(ChatDriver::class, ChatDriverDemo::class);
 $app->singleton(ExceptionHandler::class, \Commune\Chatbot\Demo\Impl\ExceptionHandlerDemo::class);
