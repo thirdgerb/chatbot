@@ -64,13 +64,14 @@ class ChatbotAppDemo implements ChatbotApp
                     UserCommandPipe::class,
                     HostPipe::class
                 ],
+                'analyzer_mark' => '#',
                 'analyzers' => [
                     Commands\Locate::class,
                     Commands\ShowContext::class,
                     Commands\History::class,
                     Commands\Scoping::class,
                 ],
-                'analyzer_mark' => '/',
+                'command_mark' => '/',
                 'commands' => [
                     Commands\Quit::class,
                     Commands\WhoAmI::class,
@@ -80,7 +81,6 @@ class ChatbotAppDemo implements ChatbotApp
                     Commands\Cancel::class,
                     Commands\Repeat::class,
                 ],
-                'command_mark' => '.',
             ],
 
 
@@ -97,7 +97,7 @@ class ChatbotAppDemo implements ChatbotApp
                 'exceptions' => [
                     0 => 'unexpected exception occur',
                 ],
-                'ask_intent_argument' => '请输入{key}({desc}):'
+                'ask_intent_argument' => '请输入{key} ({desc})'
             ],
         ];
     }
@@ -128,11 +128,13 @@ class ChatbotAppDemo implements ChatbotApp
     public function getIntentDefaultRoute(Router $router): IntentRoute
     {
         if (!isset($this->defIntentRoute)) {
-            $this->defIntentRoute = new IntentRoute($this, $router);
+            $this->defIntentRoute = new IntentRoute( $this, $router, static::class);
             $this->defIntentRoute
+                ->action()
                 ->call(function (Context $context, Intent $intent) {
                     $context->error('miss match intent : ' . $intent);
                 })
+                ->redirect()
                 ->home();
 
         }

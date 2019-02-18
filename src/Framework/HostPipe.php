@@ -8,29 +8,17 @@
 namespace Commune\Chatbot\Framework;
 
 
-use Commune\Chatbot\Contracts\ChatbotApp;
-use Commune\Chatbot\Contracts\SessionDriver;
 use Commune\Chatbot\Framework\Exceptions\ConversationException;
 use Commune\Chatbot\Framework\Exceptions\ChatbotHostException;
 use Commune\Chatbot\Framework\Conversation\Conversation;
-use Commune\Chatbot\Framework\Directing\Director;
-use Commune\Chatbot\Framework\Intent\Predefined\MsgCmdIntent;
-use Commune\Chatbot\Framework\Routing\Router;
-use Commune\Chatbot\Framework\Session\Session;
-use Commune\Chatbot\Framework\Support\ChatbotUtils;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Input\StringInput;
 
 class HostPipe implements ChatbotPipe
 {
     /**
-     * @var ChatbotApp
+     * @var HostDriver
      */
-    protected $app;
-
-    protected $router;
-
-    protected $sessionDriver;
+    protected $driver;
 
     /**
      * @var LoggerInterface
@@ -38,26 +26,22 @@ class HostPipe implements ChatbotPipe
     protected $log;
 
     public function __construct(
-        ChatbotApp $app,
-        Router $router,
-        SessionDriver $driver,
+        HostDriver $driver,
         LoggerInterface $log
     )
     {
-        $this->app = $app;
-        $this->router = $router;
-        $this->sessionDriver = $driver;
         $this->log = $log;
+        $this->driver = $driver;
     }
 
 
     public function handle(Conversation $conversation, \Closure $next) : Conversation
     {
-        $session = $this->makeSession($conversation);
+        $session = $this->driver->getSession($conversation);
 
         try {
 
-            $director = new Director($this->app, $session, $this->router);
+            $director = $this->driver->getDirector($session);
 
             $conversation = $director->dispatch();
 
@@ -79,22 +63,6 @@ class HostPipe implements ChatbotPipe
         }
     }
 
-
-    protected function router() : Router
-    {
-        return $this->app->make(Router::class);
-    }
-
-    protected function makeSession(Conversation $conversation) : Session
-    {
-        return new Session(
-            $this->app,
-            $this->sessionDriver,
-            $this->log,
-            $this->router,
-            $conversation
-        );
-    }
 
 
 

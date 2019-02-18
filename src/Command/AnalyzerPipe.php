@@ -5,6 +5,8 @@ namespace Commune\Chatbot\Command;
 
 use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Framework\Conversation\Conversation;
+use Commune\Chatbot\Framework\Intent\Predefined\MsgCmdIntent;
+use Commune\Chatbot\Framework\Message\Message;
 
 class AnalyzerPipe extends CommandPipe
 {
@@ -29,4 +31,8 @@ class AnalyzerPipe extends CommandPipe
         return parent::handle($conversation, $next);
     }
 
+    protected function parseCommand(string $commandText, Message $message)
+    {
+        return new MsgCmdIntent($commandText, $message);
+    }
 }

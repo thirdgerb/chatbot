@@ -8,6 +8,8 @@
 namespace Commune\Chatbot\Command;
 
 use Commune\Chatbot\Contracts\ChatbotApp;
+use Commune\Chatbot\Framework\Intent\Predefined\MsgCmdIntent;
+use Commune\Chatbot\Framework\Message\Message;
 
 
 class UserCommandPipe extends CommandPipe
@@ -23,5 +25,11 @@ class UserCommandPipe extends CommandPipe
     {
         return $this->app->getConfig(ChatbotApp::RUNTIME_USER_COMMAND_MARK, '/');
     }
+
+    protected function parseCommand(string $commandText, Message $message)
+    {
+        return new MsgCmdIntent($commandText, $message);
+    }
+
 
 }

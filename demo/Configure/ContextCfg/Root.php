@@ -85,7 +85,9 @@ class Root extends ContextCfg
                         ['testing']
                 );
 
-        $route->hearsCommand('test:cmd {arg1}')
+        $route->hearsCommand('test:cmd 
+            {arg1=123 : 用来测试的参数arg1}
+            ')
             ->action()
             ->call(function(Context $context, Intent $intent) {
                 $context->info('命中命令: test:cmd');

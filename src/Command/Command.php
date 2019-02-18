@@ -7,16 +7,11 @@
 
 namespace Commune\Chatbot\Command;
 
-
-use Commune\Chatbot\Contracts\ChatbotApp;
-use Commune\Chatbot\Contracts\SessionDriver;
 use Commune\Chatbot\Framework\Conversation\Conversation;
-use Commune\Chatbot\Framework\Directing\Director;
+use Commune\Chatbot\Framework\HostDriver;
 use Commune\Chatbot\Framework\Intent\IntentDefinition;
 use Commune\Chatbot\Framework\Intent\Predefined\MsgCmdIntent;
 use Commune\Chatbot\Framework\Message\Text;
-use Commune\Chatbot\Framework\Routing\Router;
-use Commune\Chatbot\Framework\Session\Session;
 use Illuminate\Console\Parser;
 use Psr\Log\LoggerInterface;
 
@@ -41,36 +36,22 @@ abstract class Command
     protected $options = [];
 
     /**
-     * @var ChatbotApp
-     */
-    protected $app;
-
-    /**
      * @var LoggerInterface
      */
     protected $log;
 
     /**
-     * @var Router
+     * @var HostDriver
      */
-    protected $router;
-
-    /**
-     * @var SessionDriver
-     */
-    protected $sessionDriver;
+    protected $hostDriver;
 
     public function __construct(
-        ChatbotApp $app,
-        SessionDriver $sessionDriver,
-        Router $router,
+        HostDriver $driver,
         LoggerInterface $log
     )
     {
-        $this->app = $app;
         $this->log = $log;
-        $this->router = $router;
-        $this->sessionDriver = $sessionDriver;
+        $this->hostDriver = $driver;
         $this->definition = new IntentDefinition();
         [$name, $arguments, $options] = Parser::parse($this->signature);
         $this->name = $name;
@@ -101,24 +82,4 @@ abstract class Command
         return $this->handleIntent($intent, $conversation);
     }
 
-    protected function getSession(Conversation $conversation)
-    {
-        return new Session(
-            $this->app,
-            $this->sessionDriver,
-            $this->log,
-            $this->router,
-            $conversation
-        );
-    }
-
-    protected function getDirector(Session $session)
-    {
-        return new Director(
-            $this->app,
-            $session,
-            $this->router
-        );
-
-    }
 }

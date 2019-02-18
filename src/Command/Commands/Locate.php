@@ -26,7 +26,7 @@ class Locate extends Command
 
     protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
     {
-        $session = $this->getSession($conversation);
+        $session = $this->hostDriver->getSession($conversation);
 
         $location = $session->getHistory()->current();
         $conversation->reply(new Text(

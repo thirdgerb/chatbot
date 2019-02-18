@@ -11,6 +11,7 @@ namespace Commune\Chatbot\Framework\Bootstrap;
 use Commune\Chatbot\Command\Command;
 use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\HostDriver;
 use Commune\Chatbot\Framework\Routing\Router;
 
 class PreloadContextConfig
@@ -36,9 +37,11 @@ class PreloadContextConfig
      */
     public function bootstrap(ChatbotApp $app)
     {
+        // 必要, 方便各处获取 host 相关的组件.
+        $app->getContainer()->singleton(HostDriver::class);
+
         $this->preloadContexts($app);
         $this->preloadCommands($app);
-
     }
 
     /**

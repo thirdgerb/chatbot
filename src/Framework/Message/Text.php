@@ -38,4 +38,11 @@ class Text extends Message
     {
         return $this->text;
     }
+
+    public function getData(): array
+    {
+        return [
+            'text' => $this->getText()
+        ];
+    }
 }

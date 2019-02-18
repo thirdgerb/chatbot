@@ -9,7 +9,9 @@ namespace Commune\Chatbot\Framework\Intent;
 
 
 use Commune\Chatbot\Framework\Message\Message;
+use Commune\Chatbot\Framework\Support\ChatbotUtils;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,7 +22,7 @@ use Symfony\Component\Console\Input\InputOption;
  * @see \Symfony\Component\Console\Input
  * @package Commune\Chatbot\Framework\Intent
  */
-abstract class Intent implements \ArrayAccess, Arrayable
+abstract class Intent implements \ArrayAccess, Arrayable, \JsonSerializable, Jsonable
 {
 
     /**
@@ -155,11 +157,6 @@ abstract class Intent implements \ArrayAccess, Arrayable
         //unset($this->entities[$offset]);
     }
 
-    public function toArray()
-    {
-        return $this->entities->toArray();
-    }
-
     public function getEntities() : array
     {
         return $this->entities->toArray();
@@ -217,6 +214,29 @@ abstract class Intent implements \ArrayAccess, Arrayable
         return $result;
     }
 
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'message' => $this->getMessage()->toArray(),
+            'entities' => $this->getEntities()
+        ];
+    }
+
+    public function toJson($option = ChatbotUtils::JSON_OPTION) : string
+    {
+        return json_encode($this->toArray(), $option);
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->toJson();
+    }
+
+    public function __toString()
+    {
+        return $this->toJson();
+    }
 
 
     public function __sleep()

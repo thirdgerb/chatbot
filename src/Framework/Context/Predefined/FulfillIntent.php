@@ -79,14 +79,14 @@ class FulfillIntent extends ContextCfg
                         return $context->confirm(
                             'questionFallback',
                             $params[0] ?? '请确认'.$field,
-                            $params[2] ?? 'yes'
+                            $params[1] ?? 'yes'
                         );
                     case 'ask' :
                     default :
                         $q = $context->ask(
                             'questionFallback',
                             $params[0] ?? "请输入$field",
-                            $params[2] ?? ''
+                            $params[1] ?? ''
                         );
                         return $q;
 

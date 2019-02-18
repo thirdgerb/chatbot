@@ -21,7 +21,7 @@ class Repeat extends Command
 
     protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
     {
-        $director = $this->getDirector($session = $this->getSession($conversation));
+        $director = $this->hostDriver->getDirector($session = $this->hostDriver->getSession($conversation));
         return $director->repeat();
     }
 

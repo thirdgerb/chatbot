@@ -20,7 +20,7 @@ class Cancel extends Command
 
     protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
     {
-        $director = $this->getDirector($this->getSession($conversation));
+        $director = $this->hostDriver->getDirector($this->hostDriver->getSession($conversation));
         return $director->cancel();
     }
 

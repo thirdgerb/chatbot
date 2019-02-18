@@ -21,7 +21,7 @@ class Where extends Command
 
     protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
     {
-        $context = $this->getDirector($this->getSession($conversation))->fetchCurrentContext();
+        $context = $this->hostDriver->getDirector($this->hostDriver->getSession($conversation))->fetchCurrentContext();
         $conversation->reply(new Text($context->getDescription()));
         return $conversation;
     }

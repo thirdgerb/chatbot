@@ -12,7 +12,7 @@ use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Framework\ChatbotPipe;
 use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\Framework\Intent\Predefined\MsgCmdIntent;
+use Commune\Chatbot\Framework\Message\Message;
 use Commune\Chatbot\Framework\Support\ChatbotUtils;
 
 abstract class CommandPipe implements ChatbotPipe
@@ -55,6 +55,7 @@ abstract class CommandPipe implements ChatbotPipe
 
     abstract protected function getCommandMark() : string;
 
+    abstract protected function parseCommand(string $commandText, Message $message);
 
     public function handle(Conversation $conversation, \Closure $next): Conversation
     {
@@ -65,7 +66,8 @@ abstract class CommandPipe implements ChatbotPipe
             return $next($conversation);
         }
 
-        $messageCommand = new MsgCmdIntent($commandText, $conversation->getMessage());
+        $messageCommand = $this->parseCommand($commandText, $conversation->getMessage());
+
         if ($this->nextWithCommand) {
             $conversation->setCommandIntent($messageCommand);
         }
@@ -84,8 +86,7 @@ abstract class CommandPipe implements ChatbotPipe
         }
 
 
-        $returnr = $next($conversation);
-        return $returnr;
+        return $next($conversation);
     }
 
 

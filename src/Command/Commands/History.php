@@ -21,7 +21,7 @@ class History extends Command
 
     protected function handleIntent(MsgCmdIntent $intent, Conversation $conversation): Conversation
     {
-        $session = $this->getSession($conversation);
+        $session = $this->hostDriver->getSession($conversation);
 
         $history = $session->getHistory();
 

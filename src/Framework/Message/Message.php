@@ -9,8 +9,6 @@ namespace Commune\Chatbot\Framework\Message;
 
 use Commune\Chatbot\Framework\Support\ArrayAbleToJson;
 use Commune\Chatbot\Framework\Support\ChatbotUtils;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class Message implements \JsonSerializable
@@ -44,11 +42,13 @@ abstract class Message implements \JsonSerializable
 
     abstract public function getText() : string;
 
+    abstract public function getData() : array;
+
     public function toArray() : array
     {
         return [
             'type' => static::class,
-            'text' => $this->getTrimText(),
+            'data' => $this->getData(),
             'verbose' => $this->getVerbosity()
         ];
     }
