@@ -10,7 +10,6 @@ namespace Commune\Chatbot\Framework\Chat;
 use Commune\Chatbot\Framework\ChatbotPipe;
 use Commune\Chatbot\Contracts\ChatDriver;
 use Commune\Chatbot\Contracts\IdGenerator;
-use Commune\Chatbot\Framework\Exceptions\ChatbotException;
 use Psr\Log\LoggerInterface;
 use Commune\Chatbot\Framework\Exceptions\ChatbotPipeException;
 use Commune\Chatbot\Framework\Exceptions\TooBusyException;

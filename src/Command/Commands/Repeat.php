@@ -22,7 +22,7 @@ class Repeat extends Command
     protected function handleIntent(MsgCmdIntent $intent,\Closure $next,  Conversation $conversation): Conversation
     {
         $director = $this->hostDriver->getDirector($session = $this->hostDriver->getSession($conversation));
-        return $director->repeat();
+        return $director->restart();
     }
 
 

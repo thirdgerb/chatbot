@@ -81,6 +81,14 @@ class Redirect extends Runner
 
     /*----------- redirect -----------*/
 
+    public function restart()
+    {
+        $this->setRedirect(function(Director $director, Context $context, Intent $intent) use ($contextName, $props){
+            return $director->restart();
+        });
+        return $this;
+    }
+
     public function to(string $contextName, array $props = []) : self
     {
         $this->setRedirect(function(Director $director, Context $context, Intent $intent) use ($contextName, $props){
@@ -146,7 +154,7 @@ class Redirect extends Runner
     {
         $this->setRedirect(function(Director $director, Context $context, Intent $intent) use ($factory) {
             $location = $factory($context, $intent);
-            return $director->to($location);
+            return $director->handleLocation($location);
         });
         return $this;
     }
@@ -162,7 +170,7 @@ class Redirect extends Runner
                 $question = $context->format($question, $fields);
             }
             $location = $context->ask($callbackRoute, $question, $default);
-            return $director->to($location);
+            return $director->handleLocation($location);
         });
         return $this;
     }
@@ -178,7 +186,7 @@ class Redirect extends Runner
                 $question = $context->format($question, $fields);
             }
             $location = $context->confirm($callbackRoute, $question, $default);
-            return $director->to($location);
+            return $director->handleLocation($location);
         });
         return $this;
     }
@@ -195,7 +203,7 @@ class Redirect extends Runner
                 $question = $context->format($question, $fields);
             }
             $location = $context->choose($callbackRoute, $question, $choices, $default);
-            return $director->to($location);
+            return $director->handleLocation($location);
         });
         return $this;
     }

@@ -201,9 +201,12 @@ class Director
         return $this->startDialog($to);
     }
 
-    public function repeat() : Conversation
+    public function restart() : Conversation
     {
         $current = $this->history->getCurrent();
+        // 按语境scope 更新当前内容. 可.
+        $current->setContextId(null);
+        $this->history->setCurrent($current);
         return $this->startDialog($current);
     }
 

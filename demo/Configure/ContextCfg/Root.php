@@ -9,8 +9,10 @@ namespace Commune\Chatbot\Demo\Configure\ContextCfg;
 
 use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Context\ContextCfg;
+use Commune\Chatbot\Framework\Conversation\Conversation;
 use Commune\Chatbot\Framework\Conversation\Scope;
 use Commune\Chatbot\Framework\Intent\Intent;
+use Commune\Chatbot\Framework\Message\Text;
 use Commune\Chatbot\Framework\Routing\DialogRoute;
 
 class Root extends ContextCfg
@@ -46,6 +48,10 @@ class Root extends ContextCfg
                     ->to(Test::class);
 
         $route->hears('test question')
+            ->middleware(function(Conversation $conversation, \Closure $next){
+                $conversation->reply(new Text('hit middleware'));
+                return $next($conversation);
+            })
             ->action()
                 ->call(function(Context $context, Intent $intent){
                     return $context->ask('sayAnswer', '测试回调逻辑, 请输入回答');
