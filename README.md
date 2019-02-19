@@ -37,9 +37,15 @@
 
 刚想到的, 记录一下.
 
--   改动
+-   改动 : Director 需要大规模的优化:
     -   考虑表单提交的场景, intended 应该能通过 /back /forward 来移动, 并重新提交.
-    -   如果intended 要可以移动, 那需要修改guest和intend 机制.
+    -   优化所有重定向. 现在Director + history + Context + location 四套机制互相实现, 有些累赘. 不好理解. 
+    -   guest 和 intended 不是比较好的文本, 常常很费解. 
+    -   连续 intended 的backward 和 forward 需要重做.  
+    -   location 和 context 要相互作用, 保证contextId 一致, 应该修改api 更加面向对象. 
+    -   要设计一套流畅的流程管控.  可以轻易实现表单式输入. 
+    -   实现Redirect 的 through 机制, 可以快速定义管道机制.  
+    -   定义特殊的 context, 降低开发成本.
     -   cancel 应该起到跳出当前对话的作用, 而不是和 backward 一样.
     -   cancel 应该是 DialogRoute 的默认节点, 允许进行定义, 比如跳转.
     -   fail 也应该是 DialogRoute 的默认节点.
@@ -55,6 +61,7 @@
     -   问答小程序. 通用的问答程序, 可在线配置答案, 通过选项式的交互界面来挑选结果. 希望这种方式速度更快.
     -   问卷调查. 自动开始提问, 回答则是问题的答案. 最后确认可提交.
     -   流程管控.  把对话定义成固定的流程, 用户按流程的约束来输入.... 作为最核心的一种应用形式.
+    -   接口调试工具.
     -   接口调试工具.
 
 [开发计划](docs/plan.md)
