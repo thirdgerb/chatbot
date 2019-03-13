@@ -160,6 +160,10 @@ class DialogRoute
         $factory = new IntentFactory();
         $factory->setCommand($signature);
         $intentRoute = new IntentRoute($this->app, $this->router, $factory->getCommandName(), $description, $factory);
+
+        //默认可以单词命中signature
+        $intentRoute->exactly($factory->getCommandName());
+
         return $this->addIntentRoute($intentRoute);
     }
 

@@ -53,7 +53,11 @@ class Choice extends Question
 
         if (is_numeric($text) && array_key_exists($text, $choices)) {
             $choice = $choices[$text];
+
         } elseif(trim($text) === '') {
+            $choice = $this->defaultChoice($context);
+
+        } else {
 
             foreach($choices as $index => $val) {
                 if (Str::startsWith($val, $text)) {

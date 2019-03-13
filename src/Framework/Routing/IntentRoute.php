@@ -207,7 +207,7 @@ class IntentRoute
 
     public function redirect($condition = null) : Redirect
     {
-        return $this->action->redirect($condition);
+        return $this->action()->redirect($condition);
     }
 
 

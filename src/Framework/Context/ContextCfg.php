@@ -38,6 +38,7 @@ abstract class ContextCfg
         //'valueName',
     ];
 
+    //todo 不要放在这里, 反而不好写后续代码
     const CREATING = 'creating';
     const WAKING = 'waking';
     const DEPENDING = 'depending';
@@ -85,7 +86,7 @@ abstract class ContextCfg
         return new ArrayIntent(
             $context->getId(),
             $message,
-            $context->getData()
+            $context->toEntities()
         );
     }
 
@@ -107,6 +108,10 @@ abstract class ContextCfg
         return [];
     }
 
+    public function fetchEntities(Context $context)
+    {
+        return $context->getData();
+    }
 
 
     /*------ schema ------*/
@@ -133,7 +138,7 @@ abstract class ContextCfg
 
     public function mutatorSchemaExists(string $name) : bool
     {
-        return array_key_exists($name, static::MUTATOR);
+        return in_array($name, static::MUTATOR);
     }
 
     public function dependsSchemaExists(string $name) : bool

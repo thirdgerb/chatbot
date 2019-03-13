@@ -25,7 +25,7 @@ class Where extends Command
 
         $conversation->reply(new Text(
             'at '
-                . get_class($context)
+                . $context->getName()
                 . '; desc: ' . $context->getDescription()
             )
         );

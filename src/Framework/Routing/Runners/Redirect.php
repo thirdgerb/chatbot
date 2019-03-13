@@ -83,7 +83,7 @@ class Redirect extends Runner
 
     public function restart()
     {
-        $this->setRedirect(function(Director $director, Context $context, Intent $intent) use ($contextName, $props){
+        $this->setRedirect(function(Director $director, Context $context, Intent $intent) {
             return $director->restart();
         });
         return $this;
@@ -175,7 +175,7 @@ class Redirect extends Runner
         return $this;
     }
 
-    public function confirm(string $callbackRoute, string $question, string $default = null, array $fields)
+    public function confirm(string $callbackRoute, string $question, string $default = null, array $fields = [])
     {
         $this->setRedirect(function (
             Director $director,
@@ -192,7 +192,7 @@ class Redirect extends Runner
     }
 
 
-    public function choose(string $callbackRoute, string $question, array $choices, int $default = 0, array $fields)
+    public function choose(string $callbackRoute, string $question, array $choices, int $default = 0, array $fields = [])
     {
         $this->setRedirect(function (
             Director $director,

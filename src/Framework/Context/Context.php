@@ -339,6 +339,11 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
         return $this->config->toString($this);
     }
 
+    public function toEntities() : array
+    {
+        return $this->config->fetchEntities($this);
+    }
+
     /**
      * 转义为Intent, 方便回调处理
      * @return Intent

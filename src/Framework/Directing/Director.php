@@ -336,9 +336,14 @@ class Director
 
     protected function debug()
     {
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3);
         $func = $backtrace[2]['function'];
-        $this->log->debug('Host Director run ' . $func, $backtrace[2]);
+        $location = $backtrace[2]['args'][0] ?? null;
+        $lo = '';
+        if (isset($location) && $location instanceof Location) {
+            $lo = $location->toJson(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        }
+        $this->log->debug('Host Director run ' . $func . '; location : ' . $lo);
     }
 
     protected function fireContextEvent(Context $context, string $event)

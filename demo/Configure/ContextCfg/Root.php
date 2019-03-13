@@ -7,6 +7,7 @@
 
 namespace Commune\Chatbot\Demo\Configure\ContextCfg;
 
+use Commune\Chatbot\Demo\Configure\ContextCfg\Cases\Welcome;
 use Commune\Chatbot\Framework\Context\Context;
 use Commune\Chatbot\Framework\Context\ContextCfg;
 use Commune\Chatbot\Framework\Conversation\Conversation;
@@ -30,6 +31,11 @@ class Root extends ContextCfg
             ->call(function(Context $context, Intent $intent){
                 $context->info('收到输入:' .$intent->getMessage()->getText());
             });
+
+        $route->hears('cases')
+            ->exactly('c')
+            ->redirect()
+                ->to(Welcome::class);
 
         $route->hears('multi')
             ->action()
