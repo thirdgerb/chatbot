@@ -11,9 +11,9 @@ namespace Commune\Chatbot\Framework\Support;
 trait ArrayAbleToJson
 {
 
-    public function toJson(int $option = null) : string
+    public function toJson(int $option = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) : string
     {
-        $option = $option ?? JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+        $option = $option ?? JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT;
         return json_encode($this->toArray(), $option);
     }
 

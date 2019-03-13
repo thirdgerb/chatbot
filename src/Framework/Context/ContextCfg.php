@@ -153,7 +153,7 @@ abstract class ContextCfg
 
     public function getDescription(Context $context) : string
     {
-        return 'at ' . static::DESCRIPTION;
+        return static::DESCRIPTION;
     }
 
     /*------ getter ------*/

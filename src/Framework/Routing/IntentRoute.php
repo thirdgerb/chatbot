@@ -148,9 +148,9 @@ class IntentRoute
 
     /*------- 重定向 -------*/
 
-    public function middleware(string ...$middleware) : self
+    public function middleware($middleware) : self
     {
-        $this->middleware = array_merge($this->middleware, $middleware);
+        $this->middleware[] = $middleware;
         return $this;
     }
 

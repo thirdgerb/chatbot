@@ -8,8 +8,13 @@
 namespace Commune\Chatbot\Framework\Character;
 
 
-class User
+use Commune\Chatbot\Framework\Support\ArrayAbleToJson;
+use Illuminate\Contracts\Support\Arrayable;
+
+class User implements Arrayable, \JsonSerializable
 {
+    use ArrayAbleToJson;
+
     /**
      * @var string
      */
@@ -122,12 +127,6 @@ class User
             'platform' => $this->platform->toArray(),
             'origin' => $this->origin,
         ];
-    }
-
-
-    public function toJson() : string
-    {
-        return json_encode($this->toArray(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
 }

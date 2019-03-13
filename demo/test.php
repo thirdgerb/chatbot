@@ -6,7 +6,7 @@ $app = require __DIR__ . '/autoload.php';
 $loop = \React\EventLoop\Factory::create();
 $stdio = new \Clue\React\Stdio\Stdio($loop);
 
-$stdio->getReadline()->setPrompt('Input > ');
+$stdio->getReadline()->setPrompt('> ');
 
 $app->singleton(\Commune\Chatbot\Contracts\ServerDriver::class, function() use ($stdio){
     return new \Commune\Chatbot\Demo\Impl\ServerDriverDemo($stdio);

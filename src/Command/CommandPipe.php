@@ -38,13 +38,25 @@ abstract class CommandPipe implements ChatbotPipe
     {
         $commands = $this->getCommandConfig();
 
-        foreach ($commands as $commandName) {
+        foreach ($commands as $key => $commandName) {
+
+            if (is_int($key)) {
+                $name = null;
+            } else {
+                $name = $key;
+            }
 
             $command = $this->app->make($commandName);
             if (!$command instanceof Command) {
                 //todo
                 throw new ConfigureException();
             }
+
+            // 重置命令名称
+            if (isset($name)) {
+                $command->resetName($name);
+            }
+
             $this->commands[] = $command;
         }
 

@@ -8,21 +8,14 @@
 namespace Commune\Chatbot\Demo\Impl;
 
 
-use Commune\Chatbot\Command\AnalyzerPipe;
-use Commune\Chatbot\Command\Commands;
-use Commune\Chatbot\Command\UserCommandPipe;
 use Commune\Chatbot\Contracts\ChatbotApp;
 use Commune\Chatbot\Contracts\ExceptionHandler;
 use Commune\Chatbot\Contracts\ServerDriver;
-use Commune\Chatbot\Framework\Bootstrap\PreloadContextConfig;
 use Commune\Chatbot\Framework\Character\User;
-use Commune\Chatbot\Framework\Chat\ChatPipe;
 use Commune\Chatbot\Framework\Context\Context;
-use Commune\Chatbot\Framework\HostPipe;
 use Commune\Chatbot\Framework\Intent\Intent;
 use Commune\Chatbot\Framework\Routing\IntentRoute;
 use Commune\Chatbot\Framework\Routing\Router;
-use Commune\Chatbot\Demo\Configure\ContextCfg;
 use Illuminate\Support\Arr;
 use Illuminate\Contracts\Container\Container;
 
@@ -51,55 +44,8 @@ class ChatbotAppDemo implements ChatbotApp
 
     public function getChatbotConfig(): array
     {
+        return include __DIR__ . '/../config.php';
 
-        return [
-            'runtime' => [
-                'direct_max_ticks' => 30,
-                'bootstrappers' => [
-                    PreloadContextConfig::class,
-                ],
-                'pipes' => [
-                    ChatPipe::class,
-                    AnalyzerPipe::class,
-                    UserCommandPipe::class,
-                    HostPipe::class
-                ],
-                'analyzer_mark' => '#',
-                'analyzers' => [
-                    Commands\Locate::class,
-                    Commands\ShowContext::class,
-                    Commands\History::class,
-                    Commands\Scoping::class,
-                ],
-                'command_mark' => '/',
-                'commands' => [
-                    Commands\Quit::class,
-                    Commands\WhoAmI::class,
-                    Commands\Where::class,
-                    Commands\Backward::class,
-                    Commands\Forward::class,
-                    Commands\Cancel::class,
-                    Commands\Repeat::class,
-                ],
-            ],
-
-
-            'contexts' => [
-                'root' => ContextCfg\Root::class,
-                'preload' => [
-                    ContextCfg\Root::class,
-                    ContextCfg\Test::class
-                ]
-            ],
-
-            'messages' => [
-                'miss_match_message' => 'miss match',
-                'exceptions' => [
-                    0 => 'unexpected exception occur',
-                ],
-                'ask_intent_argument' => '请输入{key} ({desc})'
-            ],
-        ];
     }
 
     public function isSupervisor(User $sender): bool

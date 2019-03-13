@@ -95,7 +95,7 @@ class Context implements Talkable,\ArrayAccess, \JsonSerializable
 
     public function getDescription() : string
     {
-        return $this->config->getDescription($this) ? : $this->data->getContextName();
+        return $this->config->getDescription($this);
     }
 
 

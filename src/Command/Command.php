@@ -82,4 +82,9 @@ abstract class Command
         return $this->handleIntent($intent, $next, $conversation);
     }
 
+    public function resetName(string $name)
+    {
+        $this->name = $name;
+    }
+
 }

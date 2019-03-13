@@ -1,6 +1,15 @@
 
 ## 更新记录
 
+
+### 20190313 v1 更新
+
+-   将config从demo中移到专门的配置文件.
+-   优化了where命令.
+-   允许 command 设置别名.
+-   user 类增加interface
+-   修复了intentRoute middleware 的bug
+
 ### 20190219 v1 更新
 
 -   增加了restart 策略, 更新当前context. 但不会刷新数据. 要刷新数据目前考虑让用户手动.

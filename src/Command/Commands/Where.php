@@ -22,7 +22,13 @@ class Where extends Command
     protected function handleIntent(MsgCmdIntent $intent,\Closure $next,  Conversation $conversation): Conversation
     {
         $context = $this->hostDriver->getDirector($this->hostDriver->getSession($conversation))->fetchCurrentContext();
-        $conversation->reply(new Text($context->getDescription()));
+
+        $conversation->reply(new Text(
+            'at '
+                . get_class($context)
+                . '; desc: ' . $context->getDescription()
+            )
+        );
         return $conversation;
     }
 

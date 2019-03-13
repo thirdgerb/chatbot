@@ -47,7 +47,7 @@ class Root extends ContextCfg
                 ->redirect()
                     ->to(Test::class);
 
-        $route->hears('test question')
+        $route->hears('test question through middleware')
             ->middleware(function(Conversation $conversation, \Closure $next){
                 $conversation->reply(new Text('hit middleware'));
                 return $next($conversation);
