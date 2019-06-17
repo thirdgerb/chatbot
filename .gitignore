@@ -2,4 +2,6 @@
 .idea/
 composer.lock
 vendor/
+exclude/
 tmp.log
+test.php

@@ -1,0 +1,167 @@
+<?php
+
+namespace Commune\Chatbot\Framework\Utils;
+
+use Commune\Support\RegexPatterns;
+use Illuminate\Support\Str;
+
+/**
+ * 用于chatbot 命令管理的函数.
+ */
+class CommandUtils
+{
+    // 命令的长度
+    const VALID_COMMAND_LEN = 30;
+
+    const PRETTY_JSON = JSON_UNESCAPED_UNICODE
+    | JSON_UNESCAPED_SLASHES
+    | JSON_PRETTY_PRINT;
+
+    protected static $userCommandMark = '#';
+
+    protected static $validCommandLen = 30;
+
+    /**
+     * @param string $mark
+     */
+    public static function setUserCommandMark(string $mark) : void
+    {
+        self::$userCommandMark = $mark;
+    }
+
+    /**
+     * 修改合法命令限定的长度.
+     *
+     * @param int $length
+     */
+    public static function setValidCommandLen(int $length) : void
+    {
+        // 永远不要相信程序员会干什么蠢事...
+        if ($length > 0) {
+            self::$validCommandLen = $length;
+        }
+    }
+
+    /**
+     * 获取一个没有mark 的command str, 通常用于解析命令参数.
+     * 这是因为定义一个命令时, 名字是固定的, 但标记为命令的command mark 可能不一样.
+     *
+     * 比如:
+     *
+     * /help
+     * #help
+     * .help
+     *
+     * 不应该在定义命令的时候把这个限制死了.
+     *
+     * @param string $text
+     * @param string $commandMark
+     * @return null|string
+     */
+    public static function getCommandStr(string $text, string $commandMark = null) : ? string
+    {
+        $commandMark = $commandMark ?? self::$userCommandMark;
+
+        $hasMark = strlen($commandMark) === 0
+            || mb_strpos($text, $commandMark) === 0;
+
+        // 没有mark 的一定不是字符串.
+        if (!$hasMark) {
+            return null;
+        }
+
+        if (
+            mb_strpos($text, $commandMark) === 0
+            && 0 !== mb_strpos($text, "$commandMark$commandMark")
+        ) {
+            $markLen = mb_strlen($commandMark);
+            $text = mb_substr($text, $markLen);
+        }
+
+        return static::sbc2dbc($text);
+    }
+
+
+    /**
+     * 这个方法可用用来判断, 一个字符串是否是一个合法的命令.
+     * 如果返回值是有命令的 name, 则是合法的. 如果返回null, 说明不是一个命令字符串.
+     *
+     * @param string $commandStr
+     * @return null|string
+     */
+    public static function getCommandNameStr(string $commandStr) : ? string
+    {
+        // 决定终点
+        $spacePos = mb_strpos($commandStr, ' ');
+        if ($spacePos !== false && $spacePos > 0) {
+            $commandStr = mb_substr($commandStr, 0, $spacePos);
+        }
+
+        // 判断
+        if (self::validateCommandName($commandStr)) {
+            return $commandStr;
+        }
+
+        return null;
+    }
+
+    /**
+     * 判断一个字符串是否匹配一个命令名称.
+     *
+     * @param string $text
+     * @param string $commandName
+     * @return bool
+     */
+    public static function matchCommandName(string $text, string $commandName) : bool
+    {
+        return !empty($text)
+            && (
+                $text === $commandName
+                || Str::startsWith($text, "$commandName ")
+            );
+    }
+
+    /**
+     * 判断命令名是否合法.
+     *
+     * @param string $suggestCommand
+     * @return bool
+     */
+    public static function validateCommandName(string $suggestCommand) : bool
+    {
+        // 只允许中文 + 英文 + 数字 作为命令.
+        $validChars = preg_match(
+            $p = '/^'.RegexPatterns::CH_EN_NUM_CHAR .'+$/u',
+            $suggestCommand
+        );
+
+        return $validChars
+            && mb_strlen($suggestCommand) < self::VALID_COMMAND_LEN;
+    }
+
+    /**
+     * 把全角符号做一些替换.
+     * @see https://www.bbsmax.com/A/Ae5Ry6bAJQ/
+     * @param string $str
+     * @return string
+     */
+    public static function sbc2dbc(string $str) : string
+    {
+        $arr = array(
+            '０'=>'0', '１'=>'1', '２'=>'2', '３'=>'3', '４'=>'4','５'=>'5', '６'=>'6', '７'=>'7', '８'=>'8', '９'=>'9',
+            'Ａ'=>'A', 'Ｂ'=>'B', 'Ｃ'=>'C', 'Ｄ'=>'D', 'Ｅ'=>'E','Ｆ'=>'F', 'Ｇ'=>'G', 'Ｈ'=>'H', 'Ｉ'=>'I', 'Ｊ'=>'J',
+            'Ｋ'=>'K', 'Ｌ'=>'L', 'Ｍ'=>'M', 'Ｎ'=>'N', 'Ｏ'=>'O','Ｐ'=>'P', 'Ｑ'=>'Q', 'Ｒ'=>'R', 'Ｓ'=>'S', 'Ｔ'=>'T',
+            'Ｕ'=>'U', 'Ｖ'=>'V', 'Ｗ'=>'W', 'Ｘ'=>'X', 'Ｙ'=>'Y','Ｚ'=>'Z', 'ａ'=>'a', 'ｂ'=>'b', 'ｃ'=>'c', 'ｄ'=>'d',
+            'ｅ'=>'e', 'ｆ'=>'f', 'ｇ'=>'g', 'ｈ'=>'h', 'ｉ'=>'i','ｊ'=>'j', 'ｋ'=>'k', 'ｌ'=>'l', 'ｍ'=>'m', 'ｎ'=>'n',
+            'ｏ'=>'o', 'ｐ'=>'p', 'ｑ'=>'q', 'ｒ'=>'r', 'ｓ'=>'s', 'ｔ'=>'t', 'ｕ'=>'u', 'ｖ'=>'v', 'ｗ'=>'w', 'ｘ'=>'x',
+            'ｙ'=>'y', 'ｚ'=>'z',
+            '（'=>'(', '）'=>')', '〔'=>'(', '〕'=>')', '【'=>'[','】'=>']', '〖'=>'[', '〗'=>']', '“'=>'"', '”'=>'"',
+            '‘'=>'\'', '｛'=>'{', '｝'=>'}', '《'=>'<','》'=>'>','％'=>'%', '＋'=>'+', '—'=>'-', '－'=>'-',
+            '～'=>'~','：'=>':', '。'=>'.', '、'=>',', '，'=>',', '；'=>';', '？'=>'?', '！'=>'!', '…'=>'-',
+            '‖'=>'|', '｜'=>'|', '〃'=>'"','　'=>' ', '×'=>'*', '￣'=>'~', '．'=>'.', '＊'=>'*',
+            '＆'=>'&','＜'=>'<', '＞'=>'>', '＄'=>'$', '＠'=>'@', '＾'=>'^', '＿'=>'_', '＂'=>'"', '￥'=>'$', '＝'=>'=',
+            '＼'=>'\\', '／'=>'/'
+        );
+        return strtr($str, $arr);
+    }
+}
