@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Platform\Swoole;
+namespace Commune\Chatbot\App\Platform\SwooleConsole;
 
 
 use Commune\Chatbot\App\Messages\Text;

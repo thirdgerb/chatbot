@@ -12,7 +12,7 @@ return [
         \Commune\Chatbot\App\Components\ConfigurableComponent::class,
     ],
     'reactorProviders' => [
-        \Commune\Chatbot\App\Platform\Swoole\SwooleServiceServiceProvider::class,
+        \Commune\Chatbot\App\Platform\SwooleConsole\SwooleServiceServiceProvider::class,
         \Commune\Chatbot\App\Drivers\Demo\ExpHandlerServiceProvider::class,
     ],
     'conversationProviders' => [
