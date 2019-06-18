@@ -75,9 +75,9 @@ interface Conversation extends ConversationContainer
 
     /**
      * 获取日志模块
-     * @return LoggerInterface
+     * @return ConversationLogger
      */
-    public function getLogger() : LoggerInterface;
+    public function getLogger() : ConversationLogger;
 
     /**
      * 当前请求的处理器

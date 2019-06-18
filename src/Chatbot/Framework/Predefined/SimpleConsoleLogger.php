@@ -8,10 +8,10 @@
 namespace Commune\Chatbot\Framework\Predefined;
 
 
-use Psr\Log\LoggerInterface;
+use Commune\Chatbot\Contracts\ConsoleLogger;
 use Psr\Log\LoggerTrait;
 
-class SimpleConsoleLogger implements LoggerInterface
+class SimpleConsoleLogger implements ConsoleLogger
 {
     use LoggerTrait;
 

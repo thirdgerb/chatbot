@@ -11,6 +11,7 @@ use Commune\Chatbot\Blueprint\Conversation\Ability;
 use Commune\Chatbot\Blueprint\Conversation\Chat;
 use Commune\Chatbot\Blueprint\Conversation\Conversation as Blueprint;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
+use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
 use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\Blueprint\Conversation\Monologue;
@@ -115,9 +116,9 @@ class ConversationImpl implements Blueprint
         $this->getEventDispatcher()->dispatch($event);
     }
 
-    public function getLogger(): LoggerInterface
+    public function getLogger(): ConversationLogger
     {
-        return $this->make(LoggerInterface::class);
+        return $this->make(ConversationLogger::class);
     }
 
     /*------ status ------*/

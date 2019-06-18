@@ -10,13 +10,16 @@ namespace Commune\Chatbot\Framework\Providers;
 
 use Commune\Chatbot\Blueprint\Conversation\Chat;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
+use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\Blueprint\Conversation\Monologue;
 use Commune\Chatbot\Blueprint\Conversation\User;
 use Commune\Chatbot\Framework\Conversation\ChatImpl;
+use Commune\Chatbot\Framework\Conversation\ConversationLoggerImpl;
 use Commune\Chatbot\Framework\Conversation\IncomingMessageImpl;
 use Commune\Chatbot\Framework\Conversation\MonologueImpl;
 use Commune\Chatbot\Framework\Conversation\UserImpl;
+use Psr\Log\LoggerInterface;
 
 class ConversationalServiceProvider extends BaseServiceProvider
 {
@@ -31,6 +34,7 @@ class ConversationalServiceProvider extends BaseServiceProvider
         $this->registerIncomingMessage();
         $this->registerUser();
         $this->registerChat();
+        $this->registerLogger();
     }
 
     protected function registerUser() : void
@@ -98,6 +102,17 @@ class ConversationalServiceProvider extends BaseServiceProvider
                 return $incomingMessage;
             }
         );
+
+    }
+
+    protected function registerLogger() : void
+    {
+        $this->app->singleton(ConversationLogger::class, function($app){
+            return new ConversationLoggerImpl(
+                $app[LoggerInterface::class],
+                $app
+            );
+        });
 
     }
 }

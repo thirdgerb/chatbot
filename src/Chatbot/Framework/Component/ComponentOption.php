@@ -41,7 +41,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
         $this->app->registerReactorService(
             new LoadPsr4SelfRegister(
                 $this->app->getReactorContainer(),
-                $this->app->getReactorLogger(),
+                $this->app->getConsoleLogger(),
                 $namespace,
                 $path
             )

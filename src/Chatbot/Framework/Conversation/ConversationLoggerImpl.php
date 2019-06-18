@@ -5,10 +5,11 @@ namespace Commune\Chatbot\Framework\Conversation;
 
 
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
+use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 
-class ConversationLogger implements LoggerInterface
+class ConversationLoggerImpl implements ConversationLogger
 {
     use LoggerTrait;
 

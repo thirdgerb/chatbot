@@ -14,7 +14,7 @@ class LoadComponents implements Bootstrapper
     public function bootstrap(Application $app): void
     {
         $config = $app->getConfig();
-        $logger = $app->getReactorLogger();
+        $logger = $app->getConsoleLogger();
 
         foreach ($config->components as $index => $name) {
 

@@ -30,7 +30,7 @@ class LoadConfiguration implements Bootstrapper
     public function bootstrap(Application $app) : void
     {
         $container = $app->getReactorContainer();
-        $logger = $app->getReactorLogger();
+        $logger = $app->getConsoleLogger();
 
         // chatbot config
         $chatbotConfig = $app->getConfig();

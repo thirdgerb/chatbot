@@ -10,11 +10,12 @@ use Commune\Chatbot\App\SessionPipe\NavigationPipe;
 use Commune\Support\Option;
 
 /**
- * @property-read int $maxBreakpointHistory
- * @property-read string $rootContextName
+ * @property-read int $maxBreakpointHistory 会话可追溯的历史记录个数.
+ * @property-read string $rootContextName 根语境的名字.
  * @property-read int $maxRedirectTimes
- * @property-read int $sessionExpireSeconds
- * @property-read string[] $sessionPipes
+ * @property-read int $sessionExpireSeconds 会话过期的时间.
+ * @property-read int $sessionCacheSeconds 会话数据缓存的时间. 仅仅起到缓存作用.
+ * @property-read string[] $sessionPipes  会话中的管道.
  * @property-read string[] $navigatorIntents
  * @property-read MemoryOption[] $memories
  */
@@ -28,9 +29,10 @@ class OOHostConfig extends Option
     {
         return [
             'rootContextName' => 'rootContextName',
-            'maxBreakpointHistory' => 10,
+            'maxBreakpointHistory' => 5,
             'maxRedirectTimes' => 20,
             'sessionExpireSeconds' => 3600,
+            'sessionCacheSeconds' => 60,
             'sessionPipes' => [
                 UserCommandsPipe::class,
                 AnalyserPipe::class,

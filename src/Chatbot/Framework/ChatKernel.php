@@ -94,7 +94,7 @@ class ChatKernel implements Kernel
         // 理论上不出现任何异常.
         } catch (\Throwable $e) {
 
-            $this->app->getReactorLogger()->critical($e);
+            $this->app->getConsoleLogger()->critical($e);
             // 直接exit
             $this->server->fail();
         }

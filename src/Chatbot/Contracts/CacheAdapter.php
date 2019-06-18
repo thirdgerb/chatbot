@@ -54,10 +54,15 @@ interface CacheAdapter
     public function lock(string $key, int $ttl = null) : bool;
 
     /**
+     * @param string $key
+     * @return bool
+     */
+    public function unlock(string $key) : bool;
+
+    /**
      * 解开分布式锁
      * @param string $key
      * @return bool
-     * @throws RuntimeExceptionInterface
      */
     public function forget(string $key) : bool;
 

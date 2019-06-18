@@ -49,14 +49,27 @@ class SwooleConsoleServer implements ChatServer
         $this->ip = $config->ip;
         $this->port = $config->port;
         $this->server = new Server($this->ip, $this->port);
+    }
 
+    protected function bootstrap() : void
+    {
         Runtime::enableCoroutine();
+
+        $this->server->on('connect', function ($server, $fd){
+            echo "connection open: {$fd}\n";
+        });
+
+        $this->server->on('close', function($server, $fd) {
+            echo "connection close: {$fd}\n";
+        });
     }
 
 
 
     public function run(): void
     {
+        $this->bootstrap();
+
         $config = $this->app->getReactorContainer()[ConsoleConfig::class];
         $this->server->on('receive', function ($server, $fd, $reactor_id, $data) use ($config) {
             $kernel = $this->app->getKernel();
@@ -64,7 +77,7 @@ class SwooleConsoleServer implements ChatServer
             $request = new SwooleUserMessageRequest(
                 $server,
                 $fd,
-                $data,
+                trim($data),
                 $config
             );
 
@@ -81,7 +94,7 @@ class SwooleConsoleServer implements ChatServer
 
     public function fail(): void
     {
-        exit(255);
+        $this->server->shutdown();
     }
 
     public function closeClient(Conversation $conversation): void

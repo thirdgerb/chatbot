@@ -12,7 +12,9 @@ namespace Commune\Chatbot\Framework;
 use Commune\Chatbot\Blueprint\Conversation\ConversationContainer;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Contracts\ChatServer;
+use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Predefined\SimpleConsoleLogger;
 use Commune\Chatbot\Framework\Providers;
 use Commune\Chatbot\Config\Host\OOHostConfig;
 use Commune\Chatbot\OOHost\OOHostServiceProvider;
@@ -26,8 +28,6 @@ use Commune\Chatbot\Framework\Bootstrap;
 
 // framework
 use Commune\Chatbot\Framework\Exceptions\BootingException;
-use Commune\Chatbot\Framework\Predefined\SimpleConsoleLogger;
-
 
 // config
 use Commune\Chatbot\Config\ChatbotConfig;
@@ -92,9 +92,9 @@ class ChatApp implements Blueprint
     protected $conversationContainer;
 
     /**
-     * @var LoggerInterface
+     * @var ConsoleLogger
      */
-    protected $reactorLogger;
+    protected $consoleLogger;
 
     /**
      * @var string[]
@@ -120,12 +120,12 @@ class ChatApp implements Blueprint
      * ChatbotApp constructor.
      * @param array $config
      * @param ContainerContract|null $reactorContainer
-     * @param LoggerInterface|null $consoleLogger
+     * @param ConsoleLogger|null $consoleLogger
      */
     public function __construct(
         array $config,
         ContainerContract $reactorContainer = null,
-        LoggerInterface $consoleLogger = null
+        ConsoleLogger $consoleLogger = null
     )
     {
 
@@ -141,7 +141,7 @@ class ChatApp implements Blueprint
         $this->reactorContainer = $reactorContainer
             ?? new IlluminateAdapter(new Container());
 
-        $this->reactorLogger = $consoleLogger
+        $this->consoleLogger = $consoleLogger
             ?? new SimpleConsoleLogger();
 
         // 创建会话容器.
@@ -150,12 +150,9 @@ class ChatApp implements Blueprint
         $this->baseRegister();
     }
 
-    /**
-     * @return LoggerInterface
-     */
-    public function getReactorLogger(): LoggerInterface
+    public function getConsoleLogger(): ConsoleLogger
     {
-        return $this->reactorLogger;
+        return $this->consoleLogger;
     }
 
     /**
@@ -199,7 +196,7 @@ class ChatApp implements Blueprint
         if (is_string($providerName)) {
 
             if (isset($this->registeredProviders[$providerName])) {
-                $this->reactorLogger
+                $this->consoleLogger
                     ->warning("try to register reactor provider $providerName which already loaded");
                 return null;
             }
@@ -243,7 +240,7 @@ class ChatApp implements Blueprint
             return $this;
         }
 
-        $logger = $this->reactorLogger;
+        $logger = $this->consoleLogger;
         try {
             $logger->info(static::class . ' chatbot reactor booting');
 
@@ -289,7 +286,7 @@ class ChatApp implements Blueprint
     protected function baseBinding() : void
     {
         // 绑定默认组件到容器上.
-        $this->reactorLogger->info("self binding....... ");
+        $this->consoleLogger->info("self binding....... ");
 
         // self
         $this->reactorContainer->instance(Blueprint::class, $this);
@@ -299,7 +296,7 @@ class ChatApp implements Blueprint
         $this->reactorContainer->instance(OOHostConfig::class, $this->config->host);
 
         // server
-        $this->reactorContainer->instance(LoggerInterface::class, $this->reactorLogger);
+        $this->reactorContainer->instance(ConsoleLogger::class, $this->consoleLogger);
 
         // kernel
         $this->reactorContainer->singleton(Kernel::class, ChatKernel::class);
@@ -312,10 +309,11 @@ class ChatApp implements Blueprint
         $this->registerReactorService(Providers\TranslatorServiceProvider::class);
         // host
         $this->registerReactorService(OOHostServiceProvider::class);
+        $this->registerReactorService(Providers\LoggerServiceProvider::class);
+
 
         // conversation
         $this->registerConversationService(Providers\EventServiceProvider::class);
-        $this->registerConversationService(Providers\LoggerServiceProvider::class);
         $this->registerConversationService(Providers\ConversationalServiceProvider::class);
 
     }

@@ -15,10 +15,10 @@ class RegisterBaseServices implements Bootstrapper
 {
     public function bootstrap(Application $app): void
     {
-        $app->getReactorLogger()->info('start register base service provider');
+        $app->getConsoleLogger()->info('start register base service provider');
 
         $config = $app->getConfig();
-        $log = $app->getReactorLogger();
+        $log = $app->getConsoleLogger();
 
         foreach ($config->baseProviders as $providerName) {
 

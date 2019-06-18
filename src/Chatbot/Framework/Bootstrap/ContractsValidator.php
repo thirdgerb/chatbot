@@ -13,6 +13,7 @@ namespace Commune\Chatbot\Framework\Bootstrap;
 use Commune\Chatbot\Blueprint\Conversation\Chat;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\Blueprint\Conversation\User;
+use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\OOHost\Session\Driver as SessionDriver;
 use Commune\Container\ContainerContract;
 use Commune\Chatbot\Config\ChatbotConfig;
@@ -48,6 +49,7 @@ class ContractsValidator implements Bootstrapper
         ChatServer::class,
         // 系统日志
         LoggerInterface::class,
+        ConsoleLogger::class,
         // 必须绑定的配置
         ChatbotConfig::class,
         // 内核绑定.
@@ -63,8 +65,6 @@ class ContractsValidator implements Bootstrapper
      */
     protected $conversationContracts = [
         Monologue::class,
-        // 系统日志
-        LoggerInterface::class,
         // 依赖会话级容器的.
         EventDispatcher::class,
         // 有IO 开销, 考虑IO非阻塞实现的
@@ -88,7 +88,7 @@ class ContractsValidator implements Bootstrapper
      */
     protected function validateContracts(Application $app)
     {
-        $logger = $app->getReactorLogger();
+        $logger = $app->getConsoleLogger();
 
         $logger->debug("check reactor contracts has been bound correctly");
         foreach ($this->reactorContracts as $name) {

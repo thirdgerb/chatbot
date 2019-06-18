@@ -49,9 +49,16 @@ class ArrayCache implements CacheAdapter
 
     public function forget(string $key): bool
     {
+        $i = isset(self::$cached[$key]);
         unset(self::$cached[$key]);
-        return true;
+        return $i;
     }
+
+    public function unlock(string $key): bool
+    {
+        return $this->forget($key);
+    }
+
 
     public function __destruct()
     {

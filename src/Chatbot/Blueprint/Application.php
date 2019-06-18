@@ -10,6 +10,7 @@ namespace Commune\Chatbot\Blueprint;
 use Commune\Chatbot\Blueprint\Conversation\ConversationContainer;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\ChatServer;
+use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\Framework\Exceptions\BootingException;
 use Commune\Container\ContainerContract;
 
@@ -23,12 +24,11 @@ interface Application
 
     /**
      * 启动时, 系统专用的日志模块.
-     * 本意是在console 里打印日志.
-     * 也可以按需替换为别的.
+     * 在console 里打印日志.
      *
-     * @return LoggerInterface
+     * @return ConsoleLogger
      */
-    public function getReactorLogger(): LoggerInterface;
+    public function getConsoleLogger(): ConsoleLogger;
 
     /**
      * 系统默认的日志.

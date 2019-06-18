@@ -6,6 +6,7 @@ namespace Commune\Chatbot\App\Drivers\Demo;
 
 use Commune\Chatbot\Blueprint\Exceptions\RuntimeExceptionInterface;
 use Commune\Chatbot\Blueprint\Exceptions\StopServiceExceptionInterface;
+use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\Contracts\ExceptionHandler;
 use Psr\Log\LoggerInterface;
 
@@ -19,9 +20,9 @@ class SimpleExpHandler implements ExceptionHandler
 
     /**
      * SimpleExceptionHandler constructor.
-     * @param LoggerInterface $logger
+     * @param ConsoleLogger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(ConsoleLogger $logger)
     {
         $this->logger = $logger;
     }

@@ -22,7 +22,7 @@ class WelcomeToUserChatbot implements Bootstrapper
 {
     public function bootstrap(Application $app): void
     {
-        $logger = $app->getReactorLogger();
+        $logger = $app->getConsoleLogger();
 
         $logger->info('');
         $logger->info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
