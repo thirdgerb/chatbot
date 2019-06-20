@@ -32,6 +32,11 @@ abstract class AbsMessage implements Contract
      */
     protected $createdAt;
 
+    /**
+     * @var Carbon|null
+     */
+    protected $deliverAt;
+
     protected $cmdText;
 
     /**
@@ -109,5 +114,17 @@ abstract class AbsMessage implements Contract
     {
         return $this->getText();
     }
+
+    public function getDeliverAt(): ? Carbon
+    {
+        return $this->deliverAt;
+    }
+
+    public function deliverAt(Carbon $carbon): Message
+    {
+        $this->deliverAt = $carbon;
+        return $this;
+    }
+
 
 }

@@ -27,7 +27,7 @@ trait IdGeneratorHelper
         if (isset(static::$idGenerator)) {
             return static::$idGenerator->createUuId();
         }
-        return str_replace('-', '', Uuid::uuid4()->toString());
+        return Uuid::uuid4()->toString();
     }
 
     public function createUuId()

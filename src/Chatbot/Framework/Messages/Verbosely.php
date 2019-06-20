@@ -25,7 +25,7 @@ trait Verbosely
     /**
      * @var bool
      */
-    protected $translate = true;
+    protected $shouldTranslate = true;
 
 
     /**
@@ -38,7 +38,7 @@ trait Verbosely
      */
     public function raw()
     {
-        $this->translate = false;
+        $this->shouldTranslate = false;
         $this->translation = $this->input;
         return $this;
     }
@@ -88,7 +88,7 @@ trait Verbosely
 
     public function translate(Translator $translator, string $locale = null): void
     {
-        if ($this->translate) {
+        if ($this->shouldTranslate) {
             $this->translation = $this->doTranslate($translator, $locale);
         }
     }

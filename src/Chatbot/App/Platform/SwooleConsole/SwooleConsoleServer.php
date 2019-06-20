@@ -62,13 +62,6 @@ class SwooleConsoleServer implements ChatServer
         $this->server->on('close', function($server, $fd) {
             echo "connection close: {$fd}\n";
         });
-    }
-
-
-
-    public function run(): void
-    {
-        $this->bootstrap();
 
         $config = $this->app->getReactorContainer()[ConsoleConfig::class];
         $this->server->on('receive', function ($server, $fd, $reactor_id, $data) use ($config) {
@@ -83,6 +76,14 @@ class SwooleConsoleServer implements ChatServer
 
             $kernel->onUserMessage($request);
         });
+    }
+
+
+
+    public function run(): void
+    {
+        $this->bootstrap();
+
 
         $this->server->start();
     }

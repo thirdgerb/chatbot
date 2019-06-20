@@ -12,7 +12,8 @@ use Commune\Support\Option;
 /**
  * @property-read int $maxBreakpointHistory 会话可追溯的历史记录个数.
  * @property-read string $rootContextName 根语境的名字.
- * @property-read int $maxRedirectTimes
+ * @property-read int $maxRedirectTimes 单次请求最大重定向次数, 超过就怀疑发生循环定向.
+ * @property-read array $autoloadPsr4 按psr-4 规范预加载context
  * @property-read int $sessionExpireSeconds 会话过期的时间.
  * @property-read int $sessionCacheSeconds 会话数据缓存的时间. 仅仅起到缓存作用.
  * @property-read string[] $sessionPipes  会话中的管道.
@@ -33,6 +34,7 @@ class OOHostConfig extends Option
             'maxRedirectTimes' => 20,
             'sessionExpireSeconds' => 3600,
             'sessionCacheSeconds' => 60,
+            'autoloadPsr4' => [],
             'sessionPipes' => [
                 UserCommandsPipe::class,
                 AnalyserPipe::class,

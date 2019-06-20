@@ -41,6 +41,19 @@ interface Message extends ArrayAndJsonAble
     public function getCreatedAt() : Carbon;
 
     /**
+     * 投递时间. 为null 表示立刻可以投递.
+     * @return null|Carbon
+     */
+    public function getDeliverAt() : ? Carbon;
+
+    /**
+     * 设置投递时间.
+     * @param Carbon $carbon
+     * @return Message
+     */
+    public function deliverAt(Carbon $carbon) : Message;
+
+    /**
      * 消息用文本表示.
      * 每种类型的消息都要能给出text
      *

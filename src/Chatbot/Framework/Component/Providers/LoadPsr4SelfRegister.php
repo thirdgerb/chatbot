@@ -55,20 +55,34 @@ class LoadPsr4SelfRegister extends ServiceProvider
 
     public function boot($app)
     {
+        static::loadSelfRegister(
+            $this->domain,
+            $this->path,
+            $this->logger
+        );
 
+    }
+
+    public static function loadSelfRegister(
+        string $namespace,
+        string $path,
+        LoggerInterface $logger
+    ) : void
+    {
         $finder = new Finder();
         $finder->files()
-            ->in($this->path)
+            ->in($path)
             ->name('/\.php$/');
 
+        $i = 0;
         foreach ($finder as $fileInfo) {
 
             $path = $fileInfo->getPathname();
-            $name = str_replace($this->path, '', $path);
+            $name = str_replace($path, '', $path);
             $name = str_replace('.php', '', $name);
             $name = str_replace('/', '\\', $name);
 
-            $clazz = trim($this->domain, '\\')
+            $clazz = trim($namespace, '\\')
                 . '\\' .
                 trim($name, '\\');
 
@@ -82,11 +96,22 @@ class LoadPsr4SelfRegister extends ServiceProvider
                 continue;
             }
 
-            $this->logger->debug("register context $clazz");
+            $logger->debug("register context $clazz");
             $method = [$clazz, SelfRegister::REGISTER_METHOD];
             call_user_func($method);
+            $i ++;
         }
+
+        if (empty($i)) {
+            $logger->warning(
+                'no self register class found,'
+                . "namespace is $namespace,"
+                . "path is $path"
+            );
+        }
+
     }
+
 
     public function register()
     {
