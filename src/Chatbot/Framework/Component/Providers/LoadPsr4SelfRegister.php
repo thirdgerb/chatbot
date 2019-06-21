@@ -4,7 +4,6 @@
 namespace Commune\Chatbot\Framework\Component\Providers;
 
 
-use Commune\Chatbot\App\Components\Configurable\Controllers\EntryIntent;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
@@ -65,20 +64,20 @@ class LoadPsr4SelfRegister extends ServiceProvider
 
     public static function loadSelfRegister(
         string $namespace,
-        string $path,
+        string $directory,
         LoggerInterface $logger
     ) : void
     {
         $finder = new Finder();
         $finder->files()
-            ->in($path)
+            ->in($directory)
             ->name('/\.php$/');
 
         $i = 0;
         foreach ($finder as $fileInfo) {
 
             $path = $fileInfo->getPathname();
-            $name = str_replace($path, '', $path);
+            $name = str_replace($directory, '', $path);
             $name = str_replace('.php', '', $name);
             $name = str_replace('/', '\\', $name);
 
@@ -106,7 +105,7 @@ class LoadPsr4SelfRegister extends ServiceProvider
             $logger->warning(
                 'no self register class found,'
                 . "namespace is $namespace,"
-                . "path is $path"
+                . "directory is $directory"
             );
         }
 
