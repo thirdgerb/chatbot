@@ -7,7 +7,7 @@ namespace Commune\Chatbot\App\Components\IntentManager;
 use Commune\Chatbot\App\Abilities\Supervise;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Callables\StageComponents\Paginator;
-use Commune\Chatbot\App\Components\IntentManagerComponent;
+use Commune\Chatbot\App\Components\NLUExamplesComponent;
 use Commune\Chatbot\App\Messages\QA\VbAnswer;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
@@ -338,9 +338,9 @@ class NLUExamplesManager extends OOContext
     protected function doSave(Dialog $dialog, Registrar $registrar) : void
     {
         /**
-         * @var IntentManagerComponent $option
+         * @var NLUExamplesComponent $option
          */
-        $option = $dialog->app->make(IntentManagerComponent::class);
+        $option = $dialog->app->make(NLUExamplesComponent::class);
         $all = $registrar->getNLUExamplesCollection();
 
         $data = [];

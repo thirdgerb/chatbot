@@ -11,6 +11,7 @@ use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 
 /**
  * 可配置的整个 context
+ * 尚未完工.
  *
  * @property-read string $serviceProvider
  * @property-read string $defaultPath
