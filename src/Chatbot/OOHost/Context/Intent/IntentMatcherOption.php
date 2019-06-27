@@ -17,15 +17,7 @@ use Commune\Support\Option;
  * '
  * @property-read string $signature
  *
- *
- * 符合NLU需求的训练样本.
- *
- * 每个元素是一个样本. 用类似markdown link 的语法来标记entity.
- *
- * 例如 "这句话的Entity就在[句尾](where)"
- *
- * @property-read string[] $examples
- *
+
  *
  *
  * 每个元素可以是字符串或是数组
@@ -49,9 +41,6 @@ class IntentMatcherOption extends Option
     {
         return [
             'signature' => '', //'command {test1}',
-            'examples' => [
-                //'test [value](key)',
-            ],
             'regex' => [
                 //['/pattern1/', 'key1', 'key2', 'key3'],
                 //['/pattern2/', 'key1', 'key2', 'key3'],

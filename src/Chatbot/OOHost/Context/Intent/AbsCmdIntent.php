@@ -10,6 +10,7 @@ use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Chatbot\OOHost\NLU\NLUExample;
 
 abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
 {
@@ -17,6 +18,13 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
      * @var string 简介.
      */
     const DESCRIPTION = 'should define intent description by constant';
+
+    /**
+     * @var string[] 例句.
+     * entity 用markdown link 语法标记.
+     * 例如: 请问[北京](city)的天气如何
+     */
+    const EXAMPLES = [];
 
     abstract public static function getMatcherOption() : IntentMatcherOption;
 
@@ -46,6 +54,14 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
         }
         $def = static::buildDefinition();
         $repo->register($def);
+        if (!empty(static::EXAMPLES)) {
+            foreach (static::EXAMPLES as $str) {
+                $repo->registerNLUExample(
+                    $name,
+                    new NLUExample($str)
+                );
+            }
+        }
         return $def;
     }
 

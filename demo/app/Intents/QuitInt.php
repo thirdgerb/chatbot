@@ -15,7 +15,7 @@ class QuitInt extends NavigateIntent
     const SIGNATURE = 'quit';
     const DESCRIPTION = '退出';
     const REGEX = [
-        ['/^(退出|quit|bye|再见)$/iu']
+        ['/^(quit|bye|再见)$/iu']
     ];
 
     public function navigate(Dialog $dialog): ? Navigator

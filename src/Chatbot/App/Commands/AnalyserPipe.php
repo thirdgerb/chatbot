@@ -5,6 +5,7 @@ namespace Commune\Chatbot\App\Commands;
 
 
 use Commune\Chatbot\App\Abilities\Supervise;
+use Commune\Chatbot\App\Commands\Analysis\ContextRepoCmd;
 use Commune\Chatbot\App\Commands\Analysis\MemoryCmd;
 use Commune\Chatbot\App\Commands\Analysis\RedirectCmd;
 use Commune\Chatbot\App\Commands\Analysis\StatusCmd;
@@ -21,7 +22,8 @@ class AnalyserPipe extends SessionCommandPipe
         WhereCmd::class,
         StatusCmd::class,
         MemoryCmd::class,
-        RedirectCmd::class
+        RedirectCmd::class,
+        ContextRepoCmd::class
     ];
 
     // 定义一个 command mark

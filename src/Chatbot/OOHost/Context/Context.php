@@ -30,13 +30,29 @@ interface Context extends
     Dictionary  // context 可以像对象, 或者数组一样操作它存储的数据.
 {
 
+    // 语境脱出时调用的事件方法名
     const EXITING_LISTENER = '__exiting';
-    // 多轮对话的启动环节.
-    const INITIAL_STAGE = 'start';
+
+    // 定义多轮对话每个阶段的方法名前缀.
+    // 例如 start 阶段, 命名为 __onStart
     const STAGE_METHOD_PREFIX = '__on';
+
+    // 多轮对话的启动阶段.
+    const INITIAL_STAGE = 'start';
+
+    // 定义多轮对话的依赖属性. 属性本身会通过多轮对话来完善, 全完善后才会进入start阶段.
     const DEPENDENCY_BUILDER = '__depend';
+
     // 中间件方法.
+
+    // 如果此方法存在, 所有 $dialog->hear(Message $message) 时都会调用此方法,
+    // 入参是 Hearing 类.
+    // 可以给所有的hearing 定义一些公共的流程.
     const HEARING_MIDDLEWARE_METHOD = '__hearing';
+
+    // 如果此方法存在, 所有stage 方法构建时都会调用它.
+    // 入参是 Stage
+    // 可以给所有的stage 定义公共流程.
     const STAGE_MIDDLEWARE_METHOD = '__staging';
 
     /**
@@ -57,6 +73,10 @@ interface Context extends
     public function __onStart(Stage $stage): Navigator;
 
     public function __exiting(Exiting $listener) : void;
+
+    //public function __hearing(Hearing $hearing) : void;
+
+    //public function __staging(Stage $stage) : void;
 
     /*--------- value ---------*/
 

@@ -15,6 +15,12 @@ interface Registrar
 
     public function each() : \Generator;
 
+    /**
+     * 已注册的context 数量.
+     * @return int
+     */
+    public function count() : int;
+
     public function getNamesByDomain(string $domain) : array;
 
 

@@ -16,7 +16,6 @@ abstract class MessageIntent extends AbsCmdIntent
     const DESCRIPTION = 'should define description';
 
     const SIGNATURE = ''; // must be set
-    const EXAMPLES = [];
     const REGEX = [];
     const KEYWORDS = [];
 
@@ -32,7 +31,6 @@ abstract class MessageIntent extends AbsCmdIntent
 
         return new IntentMatcherOption([
             'signature' => static::SIGNATURE,
-            'examples' => static::EXAMPLES,
             'regex' => static::REGEX,
             'keywords' => static::KEYWORDS,
         ]);

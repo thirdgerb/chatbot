@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\OOHost\Context\Intent;
+namespace Commune\Chatbot\OOHost\NLU;
 
 
 class NLUExampleEntity
@@ -10,10 +10,12 @@ class NLUExampleEntity
      * @var string
      */
     public $name;
+
     /**
      * @var string
      */
     public $value;
+
     /**
      * @var int
      */

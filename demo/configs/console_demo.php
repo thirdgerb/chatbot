@@ -10,6 +10,9 @@ return [
     'components' => [
         \Commune\Demo\App\DemoOption::class,
         \Commune\Chatbot\App\Components\ConfigurableComponent::class,
+        \Commune\Chatbot\App\Components\IntentManagerComponent::class => [
+            'repository' => __DIR__ .'/repository.json'
+        ],
     ],
     'reactorProviders' => [
         \Commune\Chatbot\App\Platform\ReactorStdio\RSServerServiceProvider::class,

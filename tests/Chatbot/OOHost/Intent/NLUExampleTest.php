@@ -4,7 +4,7 @@
 namespace Commune\Test\Chatbot\OOHost\Intent;
 
 
-use Commune\Chatbot\OOHost\Context\Intent\NLUExample;
+use Commune\Chatbot\OOHost\NLU\NLUExample;
 use PHPUnit\Framework\TestCase;
 
 class NLUExampleTest extends TestCase
@@ -13,7 +13,6 @@ class NLUExampleTest extends TestCase
     public function testParse()
     {
         $e = new NLUExample(
-            'test',
             '[中文](lang)和english[还有if](and)数字比如[123](num)夹杂在一起'
         );
 

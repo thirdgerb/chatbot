@@ -35,8 +35,14 @@ class IncomingMessageImpl extends ConversationMessageImpl implements IncomingMes
 
     public function getHighlyPossibleIntent(): ? string
     {
+        $order = $this->getPossibleIntentNames();
+        return $order[0] ?? null;
+    }
+
+    public function getPossibleIntentNames(): array
+    {
         if (empty($this->possibleIntents)) {
-            return null;
+            return [];
         }
 
         $order = [];
@@ -44,16 +50,15 @@ class IncomingMessageImpl extends ConversationMessageImpl implements IncomingMes
             $order[] = [$odd, $name];
         }
 
+        // 按优先级进行排序.
         usort($order, function($a, $b){
+            // 大的是1.
             return $a[0] < $b[0] ? 1 : ($a[0] > $b[0] ? -1 : 0);
         });
 
-        return $order[0][1];
-    }
-
-    public function getPossibleIntentNames(): array
-    {
-        return array_keys($this->possibleIntents);
+        return array_map(function($i) {
+            return $i[1];
+        }, $order);
     }
 
 

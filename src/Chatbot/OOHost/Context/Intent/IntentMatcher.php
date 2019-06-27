@@ -16,7 +16,6 @@ use Commune\Chatbot\OOHost\Command\CommandMessage;
  * @property-read string $intentName
  * @property-read array $regex
  * @property-read array $keywords
- * @property-read NLUExample[] $examples
  * @property-read string $signature
  * @property-read CommandDefinition|null $command
  */
@@ -48,11 +47,6 @@ class IntentMatcher
     protected $keywords = [];
 
     /**
-     * @var NLUExample[]
-     */
-    protected $examples = [];
-
-    /**
      * IntentMatcher constructor.
      * @param $intentName
      */
@@ -65,9 +59,6 @@ class IntentMatcher
     {
         return new IntentMatcherOption([
             'signature' => $this->signature,
-            'examples' => array_map(function(NLUExample $example) {
-                return $example->originText;
-            }, $this->examples),
             'keywords' => $this->keywords,
             'regex' => array_map(function(array $regex) {
                 return array_unshift($regex[1], $regex[0]);
@@ -82,9 +73,6 @@ class IntentMatcher
         foreach ($option->regex as $keys) {
             $pattern = array_shift($keys);
             $this->addRegex($pattern, $keys);
-        }
-        foreach ($option->examples as $example) {
-            $this->addExample($example);
         }
     }
 
@@ -116,11 +104,6 @@ class IntentMatcher
     public function addRegex(string $pattern, array $matches) : void
     {
         $this->regex[] = [$pattern, $matches];
-    }
-
-    public function addExample(string $example) : void
-    {
-        $this->examples[] = new NLUExample($this->intentName, $example);
     }
 
     public function match(Message $message) : ? array

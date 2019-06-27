@@ -23,7 +23,7 @@ class SelfRegisterComponent extends ComponentOption
 
     protected function doBootstrap(): void
     {
-        $this->selfRegisterByPsr4($this->namespace, $this->path);
+        $this->loadSelfRegisterByPsr4($this->namespace, $this->path);
     }
 
 }

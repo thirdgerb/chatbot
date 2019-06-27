@@ -20,7 +20,6 @@ abstract class NavigateIntent extends AbsCmdIntent
     const DESCRIPTION = 'should define intent description by constant';
 
     const SIGNATURE = ''; // must be set
-    const EXAMPLES = [];
     const REGEX = [];
     const KEYWORDS = [];
 
@@ -42,7 +41,6 @@ abstract class NavigateIntent extends AbsCmdIntent
 
         return new IntentMatcherOption([
             'signature' => static::SIGNATURE,
-            'examples' => static::EXAMPLES,
             'regex' => static::REGEX,
             'keywords' => static::KEYWORDS,
         ]);

@@ -11,6 +11,13 @@ use Commune\Chatbot\OOHost\Session\SessionData;
 use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
 
+/**
+ * Context 的公共抽象. 具体实现有三类:
+ *
+ * - OOContext : 面向对象的标准 context
+ * - Intent : 意图描述. 可以对用户意图进行匹配.
+ * - Memory : 记忆, 可以用于上下文存储数据.
+ */
 abstract class AbsContext extends AbsMessage implements Context
 {
     private static $counts = [];

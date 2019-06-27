@@ -7,6 +7,7 @@ namespace Commune\Chatbot\Framework\Component;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Bootstrap\Bootstrapper;
+use Commune\Chatbot\Framework\Component\Providers\LoadNLUExamplesFromJson;
 use Commune\Chatbot\Framework\Component\Providers\LoadPsr4SelfRegister;
 use Commune\Chatbot\Framework\Component\Providers\LoadTranslationConfig;
 use Commune\Support\Option;
@@ -33,7 +34,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
      * @param string $namespace
      * @param string $path
      */
-    public function selfRegisterByPsr4(
+    public function loadSelfRegisterByPsr4(
         string $namespace,
         string $path
     ) : void
@@ -59,7 +60,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
      * @param string $resourcePath
      * @param string $loader
      */
-    public function addTranslationResource(
+    public function loadTranslationResource(
         string $resourcePath,
         string $loader = Translator::FORMAT_PHP
     ) : void
@@ -73,4 +74,16 @@ abstract class ComponentOption extends Option implements Bootstrapper
         );
     }
 
+
+    public function loadNLUExampleFromJsonFile(
+        string $resourcePath
+    ) : void
+    {
+        $this->app->registerReactorService(
+            new LoadNLUExamplesFromJson(
+                $this->app->getReactorContainer(),
+                $resourcePath
+            )
+        );
+    }
 }

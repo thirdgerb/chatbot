@@ -258,7 +258,7 @@ class HearingHandler implements Hearing
 
         // 否则, 视作第一次进入的intent 解析.
         $session = $this->dialog->session;
-        $matched = $session->intentRepo->matchAny($session);
+        $matched = $session->intentRepo->matchPossibleIntent($session);
 
         if (!isset($matched)) {
             return $this;

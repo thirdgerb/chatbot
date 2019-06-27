@@ -142,5 +142,10 @@ class ContextRegistrar implements Registrar
         return [$element];
     }
 
+    public function count(): int
+    {
+        return count($this->definitionsByName);
+    }
+
 
 }

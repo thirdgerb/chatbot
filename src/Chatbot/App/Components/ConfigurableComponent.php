@@ -37,14 +37,14 @@ class ConfigurableComponent extends ComponentOption
         $this->registerComponentServiceProvider();
 
         // 先加载当前组件内的模块.
-        $this->selfRegisterByPsr4(
+        $this->loadSelfRegisterByPsr4(
             'Commune\\Chatbot\\App\\Components\\Configurable\\',
             __DIR__ .'/Configurable'
         );
 
         // 加载必要的翻译文件.
         if (!empty($this->trans)) {
-            $this->addTranslationResource(__DIR__.'/Configurable/trans');
+            $this->loadTranslationResource(__DIR__.'/Configurable/trans');
         }
     }
 
