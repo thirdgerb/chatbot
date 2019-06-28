@@ -58,13 +58,10 @@ abstract class OOContext
         $registrar = $this->getRegistrar();
         $name = $this->getName();
 
-        if ($registrar->has($name)) {
-            return $registrar->get($name);
+        if (!$registrar->has($name)) {
+            static::registerSelfDefinition();
         }
-
-        $def = $this->buildDefinition();
-        $registrar->register($def);
-        return $def;
+        return $registrar->get($name);
     }
 
     protected static function getRegistrar(): Registrar

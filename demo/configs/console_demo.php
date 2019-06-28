@@ -14,6 +14,9 @@ return [
             'repository' => __DIR__ .'/repository.json'
         ],
         \Commune\Chatbot\App\Components\SimpleFileIntentComponent::class,
+        \Commune\Chatbot\App\Components\RasaComponent::class => [
+            'output' => __DIR__ .'/cache/nlu.md',
+        ],
     ],
     'reactorProviders' => [
         \Commune\Chatbot\App\Platform\ReactorStdio\RSServerServiceProvider::class,
@@ -64,7 +67,14 @@ return [
         'rootContextName' => \Commune\Demo\App\Contexts\Welcome::class,
         'navigatorIntents' => [
             \Commune\Demo\App\Intents\QuitInt::class
-        ]
+        ],
+        'sessionPipes' => [
+            \Commune\Chatbot\App\Commands\UserCommandsPipe::class,
+            \Commune\Chatbot\App\Commands\AnalyserPipe::class,
+            \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,
+            \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
+            \Commune\Chatbot\App\Components\Rasa\RasaNLUPipe::class,
+        ],
     ] + \Commune\Chatbot\Config\Host\OOHostConfig::stub(),
 
 ];

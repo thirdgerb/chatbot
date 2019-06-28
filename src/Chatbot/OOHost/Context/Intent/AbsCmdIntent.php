@@ -49,22 +49,10 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
         $repo = static::getRegistrar();
         $name = $this->getName();
 
-        if ($repo->has($name)) {
-            return $repo->get($name);
+        if (!$repo->has($name)) {
+            static::registerSelfDefinition();
         }
-        $def = static::buildDefinition();
-        $repo->register($def);
-
-        // 注册 nlu. 非强制, 可以被 intentManager 改写.
-        if (!empty(static::EXAMPLES)) {
-            foreach (static::EXAMPLES as $str) {
-                $repo->registerNLUExample(
-                    $name,
-                    new NLUExample($str)
-                );
-            }
-        }
-        return $def;
+        return $repo->get($name);
     }
 
 
@@ -73,6 +61,16 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
         $def = static::buildDefinition();
         $repo = static::getRegistrar();
         $repo->register($def);
+
+        // 注册 nlu. 非强制, 可以被 intentManager 改写.
+        if (!empty(static::EXAMPLES)) {
+            foreach (static::EXAMPLES as $str) {
+                $repo->registerNLUExample(
+                    static::getContextName(),
+                    new NLUExample($str)
+                );
+            }
+        }
     }
 
 

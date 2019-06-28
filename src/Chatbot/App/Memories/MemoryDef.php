@@ -80,13 +80,11 @@ class MemoryDef extends AbsMemory implements SelfRegister
     {
         $repo = static::getRegistrar();
         $name = $this->getName();
-        if ($repo->has($name)) {
-            return $repo->get($name);
+        if (!$repo->has($name)) {
+            static::registerSelfDefinition();
         }
 
-        $def = static::buildDefinition();
-        $repo->register($def);
-        return $def;
+        return $repo->get($name);
     }
 
     protected static function buildDefinition() : Definition

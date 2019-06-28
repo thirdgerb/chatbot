@@ -4,9 +4,9 @@
 namespace Commune\Chatbot\OOHost\NLU;
 
 
-use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Intent\Registrar;
+use Commune\Chatbot\OOHost\Session\Session;
 
 interface NatureLanguageUnit
 {
@@ -32,9 +32,9 @@ interface NatureLanguageUnit
      * 另一种是连预测的意图都没有.
      * 通常只有第二种情况有记录的价值, 记录的时候应该区分两种.
      *
-     * @param IncomingMessage $message
+     * @param Session $session
      */
-    public function logUnmatchedMessage(IncomingMessage $message) : void;
+    public function logUnmatchedMessage(Session $session) : void;
 
     /**
      * 输出意图的例句. 输出为什么格式的文件不做考虑.

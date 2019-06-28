@@ -65,7 +65,7 @@ interface Registrar extends ContextRegistrar
 
     /**
      * @param string $domain
-     * @return array
+     * @return array  [ 'name' => [ NLUExample $example1] ]
      */
     public function getNLUExampleMapByIntentDomain(string $domain = '') : array;
 

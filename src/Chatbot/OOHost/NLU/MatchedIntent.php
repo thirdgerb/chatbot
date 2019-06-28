@@ -4,6 +4,8 @@
 namespace Commune\Chatbot\OOHost\NLU;
 
 
+use Illuminate\Support\Collection;
+
 class MatchedIntent
 {
     /**
@@ -12,7 +14,7 @@ class MatchedIntent
     public $name;
 
     /**
-     * @var array
+     * @var Collection
      */
     public $entities;
 
@@ -23,16 +25,23 @@ class MatchedIntent
     public $confidence;
 
     /**
+     * @var bool
+     */
+    public $highlyPossible;
+
+    /**
      * MatchedIntent constructor.
      * @param string $name
-     * @param array $entities
+     * @param Collection $entities
      * @param int $confidence
+     * @param bool $highlyPossible
      */
-    public function __construct(string $name, array $entities, int $confidence)
+    public function __construct(string $name, Collection $entities, int $confidence, bool $highlyPossible)
     {
         $this->name = $name;
         $this->entities = $entities;
         $this->confidence = $confidence;
+        $this->highlyPossible = $highlyPossible;
     }
 
 

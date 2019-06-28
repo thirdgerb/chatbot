@@ -1,28 +1,27 @@
 <?php
 
 
-namespace Commune\Chatbot\OOHost\History;
+namespace Commune\Chatbot\OOHost\NLU;
 
+
+use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\OOHost\Session\SessionData;
 use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
 
-class Yielding implements SessionData
+class MissIntentMessage implements SessionData
 {
+    /**
+     * @var IncomingMessage
+     */
+    protected $msg;
 
     /**
-     * @var Thread
+     * MissIntentMessage constructor.
+     * @param IncomingMessage $msg
      */
-    public $thread;
-
-    /**
-     * @var string
-     */
-    public $contextId;
-
-    public function __construct(Thread $thread)
+    public function __construct(IncomingMessage $msg)
     {
-        $this->thread = $thread;
-        $this->contextId = $thread->currentNode()->getContextId();
+        $this->msg = $msg;
     }
 
     public function toSessionIdentity(): SessionDataIdentity
@@ -40,12 +39,12 @@ class Yielding implements SessionData
 
     public function getSessionDataType(): string
     {
-        return SessionData::YIELDING_TYPE;
+        return static::class;
     }
 
     public function getSessionDataId(): string
     {
-        return $this->contextId;
+        return $this->msg->getId();
     }
 
 

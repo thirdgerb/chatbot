@@ -8,6 +8,7 @@
 namespace Commune\Chatbot\Framework\Conversation;
 
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
+use Illuminate\Support\Collection;
 
 class IncomingMessageImpl extends ConversationMessageImpl implements IncomingMessage
 {
@@ -16,8 +17,17 @@ class IncomingMessageImpl extends ConversationMessageImpl implements IncomingMes
      */
     protected $possibleIntents = [];
 
+    /**
+     * @var string[]
+     */
+    protected $highlyPossible = [];
 
-    public function addPossibleIntent(string $intentName, array $entities, int $odd = 0): void
+    public function setHighlyPossibleIntentNames(array $names): void
+    {
+        $this->highlyPossible = $names;
+    }
+
+    public function addPossibleIntent(string $intentName, Collection $entities, int $odd = 0): void
     {
         $this->possibleIntents[$intentName] = [$entities, $odd];
     }
@@ -29,24 +39,29 @@ class IncomingMessageImpl extends ConversationMessageImpl implements IncomingMes
 
     public function getPossibleIntentEntities(string $intentName): array
     {
-        return $this->possibleIntents[$intentName][0] ?? [];
+        $collection = $this->possibleIntents[$intentName][0] ?? null;
+        return $collection instanceof Collection
+            ? $collection->toArray()
+            : [];
     }
 
 
-    public function getHighlyPossibleIntent(): ? string
+    public function getMostPossibleIntent() : ? string
     {
-        $order = $this->getPossibleIntentNames();
+        $order = $this->getHighlyPossibleIntentNames();
         return $order[0] ?? null;
     }
 
-    public function getPossibleIntentNames(): array
+    public function getHighlyPossibleIntentNames(): array
     {
         if (empty($this->possibleIntents)) {
             return [];
         }
 
         $order = [];
-        foreach ($this->possibleIntents as $name => list($entities, $odd)) {
+
+        foreach ($this->highlyPossible as $name) {
+            list($entities, $odd) = $this->possibleIntents[$name] ?? [null, 0];
             $order[] = [$odd, $name];
         }
 
@@ -59,6 +74,13 @@ class IncomingMessageImpl extends ConversationMessageImpl implements IncomingMes
         return array_map(function($i) {
             return $i[1];
         }, $order);
+    }
+
+    public function getPossibleIntentCollection(): Collection
+    {
+        return new Collection(array_map(function($item){
+            return $item[1];
+        }, $this->possibleIntents));
     }
 
 

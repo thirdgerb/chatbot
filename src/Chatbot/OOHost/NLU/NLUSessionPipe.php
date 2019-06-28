@@ -21,12 +21,22 @@ abstract class NLUSessionPipe implements SessionPipe, NatureLanguageUnit
         }
 
         $allMatched = $this->matchIntents($message);
+        $highlyPossible = [];
+        $incomingMessage = $session->incomingMessage;
         foreach ($allMatched as $matched) {
-            $session->incomingMessage->addPossibleIntent(
+            $incomingMessage->addPossibleIntent(
                 $matched->name,
                 $matched->entities,
                 $matched->confidence
             );
+
+            if ($matched->highlyPossible) {
+                $highlyPossible[] = $matched->name;
+            }
+        }
+
+        if (!empty($highlyPossible)) {
+            $incomingMessage->setHighlyPossibleIntentNames($highlyPossible);
         }
 
         /**
@@ -35,9 +45,8 @@ abstract class NLUSessionPipe implements SessionPipe, NatureLanguageUnit
         $session = $next($session);
 
         // log unmatched
-        $matched = $session->getMatchedIntent();
-        if (empty($matched)) {
-            $this->logUnmatchedMessage($session->incomingMessage);
+        if (empty($allMatched) && !$session->isHeard()) {
+            $this->logUnmatchedMessage($session);
         }
 
         return $session;

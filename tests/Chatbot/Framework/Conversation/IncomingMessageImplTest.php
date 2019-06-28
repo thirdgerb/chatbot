@@ -26,7 +26,7 @@ class IncomingMessageImplTest extends TestCase
         $i->addPossibleIntent('c', [], 2);
         $i->addPossibleIntent('d', [], 3);
 
-        $this->assertEquals('d', $i->getHighlyPossibleIntent());
+        $this->assertEquals('d', $i->getMostPossibleIntent());
     }
 
 }
