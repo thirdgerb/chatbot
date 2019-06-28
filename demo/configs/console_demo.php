@@ -13,6 +13,7 @@ return [
         \Commune\Chatbot\App\Components\NLUExamplesComponent::class => [
             'repository' => __DIR__ .'/repository.json'
         ],
+        \Commune\Chatbot\App\Components\SimpleFileIntentComponent::class,
     ],
     'reactorProviders' => [
         \Commune\Chatbot\App\Platform\ReactorStdio\RSServerServiceProvider::class,

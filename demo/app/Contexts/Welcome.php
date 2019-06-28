@@ -53,6 +53,7 @@ class Welcome extends TaskDef
                             return $dialog->repeat();
                         }
                     )
+                    ->isAnyIntent()
                     ->isChoice(0)
                     ->pregMatch('/^hello/', [])
                     ->heard(function(Dialog $dialog) : Navigator {

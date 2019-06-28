@@ -58,14 +58,13 @@ class LoadNLUExamplesFromJson extends ServiceProvider
                     . ' is invalid format'
                 );
             }
+            $nluExamples = [];
             foreach ($examples as $example) {
-                $repo->registerNLUExample(
-                    $intentName,
-                    new NLUExample($example),
-                    // repository 的定义最高优先级.
-                    true
-                );
+                $nluExamples[]= new NLUExample($example);
             }
+
+            // 覆盖
+            $repo->setIntentNLUExamples($intentName, $nluExamples);
         }
     }
 

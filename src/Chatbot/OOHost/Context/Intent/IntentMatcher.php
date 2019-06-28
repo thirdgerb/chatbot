@@ -68,11 +68,19 @@ class IntentMatcher
 
     public function mergeOption(IntentMatcherOption $option)
     {
-        $this->setSignature($option->signature);
-        $this->setKeywords($option->keywords);
-        foreach ($option->regex as $keys) {
-            $pattern = array_shift($keys);
-            $this->addRegex($pattern, $keys);
+        if (!empty($option->signature)) {
+            $this->setSignature($option->signature);
+        }
+
+        if (!empty($option->keywords)) {
+            $this->setKeywords($option->keywords);
+        }
+
+        if (!empty($option->regex)) {
+            foreach ($option->regex as $keys) {
+                $pattern = array_shift($keys);
+                $this->addRegex($pattern, $keys);
+            }
         }
     }
 

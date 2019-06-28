@@ -341,7 +341,7 @@ class ContextDefinition implements Definition
 
 
     /**
-     * @throws \ReflectionException
+     * @throws
      */
     protected function registerClassStage() : void
     {

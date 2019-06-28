@@ -54,6 +54,8 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
         }
         $def = static::buildDefinition();
         $repo->register($def);
+
+        // 注册 nlu. 非强制, 可以被 intentManager 改写.
         if (!empty(static::EXAMPLES)) {
             foreach (static::EXAMPLES as $str) {
                 $repo->registerNLUExample(

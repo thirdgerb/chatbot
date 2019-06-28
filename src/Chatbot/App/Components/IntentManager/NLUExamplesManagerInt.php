@@ -31,7 +31,7 @@ use Illuminate\Support\Collection;
  * @property int $page
  *
  */
-class NLUExamplesManager extends OOContext
+class NLUExamplesManagerInt extends OOContext
 {
     const DESCRIPTION = '管理意图的 NLU 样本';
 
