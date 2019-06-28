@@ -248,9 +248,7 @@ class NLUExamplesManager extends OOContext
 
             $dialog->say()
                 ->askChoose(
-                    "
-正在编辑意图 $name ($desc). 
-
+                    "正在编辑意图 $name ($desc). 
 
 输入例句的  '序号: 修改内容' 可以修改已有的例句. (例如输入 '0: 把例句改成这样')
 

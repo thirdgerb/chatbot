@@ -19,11 +19,11 @@ class ContextRepoCmd extends SessionCommand
     {domain? : 命名空间, 默认为空, 表示所有}
     {page? : 查看第几页, 默认为0}
     {limit? : 每页多少条, 默认为0, 表示所有}
-    {--i|intent: 仓库为intent}
-    {--m|memory: 仓库为memory}
+    {--i|intent : 仓库为intent}
+    {--m|memory : 仓库为memory}
 ';
 
-    const DESCRIPTION = '查看已注册的intents';
+    const DESCRIPTION = '查看已注册的 context';
 
     public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe): void
     {
@@ -35,14 +35,17 @@ class ContextRepoCmd extends SessionCommand
         $limit = intval($message['limit']);
         $limit = $limit > 0 ? $limit : 0;
 
-        if (isset($message['--memory'])) {
+        if ($message['--memory']) {
             $repo = MemoryRegistrar::getIns();
+            $type = 'memory';
 
-        } elseif(isset($message['--intent'])) {
+        } elseif($message['--intent']) {
             $repo = IntentRegistrar::getIns();
+            $type = 'intent';
 
         } else {
             $repo = ContextRegistrar::getIns();
+            $type = 'context';
 
         }
 
@@ -60,7 +63,7 @@ class ContextRepoCmd extends SessionCommand
         }
 
         $this->say()
-            ->info("已注册的意图为: ")
+            ->info("已注册的 $type 为: ")
             ->info(implode("\n", $result));
 
     }
