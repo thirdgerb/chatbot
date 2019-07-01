@@ -5,28 +5,26 @@ namespace Commune\Chatbot\App\SessionPipe;
 
 
 use Commune\Chatbot\Config\ChatbotConfig;
-use Commune\Chatbot\OOHost\Context\Intent\AbsIntent;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
-use Commune\Chatbot\Config\Host\OOHostConfig;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 
 class NavigationPipe implements SessionPipe
 {
-
-    /**
-     * @var OOHostConfig
-     */
-    protected $hostConfig;
+    protected $navigationIntents = [];
 
     public function __construct(ChatbotConfig $config)
     {
-        $this->hostConfig = $config->host;
+        $this->navigationIntents = $config->host->navigatorIntents;
     }
 
     public function handle(Session $session, \Closure $next): Session
     {
-        $navigation = $this->hostConfig->navigatorIntents;
+        $navigation = $this->navigationIntents;
+
+        if (empty($navigation)) {
+            return $next($session);
+        }
 
         // 检查matched
         $intent = $session->getMatchedIntent();

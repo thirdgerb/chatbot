@@ -90,7 +90,8 @@ class LoadConfiguration implements Bootstrapper
                 || is_a($value, $name, TRUE)
             )
         ) {
-            $container->instance($name, new $value);
+            $container->instance($name, $o = new $value);
+            $container->instance($value, $o);
 
         // 闭包的话, 还是走绑定逻辑.
         } elseif ($value instanceof \Closure) {

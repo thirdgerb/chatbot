@@ -16,7 +16,7 @@ use Commune\Chatbot\Framework\Component\ComponentOption;
  * @property-read string $output
  * @property-read string $jwt
  * @property-read int $threshold  阈值
- * @property-read string|\Closure $rasaPipe
+ * @property-read string|\Closure $pipe
  * @property-read SynonymOption[] $synonym
  * @property-read LookupOption[] $lookup
  * @property-read RegexOption[] $regex
@@ -36,7 +36,7 @@ class RasaComponent extends ComponentOption
         return [
             'server' => 'localhost:5005',
             'jwt' => '',
-            'rasaPipe' => RasaNLUPipeImpl::class,
+            'pipe' => RasaNLUPipeImpl::class,
             'threshold' => 70,
             'output' => __DIR__ .'/Rasa/nlu.md',
             'synonym' => [
@@ -56,7 +56,7 @@ class RasaComponent extends ComponentOption
         $this->app->registerConversationService(
             new RasaServiceProvider(
                 $this->app->getConversationContainer(),
-                $this->rasaPipe
+                $this->pipe
             )
         );
 
