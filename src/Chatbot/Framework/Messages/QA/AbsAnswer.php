@@ -46,6 +46,10 @@ abstract class AbsAnswer extends AbsMessage implements Answer
             $choice = 0;
         }
 
+        if (is_numeric($choice)) {
+            return is_numeric($this->choice) && $this->choice == $choice;
+        }
+
         return $choice == $this->choice;
     }
 

@@ -28,7 +28,6 @@ use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Exceptions\FatalErrorException;
 use Commune\Container\ContainerContract;
 use Commune\Container\RecursiveContainer;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**

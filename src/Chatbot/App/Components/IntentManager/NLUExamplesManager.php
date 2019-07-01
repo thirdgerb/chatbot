@@ -31,7 +31,7 @@ use Illuminate\Support\Collection;
  * @property int $page
  *
  */
-class NLUExamplesManagerInt extends OOContext
+class NLUExamplesManager extends OOContext
 {
     const DESCRIPTION = '管理意图的 NLU 样本';
 
@@ -128,7 +128,7 @@ class NLUExamplesManagerInt extends OOContext
                 $repo = $this->getRepo();
 
                 foreach ($items as $name => $collection) {
-                    $count = $collection->count();
+                    $count = count($collection);
                     $desc = $repo->get($name)->getDesc();
 
                     $list[] = "$name ($count) : $desc";

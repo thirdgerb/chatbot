@@ -39,6 +39,11 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
      */
     protected $fd;
 
+    /**
+     * @var array
+     */
+    protected $clientInfo;
+
     /*----- cached ----0*/
 
     /**
@@ -56,6 +61,11 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
      * @var ConversationMessage[]
      */
     protected $buffers = [];
+
+    /**
+     * @var string
+     */
+    protected $userId;
 
     /**
      * SwooleUserMessageRequest constructor.
@@ -76,6 +86,7 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
         $this->config = $config;
         $this->fd = $fd;
         $this->config = $config ?? new ConsoleConfig();
+        $this->clientInfo = $server->getClientInfo($fd);
     }
 
     /**
@@ -120,12 +131,13 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
 
     public function fetchUserId(): string
     {
-        return $this->config->consoleUserId;
+        return $this->userId
+            ?? $this->userId = md5($this->clientInfo['remote_ip']);
     }
 
     public function fetchUserName(): string
     {
-        return $this->config->consoleUserName;
+        return $this->clientInfo['remote_ip'];
     }
 
     public function fetchUserData(): array

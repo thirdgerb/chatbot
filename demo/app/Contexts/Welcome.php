@@ -72,8 +72,6 @@ class Welcome extends TaskDef
                     ->is('sandbox')
                         ->heard(function(Dialog $dialog, Session $session) {
                             $test = $session->memory['sandbox']['test'] ?? 0;
-                            var_dump($test);
-
                             $dialog->say()
                                 ->info("test is :")
                                 ->info($test);
@@ -127,7 +125,7 @@ class Welcome extends TaskDef
                     )
                     ->end(function(Dialog $dialog, Message $message){
 
-                        $dialog->say()->info($message->getText());
+                        $dialog->say()->info("输入了:" . $message->getText());
                         return $dialog->missMatch();
                     });
             });

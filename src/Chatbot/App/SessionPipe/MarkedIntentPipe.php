@@ -24,9 +24,8 @@ class MarkedIntentPipe implements SessionPipe
 
         $intentName = trim($text, '#');
         if ($session->intentRepo->has($intentName)) {
-            $session->setMatchedIntent(
-                $session->intentRepo->get($intentName)->newContext([])
-            );
+            $intent = $session->intentRepo->get($intentName)->newContext([]);
+            $session->setMatchedIntent($intent);
         }
 
         return $next($session);
