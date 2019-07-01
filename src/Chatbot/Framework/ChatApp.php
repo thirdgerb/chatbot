@@ -15,9 +15,7 @@ use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Predefined\SimpleConsoleLogger;
-use Commune\Chatbot\Framework\Providers;
 use Commune\Chatbot\Config\Host\OOHostConfig;
-use Commune\Chatbot\OOHost\OOHostServiceProvider;
 use Commune\Container\ContainerContract;
 use Commune\Chatbot\Blueprint\Kernel;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
@@ -305,16 +303,15 @@ class ChatApp implements Blueprint
 
     protected function baseRegister() : void
     {
+        $config = $this->getConfig()->baseServices;
         // reactor
-        $this->registerReactorService(Providers\TranslatorServiceProvider::class);
-        // host
-        $this->registerReactorService(OOHostServiceProvider::class);
-        $this->registerReactorService(Providers\LoggerServiceProvider::class);
-
+        $this->registerReactorService($config->translation);
+        $this->registerReactorService($config->hosting);
+        $this->registerReactorService($config->logger);
 
         // conversation
-        $this->registerConversationService(Providers\EventServiceProvider::class);
-        $this->registerConversationService(Providers\ConversationalServiceProvider::class);
+        $this->registerConversationService($config->event);
+        $this->registerConversationService($config->conversational);
 
     }
 

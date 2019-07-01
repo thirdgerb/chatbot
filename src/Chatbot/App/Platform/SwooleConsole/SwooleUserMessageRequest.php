@@ -125,7 +125,7 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
 
     public function fetchUserName(): string
     {
-        return $this->config->userName;
+        return $this->config->consoleUserName;
     }
 
     public function fetchUserData(): array

@@ -10,6 +10,7 @@ namespace Commune\Chatbot\Config;
 use Commune\Chatbot\Config\Logger\LoggerConfig;
 use Commune\Chatbot\Config\Message\DefaultMessagesConfig;
 use Commune\Chatbot\Config\Pipes\ChatbotPipesConfig;
+use Commune\Chatbot\Config\Services\BaseServiceConfig;
 use Commune\Chatbot\Config\Translation\TranslationConfig;
 use Commune\Chatbot\Config\Event\EventListenerConfig;
 use Commune\Chatbot\Config\Host\OOHostConfig;
@@ -22,6 +23,7 @@ use Commune\Support\Option;
  * @property-read bool $debug
  * @property-read array $configBindings
  *
+ * @property-read BaseServiceConfig $baseServices
  * @property-read string[] $reactorProviders
  * @property-read string[] $conversationProviders
  * @property-read string[] $components
@@ -44,6 +46,7 @@ class ChatbotConfig extends Option
         'eventRegister[]' => EventListenerConfig::class,
         'chatbotPipes' => ChatbotPipesConfig::class,
         'translation' => TranslationConfig::class,
+        'baseServices' => BaseServiceConfig::class,
         'logger' => LoggerConfig::class,
         'host' => OOHostConfig::class,
     ];
@@ -59,6 +62,9 @@ class ChatbotConfig extends Option
                 // 'componentName',
                 // 'componentName' => []
             ],
+
+            // 系统的服务.
+            'baseServices' => BaseServiceConfig::stub(),
 
             // 用户自定义的组件.
             'reactorProviders' => [

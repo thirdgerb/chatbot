@@ -130,15 +130,8 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
 
     public function logUnmatchedMessage(Session $session): void
     {
-        $message = $session->incomingMessage;
-        $names = $message->getHighlyPossibleIntentNames();
-
-        if (empty($names)) {
-            $session->repo->driver->saveSessionData(
-                $session,
-                new MissIntentMessage($session->incomingMessage)
-            );
-        }
+        // 交给别人去实现.
+        return;
     }
 
     public function outputIntentExamples(Registrar $registrar): void

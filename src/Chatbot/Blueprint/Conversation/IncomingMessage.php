@@ -36,7 +36,7 @@ interface IncomingMessage extends ConversationMessage
      * @param string $intentName
      * @return bool
      */
-    public function hasPossibleIntent(string $intentName) : bool ;
+    public function hasHighlyPossibleIntent(string $intentName) : bool ;
 
     /**
      * 概率由大到小排序.

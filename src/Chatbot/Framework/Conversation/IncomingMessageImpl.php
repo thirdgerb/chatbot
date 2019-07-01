@@ -32,9 +32,9 @@ class IncomingMessageImpl extends ConversationMessageImpl implements IncomingMes
         $this->possibleIntents[$intentName] = [$entities, $odd];
     }
 
-    public function hasPossibleIntent(string $intentName): bool
+    public function hasHighlyPossibleIntent(string $intentName): bool
     {
-        return isset($this->possibleIntents[$intentName]);
+        return in_array($intentName, $this->highlyPossible);
     }
 
     public function getPossibleIntentEntities(string $intentName): array

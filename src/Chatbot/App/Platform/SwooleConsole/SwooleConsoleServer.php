@@ -36,6 +36,11 @@ class SwooleConsoleServer implements ChatServer
     protected $server;
 
     /**
+     * @var array
+     */
+    protected $allow;
+
+    /**
      * SwooleServer constructor.
      * @param Application $app
      */
@@ -48,6 +53,7 @@ class SwooleConsoleServer implements ChatServer
         $config = $app->getReactorContainer()[ConsoleConfig::class];
         $this->ip = $config->ip;
         $this->port = $config->port;
+        $this->allow = $config->allowIPs;
         $this->server = new Server($this->ip, $this->port);
     }
 
@@ -55,8 +61,17 @@ class SwooleConsoleServer implements ChatServer
     {
         Runtime::enableCoroutine();
 
-        $this->server->on('connect', function ($server, $fd){
-            echo "connection open: {$fd}\n";
+        $this->server->on('connect', function (Server $server, $fd){
+            $info = $server->getClientInfo($fd);
+            $address = $info['remote_ip'] ?? '';
+            if (in_array($address, $this->allow)) {
+                echo "connection open: {$address} {$fd}\n";
+            } else {
+                echo "connection not allowed: {$address} {$fd}\n";
+                $server->send($fd, "ip not allowed");
+                $server->close($fd);
+            }
+
         });
 
         $this->server->on('close', function($server, $fd) {

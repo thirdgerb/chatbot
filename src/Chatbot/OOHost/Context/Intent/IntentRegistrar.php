@@ -231,7 +231,8 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
         $incomingMessage = $session->incomingMessage;
         $origin = $incomingMessage->message;
 
-        if ($incomingMessage->hasPossibleIntent($name)) {
+        // 必须高于阈值的意图才会被识别.
+        if ($incomingMessage->hasHighlyPossibleIntent($name)) {
             $entities = $incomingMessage->getPossibleIntentEntities($name);
             return $def->newContext($entities);
         }
