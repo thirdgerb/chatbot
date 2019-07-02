@@ -14,7 +14,6 @@ use Commune\Chatbot\OOHost\Context\Registrar;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryBagDefinition;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
 use Commune\Chatbot\OOHost\Context\Intent\Registrar as IntentRegistrarInterface;
-use function foo\func;
 
 class OOHostServiceProvider extends BaseServiceProvider
 {
@@ -58,7 +57,7 @@ class OOHostServiceProvider extends BaseServiceProvider
         $this->app->singleton(IntentRegistrarInterface::class, function(){
             return IntentRegistrar::getIns();
         });
-    }
 
+    }
 
 }

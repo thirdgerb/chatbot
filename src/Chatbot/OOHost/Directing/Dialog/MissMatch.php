@@ -12,14 +12,6 @@ class MissMatch extends AbsNavigator
 {
     public function doDisplay(): ? Navigator
     {
-        $missMatched = $this->dialog
-            ->session
-            ->chatbotConfig
-            ->defaultMessages
-            ->messageMissMatched;
-        $this->dialog->say()->warning($missMatched);
-
         return new Rewind($this->dialog, $this->history);
-
     }
 }
