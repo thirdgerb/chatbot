@@ -12,6 +12,10 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
+/**
+ * 有预定义行动(action) 的intent.
+ * 如果不被hearing 拦截, 会进入自己的context, 并执行对话逻辑.
+ */
 abstract class ActionIntent extends AbsCmdIntent
 {
     const DESCRIPTION = 'should define description';
@@ -19,6 +23,7 @@ abstract class ActionIntent extends AbsCmdIntent
     const SIGNATURE = ''; // must be set
     const REGEX = [];
     const KEYWORDS = [];
+    const EXAMPLES = [];
 
     public function navigate(Dialog $dialog): ? Navigator
     {

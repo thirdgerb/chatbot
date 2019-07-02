@@ -13,6 +13,8 @@ use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Chatbot\OOHost\Emotion\Emotion;
+use Commune\Chatbot\OOHost\Emotion\Feeling;
 use Commune\Chatbot\OOHost\Exceptions\NavigatorException;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMatcher;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
@@ -398,6 +400,31 @@ class HearingHandler implements Hearing
         if ($this->message->hasChoice($suggestionIndex)) {
             $this->heard = true;
             return $this->callInterceptor($interceptor);
+        }
+
+        return $this;
+    }
+
+    public function feels(
+        string $emotionName,
+        callable $action = null
+    ): Hearing
+    {
+
+        if (isset($this->navigator)) return $this;
+
+        if (!is_a($emotionName, Emotion::class, TRUE)) {
+            throw new ConfigureException(__METHOD__ . ' emotionName must be subclass of '. Emotion::class);
+        }
+
+        /**
+         * @var Feeling $feels
+         */
+        $feels = $this->dialog->app->make(Feeling::class);
+
+        if ($feels->feel($this->message, $emotionName)) {
+            $this->heard = true;
+            $this->callInterceptor($action);
         }
 
         return $this;

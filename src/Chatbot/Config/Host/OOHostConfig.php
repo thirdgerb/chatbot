@@ -7,6 +7,7 @@ use Commune\Chatbot\App\Commands\AnalyserPipe;
 use Commune\Chatbot\App\Commands\UserCommandsPipe;
 use Commune\Chatbot\App\SessionPipe\MarkedIntentPipe;
 use Commune\Chatbot\App\SessionPipe\NavigationPipe;
+use Commune\Chatbot\App\SessionPipe\UnheardPipe;
 use Commune\Support\Option;
 
 /**
@@ -40,6 +41,7 @@ class OOHostConfig extends Option
                 AnalyserPipe::class,
                 MarkedIntentPipe::class,
                 NavigationPipe::class,
+                UnheardPipe::class,
             ],
             'navigatorIntents' => [
                 //intentName

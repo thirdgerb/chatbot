@@ -11,6 +11,11 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
+/**
+ * 信息类Intent.
+ * 它的作用是实现一个多轮对话, 填满所有参数后返回.
+ * 可以用注解等方式来定义参数.
+ */
 abstract class MessageIntent extends AbsCmdIntent
 {
     const DESCRIPTION = 'should define description';
@@ -18,6 +23,7 @@ abstract class MessageIntent extends AbsCmdIntent
     const SIGNATURE = ''; // must be set
     const REGEX = [];
     const KEYWORDS = [];
+    const EXAMPLES = [];
 
     public static function getMatcherOption(): IntentMatcherOption
     {
@@ -39,7 +45,10 @@ abstract class MessageIntent extends AbsCmdIntent
 
     public function navigate(Dialog $dialog): ? Navigator
     {
-        return $dialog->redirect->dependOn($this);
+        if (!$this->isPrepared()) {
+            return $dialog->redirect->dependOn($this);
+        }
+        return null;
     }
 
     public function __onStart(Stage $stageRoute): Navigator

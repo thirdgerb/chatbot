@@ -7,6 +7,7 @@ namespace Commune\Chatbot\Framework\Component;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Bootstrap\Bootstrapper;
+use Commune\Chatbot\Framework\Component\Providers\LoadEmotions;
 use Commune\Chatbot\Framework\Component\Providers\LoadNLUExamplesFromJson;
 use Commune\Chatbot\Framework\Component\Providers\LoadPsr4SelfRegister;
 use Commune\Chatbot\Framework\Component\Providers\LoadTranslationConfig;
@@ -75,6 +76,9 @@ abstract class ComponentOption extends Option implements Bootstrapper
     }
 
 
+    /**
+     * @param string $resourcePath
+     */
     public function loadNLUExampleFromJsonFile(
         string $resourcePath
     ) : void
@@ -85,5 +89,29 @@ abstract class ComponentOption extends Option implements Bootstrapper
                 $resourcePath
             )
         );
+    }
+
+
+    /**
+     * @var LoadEmotions
+     */
+    protected $loadEmotions;
+
+    /**
+     * @param string $emotionName
+     * @param string|callable $experience
+     */
+    public function addFeelingExperience(
+        string $emotionName,
+        $experience
+    ) : void
+    {
+        if (!isset($this->loadEmotions)) {
+
+            $loadEmotions = new LoadEmotions($this->app->getReactorContainer());
+            $this->loadEmotions = $loadEmotions;
+            $this->app->registerReactorService($loadEmotions);
+        }
+        $this->loadEmotions->addExperience($emotionName, $experience);
     }
 }

@@ -98,6 +98,17 @@ interface Hearing
     ): Hearing;
 
 
+    /**
+     * 判断消息是否符合某种情感.
+     * @param string $emotionName
+     * @param Action|callable $action
+     * @return Hearing
+     */
+    public function feels(
+        string $emotionName,
+        callable $action = null
+    ) : Hearing;
+
 
     /**
      * 由 NLU 传递来的intent 如果存在
