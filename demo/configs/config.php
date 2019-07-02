@@ -20,6 +20,9 @@ return [
             'output' => __DIR__ .'/nlu.md',
         ],
         \Commune\Chatbot\App\Components\PredefinedIntComponent::class,
+        \Commune\Chatbot\App\Components\SimpleChatComponent::class => [
+            'resourcePath' => __DIR__ .'/chats/'
+        ],
     ],
     'reactorProviders' => [
     ],
@@ -79,6 +82,7 @@ return [
             \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,
             \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
             // \Commune\Chatbot\App\Components\Rasa\RasaNLUPipe::class,
+            \Commune\Chatbot\App\SessionPipe\UnheardPipe::class,
         ],
     ] + \Commune\Chatbot\Config\Host\OOHostConfig::stub(),
 

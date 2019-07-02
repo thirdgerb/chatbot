@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Components\IntentManager;
+namespace Commune\Chatbot\App\Components\NLUExamples;
 
 
 use Commune\Chatbot\App\Abilities\Supervise;

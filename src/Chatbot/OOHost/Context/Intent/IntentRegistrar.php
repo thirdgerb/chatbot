@@ -94,6 +94,7 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
         }
 
         $incomingMessage = $session->incomingMessage;
+
         $names = $incomingMessage->getHighlyPossibleIntentNames();
         if (empty($names)) {
             return null;

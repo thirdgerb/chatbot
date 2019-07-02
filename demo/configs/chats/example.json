@@ -1,0 +1,13 @@
+{
+    "attitudes.greet": [
+        "你好~!",
+        "hello!",
+        "hi!"
+    ],
+    "attitudes.thanks": [
+        "客气了",
+        "不用谢",
+        "很高兴能有所帮助",
+        "you are welcome"
+    ]
+}

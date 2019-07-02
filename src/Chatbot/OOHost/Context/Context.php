@@ -51,7 +51,7 @@ interface Context extends
     const HEARING_MIDDLEWARE_METHOD = '__hearing';
 
     // 如果此方法存在, 所有stage 方法构建时都会调用它.
-    // 入参是 Stage
+    // 入参是 Stage, 返回值是 void
     // 可以给所有的stage 定义公共流程.
     const STAGE_MIDDLEWARE_METHOD = '__staging';
 

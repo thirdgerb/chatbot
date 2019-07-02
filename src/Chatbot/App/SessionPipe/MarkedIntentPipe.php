@@ -6,6 +6,7 @@ namespace Commune\Chatbot\App\SessionPipe;
 
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
+use Illuminate\Support\Collection;
 
 class MarkedIntentPipe implements SessionPipe
 {
@@ -24,8 +25,16 @@ class MarkedIntentPipe implements SessionPipe
 
         $intentName = trim($text, '#');
         if ($session->intentRepo->has($intentName)) {
-            $intent = $session->intentRepo->get($intentName)->newContext([]);
-            $session->setMatchedIntent($intent);
+            $incoming = $session->incomingMessage;
+            $incoming->addPossibleIntent(
+                    $intentName,
+                    new Collection([]),
+                    100
+                );
+
+            $highlyPossible = $incoming->getHighlyPossibleIntentNames();
+            $highlyPossible[] = $intentName;
+            $incoming->setHighlyPossibleIntentNames($highlyPossible);
         }
 
         return $next($session);

@@ -4,13 +4,17 @@
 namespace Commune\Chatbot\App\Messages\QA;
 
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Messages\QA\AbsAnswer;
+use Commune\Chatbot\Framework\Messages\Verbosely;
 
 /**
  * Verbose Answer
  */
-class VbAnswer extends AbsAnswer
+class VbAnswer extends AbsAnswer implements VerboseMsg
 {
+    use Verbosely;
+
     protected $answer;
 
     /**
@@ -35,6 +39,9 @@ class VbAnswer extends AbsAnswer
 
     public function namesAsDependency(): array
     {
-        return array_merge(parent::namesAsDependency(), [VbAnswer::class]);
+        return array_merge(parent::namesAsDependency(), [VbAnswer::class, VerboseMsg::class]);
     }
+
+
+
 }

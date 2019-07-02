@@ -16,12 +16,12 @@ class UnheardPipe implements SessionPipe
          */
         $session = $next($session);
 
-        if ($session->shouldQuit()) {
+        if ($session->isQuiting()) {
             $farewell = $session
                 ->chatbotConfig
                 ->defaultMessages
                 ->farewell;
-            $session->dialog->say()->info($farewell);
+            $session->conversation->monolog()->info($farewell);
             return $session;
         }
 
@@ -31,7 +31,7 @@ class UnheardPipe implements SessionPipe
                 ->chatbotConfig
                 ->defaultMessages
                 ->messageMissMatched;
-            $session->dialog->say()->warning($missMatched);
+            $session->conversation->monolog()->warning($missMatched);
 
             return $session;
         }

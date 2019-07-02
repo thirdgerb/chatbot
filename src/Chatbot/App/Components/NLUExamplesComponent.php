@@ -20,7 +20,7 @@ class NLUExamplesComponent extends ComponentOption
     public static function stub(): array
     {
         return [
-            'repository' => __DIR__ .'/IntentManager/repository.json',
+            'repository' => __DIR__ .'/NLUExamples/repository.json',
         ];
     }
 
@@ -29,8 +29,8 @@ class NLUExamplesComponent extends ComponentOption
     protected function doBootstrap(): void
     {
         $this->loadSelfRegisterByPsr4(
-            "Commune\\Chatbot\\App\\Components\\IntentManager\\",
-            __DIR__ .'/IntentManager/'
+            "Commune\\Chatbot\\App\\Components\\NLUExamples\\",
+            __DIR__ .'/NLUExamples/'
         );
 
         $this->loadNLUExampleFromJsonFile($this->repository);
