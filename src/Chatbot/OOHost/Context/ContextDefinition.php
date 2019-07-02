@@ -420,4 +420,17 @@ class ContextDefinition implements Definition
         call_user_func($method, $builder);
     }
 
+    /**
+     * @return string[]
+     */
+    public function getTags(): array
+    {
+        $var = $this->contextClazz . '::CONTEXT_TAGS';
+        if (defined($var)) {
+            return constant($var);
+        }
+        return [];
+    }
+
+
 }

@@ -5,12 +5,14 @@ namespace Commune\Chatbot\App\Platform\ReactorStdio;
 
 
 use Commune\Chatbot\App\Abilities\Supervise;
+use Commune\Chatbot\App\Drivers\Demo\SimpleExpHandler;
 use Commune\Chatbot\App\Platform\ConsoleConfig;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Contracts\ChatServer;
+use Commune\Chatbot\Contracts\ExceptionHandler;
 
-class RSServerServiceProvider extends ServiceProvider
+class RSServerProvider extends ServiceProvider
 {
     public function boot($app): void
     {
@@ -35,6 +37,11 @@ class RSServerServiceProvider extends ServiceProvider
                 }
             };
         });
+
+        $this->app->singleton(
+            ExceptionHandler::class,
+            SimpleExpHandler::class
+        );
     }
 
 

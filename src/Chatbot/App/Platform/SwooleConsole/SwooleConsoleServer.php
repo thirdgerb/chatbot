@@ -68,7 +68,7 @@ class SwooleConsoleServer implements ChatServer
                 echo "connection open: {$address} {$fd}\n";
             } else {
                 echo "connection not allowed: {$address} {$fd}\n";
-                $server->send($fd, "ip not allowed");
+                $server->send($fd, "ip not allowed\n");
                 $server->close($fd);
             }
 

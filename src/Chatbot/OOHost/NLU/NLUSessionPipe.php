@@ -20,7 +20,9 @@ abstract class NLUSessionPipe implements SessionPipe, NatureLanguageUnit
             return $next($session);
         }
 
+        // 将 NLU 得到的意图一视同仁.
         $allMatched = $this->matchIntents($message);
+
         $highlyPossible = [];
         $incomingMessage = $session->incomingMessage;
         foreach ($allMatched as $matched) {
@@ -30,6 +32,7 @@ abstract class NLUSessionPipe implements SessionPipe, NatureLanguageUnit
                 $matched->confidence
             );
 
+            // 高可能的意图区别对待.
             if ($matched->highlyPossible) {
                 $highlyPossible[] = $matched->name;
             }

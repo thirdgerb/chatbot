@@ -300,6 +300,9 @@ class History
         return $this;
     }
 
+    /**
+     * 跟repeat 不一样, 完全当这一轮对话没有发生过.
+     */
     public function rewind() : void
     {
         $breakpoint = new Breakpoint($this->session, $this->prevBreakpoint);

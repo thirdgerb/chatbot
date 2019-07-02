@@ -17,6 +17,8 @@ interface Definition
     const BACKWARD = 4;
     const QUIT = 5;
 
+    // predefined tags
+    const TAG_MANAGER = 'manager';
 
     /**
      * create a context
@@ -32,6 +34,12 @@ interface Definition
     public function getClazz() : string;
 
     public function getDesc() : string;
+
+    /**
+     * 获取context 的类型定义.
+     * @return string[]
+     */
+    public function getTags() : array;
 
     /*--------- entity ---------*/
 

@@ -13,6 +13,9 @@ interface Registrar
 
     public function get(string $contextName) : ? Definition;
 
+    /**
+     * @return \Generator of Definition
+     */
     public function each() : \Generator;
 
     /**
@@ -21,7 +24,17 @@ interface Registrar
      */
     public function count() : int;
 
+    /**
+     * @param string $domain
+     * @return string[]
+     */
     public function getNamesByDomain(string $domain) : array;
 
 
+    /**
+     * 按 definition->getTags() 的tag 来反查.
+     * @param string ...$tags
+     * @return string[]
+     */
+    public function getNamesByTag(string ...$tags) : array;
 }

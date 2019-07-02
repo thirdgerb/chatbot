@@ -6,7 +6,6 @@ namespace Commune\Chatbot\App\Commands;
 
 use Commune\Chatbot\App\Commands\Navigation\BackCmd;
 use Commune\Chatbot\App\Commands\Navigation\CancelCmd;
-use Commune\Chatbot\App\Commands\Navigation\OkCmd;
 use Commune\Chatbot\App\Commands\Navigation\QuitCmd;
 use Commune\Chatbot\OOHost\Command\Help;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
@@ -17,7 +16,6 @@ class UserCommandsPipe extends SessionCommandPipe
     protected $commands = [
         Help::class,
         BackCmd::class,
-        OkCmd::class,
         QuitCmd::class,
         CancelCmd::class,
     ];

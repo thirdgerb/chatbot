@@ -92,7 +92,7 @@ class ArraySessionDriver implements Driver
 
     public function findContext(Session $session, string $contextId): ? Context
     {
-        return $this->findSessionData($id, SessionData::CONTEXT_TYPE);
+        return $this->findSessionData($contextId, SessionData::CONTEXT_TYPE);
     }
 
     public function __destruct()

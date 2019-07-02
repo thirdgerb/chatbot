@@ -6,6 +6,7 @@ namespace Commune\Chatbot\App\Components\Rasa\Contexts;
 
 use Commune\Chatbot\App\Abilities\Supervise;
 use Commune\Chatbot\App\Components\Rasa\RasaNLUPipe;
+use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Intent\AbsCmdIntent;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMatcherOption;
@@ -18,13 +19,16 @@ class RasaManagerInt extends AbsCmdIntent
 {
     const DESCRIPTION = 'rasa意图管理';
 
+    const CONTEXT_TAGS = [
+        Definition::TAG_MANAGER
+    ];
+
     const EXAMPLES = [
         '测试意图命中',
         '测试命中的意图',
         '测试命中了什么意图',
-        '如何测试意图是什么',
         '测试 matched intent',
-        '怎么查看命中的意图',
+        '查看命中的意图',
     ];
 
     public static function getMatcherOption(): IntentMatcherOption

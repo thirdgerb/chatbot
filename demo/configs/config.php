@@ -5,15 +5,23 @@
 return [
     'debug' => true,
     'configBindings' => [
-        \Commune\Chatbot\App\Platform\ConsoleConfig::class,
+        \Commune\Chatbot\App\Platform\ConsoleConfig::class => [
+            'allowIPs' => ['127.0.0.1'],
+        ],
     ],
     'components' => [
         \Commune\Demo\App\DemoOption::class,
         \Commune\Chatbot\App\Components\ConfigurableComponent::class,
+        \Commune\Chatbot\App\Components\NLUExamplesComponent::class => [
+            'repository' => __DIR__ .'/repository.json'
+        ],
+        \Commune\Chatbot\App\Components\SimpleFileIntentComponent::class,
+        \Commune\Chatbot\App\Components\RasaComponent::class => [
+            'output' => __DIR__ .'/nlu.md',
+        ],
+        \Commune\Chatbot\App\Components\PredefinedIntComponent::class,
     ],
     'reactorProviders' => [
-        \Commune\Chatbot\App\Platform\SwooleConsole\SwooleServiceServiceProvider::class,
-        \Commune\Chatbot\App\Drivers\Demo\ExpHandlerServiceProvider::class,
     ],
     'conversationProviders' => [
         \Commune\Chatbot\App\Drivers\Demo\CacheServiceProvider::class,
@@ -57,10 +65,21 @@ return [
     ],
         
     'host' => [
-        'rootContextName' => \Commune\Demo\App\Contexts\Welcome::class,
+        'rootContextName' => \Commune\Demo\App\Contexts\TestCase::class,
         'navigatorIntents' => [
-            \Commune\Demo\App\Intents\QuitInt::class
-        ]
+            \Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt::class,
+            \Commune\Chatbot\App\Components\Predefined\Navigation\CancelInt::class,
+            \Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt::class,
+            \Commune\Chatbot\App\Components\Predefined\Navigation\RepeatInt::class,
+            \Commune\Chatbot\App\Components\Predefined\Navigation\RestartInt::class,
+        ],
+        'sessionPipes' => [
+            \Commune\Chatbot\App\Commands\UserCommandsPipe::class,
+            \Commune\Chatbot\App\Commands\AnalyserPipe::class,
+            \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,
+            \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
+            // \Commune\Chatbot\App\Components\Rasa\RasaNLUPipe::class,
+        ],
     ] + \Commune\Chatbot\Config\Host\OOHostConfig::stub(),
 
 ];

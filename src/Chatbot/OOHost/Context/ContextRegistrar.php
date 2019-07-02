@@ -20,6 +20,11 @@ class ContextRegistrar implements Registrar
     protected $classToName = [];
 
     /**
+     * @var string[][]
+     */
+    protected $tagToName = [];
+
+    /**
      * @var Registrar[]
      */
     private static $instances;
@@ -28,6 +33,7 @@ class ContextRegistrar implements Registrar
      * @var array
      */
     protected $domainTrees = [];
+
 
     final private function __construct()
     {
@@ -65,6 +71,16 @@ class ContextRegistrar implements Registrar
         $this->definitionsByName[$id] = $def;
         $this->classToName[$def->getClazz()] = $def->getName();
         Arr::set($this->domainTrees, $id, $id);
+
+
+        // 注册tag
+        $tags = $def->getTags();
+        if (!empty($tags)) {
+            foreach ($tags as $tag) {
+                $this->tagToName[$tag][] = $id;
+            }
+        }
+
         return true;
     }
 
@@ -115,6 +131,9 @@ class ContextRegistrar implements Registrar
         return $id;
     }
 
+    /**
+     * @return \Generator
+     */
     public function each() : \Generator
     {
         foreach ($this->definitionsByName as $def) {
@@ -145,6 +164,17 @@ class ContextRegistrar implements Registrar
     public function count(): int
     {
         return count($this->definitionsByName);
+    }
+
+    public function getNamesByTag(string ...$tags): array
+    {
+        $names = [];
+        foreach ($tags as $tag) {
+            if (isset($this->tagToName[$tag])) {
+                $names = array_merge($names, $this->tagToName[$tag]);
+            }
+        }
+        return array_unique($names);
     }
 
 

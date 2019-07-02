@@ -13,6 +13,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Context\Context;
+use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Hearing;
@@ -34,6 +35,10 @@ use Illuminate\Support\Collection;
 class NLUExamplesManager extends OOContext
 {
     const DESCRIPTION = '管理意图的 NLU 样本';
+
+    const CONTEXT_TAGS = [
+        Definition::TAG_MANAGER
+    ];
 
     protected $limit = 30;
 

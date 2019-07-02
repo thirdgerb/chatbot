@@ -13,16 +13,18 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Demo\App\Components\CustomService\Routes\HearUserCall;
-use Commune\Demo\App\Intents\TestInt;
 use Commune\Demo\App\Memories\Sandbox;
 
 /**
- * @property string $name
+ * 用于测试功能的简单 test case
+ *
+ * @property string $name  请输入您的名字, 测试depend 功能.
  */
-class Welcome extends TaskDef
+class TestCase extends TaskDef
 {
     public static function __depend(Depending $depending): void
     {
+        $depending->onAnnotations();
     }
 
     public function __onStart(Stage $stage): Navigator
@@ -33,26 +35,17 @@ class Welcome extends TaskDef
                     ->askVerbose(
                         '请输入:',
                         [
-                            0 => 'hello',
-                            'test',
-                            'memory',
-                            'test class memory',
-                            '测试客服',
-                            5 => '测试依赖注入参数'
+                            0 => 'hello : 测试选项与正则 /^hello/',
+                            'test pipe: 测试经过 test pipe, 然后回到start',
+                            'sandbox : 测试在config里定义的 memory',
+                            'sandbox class: 测试用类定义的 memory',
+                            5 => 'dependencies: 测试依赖注入参数'
                         ]
                     );
             },
             function(Dialog $dialog, Message $message){
 
                 return $dialog->hear($message)
-                    ->isIntentIn(
-                        ['demo'],
-                        function(Dialog $dialog, TestInt $message){
-                            $dialog->say()
-                                ->info("matched test intent");
-                            return $dialog->repeat();
-                        }
-                    )
                     ->isAnyIntent()
                     ->isChoice(0)
                     ->pregMatch('/^hello/', [])

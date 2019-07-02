@@ -21,6 +21,7 @@ class ContextRepoCmd extends SessionCommand
     {limit? : 每页多少条, 默认为0, 表示所有}
     {--i|intent : 仓库为intent}
     {--m|memory : 仓库为memory}
+    {--t|tag : 不按domain查询,转为按tag查询.}
 ';
 
     const DESCRIPTION = '查看已注册的 context';
@@ -49,7 +50,12 @@ class ContextRepoCmd extends SessionCommand
 
         }
 
-        $names = $repo->getNamesByDomain($domain);
+        if ($message['--tag']) {
+            $names = $repo->getNamesByTag($domain);
+        } else {
+            $names = $repo->getNamesByDomain($domain);
+        }
+
 
         if ($limit > 0 ) {
             $names = (new Collection($names))->splice($page * $limit, $limit);
@@ -65,7 +71,6 @@ class ContextRepoCmd extends SessionCommand
         $this->say()
             ->info("已注册的 $type 为: ")
             ->info(implode("\n", $result));
-
     }
 
 
