@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\Components\SimpleChat\Tasks;
 
 
-use Commune\Chatbot\App\Callables\Intercepers\MustBeSupervisor;
+use Commune\Chatbot\App\Abilities\Supervise;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Components\SimpleChat\Manager;
 use Commune\Chatbot\App\Components\SimpleChat\SimpleChatAction;
@@ -24,6 +24,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 /**
  * @property-read string $editIndex
  * @property-read string $editIntent
+ * @property-read bool $isSupervisor
  */
 class ManagerTask extends TaskDef
 {
@@ -33,11 +34,6 @@ class ManagerTask extends TaskDef
 
     public static function __depend(Depending $depending): void
     {
-    }
-
-    public function __staging(Stage $stage) : void
-    {
-        $stage->onStart(new MustBeSupervisor());
     }
 
     public function __hearing(Hearing $hearing) : void
@@ -229,6 +225,9 @@ class ManagerTask extends TaskDef
             })
             ->isInstanceOf(VerboseMsg::class, function(Dialog $dialog, VerboseMsg $msg) use ($replies) {
 
+                if (!$this->isSupervisor) {
+                    return $dialog->reject();
+                }
 
                 $text = $msg->getTrimmedText();
                 $secs = explode(":", $text, 2);
@@ -253,6 +252,7 @@ class ManagerTask extends TaskDef
                 if (mb_strlen($mod) === 0) {
                     unset($replies[$index]);
                     Manager::setIntentReplies($this->editIndex, $this->editIntent, $replies);
+
                     Manager::saveResource($this->editIndex);
                     $dialog->say()->info("删除了第 $index 条");
                     return $dialog->repeat();
@@ -260,6 +260,8 @@ class ManagerTask extends TaskDef
 
 
                 $replies[$index] = $mod;
+
+
                 Manager::setIntentReplies($this->editIndex, $this->editIntent, $replies);
                 Manager::saveResource($this->editIndex);
                 $dialog->say()->info("修改了第 $index 条");
@@ -276,8 +278,18 @@ class ManagerTask extends TaskDef
         $listener->onFulfill(function(Dialog $dialog) {
             $dialog->say()
                 ->info('结束 simple chat 编辑');
+        })->onReject(function(Dialog $dialog) {
+            $dialog->say()
+                ->error("没有操作权限!");
         });
     }
 
+
+    public function __getIsSupervisor() : bool
+    {
+        return $this->getSession()
+            ->conversation
+            ->isAbleTo(Supervise::class);
+    }
 
 }

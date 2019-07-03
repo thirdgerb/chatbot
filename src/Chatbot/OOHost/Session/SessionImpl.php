@@ -323,6 +323,9 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function setMatchedIntent(IntentMessage $intent): void
     {
+        if (!$intent->isInstanced()) {
+            $intent = $intent->toInstance($this);
+        }
         $this->matchedIntent = $intent;
     }
 

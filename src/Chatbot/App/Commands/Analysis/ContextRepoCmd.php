@@ -21,7 +21,7 @@ class ContextRepoCmd extends SessionCommand
     {limit? : 每页多少条, 默认为0, 表示所有}
     {--i|intent : 仓库为intent}
     {--m|memory : 仓库为memory}
-    {--t|tag : 不按domain查询,转为按tag查询.}
+    {--t|tag : 不按domain查询,转为按tag查询.常见tag如"manager"}
 ';
 
     const DESCRIPTION = '查看已注册的 context';

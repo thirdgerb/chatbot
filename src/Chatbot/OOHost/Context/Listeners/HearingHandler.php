@@ -255,6 +255,7 @@ class HearingHandler implements Hearing
 
         // 如果消息本身就是 intent, 则视作回调.
         if ($this->message instanceof IntentMessage) {
+            $this->heardUncaught = false;
             return $this->callbackIntent(
                 $this->message,
                 $intentAction
@@ -340,7 +341,7 @@ class HearingHandler implements Hearing
             return $this;
         }
 
-        return $this->callbackIntent($intent, $intentAction);
+        return $this->heardIntent($intent, $intentAction);
     }
 
     /**

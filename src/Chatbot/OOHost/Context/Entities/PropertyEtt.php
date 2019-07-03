@@ -142,7 +142,7 @@ class PropertyEtt implements Entity
     {
         $method = static::ANSWER_VALIDATE_METHOD_PREFIX . ucfirst($this->name);
         if (method_exists($self, $method)) {
-            return $self->{$method}($dialog, $method);
+            return $self->{$method}($dialog, $message);
         }
 
         // 用interceptor 作为一种校验方式.

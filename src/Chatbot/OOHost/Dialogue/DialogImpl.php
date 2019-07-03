@@ -18,7 +18,6 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\History\History;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionImpl;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Psr\Log\LoggerInterface;
 
 
@@ -500,7 +499,7 @@ class DialogImpl implements Dialog, Redirect, App
 
     public function __destruct()
     {
-        if (CHATBOT_DEBUG) {
+        if (CHATBOT_DEBUG && isset($this->session)) {
             $this->getLogger()->debug(__METHOD__);
         }
     }

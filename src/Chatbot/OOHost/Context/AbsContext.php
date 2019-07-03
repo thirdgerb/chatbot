@@ -38,7 +38,7 @@ abstract class AbsContext extends AbsMessage implements Context
      * 属性之所以用 '_' 做前缀, 是防止 __get 方法定义了重复的名称, 导致内部逻辑错误.
      * @var array
      */
-    protected $_props = [];
+    public $_props = [];
 
     /**
      * context 持有数据的地方.

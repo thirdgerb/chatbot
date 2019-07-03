@@ -12,7 +12,6 @@ use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
-use Commune\Demo\App\Components\CustomService\Routes\HearUserCall;
 use Commune\Demo\App\Memories\Sandbox;
 
 /**
@@ -47,6 +46,7 @@ class TestCase extends TaskDef
 
                 return $dialog->hear($message)
                     ->isAnyIntent()
+                    ->isIntentIn(['Commune.Demo'])
                     ->isChoice(0)
                     ->pregMatch('/^hello/', [])
                     ->heard(function(Dialog $dialog) : Navigator {

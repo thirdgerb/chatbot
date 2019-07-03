@@ -166,7 +166,11 @@ class VbQuestion extends AbsQuestion implements VerboseMsg
         // 再匹配suggestions 的开头
         foreach ($this->suggestions as $index => $suggestion) {
             if (Str::startsWith($suggestion, $text)) {
-                return $this->answer = $this->newAnswer($message, $this->suggestions[$index], $index);
+                return $this->answer = $this->newAnswer(
+                    $message,
+                    $this->suggestions[$index],
+                    $index
+                );
             }
         }
 

@@ -67,6 +67,7 @@ abstract class AbsIntent
         }
         $this->_session = $session;
         $this->getId();
+        $this->assign();
         $this->_session->repo->cacheSessionData($this);
 
         return $this;
