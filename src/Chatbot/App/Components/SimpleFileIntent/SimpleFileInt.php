@@ -58,11 +58,25 @@ class SimpleFileInt extends AbsIntent
     public function __onSuggest(Stage $stage) : Navigator
     {
         $option = $this->getDef()->getFileIntentOption();
+        $optionSuggestions = [];
+        $repo = $this->getSession()->contextRepo;
+
+        foreach ($option->suggestions as $suggestion) {
+            if ($repo->has($suggestion)) {
+                $optionSuggestions[] = $suggestion;
+                continue;
+            }
+
+            if ($repo->has($name = 'sfi.'.$suggestion)) {
+                $optionSuggestions[] = $name;
+            }
+        }
+
         $suggestions = [
             '不用了' => function(Dialog $dialog) {
                 return $dialog->fulfill();
             }
-        ] + $option->suggestions;
+        ] + $optionSuggestions;
 
         return $stage->component(new Menu(
             $option->question,
@@ -80,12 +94,6 @@ class SimpleFileInt extends AbsIntent
             }
         ));
     }
-
-
-
-
-
-
 
     public static function __depend(Depending $depending): void
     {

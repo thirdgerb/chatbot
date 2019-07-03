@@ -18,11 +18,16 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  */
 abstract class ActionIntent extends AbsCmdIntent
 {
+    // 意图的描述
     const DESCRIPTION = 'should define description';
 
-    const SIGNATURE = ''; // must be set
+    // 命令名. 可以用命令的方式来匹配
+    const SIGNATURE = '';
+    // 用正则来匹配
     const REGEX = [];
+    // 用关键字来匹配.
     const KEYWORDS = [];
+    // 给NLU用的例句.
     const EXAMPLES = [];
 
     public function navigate(Dialog $dialog): ? Navigator

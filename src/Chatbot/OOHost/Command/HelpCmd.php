@@ -7,7 +7,7 @@ namespace Commune\Chatbot\OOHost\Command;
 use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 
-class Help extends SessionCommand
+class HelpCmd extends SessionCommand
 {
     const SIGNATURE = 'help
         {commandName? : 命令的名称.比如 /help }
@@ -69,24 +69,20 @@ class Help extends SessionCommand
         $definition = $getDefinition();
 
         $commandName = $definition->getCommandName();
-        $this->say()->info("Command [$commandName] : $desc" . PHP_EOL);
+        $output = "Command [$commandName] : $desc" . PHP_EOL;
 
 
         // 变量
-        $this->say()->info("Arguments:");
+        $output .= "Arguments:\n\n";
         foreach ($definition->getArguments() as $argument) {
-            $this->say()
-                ->info(
-                    sprintf(
-                    "%s\t: %s",
-                        $argument->getName(),
-                        $this->say()->trans($argument->getDescription())
-                    )
-                );
+           $output .= sprintf(
+            "%s\t: %s\n",
+                $argument->getName(),
+                $this->say()->trans($argument->getDescription())
+            );
         }
-        $this->say()->info("");
 
-        $this->say()->info("Options:");
+        $output.="\nOptions:\n";
         foreach ($definition->getOptions() as $option) {
             $name = $option->getName();
             $shotCut = $option->getShortcut();
@@ -95,16 +91,13 @@ class Help extends SessionCommand
                 : '';
 
 
-            $this->say()->info(
-                sprintf(
-                    "%s--%s \t: %s",
-                    $shotCutStr,
-                    $name,
-                    $this->say()->trans($option->getDescription())
-                )
+           $output.= sprintf(
+                "\n%s--%s \t: %s",
+                $shotCutStr,
+                $name,
+                $this->say()->trans($option->getDescription())
             );
         }
-
-
+        $this->say()->info($output);
     }
 }

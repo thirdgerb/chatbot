@@ -11,7 +11,7 @@ use Commune\Chatbot\App\Commands\Analysis\NewSessionCmd;
 use Commune\Chatbot\App\Commands\Analysis\RedirectCmd;
 use Commune\Chatbot\App\Commands\Analysis\StatusCmd;
 use Commune\Chatbot\App\Commands\Analysis\WhereCmd;
-use Commune\Chatbot\OOHost\Command\Help;
+use Commune\Chatbot\OOHost\Command\HelpCmd;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
 use Commune\Chatbot\OOHost\Session\Session;
 
@@ -19,7 +19,7 @@ class AnalyserPipe extends SessionCommandPipe
 {
     // 命令的名称.
     protected $commands = [
-        Help::class,
+        HelpCmd::class,
         WhereCmd::class,
         StatusCmd::class,
         MemoryCmd::class,

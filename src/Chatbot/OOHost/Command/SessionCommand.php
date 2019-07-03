@@ -76,11 +76,11 @@ abstract class SessionCommand
             ->toCommandMessage($cmdText, $message);
 
         // 跳转运行 help
-        if ($commandMsg['--help'] && !$this instanceof Help) {
+        if ($commandMsg['--help'] && !$this instanceof HelpCmd) {
             /**
-             * @var Help $helper
+             * @var HelpCmd $helper
              */
-            $helper = $pipe->makeCommand($session, Help::class);
+            $helper = $pipe->makeCommand($session, HelpCmd::class);
             $helper->withSession($session);
 
             $helper->helpCommandClazz(
