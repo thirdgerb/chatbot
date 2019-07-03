@@ -361,19 +361,19 @@ class DialogImpl implements Dialog, Redirect, App
 
     /*--------- backward ---------*/
 
-    public function quit(): Navigator
+    public function quit(bool $skipSelfExitingEvent = false): Navigator
     {
-        return new Directing\Backward\Quit($this, $this->history);
+        return new Directing\Backward\Quit($this, $this->history, $skipSelfExitingEvent);
     }
 
-    public function reject(): Navigator
+    public function reject(bool $skipSelfExitingEvent = false): Navigator
     {
-        return new Directing\Backward\Reject($this, $this->history);
+        return new Directing\Backward\Reject($this, $this->history, $skipSelfExitingEvent);
     }
 
-    public function cancel(): Navigator
+    public function cancel(bool $skipSelfExitingEvent = false): Navigator
     {
-        return new Directing\Backward\Cancel($this, $this->history);
+        return new Directing\Backward\Cancel($this, $this->history, $skipSelfExitingEvent);
     }
 
 

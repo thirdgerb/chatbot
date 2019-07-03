@@ -81,12 +81,6 @@ interface Dialog
      */
     public function next() : Navigator;
 
-    /**
-     * 完成当前的任务, 向前回调.
-     * @return Navigator
-     */
-    public function fulfill() : Navigator;
-
 
     /*-------- context stage --------*/
 
@@ -129,12 +123,6 @@ interface Dialog
     /*-------- history --------*/
 
     /**
-     * 退回到上一个向用户提出问题的状态.
-     * @return Navigator
-     */
-    public function backward() : Navigator;
-
-    /**
      * 重新向用户提出上一个问题
      * 而不是重复当前stage
      * @return Navigator
@@ -153,27 +141,45 @@ interface Dialog
      */
     public function wait() : Navigator;
 
+    /*-------- 退出语境 --------*/
+
+
     /**
-     * 退出当前的 session. 下次用户进来, 会从头开始对话.
+     * 完成当前的任务, 向前回调.
      * @return Navigator
      */
-    public function quit() : Navigator;
+    public function fulfill() : Navigator;
 
 
-    /*-------- 异常 --------*/
+    /**
+     * 退回到上一个向用户提出问题的状态.
+     * @return Navigator
+     */
+    public function backward() : Navigator;
+
+
+    /**
+     * 退出当前的 session. 下次用户进来, 会从头开始对话.
+     * @param bool $skipSelfExitingEvent
+     * @return Navigator
+     */
+    public function quit(bool $skipSelfExitingEvent = false) : Navigator;
+
 
     /**
      * 机器人拒绝用户进入当前的语境.
      *
+     * @param bool $skipSelfExitingEvent
      * @return Navigator
      */
-    public function reject() : Navigator;
+    public function reject(bool $skipSelfExitingEvent = false) : Navigator;
 
     /**
      * 用户主动取消当前的语境.
      *
+     * @param bool $skipSelfExitingEvent
      * @return Navigator
      */
-    public function cancel() : Navigator;
+    public function cancel(bool $skipSelfExitingEvent = false) : Navigator;
 
 }
