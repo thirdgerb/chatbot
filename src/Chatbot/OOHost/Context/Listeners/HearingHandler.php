@@ -255,7 +255,6 @@ class HearingHandler implements Hearing
 
         // 如果消息本身就是 intent, 则视作回调.
         if ($this->message instanceof IntentMessage) {
-            $this->heardUncaught = false;
             return $this->callbackIntent(
                 $this->message,
                 $intentAction
@@ -302,7 +301,16 @@ class HearingHandler implements Hearing
     ) : Hearing
     {
         $this->heard = true;
-        return $this->callInterceptor($interceptor, $message);
+
+        // 如果有拦截器存在, 则执行拦截器
+        if (isset($interceptor)) {
+            return $this->callInterceptor($interceptor, $message);
+        }
+
+        // 没有拦截器时, 就当是一个正常的回调.
+        // 逻辑会比较难以理解. 所以最好还是写上interceptor
+        $this->setNavigator($this->dialog->repeat());
+        return $this;
     }
 
     /**

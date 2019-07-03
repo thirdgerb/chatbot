@@ -38,6 +38,7 @@ class TestCase extends TaskDef
                             'test pipe: 测试经过 test pipe, 然后回到start',
                             'sandbox : 测试在config里定义的 memory',
                             'sandbox class: 测试用类定义的 memory',
+                            '#tellWeather : 用命令命中意图, 查询天气',
                             5 => 'dependencies: 测试依赖注入参数'
                         ]
                     );
@@ -101,8 +102,11 @@ class TestCase extends TaskDef
                         }
                     )
                     ->isChoice(4, function(Dialog $dialog){
-                        return $dialog->goStage('testCustom');
+                        $dialog->say()->info(
+                            "请输入 #tellWeather [城市] [天气]"
+                        );
 
+                        return $dialog->wait();
                     })
                     ->isChoice(
                         5,
@@ -122,14 +126,6 @@ class TestCase extends TaskDef
                         return $dialog->missMatch();
                     });
             });
-    }
-
-    public function __onTestCustom(Stage $stage) : Navigator
-    {
-        return $stage->sleepTo(new HearUserCall(), function(Dialog $dialog){
-            $dialog->say()->info("完成客服测试.");
-            return $dialog->restart();
-        });
     }
 
     public function __onTest(Stage $stage): Navigator
