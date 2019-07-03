@@ -57,6 +57,7 @@ abstract class AbsMemory extends AbsContext implements Memory
         $data = $session->repo->fetchSessionData(
             $identity = $this->toSessionIdentity(),
             function() {
+                $this->assign();
                 return $this;
             }
         );

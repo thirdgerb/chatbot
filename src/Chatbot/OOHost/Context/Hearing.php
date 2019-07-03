@@ -109,6 +109,17 @@ interface Hearing
         callable $action = null
     ) : Hearing;
 
+    /**
+     * @param callable $action
+     * @return Hearing
+     */
+    public function isPositive(callable $action = null) : Hearing;
+
+    /**
+     * @param callable|null $action
+     * @return Hearing
+     */
+    public function isNegative(callable $action = null) : Hearing;
 
     /**
      * 由 NLU 传递来的intent 如果存在

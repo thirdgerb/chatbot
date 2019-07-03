@@ -3,7 +3,9 @@
 
 namespace Commune\Chatbot\App\Messages\QA;
 
-class Confirmation extends VbAnswer
+use Commune\Chatbot\Blueprint\Message\QA\Confirmation as Contract;
+
+class Confirmation extends VbAnswer implements Contract
 {
     /**
      * @return bool
@@ -12,5 +14,11 @@ class Confirmation extends VbAnswer
     {
         return $this->choice == 0 ;
     }
+
+    public function isPositive(): bool
+    {
+        return $this->hasChoice(1);
+    }
+
 
 }

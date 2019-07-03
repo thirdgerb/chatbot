@@ -14,12 +14,15 @@ use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Emotion\Emotion;
+use Commune\Chatbot\OOHost\Emotion\Emotions\Negative;
+use Commune\Chatbot\OOHost\Emotion\Emotions\Positive;
 use Commune\Chatbot\OOHost\Emotion\Feeling;
 use Commune\Chatbot\OOHost\Exceptions\NavigatorException;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMatcher;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
+use Commune\Chatbot\Blueprint\Message\QA\Confirmation;
 
 class HearingHandler implements Hearing
 {
@@ -414,19 +417,56 @@ class HearingHandler implements Hearing
         if (isset($this->navigator)) return $this;
 
         if (!is_a($emotionName, Emotion::class, TRUE)) {
-            throw new ConfigureException(__METHOD__ . ' emotionName must be subclass of '. Emotion::class);
+            throw new ConfigureException(
+                __METHOD__
+                . ' emotionName must be subclass of '. Emotion::class
+                . ", $emotionName given"
+            );
         }
 
-        /**
-         * @var Feeling $feels
-         */
-        $feels = $this->dialog->app->make(Feeling::class);
 
-        if ($feels->feel($this->message, $emotionName)) {
+        if ($this->doFeels($emotionName)) {
             $this->heard = true;
             $this->callInterceptor($action);
         }
 
+        return $this;
+    }
+
+    protected function doFeels(string $emotionName) : bool
+    {
+        /**
+         * @var Feeling $feels
+         */
+        $feels = $this->dialog->app->make(Feeling::class);
+        return $feels->feel($this->message, $emotionName)    ;
+    }
+
+    public function isNegative(callable $action = null): Hearing
+    {
+        if (isset($this->navigator)) return $this;
+
+        $is = $this->message instanceof Confirmation && ! $this->message->isPositive();
+        $is = $is || $this->doFeels(Negative::class);
+
+        if ($is) {
+            $this->heard = true;
+            $this->callInterceptor($action);
+        }
+        return $this;
+    }
+
+    public function isPositive(callable $action = null): Hearing
+    {
+        if (isset($this->navigator)) return $this;
+
+        $is = $this->message instanceof Confirmation && $this->message->isPositive();
+        $is = $is || $this->doFeels(Positive::class);
+
+        if ($is) {
+            $this->heard = true;
+            $this->callInterceptor($action);
+        }
         return $this;
     }
 

@@ -16,7 +16,6 @@ class QuitInt extends NavigateIntent
     const DESCRIPTION = '退出当前会话';
 
     const EXAMPLES = [
-        'exit',
         '结束对话',
         '今天先说到这儿',
         '就说到这里吧',

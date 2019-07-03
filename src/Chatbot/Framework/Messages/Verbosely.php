@@ -15,31 +15,31 @@ trait Verbosely
     /**
      * @var int
      */
-    protected $level = VerboseMsg::INFO;
+    protected $_level = VerboseMsg::INFO;
 
     /**
      * @var array
      */
-    protected $slots = [];
+    protected $_slots = [];
 
     /**
      * @var bool
      */
-    protected $shouldTranslate = true;
+    protected $_shouldTranslate = true;
 
 
     /**
      * @var string
      */
-    protected $translation;
+    protected $_translation;
 
     /**
      * @return $this
      */
     public function raw()
     {
-        $this->shouldTranslate = false;
-        $this->translation = $this->input;
+        $this->_shouldTranslate = false;
+        $this->_translation = $this->input;
         return $this;
     }
 
@@ -49,7 +49,7 @@ trait Verbosely
      */
     public function withSlots(array $slots)
     {
-        $this->slots = $slots + $this->slots;
+        $this->_slots = $slots + $this->_slots;
         return $this;
     }
 
@@ -59,19 +59,19 @@ trait Verbosely
      */
     public function withLevel(string $level)
     {
-        $this->level = $level;
+        $this->_level = $level;
         return $this;
     }
 
     public function getLevel(): string
     {
-        return $this->level;
+        return $this->_level;
     }
 
     public function getSlots() : array
     {
         $result = [];
-        foreach($this->slots as $key => $value) {
+        foreach($this->_slots as $key => $value) {
 
             if (is_array($value)) {
                 continue;
@@ -88,8 +88,8 @@ trait Verbosely
 
     public function translate(Translator $translator, string $locale = null): void
     {
-        if ($this->shouldTranslate) {
-            $this->translation = $this->doTranslate($translator, $locale);
+        if ($this->_shouldTranslate) {
+            $this->_translation = $this->doTranslate($translator, $locale);
         }
     }
 

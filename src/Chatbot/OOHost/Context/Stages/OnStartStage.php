@@ -52,6 +52,7 @@ interface OnStartStage extends Speech
     public function fulfill() : Navigator;
 
     /**
+     * 和interceptor 不一样, 必须返回 navigator
      * @param callable $action
      * @return Navigator
      */

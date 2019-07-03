@@ -60,7 +60,7 @@ class VbQuestion extends AbsQuestion implements VerboseMsg
 
     public function makeQuestion(): string
     {
-        return $this->translation ?? $this->getInput();
+        return $this->_translation ?? $this->getInput();
     }
 
     public function getInput() : string
@@ -145,16 +145,24 @@ class VbQuestion extends AbsQuestion implements VerboseMsg
             }
         }
 
-        // 先检查答案是不是 choice 的序号
-        $text = $message->getTrimmedText();
-        if (isset($this->suggestions[$text])) {
-            return $this->answer = $this->newAnswer(
-                $message,
-                $this->suggestions[$text],
-                $text
-            );
-        }
+        return $this->isIndexOfSuggestions($message)
+            ?? $this->isSuggestionStartPart($message)
+            ?? $this->acceptAnyAnswer($message)
+            ?? null;
+    }
 
+    protected function acceptAnyAnswer(Message $message) : ? Answer
+    {
+        // 看看是否只允许在建议中.
+        if (!$this->onlySuggestion) {
+            return $this->answer = $this->newAnswer($message, $message->getText(), null);
+        }
+        return null;
+    }
+
+    protected function isSuggestionStartPart(Message $message) : ? Answer
+    {
+        $text = $message->getTrimmedText();
         // 再匹配suggestions 的开头
         foreach ($this->suggestions as $index => $suggestion) {
             if (Str::startsWith($suggestion, $text)) {
@@ -162,9 +170,29 @@ class VbQuestion extends AbsQuestion implements VerboseMsg
             }
         }
 
-        // 看看是否只允许在建议中.
-        if (!$this->onlySuggestion) {
-            return $this->answer = $this->newAnswer($message, $message->getText(), null);
+        return null;
+    }
+
+    protected function isIndexOfSuggestions(Message $message) : ? Answer
+    {
+        $text = $message->getTrimmedText();
+        $text = strtolower($text);
+        $originIndexes = [];
+        foreach ($this->suggestions as $index => $suggestion) {
+            if (is_string($index)) {
+                $originIndexes[strtolower($index)] = $index;
+            } else {
+                $originIndexes[$index] = $index;
+            }
+        }
+
+        if (isset($originIndexes[$text])) {
+            $originIndex = $originIndexes[$text];
+            return $this->answer = $this->newAnswer(
+                $message,
+                $this->suggestions[$originIndex],
+                $originIndex
+            );
         }
 
         return null;

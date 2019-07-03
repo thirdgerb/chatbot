@@ -30,14 +30,14 @@ abstract class AbsMessage implements Contract
     /**
      * @var Carbon
      */
-    protected $createdAt;
+    protected $_createdAt;
 
     /**
      * @var Carbon|null
      */
-    protected $deliverAt;
+    protected $_deliverAt;
 
-    protected $cmdText;
+    protected $_cmdText;
 
     /**
      * AbsMessage constructor.
@@ -45,7 +45,7 @@ abstract class AbsMessage implements Contract
      */
     public function __construct(Carbon $createdAt = null)
     {
-        $this->createdAt = $createdAt ?? new Carbon();
+        $this->_createdAt = $createdAt ?? new Carbon();
     }
 
 
@@ -87,7 +87,7 @@ abstract class AbsMessage implements Contract
 
     public function getCreatedAt(): Carbon
     {
-        return $this->createdAt ?? $this->createdAt = new Carbon();
+        return $this->_createdAt ?? $this->_createdAt = new Carbon();
     }
 
 
@@ -102,8 +102,8 @@ abstract class AbsMessage implements Contract
 
     public function getCmdText(): ? string
     {
-        return $this->cmdText
-            ?? $this->cmdText = CommandUtils::getCommandStr(
+        return $this->_cmdText
+            ?? $this->_cmdText = CommandUtils::getCommandStr(
                 $this->getTrimmedText(),
                 // 确保 commandUtils 会使用 user command mark
                 null
@@ -117,12 +117,12 @@ abstract class AbsMessage implements Contract
 
     public function getDeliverAt(): ? Carbon
     {
-        return $this->deliverAt;
+        return $this->_deliverAt;
     }
 
     public function deliverAt(Carbon $carbon): Message
     {
-        $this->deliverAt = $carbon;
+        $this->_deliverAt = $carbon;
         return $this;
     }
 

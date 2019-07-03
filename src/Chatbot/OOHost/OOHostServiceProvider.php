@@ -14,6 +14,8 @@ use Commune\Chatbot\OOHost\Context\Registrar;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryBagDefinition;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
 use Commune\Chatbot\OOHost\Context\Intent\Registrar as IntentRegistrarInterface;
+use Commune\Chatbot\OOHost\Emotion\Feeling;
+use Commune\Chatbot\OOHost\Emotion\Feels;
 
 class OOHostServiceProvider extends BaseServiceProvider
 {
@@ -56,6 +58,10 @@ class OOHostServiceProvider extends BaseServiceProvider
 
         $this->app->singleton(IntentRegistrarInterface::class, function(){
             return IntentRegistrar::getIns();
+        });
+
+        $this->app->singleton(Feeling::class, function() {
+            return new Feels();
         });
 
     }

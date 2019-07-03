@@ -42,7 +42,7 @@ class Verbose extends AbsMessage implements VerboseMsg
 
     public function getText(): string
     {
-        return $this->text ?? $this->translation ?? $this->getInput();
+        return $this->text ?? $this->_translation ?? $this->getInput();
     }
 
     public function getInput(): string
@@ -55,7 +55,7 @@ class Verbose extends AbsMessage implements VerboseMsg
     {
         return [
             'text' => $this->text,
-            'level' => $this->level
+            'level' => $this->_level
         ];
     }
 
