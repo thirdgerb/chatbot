@@ -3,7 +3,6 @@
 
 namespace Commune\Chatbot\OOHost\Context\Intent;
 
-use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -23,23 +22,5 @@ interface IntentMessage extends Context
      * @return Navigator|null
      */
     public function navigate(Dialog $dialog) : ? Navigator;
-
-
-//    /**
-//     * 告知 intent 自己被依赖,
-//     * 这样补完信息后也不会执行 action,
-//     * 而是fulfill回到之前的context
-//     *
-//     * @return IntentMessage
-//     */
-//    public function beDepended() : IntentMessage;
-
-//    /**
-//     * Intent 如果自己可以执行, 则从action 开始.
-//     *
-//     * @param Stage $stageRoute
-//     * @return Navigator|null
-//     */
-//    public function action(Stage $stageRoute) : ? Navigator;
 
 }

@@ -247,8 +247,10 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
         return null;
     }
 
+
     public function setIntentNLUExamples(string $intentName, array $examples): void
     {
+        $items = [];
         foreach ($examples as $example) {
             if (!$example instanceof NLUExample) {
                 throw new \InvalidArgumentException(
@@ -260,9 +262,18 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
                     . ' given'
                 );
             }
+            $items[$example->text] = $example;
         }
-        $this->nluExamples[$intentName] = $examples;
+        $this->nluExamples[$intentName] = $items;
     }
 
+    public function hasCommandIntent(string $intentName) : bool
+    {
+        if (!$this->has($intentName)) {
+            return false;
+        }
+        $matcher = $this->getMatcher($intentName);
+        return $matcher->hasCommand();
+    }
 
 }

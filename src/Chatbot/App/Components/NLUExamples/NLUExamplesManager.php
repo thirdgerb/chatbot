@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\Components\NLUExamples;
 
 
-use Commune\Chatbot\App\Abilities\Supervise;
+use Commune\Chatbot\App\Callables\Intercepers\MustBeSupervisor;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Callables\StageComponents\Paginator;
 use Commune\Chatbot\App\Components\NLUExamplesComponent;
@@ -57,16 +57,7 @@ class NLUExamplesManager extends OOContext
 
     public function staging(Stage $stage)
     {
-        $stage->onStart(function(Dialog $dialog) : ? Navigator{
-            $isSupervisor = $dialog->session
-                ->conversation
-                ->isAbleTo(Supervise::class);
-            if (!$isSupervisor) {
-                return $dialog->reject();
-            }
-
-            return null;
-        });
+        $stage->onStart(new MustBeSupervisor());
     }
 
     public static function __depend(Depending $depending): void

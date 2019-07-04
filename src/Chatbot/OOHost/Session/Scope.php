@@ -128,6 +128,7 @@ class Scope implements ArrayAndJsonAble
 
     /**
      * @return \ReflectionProperty[]
+     * @throws
      */
     private static function getProperties() : array
     {
@@ -135,7 +136,11 @@ class Scope implements ArrayAndJsonAble
             return self::$properties;
         }
         $r = new \ReflectionClass(self::class);
-        return self::$properties = $r->getProperties();
+        self::$properties = array_filter($r->getProperties(), function(\ReflectionProperty $property){
+            return !$property->isStatic();
+        });
+
+        return self::$properties;
     }
 
     public function __get($name)

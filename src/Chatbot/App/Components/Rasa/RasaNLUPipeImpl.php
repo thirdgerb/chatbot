@@ -68,7 +68,7 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
         }
 
         $matchedIntents = [];
-        $entities = new Collection($parsed['entities'] ?? []);
+        $entities = $this->wrapEntities($parsed['entities'] ?? []);
         if (isset($parsed['intent'])) {
             $matchedIntents = $this->wrapIntent(
                 $matchedIntents,
@@ -91,6 +91,23 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
         return $matchedIntents;
     }
 
+    protected function wrapEntities(array $parsed) : Collection
+    {
+        $items = [];
+        $itemsConfidence = [];
+        foreach ($parsed as $entity) {
+            $name = $entity['entity'] ?? '';
+            $value = $entity['value'] ?? '';
+            $confidence = $entity['confidence'] ?? 0;
+
+            if (!isset($itemsConfidence[$name]) || $confidence > $itemsConfidence[$name]) {
+                $items[$name] = $value;
+                $itemsConfidence[$name] = $confidence;
+            }
+        }
+
+        return new Collection($items);
+    }
 
     protected function wrapIntent(array $matched, $item, Collection $entities) : array
     {

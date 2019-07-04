@@ -6,6 +6,7 @@ namespace Commune\Chatbot\OOHost;
 
 use Closure;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
+use Commune\Chatbot\Config\Host\OOHostConfig;
 use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\CacheAdapter;

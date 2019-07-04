@@ -45,7 +45,7 @@ class RasaManagerInt extends AbsCmdIntent
 
     public function navigate(Dialog $dialog): ? Navigator
     {
-        return $dialog->redirect->replaceTo($this);
+        return $dialog->redirect->sleepTo($this);
     }
 
     public function __onStart(Stage $stage): Navigator
@@ -110,6 +110,8 @@ class RasaManagerInt extends AbsCmdIntent
                         $entities = [];
                     }
 
+                    $intent = $dialog->session->intentRepo->matchPossibleIntent($dialog->session);
+
 
                     $dialog->say()
                         ->info("NLU认为最可能的意图:\n$mostPossible")
@@ -124,6 +126,10 @@ class RasaManagerInt extends AbsCmdIntent
                         ->info(
                             "NLU得到的entities: \n"
                             . json_encode($entities, $option)
+                        )
+                        ->info(
+                            "匹配得到的intent: \n"
+                            . $intent->toPrettyJson()
                         );
                 } else {
                     $dialog->say()->info('没有命中任何意图.');

@@ -4,6 +4,7 @@
 namespace Commune\Demo\App\Contexts;
 
 
+use Commune\Chatbot\App\Components\SimpleChat\SimpleChatAction;
 use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Stage;
@@ -120,6 +121,7 @@ class TestCase extends TaskDef
                             return $dialog->restart();
                         }
                     )
+                    ->interceptor(new SimpleChatAction('example'))
                     ->end(function(Dialog $dialog, Message $message){
 
                         $dialog->say()->info("输入了:" . $message->getText());

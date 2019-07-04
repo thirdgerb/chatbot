@@ -7,13 +7,13 @@ namespace Commune\Chatbot\OOHost\Command;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Speech;
 use Commune\Chatbot\OOHost\Session\Session;
-
 use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
-
-use Commune\Chatbot\Framework\Utils\CommandUtils;
 use Symfony\Component\Console\Input\InputOption;
 
 
+/**
+ * 注意command 不应该是单例. 它会持有session
+ */
 abstract class SessionCommand
 {
     const SIGNATURE = 'test';
@@ -60,44 +60,44 @@ abstract class SessionCommand
         return $this;
     }
 
-    public function handleSession(Session $session, SessionCommandPipe $pipe) : void
+    public function handleSession(Session $session, SessionCommandPipe $pipe, string $cmdText) : Session
     {
         $this->withSession($session);
         $message = $session->incomingMessage->message;
 
-        // cmdText 不同于 intent, 不一定使用 user command mark
-        $cmdText = CommandUtils::getCommandStr(
-            $message->getTrimmedText(),
-            $pipe->getCommandMark()
-        );
-
         $command = $this;
-        $commandMsg = static::getCommandDefinition()
+        $commandMsg = $this->getCommandDefinition()
             ->toCommandMessage($cmdText, $message);
 
         // 跳转运行 help
-        if ($commandMsg['--help'] && !$this instanceof HelpCmd) {
-            /**
-             * @var HelpCmd $helper
-             */
-            $helper = $pipe->makeCommand($session, HelpCmd::class);
-            $helper->withSession($session);
+        if ($commandMsg['--help'] ) {
 
-            $helper->helpCommandClazz(
-                static::class,
+            if ($this instanceof HelpCmd) {
+                $helper = $this;
+            } else {
+                /**
+                 * @var HelpCmd $helper
+                 */
+                $helper = $pipe->makeCommand($session, HelpCmd::class);
+                $helper->withSession($session);
+            }
+
+
+            $helper->helpCommand(
+                $this->getCommandDefinition(),
                 $this->getDescription()
             );
-            return;
+            return $session;
         }
 
         if ($commandMsg->isCorrect()) {
             $command->handle($commandMsg, $session, $pipe);
-            return;
+            return $session;
         }
 
         $errorBag = $commandMsg->getErrors();
         $command->sendError($errorBag);
-        return;
+        return $session;
     }
 
     public function sendError(array $errorBag) : void
@@ -113,18 +113,18 @@ abstract class SessionCommand
     }
 
 
-    public static function getDescription() : string
+    public function getDescription() : string
     {
         return static::DESCRIPTION;
     }
 
-    public static function getCommandName() : string
+    public function getCommandName() : string
     {
-        $definition = self::getCommandDefinition();
+        $definition = $this->getCommandDefinition();
         return $definition->getCommandName();
     }
 
-    public static function getCommandDefinition() : CommandDefinition
+    public function getCommandDefinition() : CommandDefinition
     {
         $name = static::class;
         if (isset(self::$definitions[$name])) {
@@ -137,20 +137,11 @@ abstract class SessionCommand
             'help',
             'h',
             null,
-            'help to see command detail'
+            '查看命令的参数与选项'
         ));
 
         self::$definitions[$name] = $definition;
         return $definition;
-    }
-
-
-    public function __destruct()
-    {
-        //检查是否销毁.
-        if (CHATBOT_DEBUG) $this->session->logger->debug(
-            __CLASS__. '::' . __FUNCTION__
-        );
     }
 
 }

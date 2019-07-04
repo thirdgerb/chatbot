@@ -110,6 +110,11 @@ abstract class AbsMessage implements Contract
             );
     }
 
+    public function setCmdText(string $text = null): void
+    {
+        $this->_cmdText = $text;
+    }
+
     public function __toString()
     {
         return $this->getText();

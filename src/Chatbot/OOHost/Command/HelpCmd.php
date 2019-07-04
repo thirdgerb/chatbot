@@ -20,7 +20,7 @@ class HelpCmd extends SessionCommand
         if (empty($message['commandName'])) {
             $this->helpPipe($pipe);
         } else {
-            $this->helpCommandName($message['commandName'], $pipe);
+            $this->helpCommandName($session, $message['commandName'], $pipe);
         }
     }
 
@@ -28,7 +28,7 @@ class HelpCmd extends SessionCommand
     {
         $available = '';
         foreach ($pipe->getDescriptions() as $name => $description) {
-            $available .= "$name\t: \t$description" .PHP_EOL;
+            $available .= "  $name\t:\t$description" .PHP_EOL;
         }
 
         $this->say(['%available%' => $available])
@@ -36,6 +36,7 @@ class HelpCmd extends SessionCommand
     }
 
     public function helpCommandName(
+        Session $session,
         string $commandName,
         SessionCommandPipe $pipe
     ) : void
@@ -47,56 +48,49 @@ class HelpCmd extends SessionCommand
             return;
         }
 
-        $clazz = $pipe->getCommandClazz($commandName);
+        $id = $pipe->getCommandID($commandName);
+        $command = $pipe->makeCommand($session, $id);
         $desc = $pipe->getCommandDesc($commandName);
-
-        if (!is_a($clazz, SessionCommand::class, TRUE)) {
-            $this->say()->warning('command.notValid', [
-                '%name%' => $commandName
-            ]);
-            return;
-        }
-
-        $this->helpCommandClazz($clazz, $desc);
+        $this->helpCommand($command->getCommandDefinition(), $desc);
     }
 
-    public function helpCommandClazz(string $clazz, string $desc) : void
+    public function helpCommand(CommandDefinition $definition, string $desc) : void
     {
-        $getDefinition = "$clazz::getCommandDefinition";
-        /**
-         * @var CommandDefinition $definition
-         */
-        $definition = $getDefinition();
-
         $commandName = $definition->getCommandName();
-        $output = "Command [$commandName] : $desc" . PHP_EOL;
+        $output = "命令 [$commandName] : $desc\n\n";
 
 
         // 变量
-        $output .= "Arguments:\n\n";
-        foreach ($definition->getArguments() as $argument) {
-           $output .= sprintf(
-            "%s\t: %s\n",
-                $argument->getName(),
-                $this->say()->trans($argument->getDescription())
-            );
+        $arguments = $definition->getArguments();
+        if (!empty($arguments)) {
+            $output .= "arguments (直接写在变量后, 空格隔开, 字符串建议放在引号内) :\n";
+            foreach ($arguments as $argument) {
+               $output .= sprintf(
+                "  %s\t:\t%s\n",
+                    $argument->getName(),
+                    $this->say()->trans($argument->getDescription())
+                );
+            }
         }
 
-        $output.="\nOptions:\n";
-        foreach ($definition->getOptions() as $option) {
-            $name = $option->getName();
-            $shotCut = $option->getShortcut();
-            $shotCutStr = $shotCut
-                ?  "-$shotCut,"
-                : '';
+        $options = $definition->getOptions();
+        if (!empty($options)) {
+            $output.="\noptions: (直接写参数名, 例如 -h ) \n";
+            foreach ($options as $option) {
+                $name = $option->getName();
+                $shotCut = $option->getShortcut();
+                $shotCutStr = $shotCut
+                    ?  "-$shotCut,"
+                    : '';
 
 
-           $output.= sprintf(
-                "\n%s--%s \t: %s",
-                $shotCutStr,
-                $name,
-                $this->say()->trans($option->getDescription())
-            );
+                $output.= sprintf(
+                    "  %s--%s\t:\t%s\n",
+                    $shotCutStr,
+                    $name,
+                    $this->say()->trans($option->getDescription())
+                );
+            }
         }
         $this->say()->info($output);
     }

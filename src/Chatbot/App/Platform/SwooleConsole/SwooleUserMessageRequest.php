@@ -20,7 +20,7 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
     use IdGeneratorHelper;
 
     /**
-     * @var string
+     * @var string|Message
      */
     protected $data;
 
@@ -71,13 +71,13 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
      * SwooleUserMessageRequest constructor.
      * @param Server $server
      * @param int $fd
-     * @param string $data
+     * @param string|Message $data
      * @param ConsoleConfig|null $config
      */
     public function __construct(
         Server $server,
         int $fd,
-        string $data,
+        $data,
         ConsoleConfig $config = null
     )
     {
@@ -114,6 +114,10 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
 
     public function fetchMessage(): Message
     {
+        if ($this->data instanceof Message) {
+            return $this->data;
+        }
+
         return $this->message
             ?? $this->message = new Text($this->data);
     }

@@ -8,6 +8,7 @@ use Commune\Chatbot\App\Platform\ConsoleConfig;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Contracts\ChatServer;
+use Commune\Chatbot\Framework\Messages\Events\ConnectionEvt;
 use Swoole\Coroutine;
 use Swoole\Runtime;
 use Swoole\Server;
@@ -60,12 +61,23 @@ class SwooleConsoleServer implements ChatServer
     protected function bootstrap() : void
     {
         Runtime::enableCoroutine();
+        $config = $this->app->getReactorContainer()[ConsoleConfig::class];
 
-        $this->server->on('connect', function (Server $server, $fd){
+        $this->server->on('connect', function (Server $server, $fd) use ($config){
             $info = $server->getClientInfo($fd);
             $address = $info['remote_ip'] ?? '';
             if (in_array($address, $this->allow)) {
                 echo "connection open: {$address} {$fd}\n";
+
+                $kernel = $this->app->getKernel();
+                $request = new SwooleUserMessageRequest(
+                    $server,
+                    $fd,
+                    new ConnectionEvt(),
+                    $config
+                );
+                $kernel->onUserMessage($request);
+
             } else {
                 echo "connection not allowed: {$address} {$fd}\n";
                 $server->send($fd, "ip not allowed\n");
@@ -78,7 +90,6 @@ class SwooleConsoleServer implements ChatServer
             echo "connection close: {$fd}\n";
         });
 
-        $config = $this->app->getReactorContainer()[ConsoleConfig::class];
         $this->server->on('receive', function ($server, $fd, $reactor_id, $data) use ($config) {
             $kernel = $this->app->getKernel();
 

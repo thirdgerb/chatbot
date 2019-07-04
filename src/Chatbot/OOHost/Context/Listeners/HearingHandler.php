@@ -4,11 +4,13 @@
 namespace Commune\Chatbot\OOHost\Context\Listeners;
 
 
+use Commune\Chatbot\Blueprint\Message\Event\EventMsg;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Messages\ArrayMessage;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
+use Commune\Chatbot\OOHost\Context\Callables\Action;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
@@ -281,6 +283,7 @@ class HearingHandler implements Hearing
     ) : Hearing
     {
         $this->heard = true;
+        $this->heardUncaught = false;
         if (isset($intentAction)) {
             return $this->callInterceptor($intentAction, $matched);
         }
@@ -593,6 +596,35 @@ class HearingHandler implements Hearing
         return $this;
     }
 
+    public function isEvent(string $eventName, callable $action = null): Hearing
+    {
+        if (isset($this->navigator)) return $this;
+
+        if ($this->message instanceof EventMsg && $this->message->getEventName() == $eventName) {
+            $this->heard = true;
+            $this->callInterceptor($action);
+        }
+
+        return $this;
+    }
+
+
+    public function isEventIn(array $eventName, callable $action = null): Hearing
+    {
+        if (isset($this->navigator)) return $this;
+
+        if (!$this->message instanceof EventMsg) {
+            return $this;
+        }
+
+        if (in_array($this->message->getEventName(), $eventName)) {
+            $this->heard = true;
+            $this->callInterceptor($action);
+        }
+
+        return $this;
+    }
+
 
     public function end(callable $fallback = null): Navigator
     {
@@ -602,19 +634,12 @@ class HearingHandler implements Hearing
             $this->fallback[] = $fallback;
         }
 
-        // 不填的话, 优先进入intent
-        // 看看这个做法是不是合理.
-        if (empty($this->fallback)) {
-            $this->isAnyIntent();
+        // 如果要匹配任意意图, 需要手动调用 isAnyIntent
 
-        // 有fallback, 则优先执行fallback
-        } else {
-
-            foreach ($this->fallback as $caller) {
-                $this->callInterceptor($caller);
-                if(isset($this->navigator)) {
-                    return $this->navigator;
-                }
+        foreach ($this->fallback as $caller) {
+            $this->callInterceptor($caller);
+            if(isset($this->navigator)) {
+                return $this->navigator;
             }
         }
 

@@ -27,6 +27,11 @@ class Snapshot
      */
     public $savedSessionData = [];
 
+    /**
+     * 如果没有saved, 则可能出错了.
+     * @var bool
+     */
+    public $saved = false;
 
     /**
      * Snapshot constructor.
@@ -83,7 +88,7 @@ class Snapshot
     {
         $this->savedSessionData = $this->cachedSessionData;
         // 不缓存cached. 这样每次反序列化时, cached 为空. 只有上一次被用过的, 才会被快照.
-        return ['sessionId', 'savedSessionData', 'breakpoint'];
+        return ['sessionId', 'savedSessionData', 'breakpoint', 'saved'];
     }
 
 

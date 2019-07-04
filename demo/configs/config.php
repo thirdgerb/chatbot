@@ -82,7 +82,6 @@ return [
             \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,
             \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
             // \Commune\Chatbot\App\Components\Rasa\RasaNLUPipe::class,
-            \Commune\Chatbot\App\SessionPipe\UnheardPipe::class,
         ],
     ] + \Commune\Chatbot\Config\Host\OOHostConfig::stub(),
 

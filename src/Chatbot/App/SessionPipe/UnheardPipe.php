@@ -7,6 +7,9 @@ namespace Commune\Chatbot\App\SessionPipe;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 
+/**
+ * @deprecated
+ */
 class UnheardPipe implements SessionPipe
 {
     public function handle(Session $session, \Closure $next): Session

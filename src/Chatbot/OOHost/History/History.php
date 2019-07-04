@@ -218,11 +218,9 @@ class History
         return $this;
     }
 
-    protected function wrapContext(Context $context = null) : Context
+    protected function wrapContext(Context $context) : Context
     {
-        if (isset($context)) {
-            return $context->toInstance($this->session);
-        }
+        return $context->toInstance($this->session);
     }
 
     /**
@@ -236,7 +234,9 @@ class History
      */
     public function yieldTo(Context $context = null) : History
     {
-        $context = $this->wrapContext($context);
+        if (isset($context)) {
+            $context = $this->wrapContext($context);
+        }
         // 保存起来.
         $yielding = new Yielding($this->breakpoint->process->thread);
         $session = $this->session;

@@ -47,6 +47,13 @@ interface Registrar extends ContextRegistrar
     public function matchIntent(string $intentName, Session $session) : ? IntentMessage;
 
 
+    /**
+     * intent 可以用命令的方式匹配.
+     * @param string $intentName
+     * @return bool
+     */
+    public function hasCommandIntent(string $intentName) : bool;
+
     /*---------- NLU ----------*/
 
     /**
@@ -90,4 +97,5 @@ interface Registrar extends ContextRegistrar
      * @param NLUExample[] $examples
      */
     public function setIntentNLUExamples(string $intentName, array $examples) : void;
+
 }

@@ -171,14 +171,21 @@ class SessionImpl implements Session, HasIdGenerator
         // host config 没有强类型约束. 注意格式要正确.
         $this->hostConfig = $this->chatbotConfig->host;
 
+        $this->traceId = $this->conversation->getTraceId();
+        self::$sessionIds[$this->traceId] = $this->sessionId;
+
+        $this->prepareRepo($belongsTo, $driver);
+    }
+
+    protected function prepareRepo(
+        string $belongsTo,
+        Driver $driver
+    ) : void
+    {
         $this->cacheKey = "chatbot:session:snapshot:$belongsTo";
         $snapshot = $this->getSnapshot($this->cacheKey);
         $this->sessionId = $snapshot->sessionId;
-
         $this->repo = new Repository($this, $driver, $snapshot);
-
-        $this->traceId = $this->conversation->getTraceId();
-        self::$sessionIds[$this->traceId] = $this->sessionId;
     }
 
     public static function getInstanceIds(): array
@@ -193,7 +200,12 @@ class SessionImpl implements Session, HasIdGenerator
 
         if (!empty($cached)) {
             $us = unserialize($cached);
-            if ($us instanceof Snapshot) {
+            // 如果 snapshot 的 saved 为false,
+            // 说明出现重大错误, 导致上一轮没有saved.
+            // 这时必须从头开始, 否则永远卡在错误这里.
+            if ($us instanceof Snapshot && $us->saved) {
+                // 新的一轮, snapshot saved 自然从头开始.
+                $us->saved = false;
                 return $us;
             }
         }
@@ -386,12 +398,12 @@ class SessionImpl implements Session, HasIdGenerator
             return;
         }
 
-        // 什么也不做.
+        // 如果是sneak, 什么也不做. 也不会存储.
         if (!$this->sneak) {
             try {
 
                 $snapshot = $this->repo->snapshot;
-
+                $snapshot->saved = true;
                 $this->saveCached($snapshot);
 
                 // breakpoint

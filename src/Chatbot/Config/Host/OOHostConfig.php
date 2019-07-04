@@ -5,6 +5,7 @@ namespace Commune\Chatbot\Config\Host;
 
 use Commune\Chatbot\App\Commands\AnalyserPipe;
 use Commune\Chatbot\App\Commands\UserCommandsPipe;
+use Commune\Chatbot\App\SessionPipe\EventMsgPipe;
 use Commune\Chatbot\App\SessionPipe\MarkedIntentPipe;
 use Commune\Chatbot\App\SessionPipe\NavigationPipe;
 use Commune\Chatbot\App\SessionPipe\UnheardPipe;
@@ -37,11 +38,11 @@ class OOHostConfig extends Option
             'sessionCacheSeconds' => 60,
             'autoloadPsr4' => [],
             'sessionPipes' => [
+                EventMsgPipe::class,
                 UserCommandsPipe::class,
                 AnalyserPipe::class,
                 MarkedIntentPipe::class,
                 NavigationPipe::class,
-                UnheardPipe::class,
             ],
             'navigatorIntents' => [
                 //intentName

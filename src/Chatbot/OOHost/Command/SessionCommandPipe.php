@@ -7,8 +7,10 @@ namespace Commune\Chatbot\OOHost\Command;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
+use Illuminate\Console\Parser;
 
 /**
  *
@@ -50,20 +52,34 @@ class SessionCommandPipe implements SessionPipe
 
     protected function registerCommandName(string $commandName) : void
     {
-        if (!is_a($commandName, SessionCommand::class, TRUE)) {
-            throw new ConfigureException(
-                static::class
-                . ' can only register clazz instance of '
-                . SessionCommand::class
-                . ', ' . $commandName . ' given'
-            );
+        $repo = IntentRegistrar::getIns();
+        // 注册 command
+        if (is_a($commandName, SessionCommand::class, TRUE)) {
+            $desc = constant("$commandName::DESCRIPTION");
+            list($name, $arguments, $options) = Parser::parse(constant("$commandName::SIGNATURE"));
+            self::$commandNames[static::class][$name] = $commandName;
+            self::$commandDescriptions[static::class][$name] = $desc;
+            return;
+        // 注册 command intent
         }
 
-        $func = "$commandName::getCommandName";
-        $desc = "$commandName::getDescription";
-        $name = $func();
-        self::$commandNames[static::class][$name] = $commandName;
-        self::$commandDescriptions[static::class][$name] = $desc();
+        if ($repo->hasCommandIntent($commandName)) {
+            $matcher = $repo->getMatcher($commandName);
+            $command = $matcher->getCommand();
+            $name = $command->getCommandName();
+            self::$commandNames[static::class][$name] = $commandName;
+            self::$commandDescriptions[static::class][$name] = $repo
+                ->get($commandName)
+                ->getDesc();
+            return;
+        }
+
+        throw new ConfigureException(
+            static::class
+            . ' can only register command intent, or clazz instance of '
+            . SessionCommand::class
+            . ', ' . $commandName . ' given'
+        );
     }
 
 
@@ -94,8 +110,7 @@ class SessionCommandPipe implements SessionPipe
         $commands = $this->getCommands();
         foreach ($commands as $name => $clazz) {
             if (CommandUtils::matchCommandName($cmdStr, $name)) {
-                $this->runCommand($session, $name);
-                return $session;
+                return $this->runCommand($session, $name, $cmdStr);
             }
         }
 
@@ -107,7 +122,7 @@ class SessionCommandPipe implements SessionPipe
         return isset(self::$commandNames[static::class][$name]);
     }
 
-    public function getCommandClazz(string $name) : string
+    public function getCommandID(string $name) : string
     {
         return self::$commandNames[static::class][$name] ?? '';
     }
@@ -127,7 +142,7 @@ class SessionCommandPipe implements SessionPipe
         return self::$commandDescriptions[static::class];
     }
 
-    public function runCommand(Session $session, string $commandName) : void
+    public function runCommand(Session $session, string $commandName, string $cmdStr) : Session
     {
         if (empty($commandName)) {
             throw new \InvalidArgumentException(
@@ -148,22 +163,28 @@ class SessionCommandPipe implements SessionPipe
         /**
          * @var SessionCommand $command
          */
-        $commandClazz = $this->getCommandClazz($commandName);
-        $command = $this->makeCommand($session, $commandClazz);
-        $command->handleSession($session, $this);
+        $commandID = $this->getCommandID($commandName);
+        // session command
+        $command = $this->makeCommand($session, $commandID);
+        return $command->handleSession($session, $this, $cmdStr);
     }
 
-    public function makeCommand(Session $session, string $commandClazz) : SessionCommand
+    public function makeCommand(Session $session, string $commandID) : SessionCommand
     {
-        if (!is_a($commandClazz, SessionCommand::class, TRUE)) {
-            throw new ConfigureException(
-                static::class
-                . ' only make '.SessionCommand::class
-                . ', '.$commandClazz .' given'
-            );
+        if (is_a($commandID, SessionCommand::class, TRUE)) {
+            return $session->conversation->make($commandID);
         }
 
-        return $session->conversation->make($commandClazz);
+        $repo = IntentRegistrar::getIns();
+        if ($repo->hasCommandIntent($commandID)) {
+            return new IntentCmd($commandID);
+        }
+
+        throw new ConfigureException(
+                static::class
+                . ' only make '.SessionCommand::class
+                . ', or command intent, '.$commandID .' given'
+            );
     }
 
 
@@ -171,6 +192,5 @@ class SessionCommandPipe implements SessionPipe
     {
         return $this->commandMark;
     }
-
 
 }

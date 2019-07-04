@@ -24,7 +24,7 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
     use IdGeneratorHelper;
 
     /**
-     * @var string
+     * @var string|Message
      */
     protected $line;
 
@@ -56,11 +56,11 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
     /**
      *
      * StdioUserMessageRequest constructor.
-     * @param string $line
+     * @param string|Message $line
      * @param Stdio $stdio
      * @param ConsoleConfig $config
      */
-    public function __construct(string $line, Stdio $stdio, ConsoleConfig $config)
+    public function __construct($line, Stdio $stdio, ConsoleConfig $config)
     {
         $this->line = $line;
         $this->stdio = $stdio;
@@ -85,6 +85,9 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
 
     public function fetchMessage(): Message
     {
+        if ($this->line instanceof Message) {
+            return $this->line;
+        }
         return $this->message ?? $this->message = new Text($this->line);
     }
 

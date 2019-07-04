@@ -87,6 +87,11 @@ interface Message extends ArrayAndJsonAble
     public function getCmdText() : ? string;
 
     /**
+     * @param string|null $text
+     */
+    public function setCmdText(string $text = null) : void;
+
+    /**
      * 用数组结构给出消息的核心数据.
      * 不包括 type 等公共信息.
      * 那部分数据在 toArray 里

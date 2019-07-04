@@ -103,7 +103,7 @@ class ChattingPipe extends ChatbotPipeImpl
 
     public function lockChat(string $chatId) : bool
     {
-        return $this->cache->lock($this->getChatLockerKey($chatId));
+        return $this->cache->lock($this->getChatLockerKey($chatId), 2);
     }
 
     public function unlockChat(string $chatId) : void

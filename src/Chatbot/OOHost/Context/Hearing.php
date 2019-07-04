@@ -268,6 +268,22 @@ interface Hearing
      */
     public function fallback(callable $fallback) : Hearing;
 
+
+    /**
+     * 如果不主动拦截, 则event 消息都会被忽视.
+     * @param string $eventName
+     * @param callable|Action|null $action
+     * @return Hearing
+     */
+    public function isEvent(string $eventName, callable $action = null) : Hearing;
+
+    /**
+     * @param string[] $eventName
+     * @param callable|null $action
+     * @return Hearing
+     */
+    public function isEventIn(array $eventName, callable $action = null) : Hearing;
+
     /**
      * 作为链式调用的结尾.
      *

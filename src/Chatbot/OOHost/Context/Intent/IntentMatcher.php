@@ -134,7 +134,7 @@ class IntentMatcher
         $text = $message->getTrimmedText();
 
         // 检查命令模式.
-        if (!empty($this->command)) {
+        if ($this->hasCommand()) {
             $entities = $this->matchCommand($message, $this->command);
             if (isset($entities)) {
                 return $entities->getEntities();
@@ -157,6 +157,16 @@ class IntentMatcher
         }
 
         return null;
+    }
+
+    public function hasCommand() : bool
+    {
+        return !empty($this->command);
+    }
+
+    public function getCommand() : ? CommandDefinition
+    {
+        return $this->command;
     }
 
     public static function matchRegex(string $text, string $pattern, array $args) : ? array

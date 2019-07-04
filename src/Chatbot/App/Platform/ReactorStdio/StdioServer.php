@@ -12,6 +12,7 @@ use Commune\Chatbot\App\Platform\ConsoleConfig;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Contracts\ChatServer;
+use Commune\Chatbot\Framework\Messages\Events\ConnectionEvt;
 use React\EventLoop\Factory;
 use Clue\React\Stdio\Stdio;
 use React\EventLoop\LoopInterface;
@@ -65,6 +66,10 @@ class StdioServer implements ChatServer
                     new StdioUserMessageRequest($line, $this->stdio, $config)
                 );
         });
+
+        $this->app->getKernel()->onUserMessage(
+            new StdioUserMessageRequest(new ConnectionEvt(), $this->stdio, $config)
+        );
 
         $this->loop->run();
 
