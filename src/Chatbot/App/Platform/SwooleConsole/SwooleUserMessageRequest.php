@@ -10,6 +10,7 @@ use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
 use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Framework\Conversation\MessageRequestHelper;
 use Commune\Chatbot\Framework\Predefined\SimpleConsoleLogger;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
@@ -17,7 +18,7 @@ use Swoole\Server;
 
 class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
 {
-    use IdGeneratorHelper;
+    use IdGeneratorHelper, MessageRequestHelper;
 
     /**
      * @var string|Message
@@ -159,6 +160,7 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
         while ($message = array_shift($this->buffers)) {
             $this->write($message->getMessage());
         }
+        $this->buffers = [];
     }
 
     protected function write(Message $msg) : void
@@ -192,10 +194,5 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
             $this->server->send($this->fd, $msg->getText() . PHP_EOL);
         }
     }
-
-    public function finishRequest(): void
-    {
-    }
-
 
 }

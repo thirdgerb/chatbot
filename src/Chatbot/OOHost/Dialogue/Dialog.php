@@ -123,8 +123,7 @@ interface Dialog
     /*-------- history --------*/
 
     /**
-     * 重新向用户提出上一个问题
-     * 而不是重复当前stage
+     * 当做什么都没发生过. 而不是重复当前stage
      * @return Navigator
      */
     public function rewind() : Navigator;

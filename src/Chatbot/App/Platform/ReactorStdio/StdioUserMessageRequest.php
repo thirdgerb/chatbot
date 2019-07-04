@@ -14,6 +14,7 @@ use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
 use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Framework\Conversation\MessageRequestHelper;
 use Commune\Chatbot\Framework\Predefined\SimpleConsoleLogger;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
@@ -21,7 +22,7 @@ use Commune\Chatbot\Blueprint\Message\QA\Question;
 
 class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
 {
-    use IdGeneratorHelper;
+    use IdGeneratorHelper, MessageRequestHelper;
 
     /**
      * @var string|Message
@@ -126,6 +127,7 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
         while ($message = array_shift($this->buffers)) {
             $this->write($message->getMessage());
         }
+        $this->buffers = [];
     }
 
     protected function write(Message $msg) 
@@ -170,11 +172,5 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
         }
         $this->stdio->write(PHP_EOL);
     }
-
-    public function finishRequest(): void
-    {
-        $this->flushChatMessages();
-    }
-
 
 }

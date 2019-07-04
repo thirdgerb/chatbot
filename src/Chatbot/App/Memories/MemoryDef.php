@@ -32,7 +32,12 @@ class MemoryDef extends AbsMemory implements SelfRegister
      */
     final public function __construct()
     {
-        parent::__construct([]);
+        parent::__construct($this->init());
+    }
+
+    protected function init() : array
+    {
+        return [];
     }
 
     final public function getName(): string

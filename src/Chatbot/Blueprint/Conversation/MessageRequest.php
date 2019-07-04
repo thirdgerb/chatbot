@@ -12,6 +12,9 @@ use Commune\Chatbot\Blueprint\Message\Message;
 
 interface MessageRequest
 {
+
+    public function withConversation(Conversation $conversation) : void;
+
     /*-------- generate --------*/
 
     /**

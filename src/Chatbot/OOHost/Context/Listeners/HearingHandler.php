@@ -630,6 +630,12 @@ class HearingHandler implements Hearing
     {
         if (isset($this->navigator)) return $this->navigator;
 
+        // 如果是消息的话.
+        if ($this->message instanceof EventMsg) {
+            $this->setNavigator($this->dialog->rewind());
+            return $this->navigator;
+        }
+
         if (isset($fallback)) {
             $this->fallback[] = $fallback;
         }
@@ -642,6 +648,7 @@ class HearingHandler implements Hearing
                 return $this->navigator;
             }
         }
+
 
         return $this->navigator ?? $this->dialog->missMatch();
     }

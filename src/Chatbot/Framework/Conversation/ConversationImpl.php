@@ -93,6 +93,8 @@ class ConversationImpl implements Blueprint
         // share request
         $container->share( MessageRequest::class, $request);
         $container->share(get_class($request), $request);
+        // 互相持有, 要注意内存泄露的问题.
+        $request->withConversation($container);
 
         $container->asConversation = true;
         $trace = $container->getTraceId();
