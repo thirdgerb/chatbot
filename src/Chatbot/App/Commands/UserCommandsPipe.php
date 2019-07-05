@@ -8,6 +8,7 @@ use Commune\Chatbot\App\Components\Predefined\Navigation\BackwardInt;
 use Commune\Chatbot\App\Components\Predefined\Navigation\CancelInt;
 use Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt;
 use Commune\Chatbot\App\Components\Predefined\Navigation\RepeatInt;
+use Commune\Chatbot\App\Components\Predefined\Navigation\RestartInt;
 use Commune\Chatbot\OOHost\Command\HelpCmd;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
 
@@ -20,6 +21,7 @@ class UserCommandsPipe extends SessionCommandPipe
         QuitInt::class,
         BackwardInt::class,
         RepeatInt::class,
+        RestartInt::class,
     ];
 
     // 定义一个 command mark

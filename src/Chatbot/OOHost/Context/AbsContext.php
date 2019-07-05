@@ -20,8 +20,6 @@ use Commune\Chatbot\OOHost\Session\SessionInstance;
  */
 abstract class AbsContext extends AbsMessage implements Context
 {
-    private static $counts = [];
-
     const GETTER_PREFIX = '__get';
     const SETTER_PREFIX = '__set';
 
@@ -68,14 +66,8 @@ abstract class AbsContext extends AbsMessage implements Context
     {
         $this->_props = $props;
         parent::__construct();
-        self::addCount();
     }
 
-    private static function addCount()
-    {
-        $name = static::class;
-        self::$counts[$name]  = (self::$counts[$name] ?? 0) + 1;
-    }
 
     /*------- changed -------*/
 
@@ -332,7 +324,6 @@ abstract class AbsContext extends AbsMessage implements Context
     public function __wakeup(): void
     {
         $this->_changed = false;
-        self::addCount();
     }
 
     /**
@@ -366,22 +357,5 @@ abstract class AbsContext extends AbsMessage implements Context
     public function getSessionDataId(): string
     {
         return $this->getId();
-    }
-
-    public function __destruct()
-    {
-        $name = static::class;
-        $count = self::$counts[$name] ?? 0;
-        $count--;
-        if ($count > 0) {
-            self::$counts[$name] = $count;
-        } else {
-            unset(self::$counts[$name]);
-        }
-    }
-
-    public static function getInstancesCount() : array
-    {
-        return self::$counts;
     }
 }

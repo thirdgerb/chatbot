@@ -7,6 +7,7 @@ namespace Commune\Chatbot\Blueprint\Conversation;
 use Commune\Chatbot\Framework\Events\ChatbotPipeEvent;
 
 /**
+ * @deprecated
  * @property-read Conversation $conversation
  */
 interface Signal

@@ -5,6 +5,8 @@ namespace Commune\Chatbot\App\Drivers\Demo;
 
 
 
+use Commune\Chatbot\Blueprint\Conversation\Conversation;
+use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\History\Breakpoint;
 use Commune\Chatbot\OOHost\History\Yielding;
@@ -15,10 +17,17 @@ use Psr\Log\LoggerInterface;
 
 class ArraySessionDriver implements Driver
 {
+    use RunningSpyTrait;
+
     /**
      * @var LoggerInterface
      */
     protected $logger;
+
+    /**
+     * @var string
+     */
+    protected $traceId;
 
     protected static $sessionData = [];
 
@@ -28,13 +37,14 @@ class ArraySessionDriver implements Driver
 
     protected static $contexts = [];
 
-    /**
-     * ArraySessionDriver constructor.
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(Conversation $conversation)
     {
-        $this->logger = $logger;
+        $this->logger = $conversation->getLogger();
+        $this->traceId = $conversation->getTraceId();
+        static::addRunningTrace(
+            $this->traceId,
+            $this->traceId
+        );
     }
 
     public function saveSessionData(
@@ -47,6 +57,11 @@ class ArraySessionDriver implements Driver
         self::$sessionData[$type][$id] = serialize($sessionData);
     }
 
+    /**
+     * @param string $id
+     * @param string $dataType
+     * @return SessionData|null
+     */
     public function findSessionData(
         string $id,
         string $dataType = ''
@@ -97,7 +112,7 @@ class ArraySessionDriver implements Driver
 
     public function __destruct()
     {
-        $this->logger->debug(__METHOD__);
+        self::removeRunningTrace($this->traceId);
     }
 
 

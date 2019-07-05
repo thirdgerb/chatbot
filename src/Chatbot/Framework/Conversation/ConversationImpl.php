@@ -16,10 +16,8 @@ use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\Blueprint\Conversation\Monologue;
 use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
-use Commune\Chatbot\Blueprint\Conversation\Signal;
+//use Commune\Chatbot\Blueprint\Conversation\Signal;
 use Commune\Chatbot\Blueprint\Conversation\User;
-use Commune\Chatbot\Framework\Events\ChatbotPipeClose;
-use Commune\Chatbot\Framework\Events\ChatbotPipeStart;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Config\ChatbotConfig;
@@ -46,9 +44,7 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class ConversationImpl implements Blueprint
 {
-    use RecursiveContainer;
-
-    protected static $ids = [];
+    use RecursiveContainer, RunningSpyTrait;
 
     /**
      * @var string
@@ -98,7 +94,8 @@ class ConversationImpl implements Blueprint
 
         $container->asConversation = true;
         $trace = $container->getTraceId();
-        self::$ids[$trace] = $container->getConversationId();
+
+        static::addRunningTrace($trace, $container->getConversationId());
         return $container;
     }
 
@@ -128,11 +125,6 @@ class ConversationImpl implements Blueprint
     public function isInstanced() : bool
     {
         return $this->asConversation;
-    }
-
-    public static function getInstanceIds(): array
-    {
-        return self::$ids;
     }
 
     public function isAbleTo(string $abilityInterfaceName): bool
@@ -240,7 +232,7 @@ class ConversationImpl implements Blueprint
         );
 
         // 先缓冲起消息来. 是不是立刻发送, request 自己决定.
-        $request->bufferMessageToChat($replyMessage);
+        $request->bufferConversationMessage($replyMessage);
 
         // 这个和buffer 不一样, 用于别的处理, 比如存储消息.
         $this->replyMessages[] = $replyMessage;
@@ -266,20 +258,24 @@ class ConversationImpl implements Blueprint
     }
 
     /*---------- signal -----------*/
-
-    public function sendSignal(Signal $signal): void
-    {
-        $signal->withConversation($this);
-        $this->getEventDispatcher()->listenCallable(
-            ChatbotPipeStart::class,
-            [$signal, 'handle']
-        );
-
-        $this->getEventDispatcher()->listenCallable(
-            ChatbotPipeClose::class,
-            [$signal, 'handle']
-        );
-    }
+//
+//    /**
+//     * @deprecated
+//     * @param Signal $signal
+//     */
+//    public function sendSignal(Signal $signal): void
+//    {
+//        $signal->withConversation($this);
+//        $this->getEventDispatcher()->listenCallable(
+//            ChatbotPipeStart::class,
+//            [$signal, 'handle']
+//        );
+//
+//        $this->getEventDispatcher()->listenCallable(
+//            ChatbotPipeClose::class,
+//            [$signal, 'handle']
+//        );
+//    }
 
 
 
@@ -324,6 +320,6 @@ class ConversationImpl implements Blueprint
 
     public function __destruct()
     {
-        unset(self::$ids[$this->traceId]);
+        static::removeRunningTrace($this->traceId);
     }
 }

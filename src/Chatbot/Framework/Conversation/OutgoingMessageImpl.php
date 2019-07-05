@@ -9,7 +9,6 @@ namespace Commune\Chatbot\Framework\Conversation;
 
 
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
-use Commune\Chatbot\Blueprint\Conversation\Scope;
 use Commune\Chatbot\Blueprint\Message\Message;
 
 class OutgoingMessageImpl extends ConversationMessageImpl
@@ -30,16 +29,6 @@ class OutgoingMessageImpl extends ConversationMessageImpl
             $incomingMessage->getId(),
             $incomingMessage->getMessage(),
             $incomingMessage->getTraceId()
-        );
-    }
-
-    public function toScope(string $sessionId): Scope
-    {
-        return new ScopeImpl(
-            $sessionId,
-            $this->getReplyToId(),
-            $this->getReplyTo()->getCreatedAt()->toDateTimeString(),
-            $this
         );
     }
 }

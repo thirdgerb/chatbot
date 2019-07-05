@@ -117,7 +117,7 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
         return [];
     }
 
-    public function bufferMessageToChat(ConversationMessage $message): void
+    public function bufferConversationMessage(ConversationMessage $message): void
     {
         $this->buffers[] = $message;
     }

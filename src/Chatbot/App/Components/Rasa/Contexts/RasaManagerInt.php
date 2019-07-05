@@ -129,7 +129,7 @@ class RasaManagerInt extends AbsCmdIntent
                         )
                         ->info(
                             "匹配得到的intent: \n"
-                            . $intent->toPrettyJson()
+                            . ($intent ? $intent->toPrettyJson() : '')
                         );
                 } else {
                     $dialog->say()->info('没有命中任何意图.');

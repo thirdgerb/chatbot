@@ -76,7 +76,7 @@ class ChatKernel implements Kernel
             $pipeline = $this->buildPipeline(
                     $conversation,
                     $chatbotConfig->chatbotPipes->onUserMessage
-                )->via(Kernel::ON_USER_MESSAGE);
+                );
 
             // 发送会话
             /**

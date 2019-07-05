@@ -66,7 +66,7 @@ class MessengerPipe implements InitialPipe
         return $this->app->getReactorContainer()[ExceptionHandler::class];
     }
 
-    public function onUserMessage(Conversation $conversation, \Closure $next): Conversation
+    public function handle(Conversation $conversation, \Closure $next): Conversation
     {
         $start = new Carbon();
         $traceId = null;

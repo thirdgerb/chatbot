@@ -20,14 +20,6 @@ use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
  */
 interface Kernel
 {
-
-    // 用户发送来的消息
-    const ON_USER_MESSAGE = 'onUserMessage';
-    // 接受到给用户的异步回复消息
-    const ON_REPLY_MESSAGE = 'onReplyMessage';
-    // 得到了一个服务的异步回调.
-    const ON_SERVICE_MESSAGE = 'onServiceMessage';
-
     /**
      * 接受一个用户的 message, 并完成机器人的回复.
      *

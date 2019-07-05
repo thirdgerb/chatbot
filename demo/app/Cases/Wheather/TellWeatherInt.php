@@ -76,7 +76,8 @@ class TellWeatherInt extends ActionIntent
                 if (!isset($time)) {
                     $dialog->say()
                         ->warning("sorry, 日期 $date 不知道是哪天...请再告诉我一次?");
-                    return $dialog->goStage('date');
+                    unset($this->date);
+                    return $dialog->goStagePipes(['date', 'start']);
                 }
 
                 $realDate = date('Y-m-d', $time);

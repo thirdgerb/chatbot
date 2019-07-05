@@ -22,6 +22,6 @@ interface ChatbotPipe
 {
     public function getPipeName() :string;
 
-    public function onUserMessage(Conversation $conversation, \Closure $next) : Conversation;
+    public function handle(Conversation $conversation, \Closure $next) : Conversation;
 
 }

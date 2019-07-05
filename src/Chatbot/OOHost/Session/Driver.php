@@ -4,11 +4,12 @@
 namespace Commune\Chatbot\OOHost\Session;
 
 
+use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\History\Breakpoint;
 use Commune\Chatbot\OOHost\History\Yielding;
 
-interface Driver
+interface Driver extends RunningSpy
 {
 
     public function saveYielding(Session $session, Yielding $yielding) : void;

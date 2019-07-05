@@ -22,9 +22,13 @@ class MustBeSupervisor implements Interceptor
             ->isAbleTo(Supervise::class);
 
         if (!$isSupervisor) {
-            return $dialog->reject();
+            return null;
         }
-        return null;
+
+        // 添加消息
+
+
+        return $dialog->reject();
     }
 
 

@@ -35,7 +35,7 @@ abstract class ChatbotPipeImpl implements Blueprint
 
 
 
-    public function onUserMessage(Conversation $conversation, \Closure $next) : Conversation
+    public function handle(Conversation $conversation, \Closure $next) : Conversation
     {
         try {
 

@@ -8,6 +8,7 @@ use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\CacheAdapter;
+use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\OOHost\Context\Context;
@@ -46,9 +47,7 @@ use Psr\Log\LoggerInterface;
  */
 class SessionImpl implements Session, HasIdGenerator
 {
-    use IdGeneratorHelper;
-
-    protected static $sessionIds = [];
+    use IdGeneratorHelper, RunningSpyTrait;
 
     /**
      * @var bool
@@ -163,18 +162,21 @@ class SessionImpl implements Session, HasIdGenerator
         \Closure $rootContextMaker = null
     )
     {
-        $this->cache = $cache;
+
         $this->conversation = $conversation;
+
+        $this->traceId = $conversation->getTraceId();
         $this->chatbotConfig = $conversation->getChatbotConfig();
-        $this->driver = $driver;
-        $this->rootContextMaker = $rootContextMaker;
-        // host config 没有强类型约束. 注意格式要正确.
         $this->hostConfig = $this->chatbotConfig->host;
 
-        $this->traceId = $this->conversation->getTraceId();
-        self::$sessionIds[$this->traceId] = $this->sessionId;
+        $this->cache = $cache;
+        $this->driver = $driver;
+
+        $this->rootContextMaker = $rootContextMaker;
+        // host config 没有强类型约束. 注意格式要正确.
 
         $this->prepareRepo($belongsTo, $driver);
+        static::addRunningTrace($this->traceId, $this->sessionId);
     }
 
     protected function prepareRepo(
@@ -187,12 +189,6 @@ class SessionImpl implements Session, HasIdGenerator
         $this->sessionId = $snapshot->sessionId;
         $this->repo = new Repository($this, $driver, $snapshot);
     }
-
-    public static function getInstanceIds(): array
-    {
-        return self::$sessionIds;
-    }
-
 
     protected function getSnapshot(string $key) : Snapshot
     {
@@ -489,7 +485,7 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function __destruct()
     {
-        unset(self::$sessionIds[$this->traceId]);
+        self::removeRunningTrace($this->traceId);
     }
 
 }

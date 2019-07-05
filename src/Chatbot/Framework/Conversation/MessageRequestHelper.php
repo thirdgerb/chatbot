@@ -28,7 +28,6 @@ trait MessageRequestHelper
 
     public function finishRequest() : void
     {
-        $this->flushChatMessages();
         $this->conversation = null;
         $this->logger = null;
     }

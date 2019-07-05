@@ -8,16 +8,13 @@
 namespace Commune\Chatbot\Blueprint\Conversation;
 
 use Commune\Chatbot\Blueprint\Message\Message;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
  * 使用IoC容器来承载一个请求, 将请求内的依赖都包装到这个容器内.
  * 好处是让一个请求内不同的模块, 可以通过依赖注入的方式分享各种组件.
- *
- *
  */
-interface Conversation extends ConversationContainer
+interface Conversation extends ConversationContainer, RunningSpy
 {
 
     /*------------ create ------------*/
@@ -26,11 +23,6 @@ interface Conversation extends ConversationContainer
      * @return bool
      */
     public function isInstanced() : bool;
-
-    /**
-     * @return string[]
-     */
-    public static function getInstanceIds() : array;
 
     /*------------ policy ------------*/
 

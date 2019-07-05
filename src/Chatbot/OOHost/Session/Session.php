@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\Session;
 
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
+use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\OOHost\Context\Context;
@@ -34,14 +35,8 @@ use Psr\Log\LoggerInterface;
  * @property-read OOHostConfig $hostConfig
  * @property-read SessionMemory $memory
  */
-interface Session
+interface Session extends RunningSpy
 {
-
-    /**
-     * @return string[]
-     */
-    public static function getInstanceIds() : array;
-
     /*----- 响应会话 -----*/
 
     public function hear(Message $message, Navigator $navigator = null) : void;

@@ -89,7 +89,7 @@ interface MessageRequest
      *
      * @param ConversationMessage $message
      */
-    public function bufferMessageToChat(ConversationMessage $message) : void;
+    public function bufferConversationMessage(ConversationMessage $message) : void;
 
     /**
      * 将当前准备要发送的信息, 全部发送给用户.

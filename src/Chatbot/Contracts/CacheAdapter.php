@@ -7,6 +7,7 @@
 
 namespace Commune\Chatbot\Contracts;
 
+use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Exceptions\RuntimeExceptionInterface;
 
 /**
@@ -17,7 +18,7 @@ use Commune\Chatbot\Blueprint\Exceptions\RuntimeExceptionInterface;
  * @package Commune\Chatbot\Contracts
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface CacheAdapter
+interface CacheAdapter extends RunningSpy
 {
 
     /**

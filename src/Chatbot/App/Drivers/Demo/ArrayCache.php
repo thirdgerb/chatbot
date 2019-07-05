@@ -3,25 +3,31 @@
 
 namespace Commune\Chatbot\App\Drivers\Demo;
 
+use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Contracts\CacheAdapter;
-use Psr\Log\LoggerInterface;
+use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 
 /**
  * 模拟的cache. 方便测试用.
  */
 class ArrayCache implements CacheAdapter
 {
+    use RunningSpyTrait;
+
     protected static $cached = [];
 
     protected $logger;
 
     /**
-     * ArrayCache constructor.
-     * @param LoggerInterface $Logger
+     * @var string
      */
-    public function __construct(LoggerInterface $Logger)
+    protected $traceId;
+
+    public function __construct(Conversation $conversation)
     {
-        $this->logger = $Logger;
+        $this->logger = $conversation->getLogger();
+        $this->traceId = $conversation->getTraceId();
+        self::addRunningTrace($this->traceId, $this->traceId);
     }
 
 
@@ -62,7 +68,7 @@ class ArrayCache implements CacheAdapter
 
     public function __destruct()
     {
-        $this->logger->debug(__METHOD__);
+        self::removeRunningTrace($this->traceId);
     }
 
 }
