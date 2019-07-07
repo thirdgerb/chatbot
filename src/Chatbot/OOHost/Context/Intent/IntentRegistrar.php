@@ -86,7 +86,7 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
      * @param Session $session
      * @return IntentMessage|null
      */
-    public function matchPossibleIntent(Session $session) : ? IntentMessage
+    public function matchHighlyPossibleIntent(Session $session) : ? IntentMessage
     {
         $matched = $session->getMatchedIntent();
         if (isset($matched)) {
@@ -126,6 +126,9 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
             return null;
         }
 
+        // 必须用definition, 因为intentName 可能有很多种...
+        // 牺牲一点性能获取工程上的便利.
+        // 但有可能造成歧义. 需要继续权衡.
         $def = $this->get($intentName);
         $matcher = $this->getMatcher($intentName);
         $intent = $this->doMatch($session, $def, $matcher);
@@ -230,15 +233,16 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
 
         // 检查incoming message
         $incomingMessage = $session->incomingMessage;
-        $origin = $incomingMessage->message;
 
         // 必须高于阈值的意图才会被识别.
+        // 是否已经包含.
         if ($incomingMessage->hasHighlyPossibleIntent($name)) {
             $entities = $incomingMessage->getPossibleIntentEntities($name);
             return $def->newContext($entities)->toInstance($session);
         }
 
         // 使用matcher
+        $origin = $incomingMessage->message;
         $entities = $matcher->match($origin);
         if (isset($entities)) {
             return $def->newContext($entities)->toInstance($session);

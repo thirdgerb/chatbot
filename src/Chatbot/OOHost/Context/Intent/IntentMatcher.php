@@ -5,6 +5,7 @@ namespace Commune\Chatbot\OOHost\Context\Intent;
 
 
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
@@ -131,8 +132,12 @@ class IntentMatcher
             }
         }
 
-        $text = $message->getTrimmedText();
+        // 其它的逻辑都要求是对话, 才去匹配.
+        if (!$message instanceof VerboseMsg) {
+            return [];
+        }
 
+        $text = $message->getTrimmedText();
         // 检查命令模式.
         if ($this->hasCommand()) {
             $entities = $this->matchCommand($message, $this->command);

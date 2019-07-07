@@ -110,7 +110,7 @@ class RasaManagerInt extends AbsCmdIntent
                         $entities = [];
                     }
 
-                    $intent = $dialog->session->intentRepo->matchPossibleIntent($dialog->session);
+                    $intent = $dialog->session->intentRepo->matchHighlyPossibleIntent($dialog->session);
 
 
                     $dialog->say()
