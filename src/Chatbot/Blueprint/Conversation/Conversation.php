@@ -84,10 +84,17 @@ interface Conversation extends ConversationContainer, RunningSpy
     public function monolog() : Monologue;
 
     /**
-     * 回复消息的接口.
+     * 回复消息给当前用户
      * @param Message $message
      */
     public function reply(Message $message) : void;
+
+    /**
+     * 转发消息不是给当前用户, 而是给别的用户.
+     * @param string $userId
+     * @param Message $message
+     */
+    public function deliver(string $userId, Message $message) : void;
 
     /**
      * 需要发送出去的信息.

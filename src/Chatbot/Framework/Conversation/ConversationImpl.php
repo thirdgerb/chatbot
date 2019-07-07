@@ -206,22 +206,6 @@ class ConversationImpl implements Blueprint
             );
         }
 
-        $this->saveReply($message);
-    }
-
-
-    public function monolog(): Monologue
-    {
-        return $this->make(Monologue::class);
-    }
-
-
-    /**
-     * 回复
-     * @param Message $message
-     */
-    public function saveReply(Message $message) : void
-    {
         $request = $this->getRequest();
         $incomingMessage = $this->getIncomingMessage();
 
@@ -231,11 +215,51 @@ class ConversationImpl implements Blueprint
             $message
         );
 
-        // 先缓冲起消息来. 是不是立刻发送, request 自己决定.
-        $request->bufferConversationMessage($replyMessage);
+        $this->saveConversationMessage($request, $replyMessage);
+    }
 
+    public function deliver(string $userId, Message $message): void
+    {
+        if ($message instanceof VerboseMsg) {
+            $message->translate(
+                $this->make(Translator::class),
+                $this->locale()
+            );
+        }
+
+        $request = $this->getRequest();
+        $chat = new ChatImpl(
+            $request->getPlatformId(),
+            $userId,
+            $request->getChatbotUserId()
+        );
+
+        $toChat = new ToChatMessage(
+            $chat,
+            $request->generateMessageId(),
+            $message,
+            $this->getTraceId()
+        );
+
+        $this->saveConversationMessage($request, $toChat);
+    }
+
+
+    public function monolog(): Monologue
+    {
+        return $this->make(Monologue::class);
+    }
+
+
+    public function saveConversationMessage(
+        MessageRequest $request,
+        ConversationMessage $message
+    ) : void
+    {
+        // 先缓冲起消息来. 是不是立刻发送, request 自己决定.
+        $request->bufferConversationMessage($message);
         // 这个和buffer 不一样, 用于别的处理, 比如存储消息.
-        $this->replyMessages[] = $replyMessage;
+        $this->replyMessages[] = $message;
     }
 
 
