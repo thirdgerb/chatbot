@@ -243,9 +243,9 @@ class DialogImpl implements Dialog, Redirect, App
         return $this->history->currentTask()->getStage();
     }
 
-    public function prevQuestion(): ? Question
+    public function currentQuestion(): ? Question
     {
-        return $this->history->getBreakPoint()->prevQuestion;
+        return $this->history->currentQuestion();
     }
 
 
@@ -261,7 +261,7 @@ class DialogImpl implements Dialog, Redirect, App
     {
         // 如果是question, 则记录到 breakpoint里, 方便回溯.
         if ($message instanceof Question) {
-            $this->history->getBreakPoint()->question = $message;
+            $this->history->setQuestion($message);
         }
         $this->conversation->reply($message);
     }
@@ -402,15 +402,19 @@ class DialogImpl implements Dialog, Redirect, App
         }
     }
 
-    public function sleepTo($to): Navigator
+    public function sleepTo($to = null): Navigator
     {
-        $to = $this->wrapContext($to, __METHOD__);
+        if (!isset($to)) {
+            $to = $this->wrapContext($to, __METHOD__);
+        }
         return new Directing\Redirects\SleepTo($this, $this->history, $to);
     }
 
-    public function yieldTo($to): Navigator
+    public function yieldTo($to = null): Navigator
     {
-        $to = $this->wrapContext($to, __METHOD__);
+        if (!empty($to)) {
+            $to = $this->wrapContext($to, __METHOD__);
+        }
         return new Directing\Redirects\YieldTo($this, $this->history, $to);
     }
 

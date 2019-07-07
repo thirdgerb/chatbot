@@ -65,12 +65,6 @@ interface OnCallbackStage extends Speech
     ) : Navigator;
 
     /**
-     * 重新 start 当前的 stage
-     * @return Navigator
-     */
-    public function repeat() : Navigator;
-
-    /**
      * @param array $stages
      * @param bool $resetPipe   是否重置掉当前stage 回调的stage路径.
      * @return Navigator
@@ -90,46 +84,11 @@ interface OnCallbackStage extends Speech
     public function backward() : Navigator;
 
     /**
-     * 重新向用户提出上一个问题
-     * 而不是重复当前stage
-     * @return Navigator
-     */
-    public function rewind() : Navigator;
-
-    /**
-     * 明确告诉用户 miss match. 然后执行 repeat
-     * @return Navigator
-     */
-    public function missMatch() : Navigator;
-
-    /**
      * 用同一个stage 等待用户的下一次消息.
      * @return Navigator
      */
     public function wait() : Navigator;
 
-    /**
-     * 退出当前的 session. 下次用户进来, 会从头开始对话.
-     * @return Navigator
-     */
-    public function quit() : Navigator;
-
-
-    /*-------- 异常 --------*/
-
-    /**
-     * 机器人拒绝用户进入当前的语境.
-     *
-     * @return Navigator
-     */
-    public function reject() : Navigator;
-
-    /**
-     * 用户主动取消当前的语境.
-     *
-     * @return Navigator
-     */
-    public function cancel() : Navigator;
 
 
 }

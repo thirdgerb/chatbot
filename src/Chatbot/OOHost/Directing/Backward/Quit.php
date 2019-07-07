@@ -13,12 +13,12 @@ class Quit extends FallbackNavigator
 
     public function then(): ? Navigator
     {
-        $farewell = $this->dialog
-            ->session
-            ->chatbotConfig
-            ->defaultMessages
-            ->farewell;
-        $this->dialog->say()->info($farewell);
+//        $farewell = $this->dialog
+//            ->session
+//            ->chatbotConfig
+//            ->defaultMessages
+//            ->farewell;
+//        $this->dialog->say()->info($farewell);
 
         $this->dialog
             ->session

@@ -339,9 +339,9 @@ abstract class AbsDomainResource extends ResourceDef
                 );
                 $dialog->say()->info("$key 的当前值为 : $value");
             })
-            ->build()
+            ->buildTalk()
             ->askVerbose("请输入 $key 的值: ")
-            ->callback()
+            ->wait()
             ->hearing()
             ->isAnswer(function(Dialog $dialog, Answer $answer) use ($key){
                 $r = $answer->toResult();

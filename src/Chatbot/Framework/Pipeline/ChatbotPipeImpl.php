@@ -55,7 +55,8 @@ abstract class ChatbotPipeImpl implements Blueprint
 
             return $result;
 
-        // 直接中断流程的异常, 携带conversation, 直接中断后续的pipe.
+        // 直接中断流程的异常, 携带conversation, 可以直接中断后续的逻辑.
+        // 但还是要执行 finally
         } catch (ConversationalException $e) {
             return $e->getConversation();
 
@@ -66,7 +67,10 @@ abstract class ChatbotPipeImpl implements Blueprint
         // 未知的异常会重新在pipeline里包装.
         // LogicException 理论上都应该被处理掉了.
         } catch (\Exception $e) {
-            throw new PipelineException($this->getPipeName(), $e);
+            throw new PipelineException(
+                $this->getPipeName() . ':' . $e->getMessage(),
+                $e
+            );
 
         } finally {
             $this->onUserMessageFinally($conversation);

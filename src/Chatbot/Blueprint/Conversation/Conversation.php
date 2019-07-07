@@ -86,21 +86,43 @@ interface Conversation extends ConversationContainer, RunningSpy
     /**
      * 回复消息给当前用户
      * @param Message $message
+     * @param bool $immediately
      */
-    public function reply(Message $message) : void;
+    public function reply(Message $message, bool $immediately = false) : void;
 
     /**
-     * 转发消息不是给当前用户, 而是给别的用户.
+     * 转发消息不是给当前用户, 而是给制定的用户.
+     *
      * @param string $userId
      * @param Message $message
+     * @param bool $immediately
      */
-    public function deliver(string $userId, Message $message) : void;
+    public function deliver(string $userId, Message $message, bool $immediately = false) : void;
+
+    /*------------ conversation messages ------------*/
 
     /**
-     * 需要发送出去的信息.
-     * @return ConversationMessage[]
+     * 保存要发送的消息.
+     * @param MessageRequest $request
+     * @param ConversationMessage $message
+     * @param bool $immediatelyBuffer  是否立刻交给 request 去 buffer, 如果这么做就反悔不了了.
      */
-    public function getOutgoingMessages() : array;
+    public function saveConversationMessage(
+        MessageRequest $request,
+        ConversationMessage $message,
+        bool  $immediatelyBuffer
+    ) : void;
+
+    /**
+     * 清空所有要发送的消息
+     */
+    public function flushConversationMessages() : void;
+
+
+    /**
+     * 完成一个请求, 把所有消息发送出去.
+     */
+    public function finishRequest() : void;
 
     /*------------ event ------------*/
 
@@ -114,6 +136,7 @@ interface Conversation extends ConversationContainer, RunningSpy
 
     /**
      * 结束一个 conversation
+     * 为 destruct 做准备.
      */
     public function finish() : void;
 

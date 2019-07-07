@@ -62,7 +62,7 @@ class TellWeatherInt extends ActionIntent
 
     public function action(Stage $stageRoute): Navigator
     {
-        return $stageRoute->build()
+        return $stageRoute->buildTalk()
             ->action(function(Dialog $dialog){
 
                 $city = $this->city;

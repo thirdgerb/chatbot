@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context;
 
 
+use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
@@ -122,14 +123,14 @@ interface Definition
      * @param Context $self
      * @param Dialog $dialog
      * @param string $stage
-     * @param $callbackValue
+     * @param Message|null $callbackValue
      * @return Navigator
      */
     public function callbackStage(
         Context $self,
         Dialog $dialog,
         string $stage,
-        $callbackValue
+        Message $callbackValue = null
     ) : Navigator;
 
     /**

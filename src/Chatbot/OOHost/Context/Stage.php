@@ -11,6 +11,7 @@ use Commune\Chatbot\OOHost\Context\Stages\CallbackStage;
 use Commune\Chatbot\OOHost\Context\Stages\OnStartStage;
 use Commune\Chatbot\OOHost\Context\Stages\StartStage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
+use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 /**
@@ -26,17 +27,23 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 interface Stage
 {
     /**
-     * checkpoint 是通过 startStage 唤起
+     * 进入一个stage, 启动
      * @return bool
      */
     public function isStart() : bool;
 
     /**
-     * checkpoint 是通过 callbackStage 唤起.
-     * stage has been callback
+     * stage 拿到了一个回调 message
+     * 可能是 yield dependOn 或者 wait 拿到的message
      * @return bool
      */
     public function isCallback() : bool;
+
+    /**
+     * stage 进入sleep, 被重新唤醒, 没有message
+     * @return bool
+     */
+    public function isFallback() : bool;
 
     /**
      * 用组件的方式定义一个 checkpoint
@@ -48,15 +55,7 @@ interface Stage
     /*------ 事件 ------*/
 
     /**
-     * 如果当前检查点有数据,
-     * 则直接运行 next.
-     *
-     * @return Stage
-     */
-    public function ifAbsent() : Stage;
-
-    /**
-     * 进入一个stage 的时候触发.
+     * start 时候触发.
      *
      * @param callable $interceptor
      * @return Stage
@@ -64,12 +63,19 @@ interface Stage
     public function onStart(callable $interceptor) : Stage;
 
     /**
-     * 一个产生了等待的stage, 接受到回调时触发.
+     * callback 时触发.
      *
      * @param callable $interceptor
      * @return Stage
      */
     public function onCallback(callable $interceptor) : Stage;
+
+    /**
+     * fallback 的时候才会触发
+     * @param callable $interceptor
+     * @return Stage
+     */
+    public function onFallback(callable $interceptor) : Stage;
 
 
     /*------ 等待用户输入. ------*/
@@ -94,11 +100,12 @@ interface Stage
 
 
     /**
-     * 用链式调用的 api 来定义流程.
+     * 用链式调用的 api 来定义 talk 的流程.
+     * talk 之外的情况并不适用.
      *
      * @return OnStartStage
      */
-    public function build() : OnStartStage;
+    public function buildTalk() : OnStartStage;
 
     /**
      * 不做任何事
@@ -110,22 +117,6 @@ interface Stage
     public function wait(
         callable $hearMessage
     ) : Navigator;
-
-
-    /**
-     * @param string $stageName
-     * @param bool $resetPipes
-     * @return Navigator
-     */
-    public function goStage(string $stageName, bool $resetPipes = false) : Navigator;
-
-
-    /**
-     * @param array $stages
-     * @param bool $resetPipes
-     * @return Navigator
-     */
-    public function goStagePipes(array $stages, bool $resetPipes = false) : Navigator;
 
     /*------ 依赖信息 ------*/
 
@@ -169,10 +160,11 @@ interface Stage
     public function sleepTo($to, callable $wake = null) : Navigator;
 
     /**
-     * @param Context|string $to
+     * @param null $to
+     * @param string $level
      * @return Navigator
      */
-    public function replaceTo($to) : Navigator;
+    public function replaceTo($to = null, string $level = Redirect::THREAD_LEVEL) : Navigator;
 
     /**
      * 由于调用了一个服务, 依赖该服务的回调,

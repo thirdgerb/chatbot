@@ -37,13 +37,13 @@ interface Redirect
      * @param Context|string $to
      * @return Navigator
      */
-    public function sleepTo($to) : Navigator;
+    public function sleepTo($to = null) : Navigator;
 
     /**
-     * @param Context|string $to
+     * @param Context|string|null $to
      * @return Navigator
      */
-    public function yieldTo($to) : Navigator;
+    public function yieldTo($to = null) : Navigator;
 
     /**
      * @return Navigator

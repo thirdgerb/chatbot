@@ -25,33 +25,22 @@ class FakeHearing
     protected $dialog;
 
     /**
-     * @var bool
-     */
-    protected $isStart;
-
-    /**
      * FakeHearing constructor.
-     * @param Navigator|null $navigator
      * @param Dialog $dialog
-     * @param bool $isStart
+     * @param Navigator|null $navigator
      */
     public function __construct(
-        ?Navigator $navigator,
         Dialog $dialog,
-        bool $isStart
+        Navigator $navigator
     )
     {
         $this->navigator = $navigator;
         $this->dialog = $dialog;
-        $this->isStart = $isStart;
     }
 
 
     public function end(callable $fallback = null) : Navigator
     {
-        if ($this->isStart) {
-            return $this->navigator ?? $this->dialog->wait();
-        }
         return $this->navigator ?? $this->dialog->missMatch();
     }
 

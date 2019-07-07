@@ -4,8 +4,6 @@ namespace Commune\Chatbot\App\ChatPipe;
 
 
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
-use Commune\Chatbot\App\ChatPipe\Chatting\ReceiveIncomingMessage;
-use Commune\Chatbot\App\ChatPipe\Chatting\SendingOutgoingMessage;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Contracts\EventDispatcher;
@@ -53,15 +51,6 @@ class ChattingPipe extends ChatbotPipeImpl
         // 锁chat 失败
         $locked = $this->lockChat($chatId);
 
-        // 触发接受信息事件.
-        $incomingMessage = $conversation->getIncomingMessage();
-        $this->dispatcher->dispatch(
-            new ReceiveIncomingMessage(
-                $incomingMessage,
-                $locked
-            )
-        );
-
         // 没锁到就直接返回好了.
         if (! $locked) {
             $conversation->monolog()->warning(
@@ -77,19 +66,10 @@ class ChattingPipe extends ChatbotPipeImpl
          */
         $replyConversation = $next($conversation);
 
-        $replies = $replyConversation->getOutgoingMessages();
-        // 记录消息的事件.
-        $this->dispatcher->dispatch(
-            new SendingOutgoingMessage($replies)
-        );
-
         $this->unlockChat($chatId);
         return $replyConversation;
 
     }
-    /*----------- on message to user -----------*/
-
-
 
     /*----------- finally -----------*/
 

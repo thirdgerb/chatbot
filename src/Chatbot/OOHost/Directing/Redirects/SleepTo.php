@@ -10,6 +10,10 @@ use Commune\Chatbot\OOHost\Directing\AbsNavigator;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\History\History;
 
+/**
+ * 当前thread 进入sleep 状态.
+ * 让出控制权给新的thread, 或者fallback 到最早sleep的一个thread
+ */
 class SleepTo extends AbsNavigator
 {
     /**
@@ -22,21 +26,29 @@ class SleepTo extends AbsNavigator
      * Redirector constructor.
      * @param Dialog $dialog
      * @param History $history
-     * @param Context $to
+     * @param Context|null $to
      */
     public function __construct(
         Dialog $dialog,
         History $history,
-        Context $to
+        Context $to = null
     )
     {
         $this->to = $to;
         parent::__construct($dialog, $history);
     }
+
     public function doDisplay(): ? Navigator
     {
-        $this->history->sleepTo($this->to);
-        return $this->startCurrent();
+        // 是否能够sleep to
+        $history = $this->history->sleepTo($this->to);
+
+        if (isset($history)) {
+            return $this->startCurrent();
+        }
+
+        // 当 to 为null, 自己又是第一个的话, 就restart. 会导致不如预期.
+        return $this->dialog->restart();
     }
 
 

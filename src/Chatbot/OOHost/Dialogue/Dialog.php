@@ -36,7 +36,7 @@ interface Dialog
     /**
      * @return Question|null
      */
-    public function prevQuestion() : ? Question;
+    public function currentQuestion() : ? Question;
 
     /**
      * 根据contextName 生成一个context 实例.
@@ -123,13 +123,15 @@ interface Dialog
     /*-------- history --------*/
 
     /**
-     * 当做什么都没发生过. 而不是重复当前stage
+     * 当做什么都没发生过.
+     * 有问题重复问题.
+     * 而不是repeat 当前stage
      * @return Navigator
      */
     public function rewind() : Navigator;
 
     /**
-     * 明确告诉用户 miss match. 然后执行 repeat
+     * 明确告诉用户 miss match. 然后执行 rewind
      * @return Navigator
      */
     public function missMatch() : Navigator;

@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\History;
 
 
-use Commune\Chatbot\OOHost\Session\Session;
+use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
@@ -12,24 +12,77 @@ class Process implements ArrayAndJsonAble
 {
     use ArrayAbleToJson;
 
-    public $sessionId;
+    protected $sessionId;
 
     /**
      * @var Thread
      */
-    public $thread;
+    protected $thread;
 
     /**
      * @var Thread[]
      */
-    public $sleeping = [];
+    protected $sleeping = [];
 
-    public function __construct(Session $session)
+    public function __construct(string $sessionId, Thread $thread)
     {
-        $this->sessionId = $session->sessionId;
+        $this->sessionId = $sessionId;
+        $this->thread = $thread;
+    }
 
-        $root = $session->makeRootContext();
-        $this->thread = new Thread(new Node($root));
+    public function currentThread() : Thread
+    {
+        return $this->thread;
+    }
+
+    public function currentTask() : Node
+    {
+        return $this->thread->currentTask();
+    }
+
+    public function currentQuestion() : ? Question
+    {
+        return $this->thread->currentQuestion();
+    }
+
+
+    public function setQuestion(Question $question = null) : void
+    {
+        $this->thread->setQuestion($question);
+    }
+
+
+    public function goStage(string $stageName, bool $reset) : void
+    {
+        $this->thread->goStage($stageName, $reset);
+    }
+
+
+    public function addStage(string $stage)  : void
+    {
+        $this->thread->addStage($stage);
+    }
+
+    public function nextStage() : ? string
+    {
+        return $this->thread->nextStage();
+    }
+
+    public function replaceThread(Thread $thread) : void
+    {
+        $this->thread = $thread;
+    }
+
+
+    public function replaceTask(Node $task)  :void
+    {
+        $this->thread->replaceTask($task);
+    }
+
+
+    public function dependOn(Node $node) : void
+    {
+        $this->thread->dependOn($node);
     }
 
     public function sleepTo(Thread $thread) : void
@@ -38,7 +91,12 @@ class Process implements ArrayAndJsonAble
         $this->thread = $thread;
     }
 
-    public function pop() : ? Thread
+    public function intended() : ? Node
+    {
+        return $this->thread->intended();
+    }
+
+    public function wake() : ? Thread
     {
         return array_pop($this->sleeping);
     }
@@ -58,5 +116,15 @@ class Process implements ArrayAndJsonAble
             'sleeping' => $sleeping,
             'yielding' => $yielding
         ];
+    }
+
+    public function __clone()
+    {
+        $this->thread = clone $this->thread;
+
+        foreach ($this->sleeping as $index => $sleeping) {
+            $this->sleeping[$index] = clone $sleeping;
+        }
+
     }
 }

@@ -128,9 +128,9 @@ class ManagerTask extends TaskDef
 
     public function __onTalkIntent(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->info("请输入一句话, 我们查看是否命中意图, 默认回复如何")
-            ->callback()
+            ->wait()
             ->hearing()
             ->isInstanceOf(VerboseMsg::class, function(Dialog $dialog, VerboseMsg $msg){
 
@@ -158,9 +158,9 @@ class ManagerTask extends TaskDef
 
     public function __onEditIntent(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askVerbose("请输入意图的名称, 输入'b' 返回")
-            ->callback()
+            ->wait()
             ->hearing()
             ->is('b', function(Dialog $dialog){
 
@@ -206,7 +206,7 @@ class ManagerTask extends TaskDef
 
         $operation['a'] = '添加新回复';
 
-        return $stage->build()
+        return $stage->buildTalk()
             ->askVerbose(
                 '正在编辑分组 ' . $this->editIndex . ' 下的意图 '.$this->editIntent .'
                 
@@ -217,7 +217,7 @@ class ManagerTask extends TaskDef
 预定义的回复如下:',
                 $replies
             )
-            ->callback()
+            ->wait()
             ->hearing()
             ->is('b', function(Dialog $dialog) {
                 return $dialog->goStage('edit');

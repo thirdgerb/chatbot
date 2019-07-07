@@ -280,4 +280,5 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
         return $matcher->hasCommand();
     }
 
+
 }

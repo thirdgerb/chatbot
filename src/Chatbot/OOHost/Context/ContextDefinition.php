@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context;
 
 use Closure;
+use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Entities\DependingBuilder;
 use ReflectionMethod;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
@@ -257,7 +258,7 @@ class ContextDefinition implements Definition
         Context $self,
         Dialog $dialog,
         string $stage,
-        $callbackValue
+        Message $callbackValue = null
     ): Navigator
     {
         $this->checkStageExists($stage);

@@ -32,12 +32,12 @@ class KeyEditor extends TaskDef
     {
         $value = $this->option->{$this->key};
 
-        return $stage->build()
+        return $stage->buildTalk()
             ->info(
                 '正在修改' . $this->key
                 . "\n 当前值为 :\n ".json_encode($value, self::PRETTY)
             )->askVerbose('请输入修改结果:')
-            ->callback()
+            ->wait()
             ->hearing()
                 ->isAnswer(function(Dialog $dialog, Answer $answer){
                     $result = $answer->toResult();

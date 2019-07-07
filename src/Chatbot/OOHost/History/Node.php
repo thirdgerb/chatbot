@@ -63,12 +63,23 @@ class Node implements ArrayAndJsonAble
         return $this->currentStage;
     }
 
-    public function go(string $stageName) : void
+
+    public function goStage(string $stageName, bool $reset = false) : void
     {
+        if ($reset) {
+            $this->stacks = [];
+        }
         $this->currentStage = $stageName;
     }
 
-    public function next() : ? string
+
+    public function addStage(string $stage)  : void
+    {
+        array_push($this->stacks, $this->currentStage);
+        $this->currentStage = $stage;
+    }
+
+    public function nextStage() : ? string
     {
         $stage = array_pop($this->stacks);
         if (isset($stage)) {
@@ -77,16 +88,6 @@ class Node implements ArrayAndJsonAble
         return $stage;
     }
 
-    public function add(string $stage) : void
-    {
-        array_push($this->stacks, $this->currentStage);
-        $this->currentStage = $stage;
-    }
-
-    public function flushStacks() : void
-    {
-        $this->stacks = [];
-    }
 
     public function toArray(): array
     {

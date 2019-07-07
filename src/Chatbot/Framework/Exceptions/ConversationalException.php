@@ -26,12 +26,11 @@ class ConversationalException extends LogicException
     /**
      * ConversationalException constructor.
      * @param Conversation $conversation
-     * @param \Throwable $e
      */
-    public function __construct(Conversation $conversation, \Throwable $e = null)
+    public function __construct(Conversation $conversation)
     {
         $this->conversation = $conversation;
-        parent::__construct('conversational exception', $e);
+        parent::__construct('conversational exception', null);
     }
 
     /**

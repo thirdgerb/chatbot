@@ -8,7 +8,7 @@ use Commune\Chatbot\App\Commands\UserCommandsPipe;
 use Commune\Chatbot\App\SessionPipe\EventMsgPipe;
 use Commune\Chatbot\App\SessionPipe\MarkedIntentPipe;
 use Commune\Chatbot\App\SessionPipe\NavigationPipe;
-use Commune\Chatbot\App\SessionPipe\UnheardPipe;
+use Commune\Chatbot\App\SessionPipe\DefaultReplyPipe;
 use Commune\Support\Option;
 
 /**
@@ -38,6 +38,7 @@ class OOHostConfig extends Option
             'sessionCacheSeconds' => 60,
             'autoloadPsr4' => [],
             'sessionPipes' => [
+                DefaultReplyPipe::class,
                 EventMsgPipe::class,
                 UserCommandsPipe::class,
                 AnalyserPipe::class,

@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\History;
 
 
+use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
@@ -14,24 +15,78 @@ class Thread implements ArrayAndJsonAble
     /**
      * @var Node[]
      */
-    public $stacks = [];
+    protected $stacks = [];
 
     /**
      * @var Node
      */
-    public $node;
+    protected $node;
+
+    /**
+     * @var Question
+     */
+    protected $question;
 
     public function __construct(Node $node)
     {
         $this->node = $node;
     }
 
-    public function currentNode() : Node
+    public function currentTask() : Node
     {
         return $this->node;
     }
 
-    public function pop() : ? Node
+    public function currentQuestion() : ? Question
+    {
+        return $this->question;
+    }
+
+
+    public function setQuestion(Question $question = null) : void
+    {
+        $this->question = $question;
+    }
+
+
+    public function goStage(string $stageName, bool $reset) : void
+    {
+        $this->node->goStage($stageName, $reset);
+        $this->question = null;
+    }
+
+
+    public function addStage(string $stage)  : void
+    {
+        $this->node->addStage($stage);
+        $this->question = null;
+    }
+
+
+    public function nextStage() : ? string
+    {
+        $next = $this->node->nextStage();
+        if (isset($next)) {
+            $this->question = null;
+        }
+        return $next;
+    }
+
+
+    public function replaceTask(Node $task)  :void
+    {
+        $this->node = $task;
+        $this->question = null;
+    }
+
+    public function dependOn(Node $node) : void
+    {
+        array_push($this->stacks, $this->node);
+        $this->node = $node;
+        $this->question = null;
+    }
+
+    public function intended() : ? Node
     {
         $node = array_pop($this->stacks);
         if (isset($node)) {
@@ -41,11 +96,6 @@ class Thread implements ArrayAndJsonAble
         return null;
     }
 
-    public function push(Node $node) : void
-    {
-        array_push($this->stacks, $this->node);
-        $this->node = $node;
-    }
 
     public function toArray(): array
     {
@@ -55,7 +105,18 @@ class Thread implements ArrayAndJsonAble
         }
         return [
             'node' => $this->node->toArray(),
+            'question' => $this->question->toArray(),
             'stack' => $stack
         ];
+    }
+
+
+    public function __clone()
+    {
+        $this->node = clone $this->node;
+        $this->question = isset($this->question) ? clone $this->question : null;
+        foreach ($this->stacks as $index => $stack) {
+            $this->stacks[$index] = clone $stack;
+        }
     }
 }

@@ -25,9 +25,9 @@ class EditDomainController extends Controller
 
     public function __onStart(Stage $stage): Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askVerbose('请输入 domain 的名称.')
-            ->callback()
+            ->wait()
             ->hearing()
             ->isAnswer(function(
                 Dialog $dialog,
@@ -69,9 +69,9 @@ class EditDomainController extends Controller
 
     public function __onCreate(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askConfirm('确认创建模块 '.$this->domainName.' 吗?')
-            ->callback()
+            ->wait()
                 ->hearing()
                     ->isChoice(
                         1,
@@ -111,9 +111,9 @@ class EditDomainController extends Controller
 
     public function __onAskSave(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askConfirm('需要保存修改吗?')
-            ->callback()
+            ->wait()
                 ->hearing()
                 ->isChoice(1, function(Dialog $dialog){
                     return $dialog->goStage('save');

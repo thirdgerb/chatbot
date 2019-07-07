@@ -54,14 +54,14 @@ class OptionEditor extends OOContext
 
     public function __onStart(Stage $stage): Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->info($this->welcome)
             ->goStage('show');
     }
 
     public function __onShow(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->interceptor(function(Dialog $dialog) {
                 $dialog->say()
                     ->info(
@@ -98,12 +98,12 @@ class OptionEditor extends OOContext
         $options = $this->optionPropSuggestions;
         $options['b'] = '返回上一层';
 
-        return $stage->build()
+        return $stage->buildTalk()
             ->askChoose(
                 '选择需要编辑的键',
                 $options
             )
-            ->callback()
+            ->wait()
             ->hearing()
                 ->isChoice('b', function(Dialog $dialog){
                     return $dialog->fulfill();
@@ -149,7 +149,7 @@ class OptionEditor extends OOContext
 
     public function __onEditValue(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->dependOn(new KeyEditor($this->option, $this->modifyKey))
             ->action(function(Dialog $dialog, KeyEditor $callback) {
                 return $this->saveChange($callback->option, $dialog);

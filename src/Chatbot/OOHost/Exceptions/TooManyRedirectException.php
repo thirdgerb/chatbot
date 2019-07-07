@@ -3,8 +3,8 @@
 
 namespace Commune\Chatbot\OOHost\Exceptions;
 
-use Commune\Chatbot\Framework\Exceptions\RuntimeException;
+use Commune\Chatbot\Framework\Exceptions\LogicException;
 
-class TooManyRedirectException extends RuntimeException
+class TooManyRedirectException extends LogicException
 {
 }

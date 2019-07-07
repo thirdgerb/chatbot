@@ -41,7 +41,7 @@ class ReadPersonality extends Questionnaire
 
     protected function doStart(Stage $stage): Navigator
     {
-        return $stage->build()->action(function (Dialog $dialog) : Navigator {
+        return $stage->buildTalk()->action(function (Dialog $dialog) : Navigator {
             $dialog->say()->info("这里是趣味测试题的测试用例.");
 
             if ($this->finish) {
@@ -70,9 +70,9 @@ class ReadPersonality extends Questionnaire
 
     public function __onRetest(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askConfirm('想要重新测试一次吗?')
-            ->callback()
+            ->wait()
             ->hearing()
             ->isPositive(function(Dialog $dialog){
                 $this->score = 0;
@@ -90,9 +90,9 @@ class ReadPersonality extends Questionnaire
 
     public function __onAskContinue(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askConfirm('想要继续测试吗?')
-            ->callback()
+            ->wait()
             ->hearing()
             ->isPositive( function(Dialog $dialog){
                 return $this->next($dialog, $this->nowQuestion);
@@ -105,7 +105,7 @@ class ReadPersonality extends Questionnaire
     public function __onAskStart(Stage $stage) : Navigator
     {
 
-        return $stage->build()
+        return $stage->buildTalk()
             ->info('你崇尚浪漫的爱情吗？当爱情与婚姻发生冲突的时候，你会怎样选择？爱情与事业中的你是怎样的？一起来做做这套测试题吧，看看你的潜意识中是怎样看待爱情、婚姻与事业的。15秒就可以测出你的性格')
             ->action(function(Dialog $dialog) {
                 return $this->next($dialog, 0 );

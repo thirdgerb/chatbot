@@ -26,7 +26,7 @@ class Hear extends AbsNavigator
 
     public function doDisplay(): ? Navigator
     {
-        $question = $this->dialog->prevQuestion();
+        $question = $this->dialog->currentQuestion();
         if (isset($question)) {
             $answer = $question->parseAnswer($this->message);
             if (isset($answer)) {

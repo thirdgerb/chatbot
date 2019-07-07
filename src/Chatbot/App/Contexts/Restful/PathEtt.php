@@ -76,10 +76,10 @@ class PathEtt implements Entity
 
     public function asStage(Stage $stageRoute): Navigator
     {
-        return $stageRoute->build()
+        return $stageRoute->buildTalk()
             ->withSlots(['name' => $this->realName])
             ->askVerbose($this->askForValue)
-            ->callback()
+            ->wait()
             ->hearing()
             ->isAnswer(function(ResourceDef $self, Dialog $dialog, Answer $answer){
                 $result = $answer->toResult();

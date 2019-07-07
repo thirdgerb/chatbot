@@ -15,9 +15,9 @@ use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Contracts\ExceptionHandler;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
-use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\Framework\Exceptions\ConversationalException;
 use Commune\Chatbot\Framework\Exceptions\FatalErrorException;
+use Commune\Chatbot\Framework\Exceptions\PipelineException;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Chatbot\Framework\Pipeline\PipelineLog;
 
@@ -74,7 +74,7 @@ class MessengerPipe implements InitialPipe
 
             if (!$this->app->isAvailable()) {
                 $this->replyUnavailable($conversation);
-                return $conversation;
+                return $this->receiveConversation($conversation, $start);
             }
 
             // 启动
@@ -86,23 +86,11 @@ class MessengerPipe implements InitialPipe
             $conversation = $next($conversation);
             return $this->receiveConversation($conversation, $start);
 
-        // 需要将异常内的消息发送给用户
-        // 一种跳出流程的方式.
-        } catch (ConversationalException $e) {
-
-            return $this->receiveConversation(
-                $e->getConversation(),
-                $start
-            );
-
         // kill 掉当前的会话, 仍然允许 server 继续运行
         } catch (RuntimeException $e) {
-
+            // 抛出后会关闭当前客户端.
             $this->getExpHandler()->reportRuntimeException(__METHOD__, $e);
             $this->getServer()->closeClient($conversation);
-
-            // 抛出后会关闭当前客户端.
-            // 所以在此之前抛出事件.
             return $conversation;
 
         // 致命的错误
@@ -135,12 +123,7 @@ class MessengerPipe implements InitialPipe
     {
         // 结束
         $this->endPipe($conversation, $start, new Carbon());
-        // 发送消息.
-        $request = $conversation->getRequest();
-        $request->flushChatMessages();
-        // 这一步.
-        $request->finishRequest();
-
+        $conversation->finishRequest();
         return $conversation;
     }
 

@@ -4,7 +4,6 @@
 namespace Commune\Chatbot\OOHost\Context\Stages;
 
 
-use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Speech;
@@ -20,19 +19,20 @@ class CallbackStageBuilder implements OnCallbackStage
     protected $stage;
 
     /**
-     * @var bool
-     */
-    protected $isCallback;
-
-    /**
      * @var Speech
      */
     protected $dialogSpeech;
 
+    /**
+     * @var bool
+     */
+    protected $isCallback;
+
     public function __construct(Stage $stage)
     {
         $this->stage = $stage;
-        $this->isCallback = $stage->isCallback();
+        $this->isCallback = $this->stage->isCallback();
+        
         if ($this->isCallback) {
             $this->dialogSpeech = $stage->dialog
                 ->say()
@@ -40,19 +40,28 @@ class CallbackStageBuilder implements OnCallbackStage
         }
     }
 
+    /**
+     * 调用过程是否有效.
+     * @return bool
+     */
     protected function isAvailable() : bool
     {
-        if (!$this->isCallback) {
+        if (!$this->stage->isCallback()) {
             return false;
         }
         $navigator = $this->stage->navigator;
         return !isset($navigator);
     }
 
-    protected function onStartResult() : Navigator
+    protected function onDefaultResult() : Navigator
     {
+        if ($this->stage->isStart()) {
+            return $this->stage->navigator
+                ?? $this->stage->dialog->wait();
+        }
+
         return $this->stage->navigator
-            ?? $this->stage->dialog->wait();
+            ?? $this->stage->dialog->repeat();
     }
 
     public function interceptor(callable $action): OnCallbackStage
@@ -67,30 +76,24 @@ class CallbackStageBuilder implements OnCallbackStage
     public function hearing()
     {
         $navigator = $this->stage->navigator;
-        if (
-            $this->isCallback
-            && !isset($navigator)
-            && $this->stage->value instanceof Message
-        ) {
+
+        // 正常的callback
+        if (!isset($navigator) && $this->stage->isCallback()) {
             return $this->stage->dialog->hear($this->stage->value);
         }
 
         return new FakeHearing(
-            $this->stage->navigator,
             $this->stage->dialog,
-            ! $this->isCallback
+            $this->onDefaultResult()
         );
     }
 
 
     public function action(callable $action): Navigator
     {
-        if ($this->isCallback) {
-            $this->stage->onCallback($action);
-            return $this->stage->navigator ?? $this->stage->dialog->missMatch();
-        }
+        $this->stage->onCallback($action);
+        return $this->onDefaultResult();
 
-        return $this->onStartResult();
     }
 
     public function next(): Navigator
@@ -100,7 +103,7 @@ class CallbackStageBuilder implements OnCallbackStage
                 ?? $this->stage->dialog->next();
         }
 
-        return $this->onStartResult();
+        return $this->onDefaultResult();
     }
 
     public function fulfill(): Navigator
@@ -110,7 +113,7 @@ class CallbackStageBuilder implements OnCallbackStage
                 ?? $this->stage->dialog->next();
         }
 
-        return $this->onStartResult();
+        return $this->onDefaultResult();
     }
 
     public function restart(): Navigator
@@ -120,7 +123,7 @@ class CallbackStageBuilder implements OnCallbackStage
                 ?? $this->stage->dialog->restart();
         }
 
-        return $this->onStartResult();
+        return $this->onDefaultResult();
     }
 
     public function goStage(
@@ -133,17 +136,7 @@ class CallbackStageBuilder implements OnCallbackStage
                 ?? $this->stage->dialog->goStage($stageName, $resetPipe);
         }
 
-        return $this->onStartResult();
-    }
-
-    public function repeat(): Navigator
-    {
-        if ($this->isCallback) {
-            return $this->stage->navigator
-                ?? $this->stage->dialog->repeat();
-        }
-
-        return $this->onStartResult();
+        return $this->onDefaultResult();
     }
 
     public function goStagePipes(
@@ -156,7 +149,7 @@ class CallbackStageBuilder implements OnCallbackStage
                 ?? $this->stage->dialog->goStagePipes($stages, $resetPipe);
         }
 
-        return $this->onStartResult();
+        return $this->onDefaultResult();
     }
 
     public function backward(): Navigator
@@ -166,27 +159,7 @@ class CallbackStageBuilder implements OnCallbackStage
                 ?? $this->stage->dialog->backward();
         }
 
-        return $this->onStartResult();
-    }
-
-    public function rewind(): Navigator
-    {
-        if ($this->isCallback) {
-            return $this->stage->navigator
-                ?? $this->stage->dialog->rewind();
-        }
-
-        return $this->onStartResult();
-    }
-
-    public function missMatch(): Navigator
-    {
-        if ($this->isCallback) {
-            return $this->stage->navigator
-                ?? $this->stage->dialog->missMatch();
-        }
-
-        return $this->onStartResult();
+        return $this->onDefaultResult();
     }
 
     public function wait(): Navigator
@@ -196,37 +169,7 @@ class CallbackStageBuilder implements OnCallbackStage
                 ?? $this->stage->dialog->wait();
         }
 
-        return $this->onStartResult();
-    }
-
-    public function quit(): Navigator
-    {
-        if ($this->isCallback) {
-            return $this->stage->navigator
-                ?? $this->stage->dialog->quit();
-        }
-
-        return $this->onStartResult();
-    }
-
-    public function reject(): Navigator
-    {
-        if ($this->isCallback) {
-            return $this->stage->navigator
-                ?? $this->stage->dialog->reject();
-        }
-
-        return $this->onStartResult();
-    }
-
-    public function cancel(): Navigator
-    {
-        if ($this->isCallback) {
-            return $this->stage->navigator
-                ?? $this->stage->dialog->cancel();
-        }
-
-        return $this->onStartResult();
+        return $this->onDefaultResult();
     }
 
 

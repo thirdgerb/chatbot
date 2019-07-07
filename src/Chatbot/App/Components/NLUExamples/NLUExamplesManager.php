@@ -69,7 +69,7 @@ class NLUExamplesManager extends OOContext
         $repo = IntentRegistrar::getIns();
         $intentCount = $repo->countIntentsHasNLUExamples();
         $expCount = $repo->countNLUExamples();
-        return $stage->build()
+        return $stage->buildTalk()
             ->info("对意图(intent) 的例句进行管理.(随时输入.exit退出)
 可为意图查看, 添加例句.
 共有$intentCount 个intent配置了共$expCount 条例句.")
@@ -210,9 +210,9 @@ class NLUExamplesManager extends OOContext
 
     public function __onShow(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askVerbose('请输入意图的名称:')
-            ->callback()
+            ->wait()
             ->hearing()
             ->isAnswer(function(Dialog $dialog, Answer $answer){
                 $name = (string) $answer->toResult();
@@ -311,9 +311,9 @@ class NLUExamplesManager extends OOContext
 
     public function __onAddExample(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askVerbose('请输入要添加的例句:')
-            ->callback()
+            ->wait()
             ->hearing()
             ->isAnswer(function (Dialog $dialog, VbAnswer $answer) {
                 $text = $answer->toResult();

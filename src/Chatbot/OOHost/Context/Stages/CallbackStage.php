@@ -3,9 +3,6 @@
 
 namespace Commune\Chatbot\OOHost\Context\Stages;
 
-
-use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 class CallbackStage extends AbsStage
@@ -17,23 +14,12 @@ class CallbackStage extends AbsStage
 
     public function isCallback(): bool
     {
-        return true;
+        return isset($this->value);
     }
 
-    public function ifAbsent(): Stage
+    public function isFallback(): bool
     {
-        return $this;
-    }
-
-    public function onStart(callable $interceptor): Stage
-    {
-        return $this;
-    }
-
-    public function onCallback(callable $interceptor): Stage
-    {
-        $this->callInterceptor($interceptor);
-        return $this;
+        return !isset($this->value);
     }
 
     public function talk(
@@ -49,33 +35,26 @@ class CallbackStage extends AbsStage
         callable $hearMessage
     ): Navigator
     {
-        // wait 在接受到空回调的时候, 默认是restart
-        if (!$this->value instanceof Message) {
-            return $this->dialog->restart();
+        // 检查拦截
+        if (isset($this->navigator)) return $this->navigator;
+
+        // wait 在接受到空回调的时候, 默认是repeat
+        if ($this->isFallback()) {
+            return $this->dialog->repeat();
         }
         $this->callInterceptor($hearMessage);
         return $this->navigator ?? $this->dialog->missMatch();
     }
-
-    public function goStage(string $stageName, bool $resetPipes = false): Navigator
-    {
-        return $this->dialog->goStage($stageName, $resetPipes);
-    }
-
-    public function goStagePipes(array $stages, bool $resetPipes = false): Navigator
-    {
-        return $this->dialog->goStagePipes($stages, $resetPipes);
-    }
-
 
     public function sleepTo($to, callable $wake = null): Navigator
     {
         // 检查拦截
         if (isset($this->navigator)) return $this->navigator;
 
-        if (isset($wake)) {
+        if ($this->isFallback()) {
             $this->callInterceptor($wake);
         }
+
         return $this->navigator ?? $this->dialog->restart();
     }
 
@@ -86,7 +65,7 @@ class CallbackStage extends AbsStage
     {
         if (isset($this->navigator)) return $this->navigator;
 
-        if (isset($callback)) {
+        if ($this->isCallback()) {
             $this->callInterceptor($callback);
         }
 
@@ -99,10 +78,13 @@ class CallbackStage extends AbsStage
         callable $wake
     ): Navigator
     {
-
         if (isset($this->navigator)) return $this->navigator;
-        $this->callInterceptor($wake);
-        return $this->navigator ?? $this->dialog->wait();
+
+        if ($this->isCallback()) {
+            $this->callInterceptor($wake);
+        }
+
+        return $this->navigator ?? $this->dialog->redirect->yieldTo();
     }
 
 

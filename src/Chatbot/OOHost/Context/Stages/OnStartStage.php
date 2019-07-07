@@ -7,6 +7,7 @@ namespace Commune\Chatbot\OOHost\Context\Stages;
 use Commune\Chatbot\OOHost\Context\Callables\Interceptor;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Stage;
+use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Dialogue\Speech;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
@@ -17,6 +18,8 @@ interface OnStartStage extends Speech
      * @return OnStartStage
      */
     public function interceptor(callable $interceptor) : OnStartStage;
+
+    /*--------- 直接跳转 ---------*/
 
     /**
      * @param string $name
@@ -52,6 +55,15 @@ interface OnStartStage extends Speech
     public function fulfill() : Navigator;
 
     /**
+     * 忘记当前的thread, 进入一个新的thread
+     *
+     * @param Context|string $to
+     * @param string $level
+     * @return Navigator
+     */
+    public function replaceTo($to, string $level = Redirect::THREAD_LEVEL) : Navigator;
+
+    /**
      * 和interceptor 不一样, 必须返回 navigator
      * @param callable $action
      * @return Navigator
@@ -59,9 +71,7 @@ interface OnStartStage extends Speech
     public function action(callable $action) : Navigator;
 
 
-
-
-
+    /*--------- callback ---------*/
 
     /**
      * @param Context|string $to
@@ -70,29 +80,18 @@ interface OnStartStage extends Speech
     public function dependOn($to) : OnCallbackStage;
 
     /**
-     * 忘记当前的thread, 进入一个新的thread
-     *
-     * @param Context|string $to
-     * @return OnCallbackStage
-     */
-    public function replaceTo($to) : OnCallbackStage;
-
-    /**
-     * @param Context|string $to
-     * @return OnCallbackStage
-     */
-    public function sleepTo($to) : OnCallbackStage;
-
-    /**
      * @param Context|string $to
      * @return OnCallbackStage
      */
     public function yieldTo($to) : OnCallbackStage;
 
+
     /**
      * @return OnCallbackStage
      */
-    public function callback() : OnCallbackStage;
+    public function wait() : OnCallbackStage;
+
+    /*--------- 返回 stage ---------*/
 
     /**
      * 回到stage. 做了一些没有副作用的操作.

@@ -71,7 +71,7 @@ abstract class Questionnaire extends MemorialTask
      */
     public function __onFinal(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->interceptor([$this, 'doFinal'])
             ->action(function(Dialog $dialog) : Navigator{
                 $this->finish = true;
@@ -87,12 +87,12 @@ abstract class Questionnaire extends MemorialTask
         $answers = array_values($definition);
 
         $index = $this->nowQuestion;
-        return $stage->build()
+        return $stage->buildTalk()
             ->askChoose(
                 $this->wrapQuestion($questions[$index]),
                 $this->wrapAnswers($answers[$index])
             )
-            ->callback()
+            ->wait()
             ->hearing()
             ->isAnswer(function(Dialog $dialog, Choice $choice) {
                 $answer = $choice->getChoice();

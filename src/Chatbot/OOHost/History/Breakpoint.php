@@ -3,7 +3,6 @@
 
 namespace Commune\Chatbot\OOHost\History;
 
-use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionData;
 use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
@@ -17,42 +16,34 @@ class Breakpoint implements ArrayAndJsonAble, SessionData
     /**
      * @var string
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $sessionId;
+    protected $sessionId;
 
     /**
      * @var string
      */
-    public $prevId;
+    protected $prevId;
 
     /**
      * @var string[]
      */
-    public $backtrace = [];
-
-    /**
-     * @var Question|null
-     */
-    public $prevQuestion;
-
-    /**
-     * @var Question|null
-     */
-    public $question;
+    protected $backtrace = [];
 
     /**
      * @var Process
      */
-    public $process;
+    protected $process;
+
+    /*----- cached -----*/
 
     /**
      * @var int
      */
-    public $maxHistory;
+    protected $maxHistory;
 
     public function __construct(
         Session $session,
@@ -70,14 +61,11 @@ class Breakpoint implements ArrayAndJsonAble, SessionData
         }
     }
 
+
     protected function fromPrev(Breakpoint $prev) : void
     {
         $this->prevId = $prev->getSessionDataId();
-        $question = $prev->question;
-        if (isset($question)) {
-            $this->prevQuestion = clone $question;
-        }
-        $this->process = $prev->process;
+        $this->process = clone $prev->process;
 
         if (isset($prev->prevId)) {
             $this->pushPrev(
@@ -89,7 +77,10 @@ class Breakpoint implements ArrayAndJsonAble, SessionData
 
     protected function fromRoot(Session $session) : void
     {
-        $this->process = new Process($session);
+        $this->process = new Process(
+            $session->sessionId,
+            new Thread(new Node($session->makeRootContext()))
+        );
     }
 
     protected function pushPrev(string $breakPointId, int $num) : void
@@ -100,6 +91,23 @@ class Breakpoint implements ArrayAndJsonAble, SessionData
         }
     }
 
+    public function process() : Process
+    {
+        return $this->process;
+    }
+
+
+    public function backward() : ? string
+    {
+        $lastId = end($this->backtrace);
+        return $lastId;
+    }
+
+    public function replaceProcess(Process $process) : void
+    {
+        $this->process = $process;
+    }
+
     public function toArray(): array
     {
         return [
@@ -107,12 +115,6 @@ class Breakpoint implements ArrayAndJsonAble, SessionData
             'sessionId' => $this->sessionId,
             'prevId' => $this->prevId,
             'backtrace' => $this->backtrace,
-            'prevQuestion' => isset($this->prevQuestion)
-                ? $this->prevQuestion->toArray()
-                : null,
-            'question' => isset($this->question)
-                ? $this->question->toArray()
-                : null,
             'process' => $this->process->toArray()
         ];
     }
@@ -147,7 +149,6 @@ class Breakpoint implements ArrayAndJsonAble, SessionData
             'sessionId',
             'prevId',
             'backtrace',
-            'question',
             'process'
         ];
     }

@@ -90,21 +90,20 @@ class PropertyEtt implements Entity
     public function asStage(Stage $stageRoute) : Navigator
     {
 
-        // context 定义的checkpoint 最高优.
-        // stage 存在的时候, checkpoint使用该方法.
+        // context 定义的 stage 最高优.
+        // stage method 存在的时候, stage 使用该方法.
         $stageMethod = Context::STAGE_METHOD_PREFIX . $this->name;
         if (method_exists($stageRoute->self, $stageMethod)) {
             return $stageRoute->self->{$stageMethod}($stageRoute);
         }
 
-        // 其次是 定义entity 时定义的 checkpoint. 有些 entity 可以提前定义.
-        if (isset($this->checkpoint)) {
-            return call_user_func($this->checkpoint, $stageRoute);
+        // 如果数据存在, 则走下一步.
+        if (isset($stageRoute->self->{$this->name})) {
+            return $stageRoute->dialog->next();
         }
 
-        // 最差劲的情况是默认的 checkpoint
+        // 默认用entity 自己的 stage 方法
         return $stageRoute
-            ->ifAbsent()
             ->onStart(function(Context $self, Dialog $dialog) {
                 $this->askDefaultQuestion($self, $dialog);
                 return $dialog->wait();

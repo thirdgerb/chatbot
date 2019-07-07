@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\History;
 
 
+use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Exceptions\DataNotFoundException;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -64,10 +65,17 @@ class History
 
     public function currentTask() : Node
     {
-        return $this->breakpoint
-            ->process
-            ->thread
-            ->currentNode();
+        return $this->breakpoint->process()->currentTask();
+    }
+
+    public function currentQuestion() : ? Question
+    {
+        return $this->breakpoint->process()->currentQuestion();
+    }
+
+    public function setQuestion(Question $question = null) : void
+    {
+        $this->breakpoint->process()->setQuestion($question);
     }
 
     /**
@@ -104,18 +112,13 @@ class History
 
     public function goStage(string $stageName, bool $reset) : History
     {
-        $current = $this->currentTask();
-        if ($reset) {
-            $current->flushStacks();
-        }
-        $current->go($stageName);
-
+        $this->breakpoint->process()->goStage($stageName, $reset);
         return $this;
     }
 
     public function addStage(string $stage)  : History
     {
-        $this->currentTask()->add($stage);
+        $this->breakpoint->process()->addStage($stage);
         return $this;
     }
 
@@ -129,8 +132,7 @@ class History
      */
     public function backward() : ? History
     {
-        $lastId = array_pop($this->breakpoint->backtrace);
-
+        $lastId = $this->breakpoint->backward();
         if (!isset($lastId)) {
             return null;
         }
@@ -168,24 +170,38 @@ class History
     {
         $context = $this->wrapContext($context);
         $newThread = new Thread(new Node($context));
-        $this->breakpoint->process->thread = $newThread;
+        $this->breakpoint->process()->replaceThread($newThread);
         return $this;
     }
 
+    /**
+     * 将当前node 替换成新的context
+     * 这要求新的context 作为回调, 继承旧的context class
+     * @param Context $context
+     * @return History
+     */
     public function replaceNodeTo(Context $context) : History
     {
         $context = $this->wrapContext($context);
-        $this->breakpoint->process->thread->node = new Node($context);
+        $this->breakpoint->process()->replaceTask(new Node($context));
         return $this;
     }
 
     public function replaceProcessTo(Context $context) : History
     {
         $context = $this->wrapContext($context);
-        $process = new Process($this->session);
+        $process = $this->homeProcess();
         $process->sleepTo(new Thread(new Node($context)));
-        $this->breakpoint->process = $process;
+        $this->breakpoint->replaceProcess($process);
         return $this;
+    }
+
+    protected function homeProcess() : Process
+    {
+        return new Process(
+            $this->session->sessionId,
+            new Thread(new Node($this->session->makeRootContext()))
+        );
     }
 
     /**
@@ -199,7 +215,7 @@ class History
     {
         $context = $this->wrapContext($context);
         $task = new Node($context);
-        $this->breakpoint->process->thread->push($task);
+        $this->breakpoint->process()->dependOn($task);
         return $this;
     }
 
@@ -208,14 +224,26 @@ class History
      * 优先级高于 sleep, 并且先入先出
      *
      * @param Context $context
-     * @return History
+     * @return History|null 不能sleep 的情况. 则直接运行.
      */
-    public function sleepTo(Context $context) : History
+    public function sleepTo(Context $context = null) : ? History
     {
-        $context = $this->wrapContext($context);
-        $newThread = new Thread(new Node($context));
-        $this->breakpoint->process->sleepTo($newThread);
-        return $this;
+        $newThread = null;
+        // 有目的地的时候.
+        if (isset($context)) {
+            $context = $this->wrapContext($context);
+            $newThread = new Thread(new Node($context));
+            $this->breakpoint->process()->sleepTo($newThread);
+            return $this;
+        }
+
+        $target = $this->breakpoint->process()->wake();
+        if (!empty($target)) {
+            $this->breakpoint->process()->sleepTo($target);
+            return $this;
+        }
+
+        return null;
     }
 
     protected function wrapContext(Context $context) : Context
@@ -238,14 +266,14 @@ class History
             $context = $this->wrapContext($context);
         }
         // 保存起来.
-        $yielding = new Yielding($this->breakpoint->process->thread);
+        $yielding = new Yielding($this->breakpoint->process()->currentThread());
         $session = $this->session;
         $session->repo->driver->saveYielding($session, $yielding);
 
 
         if (isset($context)) {
             $task = new Node($context);
-            $this->breakpoint->process->thread = new Thread($task);
+            $this->breakpoint->process()->replaceThread(new Thread($task));
             return $this;
         }
 
@@ -256,7 +284,7 @@ class History
 
     public function nextStage() : ? History
     {
-        $next = $this->currentTask()->next();
+        $next = $this->breakpoint->process()->nextStage();
         return isset($next) ? $this : null;
     }
 
@@ -267,7 +295,7 @@ class History
      */
     public function intended() : ? History
     {
-        $task = $this->breakpoint->process->thread->pop();
+        $task = $this->breakpoint->process()->intended();
         return isset($task) ? $this : null;
     }
 
@@ -279,10 +307,10 @@ class History
      */
     public function fallback() : History
     {
-        $process = $this->breakpoint->process;
-        $thread = $process->pop();
+        $process = $this->breakpoint->process();
+        $thread = $process->wake();
         if (isset($thread)) {
-            $process->thread = $thread;
+            $process->replaceThread($thread);
             return $this;
         }
 
@@ -296,7 +324,8 @@ class History
      */
     public function home() : History
     {
-        $this->breakpoint->process = new Process($this->session);
+        $home = $this->homeProcess();
+        $this->breakpoint->replaceProcess($home);
         return $this;
     }
 

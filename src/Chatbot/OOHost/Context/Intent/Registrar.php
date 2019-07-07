@@ -36,7 +36,7 @@ interface Registrar extends ContextRegistrar
      * @param Session $session
      * @return IntentMessage|null
      */
-    public function matchPossibleIntent(Session $session) : ? IntentMessage;
+    public function matchHighlyPossibleIntent(Session $session) : ? IntentMessage;
 
     /**
      * 按intent name 进行匹配.

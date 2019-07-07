@@ -22,7 +22,7 @@ class Yielding implements SessionData
     public function __construct(Thread $thread)
     {
         $this->thread = $thread;
-        $this->contextId = $thread->currentNode()->getContextId();
+        $this->contextId = $thread->currentTask()->getContextId();
     }
 
     public function toSessionIdentity(): SessionDataIdentity

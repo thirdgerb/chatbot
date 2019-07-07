@@ -86,27 +86,31 @@ class Director
 
                 $navigator = $navigator->display();
 
+            // 一种特殊的异常, 用于跳脱流程.
             } catch (NavigatorException $e) {
-                // todo 考虑记录日志.
                 $navigator = $e->getNavigator();
 
+            // 预定义的逻辑错误
+            } catch (TooManyRedirectException $e) {
+                $this->session->getLogger()->error($e);
+                return $this->destroy();
+
+            // 预定义的逻辑错误
+            } catch (DataNotFoundException $e) {
+                $this->session->getLogger()->error($e);
+                return $this->destroy();
+
+            // 逻辑错误是可以接受的. 不会导致断开连接.
             } catch (LogicException $e) {
+
                 $this->session->getLogger()->warning($e);
                 $navigator = new Failure(
                     $this->session->dialog,
                     $this->session->getHistory()
                 );
-
-            } catch (TooManyRedirectException $e) {
-                $this->session->getLogger()->error($e);
-                return $this->destroy();
-
-            } catch (DataNotFoundException $e) {
-                $this->session->getLogger()->error($e);
-                return $this->destroy();
             }
-            // 其它的异常不会捕获.
 
+        // 其它的异常不会捕获.
 
         } while (isset($navigator));
 

@@ -6,6 +6,7 @@ namespace Commune\Chatbot\OOHost\Context\Stages;
 
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
+use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Dialogue\Speech;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
@@ -62,12 +63,17 @@ class OnStartStageBuilder implements OnStartStage
         return $this->stage->dialog->fulfill();
     }
 
+
+    public function replaceTo($to = null, string $level = Redirect::THREAD_LEVEL):Navigator
+    {
+        return $this->stage->dialog->redirect->replaceTo($to, $level);
+    }
+
     public function action(callable $action): Navigator
     {
         $this->stage->onStart($action);
         return $this->stage->navigator ?? $this->stage->dialog->next();
     }
-
 
     public function interceptor(callable $interceptor): OnStartStage
     {
@@ -95,7 +101,7 @@ class OnStartStageBuilder implements OnStartStage
             ?? $this->stage->dialog->goStagePipes($pipes, $resetPipes);
     }
 
-    protected function toCallbackStage() : OnCallbackStage
+    public function wait() : OnCallbackStage
     {
         return new CallbackStageBuilder($this->stage);
     }
@@ -103,57 +109,20 @@ class OnStartStageBuilder implements OnStartStage
 
     public function dependOn($to): OnCallbackStage
     {
-        if ($this->isAvailable()) {
-            $this->stage->onStart(function(Dialog $dialog) use ($to) {
-                return $dialog->redirect->dependOn($to);
-            });
-        }
-
-        return $this->toCallbackStage();
+        $this->stage->onStart(function(Dialog $dialog) use ($to) {
+            return $dialog->redirect->dependOn($to);
+        });
+        return $this->wait();
     }
 
-    public function replaceTo($to): OnCallbackStage
-    {
-        if ($this->isAvailable()) {
-            $this->stage->onStart(function(Dialog $dialog) use ($to) {
-                return $dialog->redirect->replaceTo($to);
-            });
-        }
-
-        return $this->toCallbackStage();
-    }
-
-    public function sleepTo($to): OnCallbackStage
-    {
-        if ($this->isAvailable()) {
-            $this->stage->onStart(function(Dialog $dialog) use ($to) {
-                return $dialog->redirect->sleepTo($to);
-            });
-        }
-
-        return $this->toCallbackStage();
-    }
 
     public function yieldTo($to): OnCallbackStage
     {
-        if ($this->isAvailable()) {
-            $this->stage->onStart(function(Dialog $dialog) use ($to) {
-                return $dialog->redirect->yieldTo($to);
-            });
-        }
+        $this->stage->onStart(function(Dialog $dialog) use ($to) {
+            return $dialog->redirect->yieldTo($to);
+        });
 
-        return $this->toCallbackStage();
-    }
-
-    public function callback(): OnCallbackStage
-    {
-        if ($this->isAvailable()) {
-            $this->stage->onStart(function(Dialog $dialog) {
-                return $dialog->wait();
-            });
-        }
-
-        return $this->toCallbackStage();
+        return $this->wait();
     }
 
     public function toStage(): Stage

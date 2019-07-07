@@ -70,13 +70,14 @@ return [
     'host' => [
         'rootContextName' => \Commune\Demo\App\Contexts\TestCase::class,
         'navigatorIntents' => [
+            \Commune\Chatbot\App\Components\Predefined\Navigation\BackwardInt::class,
             \Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt::class,
             \Commune\Chatbot\App\Components\Predefined\Navigation\CancelInt::class,
-            \Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt::class,
             \Commune\Chatbot\App\Components\Predefined\Navigation\RepeatInt::class,
             \Commune\Chatbot\App\Components\Predefined\Navigation\RestartInt::class,
         ],
         'sessionPipes' => [
+            \Commune\Chatbot\App\SessionPipe\DefaultReplyPipe::class,
             \Commune\Chatbot\App\Commands\UserCommandsPipe::class,
             \Commune\Chatbot\App\Commands\AnalyserPipe::class,
             \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,

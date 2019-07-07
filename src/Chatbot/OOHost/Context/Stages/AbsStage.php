@@ -8,6 +8,7 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
 
@@ -64,6 +65,7 @@ abstract class AbsStage implements Stage
         $this->value = $value;
     }
 
+
     protected function setNavigator(Navigator $navigator = null)
     {
         $this->navigator = $navigator;
@@ -94,12 +96,37 @@ abstract class AbsStage implements Stage
     }
 
 
-    public function replaceTo($to): Navigator
+    public function onStart(callable $interceptor): Stage
     {
-        return $this->dialog->redirect->replaceTo($to);
+        if ($this->isStart()) {
+            $this->callInterceptor($interceptor);
+        }
+        return $this;
     }
 
-    public function build(): OnStartStage
+    public function onCallback(callable $interceptor): Stage
+    {
+        if ($this->isCallback()) {
+            $this->callInterceptor($interceptor);
+        }
+        return $this;
+    }
+
+    public function onFallback(callable $interceptor): Stage
+    {
+        if ($this->isFallback()) {
+            $this->callInterceptor($interceptor);
+        }
+        return $this;
+    }
+
+
+    public function replaceTo($to = null, string $level = Redirect::THREAD_LEVEL):Navigator
+    {
+        return $this->navigator ?? $this->dialog->redirect->replaceTo($to, $level);
+    }
+
+    public function buildTalk(): OnStartStage
     {
         return new OnStartStageBuilder($this);
     }

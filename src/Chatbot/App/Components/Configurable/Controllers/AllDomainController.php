@@ -68,9 +68,9 @@ class AllDomainController extends Controller
 
     public function __onPage(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askVerbose('请输入第几页:')
-            ->callback()
+            ->wait()
             ->action(function(Dialog $dialog, Message $message){
                 $num = intval($message->getTrimmedText());
 

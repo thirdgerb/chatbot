@@ -4,18 +4,12 @@
 namespace Commune\Chatbot\OOHost\Context\Stages;
 
 
-use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 class StartStage extends AbsStage
 {
-
-    /**
-     * @var bool
-     */
-    protected $restart;
 
     /**
      * StartStage constructor.
@@ -28,33 +22,12 @@ class StartStage extends AbsStage
         parent::__construct($name, $self, $dialog, null);
     }
 
-    public function onStart(callable $interceptor): Stage
-    {
-        if ($this->restart) {
-            return $this;
-        }
-        $this->callInterceptor($interceptor);
-        return $this;
-    }
-
-    public function onCallback(callable $interceptor): Stage
-    {
-        return $this;
-    }
-
-    public function ifAbsent(): Stage
-    {
-        if ($this->self->__isset($this->name)) {
-            $this->navigator = $this->dialog->next();
-        }
-        return $this;
-    }
-
     public function talk(
         callable $talkToUser,
         callable $hearFromUser = null
     ): Navigator
     {
+        if (isset($this->navigator)) return $this->navigator;
         $this->callInterceptor($talkToUser);
         return $this->navigator ?? $this->dialog->wait();
     }
@@ -101,16 +74,6 @@ class StartStage extends AbsStage
         return $this->dialog->redirect->yieldTo($to);
     }
 
-    public function goStage(string $stageName, bool $resetPipes = false): Navigator
-    {
-        return $this->dialog->wait();
-    }
-
-    public function goStagePipes(array $stages, bool $resetPipes = false): Navigator
-    {
-        return $this->dialog->wait();
-    }
-
 
     public function isStart(): bool
     {
@@ -122,4 +85,8 @@ class StartStage extends AbsStage
         return false;
     }
 
+    public function isFallback(): bool
+    {
+        return false;
+    }
 }

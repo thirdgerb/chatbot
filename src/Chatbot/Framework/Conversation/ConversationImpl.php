@@ -23,7 +23,7 @@ use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\EventDispatcher;
 use Commune\Chatbot\Contracts\Translator;
-use Commune\Chatbot\Framework\Exceptions\FatalErrorException;
+use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Container\ContainerContract;
 use Commune\Container\RecursiveContainer;
 use Symfony\Component\EventDispatcher\Event;
@@ -197,7 +197,7 @@ class ConversationImpl implements Blueprint
                     ->defaultLocale;
     }
 
-    public function reply(Message $message): void
+    public function reply(Message $message, bool $immediately = false): void
     {
         if ($message instanceof VerboseMsg) {
             $message->translate(
@@ -215,10 +215,10 @@ class ConversationImpl implements Blueprint
             $message
         );
 
-        $this->saveConversationMessage($request, $replyMessage);
+        $this->saveConversationMessage($request, $replyMessage, $immediately);
     }
 
-    public function deliver(string $userId, Message $message): void
+    public function deliver(string $userId, Message $message, bool $immediately = false): void
     {
         if ($message instanceof VerboseMsg) {
             $message->translate(
@@ -241,7 +241,7 @@ class ConversationImpl implements Blueprint
             $this->getTraceId()
         );
 
-        $this->saveConversationMessage($request, $toChat);
+        $this->saveConversationMessage($request, $toChat,  $immediately);
     }
 
 
@@ -253,25 +253,22 @@ class ConversationImpl implements Blueprint
 
     public function saveConversationMessage(
         MessageRequest $request,
-        ConversationMessage $message
+        ConversationMessage $message,
+        bool  $immediatelyBuffer
     ) : void
     {
-        // 先缓冲起消息来. 是不是立刻发送, request 自己决定.
-        $request->bufferConversationMessage($message);
-        // 这个和buffer 不一样, 用于别的处理, 比如存储消息.
-        $this->replyMessages[] = $message;
+        if ($immediatelyBuffer) {
+            // 先缓冲起消息来. 是不是立刻发送, request 自己决定.
+            $request->bufferConversationMessage($message);
+        } else {
+            // 这个和buffer 不一样, 用于别的处理, 比如存储消息.
+            $this->replyMessages[] = $message;
+        }
     }
 
-
-    /**
-     * 拿到一个 conversation 的所有 reply
-     * 用于给别的模块来处理.
-     *
-     * @return ConversationMessage[]
-     */
-    public function getOutgoingMessages(): array
+    public function flushConversationMessages(): void
     {
-        return $this->replyMessages;
+        $this->replyMessages = [];
     }
 
     /*------ input ------*/
@@ -303,6 +300,7 @@ class ConversationImpl implements Blueprint
 
 
 
+
     /*---------- 收尾记录 -----------*/
 
 
@@ -315,6 +313,28 @@ class ConversationImpl implements Blueprint
         }
     }
 
+    public function finishRequest(): void
+    {
+        try {
+
+            // 发送消息.
+            $request = $this->getRequest();
+
+            foreach ($this->replyMessages as $message) {
+                $request->bufferConversationMessage($message);
+            }
+
+            $this->replyMessages = [];
+
+            // 发送所有消息.
+            $request->flushChatMessages();
+            // 这一步.
+            $request->finishRequest();
+
+        } catch (\Exception $e) {
+            throw new RuntimeException($e);
+        }
+    }
 
     public function finish() : void
     {
@@ -327,8 +347,7 @@ class ConversationImpl implements Blueprint
 
         } catch (\Exception $e) {
             $this->unsetSelf();
-
-            throw new FatalErrorException($e);
+            throw new RuntimeException($e);
         }
     }
 

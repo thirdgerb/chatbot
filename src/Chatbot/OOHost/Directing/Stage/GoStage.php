@@ -8,6 +8,9 @@ use Commune\Chatbot\OOHost\Directing\AbsNavigator;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\History\History;
 
+/**
+ * 变更当前stage. 如果 reset 为 true, 会清空整个管道.
+ */
 class GoStage extends AbsNavigator
 {
     /**

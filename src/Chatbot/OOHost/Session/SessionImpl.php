@@ -383,6 +383,7 @@ class SessionImpl implements Session, HasIdGenerator
     public function beSneak(): void
     {
         $this->sneak = true;
+        $this->heard = true;
     }
 
     public function finish(): void

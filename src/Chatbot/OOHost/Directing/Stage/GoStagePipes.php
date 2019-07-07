@@ -9,6 +9,11 @@ use Commune\Chatbot\OOHost\Directing\AbsNavigator;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\History\History;
 
+/**
+ * 将多个stage name 作为一个管道,
+ * 从数组第一个stage 开始运行, 预期一直到最后一个.
+ * 需要每个stage 自觉地调用 ->next() 而不是 ->fulfill()
+ */
 class GoStagePipes extends AbsNavigator
 {
     /**

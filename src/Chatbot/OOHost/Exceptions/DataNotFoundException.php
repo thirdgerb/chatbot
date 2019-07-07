@@ -3,10 +3,10 @@
 
 namespace Commune\Chatbot\OOHost\Exceptions;
 
-use Commune\Chatbot\Framework\Exceptions\RuntimeException;
+use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
 
-class DataNotFoundException extends RuntimeException
+class DataNotFoundException extends LogicException
 {
     /**
      * @var string

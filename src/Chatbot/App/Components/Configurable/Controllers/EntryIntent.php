@@ -42,7 +42,7 @@ class EntryIntent extends ActionIntent
     {
         return $stage
             ->onStart(new MustBeSupervisor())
-            ->build()
+            ->buildTalk()
                 ->info('开始管理对话可配置模块')
                 ->goStage('menu');
     }
@@ -78,7 +78,7 @@ class EntryIntent extends ActionIntent
             }
         );
 
-        return $stage->build()
+        return $stage->buildTalk()
             ->info("随时可执行($operations)")
             ->toStage()
             ->component($menu);
@@ -86,7 +86,7 @@ class EntryIntent extends ActionIntent
 
     public function __onRedirect(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->dependOn($this->redirect)
                 ->info('回到管理入口')
                 ->restart();
@@ -94,11 +94,11 @@ class EntryIntent extends ActionIntent
 
     public function __onContinue(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askConfirm(
                 '还需要继续吗?',
                 true
-            )->callback()
+            )->wait()
             ->hearing()
                 ->isChoice(0, function(Dialog $dialog){
                     return $dialog->fulfill();

@@ -299,7 +299,7 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
             $this->paths,
             $this->id
         );
-        return $stage->build()
+        return $stage->buildTalk()
             ->info(
                 $this->showResourceDetail,
                 [
@@ -354,9 +354,9 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
      */
     public function __onPage(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askVerbose($this->askForPage)
-            ->callback()
+            ->wait()
             ->hearing()
                 ->isAnswer(function(Dialog $dialog, Answer $answer){
                     $page = intval($answer->toResult());
@@ -380,9 +380,9 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
 
     public function __onEditResource(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askVerbose($this->askForId)
-            ->callback()
+            ->wait()
             ->hearing()
             ->isAnswer(function(Dialog $dialog, Answer $answer){
                 $id = $answer->toResult();
@@ -398,13 +398,13 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
 
     public function __onCreateResource(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->withSlots(['%id%' => $this->redirectId])
             ->askConfirm(
                 $this->askCreateResource,
                 true
             )
-            ->callback()
+            ->wait()
             ->hearing()
             ->isChoice(1, function(Dialog $dialog){
                 $error = $this->createResource($dialog, $this->paths, $this->redirectId);
@@ -427,9 +427,9 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
 
     public function __onDelResource(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askVerbose($this->askForId)
-            ->callback()
+            ->wait()
             ->hearing()
             ->isAnswer(function (Dialog $dialog, Answer $answer) {
                 $id = $answer->toResult();
@@ -447,10 +447,10 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
 
     public function __onConfirmDelete(Stage $stage) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->withSlots(['id' => $this->redirectId])
             ->askConfirm($this->askConfirmDelete)
-            ->callback()
+            ->wait()
             ->hearing()
             ->isChoice(0, function(Dialog $dialog){
                 return $dialog->restart();
@@ -480,9 +480,9 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
      */
     protected function doSave(Stage $stage, $id) : Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->askConfirm($this->askConfirmSave)
-            ->callback()
+            ->wait()
             ->hearing()
             ->isChoice(0, function(Dialog $dialog){
                 return $dialog->restart();

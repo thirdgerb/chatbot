@@ -50,14 +50,14 @@ class RasaManagerInt extends AbsCmdIntent
 
     public function __onStart(Stage $stage): Navigator
     {
-        return $stage->build()
+        return $stage->buildTalk()
             ->info(
                 "进入rasa意图管理. 
 请输入语句, 会给出命中的意图. 
 输入'b'退出语境
 输入'w'会保存rasa的model配置"
             )
-            ->callback()
+            ->wait()
             ->hearing()
             ->is('b', function(Dialog $dialog){
                 return $dialog->fulfill();

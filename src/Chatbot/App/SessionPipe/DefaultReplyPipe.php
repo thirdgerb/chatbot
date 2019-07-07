@@ -8,9 +8,9 @@ use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 
 /**
- * @deprecated
+ * 根据session 的状态, 预定义默认回复.
  */
-class UnheardPipe implements SessionPipe
+class DefaultReplyPipe implements SessionPipe
 {
     public function handle(Session $session, \Closure $next): Session
     {

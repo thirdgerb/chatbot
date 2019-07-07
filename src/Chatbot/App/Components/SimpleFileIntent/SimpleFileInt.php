@@ -43,7 +43,7 @@ class SimpleFileInt extends AbsIntent
         $option = $this->getDef()->getFileIntentOption();
 
         $stage = $stage
-            ->build()
+            ->buildTalk()
             ->info($option->content);
 
         $suggestions = $option->suggestions;
