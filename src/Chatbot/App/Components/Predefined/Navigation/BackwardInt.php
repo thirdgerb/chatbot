@@ -12,7 +12,7 @@ class BackwardInt extends NavigateIntent
 {
     const SIGNATURE = 'backward';
 
-    const DESCRIPTION = '回到上一步';
+    const DESCRIPTION = '回到上一轮对话';
 
     const EXAMPLES = [
         '回到上一步',

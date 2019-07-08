@@ -14,7 +14,7 @@ class RepeatInt extends NavigateIntent
 
     const SIGNATURE = 'repeat';
 
-    const DESCRIPTION = '重复机器人的话';
+    const DESCRIPTION = '重复当前语境.';
 
     const EXAMPLES = [
         'repeat',

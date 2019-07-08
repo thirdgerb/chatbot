@@ -5,9 +5,11 @@ namespace Commune\Chatbot\Framework\Conversation;
 
 
 use Commune\Chatbot\Blueprint\Conversation\User;
+use Commune\Support\Arr\ArrayAbleToJson;
 
 class UserImpl implements User
 {
+    use ArrayAbleToJson;
 
     /**
      * @var string
@@ -71,6 +73,15 @@ class UserImpl implements User
     public function offsetUnset($offset)
     {
         unset($this->origin[$offset]);
+    }
+
+    public function toArray() : array
+    {
+        return [
+            'name' => $this->getName(),
+            'id' => $this->getId(),
+            'origin' => $this->getOriginData()
+        ];
     }
 
 

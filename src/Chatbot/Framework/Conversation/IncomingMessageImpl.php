@@ -8,6 +8,7 @@
 namespace Commune\Chatbot\Framework\Conversation;
 
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
+use Commune\Chatbot\OOHost\NLU\MatchedIntent;
 use Illuminate\Support\Collection;
 
 class IncomingMessageImpl extends ConversationMessageImpl implements IncomingMessage

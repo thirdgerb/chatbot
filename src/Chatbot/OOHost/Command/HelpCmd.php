@@ -27,8 +27,9 @@ class HelpCmd extends SessionCommand
     public function helpPipe( SessionCommandPipe $pipe) : void
     {
         $available = '';
+        $mark = $pipe->getCommandMark();
         foreach ($pipe->getDescriptions() as $name => $description) {
-            $available .= "  $name\t:\t$description" .PHP_EOL;
+            $available .= "  $mark$name\t:\t$description" .PHP_EOL;
         }
 
         $this->say(['%available%' => $available])

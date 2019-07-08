@@ -13,7 +13,7 @@ class CancelInt extends NavigateIntent
 
     const SIGNATURE = 'cancel';
 
-    const DESCRIPTION = '取消';
+    const DESCRIPTION = '退出当前语境';
 
     const EXAMPLES = [
         'cancel',

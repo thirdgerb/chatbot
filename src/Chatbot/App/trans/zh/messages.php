@@ -34,6 +34,7 @@ return [
 
     'errors' => [
         'badAnswer' => '您输入的信息不正确, 请重新输入',
+        'mustBeSupervisor' => '只有管理员允许访问当前语境',
     ],
 
     'messageTypeNames' => [

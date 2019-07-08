@@ -21,13 +21,12 @@ class MustBeSupervisor implements Interceptor
             ->conversation
             ->isAbleTo(Supervise::class);
 
-        if (!$isSupervisor) {
+        if ($isSupervisor) {
             return null;
         }
 
         // 添加消息
-
-
+        $dialog->say()->error('errors.mustBeSupervisor');
         return $dialog->reject();
     }
 

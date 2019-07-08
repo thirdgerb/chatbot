@@ -13,7 +13,7 @@ class RestartInt extends NavigateIntent
 
     const SIGNATURE = 'restart';
 
-    const DESCRIPTION = '重头开始一个话题';
+    const DESCRIPTION = '重启当前语境';
 
     const EXAMPLES = [
         'restart',

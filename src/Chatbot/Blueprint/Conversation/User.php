@@ -4,7 +4,9 @@
 namespace Commune\Chatbot\Blueprint\Conversation;
 
 
-interface User extends \ArrayAccess
+use Commune\Support\Arr\ArrayAndJsonAble;
+
+interface User extends \ArrayAccess, ArrayAndJsonAble
 {
 
     public function getId() : string;

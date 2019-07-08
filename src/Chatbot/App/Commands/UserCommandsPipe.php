@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\App\Commands;
 
 
+use Commune\Chatbot\App\Commands\Analysis\WhoAmICmd;
 use Commune\Chatbot\App\Components\Predefined\Navigation\BackwardInt;
 use Commune\Chatbot\App\Components\Predefined\Navigation\CancelInt;
 use Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt;
@@ -22,6 +23,7 @@ class UserCommandsPipe extends SessionCommandPipe
         BackwardInt::class,
         RepeatInt::class,
         RestartInt::class,
+        WhoAmICmd::class,
     ];
 
     // 定义一个 command mark
