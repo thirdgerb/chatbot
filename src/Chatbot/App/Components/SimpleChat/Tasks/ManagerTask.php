@@ -352,7 +352,7 @@ $text
                 return $dialog->goStage('edit');
 
             })
-            ->is('m', new ToNext('editNLU'))
+            ->is('m', new ToNext('editNLU', 'doEditIntent'))
             ->isInstanceOf(VerboseMsg::class, function(Dialog $dialog, VerboseMsg $msg) use ($replies) {
 
                 $text = $msg->getTrimmedText();
@@ -399,10 +399,7 @@ $text
      */
     public function __onEditNLU(Stage $stage) : Navigator
     {
-        return $stage->dependOn(
-            new EditIntentTask($this->editIntent),
-            new ToNext('editIntent')
-        );
+        return $stage->dependOn(new EditIntentTask($this->editIntent));
     }
 
 

@@ -13,17 +13,17 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 class ToNext implements Action
 {
     /**
-     * @var string
+     * @var string[]
      */
-    protected $stageName;
+    protected $stageNames;
 
     /**
      * GoStage constructor.
-     * @param string $stageName
+     * @param string[] $stageName
      */
-    public function __construct(string $stageName = null)
+    public function __construct(string ... $stageName)
     {
-        $this->stageName = $stageName;
+        $this->stageNames = $stageName;
     }
 
 
@@ -33,10 +33,15 @@ class ToNext implements Action
         Message $message
     ): ? Navigator
     {
-        if (isset($this->stageName)) {
-            return $dialog->goStage($this->stageName);
+        $count = count($this->stageNames);
+
+        if ($count === 0) {
+            return $dialog->next();
+        } elseif ($count === 1) {
+            return $dialog->goStage($this->stageNames[0]);
         }
-        return $dialog->next();
+
+        return $dialog->goStagePipes($this->stageNames);
     }
 
 
