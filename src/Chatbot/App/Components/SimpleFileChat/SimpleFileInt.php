@@ -117,7 +117,7 @@ class SimpleFileInt extends AbsIntent
         $id = $groupOption->id;
         $alias = $groupOption->intentAlias;
 
-        // 没有猜你想问, 直接退出.
+        // 没有猜您想问, 直接退出.
         $suggestions = $config->suggestions;
 
         // 参数准备.

@@ -37,7 +37,7 @@ use Commune\Chatbot\OOHost\NLU\NLUExample;
  *
  *
  */
-class ManagerTask extends TaskDef
+class SimpleChatTask extends TaskDef
 {
     const DESCRIPTION = '管理 simple chat (可配置的简单聊天)';
 

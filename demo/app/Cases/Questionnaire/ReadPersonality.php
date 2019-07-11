@@ -11,7 +11,6 @@ use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\Emotion\Emotions\Positive;
 use Commune\Chatbot\OOHost\Session\Scope;
 
 /**
@@ -22,7 +21,7 @@ use Commune\Chatbot\OOHost\Session\Scope;
  */
 class ReadPersonality extends Questionnaire
 {
-    const DESCRIPTION = '15秒读出你的性格';
+    const DESCRIPTION = '15秒读出您的性格';
 
     const SCOPE_TYPES = [Scope::USER_ID];
 
@@ -106,7 +105,7 @@ class ReadPersonality extends Questionnaire
     {
 
         return $stage->buildTalk()
-            ->info('你崇尚浪漫的爱情吗？当爱情与婚姻发生冲突的时候，你会怎样选择？爱情与事业中的你是怎样的？一起来做做这套测试题吧，看看你的潜意识中是怎样看待爱情、婚姻与事业的。15秒就可以测出你的性格')
+            ->info('您崇尚浪漫的爱情吗？当爱情与婚姻发生冲突的时候，您会怎样选择？爱情与事业中的您是怎样的？一起来做做这套测试题吧，看看您的潜意识中是怎样看待爱情、婚姻与事业的。15秒就可以测出您的性格')
             ->action(function(Dialog $dialog) {
                 return $this->next($dialog, 0 );
             });
@@ -117,14 +116,14 @@ class ReadPersonality extends Questionnaire
     public static function getQuestionDefinition(): array
     {
         return [
-'你更喜欢吃那种水果？ ' => [
+'您更喜欢吃那种水果？ ' => [
         'A' => '草莓',
         'B' => '苹果',
         'C' => '西瓜',
         'D' => '菠萝',
         'E' => '橘子',
     ],
-'你平时休闲经常去的地方？' => [
+'您平时休闲经常去的地方？' => [
         'A' => '郊外',
         'B' => '电影院',
         'C' => '公园',
@@ -132,14 +131,14 @@ class ReadPersonality extends Questionnaire
         'E' => '酒吧',
         'F' => '练歌房',
     ],
-'你认为容易吸引你的人是？' => [
+'您认为容易吸引您的人是？' => [
         'A' => '有才气的人',
-        'B' => '依赖你的人',
+        'B' => '依赖您的人',
         'C' => '优雅的人',
         'D' => '善良的人',
         'E' => '性情豪放的人',
     ],
-'如果你可以成为一种动物，你希望自己是哪种？' => [
+'如果您可以成为一种动物，您希望自己是哪种？' => [
         'A' => '猫',
         'B' => '马',
         'C' => '大象',
@@ -147,39 +146,39 @@ class ReadPersonality extends Questionnaire
         'E' => '狗',
         'F' => '狮子',
     ],
-'天气很热，你更愿意选择什么方式解暑？' => [
+'天气很热，您更愿意选择什么方式解暑？' => [
         'A' => '游泳',
         'B' => '喝冷饮',
         'C' => '开空调',
     ],
-'如果必须与一个你讨厌的动物或昆虫在一起生活，你能容忍哪一个？' => [
+'如果必须与一个您讨厌的动物或昆虫在一起生活，您能容忍哪一个？' => [
         'A' => '蛇',
         'B' => '猪',
         'C' => '老鼠',
         'D' => '苍蝇',
     ],
-'你喜欢看哪类电影、电视剧？' => [
+'您喜欢看哪类电影、电视剧？' => [
         'A' => '悬疑推理类',
         'B' => '童话神话类',
         'C' => '自然科学类',
         'D' => '伦理道德类',
         'E' => '战争枪战类',
     ],
-'以下哪个是你身边必带的物品？' => [
+'以下哪个是您身边必带的物品？' => [
         'A' => '打火机',
         'B' => '口红',
         'C' => '记事本',
         'D' => '纸巾',
         'E' => '手机',
     ],
-'你出行时喜欢坐什么交通工具？' => [
+'您出行时喜欢坐什么交通工具？' => [
         'A' => '火车',
         'B' => '自行车',
         'C' => '汽车',
         'D' => '飞机',
         'E' => '步行',
     ],
-'以下颜色你更喜欢哪种？' => [
+'以下颜色您更喜欢哪种？' => [
         'A' => '紫',
         'B' => '黑',
         'C' => '蓝',
@@ -187,7 +186,7 @@ class ReadPersonality extends Questionnaire
         'E' => '黄',
         'F' => '红',
     ],
-'下列运动中挑选一个你最喜欢的(不一定擅长)？' => [
+'下列运动中挑选一个您最喜欢的(不一定擅长)？' => [
         'A' => '瑜珈',
         'B' => '自行车',
         'C' => '乒乓球',
@@ -195,28 +194,28 @@ class ReadPersonality extends Questionnaire
         'E' => '足球',
         'F' => '蹦极',
     ],
-'如果你拥有一座别墅，你认为它应当建立在哪里？' => [
+'如果您拥有一座别墅，您认为它应当建立在哪里？' => [
         'A' => '湖边',
         'B' => '草原',
         'C' => '海边',
         'D' => '森林',
         'E' => '城中区',
     ],
-'你更喜欢以下哪种天气现象？' => [
+'您更喜欢以下哪种天气现象？' => [
         'A' => '雪',
         'B' => '风',
         'C' => '雨',
         'D' => '雾',
         'E' => '雷电',
     ],
-'你希望自己的窗口在一座30层大楼的第几层？' => [
+'您希望自己的窗口在一座30层大楼的第几层？' => [
         'A' => '七层2分',
         'B' => '一层',
         'C' => '二十三层',
         'D' => '十八层',
         'E' => '三十层',
     ],
-'你认为自己更喜欢在以下哪一个城市中生活？' => [
+'您认为自己更喜欢在以下哪一个城市中生活？' => [
         'A' => '丽江',
         'B' => '拉萨',
         'C' => '昆明',

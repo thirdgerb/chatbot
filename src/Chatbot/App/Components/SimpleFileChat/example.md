@@ -15,7 +15,7 @@ intent 命名规则是 sfi + $group + 文件路径 (将 / 替换为 .)
 yaml 配置如下:
 
 - description : intent 的介绍, 必须要配
-- suggestions : 是该intent 的猜你想问. 可选.
+- suggestions : 是该intent 的猜您想问. 可选.
     + suggestion 有多种配置方法:
         - intent 名称, 或者类名.
         - 省略了 'sfi.$domain.', 同 group 下的intent

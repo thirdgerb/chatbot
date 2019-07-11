@@ -19,8 +19,8 @@ class ThanksInt extends MessageIntent implements Positive
     const EXAMPLES = [
         'thanks',
         'thank you',
-        '谢谢你',
-        '感谢你',
+        '谢谢您',
+        '感谢您',
     ];
 
     public static function getContextName(): string

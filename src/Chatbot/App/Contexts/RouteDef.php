@@ -18,10 +18,10 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 /**
  * 用于定义标准化的路由模块.
- * 向用户提问, 给出"猜你想问"的建议, 把用户导航到别的语境.
+ * 向用户提问, 给出"猜您想问"的建议, 把用户导航到别的语境.
  *
  * @property string[] $routes  导航的路由.
- * @property string $askNeeds 猜你想问的问题.
+ * @property string $askNeeds 猜您想问的问题.
  * @property string $welcome  欢迎语, 可以不填.
  * @property bool $hearAnyIntent 是否拦截所有的意图, 允许导航走.
  * @property string $domain 主动拦截的意图的所在域.

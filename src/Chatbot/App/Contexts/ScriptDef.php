@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\App\Contexts;
 
 use Commune\Chatbot\App\Callables\Actions\ToNext;
+use Commune\Chatbot\App\Traits\AskContinueTrait;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Context;
@@ -73,6 +74,7 @@ abstract class ScriptDef extends OOContext
      */
     abstract public static function getScripts() : array;
 
+    abstract public function getSlots() : array;
 
     public function __onStart(Stage $stage): Navigator
     {
@@ -144,16 +146,17 @@ abstract class ScriptDef extends OOContext
             $this->getSpeech($dialog)->info($this->_want_continue);
             return $dialog->wait();
 
-        }, function(Dialog $dialog, Message $message) {
+        }, [$this, 'toNext']);
 
+    }
 
-            return $dialog->hear($message)
-                // 默认任何输入都会返回.
-                // 可以在 hearing 里定义不同的操作.
-                ->isEmpty(new ToNext())
-                ->end();
-        });
-
+    public function toNext(Dialog $dialog, Message $message) : Navigator
+    {
+        return $dialog->hear($message)
+            // 默认任何输入为空才会返回.
+            // 可以在 hearing 里定义不同的操作.
+            ->isEmpty(new ToNext())
+            ->end();
     }
 
     /**
@@ -178,7 +181,7 @@ abstract class ScriptDef extends OOContext
     protected function getSpeech(Dialog $dialog) : Speech
     {
         return $this->_speech
-            ?? $this->_speech = $dialog->say()->withContext($this);
+            ?? $this->_speech = $dialog->say($this->getSlots());
     }
 
     public function __call($name, $arguments)

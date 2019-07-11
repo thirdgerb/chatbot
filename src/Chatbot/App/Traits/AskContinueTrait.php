@@ -25,22 +25,23 @@ trait AskContinueTrait
             ->end([Redirector::class, 'next']);
     }
 
-    protected function askContinueTo(Dialog $dialog, string $next) : Navigator
+    public function askContinueTo(Dialog $dialog, string ...$next) : Navigator
     {
-        return $dialog->goStagePipes(['askContinue', $next]);
+        array_unshift($next, 'askContinue');
+        return $dialog->goStagePipes($next);
     }
-
 
     /**
      * 常用在 $stage->onFallback(), 会让用户输入 . 然后继续到下一步.
      *
-     * @param string $next
+     * @param string[] $next
      * @return callable
      */
-    public function askContinueOnFallback(string $next) : callable
+    public function callContinueTo(string ...$next) : callable
     {
         return function(Dialog $dialog) use ($next) : Navigator {
-            return $this->askContinueTo($dialog, $next);
+            array_unshift($next, $dialog);
+            return call_user_func_array([$this, 'askContinueTo'], $next);
         };
     }
 }

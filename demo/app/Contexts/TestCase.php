@@ -31,7 +31,7 @@ class TestCase extends TaskDef
     {
         return $stage->talk(function(Dialog $dialog){
                 $dialog->say()
-                    ->info('你好!'.$this->name)
+                    ->info('您好!'.$this->name)
                     ->askVerbose(
                         '请输入:',
                         [

@@ -33,7 +33,7 @@ class TellWeatherInt extends ActionIntent
         '[北京](city)[后天](date)什么天气啊',
         '气温如何?',
         '[上海](city)[大后天](date)下雨吗?',
-        '你知道[广州]的天气吗',
+        '您知道[广州]的天气吗',
         '请问[明天](date)下雨吗',
         '[后天](date)多少度啊?',
         '[明天](date)是晴天吗?',
@@ -98,7 +98,7 @@ class TellWeatherInt extends ActionIntent
                         "%city% 已经被摧毁了, 我个人猜测%date%的天气是%weather%, 温度%temp%度");
                 } elseif (in_array($city, $this->wowCities)) {
                     $say->info(
-                        "%city%在%date%的天气是%weather%, 温度%temp%度, 不信你进游戏里看");
+                        "%city%在%date%的天气是%weather%, 温度%temp%度, 不信您进游戏里看");
                 } else {
                     $say->info(
                         "%city%在%date%的天气是%weather%, 温度%temp%度 (纯属随机值)");

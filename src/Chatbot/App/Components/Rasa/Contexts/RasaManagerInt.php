@@ -18,7 +18,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 class RasaManagerInt extends AbsCmdIntent
 {
-    const DESCRIPTION = 'rasa意图管理';
+    const DESCRIPTION = 'rasa意图管理, 查看命中的意图';
 
     const CONTEXT_TAGS = [
         Definition::TAG_MANAGER

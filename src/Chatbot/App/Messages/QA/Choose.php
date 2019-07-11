@@ -30,13 +30,17 @@ class Choose extends VbQuestion implements Question
         $defaultChoice = null
     )
     {
-        if (
-            empty($options)
-            || (isset($defaultChoice) && !array_key_exists($defaultChoice, $options))
-        ) {
+        if (empty($options)) {
             throw new ConfigureException(
                 static::class
                 . ' choose must have options'
+            );
+        }
+
+        if (isset($defaultChoice) && !array_key_exists($defaultChoice, $options)) {
+            throw new ConfigureException(
+                static::class
+                . "default option $defaultChoice is not defined"
             );
         }
 

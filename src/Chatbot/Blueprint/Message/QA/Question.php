@@ -16,7 +16,7 @@ interface Question extends Message
      * 所有的问题都可以有选项的概念.
      * confirmation 的选项是 yes 或 no
      * choose 的选项是 n个中的一个
-     * 正常 ask 问题, 也可以有猜你想问, 或者没有.
+     * 正常 ask 问题, 也可以有猜您想问, 或者没有.
      *
      * @return array
      */
