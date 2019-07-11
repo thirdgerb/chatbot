@@ -18,7 +18,7 @@ class WhereCmd extends SessionCommand
             {--a|cached : 查看 cache 到snapshot的数据}
             {--b|breakpoint : 查看当前 breakpoint}';
 
-    const DESCRIPTION = '查看用户目前缓存的数据.';
+    const DESCRIPTION = '查看维持多轮对话的关键数据.';
 
     public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe): void
     {

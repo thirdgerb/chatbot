@@ -100,6 +100,7 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
             return null;
         }
 
+        $first = $names[0];
         // 按优先级顺序进行遍历.
         foreach ($names as $name) {
             if ($this->has($name)) {
@@ -111,7 +112,12 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
             }
         }
 
-        return null;
+        // 如果都没有注册的, 则用个占位符.
+        return new PlaceHolderIntent(
+            $first,
+            $incomingMessage->getPossibleIntentEntities($first)
+        );
+
     }
 
     /**
@@ -203,13 +209,11 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
         return new Collection($items);
     }
 
-    /**
-     * @return int
-     */
-    public function countIntentsHasNLUExamples() : int
+    public function countIntentsHasNLUExamples(): int
     {
         return count($this->nluExamples);
     }
+
 
     public function countNLUExamples(string $domain = null): int
     {

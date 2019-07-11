@@ -15,6 +15,7 @@ interface Registrar extends ContextRegistrar
 
     /**
      * 注册一个intentMatcher
+     *
      * @param string $intentName
      * @param IntentMatcherOption $option
      */
@@ -26,13 +27,17 @@ interface Registrar extends ContextRegistrar
 
     /**
      * 获取intentMatcher
+     *
      * @param string $intentName
      * @return IntentMatcher|null
      */
     public function getMatcher(string $intentName) : ?  IntentMatcher;
 
+    /*---------- match ----------*/
+
     /**
      * 根据有可能存在的intent, 进行匹配.
+     *
      * @param Session $session
      * @return IntentMessage|null
      */
@@ -71,28 +76,33 @@ interface Registrar extends ContextRegistrar
     public function getNLUExamplesByIntentName(string $intentName) : array;
 
     /**
+     * 根据domain, 获取 intentName =>
      * @param string $domain
      * @return array  [ 'name' => [ NLUExample $example1] ]
      */
     public function getNLUExampleMapByIntentDomain(string $domain = '') : array;
 
     /**
+     * 计算包含 nlu examples 的 intents 数量.
      * @return int
      */
     public function countIntentsHasNLUExamples() : int;
 
     /**
+     * 计算一个domain 下examples 的数量.
      * @param string|null $domain
      * @return int
      */
     public function countNLUExamples(string $domain = null) : int;
 
     /**
+     * 获取所有的 nlu examples,  intentName => NluExamples[]
      * @return Collection
      */
     public function getNLUExamplesCollection() : Collection;
 
     /**
+     * 强制赋值, 改变已有的 nlu examples
      * @param string $intentName
      * @param NLUExample[] $examples
      */

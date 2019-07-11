@@ -74,7 +74,7 @@ class VbQuestion extends AbsQuestion implements VerboseMsg
         if (isset($this->defaultChoice)) {
             $text.= ' (' . $this->defaultChoice . ')';
         }
-        $text .= $this->getSuggestionStr($suggestions);
+        $text .= PHP_EOL . $this->getSuggestionStr($suggestions);
 
         return $text;
     }

@@ -17,7 +17,12 @@ class Paginator implements StageComponent
     /**
      * @var string
      */
-    public $introduce = '第%page%/%total%页, 输入数字序号进入指定页数';
+    public $introduce = '';
+
+    /**
+     * @var string
+     */
+    public $foot = '第%page%/%total%页, 输入数字序号进入指定页数';
 
     /**
      * @var string
@@ -86,6 +91,25 @@ class Paginator implements StageComponent
         $this->hearing = $hearing;
     }
 
+    public function withIntro(string $introduce) : self
+    {
+        $this->introduce = $introduce;
+        return $this;
+    }
+
+    public function withLimit(int $limit) : self
+    {
+        $this->limit = $limit;
+        return $this;
+    }
+
+    public function withFoot(string $foot) : self
+    {
+        $this->foot = $foot;
+        return $this;
+    }
+
+
 
     public function __invoke(Stage $stage): Navigator
     {
@@ -104,10 +128,12 @@ class Paginator implements StageComponent
             $page = intval($page);
             $page = $page > 0 ? $page : 0;
 
-            $dialog->say([
+            $slots = [
                 'page' => $page + 1,
                 'total' => $this->totalPage
-            ])->info($this->introduce);
+            ];
+
+            $dialog->say($slots)->info($this->introduce);
 
             $offset = $page * $this->limit;
 
@@ -117,13 +143,20 @@ class Paginator implements StageComponent
                 [$self, $dialog, $offset, $this->limit]
             );
 
-            // list
-            call_user_func_array(
-                $this->listing,
-                [$self, $dialog, $items]
-            );
+            if (!empty($items)) {
+                // list
+                call_user_func_array(
+                    $this->listing,
+                    [$self, $dialog, $items]
+                );
+
+            } else {
+                $dialog->say()->warning('empty!');
+            }
 
             $dialog->say()
+                ->withSlots($slots)
+                ->info($this->foot)
                 ->withContext($self)
                 ->askChoose(
                     $this->question,
@@ -159,8 +192,8 @@ class Paginator implements StageComponent
                 }
 
                 $page = intval($text);
-                $page = $page > 0 ? $page : 0;
-                $self->page = $page;
+                $page = $page > 0 ? $page : 1;
+                $self->page = $page - 1;
 
                 return $dialog->repeat();
             });

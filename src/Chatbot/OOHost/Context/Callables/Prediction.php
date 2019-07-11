@@ -16,7 +16,7 @@ interface Prediction
     public function __invoke(
         Context $self,
         Dialog $dialog,
-        Message $message = null
+        Message $message
     ) : bool;
 
 

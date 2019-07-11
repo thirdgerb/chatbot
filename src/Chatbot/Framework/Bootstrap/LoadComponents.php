@@ -11,6 +11,18 @@ use Psr\Log\LoggerInterface;
 
 class LoadComponents implements Bootstrapper
 {
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var Application
+     */
+    protected $app;
+
+    protected static $registerLater = [];
+
     public function bootstrap(Application $app): void
     {
         $config = $app->getConfig();
@@ -25,17 +37,35 @@ class LoadComponents implements Bootstrapper
                 $this->registerComponent($app, $logger, $name);
 
             } else {
-                $logger->warning(
+                $this->logger->warning(
                     "invalid component registration, key $index, "
                     . var_export($name, true)
                 );
             }
+        }
 
+        $reactor = $app->getReactorContainer();
 
+        foreach (self::$registerLater as $dependency => list ($name, $data)) {
+
+            if ($reactor->has($name)) {
+                $logger->debug("component $name depended by $dependency has been register");
+                return;
+            }
+            $this->registerComponent($app, $logger, $name, $data);
         }
     }
 
-    protected function registerComponent(
+    public static function dependComponent(
+        string $dependBy,
+        string $componentName,
+        array $data = []
+    ) : void
+    {
+        self::$registerLater[$dependBy] =  [$componentName, $data];
+    }
+
+    public static function registerComponent(
         Application $app,
         LoggerInterface $logger,
         string $clazz,
@@ -51,8 +81,12 @@ class LoadComponents implements Bootstrapper
          * @var ComponentOption $bootstrapper
          */
         $bootstrapper = new $clazz($data);
+
+        $reactor = $app->getReactorContainer();
+
+
+        $reactor->instance($clazz, $bootstrapper);
         $bootstrapper->bootstrap($app);
-        $app->getReactorContainer()->instance($clazz, $bootstrapper);
     }
 
 }

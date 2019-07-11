@@ -4,7 +4,7 @@
 namespace Commune\Demo\App\Contexts;
 
 
-use Commune\Chatbot\App\Components\SimpleChat\SimpleChatAction;
+use Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction;
 use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Stage;

@@ -4,10 +4,9 @@
 namespace Commune\Chatbot\App\Intents;
 
 
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Intent\AbsCmdIntent;
-use Commune\Chatbot\OOHost\Context\Intent\IntentMatcherOption;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -40,22 +39,19 @@ abstract class ActionIntent extends AbsCmdIntent
         return $this->action($stage);
     }
 
-    public static function getMatcherOption(): IntentMatcherOption
-    {
-        if (empty(static::SIGNATURE)) {
-            throw new ConfigureException(
-                __METHOD__
-                . ' need signature to define entities,'
-                . ' empty value given'
-            );
-        }
 
-        return new IntentMatcherOption([
-            'signature' => static::SIGNATURE,
-            'regex' => static::REGEX,
-            'keywords' => static::KEYWORDS,
-        ]);
+    /**
+     * 关键, 会补完参数后执行后续逻辑. 这是重点.
+     * @param Depending $depending
+     */
+    public static function __depend(Depending $depending): void
+    {
+        $option = static::getMatcherOption();
+        if (!empty($option->signature)) {
+            $depending->onSignature($option->signature);
+        }
     }
+
 
     abstract public function action(Stage $stageRoute): Navigator;
 

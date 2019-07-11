@@ -9,7 +9,7 @@
 - 测试 matched intent
 - 查看命中的意图
 
-## intent:navigation.backward 
+## intent:navigation.back
 - 回到上一步
 - 返回上一步
 - 回到上个问题

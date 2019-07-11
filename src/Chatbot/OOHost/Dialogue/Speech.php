@@ -94,13 +94,13 @@ interface Speech
     /**
      * @param string $question
      * @param array $suggestions
-     * @param int|null $default
+     * @param int|string|null $default
      * @return static
      */
     public function askChoose(
         string $question,
         array $suggestions,
-        int $default = null
+        $default = null
     );
 
     /**

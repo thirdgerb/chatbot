@@ -15,8 +15,8 @@ class Confirm extends VbQuestion
     public function __construct(
         string $question,
         bool $default = true,
-        string $positive = 'yes',
-        string $negative = 'no'
+        string $positive = 'y',
+        string $negative = 'n'
     )
     {
         $defaultChoice = isset($default) ? ($default ? 1 : 0) : null;

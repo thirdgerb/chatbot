@@ -7,6 +7,7 @@ namespace Commune\Chatbot\Framework\Component;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Bootstrap\Bootstrapper;
+use Commune\Chatbot\Framework\Bootstrap\LoadComponents;
 use Commune\Chatbot\Framework\Component\Providers\LoadEmotions;
 use Commune\Chatbot\Framework\Component\Providers\LoadNLUExamplesFromJson;
 use Commune\Chatbot\Framework\Component\Providers\LoadPsr4SelfRegister;
@@ -113,5 +114,24 @@ abstract class ComponentOption extends Option implements Bootstrapper
             $this->app->registerReactorService($loadEmotions);
         }
         $this->loadEmotions->addExperience($emotionName, $experience);
+    }
+
+
+    /**
+     * 注册别的组件.
+     *
+     * @param string $componentName
+     * @param array $data
+     */
+    public function dependComponent(
+        string $componentName,
+        array $data = []
+    ) : void
+    {
+        LoadComponents::dependComponent(
+            static::class,
+            $componentName,
+            $data
+        );
     }
 }

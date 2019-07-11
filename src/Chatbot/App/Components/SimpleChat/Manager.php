@@ -101,7 +101,18 @@ class Manager
 
     public static function listResources() : array
     {
-        return static::$resources;
+        return array_map(function(string $path){
+            $sections = explode('/', $path);
+            $count = count($sections);
+            $left = $count > 4 ? $count - 4 : $count - 1;
+
+            for ($i =0; $i< $left ; $i ++) {
+                array_shift($sections);
+            }
+
+            return '../'. implode('/', $sections);
+
+        }, static::$resources);
     }
 
     public static function match(string $index, string $intentName) : ? string
@@ -130,16 +141,12 @@ class Manager
         return [];
     }
 
-    public static function matchReplies(string $index, string $intentName) : ? array
+    public static function matchReplies(string $index, string $intentName) :  array
     {
         if (!static::hasPreload($index)) {
             return null;
         }
 
-        if (!isset(static::$loaded[$index][$intentName])) {
-            return null;
-        }
-
-        return static::$loaded[$index][$intentName];
+        return static::$loaded[$index][$intentName] ?? [];
     }
 }

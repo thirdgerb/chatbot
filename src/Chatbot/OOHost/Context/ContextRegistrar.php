@@ -3,6 +3,7 @@
 namespace Commune\Chatbot\OOHost\Context;
 
 use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
 use Illuminate\Support\Arr;
 
 class ContextRegistrar implements Registrar
@@ -35,6 +36,13 @@ class ContextRegistrar implements Registrar
     protected $domainTrees = [];
 
 
+    /**
+     * 仍然是placeholder 的context
+     * @var string[]
+     */
+    protected $placeholders = [];
+
+
     final private function __construct()
     {
     }
@@ -63,6 +71,20 @@ class ContextRegistrar implements Registrar
 
         $id = $this->filterContextName($def->getName());
 
+        // 占位符逻辑
+        if ($def instanceof PlaceHolderIntentDef && isset($this->definitionsByName[$id])) {
+            return false;
+        }
+
+        // 如果已注册是被占位符注册的. 就强制覆盖.
+        if (
+            !$def instanceof PlaceHolderIntentDef
+            && isset($this->definitionsByName[$id])
+            && $this->definitionsByName[$id] instanceof PlaceHolderIntentDef
+        ) {
+            $force = true;
+        }
+
         // 非强制的时候, 只注册一次.
         if (!$force && isset($this->definitionsByName[$id])) {
             return false;
@@ -72,13 +94,20 @@ class ContextRegistrar implements Registrar
         $this->classToName[$def->getClazz()] = $def->getName();
         Arr::set($this->domainTrees, $id, $id);
 
-
-        // 注册tag
-        $tags = $def->getTags();
-        if (!empty($tags)) {
-            foreach ($tags as $tag) {
-                $this->tagToName[$tag][] = $id;
+        // 注册tag . placeholder 没 tag 权..
+        if (!$def instanceof PlaceholderDefinition) {
+            $tags = $def->getTags();
+            if (!empty($tags)) {
+                foreach ($tags as $tag) {
+                    $this->tagToName[$tag][] = $id;
+                }
             }
+        }
+
+        if ($def instanceof PlaceholderDefinition) {
+            $this->placeholders[$id] = true;
+        } else {
+            unset($this->placeholders[$id]);
         }
 
         return true;
@@ -175,6 +204,24 @@ class ContextRegistrar implements Registrar
             }
         }
         return array_unique($names);
+    }
+
+    public function getPlaceholders(): array
+    {
+        return array_keys($this->placeholders);
+    }
+
+    public static function validateName(string $contextName): bool
+    {
+        $name = StringUtils::namespaceSlashToDot($contextName);
+        $secs = explode('.', $name);
+        foreach ($secs as $sec) {
+            if (! preg_match('/^[a-zA-Z0-9]+$/', $sec)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 

@@ -94,10 +94,16 @@ trait StageSpeechTrait
         return $this;
     }
 
+    /**
+     * @param string $question
+     * @param array $suggestions
+     * @param null|string|int $default
+     * @return $this
+     */
     public function askChoose(
         string $question,
         array $suggestions,
-        int $default = null
+        $default = null
     )
     {
         if ($this->isAvailable()) {

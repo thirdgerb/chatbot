@@ -4,9 +4,8 @@
 namespace Commune\Chatbot\App\Intents;
 
 
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
-use Commune\Chatbot\OOHost\Context\Intent\IntentMatcherOption;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\Intent\AbsCmdIntent;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
@@ -23,32 +22,22 @@ abstract class NavigateIntent extends AbsCmdIntent
      */
     const DESCRIPTION = 'should define intent description by constant';
 
-    const SIGNATURE = ''; // must be set
-    const REGEX = [];
-    const KEYWORDS = [];
-    const EXAMPLES = [];
 
+    // 命令名. 可以用命令的方式来匹配
+    const SIGNATURE = '';
+    // 用正则来匹配
+    const REGEX = [];
+    // 用关键字来匹配.
+    const KEYWORDS = [];
+    // 给NLU用的例句.
+    const EXAMPLES = [];
     public function __onStart(Stage $stageRoute): Navigator
     {
         return $stageRoute->dialog->fulfill();
     }
 
-
-    public static function getMatcherOption(): IntentMatcherOption
+    public static function __depend(Depending $depending): void
     {
-        if (empty(static::SIGNATURE)) {
-            throw new ConfigureException(
-                __METHOD__
-                . ' need signature to define entities,'
-                . ' empty value given'
-            );
-        }
-
-        return new IntentMatcherOption([
-            'signature' => static::SIGNATURE,
-            'regex' => static::REGEX,
-            'keywords' => static::KEYWORDS,
-        ]);
     }
 
     abstract public function navigate(Dialog $dialog): ? Navigator;

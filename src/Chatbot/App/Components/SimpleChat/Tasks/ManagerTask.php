@@ -5,26 +5,37 @@ namespace Commune\Chatbot\App\Components\SimpleChat\Tasks;
 
 
 use Commune\Chatbot\App\Abilities\Supervise;
+use Commune\Chatbot\App\Callables\Actions\ToNext;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
+use Commune\Chatbot\App\Components\NLUExamples\EditIntentTask;
+use Commune\Chatbot\App\Components\NLUExamples\NLUExamplesManager;
 use Commune\Chatbot\App\Components\SimpleChat\Manager;
-use Commune\Chatbot\App\Components\SimpleChat\SimpleChatAction;
 use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\OOHost\Context\ContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
+use Commune\Chatbot\OOHost\Context\Intent\Registrar;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Chatbot\OOHost\Exceptions\NavigatorException;
+use Commune\Chatbot\OOHost\NLU\NLUExample;
 
 /**
- * @property-read string $editIndex
- * @property-read string $editIntent
- * @property-read bool $isSupervisor
+ * @property string $editIndex
+ * @property string $editIntent
+ * @property bool $isSupervisor
+ *
+ * @property string $unmatchedText
+ *
+ *
  */
 class ManagerTask extends TaskDef
 {
@@ -134,26 +145,102 @@ class ManagerTask extends TaskDef
             ->hearing()
             ->isInstanceOf(VerboseMsg::class, function(Dialog $dialog, VerboseMsg $msg){
 
-                $intent = $dialog->session->incomingMessage->getMostPossibleIntent();
+                $incoming = $dialog->session->incomingMessage;
+                $intent = $incoming->getMostPossibleIntent();
 
                 if (empty($intent)) {
                     $dialog->say()->warning('没有匹配到任何意图!');
-                    return $dialog->repeat();
+                    $this->unmatchedText = $msg->getTrimmedText();
+                    return $dialog->goStage('createPlaceholder');
                 }
+                $this->editIntent = $intent;
 
-                $dialog->say()->info("命中意图 $intent, 预期回复如下:");
+
+                $possible = $incoming->getPossibleIntentCollection();
+                $hits = '';
+                foreach ($possible as $name => $odd) {
+                    $hits .= "$name : $odd \n";
+                }
+                $dialog->say()->info("意图可能性如下: \n $hits");
+
 
                 $reply = Manager::match($this->editIndex, $intent);
-
                 if (empty($reply)) {
                     $dialog->say()->warning("无回复");
-                } else {
-                    SimpleChatAction::reply($this, $dialog, $reply);
+                    return $dialog->goStage('initChat');
                 }
+
+                $dialog->say()
+                    ->info("命中意图 $intent, 预期回复如下:")
+                    ->warning($reply);
 
                 return $dialog->goStage('edit');
             })
             ->end();
+    }
+
+    /**
+     * 是否要为不存在的意图创建一个 placeholder
+     *
+     * @param Stage $stage
+     * @return Navigator
+     */
+    public function __onCreatePlaceholder(Stage $stage) : Navigator
+    {
+        $text = $this->unmatchedText;
+
+        return $stage->buildTalk()
+            ->info(
+                "是否为例句创建一个意图占位符 (placeholder intent)? \n
+例句如下: 
+--- 
+$text
+
+---
+
+输入意图名称(必须是 字母,数字或.) 则创建意图, 输入为空则表示放弃.
+"
+            )
+            ->wait()
+            ->hearing()
+            ->isEmpty($next = new ToNext('talkIntent'))
+            ->isInstanceOf(
+                VerboseMsg::class,
+                function(Dialog $dialog, VerboseMsg $msg, NLUExamplesManager $manager){
+                    $intent = $msg->getTrimmedText();
+
+                    $matched = ContextRegistrar::validateName($intent);
+
+                    if (!$matched) {
+                        $dialog->say()->error('意图命名不合法! 只能是字母+数字加 .');
+                        return $dialog->rewind();
+                    }
+
+                    // 权限检查
+                    if (!$this->isSupervisor) {
+                        return $dialog->reject();
+                    }
+
+                    $repo = IntentRegistrar::getIns();
+
+                    if ($repo->has($intent)) {
+                        $repo->registerNLUExample($intent, new NLUExample($this->unmatchedText));
+                        $manager->generate();
+                        $dialog->say()->info("例句添加到已定义意图 $intent");
+
+                    } else {
+                        $repo->register(new PlaceHolderIntentDef($intent));
+                        $repo->registerNLUExample($intent, new NLUExample($this->unmatchedText));
+                        $manager->generate();
+                        $dialog->say()->info("创建意图完毕");
+                    }
+
+                    $this->editIntent = $intent;
+                    return $dialog->goStage('doEditIntent');
+                }
+            )
+            ->end($next);
+
     }
 
     public function __onEditIntent(Stage $stage) : Navigator
@@ -178,18 +265,59 @@ class ManagerTask extends TaskDef
 
                 $intents = Manager::listResourceIntents($this->editIndex);
                 $editing = $this->editIndex;
+                $this->editIntent = $name;
 
                 if (!in_array($name, $intents)) {
                     $dialog->say()
-                        ->info("intent $name 未在 $editing 配置内注册过, 将初始化");
-                    Manager::setIntentReplies($this->editIndex, $name, []);
+                        ->info("intent $name 未在 $editing 配置内注册过");
+
+                    return $dialog->goStage('initChat');
                 }
 
-                $this->editIntent = $name;
                 return $dialog->goStage('doEditIntent');
 
             })
             ->end();
+    }
+
+    /**
+     * 初始化一个chat
+     *
+     * @param Stage $stage
+     * @return Navigator
+     */
+    public function __onInitChat(Stage $stage) : Navigator
+    {
+        return $stage->buildTalk()
+            ->withSlots([
+                'editing' => $this->editIndex,
+                'intent' => $this->editIntent,
+            ])
+            ->askConfirm("是否在 %editing% 内初始化意图 %intent% ? ")
+            ->wait()
+            ->hearing()
+            ->isPositive(function(Dialog $dialog) {
+                $this->save($dialog, $this->editIndex, $this->editIntent, []);
+                $dialog->say()->info('初始化完毕');
+                return $dialog->goStage('doEditIntent');
+            })
+            ->end(new ToNext('edit'));
+    }
+
+    protected function save(
+        Dialog $dialog,
+        string $index,
+        string $intentName,
+        array $replies
+    ) : void
+    {
+        if (!$this->isSupervisor) {
+            throw new NavigatorException($dialog->reject());
+        }
+        Manager::setIntentReplies($index, $intentName, $replies);
+        Manager::saveResource($index);
+        $dialog->say()->info("修改并保存.");
+
     }
 
     public function __onDoEditIntent(Stage $stage) : Navigator
@@ -212,6 +340,7 @@ class ManagerTask extends TaskDef
                 
 输入普通字符串将添加新的回复
 输入"序号:修改内容"可已修改, 内容为空则删除.
+输入"m" 则继续编辑意图例句
 输入"b" 则返回
 
 预定义的回复如下:',
@@ -223,21 +352,17 @@ class ManagerTask extends TaskDef
                 return $dialog->goStage('edit');
 
             })
+            ->is('m', new ToNext('editNLU'))
             ->isInstanceOf(VerboseMsg::class, function(Dialog $dialog, VerboseMsg $msg) use ($replies) {
-
-                if (!$this->isSupervisor) {
-                    return $dialog->reject();
-                }
 
                 $text = $msg->getTrimmedText();
                 $secs = explode(":", $text, 2);
 
                 if (count($secs) === 1 || !is_numeric($secs[0])) {
                     $replies[] = $text;
-                    Manager::setIntentReplies($this->editIndex, $this->editIntent, $replies);
-                    Manager::saveResource($this->editIndex);
+                    $this->save($dialog, $this->editIndex, $this->editIntent, $replies);
 
-                    $dialog->say()->info("添加完毕");
+
                     return $dialog->repeat();
                 }
 
@@ -251,25 +376,33 @@ class ManagerTask extends TaskDef
 
                 if (mb_strlen($mod) === 0) {
                     unset($replies[$index]);
-                    Manager::setIntentReplies($this->editIndex, $this->editIntent, $replies);
+                    $this->save($dialog, $this->editIndex, $this->editIntent, $replies);
 
-                    Manager::saveResource($this->editIndex);
-                    $dialog->say()->info("删除了第 $index 条");
                     return $dialog->repeat();
                 }
 
 
                 $replies[$index] = $mod;
 
-
-                Manager::setIntentReplies($this->editIndex, $this->editIntent, $replies);
-                Manager::saveResource($this->editIndex);
-                $dialog->say()->info("修改了第 $index 条");
+                $this->save($dialog, $this->editIndex, $this->editIntent, $replies);
                 return $dialog->repeat();
 
             })
             ->end();
 
+    }
+
+    /**
+     * 编辑 NLU
+     * @param Stage $stage
+     * @return Navigator
+     */
+    public function __onEditNLU(Stage $stage) : Navigator
+    {
+        return $stage->dependOn(
+            new EditIntentTask($this->editIntent),
+            new ToNext('editIntent')
+        );
     }
 
 

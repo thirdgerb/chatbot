@@ -183,7 +183,7 @@ class History
     public function replaceNodeTo(Context $context) : History
     {
         $context = $this->wrapContext($context);
-        $this->breakpoint->process()->replaceTask(new Node($context));
+        $this->breakpoint->process()->replaceNode(new Node($context));
         return $this;
     }
 

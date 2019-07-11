@@ -13,7 +13,7 @@ class HelpCmd extends SessionCommand
         {commandName? : 命令的名称.比如 /help }
     ';
 
-    const DESCRIPTION = '查看可用指令介绍';
+    const DESCRIPTION = '查看可用指令. 也可以输入 "命令名 -h", 例如"help -h"';
 
     public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe): void
     {
@@ -26,12 +26,13 @@ class HelpCmd extends SessionCommand
 
     public function helpPipe( SessionCommandPipe $pipe) : void
     {
-        $available = '';
         $mark = $pipe->getCommandMark();
+        $messages = [];
         foreach ($pipe->getDescriptions() as $name => $description) {
-            $available .= "  $mark$name\t:\t$description" .PHP_EOL;
+            $messages[$mark . $name] = $description;
         }
 
+        $available = $this->rangeMessages($messages);
         $this->say(['%available%' => $available])
             ->info('command.available');
     }
@@ -58,25 +59,29 @@ class HelpCmd extends SessionCommand
     public function helpCommand(CommandDefinition $definition, string $desc) : void
     {
         $commandName = $definition->getCommandName();
-        $output = "命令 [$commandName] : $desc\n\n";
+        $output = "命令 [$commandName] : $desc\n";
+        $speech = $this->say();
 
 
         // 变量
         $arguments = $definition->getArguments();
         if (!empty($arguments)) {
-            $output .= "arguments (直接写在变量后, 空格隔开, 字符串建议放在引号内) :\n";
+            $output .= "\narguments (直接写在变量后, 空格隔开, 字符串建议放在引号内) :\n";
+
+
+            $messages = [];
             foreach ($arguments as $argument) {
-               $output .= sprintf(
-                "  %s\t:\t%s\n",
-                    $argument->getName(),
-                    $this->say()->trans($argument->getDescription())
-                );
+                $messages[$argument->getName()] = $speech->trans($argument->getDescription());
             }
+
+            $output .= $this->rangeMessages($messages);
         }
 
         $options = $definition->getOptions();
         if (!empty($options)) {
             $output.="\noptions: (直接写参数名, 例如 -h ) \n";
+
+            $messages = [];
             foreach ($options as $option) {
                 $name = $option->getName();
                 $shotCut = $option->getShortcut();
@@ -84,15 +89,38 @@ class HelpCmd extends SessionCommand
                     ?  "-$shotCut,"
                     : '';
 
-
-                $output.= sprintf(
-                    "  %s--%s\t:\t%s\n",
-                    $shotCutStr,
-                    $name,
-                    $this->say()->trans($option->getDescription())
-                );
+                $key = "$shotCutStr--$name";
+                $messages[$key] = $speech->trans($option->getDescription());
             }
+
+            $output.= $this->rangeMessages($messages);
         }
         $this->say()->info($output);
+    }
+
+    protected function rangeMessages(array $lines) : string
+    {
+        $keys = array_keys($lines);
+
+        $maxLength = 0;
+        foreach ($keys as $key) {
+            $len = strlen($key);
+            if ($len > $maxLength) {
+                $maxLength = $len;
+            }
+        }
+
+        $str = '';
+
+        foreach ($lines as $key => $value) {
+            $line = '';
+
+            for ($i = 0; $i < $maxLength ; $i ++ ) {
+                $line .= $key[$i] ?? ' ';
+            }
+            $str.="  $line : $value\n";
+        }
+
+        return $str;
     }
 }

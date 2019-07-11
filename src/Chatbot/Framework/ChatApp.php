@@ -239,6 +239,7 @@ class ChatApp implements Blueprint
         }
 
         $logger = $this->consoleLogger;
+
         try {
             $logger->info(static::class . ' chatbot reactor booting');
 

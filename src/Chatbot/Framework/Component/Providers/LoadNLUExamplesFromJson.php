@@ -7,6 +7,7 @@ namespace Commune\Chatbot\Framework\Component\Providers;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
 use Commune\Chatbot\OOHost\NLU\NLUExample;
 
 class LoadNLUExamplesFromJson extends ServiceProvider
@@ -63,9 +64,14 @@ class LoadNLUExamplesFromJson extends ServiceProvider
                 $nluExamples[]= new NLUExample($example);
             }
 
-            // 覆盖
+            // 生成占位符
+            if (!$repo->has($intentName)) {
+                $repo->register(new PlaceHolderIntentDef($intentName), false);
+            }
+
             $repo->setIntentNLUExamples($intentName, $nluExamples);
         }
+
     }
 
     public function register()

@@ -63,6 +63,8 @@ class SessionCommandPipe implements SessionPipe
         // 注册 command intent
         }
 
+
+        // 如果有可作为命令的 intent (signature 不为空 ) 存在
         if ($repo->hasCommandIntent($commandName)) {
             $matcher = $repo->getMatcher($commandName);
             $command = $matcher->getCommand();

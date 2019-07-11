@@ -6,6 +6,7 @@ namespace Commune\Chatbot\OOHost\Context;
 
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Chatbot\Framework\Messages\AbsMessage;
+use Commune\Chatbot\Framework\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionData;
 use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
@@ -68,6 +69,12 @@ abstract class AbsContext extends AbsMessage implements Context
         parent::__construct();
     }
 
+
+    public function nameEquals(string $name): bool
+    {
+        $name = StringUtils::namespaceSlashToDot($name);
+        return $name == $this->getName();
+    }
 
     /*------- changed -------*/
 

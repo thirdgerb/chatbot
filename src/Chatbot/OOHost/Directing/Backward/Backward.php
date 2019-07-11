@@ -28,12 +28,15 @@ class Backward extends AbsNavigator
         $history = $this->history->backward();
 
         if (isset($history)) {
-            $question = $history->getBreakPoint()->question;
+            $question = $history->currentQuestion();
             if (isset($question)) {
                 $this->dialog->reply($question);
+                return null;
+
+            } else {
+                return $this->dialog->repeat();
             }
 
-            return null;
         }
 
         return new Home($this->dialog, $this->history);

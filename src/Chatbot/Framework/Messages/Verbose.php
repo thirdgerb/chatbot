@@ -68,10 +68,7 @@ class Verbose extends AbsMessage implements VerboseMsg
     public function isEmpty(): bool
     {
         $trimmed = $this->getTrimmedText();
-        return '' === $trimmed
-            || ',' === $trimmed
-            || '.' === $trimmed
-            || ';' === $trimmed;
+        return strlen($trimmed) === 0;
     }
 
     public function namesAsDependency(): array

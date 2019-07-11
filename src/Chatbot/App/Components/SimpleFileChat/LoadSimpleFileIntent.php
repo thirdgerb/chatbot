@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Components\SimpleFileIntent;
+namespace Commune\Chatbot\App\Components\SimpleFileChat;
 
 
 use Commune\Chatbot\Blueprint\ServiceProvider;
@@ -16,10 +16,15 @@ class LoadSimpleFileIntent extends ServiceProvider
      */
     protected $resourcePath;
 
+    /**
+     * @var GroupOption
+     */
+    protected $option;
 
-    public function __construct($app, string $resourcePath)
+    public function __construct($app, GroupOption $option)
     {
-        $this->resourcePath = $resourcePath;
+        $this->resourcePath = $option->resourcePath;
+        $this->option = $option;
         parent::__construct($app);
     }
 
@@ -31,25 +36,28 @@ class LoadSimpleFileIntent extends ServiceProvider
             ->name('/\.md$/');
 
         $repo = IntentRegistrar::getIns();
+        $id = $this->option->id;
 
         foreach ($finder as $fileInfo) {
             $path = $fileInfo->getPathname();
             $name = str_replace($this->resourcePath, '', $path);
             $name = str_replace('.md', '', $name);
+            $name = trim($name, '/');
             $name = str_replace('/', '.', $name);
-            $name = FileIntOption::PREFIX . '.' . $name;
+            $name = FileChatConfig::PREFIX . ".$id." . $name;
 
-            $option = new FileIntOption(
+            $configs = new FileChatConfig(
                 $name,
                 $path,
-                $fileInfo->getContents()
+                $fileInfo->getContents(),
+                $this->option
             );
 
-            $def = new SimpleFileIntDefinition($option);
+            $def = new SimpleFileIntDefinition($configs);
             $repo->register($def);
 
             // 注册意图.
-            $examples = $option->examples;
+            $examples = $configs->examples;
             if (!empty($examples)) {
                 foreach ($examples as $example) {
                     $repo->registerNLUExample($name, new NLUExample($example));

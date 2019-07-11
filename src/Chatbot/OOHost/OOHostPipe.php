@@ -141,22 +141,6 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         );
     }
 
-    public function fetchSnapshot(string $key) : Snapshot
-    {
-        if ($this->cache->has($key)) {
-            $unserialized = unserialize($this->cache->get($key));
-
-            if ($unserialized instanceof Snapshot) {
-                return $unserialized;
-            }
-
-            $this->cache->forget($key);
-        }
-
-        $sessionId = $this->createUuId();
-        return new Snapshot($sessionId);
-    }
-
     public function onUserMessageFinally(Conversation $conversation): void
     {
     }

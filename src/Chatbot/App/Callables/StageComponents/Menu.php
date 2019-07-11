@@ -8,6 +8,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Callables\StageComponent;
 use Commune\Chatbot\OOHost\Context\Context;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -43,6 +44,16 @@ class Menu implements StageComponent
     protected $hearingComponent;
 
     /**
+     * @var boolean
+     */
+    protected $hasDefault = false;
+
+    /**
+     * @var int|string|null
+     */
+    protected $defaultChoice;
+
+    /**
      * Menu constructor.
      * @param string $question
      * @param callable[] $menu   预定义的菜单. 结构是:
@@ -51,7 +62,7 @@ class Menu implements StageComponent
      *      '字符串作为suggestion' => stageName ,
      *      'contextName',
      *    ]
-     * @param callable|null $redirector   //默认是 dependOn, 拿到了结果就认为是回调.
+     * @param callable|null $redirector   // 跳转到菜单上context 的方式, 默认是 dependOn, 拿到了结果就认为是回调.
      * @param callable|null $fallback
      * @param callable|null $hearingComponent //可定义组件
      */
@@ -68,6 +79,23 @@ class Menu implements StageComponent
         $this->fallback = $fallback;
         $this->redirector = $redirector;
         $this->hearingComponent = $hearingComponent;
+    }
+
+    public function hearing(callable $hearing) : Menu
+    {
+        $this->hearingComponent = $hearing;
+        return $this;
+    }
+
+    /**
+     * @param int|float|string $choice
+     * @return Menu
+     */
+    public function defaultChoice($choice) : Menu
+    {
+        $this->hasDefault = true;
+        $this->defaultChoice = $choice;
+        return $this;
     }
 
     public function __invoke(Stage $stage) : Navigator
@@ -91,7 +119,9 @@ class Menu implements StageComponent
                 ->askChoose(
                     $this->question,
                     $suggestions,
-                    array_keys($suggestions)[0]
+                    $this->hasDefault
+                        ? $this->defaultChoice
+                        : array_keys($suggestions)[0]
                 );
 
             return $dialog->wait();
@@ -184,9 +214,17 @@ class Menu implements StageComponent
             );
         }
 
-        // 默认的重定向是 dependOn
-        // 于是可以cancel 掉整个流程.
-        return $dialog->redirect->dependOn($context);
+        $repo = IntentRegistrar::getIns();
+
+        // 意图用特殊的方式来处理.
+        if ($repo->has($context)) {
+            $intent = $repo->get($context)->newContext();
+            return $intent->navigate($dialog);
+        }
+
+        // 默认的重定向是 sleepTo
+        // 这会导致无法 cancel 掉整个流程.
+        return $dialog->redirect->sleepTo($context);
     }
 
 }

@@ -57,6 +57,7 @@ interface IncomingMessage extends ConversationMessage
     public function getMostPossibleIntent() : ? string;
 
     /**
+     * 可能的意图
      * @return Collection
      */
     public function getPossibleIntentCollection() : Collection;

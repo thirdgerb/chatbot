@@ -31,6 +31,9 @@ interface VerboseMsg extends Message, Sendable
     const WARN = Monologue::WARNING;
     const ERROR = Monologue::ERROR;
 
+
+    const EMPTY_MARKS = ['', ';', ',', '.'];
+
     /*--------- 链式调用 ---------*/
 
     /**

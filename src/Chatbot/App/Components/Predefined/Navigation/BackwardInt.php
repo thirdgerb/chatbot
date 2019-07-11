@@ -10,7 +10,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 class BackwardInt extends NavigateIntent
 {
-    const SIGNATURE = 'backward';
+    const SIGNATURE = 'back';
 
     const DESCRIPTION = '回到上一轮对话';
 

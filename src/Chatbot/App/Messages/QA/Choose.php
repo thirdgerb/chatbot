@@ -22,14 +22,12 @@ class Choose extends VbQuestion implements Question
      * Choose constructor.
      * @param string $question
      * @param array $options
-     * @param null $defaultChoice
-     * @param null $default
+     * @param null|int|string $defaultChoice
      */
     public function __construct(
         string $question,
         array $options,
-        $defaultChoice = null,
-        $default = null
+        $defaultChoice = null
     )
     {
         if (
@@ -42,6 +40,7 @@ class Choose extends VbQuestion implements Question
             );
         }
 
+        $default = isset($defaultChoice) ? $options[$defaultChoice] : null;
         parent::__construct($question, $options, $defaultChoice, $default);
     }
 

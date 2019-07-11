@@ -1,14 +1,18 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Components\SimpleChat;
+namespace Commune\Chatbot\App\Components\SimpleChat\Callables;
 
+use Commune\Chatbot\App\Components\SimpleChat\Manager;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Callables\Action;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
+/**
+ * 用在hearing 内作为一个 action, 最好是 end() 方法或者 interceptor() 方法处使用.
+ */
 class SimpleChatAction implements Action
 {
     /**

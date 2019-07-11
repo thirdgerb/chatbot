@@ -11,7 +11,7 @@ use Commune\Chatbot\OOHost\Emotion\Emotions\Positive;
 class GoodInt extends MessageIntent implements Positive
 {
 
-    const SIGNATURE = 'ok';
+    const SIGNATURE = 'good';
 
     const DESCRIPTION = '可以';
 
@@ -20,16 +20,12 @@ class GoodInt extends MessageIntent implements Positive
         'ok',
         'okay',
         'good',
-        'very good',
-        'excellent',
         '好啊',
-        '太好了',
-        '非常好',
         '不错',
-        '真棒',
-        '挺好的呀',
-        '就这样吧',
+        '也行',
+        '挺好的',
         '这样就行',
+        '就这样吧',
     ];
 
     public static function getContextName(): string

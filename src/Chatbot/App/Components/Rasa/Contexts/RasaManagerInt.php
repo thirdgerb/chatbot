@@ -7,6 +7,7 @@ namespace Commune\Chatbot\App\Components\Rasa\Contexts;
 use Commune\Chatbot\App\Abilities\Supervise;
 use Commune\Chatbot\App\Components\Rasa\RasaNLUPipe;
 use Commune\Chatbot\OOHost\Context\Definition;
+use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Intent\AbsCmdIntent;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMatcherOption;
@@ -37,6 +38,11 @@ class RasaManagerInt extends AbsCmdIntent
             'signature' => 'matchedIntent'
         ]);
     }
+
+    public static function __depend(Depending $depending): void
+    {
+    }
+
 
     public static function getContextName(): string
     {

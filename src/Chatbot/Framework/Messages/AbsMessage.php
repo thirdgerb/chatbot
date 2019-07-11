@@ -80,8 +80,15 @@ abstract class AbsMessage implements Contract
     public function getTrimmedText() : string
     {
         $text = $this->getText();
-        //去掉全角符号, 降低复杂性.
+
+        // 去掉全角符号, 降低复杂性.
         $text = CommandUtils::sbc2dbc($text);
+
+        // 系统默认的空字符.
+        if ($text === '.' || $text === ',' || $text === ';') {
+            return '';
+        }
+
         return trim($text);
     }
 

@@ -14,7 +14,7 @@ class ReplaceNodeTo extends Redirector
 {
     public function doDisplay(): ? Navigator
     {
-        $this->history->replaceProcessTo($this->to);
+        $this->history->replaceNodeTo($this->to);
         return $this->startCurrent();
     }
 }

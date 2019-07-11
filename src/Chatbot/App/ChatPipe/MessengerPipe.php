@@ -15,9 +15,7 @@ use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Contracts\ExceptionHandler;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
-use Commune\Chatbot\Framework\Exceptions\ConversationalException;
 use Commune\Chatbot\Framework\Exceptions\FatalErrorException;
-use Commune\Chatbot\Framework\Exceptions\PipelineException;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Chatbot\Framework\Pipeline\PipelineLog;
 

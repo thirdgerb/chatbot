@@ -72,6 +72,8 @@ interface Context extends
      */
     public function getName() : string;
 
+    public function nameEquals(string $name) : bool;
+
     public static function __depend(Depending $depending) : void;
 
     public function __onStart(Stage $stage): Navigator;

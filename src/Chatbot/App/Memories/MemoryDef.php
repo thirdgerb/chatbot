@@ -73,7 +73,7 @@ class MemoryDef extends AbsMemory implements SelfRegister
     {
         $repo = static::getRegistrar();
         $def = static::buildDefinition();
-        $repo->register($def);
+        $repo->register($def, true);
     }
 
     public static function __depend(Depending $depending): void

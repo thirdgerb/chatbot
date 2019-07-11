@@ -20,6 +20,11 @@ class Process implements ArrayAndJsonAble
     protected $thread;
 
     /**
+     * @var Thread
+     */
+    protected $root;
+
+    /**
      * @var Thread[]
      */
     protected $sleeping = [];
@@ -74,9 +79,9 @@ class Process implements ArrayAndJsonAble
     }
 
 
-    public function replaceTask(Node $task)  :void
+    public function replaceNode(Node $task)  :void
     {
-        $this->thread->replaceTask($task);
+        $this->thread->replaceNode($task);
     }
 
 
@@ -108,6 +113,10 @@ class Process implements ArrayAndJsonAble
 
         foreach ($this->sleeping as $key => $value) {
             $sleeping[$key] = $value->toArray();
+        }
+
+        foreach ($yielding as $key => $value) {
+            $yielding[$key] = $value->toArray();
         }
 
         return [

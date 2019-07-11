@@ -10,7 +10,6 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Messages\ArrayMessage;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
-use Commune\Chatbot\OOHost\Context\Callables\Action;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
@@ -264,12 +263,15 @@ class HearingHandler implements Hearing
         if (isset($this->navigator)) return $this;
 
         // 如果消息本身是intent, 说明是dependOn 的回调.
-        // 任何非回调的消息, 不应该把message 变为intent
+        // 任何用户发过来的消息, 不应该把message 变为intent
         // 而应该 session->setMatchedIntent() 去设定.
         if ($this->message instanceof IntentMessage){
-            // 要dependOn, 就应该另外开一个stage, 以避免歧义.
-            // 所以遇到这种情况, 都当做没有命中意图
-            return $this;
+
+            if (!$this->message->nameEquals($intentName)) {
+                return $this;
+            }
+
+            return $this->heardIntent($this->message, $intentAction);
         }
 
         // 主动匹配.
@@ -302,9 +304,6 @@ class HearingHandler implements Hearing
     {
         if (isset($this->navigator)) return $this;
 
-        if ($this->message instanceof IntentMessage) {
-            return $this;
-        }
 
         $session = $this->dialog->session;
         $repo = $session->intentRepo;
@@ -316,6 +315,18 @@ class HearingHandler implements Hearing
         }
         //  这里是标准名称了.
         $names = array_unique($names);
+
+
+        if ($this->message instanceof IntentMessage) {
+            $name = $this->message->getName();
+            if (in_array($name, $names)) {
+                return $this->heardIntent($this->message, $intentAction);
+            }
+
+            return $this;
+        }
+
+
         $matched = $session->getMatchedIntent();
         if (isset($matched) && in_array($matched->getName(), $names)) {
             return $this->heardIntent($matched, $intentAction);
@@ -338,7 +349,7 @@ class HearingHandler implements Hearing
 
         // 如果消息本身就是 intent, 则视作回调.
         if ($this->message instanceof IntentMessage) {
-            return $this;
+            return $this->heardIntent($this->message, $intentAction);
         }
 
         // 否则, 视作第一次进入的intent 解析.
@@ -368,13 +379,23 @@ class HearingHandler implements Hearing
         callable $intentAction = null
     ) : Hearing
     {
-        $this->heard = true;
-        $this->heardUncaught = false;
+        // 有拦截的情况
         if (isset($intentAction)) {
+            $this->heard = true;
+            $this->heardUncaught = false;
             return $this->callInterceptor($intentAction, $matched);
         }
 
-        return $this->setNavigator($matched->navigate($this->dialog));
+        // intent 自己有navigator 的情况
+        $navigator = $matched->navigate($this->dialog);
+        if (isset($navigator)) {
+            $this->heard = true;
+            $this->heardUncaught = false;
+            return $this->setNavigator($navigator);
+        }
+
+        // 当什么也没发生, 例如placeHolderIntent
+        return $this;
     }
 
     /**

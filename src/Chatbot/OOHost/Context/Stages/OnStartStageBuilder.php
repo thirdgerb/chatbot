@@ -53,12 +53,18 @@ class OnStartStageBuilder implements OnStartStage
 
     public function next(): Navigator
     {
+        $navigator = $this->stage->navigator;
+        if (isset($navigator)) return $navigator;
+
         // always
         return $this->stage->dialog->next();
     }
 
     public function fulfill(): Navigator
     {
+        $navigator = $this->stage->navigator;
+        if (isset($navigator)) return $navigator;
+
         // always
         return $this->stage->dialog->fulfill();
     }
@@ -66,13 +72,25 @@ class OnStartStageBuilder implements OnStartStage
 
     public function replaceTo($to = null, string $level = Redirect::THREAD_LEVEL):Navigator
     {
+        $navigator = $this->stage->navigator;
+        if (isset($navigator)) return $navigator;
+
         return $this->stage->dialog->redirect->replaceTo($to, $level);
     }
 
     public function action(callable $action): Navigator
     {
-        $this->stage->onStart($action);
-        return $this->stage->navigator ?? $this->stage->dialog->next();
+        $navigator = $this->stage->navigator;
+        if (isset($navigator)) return $navigator;
+
+        return $this
+            ->stage
+            ->dialog
+            ->app
+            ->callContextInterceptor(
+                $this->stage->self,
+                $action
+            );
     }
 
     public function interceptor(callable $interceptor): OnStartStage
@@ -86,9 +104,11 @@ class OnStartStageBuilder implements OnStartStage
         bool $resetPipes = false
     ): Navigator
     {
+        $navigator = $this->stage->navigator;
+        if (isset($navigator)) return $navigator;
+
         // 不管是start 还是 callback, 都会直接执行.
-        return $this->stage->navigator
-            ?? $this->stage->dialog->goStage($name, $resetPipes);
+        return  $this->stage->dialog->goStage($name, $resetPipes);
     }
 
     public function goStagePipes(

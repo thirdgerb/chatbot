@@ -87,7 +87,7 @@ abstract class OOContext
 
     public static function registerSelfDefinition(): void
     {
-        static::getRegistrar()->register(static::buildDefinition());
+        static::getRegistrar()->register(static::buildDefinition(), true);
     }
 
 

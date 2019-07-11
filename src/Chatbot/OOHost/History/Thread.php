@@ -73,7 +73,7 @@ class Thread implements ArrayAndJsonAble
     }
 
 
-    public function replaceTask(Node $task)  :void
+    public function replaceNode(Node $task)  :void
     {
         $this->node = $task;
         $this->question = null;
@@ -105,7 +105,7 @@ class Thread implements ArrayAndJsonAble
         }
         return [
             'node' => $this->node->toArray(),
-            'question' => $this->question->toArray(),
+            'question' => isset($this->question) ? $this->question->toArray() : null,
             'stack' => $stack
         ];
     }

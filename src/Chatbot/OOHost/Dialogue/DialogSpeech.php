@@ -132,7 +132,7 @@ class DialogSpeech implements Speech
     public function askChoose(
         string $question,
         array $suggestions,
-        int $default = null
+        $default = null
     )
     {
         $question = new Choose($question, $suggestions, $default);

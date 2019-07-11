@@ -345,7 +345,7 @@ class DialogImpl implements Dialog, Redirect, App
 
     public function rewind(): Navigator
     {
-        return new Directing\Dialog\Repeat($this, $this->history);
+        return new Directing\Backward\Rewind($this, $this->history);
     }
 
     public function missMatch(): Navigator
@@ -404,7 +404,7 @@ class DialogImpl implements Dialog, Redirect, App
 
     public function sleepTo($to = null): Navigator
     {
-        if (!isset($to)) {
+        if (isset($to)) {
             $to = $this->wrapContext($to, __METHOD__);
         }
         return new Directing\Redirects\SleepTo($this, $this->history, $to);
@@ -412,7 +412,7 @@ class DialogImpl implements Dialog, Redirect, App
 
     public function yieldTo($to = null): Navigator
     {
-        if (!empty($to)) {
+        if (isset($to)) {
             $to = $this->wrapContext($to, __METHOD__);
         }
         return new Directing\Redirects\YieldTo($this, $this->history, $to);

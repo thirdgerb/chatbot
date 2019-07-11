@@ -15,7 +15,7 @@ return [
         \Commune\Chatbot\App\Components\NLUExamplesComponent::class => [
             'repository' => __DIR__ .'/repository.json'
         ],
-        \Commune\Chatbot\App\Components\SimpleFileIntentComponent::class,
+        \Commune\Chatbot\App\Components\SimpleFileChatComponent::class,
         \Commune\Chatbot\App\Components\RasaComponent::class => [
             'output' => __DIR__ .'/nlu.md',
         ],

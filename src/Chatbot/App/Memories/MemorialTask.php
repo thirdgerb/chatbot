@@ -76,7 +76,7 @@ abstract class MemorialTask extends AbsMemory implements SelfRegister
     {
         $repo = static::getRegistrar();
         $def = static::buildDefinition();
-        $repo->register($def);
+        $repo->register($def, true);
     }
 
     public function getDef(): Definition
