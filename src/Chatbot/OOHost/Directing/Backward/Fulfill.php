@@ -14,15 +14,11 @@ class Fulfill extends AbsNavigator
     {
         $context = $this->history->getCurrentContext();
         $caller = $context->getDef();
-        $navigator = $caller->onExiting(
+        $caller->onExiting(
             Definition::FULFILL,
             $context,
             $this->dialog
         );
-
-        if (isset($navigator)) {
-            return $navigator;
-        }
 
         $intended = $this->history->intended();
         if (isset($intended)) {

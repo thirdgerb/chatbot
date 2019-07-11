@@ -58,24 +58,21 @@ class SimpleFileInt extends AbsIntent
         $stages = array_map(function($key){
             return static::STAGE_PREFIX. $key;
         }, $keys);
-        $stages[] = 'suggest';
 
         return $stage->buildTalk()
             ->goStagePipes($stages);
     }
 
 
-    public function __onSuggest(Stage $stage) : Navigator
+    public function onSuggest(Stage $stage) : Navigator
     {
         $option = $this->getDef()->getFileChatConfig();
-        $suggestions = $option->suggestions;
+        $suggestions = $this->buildSuggestions();
 
+        // 没有猜你想问就直接退出.
         if (empty($suggestions)) {
             return $stage->dialog->fulfill();
         }
-
-
-        $suggestions = $this->buildSuggestions();
 
         return $stage->component(
             (new Menu(
@@ -111,6 +108,7 @@ class SimpleFileInt extends AbsIntent
     protected function buildSuggestions() : array
     {
 
+
         $config = $this->getConfig();
         $groupOption = $config->groupOption;
 
@@ -119,19 +117,18 @@ class SimpleFileInt extends AbsIntent
 
         // 没有猜您想问, 直接退出.
         $suggestions = $config->suggestions;
+        if (empty($suggestions)) {
+            return $groupOption->defaultSuggestions;
+        }
 
         // 参数准备.
         $repo = $this->getSession()->contextRepo;
 
-        // 与整个group 的默认配置合并.
-        foreach ($config->groupOption->defaultSuggestions as $key => $suggestion) {
-            $suggestions[$key] = $suggestion;
-        }
 
         $self = $this->getName();
         $secs = explode('.', $self);
         $last = array_pop($secs);
-        $prefix = implode('.', $secs) . '.';
+        $prefix = implode('.', $secs) ;
 
         // 特殊字符.
         if (in_array('./', $suggestions)) {
@@ -139,7 +136,7 @@ class SimpleFileInt extends AbsIntent
 
             foreach ($names as $name) {
                 if (Str::startsWith($name, $prefix)) {
-                    $name = str_replace($prefix, '', $name);
+                    $name = str_replace("$prefix.", '', $name);
 
                     if ($name != $last && false === strpos('.', $name)) {
                         $suggestions[] = $name;
@@ -148,6 +145,10 @@ class SimpleFileInt extends AbsIntent
             }
         }
 
+        // 与整个group 的默认配置合并.
+        foreach ($config->groupOption->defaultSuggestions as $key => $suggestion) {
+            $suggestions[$key] = $suggestion;
+        }
 
         $optionSuggestions = [];
 
@@ -217,6 +218,9 @@ class SimpleFileInt extends AbsIntent
 
     public function __exiting(Exiting $listener): void
     {
+        $listener->onBackward(function(Dialog $dialog){
+            return $dialog->repeat();
+        });
     }
 
     /**
@@ -228,18 +232,19 @@ class SimpleFileInt extends AbsIntent
     }
 
 
-    public function readSection(Stage $builder, $index) : Navigator
+    public function readSection(Stage $stage, $index) : Navigator
     {
         $contents = $this->getConfig()->contents;
         $index = intval($index);
         $content = $contents[$index];
 
-        $builder = $builder
+        $builder = $stage
             ->buildTalk()
             ->info(trim($content));
 
         if (!isset($contents[$index + 1])) {
-            return $builder->next();
+
+            return $this->onSuggest($builder->toStage());
         }
 
         return $builder

@@ -15,7 +15,6 @@ use Commune\Chatbot\Framework\Utils\OnionPipeline;
 use Commune\Chatbot\OOHost\Session\Driver as SessionDriver;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionImpl;
-use Commune\Chatbot\OOHost\Session\Snapshot;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 

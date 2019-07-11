@@ -78,11 +78,15 @@ abstract class ScriptDef extends OOContext
 
     public function __onStart(Stage $stage): Navigator
     {
+        return $stage->dialog->goStage('startConversation');
+    }
+
+    public function __onStartConversation(Stage $stage): Navigator
+    {
         $stages = static::getScriptStages();
         $stages[] = 'final';
         return $stage->buildTalk()->goStagePipes($stages);
     }
-
 
 
     protected static function getScriptStages() : array

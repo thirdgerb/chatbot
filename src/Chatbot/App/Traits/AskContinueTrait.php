@@ -22,6 +22,7 @@ trait AskContinueTrait
             ->info('ask.continue')
             ->wait()
             ->hearing()
+            // 其实输入任意值都会继续
             ->end([Redirector::class, 'next']);
     }
 

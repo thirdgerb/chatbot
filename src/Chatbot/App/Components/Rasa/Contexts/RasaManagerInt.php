@@ -141,8 +141,7 @@ class RasaManagerInt extends AbsCmdIntent
                     $dialog->say()->info('没有命中任何意图.');
                 }
 
-
-                return $dialog->wait();
+                return $dialog->repeat();
             });
     }
 

@@ -61,6 +61,31 @@ class History
         $this->tracker = new Tracker($session->sessionId);
     }
 
+    /**
+     * @return Breakpoint|null
+     */
+    public function prev()
+    {
+        if (isset($this->prevBreakpoint)) {
+            return $this->prevBreakpoint;
+        }
+
+        $prevId = $this->breakpoint->prevId;
+        if (!isset($prevId)) {
+            return null;
+        }
+        $breakpoint = $this->session->repo->fetchSessionData(
+            $identity = new SessionDataIdentity(
+                $this->breakpoint->prevId,
+                SessionData::BREAK_POINT
+            )
+        );
+        if (!$breakpoint instanceof Breakpoint) {
+            throw new DataNotFoundException($identity);
+        }
+
+        return $this->prevBreakpoint = $breakpoint;
+    }
 
 
     public function currentTask() : Node
@@ -148,6 +173,7 @@ class History
             throw new DataNotFoundException($identity);
         }
 
+        $this->prevBreakpoint = null;
         $this->setBreakpoint($breakpoint);
         return $this;
     }
@@ -329,14 +355,35 @@ class History
         return $this;
     }
 
+//    /**
+//     * 如果是同一个节点, 则用上一次对话的内容.
+//     * 否则不动.
+//     */
+//    public function repeat() : void
+//    {
+//        $prevBreakpoint = $this->prev();
+//        if (!isset($prevBreakpoint)) {
+//            return;
+//        }
+//
+//        $prev = $this->prevBreakpoint->process()->currentTask();
+//        $current = $this->breakpoint->process()->currentTask();
+//        if ($prev->getContextId() == $current->getContextId() && $prev->getStage() == $current->getStage()) {
+//            $this->rewind();
+//        }
+//    }
+
     /**
-     * 跟repeat 不一样, 完全当这一轮对话没有发生过.
+     * 完全当这一轮对话没有发生过.
      */
     public function rewind() : void
     {
-        $breakpoint = new Breakpoint($this->session, $this->prevBreakpoint);
-        $this->setBreakpoint($breakpoint);
+        $prev = $this->prev();
+        if (isset($prev)) {
+            $this->setBreakpoint($prev);
+        }
     }
+
 
 
     public function __get($name)

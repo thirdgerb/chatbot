@@ -9,6 +9,12 @@ use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
+/**
+ * @property-read  string $id
+ * @property-read  string $sessionId
+ * @property-read  string $prevId
+ * @property-read  string[] $backtrace
+ */
 class Breakpoint implements ArrayAndJsonAble, SessionData
 {
     use ArrayAbleToJson;
@@ -65,6 +71,7 @@ class Breakpoint implements ArrayAndJsonAble, SessionData
     protected function fromPrev(Breakpoint $prev) : void
     {
         $this->prevId = $prev->getSessionDataId();
+        $this->backtrace = $prev->backtrace;
         $this->process = clone $prev->process;
 
         if (isset($prev->prevId)) {
@@ -99,6 +106,9 @@ class Breakpoint implements ArrayAndJsonAble, SessionData
 
     public function backward() : ? string
     {
+        if (empty($this->backtrace)) {
+            return null;
+        }
         $lastId = end($this->backtrace);
         return $lastId;
     }
@@ -151,6 +161,11 @@ class Breakpoint implements ArrayAndJsonAble, SessionData
             'backtrace',
             'process'
         ];
+    }
+
+    public function __get($name)
+    {
+        return $this->{$name};
     }
 
 }

@@ -7,12 +7,17 @@ namespace Commune\Chatbot\OOHost\Directing\Backward;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Directing\AbsNavigator;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\Directing\Redirects\Home;
 
 class Backward extends AbsNavigator
 {
     public function doDisplay(): ? Navigator
     {
+        $history = $this->history->backward();
+        if (!isset($history)) {
+            $history->home();
+        }
+
+        // 只在回调的对象会执行backward
         $context = $this->history->getCurrentContext();
         $caller = $context->getDef();
         $navigator = $caller->onExiting(
@@ -25,21 +30,7 @@ class Backward extends AbsNavigator
             return $navigator;
         }
 
-        $history = $this->history->backward();
-
-        if (isset($history)) {
-            $question = $history->currentQuestion();
-            if (isset($question)) {
-                $this->dialog->reply($question);
-                return null;
-
-            } else {
-                return $this->dialog->repeat();
-            }
-
-        }
-
-        return new Home($this->dialog, $this->history);
+        return $this->startCurrent();
     }
 
 
