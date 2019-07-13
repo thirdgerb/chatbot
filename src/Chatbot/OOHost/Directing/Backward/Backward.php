@@ -14,7 +14,7 @@ class Backward extends AbsNavigator
     {
         $history = $this->history->backward();
         if (!isset($history)) {
-            $history->home();
+            $this->history->home();
         }
 
         // 只在回调的对象会执行backward

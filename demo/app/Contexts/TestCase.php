@@ -121,7 +121,7 @@ class TestCase extends TaskDef
                             return $dialog->restart();
                         }
                     )
-                    ->interceptor(new SimpleChatAction('example'))
+                    ->interceptor(new SimpleChatAction('demo'))
                     ->end(function(Dialog $dialog, Message $message){
 
                         $dialog->say()->info("输入了:" . $message->getText());

@@ -677,7 +677,6 @@ class HearingHandler implements Hearing
         }
 
         // 如果要匹配任意意图, 需要手动调用 isAnyIntent
-
         foreach ($this->fallback as $caller) {
             $this->callInterceptor($caller);
             if(isset($this->navigator)) {
@@ -685,6 +684,22 @@ class HearingHandler implements Hearing
             }
         }
 
+        // 如果设置了默认的闲聊, 会使用闲聊的逻辑.
+        $fallback = $this->dialog->session->hostConfig->hearingFallback;
+        if (isset($fallback)) {
+
+            // 允许是类名. 不过实例应该是 callable
+            if (
+                is_string($fallback)
+                && !is_callable($fallback)
+                && class_exists($fallback)
+            ) {
+                $fallback = $this->dialog->app->make($fallback);
+            }
+
+            // 没有navigator 的话就往后走
+            $this->callInterceptor($fallback);
+        }
 
         return $this->navigator ?? $this->dialog->missMatch();
     }

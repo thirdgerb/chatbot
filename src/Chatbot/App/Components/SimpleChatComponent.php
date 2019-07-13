@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\App\Components;
 
 use Commune\Chatbot\App\Components\SimpleChat\LoadSimpleChat;
+use Commune\Chatbot\App\Components\SimpleChat\SimpleChatOption;
 use Commune\Chatbot\Framework\Component\ComponentOption;
 
 
@@ -18,10 +19,16 @@ use Commune\Chatbot\Framework\Component\ComponentOption;
  *
  * $domain 和 resourcePath 下的文件名
  *
- * @property-read string[] $resourcePath
+ * @property-read string $default
+ * @property-read SimpleChatOption[] $resources
  */
 class SimpleChatComponent extends ComponentOption
 {
+
+    protected static $associations = [
+        'resources[]' => SimpleChatOption::class,
+    ];
+
     protected function doBootstrap(): void
     {
         $this->loadSelfRegisterByPsr4(
@@ -29,12 +36,14 @@ class SimpleChatComponent extends ComponentOption
             __DIR__ .'/SimpleChat/Tasks'
         );
 
-        $this->app->registerReactorService(
-            new LoadSimpleChat(
-                $this->app->getReactorContainer(),
-                $this->resourcePath
-            )
-        );
+        foreach ($this->resources as $option) {
+            $this->app->registerReactorService(
+                new LoadSimpleChat(
+                    $this->app->getReactorContainer(),
+                    $option
+                )
+            );
+        }
 
         // 依赖
         $this->dependComponent(NLUExamplesComponent::class);
@@ -43,7 +52,10 @@ class SimpleChatComponent extends ComponentOption
     public static function stub(): array
     {
         return [
-            'resourcePath' =>__DIR__ . '/SimpleChat/resources/',
+            'default' => 'example',
+            'resources' => [
+                SimpleChatOption::stub(),
+            ],
         ];
     }
 

@@ -5,19 +5,38 @@ namespace Commune\Chatbot\App\Components\SimpleChat;
 
 
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Symfony\Component\Yaml\Yaml;
 
 class Manager
 {
 
     /**
+     * chat id => 文件地址. 用来保存的时候可以操作.
      * @var string[]
      */
     protected static $resources = [];
 
     /**
+     * 'id' => [
+     *    'intentName' => [
+     *       'reply1',
+     *       'reply2',
+     *    ]
+     * ]
      * @var string[][][]
      */
-    protected static $loaded = [];
+    protected static $replies = [];
+
+    /**
+     * 'id' => [
+     *    'intentName' => [
+     *       'example1',
+     *       'example2',
+     *    ]
+     * ]
+     * @var string[][][]
+     */
+    protected static $examples = [];
 
     public static function loadResource(string $index, string $resource) : void
     {
@@ -34,30 +53,66 @@ class Manager
         }
 
         $content = file_get_contents($resource);
-        $data = json_decode($content, true);
+        try {
+            $data = Yaml::parse($content);
+
+        } catch (\Exception $e) {
+            throw new ConfigureException(
+                __METHOD__
+                . "parse yaml file $resource failed",
+                $e
+            );
+        }
 
         if (empty($data)) {
             throw new ConfigureException(
                 __METHOD__
-                . ' resource json file ' . $resource
-                . ' is invalid json'
+                . ' resource yaml file ' . $resource
+                . ' is invalid'
             );
         }
 
-        foreach ($data as $intentName => $replies) {
-            if (!is_string($intentName) || !is_array($replies)) {
+        foreach ($data as $intentName => $option) {
+            if (!is_string($intentName) || !is_array($option)) {
                 throw new  ConfigureException(
                     __METHOD__
                     . ' resource json file ' . $resource
                     . ' is invalid, only intentName => string[] accept'
                 );
             }
+
+            $examples = $option['examples'] ?? [];
+            $replies = $option['replies'] ?? [];
+
+            static::setIntentExamples($index, $intentName, $examples);
             static::setIntentReplies($index, $intentName, $replies);
         }
 
         static::$resources[$index] = $resource;
+
+        static::saveResource($index);
     }
 
+    /**
+     * @param string $index
+     * @param string $intentName
+     * @param string[] $examples
+     */
+    public static function setIntentExamples(
+        string $index,
+        string $intentName,
+        array $examples
+    ) : void
+    {
+        static::$examples[$index][$intentName] = [];
+        foreach ($examples as $text) {
+            static::$replies[$index][$intentName][] = (string) $text;
+        }
+    }
+
+    /**
+     * @param string $index
+     */
     public static function saveResource(string $index) : void
     {
         if (!isset(static::$resources[$index])) {
@@ -69,12 +124,26 @@ class Manager
         }
         
         $path = static::$resources[$index];
-        $data = static::$loaded[$index];
+        $data = [];
 
-        file_put_contents($path, json_encode(
-            $data,
-            JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-        ));
+        foreach (static::$replies as $id => $intentReplies) {
+            foreach ($intentReplies as $intentName => $replies) {
+                if (!empty($replies)) {
+                    $data[$intentName]['replies'] = array_values($replies);
+                }
+            }
+        }
+
+        foreach (static::$examples as $id => $intentExamples) {
+            foreach ($intentExamples as $intentName => $examples) {
+                if (!empty($examples)) {
+                    $data[$intentName]['examples'] = array_values($examples);
+                }
+            }
+        }
+
+        $content = Yaml::dump($data, 4);
+        file_put_contents($path, $content);
     }
 
     /**
@@ -84,9 +153,9 @@ class Manager
      */
     public static function setIntentReplies(string $index, string $intentName, array $replies)
     {
-        static::$loaded[$index][$intentName] = [];
+        static::$replies[$index][$intentName] = [];
         foreach ($replies as $text) {
-            static::$loaded[$index][$intentName][] = (string) $text;
+            static::$replies[$index][$intentName][] = (string) $text;
         }
     }
 
@@ -96,7 +165,7 @@ class Manager
      */
     public static function hasPreload(string $index) : bool
     {
-        return isset(static::$loaded[$index]);
+        return isset(static::$resources[$index]);
     }
 
     public static function listResources() : array
@@ -135,7 +204,7 @@ class Manager
     public static function listResourceIntents(string $index) : array
     {
         if (static::hasPreload($index)) {
-            return array_keys(static::$loaded[$index]);
+            return array_keys(static::$replies[$index]);
         }
 
         return [];
@@ -144,9 +213,9 @@ class Manager
     public static function matchReplies(string $index, string $intentName) :  array
     {
         if (!static::hasPreload($index)) {
-            return null;
+            return [];
         }
 
-        return static::$loaded[$index][$intentName] ?? [];
+        return static::$replies[$index][$intentName] ?? [];
     }
 }

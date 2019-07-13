@@ -1,0 +1,12 @@
+attitudes.greet :
+  examples:
+    - 'aaa',
+  replies:
+    - "您好~!",
+    - "hello!",
+    - "hi!"
+attitudes.thanks :
+  replies:
+    - "客气了",
+    - "不用谢",
+    - "很高兴能有所帮助"

@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\App\Components\SimpleChat\Callables;
 
 use Commune\Chatbot\App\Components\SimpleChat\Manager;
+use Commune\Chatbot\App\Components\SimpleChatComponent;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Callables\Action;
 use Commune\Chatbot\OOHost\Context\Context;
@@ -16,17 +17,13 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 class SimpleChatAction implements Action
 {
     /**
-     * @var int|string
+     * @var string|null
      */
-    protected $resourceIndex;
+    protected $id;
 
-    /**
-     * SimpleChatAction constructor.
-     * @param int|string $resourceIndex
-     */
-    public function __construct($resourceIndex)
+    public function __construct(string $id = null)
     {
-        $this->resourceIndex = $resourceIndex;
+        $this->id = $id;
     }
 
 
@@ -36,7 +33,20 @@ class SimpleChatAction implements Action
         Message $message
     ): ? Navigator
     {
-        $intent = $dialog->session
+
+        /**
+         * @var SimpleChatComponent $config
+         */
+        $config = $dialog->app->make(SimpleChatComponent::class);
+
+        $id = $this->id ?? $config->default;
+
+        // 检查是否匹配到了意图.
+        $intentMessage = $dialog->session->getMatchedIntent();
+        $intent = isset($intentMessage) ? $intentMessage->getName() : null;
+
+        // 广义匹配
+        $intent = $intent ?? $dialog->session
             ->incomingMessage
             ->getMostPossibleIntent();
 
@@ -44,7 +54,7 @@ class SimpleChatAction implements Action
             return null;
         }
 
-        $reply = Manager::match($this->resourceIndex, $intent);
+        $reply = Manager::match($id, $intent);
 
         if (isset($reply)) {
             static::reply($self, $dialog, $reply);

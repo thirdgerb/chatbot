@@ -9,7 +9,6 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Context\Intent\Registrar;
 use Commune\Chatbot\OOHost\NLU\MatchedIntent;
-use Commune\Chatbot\OOHost\NLU\MissIntentMessage;
 use Commune\Chatbot\OOHost\NLU\NLUSessionPipe;
 use Commune\Chatbot\OOHost\Session\Session;
 use GuzzleHttp\Client;

@@ -21,6 +21,7 @@ use Commune\Support\Option;
  * @property-read string[] $sessionPipes  会话中的管道.
  * @property-read string[] $navigatorIntents
  * @property-read MemoryOption[] $memories
+ * @property-read callable|string|null $hearingFallback
  */
 class OOHostConfig extends Option
 {
@@ -48,6 +49,7 @@ class OOHostConfig extends Option
             'navigatorIntents' => [
                 //intentName
             ],
+            'hearingFallback' => null,
             'memories' => [
                  MemoryOption::stub()
             ]

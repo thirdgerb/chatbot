@@ -21,7 +21,13 @@ return [
         ],
         \Commune\Chatbot\App\Components\PredefinedIntComponent::class,
         \Commune\Chatbot\App\Components\SimpleChatComponent::class => [
-            'resourcePath' => __DIR__ .'/chats/'
+            'default' => 'demo',
+            'resources' => [
+                [
+                    'id' => 'demo',
+                    'resource' => __DIR__ .'/chats/example.yml'
+                ]
+            ]
         ],
     ],
     'reactorProviders' => [
@@ -84,6 +90,7 @@ return [
             \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
             // \Commune\Chatbot\App\Components\Rasa\RasaNLUPipe::class,
         ],
+        'hearingFallback' => \Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction::class,
     ] + \Commune\Chatbot\Config\Host\OOHostConfig::stub(),
 
 ];
