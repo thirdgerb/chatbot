@@ -28,16 +28,16 @@ class TellWeatherInt extends ActionIntent
 
     // 给NLU用的例句.
     const EXAMPLES = [
-        '[今天](date)天气怎么样?',
+        '[今天](date)天气怎么样',
         '我想知道[明天](date)的天气如何',
         '[北京](city)[后天](date)什么天气啊',
         '气温如何?',
-        '[上海](city)[大后天](date)下雨吗?',
+        '[上海](city)[大后天](date)下雨吗',
         '您知道[广州]的天气吗',
         '请问[明天](date)下雨吗',
-        '[后天](date)多少度啊?',
-        '[明天](date)是晴天吗?',
-        '[长沙](date)下雨了吗?',
+        '[后天](date)多少度啊',
+        '[明天](date)是晴天吗',
+        '[长沙](date)下雨了吗',
     ];
 
     protected $cities = [
@@ -75,7 +75,7 @@ class TellWeatherInt extends ActionIntent
                 $time = $this->fetchTime($date);
                 if (!isset($time)) {
                     $dialog->say()
-                        ->warning("sorry, 日期 $date 不知道是哪天...请再告诉我一次?");
+                        ->warning("sorry, 没懂究竟是哪天...请再告诉我一次?");
                     unset($this->date);
                     return $dialog->goStagePipes(['date', 'start']);
                 }

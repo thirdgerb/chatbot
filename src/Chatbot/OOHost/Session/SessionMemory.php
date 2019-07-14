@@ -7,6 +7,9 @@ namespace Commune\Chatbot\OOHost\Session;
 use Commune\Chatbot\OOHost\Context\Memory\Memory;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
 
+/**
+ * 用 array 的方式来调用. 例如 $this->session->memory['sandbox']
+ */
 class SessionMemory implements \ArrayAccess
 {
     /**

@@ -21,7 +21,7 @@ class GreetInt extends MessageIntent
         'good afternoon',
         'good night',
         '您好',
-        '您好',
+        '你好啊',
         '嗨',
         '早上好',
         '中午好',

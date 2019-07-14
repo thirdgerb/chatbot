@@ -16,6 +16,9 @@ return [
         'farewell' => '再见!',
         'missMatched' => '没有明白什么意思',
         'continue' => '输入 "." 继续',
+        'script' => [
+            'continue' => '输入 "." 继续, 输入".." 跳到最后'
+        ]
     ],
 
     'command' => [

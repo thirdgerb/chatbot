@@ -15,7 +15,7 @@ use Commune\Chatbot\OOHost\Context\Hearing;
 class ContinueOrChat implements HearingComponent
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $resourceIndex;
 
@@ -26,10 +26,10 @@ class ContinueOrChat implements HearingComponent
 
     /**
      * ContinueOrChat constructor.
-     * @param string $resourceIndex
      * @param string $next
+     * @param string $resourceIndex
      */
-    public function __construct(string $resourceIndex, string $next = null)
+    public function __construct(string $next = null, string $resourceIndex = null )
     {
         $this->resourceIndex = $resourceIndex;
         $this->next = $next;

@@ -5,6 +5,9 @@ namespace Commune\Chatbot\App\Components\SimpleChat;
 
 
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
+use Commune\Chatbot\OOHost\NLU\NLUExample;
 use Symfony\Component\Yaml\Yaml;
 
 class Manager
@@ -89,8 +92,6 @@ class Manager
         }
 
         static::$resources[$index] = $resource;
-
-        static::saveResource($index);
     }
 
     /**
@@ -104,9 +105,24 @@ class Manager
         array $examples
     ) : void
     {
+        if (empty($examples)) {
+            return;
+        }
+
         static::$examples[$index][$intentName] = [];
+
         foreach ($examples as $text) {
-            static::$replies[$index][$intentName][] = (string) $text;
+            static::$examples[$index][$intentName][] = (string) $text;
+        }
+
+        $repo = IntentRegistrar::getIns();
+
+        if (!$repo->has($intentName)) {
+            $repo->register(new PlaceHolderIntentDef($intentName));
+        }
+
+        foreach ($examples as $example) {
+            $repo->registerNLUExample($intentName, new NLUExample($example));
         }
     }
 
@@ -126,7 +142,9 @@ class Manager
         $path = static::$resources[$index];
         $data = [];
 
-        foreach (static::$replies as $id => $intentReplies) {
+        $replies = static::$replies;
+        ksort($replies);
+        foreach ($replies as $id => $intentReplies) {
             foreach ($intentReplies as $intentName => $replies) {
                 if (!empty($replies)) {
                     $data[$intentName]['replies'] = array_values($replies);
@@ -142,7 +160,8 @@ class Manager
             }
         }
 
-        $content = Yaml::dump($data, 4);
+
+        $content = Yaml::dump($data, 4, 2);
         file_put_contents($path, $content);
     }
 
@@ -153,6 +172,9 @@ class Manager
      */
     public static function setIntentReplies(string $index, string $intentName, array $replies)
     {
+        if (empty($replies)) {
+            return;
+        }
         static::$replies[$index][$intentName] = [];
         foreach ($replies as $text) {
             static::$replies[$index][$intentName][] = (string) $text;

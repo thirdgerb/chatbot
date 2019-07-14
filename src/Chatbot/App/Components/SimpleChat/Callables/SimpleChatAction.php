@@ -21,6 +21,11 @@ class SimpleChatAction implements Action
      */
     protected $id;
 
+    /**
+     * @var boolean
+     */
+    protected $ran = false;
+
     public function __construct(string $id = null)
     {
         $this->id = $id;
@@ -33,6 +38,11 @@ class SimpleChatAction implements Action
         Message $message
     ): ? Navigator
     {
+        if ($this->ran) {
+            return null;
+        }
+        // 一个hearing 只运行一次
+        $this->ran = true;
 
         /**
          * @var SimpleChatComponent $config
@@ -42,14 +52,15 @@ class SimpleChatAction implements Action
         $id = $this->id ?? $config->default;
 
         // 检查是否匹配到了意图.
-        $intentMessage = $dialog->session->getMatchedIntent();
+        $session = $dialog->session;
+        $intentMessage = $session->getMatchedIntent()
+            ?? $session
+                ->intentRepo
+                ->matchHighlyPossibleIntent($session);
+
         $intent = isset($intentMessage) ? $intentMessage->getName() : null;
 
         // 广义匹配
-        $intent = $intent ?? $dialog->session
-            ->incomingMessage
-            ->getMostPossibleIntent();
-
         if (empty($intent)) {
             return null;
         }
@@ -58,17 +69,22 @@ class SimpleChatAction implements Action
 
         if (isset($reply)) {
             static::reply($self, $dialog, $reply);
-            return $dialog->wait();
+            return $this->navigate($dialog);
         }
 
         return null;
+    }
+
+    protected function navigate(Dialog $dialog) : Navigator
+    {
+        return $dialog->wait();
     }
 
     public static function reply(Context $self, Dialog $dialog, string $reply)
     {
         $dialog->say()
             ->withContext($self)
-            ->info($reply);
+            ->info(trim($reply));
     }
 
 

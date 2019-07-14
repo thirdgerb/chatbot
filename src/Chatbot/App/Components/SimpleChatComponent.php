@@ -3,6 +3,7 @@
 
 namespace Commune\Chatbot\App\Components;
 
+use Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction;
 use Commune\Chatbot\App\Components\SimpleChat\LoadSimpleChat;
 use Commune\Chatbot\App\Components\SimpleChat\SimpleChatOption;
 use Commune\Chatbot\Framework\Component\ComponentOption;
@@ -47,6 +48,10 @@ class SimpleChatComponent extends ComponentOption
 
         // 依赖
         $this->dependComponent(NLUExamplesComponent::class);
+
+        // todo 不规范的做法.
+        $this->app->getConversationContainer()
+            ->singleton(SimpleChatAction::class);
     }
 
     public static function stub(): array

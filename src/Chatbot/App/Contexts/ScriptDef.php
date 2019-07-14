@@ -4,7 +4,6 @@
 namespace Commune\Chatbot\App\Contexts;
 
 use Commune\Chatbot\App\Callables\Actions\ToNext;
-use Commune\Chatbot\App\Traits\AskContinueTrait;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Context;
@@ -28,7 +27,7 @@ abstract class ScriptDef extends OOContext
 {
     const DESCRIPTION = '需要为脚本拟个介绍';
 
-    protected $_want_continue = 'dialog.continue';
+    protected $_want_continue = 'dialog.script.continue';
 
     /**
      * @var Speech
@@ -159,6 +158,7 @@ abstract class ScriptDef extends OOContext
         return $dialog->hear($message)
             // 默认任何输入为空才会返回.
             // 可以在 hearing 里定义不同的操作.
+            ->is('..', new ToNext('final'))
             ->isEmpty(new ToNext())
             ->end();
     }

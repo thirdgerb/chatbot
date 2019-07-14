@@ -261,13 +261,6 @@ interface Hearing
      */
     public function heard(callable $action) : Hearing;
 
-    /**
-     * 注册一个fallback. 在 end 的时候会执行.
-     * @param callable $fallback
-     * @return Hearing
-     */
-    public function fallback(callable $fallback) : Hearing;
-
 
     /**
      * 如果不主动拦截, 则event 消息都会被忽视.
@@ -283,6 +276,31 @@ interface Hearing
      * @return Hearing
      */
     public function isEventIn(array $eventName, callable $action = null) : Hearing;
+
+
+    /**
+     * 任何时候都会执行.
+     * 能够因此跳过中间环节已有的navigator, 但有可能引起歧义.
+     *
+     * @param callable $callable
+     * @return Hearing
+     */
+    public function always(callable $callable) : Hearing;
+
+
+    /**
+     * 注册一个fallback. 在 end 的时候会执行.
+     * @param callable $fallback
+     * @return Hearing
+     */
+    public function fallback(callable $fallback) : Hearing;
+
+
+    /**
+     * 提前运行系统的 fallback, 通常是闲聊.
+     * @return Hearing
+     */
+    public function defaultFallback() : Hearing;
 
     /**
      * 作为链式调用的结尾.

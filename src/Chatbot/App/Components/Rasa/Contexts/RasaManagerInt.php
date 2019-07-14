@@ -24,13 +24,6 @@ class RasaManagerInt extends AbsCmdIntent
         Definition::TAG_MANAGER
     ];
 
-    const EXAMPLES = [
-        '测试意图命中',
-        '测试命中的意图',
-        '测试命中了什么意图',
-        '测试 matched intent',
-        '查看命中的意图',
-    ];
 
     public static function getMatcherOption(): IntentMatcherOption
     {

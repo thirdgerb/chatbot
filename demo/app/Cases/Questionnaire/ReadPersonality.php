@@ -105,11 +105,10 @@ class ReadPersonality extends Questionnaire
     {
 
         return $stage->buildTalk()
-            ->info('您崇尚浪漫的爱情吗？当爱情与婚姻发生冲突的时候，您会怎样选择？爱情与事业中的您是怎样的？一起来做做这套测试题吧，看看您的潜意识中是怎样看待爱情、婚姻与事业的。15秒就可以测出您的性格')
+            ->info('您崇尚浪漫的爱情吗？当爱情与婚姻发生冲突的时候，您会怎样选择？爱情与事业中的您是怎样的？一起来做做这套测试题吧，看看您的潜意识中是怎样看待爱情、婚姻与事业的。15秒就可以测出您的性格.')
             ->action(function(Dialog $dialog) {
                 return $this->next($dialog, 0 );
             });
-
 
     }
 

@@ -12,6 +12,7 @@ use Commune\Chatbot\Framework\Messages\Verbose;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\Monologue;
 use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
+use Illuminate\Support\Arr;
 
 class MonologueImpl implements Monologue
 {
@@ -26,6 +27,11 @@ class MonologueImpl implements Monologue
     protected $request;
 
     /**
+     * @var array
+     */
+    protected $defaultSlots;
+
+    /**
      * Monologue constructor.
      * @param Conversation $conversation
      * @param MessageRequest $request
@@ -37,6 +43,7 @@ class MonologueImpl implements Monologue
     {
         $this->conversation = $conversation;
         $this->request = $request;
+        $this->defaultSlots = $this->prepareEnvironment();
     }
 
     public function error(string $message, array $slots = array()) : void
@@ -66,7 +73,18 @@ class MonologueImpl implements Monologue
 
     public function say( string $message, array $slots = []): void
     {
-        $this->info($message, $slots);
+        $this->info($message, $slots );
+    }
+
+    protected function prepareEnvironment() : array
+    {
+        $env = $this->conversation->getChatbotConfig()->slots;
+        $slots = Arr::dot($env);
+
+        // 系统预定义常量.
+        $slots['user.name'] = $this->conversation->getUser()->getName();
+
+        return $slots;
     }
 
     public function trans(string $id, array $slots = []): string
@@ -83,7 +101,7 @@ class MonologueImpl implements Monologue
     {
         $this->conversation->reply(
             (new Verbose($message))
-                ->withSlots($slots)
+                ->withSlots($slots + $this->defaultSlots)
                 ->withLevel($level)
         );
     }

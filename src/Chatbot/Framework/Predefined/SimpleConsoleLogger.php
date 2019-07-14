@@ -10,6 +10,7 @@ namespace Commune\Chatbot\Framework\Predefined;
 
 use Commune\Chatbot\Contracts\ConsoleLogger;
 use Psr\Log\LoggerTrait;
+use Psr\Log\LogLevel;
 
 class SimpleConsoleLogger implements ConsoleLogger
 {
@@ -31,6 +32,10 @@ class SimpleConsoleLogger implements ConsoleLogger
 
     public function log($level, $message, array $context = array())
     {
+        if (!$this->debug && $level == LogLevel::DEBUG) {
+            return;
+        }
+
         $start = "[$level] ";
         // 打印日志message
         print_r( $start . $this->wrapMessage($level, $message) . PHP_EOL);

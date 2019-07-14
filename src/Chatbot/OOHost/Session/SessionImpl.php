@@ -484,6 +484,8 @@ class SessionImpl implements Session, HasIdGenerator
 
     }
 
+
+
     public function __destruct()
     {
         self::removeRunningTrace($this->traceId);

@@ -5,7 +5,6 @@ namespace Commune\Chatbot\App\Components\SimpleChat;
 
 
 use Commune\Chatbot\Blueprint\ServiceProvider;
-use Symfony\Component\Finder\Finder;
 
 /**
  * service provider

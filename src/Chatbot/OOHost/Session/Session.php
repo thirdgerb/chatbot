@@ -51,7 +51,6 @@ interface Session extends RunningSpy
 
     public function getMatchedIntent() : ? IntentMessage;
 
-
     /*----- 创建一个director -----*/
 
     public function newSession(string $belongsTo, \Closure $rootMaker) : Session;

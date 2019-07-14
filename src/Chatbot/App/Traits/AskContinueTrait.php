@@ -5,6 +5,7 @@ namespace Commune\Chatbot\App\Traits;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
+use Commune\Chatbot\App\Callables\Actions\ToNext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;

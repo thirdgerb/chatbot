@@ -38,6 +38,8 @@ use Commune\Support\Option;
  * @property-read DefaultMessagesConfig $defaultMessages
  *
  * @property-read OOHostConfig $host
+ *
+ * @property-read array $slots 环境变量. 会flatten ([a][b][c] 变成 a.b.c) 然后放到 slots 里面.
  */
 class ChatbotConfig extends Option
 {
@@ -55,6 +57,9 @@ class ChatbotConfig extends Option
     {
         return [
             'debug' => true,
+
+            // 预定义的 slots
+            'slots' => [],
 
             'configBindings' => [],
 

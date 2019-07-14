@@ -4,13 +4,16 @@
 namespace Commune\Chatbot\App\Components\SimpleFileChat;
 
 
+use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
+use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Intent\AbsIntent;
+use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
@@ -74,24 +77,31 @@ class SimpleFileInt extends AbsIntent
             return $stage->dialog->fulfill();
         }
 
-        return $stage->component(
-            (new Menu(
-                $option->groupOption->question,
-                $suggestions,
-                function(
-                    string $context,
-                    Dialog $dialog,
-                    int $index
-                ) {
-                    return $dialog
-                        ->redirect
-                        ->replaceTo($context, Redirect::NODE_LEVEL);
-                },
-                // fallback 输入任何值都返回.
-                [$this, 'goFulfill']
-            ))
-            ->defaultChoice(null)
-        );
+        return $stage
+            // 这种闲聊性质的中间意图不需要停留, 完成就回调.
+            ->onFallback([Redirector::class, 'fulfill'])
+            ->component(
+                (new Menu(
+                    $option->groupOption->question,
+                    $suggestions,
+                    function(
+                        string $context,
+                        Dialog $dialog,
+                        int $index
+                    ) {
+                        return $dialog
+                            ->redirect
+                            ->replaceTo($context, Redirect::NODE_LEVEL);
+                    }
+                ))
+                ->defaultChoice(null)
+                ->hearing(function(Hearing $hearing) {
+                    // 监听任何意图
+                    $hearing
+                        ->isAnyIntent()
+                        ->defaultFallback();
+                })
+            );
     }
 
     public function goFulfill(Dialog $dialog) : Navigator
@@ -138,7 +148,7 @@ class SimpleFileInt extends AbsIntent
                 if (Str::startsWith($name, $prefix)) {
                     $name = str_replace("$prefix.", '', $name);
 
-                    if ($name != $last && false === strpos('.', $name)) {
+                    if ($name != $last && false === strpos( $name, '.')) {
                         $suggestions[] = $name;
                     }
                 }

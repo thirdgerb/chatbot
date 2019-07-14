@@ -204,7 +204,8 @@ class HearingHandler implements Hearing
     {
         if (isset($this->navigator)) return $this;
 
-        if ($this->message->getTrimmedText() == $text) {
+        // 避免大小写问题.
+        if (strtolower($this->message->getTrimmedText()) == strtolower($text)) {
             $this->heard = true;
             return $this->callInterceptor($interceptor);
         }
@@ -661,6 +662,49 @@ class HearingHandler implements Hearing
         return $this;
     }
 
+    public function always(callable $callable): Hearing
+    {
+        // 原有的navigator 也会被reset
+        $this->setNavigator($this->dialog->app->callContextInterceptor(
+            $this->self,
+            $callable,
+            $message ?? $this->message
+        ));
+
+        return $this;
+    }
+
+    protected $calledDefault = false;
+
+    public function defaultFallback(): Hearing
+    {
+        if (isset($this->navigator)) return $this;
+
+        if ($this->calledDefault) {
+            return $this;
+        }
+        $this->calledDefault = true;
+
+        // 如果设置了默认的闲聊, 会使用闲聊的逻辑.
+        $fallback = $this->dialog->session->hostConfig->hearingFallback;
+        if (isset($fallback)) {
+
+            // 允许是类名. 不过实例应该是 callable
+            if (
+                is_string($fallback)
+                && !is_callable($fallback)
+                && class_exists($fallback)
+            ) {
+                $fallback = $this->dialog->app->make($fallback);
+            }
+
+            // 没有navigator 的话就往后走
+            $this->callInterceptor($fallback);
+        }
+
+        return $this;
+    }
+
 
     public function end(callable $fallback = null): Navigator
     {
@@ -684,22 +728,7 @@ class HearingHandler implements Hearing
             }
         }
 
-        // 如果设置了默认的闲聊, 会使用闲聊的逻辑.
-        $fallback = $this->dialog->session->hostConfig->hearingFallback;
-        if (isset($fallback)) {
-
-            // 允许是类名. 不过实例应该是 callable
-            if (
-                is_string($fallback)
-                && !is_callable($fallback)
-                && class_exists($fallback)
-            ) {
-                $fallback = $this->dialog->app->make($fallback);
-            }
-
-            // 没有navigator 的话就往后走
-            $this->callInterceptor($fallback);
-        }
+        $this->defaultFallback();
 
         return $this->navigator ?? $this->dialog->missMatch();
     }
