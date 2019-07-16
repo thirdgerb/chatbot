@@ -15,17 +15,7 @@ class GreetInt extends MessageIntent
 
     // 例句都可以用 nlu example manager 进行修改
     const EXAMPLES = [
-        'hello',
-        'hi',
-        'good morning',
-        'good afternoon',
-        'good night',
-        '您好',
-        '你好啊',
-        '嗨',
-        '早上好',
-        '中午好',
-        '晚上好',
+        '你好',
     ];
 
     public static function getContextName(): string

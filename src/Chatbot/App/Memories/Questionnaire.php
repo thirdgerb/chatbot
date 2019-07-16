@@ -62,7 +62,7 @@ abstract class Questionnaire extends MemorialTask
 
     abstract protected function defaultFallback() : ? callable ;
 
-    abstract protected function specialHandler(int $questionIndex, $choice) : ? Navigator;
+    abstract protected function specialHandler(Dialog $dialog, int $questionIndex, $choice) : ? Navigator;
 
     /**
      * 拿到结果之后的处理.
@@ -101,7 +101,7 @@ abstract class Questionnaire extends MemorialTask
                 $this->answers = $answers;
 
                 // 可以在这里做一些特殊的处理.
-                $navigator = $this->specialHandler($this->nowQuestion, $answer);
+                $navigator = $this->specialHandler($dialog, $this->nowQuestion, $answer);
                 // 否则按题目顺序前进.
                 return $navigator ?? $this->next($dialog);
             })
@@ -141,6 +141,11 @@ abstract class Questionnaire extends MemorialTask
         return $this->_total ?? $this->_total = count($this->getQuestionDefinition());
     }
 
+    /**
+     * 对选项进行统一封装
+     * @param array $answers
+     * @return array
+     */
     protected function wrapAnswers(array $answers) : array
     {
         return $answers;

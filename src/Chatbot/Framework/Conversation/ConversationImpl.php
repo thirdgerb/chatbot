@@ -62,9 +62,14 @@ class ConversationImpl implements Blueprint
     protected $replies = [];
 
     /**
-     * @var OutgoingMessageImpl[]
+     * @var ConversationMessage[]
      */
     protected $replyMessages = [];
+
+    /**
+     * @var ConversationMessage[]
+     */
+    protected $bufferMessages = [];
 
     /**
      * @var bool
@@ -215,7 +220,7 @@ class ConversationImpl implements Blueprint
             $message
         );
 
-        $this->saveConversationMessage($request, $replyMessage, $immediately);
+        $this->saveConversationReply($request, $replyMessage, $immediately);
     }
 
     public function deliver(string $userId, Message $message, bool $immediately = false): void
@@ -241,7 +246,7 @@ class ConversationImpl implements Blueprint
             $this->getTraceId()
         );
 
-        $this->saveConversationMessage($request, $toChat,  $immediately);
+        $this->saveConversationReply($request, $toChat,  $immediately);
     }
 
 
@@ -251,7 +256,7 @@ class ConversationImpl implements Blueprint
     }
 
 
-    public function saveConversationMessage(
+    public function saveConversationReply(
         MessageRequest $request,
         ConversationMessage $message,
         bool  $immediatelyBuffer
@@ -262,14 +267,23 @@ class ConversationImpl implements Blueprint
             $request->bufferConversationMessage($message);
         } else {
             // 这个和buffer 不一样, 用于别的处理, 比如存储消息.
-            $this->replyMessages[] = $message;
+            $this->bufferMessages[] = $message;
         }
+
+        $this->replyMessages[] = $message;
     }
 
-    public function flushConversationMessages(): void
+    public function flushConversationReplies(): void
     {
         $this->replyMessages = [];
+        $this->bufferMessages = [];
     }
+
+    public function getConversationReplies(): array
+    {
+        return $this->replyMessages;
+    }
+
 
     /*------ input ------*/
 
@@ -320,11 +334,11 @@ class ConversationImpl implements Blueprint
             // 发送消息.
             $request = $this->getRequest();
 
-            foreach ($this->replyMessages as $message) {
+            foreach ($this->bufferMessages as $message) {
                 $request->bufferConversationMessage($message);
             }
 
-            $this->replyMessages = [];
+            $this->flushConversationReplies();
 
             // 发送所有消息.
             $request->flushChatMessages();

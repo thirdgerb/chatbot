@@ -49,10 +49,20 @@ class NavigationPipe implements SessionPipe
 
     protected function runIntent(IntentMessage $intent, Session $session) : Session
     {
-        $session->hear(
-            $session->incomingMessage->message,
-            $intent->navigate($session->dialog)
-        );
+
+        $navigator = $intent->navigate($session->dialog);
+
+        // 导航类
+        if (isset($navigator)) {
+            $session->hear(
+                $session->incomingMessage->message,
+                $navigator
+            );
+            return $session;
+        }
+
+        // 非导航类, 当成了预匹配
+        $session->setMatchedIntent($intent);
         return $session;
     }
 

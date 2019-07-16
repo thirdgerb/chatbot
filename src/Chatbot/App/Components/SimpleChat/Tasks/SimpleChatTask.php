@@ -49,10 +49,8 @@ class SimpleChatTask extends TaskDef
     public function __hearing(Hearing $hearing) : void
     {
         $hearing
-            ->is('.exit', function(Dialog $dialog){
+            ->is('b', function(Dialog $dialog){
                 return  $dialog->fulfill();
-            })->is('.restart', function(Dialog $dialog) {
-                return $dialog->restart();
             });
     }
 
@@ -67,6 +65,8 @@ class SimpleChatTask extends TaskDef
 
             $talk = $dialog->say();
             $resources = Manager::listResources();
+            $indexes = array_keys($resources);
+            $first = $indexes[0] ?? '';
 
             $desc = [];
             foreach ($resources as $index => $resource) {
@@ -74,12 +74,12 @@ class SimpleChatTask extends TaskDef
             }
 
             $talk->info(
-                "进入简单配置管理, 输入 .exit 随时退出, .restart 重新开始.
+                "进入简单配置管理, 输入 'b' 随时退出.
 已加载的配置如下 ( 分组名: 文件路径 ):\n\n"
                 . implode("\n", $desc)
             );
 
-            $talk->askVerbose('请输入一个分组名, 进行管理');
+            $talk->askVerbose("请输入一个分组名(例如 $first ), 进行管理");
             return $dialog->wait();
 
         }, function(Dialog $dialog, Message $message){
@@ -91,7 +91,8 @@ class SimpleChatTask extends TaskDef
 
                     if (! Manager::hasPreload($index)) {
                         $dialog->say()
-                            ->error("分组 $index 不存在");
+                            ->error("分组 $index 不存在")
+                            ->info("请输入正确的分组, 输入'b'退出");
 
                         return $dialog->wait();
                     }
@@ -99,7 +100,13 @@ class SimpleChatTask extends TaskDef
                     $this->editIndex = $index;
                     return $dialog->goStage('edit');
                 })
-                ->end();
+                ->end(function(Dialog $dialog){
+                    $dialog
+                        ->say()
+                        ->warning('请输入正确的分组名. 输入"b"退出');
+
+                    return $dialog->repeat();
+                });
         });
     }
 

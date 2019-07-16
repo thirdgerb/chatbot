@@ -4,11 +4,14 @@
 namespace Commune\Chatbot\OOHost\Emotion;
 
 
-use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\OOHost\Session\Session;
 
 interface Feeling
 {
-    public function feel(Message $message, string $emotionName) : ? bool;
+
+    public function setIntentMap(string $emotionName, array $intentNames) : void;
+
+    public function feel(Session $session, string $emotionName) : ? bool;
 
     /**
      * @param string $emotionName

@@ -16,16 +16,7 @@ class DenyInt extends MessageIntent implements Negative
 
     // 例句都可以用 nlu example manager 进行修改
     const EXAMPLES = [
-        'no',
-        'nope',
-        'negative',
-        'not ok',
-        '否认',
-        '否定',
         '不是',
-        '不对',
-        '错了',
-        '并非如此',
     ];
 
     public static function getContextName(): string

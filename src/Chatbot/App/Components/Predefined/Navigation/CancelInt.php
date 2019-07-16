@@ -16,14 +16,6 @@ class CancelInt extends NavigateIntent
     const DESCRIPTION = '退出当前语境';
 
     const EXAMPLES = [
-        'cancel',
-        '退出这个话题',
-        '取消吧',
-        '结束这个议题',
-        '不用继续了',
-        '可以取消了',
-        '这个事情就这样吧',
-        '别继续了',
     ];
 
 

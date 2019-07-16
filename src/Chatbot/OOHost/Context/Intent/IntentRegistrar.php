@@ -229,10 +229,8 @@ class IntentRegistrar extends ContextRegistrar implements Registrar
         $name = $def->getName();
         // 检查 matched
         $matched = $session->getMatchedIntent();
-        if (isset($matched)) {
-            return $matched->getName() === $name
-                ? $matched
-                : null;
+        if (isset($matched) && $matched->getName() === $name) {
+            return $matched;
         }
 
         // 检查incoming message

@@ -17,13 +17,6 @@ class RepeatInt extends NavigateIntent
     const DESCRIPTION = '重复当前语境.';
 
     const EXAMPLES = [
-        'repeat',
-        '再说一遍',
-        '刚才说什么',
-        '现在说的是啥',
-        '您问什么',
-        '您要干什么来着',
-        '您刚才要我干嘛',
     ];
 
 

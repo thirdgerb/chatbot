@@ -52,7 +52,9 @@ class RasaManagerInt extends AbsCmdIntent
         return $stage->buildTalk()
             ->info(
                 "进入rasa意图管理. 
-请输入语句, 会给出命中的意图. 
+                
+请输入任意语句, 会给出命中的意图. 
+
 输入'b'退出语境
 输入'w'会保存rasa的model配置"
             )

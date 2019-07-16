@@ -107,16 +107,22 @@ interface Conversation extends ConversationContainer, RunningSpy
      * @param ConversationMessage $message
      * @param bool $immediatelyBuffer  是否立刻交给 request 去 buffer, 如果这么做就反悔不了了.
      */
-    public function saveConversationMessage(
+    public function saveConversationReply(
         MessageRequest $request,
         ConversationMessage $message,
         bool  $immediatelyBuffer
     ) : void;
 
+
+    /**
+     * @return ConversationMessage[]
+     */
+    public function getConversationReplies() : array;
+
     /**
      * 清空所有要发送的消息
      */
-    public function flushConversationMessages() : void;
+    public function flushConversationReplies() : void;
 
 
     /**

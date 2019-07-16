@@ -21,7 +21,7 @@ use Commune\Chatbot\OOHost\Session\Scope;
  */
 class ReadPersonality extends Questionnaire
 {
-    const DESCRIPTION = '15秒读出您的性格';
+    const DESCRIPTION = '问卷:15秒读出您的性格';
 
     const SCOPE_TYPES = [Scope::USER_ID];
 
@@ -65,6 +65,13 @@ class ReadPersonality extends Questionnaire
             return $dialog->goStage('askStart');
 
         });
+    }
+
+    protected function wrapAnswers(array $answers): array
+    {
+        $answers =  parent::wrapAnswers($answers);
+        $answers['0'] = '放弃测试';
+        return $answers;
     }
 
     public function __onRetest(Stage $stage) : Navigator
@@ -208,7 +215,7 @@ class ReadPersonality extends Questionnaire
         'E' => '雷电',
     ],
 '您希望自己的窗口在一座30层大楼的第几层？' => [
-        'A' => '七层2分',
+        'A' => '七层',
         'B' => '一层',
         'C' => '二十三层',
         'D' => '十八层',
@@ -236,6 +243,8 @@ class ReadPersonality extends Questionnaire
         $this->sumScore();
 
         $this->showResult($dialog);
+
+        $dialog->say()->info("退出后, 再次进入可记得结果, 并可重新测试(多轮对话功能点)");
         return null;
     }
 
@@ -395,7 +404,7 @@ class ReadPersonality extends Questionnaire
     public function __hearing(Hearing $hearing) : void
     {
         $hearing->is('quit', function(Dialog $dialog){
-            $dialog->say()->info("好的, 测试退出. 下次可以继续当前的进度");
+            $dialog->say()->info("好的, 测试退出. 下次可以继续当前的进度(基于上下文记忆)");
             return $dialog->cancel();
         });
     }
@@ -410,9 +419,22 @@ class ReadPersonality extends Questionnaire
         };
     }
 
-    protected function specialHandler(int $questionIndex, $choice): ? Navigator
+    protected function specialHandler(Dialog $dialog, int $questionIndex, $choice): ? Navigator
     {
+        if ($choice == '0') {
+            return $dialog->goStage('cancel');
+        }
         return null;
+    }
+
+    public function __onCancel(Stage $stage) : Navigator
+    {
+        return $stage->buildTalk()
+            ->info('将要退出测试, 保留进度, 下次返回继续 (多轮对话功能点)')
+            ->action(function (Dialog $dialog) {
+                return $dialog->cancel();
+            });
+
     }
 
     public function __getDuring() : string

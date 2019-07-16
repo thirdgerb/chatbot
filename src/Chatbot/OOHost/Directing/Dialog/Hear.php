@@ -8,7 +8,6 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\AbsNavigator;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\Emotion\Emotions\Positive;
 use Commune\Chatbot\OOHost\History\History;
 
 class Hear extends AbsNavigator
@@ -29,7 +28,10 @@ class Hear extends AbsNavigator
     {
         // 意图匹配.
         $session = $this->dialog->session;
-        $session->intentRepo->matchHighlyPossibleIntent($session);
+        $intent = $session->intentRepo->matchHighlyPossibleIntent($session);
+        if (isset($intent)) {
+            $session->setMatchedIntent($intent);
+        }
 
         // 问题过滤
         $question = $this->dialog->currentQuestion();

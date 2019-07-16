@@ -16,23 +16,7 @@ class AffirmInt extends MessageIntent implements Positive
 
     // 例句都可以用 nlu example manager 进行修改
     const EXAMPLES = [
-        'yes',
-        'ok',
-        'good',
-        'positive',
-        '确认',
-        '确定',
-        '是的',
-        '可以',
-        '好的',
-        '没错',
-        'good',
-        '好啊',
-        '不错',
-        '也行',
-        '挺好的',
-        '这样就行',
-        '就这样吧',
+        '好'
     ];
 
     public static function getContextName(): string

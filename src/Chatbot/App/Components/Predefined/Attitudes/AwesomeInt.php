@@ -17,15 +17,7 @@ class AwesomeInt extends MessageIntent implements Positive
 
     // 例句都可以用 nlu example manager 进行修改
     const EXAMPLES = [
-        'awesome',
-        'wonderful',
-        'excellent',
-        'very good',
-        '牛逼',
-        '真厉害',
-        '好厉害',
-        '太棒了',
-        '太赞了',
+        '厉害'
     ];
 
     public static function getContextName(): string

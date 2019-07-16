@@ -10,7 +10,11 @@ use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Emotion\Emotions\Negative;
 use Commune\Chatbot\OOHost\Emotion\Emotions\Positive;
+use Commune\Chatbot\OOHost\Session\Session;
 
+/**
+ * todo 情绪目前的实现策略还嫌太过复杂了. 未来考虑更改.
+ */
 class Feels implements Feeling
 {
     /**
@@ -35,8 +39,9 @@ class Feels implements Feeling
         });
     }
 
-    public function feel(Message $message, string $emotionName): bool
+    public function feel(Session $session, string $emotionName): bool
     {
+
         if (!is_a($emotionName, Emotion::class, TRUE)) {
             throw new ConfigureException(
                 "emotion name $emotionName is not subclass of "
@@ -45,19 +50,30 @@ class Feels implements Feeling
         }
 
         // 如果对象是emotion的实例
+        $message = $session->incomingMessage->getMessage();
         if ($message instanceof Emotion) {
-            return $message instanceof $emotionName;
+            return is_a($message, $emotionName, TRUE);
         }
 
-        // 如果是注册过的
-        if (
-            $message instanceof IntentMessage
-            && array_key_exists($emotionName, $this->intentMap)
-        ) {
-            $map = $this->intentMap[$emotionName];
+        $intent = $message instanceof IntentMessage
+            ? $message
+            : $session->getMatchedIntent();
 
-            return in_array(get_class($message), $map)
-                || in_array($message->getName(), $map);
+        // 如果意图存在的话.
+        if (isset($intent)) {
+
+            // 实例
+            if (is_a($intent, $emotionName, TRUE)) {
+                return true;
+            }
+
+            // 注册过map
+            if (array_key_exists($emotionName, $this->intentMap)) {
+
+                $map = $this->intentMap[$emotionName];
+                return in_array(get_class($intent), $map)
+                    || in_array($intent->getName(), $map);
+            }
         }
 
         // 如果注册了经验:
@@ -96,6 +112,11 @@ class Feels implements Feeling
                 . ' experience should only be callable or intent name string'
             );
         }
+    }
+
+    public function setIntentMap(string $emotionName, array $intentNames): void
+    {
+        $this->intentMap[$emotionName] = $intentNames;
     }
 
 

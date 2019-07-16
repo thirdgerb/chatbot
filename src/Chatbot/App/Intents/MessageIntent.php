@@ -5,6 +5,7 @@ namespace Commune\Chatbot\App\Intents;
 
 
 use Commune\Chatbot\OOHost\Context\Depending;
+use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Intent\AbsCmdIntent;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
@@ -44,4 +45,7 @@ abstract class MessageIntent extends AbsCmdIntent
         $depending->onAnnotations();
     }
 
+    public function __exiting(Exiting $listener): void
+    {
+    }
 }

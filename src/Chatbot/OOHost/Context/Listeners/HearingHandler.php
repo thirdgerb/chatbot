@@ -62,19 +62,30 @@ class HearingHandler implements Hearing
      */
     protected $fallback = [];
 
+    /**
+     * heard 方法是否未被调用.
+     * @var bool
+     */
     protected $heardUncaught = true;
+
+    /**
+     * @var callable[]
+     */
+    protected $components;
 
     /**
      * HearingHandler constructor.
      * @param Context $self
      * @param Dialog $dialog
      * @param Message $message
+     * @param callable[] $components
      * @param bool $throw
      */
     public function __construct(
         Context $self,
         Dialog $dialog,
         Message $message,
+        array $components,
         bool $throw = false
     )
     {
@@ -82,6 +93,7 @@ class HearingHandler implements Hearing
         $this->dialog = $dialog;
         $this->message = $message;
         $this->throw = $throw;
+        $this->components = $components;
     }
 
     protected function getParameters() : array
@@ -363,6 +375,8 @@ class HearingHandler implements Hearing
             return $this;
         }
 
+        $session->setMatchedIntent($matched);
+
         return $this->heardIntent(
             $matched,
             $intentAction
@@ -488,7 +502,7 @@ class HearingHandler implements Hearing
          * @var Feeling $feels
          */
         $feels = $this->dialog->app->make(Feeling::class);
-        return $feels->feel($this->message, $emotionName)    ;
+        return $feels->feel($this->dialog->session, $emotionName)    ;
     }
 
     public function isNegative(callable $action = null): Hearing
@@ -708,6 +722,15 @@ class HearingHandler implements Hearing
 
     public function end(callable $fallback = null): Navigator
     {
+        // 补加载 component
+        if (isset($this->navigator)) return $this->navigator;
+
+        if (!empty($this->components)) {
+            foreach ($this->components as $component) {
+                $this->component($component);
+            }
+        }
+
         if (isset($this->navigator)) return $this->navigator;
 
         // 如果是消息的话.

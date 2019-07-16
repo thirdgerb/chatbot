@@ -270,16 +270,20 @@ class DialogImpl implements Dialog, Redirect, App
 
     public function hear(Message $message): Hearing
     {
-        $hearing = new HearingHandler(
-            $context =$this->history->getCurrentContext(),
-            $this,
-            $message
-        );
-
+        $context =$this->history->getCurrentContext();
+        $components = [];
         $method = Context::HEARING_MIDDLEWARE_METHOD;
         if (method_exists($context, $method)) {
-            $context->{$method}($hearing);
+            $components[] = [$context, $method];
         }
+
+        $hearing = new HearingHandler(
+            $context,
+            $this,
+            $message,
+            $components
+        );
+
 
         return $hearing;
     }
