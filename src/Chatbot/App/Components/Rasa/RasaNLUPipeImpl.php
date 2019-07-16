@@ -40,7 +40,13 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
 
     public function messageCouldHandle(Message $message): bool
     {
-        return $message instanceof VerboseMsg;
+        if (!$message instanceof VerboseMsg) {
+            return false;
+        }
+
+        $text = $message->getTrimmedText();
+
+        return !is_numeric($text) && !empty($text);
     }
 
     public function matchIntents(Message $message): array

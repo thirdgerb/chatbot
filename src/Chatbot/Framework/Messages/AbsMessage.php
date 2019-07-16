@@ -39,6 +39,8 @@ abstract class AbsMessage implements Contract
 
     protected $_cmdText;
 
+    protected $_trimmed;
+
     /**
      * AbsMessage constructor.
      * @param Carbon $createdAt
@@ -79,6 +81,9 @@ abstract class AbsMessage implements Contract
      */
     public function getTrimmedText() : string
     {
+        if (isset($this->_trimmed)) {
+            return $this->_trimmed;
+        }
         $text = $this->getText();
 
         // 去掉全角符号, 降低复杂性.
@@ -86,10 +91,10 @@ abstract class AbsMessage implements Contract
 
         // 系统默认的空字符.
         if ($text === '.' || $text === ',' || $text === ';') {
-            return '';
+            return $this->_trimmed = '';
         }
 
-        return trim($text);
+        return $this->_trimmed = trim($text);
     }
 
     public function getCreatedAt(): Carbon
