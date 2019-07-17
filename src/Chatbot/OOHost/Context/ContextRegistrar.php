@@ -30,11 +30,6 @@ class ContextRegistrar implements Registrar
      */
     private static $instances;
 
-    /**
-     * @var array
-     */
-    protected $domainTrees = [];
-
 
     /**
      * 仍然是placeholder 的context
@@ -92,7 +87,6 @@ class ContextRegistrar implements Registrar
 
         $this->definitionsByName[$id] = $def;
         $this->classToName[$def->getClazz()] = $def->getName();
-        Arr::set($this->domainTrees, $id, $id);
 
         // 注册tag . placeholder 没 tag 权..
         if (!$def instanceof PlaceholderDefinition) {
@@ -104,6 +98,7 @@ class ContextRegistrar implements Registrar
             }
         }
 
+        // 记住哪些是placeHolder, 必要时清除
         if ($def instanceof PlaceholderDefinition) {
             $this->placeholders[$id] = true;
         } else {
@@ -178,16 +173,17 @@ class ContextRegistrar implements Registrar
         }
 
         $domain = $this->filterContextName($domain);
-        $element = Arr::get($this->domainTrees, $domain);
-        if (!isset($element)) {
-            return [];
-        }
+        $domain = trim($domain, '.');
 
-        if (is_array($element)) {
-            return Arr::flatten($element);
-        }
+        $results = [];
+        foreach ($this->definitionsByName as $id => $def) {
 
-        return [$element];
+            if (strpos($id, $domain) === 0) {
+                $results[] = $id;
+            }
+
+        }
+        return $results;
     }
 
     public function count(): int

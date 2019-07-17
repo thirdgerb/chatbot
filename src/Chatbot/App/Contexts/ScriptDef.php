@@ -27,7 +27,17 @@ abstract class ScriptDef extends OOContext
 {
     const DESCRIPTION = '需要为脚本拟个介绍';
 
+    /**
+     * 跳过的提示语
+     * @var string 
+     */
     protected $_want_continue = 'dialog.script.continue';
+
+    /**
+     * 跳过的操作符
+     * @var string 
+     */
+    protected $_skip_mark = '..';
 
     /**
      * @var Speech
@@ -146,7 +156,10 @@ abstract class ScriptDef extends OOContext
             foreach ($script as $message) {
                 $this->sendMessage($dialog, $message);
             }
-            $this->getSpeech($dialog)->info($this->_want_continue);
+            $this->getSpeech($dialog)
+                ->withSlots(['skip' => $this->_skip_mark])
+                ->info($this->_want_continue);
+            
             return $dialog->wait();
 
         }, [$this, 'toNext']);

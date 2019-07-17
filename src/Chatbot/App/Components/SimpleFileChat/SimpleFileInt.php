@@ -13,7 +13,6 @@ use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Intent\AbsIntent;
-use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
@@ -183,13 +182,20 @@ class SimpleFileInt extends AbsIntent
                 $suggestion = $alias[$suggestion];
             }
 
+            // .. 上一层
+            if ($suggestion === '..' && $repo->has($prefix)) {
+                $suggestion = $prefix;
+            }
+
             if (isset($loaded[$suggestion])) {
                 continue;
             }
 
+            // 前面已经处理过.
             if ($suggestion === './') {
                 continue;
             }
+
 
             // 给出参数直接就是 intent name
             if ($repo->has($suggestion)) {
@@ -205,12 +211,12 @@ class SimpleFileInt extends AbsIntent
                 continue;
             }
 
+
+            // 在同一个目录下.
             $name = $this->getName();
             $secs = explode('.', $name);
             array_pop($secs);
             $newName = implode('.', $secs) . '.' . $suggestion;
-
-            // 在同一个目录下.
             if ($repo->has($newName)) {
                 $optionSuggestions[$index] = $newName;
                 $loaded[$suggestion] = true;
@@ -244,7 +250,8 @@ class SimpleFileInt extends AbsIntent
 
     public function readSection(Stage $stage, $index) : Navigator
     {
-        $contents = $this->getConfig()->contents;
+        $config = $this->getConfig();
+        $contents = $config->contents;
         $index = intval($index);
         $content = $contents[$index];
 
@@ -253,14 +260,25 @@ class SimpleFileInt extends AbsIntent
             ->info(trim($content));
 
         if (!isset($contents[$index + 1])) {
-
             return $this->onSuggest($builder->toStage());
         }
 
+        $groupOption = $config->groupOption;
+
         return $builder
-            ->info('ask.continue')
+            ->withSlots([
+                'skip' => $groupOption->skipMark
+            ])
+            ->info($groupOption->askContinue)
             ->wait()
             ->hearing()
+            ->is($groupOption->skipMark, function(Dialog $dialog) use ($contents){
+
+                $keys = array_keys($contents);
+                $index = end($keys);
+                $stageName = static::STAGE_PREFIX . $index;
+                return $dialog->goStage($stageName, true);
+            })
             ->isAnyIntent()
             ->end(function(Dialog $dialog){
                 return $dialog->next();

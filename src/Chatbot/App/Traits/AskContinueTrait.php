@@ -5,7 +5,6 @@ namespace Commune\Chatbot\App\Traits;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
-use Commune\Chatbot\App\Callables\Actions\ToNext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -15,12 +14,18 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  */
 trait AskContinueTrait
 {
+    /**
+     * 可以更改
+     * @var string
+     */
+    protected $_askContinue = 'ask.continue';
+
     public function __onAskContinue(Stage $stage) : Navigator
     {
         return $stage
             ->onFallback([Redirector::class, 'next'])
             ->buildTalk()
-            ->info('ask.continue')
+            ->info($this->_askContinue)
             ->wait()
             ->hearing()
             // 其实输入任意值都会继续

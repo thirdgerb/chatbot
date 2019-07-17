@@ -148,12 +148,17 @@ class IntentMatcher
 
         // 检查正则模式.
         if (!empty($this->regex)) {
+            $matchedEntities = [];
+            $matched = false;
+            // 所有正则都会过一遍. 可以分布添加.
             foreach ($this->regex as list($pattern, $args)) {
                 $entities = $this->matchRegex($text, $pattern, $args);
                 if (isset($entities)) {
-                    return $entities;
+                    $matched = true;
+                    $matchedEntities = $entities + $matchedEntities;
                 }
             }
+            return $matched ? $matchedEntities : null;
         }
 
         // 勉强检查一下关键字.

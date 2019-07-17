@@ -20,6 +20,10 @@ class DontInt extends MessageIntent implements Negative
         '不用了',
     ];
 
+    const REGEX = [
+        ['/^(不用|不要|不好|别|不用了)$/'],
+    ];
+
     public static function getContextName(): string
     {
         return 'attitudes.'.static::SIGNATURE;

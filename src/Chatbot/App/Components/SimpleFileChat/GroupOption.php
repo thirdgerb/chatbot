@@ -11,7 +11,9 @@ use Commune\Support\Option;
  * @property-read string $resourcePath
  * @property-read array $intentAlias 部分intent 的简写
  * @property-read array $defaultSuggestions 默认的推荐.
- * @property-read string $question
+ * @property-read string $question  猜你想问标准问题用语
+ * @property-read string $askContinue  要用户继续时的标准用语
+ * @property-read string $skipMark  跳过连续对话的输入符号
  */
 class GroupOption extends Option
 {
@@ -27,6 +29,8 @@ class GroupOption extends Option
                 // default suggestions
             ],
             'question' => 'ask.needs',
+            'askContinue' => 'ask.continue',
+            'skipMark' => '..',
         ];
     }
 

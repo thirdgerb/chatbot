@@ -56,6 +56,7 @@ class LoadSimpleFileIntent extends ServiceProvider
             $def = new SimpleFileIntDefinition($configs);
             $repo->register($def);
 
+
             // 注册意图.
             $examples = $configs->examples;
             if (!empty($examples)) {

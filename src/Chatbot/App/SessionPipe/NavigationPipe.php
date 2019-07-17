@@ -41,13 +41,13 @@ class NavigationPipe implements SessionPipe
             // 匹配到了.
             $intent = $repo->matchIntent($intentName, $session);
             if (isset($intent)) {
-                return $this->runIntent($intent, $session);
+                return $this->runIntent($intent, $session) ?? $next($session);
             }
         }
         return $next($session);
     }
 
-    protected function runIntent(IntentMessage $intent, Session $session) : Session
+    protected function runIntent(IntentMessage $intent, Session $session) : ? Session
     {
 
         $navigator = $intent->navigate($session->dialog);
@@ -63,7 +63,7 @@ class NavigationPipe implements SessionPipe
 
         // 非导航类, 当成了预匹配
         $session->setMatchedIntent($intent);
-        return $session;
+        return null;
     }
 
 

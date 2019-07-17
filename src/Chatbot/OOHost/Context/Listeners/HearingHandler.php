@@ -679,11 +679,15 @@ class HearingHandler implements Hearing
     public function always(callable $callable): Hearing
     {
         // 原有的navigator 也会被reset
-        $this->setNavigator($this->dialog->app->callContextInterceptor(
+        $navigator = $this->dialog->app->callContextInterceptor(
             $this->self,
             $callable,
             $message ?? $this->message
-        ));
+        );
+
+        if (isset($navigator)) {
+            $this->setNavigator($navigator);
+        }
 
         return $this;
     }

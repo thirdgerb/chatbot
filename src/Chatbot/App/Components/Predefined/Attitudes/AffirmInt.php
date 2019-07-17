@@ -19,6 +19,11 @@ class AffirmInt extends MessageIntent implements Positive
         '好'
     ];
 
+    const REGEX = [
+        ['/^(是|好|可以|行|好的)$/'],
+
+    ];
+
     public static function getContextName(): string
     {
         return 'attitudes.'.static::SIGNATURE;

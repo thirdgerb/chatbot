@@ -4,13 +4,12 @@
 namespace Commune\Chatbot\App\Callables\Actions;
 
 
-use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\OOHost\Context\Callables\Action;
+use Commune\Chatbot\OOHost\Context\Callables\Interceptor;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
-class ToNext implements Action
+class ToNext implements Interceptor
 {
     /**
      * @var string[]
@@ -29,8 +28,7 @@ class ToNext implements Action
 
     public function __invoke(
         Context $self,
-        Dialog $dialog,
-        Message $message
+        Dialog $dialog
     ): ? Navigator
     {
         $count = count($this->stageNames);

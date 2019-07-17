@@ -76,7 +76,7 @@ class TellWeatherInt extends ActionIntent
                 $city = $this->city;
 
                 if (! $this->doValidateCity($dialog, $city)) {
-                    return $dialog->fulfill();
+                    return $dialog->goStagePipes(['city', 'start']);
                 }
 
                 $date = $this->date;
@@ -124,12 +124,26 @@ class TellWeatherInt extends ActionIntent
 
     }
 
+    public function __staging(Stage $stage) : void
+    {
+        $stage->onCallback(function(Dialog $dialog, Message $message){
+
+            if ($message->getTrimmedText() == 'b') {
+                return $dialog->cancel();
+            }
+
+            return null;
+        });
+    }
+
 
     public function __onMore(Stage $stage) : Navigator
     {
         return $stage
             ->buildTalk()
-            ->askConfirm('还需要了解更多吗(如果需要了解别的城市或日期, 可以直接说出来)?')
+            ->info('还需要了解更多吗?
+            
+(也可以直接说别的城市和时间, 例如"后天西安呢?")')
             ->wait()
             ->hearing()
             ->isPositive(function(Dialog $dialog){
@@ -182,6 +196,8 @@ sorry, 没明白您的意思.
 
 能识别的日期仅包括:今天,明天,后天,大后天, xx号
 能识别的城市仅包括:$cities
+
+输入'b'可以退出
 EOF
                 );
 
@@ -237,8 +253,13 @@ EOF
 
     public function __validateCity(Dialog $dialog, Message $message) : ? Navigator
     {
-        $text = $message->getTrimmedText();
-        return $this->doValidateCity($dialog, $text) ? null : $dialog->repeat();
+        return $dialog->hear($message)
+            ->isNegative([Redirector::class, 'cancel'])
+            ->end(function(Dialog $dialog, Message $message){
+
+                $text = $message->getTrimmedText();
+                return $this->doValidateCity($dialog, $text) ? null : $dialog->repeat();
+            });
     }
 
     protected function doValidateCity(Dialog $dialog, string $city) : bool
@@ -250,7 +271,9 @@ EOF
         }
 
         $dialog->say()->warning(
-            "sorry, 我们现在只有以下城市的数据:" . implode(',', $cities)
+            "sorry, 我们现在只有以下城市的数据:"
+            . implode(',', $cities)
+            . "\n 输入 'b' 可以退出"
         );
 
         return false;
@@ -268,18 +291,23 @@ EOF
         );
     }
 
-    public function __validateDate(Dialog $dialog, Answer $message) : ? Navigator
+    public function __validateDate(Dialog $dialog, Message $message) : ? Navigator
     {
-        $date = $message->toResult();
-        $time = $this->fetchTime($date);
+        return $dialog->hear($message)
+            ->isNegative([Redirector::class, 'cancel'])
+            ->isAnswer(function(Dialog $dialog, Answer $message){
+                $date = $message->toResult();
+                $time = $this->fetchTime($date);
 
-        if (isset($time)) {
-            return null;
-        }
+                if (isset($time)) {
+                    return null;
+                }
 
-        $dialog->say()->warning('对不起, 日期格式我无法理解...');
+                $dialog->say()->warning('对不起, 日期格式我无法理解...');
 
-        return $dialog->repeat();
+                return $dialog->repeat();
+
+            })->navigator;
     }
 
     protected function fetchTime(string $date) : ? int

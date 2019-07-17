@@ -19,6 +19,10 @@ class DenyInt extends MessageIntent implements Negative
         '不是',
     ];
 
+    const REGEX = [
+        ['/^(不|不是|no)$/'],
+    ];
+
     public static function getContextName(): string
     {
         return 'attitudes.'.static::SIGNATURE;

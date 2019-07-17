@@ -16,6 +16,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  * @property Dialog $dialog
  * @property Message $message
  * @property bool $heard
+ * @property Navigator|null $navigator
  */
 interface Hearing
 {
