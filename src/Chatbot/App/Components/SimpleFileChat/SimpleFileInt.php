@@ -183,8 +183,14 @@ class SimpleFileInt extends AbsIntent
             }
 
             // .. 上一层
-            if ($suggestion === '..' && $repo->has($prefix)) {
-                $suggestion = $prefix;
+            if ($suggestion === '..' ) {
+
+                if ($repo->has($prefix)){
+                    $suggestion = $prefix;
+
+                } else {
+                    continue;
+                }
             }
 
             if (isset($loaded[$suggestion])) {
