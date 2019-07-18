@@ -257,8 +257,15 @@ EOF
             ->isNegative([Redirector::class, 'cancel'])
             ->end(function(Dialog $dialog, Message $message){
 
+                $dialog->say()->info("(本环节修复了一个bug)");
                 $text = $message->getTrimmedText();
-                return $this->doValidateCity($dialog, $text) ? null : $dialog->repeat();
+                if ($this->doValidateCity($dialog, $text)) {
+
+                    $this->city = $text;
+                    return $dialog->next();
+                }
+
+                return $dialog->wait();
             });
     }
 
