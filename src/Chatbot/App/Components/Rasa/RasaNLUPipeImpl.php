@@ -83,7 +83,7 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
         $text = $message->getTrimmedText();
         $parsed = $this->request($text);
 
-        if (!is_null($parsed)) {
+        if (is_null($parsed)) {
             return null;
         }
 
@@ -106,18 +106,18 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
             );
         }
 
-        if (isset($parsed['intent_ranking'])) {
-            $ranking = $parsed['intent_ranking'];
-            foreach ($ranking as $item) {
-                $matchedIntents = $this->wrapIntent(
-                    $matchedIntents,
-                    $parsed['intent'],
-                    $entities
-                );
-            }
-        }
+//        if (isset($parsed['intent_ranking'])) {
+//            $ranking = $parsed['intent_ranking'];
+//            foreach ($ranking as $item) {
+//                $matchedIntents = $this->wrapIntent(
+//                    $matchedIntents,
+//                    $parsed['intent'],
+//                    $entities
+//                );
+//            }
+//        }
 
-
+        $matches->matchedIntents = $matchedIntents;
         // rasa 没有关键字和分词吗? 可能目前没有作为数据返回.
         return $matches;
     }
