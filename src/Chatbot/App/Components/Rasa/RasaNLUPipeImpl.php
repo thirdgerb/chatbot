@@ -9,6 +9,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Context\Intent\Registrar;
 use Commune\Chatbot\OOHost\NLU\MatchedIntent;
+use Commune\Chatbot\OOHost\NLU\Matches;
 use Commune\Chatbot\OOHost\NLU\NLUSessionPipe;
 use Commune\Chatbot\OOHost\Session\Session;
 use GuzzleHttp\Client;
@@ -46,12 +47,15 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
 
         $text = $message->getTrimmedText();
 
-        return !is_numeric($text) && !empty($text);
+
+        // 单字符不认为有语义.
+        return '' === $text
+            || is_numeric($text)
+            || preg_match('/^\w$/', $text);
     }
 
-    public function matchIntents(Message $message): array
+    protected function request(string $text) : ? array
     {
-        $text = $message->getTrimmedText();
         $body = json_encode(['text' => $text]);
 
         $client = new Client([
@@ -68,12 +72,32 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
         $result = $client->post('model/parse', $option);
         $json = $result->getBody()->getContents();
         $parsed = json_decode($json, true);
-        if (!is_array($parsed)) {
-            return [];
+
+        return is_array($parsed) ? $parsed : null;
+    }
+
+    public function match(Session $session) : ? Matches
+    {
+
+        $message = $session->incomingMessage->getMessage();
+        $text = $message->getTrimmedText();
+        $parsed = $this->request($text);
+
+        if (!is_null($parsed)) {
+            return null;
         }
 
-        $matchedIntents = [];
+        $matches = new Matches();
+
         $entities = $this->wrapEntities($parsed['entities'] ?? []);
+
+        // entities 提取
+        if (!$entities->isEmpty()) {
+            $matches->entities = $entities;
+        }
+
+        // 意图配置
+        $matchedIntents = [];
         if (isset($parsed['intent'])) {
             $matchedIntents = $this->wrapIntent(
                 $matchedIntents,
@@ -93,7 +117,9 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
             }
         }
 
-        return $matchedIntents;
+
+        // rasa 没有关键字和分词吗? 可能目前没有作为数据返回.
+        return $matches;
     }
 
     protected function wrapEntities(array $parsed) : Collection
@@ -105,6 +131,7 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
             $value = $entity['value'] ?? '';
             $confidence = $entity['confidence'] ?? 0;
 
+            // 有可能有多个值. 但多选呢? todo
             if (!isset($itemsConfidence[$name]) || $confidence > $itemsConfidence[$name]) {
                 $items[$name] = $value;
                 $itemsConfidence[$name] = $confidence;

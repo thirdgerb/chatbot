@@ -20,27 +20,15 @@ abstract class NLUSessionPipe implements SessionPipe, NatureLanguageUnit
             return $next($session);
         }
 
-        // 将 NLU 得到的意图一视同仁.
-        $allMatched = $this->matchIntents($message);
 
-        $highlyPossible = [];
-        $incomingMessage = $session->incomingMessage;
-        foreach ($allMatched as $matched) {
-            $incomingMessage->addPossibleIntent(
-                $matched->name,
-                $matched->entities,
-                $matched->confidence
-            );
+        $matches = $this->match($session);
 
-            // 高可能的意图区别对待.
-            if ($matched->highlyPossible) {
-                $highlyPossible[] = $matched->name;
-            }
+        if (!empty($matches)) {
+            $incomingMessage = $session->incomingMessage;
+            // 将结果赋值.
+            $session->incomingMessage = $matches->applyToIncomingMessage($incomingMessage);
         }
 
-        if (!empty($highlyPossible)) {
-            $incomingMessage->setHighlyPossibleIntentNames($highlyPossible);
-        }
 
         /**
          * @var Session $session

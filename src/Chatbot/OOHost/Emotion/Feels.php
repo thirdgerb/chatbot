@@ -49,6 +49,11 @@ class Feels implements Feeling
             );
         }
 
+        // NLU 正确解析了.
+        if ($session->incomingMessage->getEmotions()->contains($emotionName)) {
+            return true;
+        }
+
         // 如果对象是emotion的实例
         $message = $session->incomingMessage->getMessage();
         if ($message instanceof Emotion) {

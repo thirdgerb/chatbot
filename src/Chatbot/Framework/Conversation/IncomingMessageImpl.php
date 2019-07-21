@@ -22,6 +22,23 @@ class IncomingMessageImpl extends ConversationMessageImpl implements IncomingMes
      */
     protected $highlyPossible = [];
 
+
+    /**
+     * @var Collection|null
+     */
+    protected $keywords;
+
+    /**
+     * @var Collection|null
+     */
+    protected $entities;
+
+    /**
+     * @var Collection|null
+     */
+    protected $emotions;
+
+
     public function setHighlyPossibleIntentNames(array $names): void
     {
         $this->highlyPossible = $names;
@@ -81,6 +98,46 @@ class IncomingMessageImpl extends ConversationMessageImpl implements IncomingMes
         return new Collection(array_map(function($item){
             return $item[1];
         }, $this->possibleIntents));
+    }
+
+    public function getEntities(): Collection
+    {
+        return $this->entities ?? $this->entities = new Collection([]);
+    }
+
+    public function setEntities(Collection $collection): void
+    {
+        $this->entities = $collection;
+    }
+
+    public function getKeywords(): Collection
+    {
+        return $this->keywords ?? $this->keywords = new Collection([]);
+    }
+
+    public function addKeyword(string $keyword): void
+    {
+        $this->getKeywords()->add($keyword);
+    }
+
+    public function setKeywords(Collection $keywords): void
+    {
+        $this->keywords = $keywords;
+    }
+
+    public function getEmotions(): Collection
+    {
+        return $this->emotions ?? $this->emotions = new Collection([]);
+    }
+
+    public function addEmotion(string $emotionName): void
+    {
+        $this->getEmotions()->add($emotionName);
+    }
+
+    public function setEmotions(Collection $emotions): void
+    {
+        $this->emotions = $emotions;
     }
 
 

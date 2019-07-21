@@ -26,6 +26,7 @@ use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\Config\Host\OOHostConfig;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
+use Illuminate\Support\Collection;
 use Psr\Log\LoggerInterface;
 
 
@@ -377,6 +378,13 @@ class SessionImpl implements Session, HasIdGenerator
                 return $this->getMemory();
             default:
                 return null;
+        }
+    }
+
+    public function __set($name, $value)
+    {
+        if ($name === 'incomingMessage' && $value instanceof IncomingMessage) {
+            $this->incomingMessage = $value;
         }
     }
 

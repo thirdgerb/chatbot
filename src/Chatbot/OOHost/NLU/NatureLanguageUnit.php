@@ -18,12 +18,12 @@ interface NatureLanguageUnit
      */
     public function messageCouldHandle(Message $message) : bool;
 
+
     /**
-     * 尝试匹配一个消息. 所得的结果应该为 matchedIntent 对象构成的数组.
-     * @param Message $message
-     * @return MatchedIntent[]
+     * @param Session $session
+     * @return Matches|null
      */
-    public function matchIntents(Message $message) : array;
+    public function match(Session $session) : ? Matches;
 
     /**
      * 记录没有确定匹配到意图的消息.

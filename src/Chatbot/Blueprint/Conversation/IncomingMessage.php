@@ -62,5 +62,52 @@ interface IncomingMessage extends ConversationMessage
      */
     public function getPossibleIntentCollection() : Collection;
 
+    /*----- 管理与intent 无关的 entity -----*/
+
+    /**
+     * @return Collection
+     */
+    public function getEntities() : Collection;
+
+    /**
+     * @param Collection $collection
+     */
+    public function setEntities(Collection $collection) : void;
+
+
+    /*----- 管理分词 -----*/
+
+    /**
+     * @return Collection
+     */
+    public function getKeywords() : Collection;
+
+    /**
+     * @param string $keyword
+     */
+    public function addKeyword(string $keyword) : void;
+
+
+    /**
+     * @param Collection $keywords
+     */
+    public function setKeywords(Collection $keywords) : void;
+
+    /*----- 管理情绪 -----*/
+
+    /**
+     * @return Collection
+     */
+    public function getEmotions() : Collection;
+
+    /**
+     * @param string $emotionName
+     */
+    public function addEmotion(string $emotionName) : void;
+
+    /**
+     * @param Collection string[] $emotions
+     */
+    public function setEmotions(Collection $emotions) : void;
 
 }

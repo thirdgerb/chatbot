@@ -261,6 +261,23 @@ class HearingHandler implements Hearing
         return $this;
     }
 
+    public function hasEntity(
+        string $entityName,
+        callable $interceptor = null
+    ): Hearing
+    {
+        if (isset($this->navigator)) return $this;
+
+        $entities = $this->dialog->session->incomingMessage->getEntities();
+
+        if (!$entities->isEmpty() && $entities->has($entityName)) {
+            $this->heard = true;
+            return $this->callInterceptor($interceptor);
+        }
+
+        return $this;
+    }
+
 
     /**
      * 主动匹配一个意图
@@ -618,6 +635,11 @@ class HearingHandler implements Hearing
         array $notAny = null
     ): Hearing
     {
+
+        if (empty($keywords)) {
+            return $this;
+        }
+
         if (isset($this->navigator)) return $this;
 
         // 关键字匹配只检查文本类型.
@@ -625,9 +647,33 @@ class HearingHandler implements Hearing
             return $this;
         }
 
-        $text = $this->message->getTrimmedText();
+        $incoming = $this->dialog->session->incomingMessage;
+        $collection = $incoming->getKeywords();
 
-        if (!empty($keywords) && IntentMatcher::matchWords($text, $keywords, false)) {
+        // 分词得到的关键字不为空, 用分词来做
+        if (!$collection->isEmpty()) {
+            foreach ($keywords as $item) {
+
+                // 或关系
+                if (
+                    is_array($item)  // 表示同义词
+                    && $collection->intersect($item)->isEmpty() //交集为空, 说明不存在
+                ) {
+                    return $this;
+                }
+
+                if (!$collection->contains($item)) {
+                    return $this;
+                }
+            }
+
+            $this->heard = true;
+            return $this->callInterceptor($interceptor);
+        }
+
+        // 最脏的办法, 自己去循环匹配.
+        $text = $incoming->getMessage()->getTrimmedText();
+        if (IntentMatcher::matchWords($text, $keywords, false)) {
             $this->heard = true;
             return $this->callInterceptor($interceptor);
         }

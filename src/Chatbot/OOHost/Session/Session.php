@@ -19,8 +19,9 @@ use Psr\Log\LoggerInterface;
 
 /**
  *
+ * @property IncomingMessage $incomingMessage
+ *
  * @property-read string $sessionId
- * @property-read IncomingMessage $incomingMessage
  * @property-read Conversation $conversation
  * @property-read Scope $scope
  * @property-read LoggerInterface $logger
@@ -45,7 +46,7 @@ interface Session extends RunningSpy
 
     public function isQuiting() : bool ;
 
-    /*----- 设置当前的intent -----*/
+    /*----- nlu 相关 -----*/
 
     public function setMatchedIntent(IntentMessage $intent) : void;
 

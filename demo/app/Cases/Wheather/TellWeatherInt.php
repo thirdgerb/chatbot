@@ -43,6 +43,9 @@ class TellWeatherInt extends ActionIntent
         '[后天](date)多少度啊',
         '[明天](date)是晴天吗',
         '[长沙](date)下雨了吗',
+        '[明天](date)[北京](city)什么气温',
+        '[深圳](city)天气',
+        '[上海 ](city)天气',
     ];
 
     protected $cities = [

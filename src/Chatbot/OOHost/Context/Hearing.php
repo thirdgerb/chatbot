@@ -17,6 +17,8 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  * @property Message $message
  * @property bool $heard
  * @property Navigator|null $navigator
+ *
+ * @see \Commune\Chatbot\OOHost\Context\Listeners\HearingHandler
  */
 interface Hearing
 {
@@ -163,6 +165,18 @@ interface Hearing
     public function isIntentIn(
         array $intentNames,
         callable $intentAction = null
+    ) : Hearing;
+
+    /**
+     * 是否匹配到了entity 类型
+     *
+     * @param string $entityName
+     * @param callable|null $interceptor
+     * @return Hearing
+     */
+    public function hasEntity(
+        string $entityName,
+        callable $interceptor = null
     ) : Hearing;
 
     /**
