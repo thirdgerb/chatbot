@@ -49,9 +49,9 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
 
 
         // 单字符不认为有语义.
-        return '' === $text
+        return !('' === $text
             || is_numeric($text)
-            || preg_match('/^\w$/', $text);
+            || preg_match('/^\w$/', $text));
     }
 
     protected function request(string $text) : ? array
