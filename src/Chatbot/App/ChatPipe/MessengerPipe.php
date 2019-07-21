@@ -51,7 +51,7 @@ class MessengerPipe implements InitialPipe
      */
     public function getServer(): ChatServer
     {
-        return $this->app->getReactorContainer()[ChatServer::class];
+        return $this->app->getProcessContainer()[ChatServer::class];
     }
 
     public function getPipeName() : string
@@ -61,7 +61,7 @@ class MessengerPipe implements InitialPipe
 
     public function getExpHandler() : ExceptionHandler
     {
-        return $this->app->getReactorContainer()[ExceptionHandler::class];
+        return $this->app->getProcessContainer()[ExceptionHandler::class];
     }
 
     public function handle(Conversation $conversation, \Closure $next): Conversation

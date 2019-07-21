@@ -30,7 +30,7 @@ return [
             ]
         ],
     ],
-    'reactorProviders' => [
+    'processProviders' => [
     ],
     'conversationProviders' => [
         \Commune\Chatbot\App\Drivers\Demo\CacheServiceProvider::class,

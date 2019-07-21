@@ -44,11 +44,11 @@ class LoadComponents implements Bootstrapper
             }
         }
 
-        $reactor = $app->getReactorContainer();
+        $processIoc = $app->getProcessContainer();
 
         foreach (self::$registerLater as $dependency => list ($name, $data)) {
 
-            if ($reactor->has($name)) {
+            if ($processIoc->has($name)) {
                 $logger->debug("component $name depended by $dependency has been register");
                 return;
             }
@@ -82,10 +82,10 @@ class LoadComponents implements Bootstrapper
          */
         $bootstrapper = new $clazz($data);
 
-        $reactor = $app->getReactorContainer();
+        $processIoc = $app->getProcessContainer();
 
 
-        $reactor->instance($clazz, $bootstrapper);
+        $processIoc->instance($clazz, $bootstrapper);
         $bootstrapper->bootstrap($app);
     }
 

@@ -35,7 +35,7 @@ class TranslatorServiceProvider extends BaseServiceProvider
 {
     use TranslationLoader;
 
-    public const IS_REACTOR_SERVICE_PROVIDER = true;
+    public const IS_PROCESS_SERVICE_PROVIDER = true;
 
     public function boot($app): void
     {

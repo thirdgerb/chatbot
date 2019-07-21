@@ -19,7 +19,7 @@ use Commune\Chatbot\OOHost\Emotion\Feels;
 
 class OOHostServiceProvider extends BaseServiceProvider
 {
-    const IS_REACTOR_SERVICE_PROVIDER = true;
+    const IS_PROCESS_SERVICE_PROVIDER = true;
 
     public function boot($app)
     {

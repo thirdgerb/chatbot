@@ -40,10 +40,10 @@ class ContractsValidator implements Bootstrapper
 {
 
     /**
-     * 默认要在 reactor 容器中绑定的组件.
+     * 默认要在 process 容器中绑定的组件.
      * @var array
      */
-    protected $reactorContracts = [
+    protected $processContracts = [
         // 系统组件的自我绑定
         Application::class,
         ChatServer::class,
@@ -90,9 +90,9 @@ class ContractsValidator implements Bootstrapper
     {
         $logger = $app->getConsoleLogger();
 
-        $logger->debug("check reactor contracts has been bound correctly");
-        foreach ($this->reactorContracts as $name) {
-            $this->assertBound($logger, $app->getReactorContainer(), $name);
+        $logger->debug("check worker process contracts has been bound correctly");
+        foreach ($this->processContracts as $name) {
+            $this->assertBound($logger, $app->getProcessContainer(), $name);
         }
 
         $logger->debug("check conversation contracts has been bound correctly");

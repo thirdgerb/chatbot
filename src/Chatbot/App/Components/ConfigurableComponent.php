@@ -61,11 +61,11 @@ class ConfigurableComponent extends ComponentOption
         }
 
         $provider = new $name(
-            $this->app->getReactorContainer(),
+            $this->app->getProcessContainer(),
             $this
         );
 
-        $this->app->registerReactorService($provider);
+        $this->app->registerProcessService($provider);
     }
 
 

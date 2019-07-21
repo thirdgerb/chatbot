@@ -104,7 +104,7 @@ class ConversationImpl implements Blueprint
         return $container;
     }
 
-    public function getReactorContainer(): ContainerContract
+    public function getProcessContainer(): ContainerContract
     {
         return $this->getParentContainer();
     }

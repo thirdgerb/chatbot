@@ -40,6 +40,10 @@ class SleepTo extends AbsNavigator
 
     public function doDisplay(): ? Navigator
     {
+
+        // 加入校验.
+
+
         // 是否能够sleep to
         $history = $this->history->sleepTo($this->to);
 

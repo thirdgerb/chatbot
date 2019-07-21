@@ -72,7 +72,7 @@ class ChatApp implements Blueprint
     /**
      * @var bool
      */
-    protected $reactorBooted = false;
+    protected $workerBooted = false;
 
     /**
      * @var ChatbotConfig
@@ -82,7 +82,7 @@ class ChatApp implements Blueprint
     /**
      * @var ContainerContract
      */
-    protected $reactorContainer;
+    protected $processContainer;
 
     /**
      * @var ContainerContract
@@ -102,7 +102,7 @@ class ChatApp implements Blueprint
     /**
      * @var ServiceProvider[]
      */
-    protected $reactorProviders = [];
+    protected $processProviders = [];
 
     /**
      * @var ServiceProvider[]
@@ -117,12 +117,12 @@ class ChatApp implements Blueprint
     /**
      * ChatbotApp constructor.
      * @param array $config
-     * @param ContainerContract|null $reactorContainer
+     * @param ContainerContract|null $processContainer
      * @param ConsoleLogger|null $consoleLogger
      */
     public function __construct(
         array $config,
-        ContainerContract $reactorContainer = null,
+        ContainerContract $processContainer = null,
         ConsoleLogger $consoleLogger = null
     )
     {
@@ -136,14 +136,14 @@ class ChatApp implements Blueprint
         }
 
         // 默认的组件
-        $this->reactorContainer = $reactorContainer
+        $this->processContainer = $processContainer
             ?? new IlluminateAdapter(new Container());
 
         $this->consoleLogger = $consoleLogger
             ?? new SimpleConsoleLogger();
 
         // 创建会话容器.
-        $this->conversationContainer = new ConversationImpl($this->reactorContainer);
+        $this->conversationContainer = new ConversationImpl($this->processContainer);
         $this->baseBinding();
         $this->baseRegister();
     }
@@ -156,15 +156,15 @@ class ChatApp implements Blueprint
     /**
      * @param string|ServiceProvider $provider
      */
-    public function registerReactorService($provider): void
+    public function registerProcessService($provider): void
     {
         $provider = $this->parseProvider(
             $provider,
-            $this->reactorContainer
+            $this->processContainer
         );
 
         if (isset($provider)) {
-            $this->reactorProviders[] = $provider;
+            $this->processProviders[] = $provider;
         }
     }
 
@@ -195,7 +195,7 @@ class ChatApp implements Blueprint
 
             if (isset($this->registeredProviders[$providerName])) {
                 $this->consoleLogger
-                    ->warning("try to register reactor provider $providerName which already loaded");
+                    ->warning("try to register worker process provider $providerName which already loaded");
                 return null;
             }
 
@@ -231,17 +231,17 @@ class ChatApp implements Blueprint
 
 
 
-    public function bootReactor() : Blueprint
+    public function bootWorker() : Blueprint
     {
         // 不要重复启动.
-        if ($this->reactorBooted) {
+        if ($this->workerBooted) {
             return $this;
         }
 
         $logger = $this->consoleLogger;
 
         try {
-            $logger->info(static::class . ' chatbot reactor booting');
+            $logger->info(static::class . ' chatbot worker booting');
 
 
             // 完成各种注册逻辑.
@@ -257,18 +257,18 @@ class ChatApp implements Blueprint
             // 初始化容器.
             $logger->info(
                 "boot base container: "
-                . get_class($this->reactorContainer)
+                . get_class($this->processContainer)
             );
 
-            $logger->info(static::class . ' chatbot reactor boot');
+            $logger->info(static::class . ' chatbot worker boot');
             // baseContainer 执行boot流程.
-            foreach ($this->reactorProviders as $provider) {
+            foreach ($this->processProviders as $provider) {
                 $logger->debug("boot provider " . get_class($provider));
-                $provider->boot($this->reactorContainer);
+                $provider->boot($this->processContainer);
             }
 
-            $logger->info(static::class . ' chatbot reactor booted');
-            $this->reactorBooted = true;
+            $logger->info(static::class . ' chatbot worker booted');
+            $this->workerBooted = true;
 
             return $this;
 
@@ -288,27 +288,27 @@ class ChatApp implements Blueprint
         $this->consoleLogger->info("self binding....... ");
 
         // self
-        $this->reactorContainer->instance(Blueprint::class, $this);
+        $this->processContainer->instance(Blueprint::class, $this);
 
         // config
-        $this->reactorContainer->instance(ChatbotConfig::class, $this->config);
-        $this->reactorContainer->instance(OOHostConfig::class, $this->config->host);
+        $this->processContainer->instance(ChatbotConfig::class, $this->config);
+        $this->processContainer->instance(OOHostConfig::class, $this->config->host);
 
         // server
-        $this->reactorContainer->instance(ConsoleLogger::class, $this->consoleLogger);
+        $this->processContainer->instance(ConsoleLogger::class, $this->consoleLogger);
 
         // kernel
-        $this->reactorContainer->singleton(Kernel::class, ChatKernel::class);
+        $this->processContainer->singleton(Kernel::class, ChatKernel::class);
 
     }
 
     protected function baseRegister() : void
     {
         $config = $this->getConfig()->baseServices;
-        // reactor
-        $this->registerReactorService($config->translation);
-        $this->registerReactorService($config->hosting);
-        $this->registerReactorService($config->logger);
+        // process
+        $this->registerProcessService($config->translation);
+        $this->registerProcessService($config->hosting);
+        $this->registerProcessService($config->logger);
 
         // conversation
         $this->registerConversationService($config->event);
@@ -332,9 +332,9 @@ class ChatApp implements Blueprint
         return $this->config;
     }
 
-    public function getReactorContainer() : ContainerContract
+    public function getProcessContainer() : ContainerContract
     {
-        return $this->reactorContainer;
+        return $this->processContainer;
     }
 
     public function getConversationContainer() : ConversationContainer
@@ -344,14 +344,14 @@ class ChatApp implements Blueprint
 
     public function getKernel(): Kernel
     {
-        $this->bootReactor();
-        return $this->reactorContainer->make(Kernel::class);
+        $this->bootWorker();
+        return $this->processContainer->make(Kernel::class);
     }
 
     public function getServer(): ChatServer
     {
-        $this->bootReactor();
-        return $this->reactorContainer->make(ChatServer::class);
+        $this->bootWorker();
+        return $this->processContainer->make(ChatServer::class);
     }
 
 

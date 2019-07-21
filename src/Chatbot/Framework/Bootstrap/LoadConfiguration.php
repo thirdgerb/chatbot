@@ -16,7 +16,7 @@ use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 
 /**
  * 读取配置文件中所有预定义的配置.
- * 直接作为实例绑定到 Reactor 容器上.
+ * 直接作为实例绑定到 worker process 容器上.
  *
  * 已经加载的配置是高优先级的
  * 后续的组件注册时只能看是否已经绑定过.
@@ -29,7 +29,7 @@ class LoadConfiguration implements Bootstrapper
 {
     public function bootstrap(Application $app) : void
     {
-        $container = $app->getReactorContainer();
+        $container = $app->getProcessContainer();
         $logger = $app->getConsoleLogger();
 
         // chatbot config

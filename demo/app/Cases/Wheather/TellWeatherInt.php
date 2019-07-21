@@ -76,6 +76,7 @@ class TellWeatherInt extends ActionIntent
                 $city = $this->city;
 
                 if (! $this->doValidateCity($dialog, $city)) {
+                    unset($this->city);
                     return $dialog->goStagePipes(['city', 'start']);
                 }
 
@@ -248,16 +249,43 @@ EOF
 
     public function __exiting(Exiting $listener): void
     {
+        $listener->onCancel(function(Dialog $dialog){
+            $dialog->say()->info("好的, 结束天气查询(系统认为用户输入了取消天气查询)");
+            return $dialog->cancel(true);
+        });
     }
 
 
     public function __validateCity(Dialog $dialog, Message $message) : ? Navigator
     {
+        $fixKeywords = ['达拉然'];
         return $dialog->hear($message)
+
+            // 有些关键字意图识别会出错, 在这个环节找补一下.
+            ->hasKeywords(
+                [ $fixKeywords ],
+                function(Dialog $dialog, Message $message) use ($fixKeywords) : ? Navigator {
+
+                foreach ($fixKeywords as $keyword) {
+                    $trimmed = $message->getTrimmedText();
+                    if (strpos($trimmed, $keyword) !== false) {
+                        if ($this->doValidateCity($dialog, $keyword)) {
+                            $this->city = $keyword;
+                            return $dialog->next();
+                        }
+
+                        return $dialog->wait();
+                    }
+                }
+
+                return null;
+            })
+
+            // cancel 的逻辑
             ->isNegative([Redirector::class, 'cancel'])
+
             ->end(function(Dialog $dialog, Message $message){
 
-                $dialog->say()->info("(本环节修复了一个bug)");
                 $text = $message->getTrimmedText();
                 if ($this->doValidateCity($dialog, $text)) {
 
@@ -268,6 +296,7 @@ EOF
                 return $dialog->wait();
             });
     }
+
 
     protected function doValidateCity(Dialog $dialog, string $city) : bool
     {

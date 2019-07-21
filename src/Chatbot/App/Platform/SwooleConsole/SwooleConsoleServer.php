@@ -51,7 +51,7 @@ class SwooleConsoleServer implements ChatServer
         /**
          * @var ConsoleConfig $config
          */
-        $config = $app->getReactorContainer()[ConsoleConfig::class];
+        $config = $app->getProcessContainer()[ConsoleConfig::class];
         $this->ip = $config->ip;
         $this->port = $config->port;
         $this->allow = $config->allowIPs;
@@ -61,7 +61,7 @@ class SwooleConsoleServer implements ChatServer
     protected function bootstrap() : void
     {
         Runtime::enableCoroutine();
-        $config = $this->app->getReactorContainer()[ConsoleConfig::class];
+        $config = $this->app->getProcessContainer()[ConsoleConfig::class];
 
         $this->server->on('connect', function (Server $server, $fd) use ($config){
             $info = $server->getClientInfo($fd);

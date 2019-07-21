@@ -3,7 +3,7 @@
 require_once __DIR__ .'/../vendor/autoload.php';
 
 $config = include  __DIR__ . '/configs/config.php';
-$config['reactorProviders'] = [
+$config['processProviders'] = [
     \Commune\Chatbot\App\Platform\ReactorStdio\RSServerProvider::class,
 ];
 

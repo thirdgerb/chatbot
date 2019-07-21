@@ -7,6 +7,7 @@ namespace Commune\Chatbot\OOHost\Context\Listeners;
 use Commune\Chatbot\Blueprint\Message\Event\EventMsg;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Messages\ArrayMessage;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
@@ -618,6 +619,11 @@ class HearingHandler implements Hearing
     ): Hearing
     {
         if (isset($this->navigator)) return $this;
+
+        // 关键字匹配只检查文本类型.
+        if (!$this->message instanceof VerboseMsg) {
+            return $this;
+        }
 
         $text = $this->message->getTrimmedText();
 

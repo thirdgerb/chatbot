@@ -38,9 +38,9 @@ class SimpleFileChatComponent extends ComponentOption
     protected function doBootstrap(): void
     {
         foreach ($this->groups as $option) {
-            $this->app->registerReactorService(
+            $this->app->registerProcessService(
                 new LoadSimpleFileIntent(
-                    $this->app->getReactorContainer(),
+                    $this->app->getProcessContainer(),
                     $option
                 )
             );

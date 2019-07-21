@@ -38,9 +38,9 @@ class SimpleChatComponent extends ComponentOption
         );
 
         foreach ($this->resources as $option) {
-            $this->app->registerReactorService(
+            $this->app->registerProcessService(
                 new LoadSimpleChat(
-                    $this->app->getReactorContainer(),
+                    $this->app->getProcessContainer(),
                     $option
                 )
             );

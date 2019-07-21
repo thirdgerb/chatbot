@@ -9,7 +9,7 @@ use Commune\Container\ContainerContract;
 
 class RasaServiceProvider extends BaseServiceProvider
 {
-    const IS_REACTOR_SERVICE_PROVIDER = false;
+    const IS_PROCESS_SERVICE_PROVIDER = false;
 
     /**
      * @var mixed

@@ -12,7 +12,7 @@ interface DomainConfigRepository
     public function preload() : void;
 
     /**
-     * 预加载所有的资源. 在reactor boot 的过程中需要全部加载.
+     * 预加载所有的资源. 在worker process  boot 的过程中需要全部加载.
      * 根据repository 的不同, resource 的类型也应该有差别.
      *
      * @param $resource

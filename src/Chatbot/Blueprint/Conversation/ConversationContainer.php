@@ -12,10 +12,10 @@ interface ConversationContainer extends ContainerContract
 {
 
     /**
-     * 获取 reactor 的主容器
+     * 获取 process 级别的主容器
      * @return ContainerContract
      */
-    public function getReactorContainer() : ContainerContract;
+    public function getProcessContainer() : ContainerContract;
 
     /**
      * 系统基本配置

@@ -40,10 +40,10 @@ interface Application
     /*----------- container ------------*/
 
     /**
-     * Reactor 的 IoC 容器
+     * 进程级别的 IoC 容器
      * @return ContainerContract
      */
-    public function getReactorContainer() : ContainerContract;
+    public function getProcessContainer() : ContainerContract;
 
     /**
      * Conversation 的 IoC 容器
@@ -55,15 +55,16 @@ interface Application
     /*----------- 注册 ------------*/
 
     /**
+     * 启动 worker 进程的预加载环节. 在进入请求之前必须执行.
      * @throws BootingException
      */
-    public function bootReactor() : Application;
+    public function bootWorker() : Application;
 
     /**
-     * 使用 ServiceProvider 注册 Reactor 的服务
+     * 使用 ServiceProvider 注册进程级的服务
      * @param string $provider
      */
-    public function registerReactorService(string $provider) : void;
+    public function registerProcessService(string $provider) : void;
 
     /**
      * 使用 ServiceProvider 注册 Conversation 的服务

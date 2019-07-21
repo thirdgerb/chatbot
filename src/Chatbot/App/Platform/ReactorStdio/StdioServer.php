@@ -52,10 +52,10 @@ class StdioServer implements ChatServer
 
     public function run(): void
     {
-        $this->app->bootReactor();
+        $this->app->bootWorker();
         $this->stdio->getReadline()->setPrompt('> ');
 
-        $config = $this->app->getReactorContainer()[ConsoleConfig::class];
+        $config = $this->app->getProcessContainer()[ConsoleConfig::class];
 
         $this->stdio->on('data', function ($line) use ($config){
             $line = rtrim($line, "\r\n");
@@ -72,7 +72,6 @@ class StdioServer implements ChatServer
         );
 
         $this->loop->run();
-
     }
 
     public function fail(): void

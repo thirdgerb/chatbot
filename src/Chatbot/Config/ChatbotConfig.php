@@ -24,7 +24,7 @@ use Commune\Support\Option;
  * @property-read array $configBindings
  *
  * @property-read BaseServiceConfig $baseServices
- * @property-read string[] $reactorProviders
+ * @property-read string[] $processProviders
  * @property-read string[] $conversationProviders
  * @property-read string[] $components
  *
@@ -71,11 +71,11 @@ class ChatbotConfig extends Option
             // 系统的服务.
             'baseServices' => BaseServiceConfig::stub(),
 
-            // 用户自定义的组件.
-            'reactorProviders' => [
+            // 用户自定义的进程级组件.
+            'processProviders' => [
             ],
 
-            // 用户自定义的组件.
+            // 用户自定义的请求级组件.
             'conversationProviders' => [
             ],
 

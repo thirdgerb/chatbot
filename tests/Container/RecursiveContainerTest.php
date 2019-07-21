@@ -12,7 +12,6 @@ use Commune\Container\ContainerContract;
 use Commune\Container\ContainerTrait;
 use Commune\Container\IlluminateAdapter;
 use Commune\Container\RecursiveContainer;
-use Commune\Support\Mock\Counter;
 use Illuminate\Container\Container;
 use PHPUnit\Framework\TestCase;
 

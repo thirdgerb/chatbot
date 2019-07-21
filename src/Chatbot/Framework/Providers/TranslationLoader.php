@@ -33,7 +33,7 @@ trait TranslationLoader
         $filePattern = '/\.'.$loader.'$/';
 
         /**
-         * 获取translator 实例. 通常是在reactor 环节就获取.
+         * 获取translator 实例. 通常是在 work process 环节就获取.
          * @var SymfonyTranslator $translator
          */
         $translator = $app->make(SymfonyTranslator::class);

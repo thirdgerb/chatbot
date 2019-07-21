@@ -41,9 +41,9 @@ abstract class ComponentOption extends Option implements Bootstrapper
         string $path
     ) : void
     {
-        $this->app->registerReactorService(
+        $this->app->registerProcessService(
             new LoadPsr4SelfRegister(
-                $this->app->getReactorContainer(),
+                $this->app->getProcessContainer(),
                 $this->app->getConsoleLogger(),
                 $namespace,
                 $path
@@ -67,9 +67,9 @@ abstract class ComponentOption extends Option implements Bootstrapper
         string $loader = Translator::FORMAT_PHP
     ) : void
     {
-        $this->app->registerReactorService(
+        $this->app->registerProcessService(
             new LoadTranslationConfig(
-                $this->app->getReactorContainer(),
+                $this->app->getProcessContainer(),
                 $resourcePath,
                 $loader
             )
@@ -84,9 +84,9 @@ abstract class ComponentOption extends Option implements Bootstrapper
         string $resourcePath
     ) : void
     {
-        $this->app->registerReactorService(
+        $this->app->registerProcessService(
             new LoadNLUExamplesFromJson(
-                $this->app->getReactorContainer(),
+                $this->app->getProcessContainer(),
                 $resourcePath
             )
         );
@@ -109,9 +109,9 @@ abstract class ComponentOption extends Option implements Bootstrapper
     {
         if (!isset($this->loadEmotions)) {
 
-            $loadEmotions = new LoadEmotions($this->app->getReactorContainer());
+            $loadEmotions = new LoadEmotions($this->app->getProcessContainer());
             $this->loadEmotions = $loadEmotions;
-            $this->app->registerReactorService($loadEmotions);
+            $this->app->registerProcessService($loadEmotions);
         }
         $this->loadEmotions->addExperience($emotionName, $experience);
     }
