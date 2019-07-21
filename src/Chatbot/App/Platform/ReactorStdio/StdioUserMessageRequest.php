@@ -68,6 +68,11 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
         $this->config = $config;
     }
 
+    public function getInput()
+    {
+        return $this->line;
+    }
+
 
     public function generateMessageId(): string
     {

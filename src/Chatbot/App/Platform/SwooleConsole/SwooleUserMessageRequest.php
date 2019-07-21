@@ -98,6 +98,12 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
         return $this->fd;
     }
 
+    public function getInput()
+    {
+        return $this->data;
+    }
+
+
     public function generateMessageId(): string
     {
         return $this->createUuId();

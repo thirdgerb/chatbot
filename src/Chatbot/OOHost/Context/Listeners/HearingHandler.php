@@ -781,6 +781,7 @@ class HearingHandler implements Hearing
         // 补加载 component
         if (isset($this->navigator)) return $this->navigator;
 
+        // 预注册的组件.
         if (!empty($this->components)) {
             foreach ($this->components as $component) {
                 $this->component($component);
@@ -789,17 +790,16 @@ class HearingHandler implements Hearing
 
         if (isset($this->navigator)) return $this->navigator;
 
-        // 如果是消息的话.
+        // 如果是 event 消息的话. 当没听到.
         if ($this->message instanceof EventMsg) {
             $this->setNavigator($this->dialog->rewind());
             return $this->navigator;
         }
 
+        // 运行注册的fallback
         if (isset($fallback)) {
             $this->fallback[] = $fallback;
         }
-
-        // 如果要匹配任意意图, 需要手动调用 isAnyIntent
         foreach ($this->fallback as $caller) {
             $this->callInterceptor($caller);
             if(isset($this->navigator)) {

@@ -15,6 +15,12 @@ interface MessageRequest
 
     public function withConversation(Conversation $conversation) : void;
 
+
+    /**
+     * @return mixed
+     */
+    public function getInput();
+
     /*-------- generate --------*/
 
     /**

@@ -20,4 +20,11 @@ use Commune\Chatbot\Blueprint\Message\Tags\Sendable;
 interface MediaMsg extends Message, Sendable
 {
 
+    /**
+     * 资源都要有一个id, 可以让别的逻辑与之互动.
+     * 至于ID具体是什么意思, 可能有很多种.
+     * @return string
+     */
+    public function getMediaId() : string;
+
 }

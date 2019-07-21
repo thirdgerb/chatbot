@@ -4,10 +4,29 @@
 namespace Commune\Chatbot\Framework\Messages;
 
 
+use Carbon\Carbon;
 use Commune\Chatbot\Blueprint\Message\MediaMsg;
 
 abstract class AbsMedia extends AbsMessage implements MediaMsg
 {
+
+    /**
+     * @var string
+     */
+    protected $mediaId = '';
+
+    public function __construct(string $mediaId, Carbon $createdAt = null)
+    {
+        $this->mediaId = $mediaId;
+        parent::__construct($createdAt);
+    }
+
+    public function getMediaId(): string
+    {
+        return $this->mediaId;
+    }
+
+
     public function isEmpty(): bool
     {
         return null;

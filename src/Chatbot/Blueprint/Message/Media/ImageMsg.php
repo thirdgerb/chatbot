@@ -6,7 +6,7 @@ namespace Commune\Chatbot\Blueprint\Message\Media;
 
 use Commune\Chatbot\Blueprint\Message\MediaMsg;
 
-interface Image extends MediaMsg
+interface ImageMsg extends MediaMsg
 {
     /**
      * 图片的url

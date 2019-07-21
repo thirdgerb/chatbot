@@ -1,26 +1,30 @@
 <?php
 
 
-namespace Commune\Chatbot\Framework\Messages\Media;
+namespace Commune\Chatbot\App\Messages\Media;
 
 use Commune\Chatbot\Framework\Messages\AbsMedia;
-use Commune\Chatbot\Blueprint\Message\Media\Image as ImageItf;
+use Commune\Chatbot\Blueprint\Message\Media\ImageMsg;
 
-class Image extends AbsMedia implements ImageItf
+class Image extends AbsMedia implements ImageMsg
 {
     /**
+     * 图片的地址
+     *
      * @var string
      */
     protected $url;
 
+
     /**
      * Image constructor.
+     * @param string $id
      * @param string $url
      */
-    public function __construct(string $url)
+    public function __construct(string $id, string $url = '')
     {
         $this->url = $url;
-        parent::__construct();
+        parent::__construct($id);
     }
 
 
@@ -38,13 +42,14 @@ class Image extends AbsMedia implements ImageItf
     {
         return [
             'url' => $this->url,
+            'mediaId' => $this->getMediaId(),
         ];
     }
 
     public function namesAsDependency(): array
     {
         $names = parent::namesAsDependency();
-        $names[] = ImageItf::class;
+        $names[] = ImageMsg::class;
         $names[] = self::class;
         return $names;
     }
