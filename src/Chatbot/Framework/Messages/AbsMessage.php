@@ -89,12 +89,7 @@ abstract class AbsMessage implements Contract
         // 去掉全角符号, 降低复杂性.
         $text = CommandUtils::sbc2dbc($text);
 
-        // 系统默认的空字符.
-        if ($text === '.' || $text === ',' || $text === ';') {
-            return $this->_trimmed = '';
-        }
-
-        return $this->_trimmed = trim($text);
+        return $this->_trimmed = trim($text, " \t\n\r\0\x0B.,;");
     }
 
     public function getCreatedAt(): Carbon
