@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\App\SessionPipe;
 
 
+use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -33,6 +34,12 @@ class NavigationPipe implements SessionPipe
             return in_array($intent->getName(), $navigation)
                 ? $this->runIntent($intent, $session)
                 : $next($session);
+        }
+
+
+        $message = $session->incomingMessage->getMessage();
+        if (!$message instanceof VerboseMsg) {
+            return $next($session);
         }
 
         $repo = $session->intentRepo;

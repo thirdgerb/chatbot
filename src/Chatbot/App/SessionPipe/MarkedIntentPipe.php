@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\App\SessionPipe;
 
 
+use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 use Illuminate\Support\Collection;
@@ -17,7 +18,13 @@ class MarkedIntentPipe implements SessionPipe
             return $next($session);
         }
 
-        $text = $session->incomingMessage->message->getTrimmedText();
+        $message = $session->incomingMessage->message;
+        // only verbose
+        if (!$message instanceof VerboseMsg) {
+            return $next($session);
+        }
+
+        $text = $message->getTrimmedText();
 
         if (!preg_match('/^#[\w\.:]+#$/', $text)) {
             return $next($session);
