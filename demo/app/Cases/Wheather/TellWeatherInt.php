@@ -10,8 +10,10 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Context\Exiting;
+use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
+use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Illuminate\Support\Arr;
 
@@ -147,7 +149,7 @@ class TellWeatherInt extends ActionIntent
             ->buildTalk()
             ->info('还需要了解更多吗?
             
-(也可以直接说别的城市和时间, 例如"后天西安呢?")')
+(也可以直接说别的城市和时间, 例如"后天西安呢?". 说"不用了"退出)')
             ->wait()
             ->hearing()
             ->isPositive(function(Dialog $dialog){
@@ -209,6 +211,15 @@ EOF
             });
 
 
+    }
+
+    public function __hearing(Hearing $hearing) : void
+    {
+        $hearing
+            ->isIntent(static::class, function(Dialog $dialog, TellWeatherInt $intent){
+                return $dialog->redirect->replaceTo($intent, Redirect::NODE_LEVEL);
+            })
+            ->is('b', [Redirector::class, 'cancel']);
     }
 
     protected function matchCity(string $text) : ? string
@@ -346,7 +357,12 @@ EOF
 
                 return $dialog->repeat();
 
-            })->navigator;
+            })
+            ->end(function(Dialog $dialog){
+                $dialog->say()->info("sorry, 请只告诉我日期, 或输入'b' 退出");
+                return $dialog->repeat();
+
+            });
     }
 
     protected function fetchTime(string $date) : ? int

@@ -271,10 +271,13 @@ class DialogImpl implements Dialog, Redirect, App
     public function hear(Message $message): Hearing
     {
         $context =$this->history->getCurrentContext();
-        $components = [];
         $method = Context::HEARING_MIDDLEWARE_METHOD;
-        if (method_exists($context, $method)) {
-            $components[] = [$context, $method];
+        $after = Context::HEARD_MIDDLEWARE_METHOD;
+        $components = [];
+
+        // 注册 after hearing 的component
+        if (method_exists($context, $after)) {
+            $components[] = [$context, $after];
         }
 
         $hearing = new HearingHandler(
@@ -284,6 +287,10 @@ class DialogImpl implements Dialog, Redirect, App
             $components
         );
 
+        // 注册hearing 的component
+        if (method_exists($context, $method)) {
+            $hearing->component([$context, $method]);
+        }
 
         return $hearing;
     }

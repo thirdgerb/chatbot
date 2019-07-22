@@ -49,6 +49,7 @@ interface Context extends
     // 入参是 Hearing 类.
     // 可以给所有的hearing 定义一些公共的流程.
     const HEARING_MIDDLEWARE_METHOD = '__hearing';
+    const HEARD_MIDDLEWARE_METHOD = '__heard';
 
     // 如果此方法存在, 所有stage 方法构建时都会调用它.
     // 入参是 Stage, 返回值是 void
