@@ -217,6 +217,16 @@ EOF
     {
         $hearing
             ->isIntent(static::class, function(Dialog $dialog, TellWeatherInt $intent){
+
+                if (isset($this->city) && !isset($intent->city)) {
+                    $intent->city = $this->city;
+                }
+
+                if (isset($this->date) && !isset($intent->date)) {
+                    $intent->date = $this->date;
+                }
+
+
                 return $dialog->redirect->replaceTo($intent, Redirect::NODE_LEVEL);
             })
             ->is('b', [Redirector::class, 'cancel']);
@@ -350,7 +360,8 @@ EOF
                 $time = $this->fetchTime($date);
 
                 if (isset($time)) {
-                    return null;
+                    $this->date = $date;
+                    return $dialog->next();
                 }
 
                 $dialog->say()->warning('对不起, 日期格式我无法理解...');
