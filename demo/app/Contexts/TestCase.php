@@ -28,14 +28,15 @@ class TestCase extends TaskDef
 
     public function __onStart(Stage $stage): Navigator
     {
-        return $stage->buildTalk()->goStage('menu');
+        return $stage->buildTalk()
+            ->info('您好!'.$this->name)
+            ->goStage('menu');
     }
 
     public function __onMenu(Stage $stage): Navigator
     {
         return $stage->talk(function(Dialog $dialog){
                 $dialog->say()
-                    ->info('您好!'.$this->name)
                     ->askVerbose(
                         '请输入:',
                         [

@@ -4,13 +4,14 @@
 namespace Commune\Chatbot\OOHost\Dialogue;
 
 
+use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Chatbot\OOHost\Context\ContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Hearing;
-use Commune\Chatbot\OOHost\Context\Listeners\HearingHandler;
 
 use Commune\Chatbot\OOHost\Directing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -29,17 +30,25 @@ use Psr\Log\LoggerInterface;
  * @property-read LoggerInterface $logger
  *
  */
-class DialogImpl implements Dialog, Redirect, App
+class DialogImpl implements Dialog, Redirect, App, RunningSpy
 {
-    // use TalkTrait;
+    use RunningSpyTrait;
 
     /*--------- components ---------*/
+
+    /**
+     * @var string
+     */
+    protected $sessionId;
 
     /**
      * @var Session
      */
     protected $sessionImpl;
 
+    /**
+     * @var \Commune\Chatbot\Blueprint\Conversation\Conversation
+     */
     protected $conversation;
 
     /*--------- cached ---------*/
@@ -56,6 +65,8 @@ class DialogImpl implements Dialog, Redirect, App
         $this->sessionImpl = $session;
         $this->conversation = $session->conversation;
         $this->history = $history;
+        $this->sessionId = $session->sessionId;
+        self::addRunningTrace($this->sessionId, $this->sessionId);
     }
 
     /*--------- app ---------*/
@@ -534,8 +545,6 @@ class DialogImpl implements Dialog, Redirect, App
 
     public function __destruct()
     {
-        if (CHATBOT_DEBUG && isset($this->session)) {
-            $this->getLogger()->debug(__METHOD__);
-        }
+        self::removeRunningTrace($this->sessionId);
     }
 }
