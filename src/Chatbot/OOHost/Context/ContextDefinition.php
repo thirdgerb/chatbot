@@ -141,9 +141,9 @@ class ContextDefinition implements Definition
     }
 
 
-    public function registerMethodAsStage(string $stageName) : void
+    public function registerMethodAsStage(string $stageName, string $methodName = null) : void
     {
-        $methodName = Context::STAGE_METHOD_PREFIX . ucfirst($stageName);
+        $methodName = $methodName ?? Context::STAGE_METHOD_PREFIX . ucfirst($stageName);
 
         $this->setStage($stageName, function(Stage $stageRoute) use ($methodName) {
             return call_user_func(
@@ -354,22 +354,28 @@ class ContextDefinition implements Definition
 
         foreach ($methods as $method) {
             $name = $method->getName();
+            $doc = $method->getDocComment();
 
             // stage method
-            if (Str::startsWith(
-                $name,
-                Context::STAGE_METHOD_PREFIX)
+            if (
+                Str::startsWith($name, Context::STAGE_METHOD_PREFIX)
             ) {
                 $this->registerStageMethod($method);
+            }
+
+            if (StringUtils::hasAnnotation($doc, Context::STAGE_ANNOTATION)) {
+                $this->registerStageMethod($method, $name);
             }
         }
 
     }
 
-    protected function registerStageMethod(ReflectionMethod $method) : void
+    protected function registerStageMethod(ReflectionMethod $method, string $stageName = null) : void
     {
         $methodName = $method->getName();
-        $stageName = lcfirst(str_replace(
+
+        // 没有设置的时候, 认为默认值是去掉 __on 的 method
+        $stageName = $stageName ?? lcfirst(str_replace(
             Context::STAGE_METHOD_PREFIX,
             '',
             $methodName
@@ -397,8 +403,7 @@ class ContextDefinition implements Definition
             $this->invalidClassStageMethod($methodName);
         }
 
-
-        $this->registerMethodAsStage($stageName);
+        $this->registerMethodAsStage($stageName, $methodName);
     }
 
     protected function invalidClassStageMethod(string $methodName) :void

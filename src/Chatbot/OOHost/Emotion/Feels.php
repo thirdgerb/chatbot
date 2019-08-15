@@ -39,6 +39,13 @@ class Feels implements Feeling
         });
     }
 
+    /**
+     * todo too expensive to feel undefined emotion
+     *
+     * @param Session $session
+     * @param string $emotionName
+     * @return bool
+     */
     public function feel(Session $session, string $emotionName): bool
     {
 
@@ -67,7 +74,7 @@ class Feels implements Feeling
         // 如果意图存在的话.
         if (isset($intent)) {
 
-            // 实例
+            // intent 本身就是 emotion 的实例
             if (is_a($intent, $emotionName, TRUE)) {
                 return true;
             }
@@ -91,8 +98,7 @@ class Feels implements Feeling
             }
         }
 
-        // null 大部分时候当false 用.
-        return null;
+        return false;
     }
 
     public function experience(string $emotionName, $experience): void

@@ -45,7 +45,8 @@ class TestCase extends TaskDef
                             'sandbox : 测试在config里定义的 memory',
                             'sandbox class: 测试用类定义的 memory',
                             '#tellWeather : 用命令命中意图, 查询天气',
-                            5 => 'dependencies: 测试依赖注入参数'
+                            5 => 'dependencies: 测试依赖注入参数',
+                            6 => '测试 todo -> otherwise api',
                         ]
                     );
             },
@@ -126,6 +127,9 @@ class TestCase extends TaskDef
                             return $dialog->restart();
                         }
                     )
+                    ->isChoice(6, function(Dialog $dialog){
+                        return $dialog->goStage('testTodo');
+                    })
                     ->end(function(Dialog $dialog, Message $message){
 
                         $dialog->say()->info("输入了:" . $message->getText());
@@ -147,6 +151,45 @@ class TestCase extends TaskDef
             $dialog->say()->info('您输入的是:'.$message->getText());
             return $dialog->next();
         });
+
+    }
+
+    /**
+     * test to do api and test define stage by annotation
+     *
+     * @stage 用 annotation 方式定义这个 stage
+     * @param Stage $stage
+     * @return Navigator
+     */
+    public function testTodo(Stage $stage) : Navigator
+    {
+        return $stage->buildTalk()
+            ->info('测试 todo api. 请输入 123, 456, 789 测试:')
+            ->wait()
+            ->hearing()
+
+                ->todo(function(Dialog $dialog, Message $message){
+                    $dialog->say()->info('matched ' . $message->getText());
+                    return $dialog->wait();
+                })
+                    ->is('123')
+                    ->is('456')
+                    ->otherwise()
+
+                ->todo(function(Dialog $dialog){
+
+                    $dialog->say()->info('matched 789');
+                    return $dialog->wait();
+                })
+                    ->pregMatch('/^789$/')
+                    ->otherwise()
+
+                ->todo(function(Dialog $dialog){
+                    return $dialog->goStage('menu');
+                })
+                    ->is('quit')
+                    ->otherwise()
+            ->end();
 
     }
 

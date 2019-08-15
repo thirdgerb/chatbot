@@ -10,6 +10,7 @@ use Commune\Chatbot\OOHost\Context\Callables\HearingComponent;
 use Commune\Chatbot\OOHost\Context\Callables\Prediction;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Chatbot\OOHost\Emotion\Feeling;
 
 /**
  * @property Context $self
@@ -27,6 +28,9 @@ interface Hearing
 
     /**
      * 注册一个fallback. 在 end 的时候会执行.
+     *
+     * register a fallback caller executing at ending
+     *
      * @param callable $fallback
      * @param bool $addToEndNotHead
      * @return Hearing
@@ -36,15 +40,19 @@ interface Hearing
     /**
      * 修改默认的fallback.
      *
+     * register the default fallback caller. run after common fallback
+     *
      * @param callable $defaultFallback
      * @return Hearing
      */
     public function defaultFallback(callable $defaultFallback) : Hearing;
 
-    /*---------- 运行逻辑 ----------*/
+    /*---------- 组件化方法 ----------*/
 
     /**
      * 调用一个session pipe 作为中间件. 立刻执行.
+     *
+     * run session pipe as middleware
      *
      * @param string $sessionPipeName
      * @return Hearing
@@ -53,6 +61,8 @@ interface Hearing
 
     /**
      * 将 hearing 传递给 component, 从而实现组件化的定义
+     *
+     * pass hearing to caller, which add functions the hearing api as reusable component
      *
      * @param HearingComponent|callable $hearingComponent
      * @return Hearing
@@ -63,6 +73,8 @@ interface Hearing
      * 拦截器.可以做任何事.
      * 比如校验用户的身份.
      *
+     * run interceptor, for example, verify user identity
+     *
      * @param callable|Action $action
      * @return Hearing
      */
@@ -71,6 +83,10 @@ interface Hearing
     /**
      * 提前运行已经注册的fallback
      * 只会运行一次.
+     *
+     * run registered fallback actions before end()
+     * only run once
+     *
      * @return Hearing
      */
     public function runFallback() : Hearing;
@@ -78,6 +94,10 @@ interface Hearing
     /**
      * 提前运行默认的 fallback
      * 只会运行一次.
+     *
+     * run registered default fallback action before end()
+     * only run once
+     *
      * @return Hearing
      */
     public function runDefaultFallback() : Hearing;
@@ -85,6 +105,8 @@ interface Hearing
     /**
      * 无论是否已经生成了Navigator 都会执行.
      * 但有可能引起歧义.
+     *
+     * run action no matter navigator has been set.
      *
      * @param callable $callable
      * @return Hearing
@@ -94,14 +116,42 @@ interface Hearing
     /**
      * 作为链式调用的结尾.
      *
+     * 会忽视掉 event 类型信息.
      * 上面的流程都处理完了还没有返回结果的时候, 会尝试调用 $fallback
      * 否则返回 missMatch
+     *
+     * end the hearing api and return navigator.
+     * ignore event message.
+     *
+     * return navigator ?? runFallback() ?? runDefaultFallback() ?? missMatch().
+     *
      *
      * @param callable|null $defaultFallback
      * @return Navigator
      */
     public function end(callable $defaultFallback = null) : Navigator;
 
+
+    /*---------- to do api ----------*/
+
+    /**
+     * to do api .
+     *
+     * 先定义要做什么, 再定义做的条件.
+     * 这样在有些场景下更加清晰.
+     *
+     *  ->todoWhile()
+     *      ->condition
+     *      ->condition
+     *  ->otherwise()
+     *
+     *  for you can quickly understand what dialog could do
+     *
+     *
+     * @param callable $todo
+     * @return ToDoWhileHearingMessage
+     */
+    public function todo(callable $todo) : ToDoWhileHearingMessage;
 
     /*---------- 匹配消息 ----------*/
 
@@ -110,7 +160,9 @@ interface Hearing
      * 用一个 prediction callable 判断是否命中条件.
      * 命中后执行 interceptor
      *
-     * @param Prediction|callable $prediction
+     * run action only if expecting prediction return true
+     *
+     * @param Prediction|callable $prediction  return bool
      * @param Action|callable $action
      * @return Hearing
      */
@@ -123,6 +175,8 @@ interface Hearing
     /**
      * message 是一个字符串.
      *
+     * if message->getText() exactly match the $text
+     *
      * @param string $text
      * @param callable|null $action
      * @return Hearing
@@ -134,6 +188,7 @@ interface Hearing
 
     /**
      * Message->isEmpty() === true
+     *
      * @param callable|null $action
      * @return Hearing
      */
@@ -146,9 +201,13 @@ interface Hearing
      * keys 命中的参数会作为变量传递给 interceptor
      * 最好不要用这一步.
      *
+     * use regex to define condition.
+     * the variable extract by regex pattern,
+     * will assign to arrayMessage variables, named by $keys
+     *
      * @param string $pattern
      * @param string[] $keys
-     * @param Action|callable $action
+     * @param Action|callable $action   message is ArrayMessage
      * @return Hearing
      */
     public function pregMatch(
@@ -160,6 +219,10 @@ interface Hearing
 
     /**
      * 判断消息是否符合某种情感.
+     *
+     * to feel message match curtain feeling
+     * parser @see Feeling
+     *
      * @param string $emotionName
      * @param Action|callable $action
      * @return Hearing
@@ -186,7 +249,7 @@ interface Hearing
      * 则执行不为null 的intentAction
      * 否则 执行 intent 自带的 action
      *
-     * @param callable|null $intentAction
+     * @param callable|null $intentAction    $message is IntentMessage
      * @return Hearing
      */
     public function isAnyIntent(
@@ -198,7 +261,7 @@ interface Hearing
      * 即便 NLU 没有传递, 也会去尝试匹配.
      *
      * @param string $intentName
-     * @param callable|null $intentAction
+     * @param callable|null $intentAction   $message is IntentMessage
      * @return Hearing
      */
     public function isIntent(
@@ -216,7 +279,7 @@ interface Hearing
      * 否则执行 intent 自己的action
      *
      * @param array $intentNames
-     * @param callable|null $intentAction
+     * @param callable|null $intentAction  $message is IntentMessage
      * @return Hearing
      */
     public function isIntentIn(
@@ -264,7 +327,7 @@ interface Hearing
     /**
      * 只要有answer, 不管上文有没有命中过.
      *
-     * @param Action|callable $action
+     * @param Action|callable $action   $message could be Answer
      * @return Hearing
      */
     public function isAnswer(callable $action = null) : Hearing;
@@ -275,7 +338,7 @@ interface Hearing
      * 可以与 answered 挑选使用.
      *
      * @param int|string $suggestionIndex
-     * @param Action|callable $action
+     * @param Action|callable $action   $message could be Choice
      * @return Hearing
      */
     public function isChoice(
@@ -299,7 +362,7 @@ interface Hearing
      * 并把匹配成功的 CommandMessage 传递给interceptor
      *
      * @param string $signature
-     * @param Action|callable $action
+     * @param Action|callable $action  $message is CommandMessage
      * @return Hearing
      */
     public function isCommand(
@@ -337,7 +400,7 @@ interface Hearing
     /**
      * 如果不主动拦截, 则event 消息都会被忽视.
      * @param string $eventName
-     * @param callable|Action|null $action
+     * @param callable|Action|null $action    $message is EventMessage
      * @return Hearing
      */
     public function isEvent(string $eventName, callable $action = null) : Hearing;

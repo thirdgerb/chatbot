@@ -13,6 +13,7 @@ use Commune\Chatbot\Framework\Messages\ArrayMessage;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Hearing;
+use Commune\Chatbot\OOHost\Context\ToDoWhileHearingMessage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Emotion\Emotion;
@@ -795,5 +796,11 @@ class HearingHandler implements Hearing
 
         return $this->navigator ?? $this->dialog->missMatch();
     }
+
+    public function todo(callable $todo): ToDoWhileHearingMessage
+    {
+        return new TodoWhileHearMessageBeMessage($this, $todo);
+    }
+
 
 }
