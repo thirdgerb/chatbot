@@ -12,7 +12,6 @@ use Commune\Chatbot\Framework\Messages\Verbose;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\Monologue;
 use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
-use Illuminate\Support\Arr;
 
 class MonologueImpl implements Monologue
 {
@@ -78,13 +77,7 @@ class MonologueImpl implements Monologue
 
     protected function prepareEnvironment() : array
     {
-        $env = $this->conversation->getChatbotConfig()->slots;
-        $slots = Arr::dot($env);
-
-        // 系统预定义常量.
-        $slots['user.name'] = $this->conversation->getUser()->getName();
-
-        return $slots;
+        return $this->conversation[Monologue::DEFAULT_SLOTS];
     }
 
     public function trans(string $id, array $slots = []): string

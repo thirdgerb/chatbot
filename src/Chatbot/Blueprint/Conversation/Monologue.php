@@ -21,6 +21,10 @@ interface Monologue
     const WARNING   = LogLevel::WARNING;
     const ERROR     = LogLevel::ERROR;
 
+
+    const DEFAULT_SLOTS = 'slots.default';
+    const SLOT_USER_NAME = 'user.name';
+
     public function say(string $message, array $slots = []) : void;
 
     public function debug(string $message, array $slots = []) : void;
