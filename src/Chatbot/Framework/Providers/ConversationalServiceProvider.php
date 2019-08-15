@@ -14,11 +14,20 @@ use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\Blueprint\Conversation\Monologue;
 use Commune\Chatbot\Blueprint\Conversation\User;
+use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Framework\Conversation\ChatImpl;
 use Commune\Chatbot\Framework\Conversation\ConversationLoggerImpl;
 use Commune\Chatbot\Framework\Conversation\IncomingMessageImpl;
 use Commune\Chatbot\Framework\Conversation\MonologueImpl;
 use Commune\Chatbot\Framework\Conversation\UserImpl;
+use Commune\Chatbot\OOHost\Context\Context;
+use Commune\Chatbot\OOHost\Context\Hearing;
+use Commune\Chatbot\OOHost\Context\Listeners\HearingHandler;
+use Commune\Chatbot\OOHost\Dialogue\Dialog;
+use Commune\Chatbot\OOHost\Session\Driver;
+use Commune\Chatbot\OOHost\Session\Session;
+use Commune\Chatbot\OOHost\Session\SessionImpl;
 use Psr\Log\LoggerInterface;
 
 class ConversationalServiceProvider extends BaseServiceProvider
@@ -35,6 +44,35 @@ class ConversationalServiceProvider extends BaseServiceProvider
         $this->registerUser();
         $this->registerChat();
         $this->registerLogger();
+        $this->registerHearing();
+        $this->registerSession();
+    }
+
+    protected function registerSession() : void
+    {
+        $this->app->bind(Session::class, function($conversation, $parameters){
+            return new SessionImpl(
+                $parameters['belongsTo'],
+                $parameters['cache'],
+                $conversation,
+                $conversation[Driver::class]
+            );
+        });
+    }
+
+    protected function registerHearing() : void
+    {
+        // 可以重写成自己觉得合适的
+        $this->app->bind(
+            Hearing::class,
+            function($app, $parameters){
+                return new HearingHandler(
+                    $parameters['context'],
+                    $parameters['dialog'],
+                    $parameters['message']
+                );
+            }
+        );
     }
 
     protected function registerUser() : void

@@ -98,7 +98,7 @@ class SimpleFileInt extends AbsIntent
                     // 监听任何意图
                     $hearing
                         ->isAnyIntent()
-                        ->defaultFallback();
+                        ->runDefaultFallback();
                 })
             );
     }

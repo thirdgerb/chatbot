@@ -4,7 +4,6 @@
 namespace Commune\Demo\App\Contexts;
 
 
-use Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction;
 use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Stage;
@@ -28,6 +27,11 @@ class TestCase extends TaskDef
     }
 
     public function __onStart(Stage $stage): Navigator
+    {
+        return $stage->buildTalk()->goStage('menu');
+    }
+
+    public function __onMenu(Stage $stage): Navigator
     {
         return $stage->talk(function(Dialog $dialog){
                 $dialog->say()
@@ -104,7 +108,7 @@ class TestCase extends TaskDef
                     )
                     ->isChoice(4, function(Dialog $dialog){
                         $dialog->say()->info(
-                            "请输入 #tellWeather [城市] [天气]"
+                            "请输入 #tellWeather [城市] [时间]"
                         );
 
                         return $dialog->wait();
@@ -121,7 +125,6 @@ class TestCase extends TaskDef
                             return $dialog->restart();
                         }
                     )
-                    ->interceptor(new SimpleChatAction('demo'))
                     ->end(function(Dialog $dialog, Message $message){
 
                         $dialog->say()->info("输入了:" . $message->getText());
@@ -135,7 +138,7 @@ class TestCase extends TaskDef
         return $stage->onStart(function(Dialog $dialog) {
             $dialog->say()
                 ->info('test stage start')
-                ->askVerbose('test ');
+                ->askVerbose('输入一个值 (会展示这个值然后跳到下一步)');
             return $dialog->wait();
 
         })->wait(function(Dialog $dialog, Message $message) {

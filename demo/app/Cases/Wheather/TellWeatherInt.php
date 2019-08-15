@@ -192,7 +192,7 @@ class TellWeatherInt extends ActionIntent
                     return null;
                 }
             )
-            ->defaultFallback()
+            ->runDefaultFallback()
             ->end(function(Dialog $dialog){
                 $cities = implode(",", $this->allCities());
                 $dialog->say()->info(<<<EOF

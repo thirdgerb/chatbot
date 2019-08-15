@@ -230,7 +230,6 @@ class ContextDefinition implements Definition
         string $stage
     ): Navigator
     {
-
         $this->checkStageExists($stage);
         // 检查depending
         if ($stage === Context::INITIAL_STAGE) {
@@ -416,7 +415,6 @@ class ContextDefinition implements Definition
     protected function registerDepend() : void
     {
         $builder = new DependingBuilder($this);
-
         $method = [$this->contextClazz, Context::DEPENDENCY_BUILDER];
         call_user_func($method, $builder);
     }

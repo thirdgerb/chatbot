@@ -23,8 +23,28 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 interface Hearing
 {
 
+    /*---------- 注册调用, 在生命周期中运行. ----------*/
+
     /**
-     * 调用一个session pipe 作为中间件.
+     * 注册一个fallback. 在 end 的时候会执行.
+     * @param callable $fallback
+     * @param bool $addToEndNotHead
+     * @return Hearing
+     */
+    public function fallback(callable $fallback, bool $addToEndNotHead = true) : Hearing;
+
+    /**
+     * 修改默认的fallback.
+     *
+     * @param callable $defaultFallback
+     * @return Hearing
+     */
+    public function defaultFallback(callable $defaultFallback) : Hearing;
+
+    /*---------- 运行逻辑 ----------*/
+
+    /**
+     * 调用一个session pipe 作为中间件. 立刻执行.
      *
      * @param string $sessionPipeName
      * @return Hearing
@@ -47,6 +67,43 @@ interface Hearing
      * @return Hearing
      */
     public function interceptor(callable $action) : Hearing;
+
+    /**
+     * 提前运行已经注册的fallback
+     * 只会运行一次.
+     * @return Hearing
+     */
+    public function runFallback() : Hearing;
+
+    /**
+     * 提前运行默认的 fallback
+     * 只会运行一次.
+     * @return Hearing
+     */
+    public function runDefaultFallback() : Hearing;
+
+    /**
+     * 无论是否已经生成了Navigator 都会执行.
+     * 但有可能引起歧义.
+     *
+     * @param callable $callable
+     * @return Hearing
+     */
+    public function always(callable $callable) : Hearing;
+
+    /**
+     * 作为链式调用的结尾.
+     *
+     * 上面的流程都处理完了还没有返回结果的时候, 会尝试调用 $fallback
+     * 否则返回 missMatch
+     *
+     * @param callable|null $defaultFallback
+     * @return Navigator
+     */
+    public function end(callable $defaultFallback = null) : Navigator;
+
+
+    /*---------- 匹配消息 ----------*/
 
     /**
      * 自定义的监听.
@@ -293,39 +350,5 @@ interface Hearing
     public function isEventIn(array $eventName, callable $action = null) : Hearing;
 
 
-    /**
-     * 任何时候都会执行.
-     * 能够因此跳过中间环节已有的navigator, 但有可能引起歧义.
-     *
-     * @param callable $callable
-     * @return Hearing
-     */
-    public function always(callable $callable) : Hearing;
-
-
-    /**
-     * 注册一个fallback. 在 end 的时候会执行.
-     * @param callable $fallback
-     * @return Hearing
-     */
-    public function fallback(callable $fallback) : Hearing;
-
-
-    /**
-     * 提前运行系统的 fallback, 通常是闲聊.
-     * @return Hearing
-     */
-    public function defaultFallback() : Hearing;
-
-    /**
-     * 作为链式调用的结尾.
-     *
-     * 上面的流程都处理完了还没有返回结果的时候, 会尝试调用 $fallback
-     * 否则返回 missMatch
-     *
-     * @param callable|null $fallback
-     * @return Navigator
-     */
-    public function end(callable $fallback = null) : Navigator;
 
 }

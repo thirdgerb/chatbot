@@ -273,21 +273,41 @@ class DialogImpl implements Dialog, Redirect, App
         $context =$this->history->getCurrentContext();
         $method = Context::HEARING_MIDDLEWARE_METHOD;
         $after = Context::HEARD_MIDDLEWARE_METHOD;
-        $components = [];
 
-        // 注册 after hearing 的component
-        if (method_exists($context, $after)) {
-            $components[] = [$context, $after];
+        /**
+         * @var Hearing $hearing
+         */
+        $hearing = $this->make(Hearing::class, [
+            'context' => $context,
+            'dialog' => $this,
+            'message' => $message
+        ]);
+
+        // 注册系统默认的fallback.
+        $defaultFallback = $this->session->hostConfig->hearingFallback;
+        if (!empty($defaultFallback)) {
+            // 允许是类名. 不过实例应该是 callable
+            if (
+                is_string($defaultFallback)
+                && !is_callable($defaultFallback)
+                && class_exists($defaultFallback)
+            ) {
+                $defaultFallback = $this->app->make($defaultFallback);
+            }
+            $hearing->defaultFallback($defaultFallback);
         }
 
-        $hearing = new HearingHandler(
-            $context,
-            $this,
-            $message,
-            $components
-        );
+        // 注册 heard 的component
+        if (method_exists($context, $after)) {
+            $hearing->fallback(
+                function() use ($hearing, $context, $after) {
+                    $context->{$after}($hearing);
+                },
+                false
+            );
+        }
 
-        // 注册hearing 的component
+        // 运行 __hearing 的component
         if (method_exists($context, $method)) {
             $hearing->component([$context, $method]);
         }

@@ -12,9 +12,7 @@ use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Framework\Pipeline\ChatbotPipeImpl;
 use Commune\Chatbot\Framework\Utils\OnionPipeline;
-use Commune\Chatbot\OOHost\Session\Driver as SessionDriver;
 use Commune\Chatbot\OOHost\Session\Session;
-use Commune\Chatbot\OOHost\Session\SessionImpl;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 
@@ -32,25 +30,15 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
     public $cache;
 
     /**
-     * @var SessionDriver
-     */
-    public $driver;
-
-    /**
      * @var OOHostConfig
      */
     public $hostConfig;
 
     public $chatbotConfig;
 
-    public function __construct(
-        CacheAdapter $cache,
-        SessionDriver $driver,
-        ChatbotConfig $config
-    )
+    public function __construct(CacheAdapter $cache, ChatbotConfig $config)
     {
         $this->cache = $cache;
-        $this->driver = $driver;
         $this->chatbotConfig = $config;
         $this->hostConfig = $config->host;
     }
@@ -132,12 +120,14 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         Conversation $conversation
     ) : Session
     {
-        return new SessionImpl(
-            $belongsTo,
-            $this->cache,
-            $conversation,
-            $this->driver
+        return $conversation->make(
+            Session::class,
+            [
+                'cache' => $this->cache,
+                'belongsTo' => $belongsTo
+            ]
         );
+
     }
 
     public function onUserMessageFinally(Conversation $conversation): void

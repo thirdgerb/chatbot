@@ -70,23 +70,20 @@ class HearingHandler implements Hearing
     protected $heardUncaught = true;
 
     /**
-     * @var callable[]
+     * @var callable
      */
-    protected $components;
+    protected $defaultFallback;
 
-    /**
-     * HearingHandler constructor.
-     * @param Context $self
-     * @param Dialog $dialog
-     * @param Message $message
-     * @param callable[] $components
-     * @param bool $throw
-     */
+
+    protected $calledFallback = false;
+
+    protected $calledDefaultFallback = false;
+
+
     public function __construct(
         Context $self,
         Dialog $dialog,
         Message $message,
-        array $components,
         bool $throw = false
     )
     {
@@ -94,7 +91,6 @@ class HearingHandler implements Hearing
         $this->dialog = $dialog;
         $this->message = $message;
         $this->throw = $throw;
-        $this->components = $components;
     }
 
     protected function getParameters() : array
@@ -362,7 +358,6 @@ class HearingHandler implements Hearing
         if (isset($matched) && in_array($matched->getName(), $names)) {
             return $this->heardIntent($matched, $intentAction);
         }
-
 
         foreach ($names as $name) {
             $this->isIntent($name, $intentAction);
@@ -691,13 +686,22 @@ class HearingHandler implements Hearing
         return $this;
     }
 
-    public function fallback(callable $fallback): Hearing
+    public function fallback(callable $fallback, bool $addToEndNotHead = true): Hearing
     {
-        if (isset($this->navigator)) return $this;
-
-        $this->fallback[] = $fallback;
+        if ($addToEndNotHead) {
+            array_push($this->fallback, $fallback);
+        } else {
+            array_unshift($this->fallback, $fallback);
+        }
         return $this;
     }
+
+    public function defaultFallback(callable $defaultFallback): Hearing
+    {
+        $this->defaultFallback = $defaultFallback ?? $this->defaultFallback;
+        return $this;
+    }
+
 
     public function isEvent(string $eventName, callable $action = null): Hearing
     {
@@ -744,31 +748,14 @@ class HearingHandler implements Hearing
         return $this;
     }
 
-    protected $calledDefault = false;
-
-    public function defaultFallback(): Hearing
+    public function runFallback(): Hearing
     {
-        if (isset($this->navigator)) return $this;
-
-        if ($this->calledDefault) {
+        if ($this->calledFallback) {
             return $this;
         }
-        $this->calledDefault = true;
 
-        // 如果设置了默认的闲聊, 会使用闲聊的逻辑.
-        $fallback = $this->dialog->session->hostConfig->hearingFallback;
-        if (isset($fallback)) {
-
-            // 允许是类名. 不过实例应该是 callable
-            if (
-                is_string($fallback)
-                && !is_callable($fallback)
-                && class_exists($fallback)
-            ) {
-                $fallback = $this->dialog->app->make($fallback);
-            }
-
-            // 没有navigator 的话就往后走
+        $this->calledFallback = true;
+        foreach ($this->fallback as $fallback) {
             $this->callInterceptor($fallback);
         }
 
@@ -776,38 +763,35 @@ class HearingHandler implements Hearing
     }
 
 
-    public function end(callable $fallback = null): Navigator
+    public function runDefaultFallback(): Hearing
+    {
+        if (isset($this->navigator)) return $this;
+
+        if ($this->calledDefaultFallback) {
+            return $this;
+        }
+
+        $this->calledDefaultFallback = true;
+
+        // 没有navigator 的话就往后走
+        return $this->callInterceptor($this->defaultFallback);
+    }
+
+
+    public function end(callable $defaultFallback = null): Navigator
     {
         // 补加载 component
         if (isset($this->navigator)) return $this->navigator;
 
-        // 预注册的组件.
-        if (!empty($this->components)) {
-            foreach ($this->components as $component) {
-                $this->component($component);
-            }
-        }
-
-        if (isset($this->navigator)) return $this->navigator;
-
         // 如果是 event 消息的话. 当没听到.
         if ($this->message instanceof EventMsg) {
-            $this->setNavigator($this->dialog->rewind());
-            return $this->navigator;
+            return $this->navigator = $this->dialog->rewind();
         }
 
-        // 运行注册的fallback
-        if (isset($fallback)) {
-            $this->fallback[] = $fallback;
-        }
-        foreach ($this->fallback as $caller) {
-            $this->callInterceptor($caller);
-            if(isset($this->navigator)) {
-                return $this->navigator;
-            }
-        }
-
-        $this->defaultFallback();
+        //
+        $this->defaultFallback($defaultFallback);
+        $this->runFallback();
+        $this->runDefaultFallback();
 
         return $this->navigator ?? $this->dialog->missMatch();
     }

@@ -84,6 +84,7 @@ return [
         ],
         'sessionPipes' => [
             \Commune\Chatbot\App\SessionPipe\DefaultReplyPipe::class,
+            \Commune\Chatbot\App\SessionPipe\EventMsgPipe::class,
             \Commune\Chatbot\App\Commands\UserCommandsPipe::class,
             \Commune\Chatbot\App\Commands\AnalyserPipe::class,
             \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,

@@ -38,7 +38,7 @@ class EventMsgPipe implements SessionPipe
 
     protected function handleEvent(EventMsg $message, Session $session) : ? Navigator
     {
-        // 举例
+        // 连接事件, 重启当前会话.
         if ($message->getEventName() === ConnectionEvt::class) {
             return $session->dialog->repeat();
         }

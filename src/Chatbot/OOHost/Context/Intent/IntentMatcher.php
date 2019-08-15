@@ -134,7 +134,7 @@ class IntentMatcher
 
         // 其它的逻辑都要求是对话, 才去匹配.
         if (!$message instanceof VerboseMsg) {
-            return [];
+            return null;
         }
 
         $text = $message->getTrimmedText();
