@@ -73,6 +73,11 @@ class StringUtils
     }
 
 
+    public static function hasAnnotation(string $doc, string $annotation) : bool
+    {
+        $matched = preg_match('/@'. $annotation.'\s/', $doc);
+        return is_int($matched) && $matched > 0;
+    }
 
     public static function matchNameAndMethod(string $name) : ? array
     {

@@ -59,5 +59,34 @@ lksjdflskjdlfjskdfjlsdjkfslkjdflskjdflkjsfsd', $desc);
         $this->assertNull(StringUtils::matchNameAndMethod('1abc@hhh'));
     }
 
+    public function testHasAnnotation()
+    {
+        $doc1 = <<<EOF
+    /**
+     * test stage
+     * @stage
+     */
+EOF;
+        $doc2 = <<<EOF
+    /**
+     * test stage
+     * @stage testing
+     */
+EOF;
+
+        $doc3 = <<<EOF
+    /**
+     * test stage
+     * @property test
+     */
+EOF;
+
+        $this->assertTrue(StringUtils::hasAnnotation($doc1, 'stage'));
+        $this->assertTrue(StringUtils::hasAnnotation($doc2, 'stage'));
+        $this->assertTrue(StringUtils::hasAnnotation($doc3, 'property'));
+        $this->assertFalse(StringUtils::hasAnnotation($doc3, 'stage'));
+        $this->assertFalse(StringUtils::hasAnnotation($doc3, 'prop'));
+
+    }
 
 }
