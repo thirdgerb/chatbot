@@ -20,16 +20,19 @@ use Commune\Support\Option;
  * Interface ChatbotConfig
  * @package Commune\Chatbot\Config
  *
+ * @property-read string $chatbotName name of current chatbot
+ *
  * @property-read bool $debug
- * @property-read array $configBindings
  *
- * @property-read BaseServiceConfig $baseServices
- * @property-read string[] $processProviders
- * @property-read string[] $conversationProviders
- * @property-read string[] $components
+ * @property-read array $configBindings preload config. immutable in process
  *
- * @property-read TranslationConfig $translation
- * @property-read LoggerConfig $logger
+ * @property-read BaseServiceConfig $baseServices chatbot system service binding. could modify
+ * @property-read string[] $processProviders process level service providers
+ * @property-read string[] $conversationProviders conversation(request) level service providers
+ * @property-read string[] $components register chatbot components
+ *
+ * @property-read TranslationConfig $translation  translator configs
+ * @property-read LoggerConfig $logger 系统的日志配置.
  *
  * @property-read ChatbotPipesConfig $chatbotPipes
  *
@@ -37,12 +40,15 @@ use Commune\Support\Option;
  *
  * @property-read DefaultMessagesConfig $defaultMessages
  *
- * @property-read OOHostConfig $host
+ * @property-read OOHostConfig $host  multi-turn conversation kernel config
  *
- * @property-read array $slots 环境变量. 会flatten ([a][b][c] 变成 a.b.c) 然后放到 slots 里面.
+ * @property-read array $slots environment slots. multidimensional array will flatten to key-value array ([a][b][c] to a.b.c)
  */
 class ChatbotConfig extends Option
 {
+    const IDENTITY = 'chatbotName';
+
+
     protected static $associations = [
         'defaultMessages' => DefaultMessagesConfig::class,
         'eventRegister[]' => EventListenerConfig::class,
@@ -56,6 +62,8 @@ class ChatbotConfig extends Option
     public static function stub(): array
     {
         return [
+            'chatbotName' => 'chatbotName',
+
             'debug' => true,
 
             // 预定义的 slots

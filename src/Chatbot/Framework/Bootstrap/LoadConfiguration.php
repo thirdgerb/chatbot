@@ -8,7 +8,7 @@
 namespace Commune\Chatbot\Framework\Bootstrap;
 
 
-use Schematic\Entry;
+use Commune\Support\Option;
 use Psr\Log\LoggerInterface;
 use Commune\Container\ContainerContract;
 use Commune\Chatbot\Blueprint\Application;
@@ -67,7 +67,7 @@ class LoadConfiguration implements Bootstrapper
         $name = is_string($key) ? $key : $value;
 
         // 判断chatbotName 是否合法.
-        if (!is_string($name) || !is_a($name, Entry::class, TRUE)) {
+        if (!is_string($name) || !is_a($name, Option::class, TRUE)) {
             //todo
             throw new ConfigureException(
                 static::class

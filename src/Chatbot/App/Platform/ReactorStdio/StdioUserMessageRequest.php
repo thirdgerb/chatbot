@@ -17,22 +17,16 @@ use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Conversation\MessageRequestHelper;
 use Commune\Chatbot\Framework\Predefined\SimpleConsoleLogger;
 use Commune\Support\Uuid\HasIdGenerator;
-use Commune\Support\Uuid\IdGeneratorHelper;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 
 class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
 {
-    use IdGeneratorHelper, MessageRequestHelper;
+    use MessageRequestHelper;
 
     /**
      * @var string|Message
      */
     protected $line;
-
-    /**
-     * @var string;
-     */
-    protected $messageId;
 
     /**
      * @var Message
@@ -79,11 +73,6 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
         return $this->createUuId();
     }
 
-    public function getChatbotUserId(): string
-    {
-        return $this->config->chatbotUserId;
-    }
-
     public function getPlatformId(): string
     {
         return StdioServer::class;
@@ -95,16 +84,6 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
             return $this->line;
         }
         return $this->message ?? $this->message = new Text($this->line);
-    }
-
-    public function fetchMessageId(): string
-    {
-        return $this->messageId ?? $this->messageId = $this->createUuId();
-    }
-
-    public function fetchTraceId(): string
-    {
-        return $this->fetchMessageId();
     }
 
     public function fetchUserId(): string

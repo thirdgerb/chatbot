@@ -8,7 +8,7 @@ interface Chat
 {
     public function getUserId() : string;
 
-    public function getChatbotUserId() : string;
+    public function getChatbotUserName() : string;
 
     public function getPlatformId() : string;
 

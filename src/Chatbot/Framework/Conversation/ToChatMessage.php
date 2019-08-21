@@ -26,11 +26,10 @@ class ToChatMessage extends ConversationMessageImpl
             $messageId,
             $message,
             $chat->getUserId(),
-            $chat->getChatbotUserId(),
+            $chat->getChatbotUserName(),
             $chat->getPlatformId(),
             $chat->getChatId(),
             $replyToId,
-            $replyToMessage,
             $traceId
         );
     }

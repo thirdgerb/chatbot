@@ -31,18 +31,50 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  */
 interface ConversationMessage extends ArrayAndJsonAble
 {
+    /**
+     * 消息ID
+     * @return string
+     */
     public function getId() : string;
 
     /*------- 关键ID -------*/
 
+    /**
+     * uuid for request
+     * request life circle share same trace id
+     *
+     * @return string
+     */
     public function getTraceId() : string;
 
+    /**
+     * messages with same chat id consider in same chat
+     *
+     * @return string
+     */
     public function getChatId() : string ;
 
+    /**
+     * user unique id
+     * may be platform user id or system generated id
+     * decided by request
+     *
+     * @return string
+     */
     public function getUserId() : string;
 
+    /**
+     * unique id for chatbot self
+     *
+     * @return string
+     */
     public function getChatbotUserId() : string ;
 
+    /**
+     * platform which chatbot located
+     *
+     * @return string
+     */
     public function getPlatformId() : string;
 
     /*------- 状态 -------*/
@@ -52,8 +84,18 @@ interface ConversationMessage extends ArrayAndJsonAble
 
     /*------- 消息 -------*/
 
+    /**
+     * origin message
+     *
+     * @return Message
+     */
     public function getMessage() : Message ;
 
+    /**
+     * if is null, means it is incoming message
+     * else is reply message
+     * @return null|string
+     */
     public function getReplyToId() : ? string ;
 
 }

@@ -21,7 +21,7 @@ class ChatImpl implements Chat
     /**
      * @var string
      */
-    protected $chatbotUserId;
+    protected $chatbotUserName;
 
     /**
      * @var string
@@ -32,14 +32,20 @@ class ChatImpl implements Chat
      * ChatImpl constructor.
      * @param string $platformId
      * @param string $userId
-     * @param string $chatbotUserId
+     * @param string $chatbotUserName
+     * @param string|null $chatId
      */
-    public function __construct(string $platformId, string $userId, string $chatbotUserId)
+    public function __construct(
+        string $platformId,
+        string $userId,
+        string $chatbotUserName,
+        string $chatId = null
+    )
     {
         $this->platformId = $platformId;
         $this->userId = $userId;
-        $this->chatbotUserId = $chatbotUserId;
-        $this->chatId = md5("p:$platformId:u:$userId:c:$chatbotUserId");
+        $this->chatbotUserName = $chatbotUserName;
+        $this->chatId = $chatId ?? md5("p:$platformId:u:$userId:c:$chatbotUserName");
     }
 
     public function getUserId(): string
@@ -47,9 +53,9 @@ class ChatImpl implements Chat
         return $this->userId;
     }
 
-    public function getChatbotUserId(): string
+    public function getChatbotUserName(): string
     {
-        return $this->chatbotUserId;
+        return $this->chatbotUserName;
     }
 
     public function getPlatformId(): string

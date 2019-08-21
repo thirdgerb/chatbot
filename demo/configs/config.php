@@ -4,6 +4,9 @@
 
 return [
     'debug' => true,
+
+    'chatbotName' => 'demo',
+
     'configBindings' => [
         \Commune\Chatbot\App\Platform\ConsoleConfig::class => [
             'allowIPs' => ['127.0.0.1'],

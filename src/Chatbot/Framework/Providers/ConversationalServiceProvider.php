@@ -120,7 +120,9 @@ class ConversationalServiceProvider extends BaseServiceProvider
                 $chat = new ChatImpl(
                     $request->getPlatformId(),
                     $request->fetchUserId(),
-                    $request->getChatbotUserId()
+                    $request->getChatbotName(),
+                    // chatId could be null
+                    $request->fetchChatId()
                 );
                 return $chat;
             }
@@ -148,7 +150,7 @@ class ConversationalServiceProvider extends BaseServiceProvider
                     $request->fetchMessageId(),
                     $request->fetchMessage(),
                     $chat->getUserId(),
-                    $chat->getChatbotUserId(),
+                    $chat->getChatbotUserName(),
                     $chat->getPlatformId(),
                     $chat->getChatId(),
                     null,

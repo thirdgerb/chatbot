@@ -130,7 +130,7 @@ class ChatApp implements Blueprint
         // 默认配置
         $this->config = new ChatbotConfig($config);
 
-        // 默认的常量
+        // 默认的常量, 只会定义一次. 理论上一个process 也只启动一个chatbot
         if (!defined('CHATBOT_DEBUG')) {
             define('CHATBOT_DEBUG', boolval($this->config->debug));
         }

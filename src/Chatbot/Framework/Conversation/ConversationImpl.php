@@ -236,7 +236,7 @@ class ConversationImpl implements Blueprint
         $chat = new ChatImpl(
             $request->getPlatformId(),
             $userId,
-            $request->getChatbotUserId()
+            $request->getChatbotName()
         );
 
         $toChat = new ToChatMessage(
