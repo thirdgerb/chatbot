@@ -24,7 +24,6 @@ use Commune\Support\Arr\ArrayAbleToJson;
  * @property-read Carbon $createdAt
  * @property-read Message $message
  * @property-read string|null $replyToId
- * @property-read Message|null $replyTo
  */
 class ConversationMessageImpl implements ConversationMessage
 {
@@ -88,7 +87,6 @@ class ConversationMessageImpl implements ConversationMessage
         string $platformId,
         string $chatId,
         string $replyToId = null,
-        Message $replyToMessage = null,
         string $traceId = null
     )
     {
@@ -99,7 +97,6 @@ class ConversationMessageImpl implements ConversationMessage
         $this->chatId = $chatId;
 
         $this->replyToId = $replyToId;
-        $this->replyToMessage = $replyToMessage;
         $this->platformId = $platformId;
 
         $this->createdAt = $message->getCreatedAt();
@@ -169,11 +166,6 @@ class ConversationMessageImpl implements ConversationMessage
     public function getReplyToId(): ? string
     {
         return $this->replyToId;
-    }
-
-    public function getReplyTo(): ? Message
-    {
-        return $this->replyToMessage;
     }
 
     public function toArray() : array

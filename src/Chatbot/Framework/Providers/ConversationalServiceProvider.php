@@ -152,7 +152,6 @@ class ConversationalServiceProvider extends BaseServiceProvider
                     $chat->getPlatformId(),
                     $chat->getChatId(),
                     null,
-                    null,
                     $request->fetchTraceId()
                 );
                 return $incomingMessage;

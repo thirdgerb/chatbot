@@ -58,9 +58,7 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
     {
         $body = json_encode(['text' => $text]);
 
-        $client = new Client([
-            'base_uri' => $this->config->server,
-        ]);
+        $client = $this->makeClient();
 
         $option = ['body' => $body];
 
@@ -74,6 +72,13 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
         $parsed = json_decode($json, true);
 
         return is_array($parsed) ? $parsed : null;
+    }
+
+    protected function makeClient() : Client
+    {
+        return new Client([
+            'base_uri' => $this->config->server,
+        ]);
     }
 
     public function match(Session $session) : ? Matches

@@ -56,6 +56,4 @@ interface ConversationMessage extends ArrayAndJsonAble
 
     public function getReplyToId() : ? string ;
 
-    public function getReplyTo() : ? Message;
-
 }

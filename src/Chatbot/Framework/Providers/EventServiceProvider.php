@@ -15,6 +15,9 @@ use Psr\Log\LoggerInterface;
 class EventServiceProvider extends BaseServiceProvider
 {
 
+    /**
+     * @param \Commune\Container\ContainerContract $app
+     */
     public function boot($app): void
     {
         /**
