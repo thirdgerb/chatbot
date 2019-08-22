@@ -52,7 +52,7 @@ class StdioServer implements ChatServer
 
     public function run(): void
     {
-        $this->app->bootWorker();
+        $this->app->bootApp();
         $this->stdio->getReadline()->setPrompt('> ');
 
         $config = $this->app->getProcessContainer()[ConsoleConfig::class];

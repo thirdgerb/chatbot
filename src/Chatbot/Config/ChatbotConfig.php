@@ -14,6 +14,9 @@ use Commune\Chatbot\Config\Services\BaseServiceConfig;
 use Commune\Chatbot\Config\Translation\TranslationConfig;
 use Commune\Chatbot\Config\Event\EventListenerConfig;
 use Commune\Chatbot\Config\Host\OOHostConfig;
+use Commune\Chatbot\Framework\Providers;
+use Commune\Chatbot\OOHost\HostConversationalServiceProvider;
+use Commune\Chatbot\OOHost\HostProcessServiceProvider;
 use Commune\Support\Option;
 
 /**
@@ -26,7 +29,7 @@ use Commune\Support\Option;
  *
  * @property-read array $configBindings preload config. immutable in process
  *
- * @property-read BaseServiceConfig $baseServices chatbot system service binding. could modify
+ * @property-read array $baseServices chatbot system service binding. could modify
  * @property-read string[] $processProviders process level service providers
  * @property-read string[] $conversationProviders conversation(request) level service providers
  * @property-read string[] $components register chatbot components
@@ -54,7 +57,6 @@ class ChatbotConfig extends Option
         'eventRegister[]' => EventListenerConfig::class,
         'chatbotPipes' => ChatbotPipesConfig::class,
         'translation' => TranslationConfig::class,
-        'baseServices' => BaseServiceConfig::class,
         'logger' => LoggerConfig::class,
         'host' => OOHostConfig::class,
     ];
@@ -76,8 +78,15 @@ class ChatbotConfig extends Option
                 // 'componentName' => []
             ],
 
-            // 系统的服务.
-            'baseServices' => BaseServiceConfig::stub(),
+            // 系统预注册的服务.
+            'baseServices' => [
+                'translation' => Providers\TranslatorServiceProvider::class,
+                'logger' => Providers\LoggerServiceProvider::class,
+                'event' => Providers\EventServiceProvider::class,
+                'conversational' => Providers\ConversationalServiceProvider::class,
+                'hostProcess' => HostProcessServiceProvider::class,
+                'hostConversation' => HostConversationalServiceProvider::class,
+            ],
 
             // 用户自定义的进程级组件.
             'processProviders' => [

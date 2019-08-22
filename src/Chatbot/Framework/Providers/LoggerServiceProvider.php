@@ -12,6 +12,7 @@ use Monolog\Logger as Monolog;
 
 class LoggerServiceProvider extends BaseServiceProvider
 {
+    const IS_PROCESS_SERVICE_PROVIDER = true;
 
     public function boot($app): void
     {

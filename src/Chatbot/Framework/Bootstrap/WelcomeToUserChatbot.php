@@ -27,7 +27,7 @@ class WelcomeToUserChatbot implements Bootstrapper
         $logger->info('');
         $logger->info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         $logger->info("                                                    ");
-        $logger->info("               welcome to use chatbot               ");
+        $logger->info("                Boot Commune Chatbot                ");
         $logger->info("                                                    ");
         $logger->info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         $logger->info('');

@@ -34,7 +34,7 @@ interface Feeling
      * register a 'experience' caller to determine message match given emotion
      *
      * @param string $emotionName
-     * @param string|callable $experience  return bool value as prediction
+     * @param string|callable $experience  accept session argument and return bool value as prediction
      */
-    public function experience(string $emotionName, $experience) : void;
+    public function experience(string $emotionName, callable $experience) : void;
 }

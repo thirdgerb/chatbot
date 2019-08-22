@@ -14,7 +14,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  *
  * @property string $userId
- * @property string $chatbotUserId
+ * @property string $chatbotName
  * @property string $chatId
  * @property string $platformId
  * @property string $conversationId
@@ -34,7 +34,7 @@ class Scope implements ArrayAndJsonAble
 {
     const USER_ID = 'userId';
     const PLATFORM_ID = 'platformId';
-    const CHATBOT_USER_ID = 'chatbotUserId';
+    const CHATBOT_USER_ID = 'chatbotName';
     const CHAT_ID = 'chatId';
     const CONVERSATION_ID = 'conversationId';
     const INCOMING_MESSAGE_ID = 'incomingMessageId';
@@ -57,7 +57,7 @@ class Scope implements ArrayAndJsonAble
 
     private $userId = '';
 
-    private $chatbotUserId = '';
+    private $chatbotName = '';
 
     private $platformId = '';
 
@@ -108,7 +108,7 @@ class Scope implements ArrayAndJsonAble
 
         $message = $conversation->getIncomingMessage();
         $scope->userId = $message->getUserId();
-        $scope->chatbotUserId = $message->getChatbotUserId();
+        $scope->chatbotName = $message->getChatbotName();
         $scope->platformId = $message->getPlatformId();
         $scope->chatId = $message->getChatId();
         $scope->conversationId = $conversation->getConversationId();

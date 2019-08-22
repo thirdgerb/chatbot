@@ -86,7 +86,7 @@ interface MessageRequest
 
     /**
      * if could not fetch chat id from request
-     * then conversation will generate chat id with userId, platformId and chatbotUserId
+     * then conversation will generate chat id with userId, platformId and chatbotName
      *
      * @return null|string
      */

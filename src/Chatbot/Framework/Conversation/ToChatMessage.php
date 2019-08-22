@@ -26,7 +26,7 @@ class ToChatMessage extends ConversationMessageImpl
             $messageId,
             $message,
             $chat->getUserId(),
-            $chat->getChatbotUserName(),
+            $chat->getChatbotName(),
             $chat->getPlatformId(),
             $chat->getChatId(),
             $replyToId,

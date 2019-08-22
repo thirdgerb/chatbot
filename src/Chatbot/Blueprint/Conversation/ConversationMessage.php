@@ -68,7 +68,7 @@ interface ConversationMessage extends ArrayAndJsonAble
      *
      * @return string
      */
-    public function getChatbotUserId() : string ;
+    public function getChatbotName() : string ;
 
     /**
      * platform which chatbot located

@@ -56,9 +56,12 @@ interface Application
 
     /**
      * 启动 worker 进程的预加载环节. 在进入请求之前必须执行.
+     *
+     * boot app at worker process, before any request
+     *
      * @throws BootingException
      */
-    public function bootWorker() : Application;
+    public function bootApp() : Application;
 
     /**
      * 使用 ServiceProvider 注册进程级的服务

@@ -14,7 +14,10 @@ use Commune\Chatbot\Blueprint\Conversation\Chat;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\Blueprint\Conversation\User;
 use Commune\Chatbot\Contracts\ConsoleLogger;
+use Commune\Chatbot\OOHost\Context\Hearing;
+use Commune\Chatbot\OOHost\Emotion\Feeling;
 use Commune\Chatbot\OOHost\Session\Driver as SessionDriver;
+use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Container\ContainerContract;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\Translator;
@@ -57,6 +60,8 @@ class ContractsValidator implements Bootstrapper
         ExceptionHandler::class,
         // 多请求复用的组件.
         Translator::class,
+        // host
+        Feeling::class,
     ];
 
     /**
@@ -74,7 +79,10 @@ class ContractsValidator implements Bootstrapper
         Chat::class,
         IncomingMessage::class,
         // host
-        SessionDriver::class
+        SessionDriver::class,
+        Session::class,
+        Hearing::class,
+        Monologue::class,
     ];
 
     public function bootstrap(Application $app): void

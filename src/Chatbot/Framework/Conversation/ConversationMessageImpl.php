@@ -52,7 +52,7 @@ class ConversationMessageImpl implements ConversationMessage
     /**
      * @var string
      */
-    protected $chatbotUserId;
+    protected $chatbotName;
 
     /**
      * @var string
@@ -83,7 +83,7 @@ class ConversationMessageImpl implements ConversationMessage
         string $messageId,
         Message $message,
         string $userId,
-        string $chatbotUserId,
+        string $chatbotName,
         string $platformId,
         string $chatId,
         string $replyToId = null,
@@ -93,7 +93,7 @@ class ConversationMessageImpl implements ConversationMessage
         $this->messageId = $messageId;
         $this->message = $message;
         $this->userId = $userId;
-        $this->chatbotUserId = $chatbotUserId;
+        $this->chatbotName = $chatbotName;
         $this->chatId = $chatId;
 
         $this->replyToId = $replyToId;
@@ -136,9 +136,9 @@ class ConversationMessageImpl implements ConversationMessage
     /**
      * @return string
      */
-    public function getChatbotUserId(): string
+    public function getChatbotName(): string
     {
-        return $this->chatbotUserId;
+        return $this->chatbotName;
     }
 
 
@@ -178,7 +178,7 @@ class ConversationMessageImpl implements ConversationMessage
             'chatId' => $this->chatId,
             'platformId' => $this->platformId,
             'userId' => $this->userId,
-            'chatbotUserId' => $this->chatbotUserId,
+            'chatbotName' => $this->chatbotName,
             'createAt' => $this->getCreatedAt()->toDateTimeString(),
             'traceId' => $this->getTraceId(),
         ];

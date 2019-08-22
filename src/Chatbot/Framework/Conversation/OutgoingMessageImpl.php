@@ -23,7 +23,7 @@ class OutgoingMessageImpl extends ConversationMessageImpl
             $messageId,
             $reply,
             $incomingMessage->getUserId(),
-            $incomingMessage->getChatbotUserId(),
+            $incomingMessage->getChatbotName(),
             $incomingMessage->getPlatformId(),
             $incomingMessage->getChatId(),
             $incomingMessage->getId(),

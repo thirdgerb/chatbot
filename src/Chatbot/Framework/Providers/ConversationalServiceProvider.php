@@ -19,12 +19,7 @@ use Commune\Chatbot\Framework\Conversation\ConversationLoggerImpl;
 use Commune\Chatbot\Framework\Conversation\IncomingMessageImpl;
 use Commune\Chatbot\Framework\Conversation\MonologueImpl;
 use Commune\Chatbot\Framework\Conversation\UserImpl;
-use Commune\Chatbot\OOHost\Context\Hearing;
-use Commune\Chatbot\OOHost\Context\Listeners\HearingHandler;
-use Commune\Chatbot\OOHost\Session\Driver;
-use Commune\Chatbot\OOHost\Session\Session;
-use Commune\Chatbot\OOHost\Session\SessionImpl;
-use Illuminate\Support\Arr;
+
 use Psr\Log\LoggerInterface;
 
 class ConversationalServiceProvider extends BaseServiceProvider
@@ -36,62 +31,13 @@ class ConversationalServiceProvider extends BaseServiceProvider
 
     public function register(): void
     {
-        $this->registerDefaultSlots();
         $this->registerMonologue();
         $this->registerIncomingMessage();
         $this->registerUser();
         $this->registerChat();
         $this->registerLogger();
-        $this->registerHearing();
-        $this->registerSession();
     }
 
-    protected function registerDefaultSlots() : void
-    {
-        $this->app->singleton(
-            Monologue::DEFAULT_SLOTS,
-            function(Conversation $conversation){
-
-                $env = $conversation->getChatbotConfig()->slots;
-                $slots = Arr::dot($env);
-
-                /**
-                 * @var User $user
-                 */
-                $user = $conversation[User::class];
-                $slots[Monologue::SLOT_USER_NAME] = $user->getName();
-
-                return $slots;
-            }
-        );
-    }
-
-    protected function registerSession() : void
-    {
-        $this->app->bind(Session::class, function($conversation, $parameters){
-            return new SessionImpl(
-                $parameters['belongsTo'],
-                $parameters['cache'],
-                $conversation,
-                $conversation[Driver::class]
-            );
-        });
-    }
-
-    protected function registerHearing() : void
-    {
-        // 可以重写成自己觉得合适的
-        $this->app->bind(
-            Hearing::class,
-            function($app, $parameters){
-                return new HearingHandler(
-                    $parameters['context'],
-                    $parameters['dialog'],
-                    $parameters['message']
-                );
-            }
-        );
-    }
 
     protected function registerUser() : void
     {
@@ -150,7 +96,7 @@ class ConversationalServiceProvider extends BaseServiceProvider
                     $request->fetchMessageId(),
                     $request->fetchMessage(),
                     $chat->getUserId(),
-                    $chat->getChatbotUserName(),
+                    $chat->getChatbotName(),
                     $chat->getPlatformId(),
                     $chat->getChatId(),
                     null,

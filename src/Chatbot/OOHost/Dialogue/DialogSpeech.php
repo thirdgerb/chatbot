@@ -164,7 +164,8 @@ class DialogSpeech implements Speech
     )
     {
         $question = new Confirm($question, $default, $yes, $no);
-        return $this->ask($question);
+        $result = $this->ask($question);
+        return $result;
     }
 
     public function trans(string $message, array $slots = []): string

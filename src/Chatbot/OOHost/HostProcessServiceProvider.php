@@ -3,21 +3,22 @@
 
 namespace Commune\Chatbot\OOHost;
 
-
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\Framework\Component\Providers\LoadPsr4SelfRegister;
 use Commune\Chatbot\Framework\Providers\BaseServiceProvider;
 use Commune\Chatbot\OOHost\Context\ContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\OOHost\Context\Registrar;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryBagDefinition;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
+use Commune\Chatbot\OOHost\Context\Registrar as ContextRegistrarInterface;
 use Commune\Chatbot\OOHost\Context\Intent\Registrar as IntentRegistrarInterface;
+use Commune\Chatbot\OOHost\Context\Memory\Registrar as MemoryRegistrarInterface;
 use Commune\Chatbot\OOHost\Emotion\Feeling;
 use Commune\Chatbot\OOHost\Emotion\Feels;
 
-class OOHostServiceProvider extends BaseServiceProvider
+
+class HostProcessServiceProvider extends BaseServiceProvider
 {
     const IS_PROCESS_SERVICE_PROVIDER = true;
 
@@ -29,7 +30,7 @@ class OOHostServiceProvider extends BaseServiceProvider
         $chatbotConfig = $app[ChatbotConfig::class];
         $host = $chatbotConfig->host;
 
-        $repo = MemoryRegistrar::getIns();
+        $repo = $app->get(MemoryRegistrarInterface::class);
         foreach ($host->memories as $memoryOption) {
             $repo->register(
                 new MemoryBagDefinition(
@@ -52,18 +53,37 @@ class OOHostServiceProvider extends BaseServiceProvider
 
     public function register()
     {
-        $this->app->singleton(Registrar::class, function(){
+        $this->registerContextRegistrar();
+        $this->registerIntentRegistrar();
+        $this->registerMemoryRegistrar();
+        $this->registerFeeling();
+    }
+
+    protected function registerContextRegistrar()
+    {
+        $this->app->singleton(ContextRegistrarInterface::class, function(){
             return ContextRegistrar::getIns();
         });
+    }
 
+    protected function registerIntentRegistrar()
+    {
         $this->app->singleton(IntentRegistrarInterface::class, function(){
             return IntentRegistrar::getIns();
         });
-
-        $this->app->singleton(Feeling::class, function() {
-            return new Feels();
-        });
-
     }
+
+    protected function registerMemoryRegistrar()
+    {
+        $this->app->singleton(MemoryRegistrarInterface::class, function(){
+            return MemoryRegistrar::getIns();
+        });
+    }
+
+    protected function registerFeeling()
+    {
+        $this->app->singleton(Feeling::class, Feels::class);
+    }
+
 
 }

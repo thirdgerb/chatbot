@@ -53,7 +53,7 @@ class ChatImpl implements Chat
         return $this->userId;
     }
 
-    public function getChatbotUserName(): string
+    public function getChatbotName(): string
     {
         return $this->chatbotUserName;
     }

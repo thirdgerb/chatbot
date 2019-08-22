@@ -47,6 +47,7 @@ class TestCase extends TaskDef
                             '#tellWeather : 用命令命中意图, 查询天气',
                             5 => 'dependencies: 测试依赖注入参数',
                             6 => '测试 todo -> otherwise api',
+                            7 => 'test confirmation with emotion'
                         ]
                     );
             },
@@ -130,6 +131,9 @@ class TestCase extends TaskDef
                     ->isChoice(6, function(Dialog $dialog){
                         return $dialog->goStage('testTodo');
                     })
+                    ->isChoice(7, function(Dialog $dialog){
+                        return $dialog->goStage('testConfirmation');
+                    })
                     ->end(function(Dialog $dialog, Message $message){
 
                         $dialog->say()->info("输入了:" . $message->getText());
@@ -193,6 +197,27 @@ class TestCase extends TaskDef
 
     }
 
+    public function __onTestConfirmation(Stage $stage) : Navigator
+    {
+        $result = $stage->buildTalk();
+
+        $result = $result
+            ->askConfirm('try to confirm this. test positive emotion. ')
+            ->wait();
+
+        $result = $result->hearing()
+                ->isPositive(function(Dialog $dialog){
+                    $dialog->say()->info('is positive emotion');
+                })
+                ->isNegative(function(Dialog $dialog){
+                    $dialog->say()->info('is negative emotion');
+                })
+                ->end(function(Dialog $dialog){
+                    return $dialog->goStage('menu');
+                });
+
+        return $result;
+    }
 
     public function __exiting(Exiting $listener): void
     {

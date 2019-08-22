@@ -34,7 +34,6 @@ use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Framework\Conversation\ConversationImpl;
 use Commune\Container\IlluminateAdapter;
 use Illuminate\Container\Container;
-use Psr\Log\LoggerInterface;
 
 /**
  * Class ChatbotApp
@@ -145,7 +144,6 @@ class ChatApp implements Blueprint
         // 创建会话容器.
         $this->conversationContainer = new ConversationImpl($this->processContainer);
         $this->baseBinding();
-        $this->baseRegister();
     }
 
     public function getConsoleLogger(): ConsoleLogger
@@ -229,9 +227,7 @@ class ChatApp implements Blueprint
         );
     }
 
-
-
-    public function bootWorker() : Blueprint
+    public function bootApp() : Blueprint
     {
         // 不要重复启动.
         if ($this->workerBooted) {
@@ -241,8 +237,8 @@ class ChatApp implements Blueprint
         $logger = $this->consoleLogger;
 
         try {
-            $logger->info(static::class . ' chatbot worker booting');
 
+            $logger->info(static::class . ' start boot chatbot app');
 
             // 完成各种注册逻辑.
             foreach ($this->bootstrappers as $bootstrapperName) {
@@ -260,14 +256,14 @@ class ChatApp implements Blueprint
                 . get_class($this->processContainer)
             );
 
-            $logger->info(static::class . ' chatbot worker boot');
+            $logger->info(static::class . ' booting chatbot app');
             // baseContainer 执行boot流程.
             foreach ($this->processProviders as $provider) {
                 $logger->debug("boot provider " . get_class($provider));
                 $provider->boot($this->processContainer);
             }
 
-            $logger->info(static::class . ' chatbot worker booted');
+            $logger->info(static::class . ' chatbot app booted');
             $this->workerBooted = true;
 
             return $this;
@@ -302,21 +298,6 @@ class ChatApp implements Blueprint
 
     }
 
-    protected function baseRegister() : void
-    {
-        $config = $this->getConfig()->baseServices;
-        // process
-        $this->registerProcessService($config->translation);
-        $this->registerProcessService($config->hosting);
-        $this->registerProcessService($config->logger);
-
-        // conversation
-        $this->registerConversationService($config->event);
-        $this->registerConversationService($config->conversational);
-
-    }
-
-
     public function bootConversation(Conversation $conversation): void
     {
         foreach ($this->conversationProviders as $provider) {
@@ -344,13 +325,13 @@ class ChatApp implements Blueprint
 
     public function getKernel(): Kernel
     {
-        $this->bootWorker();
+        $this->bootApp();
         return $this->processContainer->make(Kernel::class);
     }
 
     public function getServer(): ChatServer
     {
-        $this->bootWorker();
+        $this->bootApp();
         return $this->processContainer->make(ChatServer::class);
     }
 

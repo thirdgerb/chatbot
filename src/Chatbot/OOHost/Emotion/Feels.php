@@ -5,12 +5,12 @@ namespace Commune\Chatbot\OOHost\Emotion;
 
 
 use Commune\Chatbot\App\Messages\QA\Confirmation;
-use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Emotion\Emotions\Negative;
 use Commune\Chatbot\OOHost\Emotion\Emotions\Positive;
 use Commune\Chatbot\OOHost\Session\Session;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 /**
  * todo 情绪目前的实现策略还嫌太过复杂了. 未来考虑更改.
@@ -27,14 +27,17 @@ class Feels implements Feeling
      */
     protected $experiences = [];
 
-    public function __construct()
+
+    protected function defaultExperience() : void
     {
         // 系统默认的两种情绪.
-        $this->experience(Negative::class, function(Message $message) : bool {
+        $this->experience(Negative::class, function(Session $session) : bool {
+            $message = $session->incomingMessage->getMessage();
             return $message instanceof Confirmation && $message->hasChoice(0);
         });
 
-        $this->experience(Positive::class, function(Message $message) : bool {
+        $this->experience(Positive::class, function(Session $session) : bool {
+            $message = $session->incomingMessage->getMessage();
             return $message instanceof Confirmation && $message->hasChoice(1);
         });
     }
@@ -88,20 +91,28 @@ class Feels implements Feeling
             }
         }
 
-        // 如果注册了经验:
-        if (isset($this->experiences[$emotionName])) {
-            foreach ($this->experiences[$emotionName] as $validator) {
-                $result = call_user_func($validator, $message);
-                if (is_bool($result)) {
-                    return $result;
+        try {
+            // 如果注册了经验:
+            if (isset($this->experiences[$emotionName])) {
+                foreach ($this->experiences[$emotionName] as $validator) {
+
+                    $result = call_user_func($validator, $session);
+
+                    if ($result === true) {
+                        return $result;
+                    }
                 }
             }
+        } catch (BindingResolutionException $e) {
+            $session->logger->error($e);
+        } catch (\ReflectionException $e) {
+            $session->logger->error($e);
         }
 
         return false;
     }
 
-    public function experience(string $emotionName, $experience): void
+    public function experience(string $emotionName, callable $experience): void
     {
         if (!is_a($emotionName, Emotion::class, TRUE)) {
             throw new \InvalidArgumentException(
@@ -110,19 +121,7 @@ class Feels implements Feeling
             );
         }
 
-
-        if( is_callable($experience)) {
-            $this->experiences[$emotionName][] = $experience;
-
-        } elseif (is_string($experience)) {
-            $this->intentMap[$emotionName][] = $experience;
-
-        } else {
-            throw new \InvalidArgumentException(
-                __METHOD__
-                . ' experience should only be callable or intent name string'
-            );
-        }
+        $this->experiences[$emotionName][] = $experience;
     }
 
     public function setIntentMap(string $emotionName, array $intentNames): void

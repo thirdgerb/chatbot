@@ -10,9 +10,6 @@ namespace Commune\Chatbot\Framework\Providers;
 
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\Translator;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Translation\Loader\CsvFileLoader;
 use Symfony\Component\Translation\Loader\JsonFileLoader;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
