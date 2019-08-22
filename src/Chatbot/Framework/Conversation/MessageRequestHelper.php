@@ -63,6 +63,24 @@ trait MessageRequestHelper
     }
 
 
+
+    public function fetchMessage(): Message
+    {
+        if (isset($this->inputMessage)) {
+            return $this->inputMessage;
+        }
+
+        $input = $this->getInput();
+        if ($input instanceof Message) {
+            return $this->inputMessage = $input;
+        }
+
+        return $this->inputMessage = $this->makeInputMessage($input);
+
+    }
+
+    abstract protected function makeInputMessage($input) : Message;
+
     public function fetchTraceId(): string
     {
         return $this->fetchMessageId();

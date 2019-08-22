@@ -101,15 +101,11 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
         return SwooleConsoleServer::class;
     }
 
-    public function fetchMessage(): Message
+    protected function makeInputMessage($input): Message
     {
-        if ($this->data instanceof Message) {
-            return $this->data;
-        }
-
-        return $this->message
-            ?? $this->message = new Text($this->data);
+        return new Text(strval($input));
     }
+
 
     public function fetchUserId(): string
     {

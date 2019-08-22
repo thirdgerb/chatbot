@@ -29,9 +29,15 @@ abstract class ComponentOption extends Option implements Bootstrapper
 
     abstract protected function doBootstrap() : void;
 
+
+    /*------ method for do bootstrap ------*/
+
     /**
      * 启动的时候预加载 SelfRegister 类
      * 这样做到基于配置文件可以预加载 intent, memory, context 等.
+     *
+     * scan and load self registering classes.
+     * find class by psr-4
      *
      * @param string $namespace
      * @param string $path
@@ -59,6 +65,8 @@ abstract class ComponentOption extends Option implements Bootstrapper
      * trans 文件夹的结构是 {$resourcePath}/语言名/{domain}.{format}
      * 例如  __DIR__/trans/zh/messages.php
      *
+     * load translation resource.
+     *
      * @param string $resourcePath
      * @param string $loader
      */
@@ -79,6 +87,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
 
     /**
      * @param string $resourcePath
+     * @deprecated
      */
     public function loadNLUExampleFromJsonFile(
         string $resourcePath
@@ -119,6 +128,13 @@ abstract class ComponentOption extends Option implements Bootstrapper
 
     /**
      * 注册别的组件.
+     *
+     * depend on another component
+     *
+     * after load all components,
+     * if the depending component is still not registered
+     * then load the component by it's default option
+     * ( todo or should throw exception? )
      *
      * @param string $componentName
      * @param array $data

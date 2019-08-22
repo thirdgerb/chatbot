@@ -78,13 +78,11 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
         return StdioServer::class;
     }
 
-    public function fetchMessage(): Message
+    protected function makeInputMessage($input): Message
     {
-        if ($this->line instanceof Message) {
-            return $this->line;
-        }
-        return $this->message ?? $this->message = new Text($this->line);
+        return new Text(strval($input));
     }
+
 
     public function fetchUserId(): string
     {
