@@ -7,7 +7,7 @@ namespace Commune\Chatbot\OOHost\Context\Stages;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
-use Commune\Chatbot\OOHost\Dialogue\Speech;
+use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 class OnStartStageBuilder implements OnStartStage
@@ -26,7 +26,7 @@ class OnStartStageBuilder implements OnStartStage
     protected $isStart;
 
     /**
-     * @var Speech
+     * @var DialogSpeech
      */
     protected $dialogSpeech;
 

@@ -168,7 +168,7 @@ class TestCase extends TaskDef
     public function testTodo(Stage $stage) : Navigator
     {
         return $stage->buildTalk()
-            ->info('测试 todo api. 请输入 123, 456, 789 测试:')
+            ->info('测试 todo api. 请输入 123, 456, 789 测试(quit 退出):')
             ->wait()
             ->hearing()
 
@@ -213,6 +213,7 @@ class TestCase extends TaskDef
                     $dialog->say()->info('is negative emotion');
                 })
                 ->end(function(Dialog $dialog){
+                    $dialog->say()->warning('nether yes nor no');
                     return $dialog->goStage('menu');
                 });
 

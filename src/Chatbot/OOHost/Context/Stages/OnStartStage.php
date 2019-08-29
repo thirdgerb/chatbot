@@ -8,10 +8,10 @@ use Commune\Chatbot\OOHost\Context\Callables\Interceptor;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
-use Commune\Chatbot\OOHost\Dialogue\Speech;
+use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
-interface OnStartStage extends Speech
+interface OnStartStage extends DialogSpeech
 {
     /**
      * @param callable|Interceptor $interceptor

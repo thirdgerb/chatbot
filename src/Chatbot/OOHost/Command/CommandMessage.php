@@ -23,6 +23,9 @@ class CommandMessage extends AbsMessage implements CmdMessage
     const ERROR_TOO_MANY_ARGS = 'too_many_args';
     const ERROR_EXPECTED_NO_ARG = 'expected_no_arg';
 
+
+    const MESSAGE_TYPE = CmdMessage::class;
+
     protected $arguments = [];
 
     protected $tokens = [];

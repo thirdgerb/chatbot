@@ -10,6 +10,8 @@ namespace Commune\Chatbot\Framework\Predefined;
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Config\Translation\TranslationConfig;
 use Commune\Chatbot\Contracts\Translator as Contract;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Symfony\Component\Translation\Translator as SymfonyTranslator;
 
 /**
@@ -46,12 +48,17 @@ class SymfonyTranslatorAdapter implements Contract
     ): string
     {
         $params = [];
-        foreach($parameters as $key => $value) {
-            $slotKey = self::MARKER . trim($key, self::MARKER) . self::MARKER;
-            $params[$slotKey] = $value;
+        // 过滤掉不合适翻译用的值.
+        $marker = static::MARKER;
+        foreach ($parameters as $key => $value) {
+            if (is_scalar($value)) {
+                $index = $marker . trim($key, $marker) . $marker;
+                $params[$index] = $value;
+            }
         }
         return $this->translator->trans($id, $params, $domain, $locale);
     }
+
 
     public function addResource(
         $resource,

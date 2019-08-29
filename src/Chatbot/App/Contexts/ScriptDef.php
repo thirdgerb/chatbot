@@ -12,7 +12,7 @@ use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\OOContext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
-use Commune\Chatbot\OOHost\Dialogue\Speech;
+use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Illuminate\Support\Str;
 
@@ -40,7 +40,7 @@ abstract class ScriptDef extends OOContext
     protected $_skip_mark = '..';
 
     /**
-     * @var Speech
+     * @var DialogSpeech
      */
     protected $_speech;
 
@@ -195,7 +195,7 @@ abstract class ScriptDef extends OOContext
         $this->getSpeech($dialog)->info(strval($message));
     }
 
-    protected function getSpeech(Dialog $dialog) : Speech
+    protected function getSpeech(Dialog $dialog) : DialogSpeech
     {
         return $this->_speech
             ?? $this->_speech = $dialog->say($this->getSlots());

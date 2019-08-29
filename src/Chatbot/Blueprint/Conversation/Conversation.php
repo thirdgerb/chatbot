@@ -20,6 +20,9 @@ interface Conversation extends ConversationContainer, RunningSpy
     /*------------ create ------------*/
 
     /**
+     * ether conversation container is instanced by request (true)
+     * or initialized by chat app to register bindings (false)
+     *
      * @return bool
      */
     public function isInstanced() : bool;
@@ -79,9 +82,9 @@ interface Conversation extends ConversationContainer, RunningSpy
 
     /**
      * 和用户对话的模块.
-     * @return Monologue
+     * @return Speech
      */
-    public function monolog() : Monologue;
+    public function getSpeech() : Speech;
 
     /**
      * 回复消息给当前用户
@@ -90,14 +93,31 @@ interface Conversation extends ConversationContainer, RunningSpy
      */
     public function reply(Message $message, bool $immediately = false) : void;
 
+
     /**
-     * 转发消息不是给当前用户, 而是给制定的用户.
+     * render reply placeholder to real reply messages
+     *
+     * @param Message $reply
+     * @return Message[]
+     */
+    public function render(Message $reply) : array;
+
+    /**
+     * 转发消息不是给当前用户, 而是给指定的用户.
+     *
+     * deliver message to curtain user
      *
      * @param string $userId
      * @param Message $message
      * @param bool $immediately
+     * @param string|null $chatId  not generate chatId with userId but set it
      */
-    public function deliver(string $userId, Message $message, bool $immediately = false) : void;
+    public function deliver(
+        string $userId,
+        Message $message,
+        bool $immediately = false,
+        string $chatId = null
+    ) : void;
 
     /*------------ conversation messages ------------*/
 

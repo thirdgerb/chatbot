@@ -285,16 +285,22 @@ class ChatApp implements Blueprint
 
         // self
         $this->processContainer->instance(Blueprint::class, $this);
+        $this->conversationContainer->instance(Blueprint::class, $this);
 
         // config
         $this->processContainer->instance(ChatbotConfig::class, $this->config);
+        $this->conversationContainer->instance(ChatbotConfig::class, $this->config);
+
         $this->processContainer->instance(OOHostConfig::class, $this->config->host);
+        $this->conversationContainer->instance(OOHostConfig::class, $this->config->host);
 
         // server
         $this->processContainer->instance(ConsoleLogger::class, $this->consoleLogger);
+        $this->conversationContainer->instance(ConsoleLogger::class, $this->consoleLogger);
 
         // kernel
         $this->processContainer->singleton(Kernel::class, ChatKernel::class);
+        $this->conversationContainer->instance(Kernel::class, ChatKernel::class);
 
     }
 

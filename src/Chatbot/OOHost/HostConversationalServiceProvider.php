@@ -13,7 +13,7 @@ use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionImpl;
 use Illuminate\Support\Arr;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
-use Commune\Chatbot\Blueprint\Conversation\Monologue;
+use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Conversation\User;
 
 class HostConversationalServiceProvider extends BaseServiceProvider
@@ -38,7 +38,7 @@ class HostConversationalServiceProvider extends BaseServiceProvider
     protected function registerDefaultSlots() : void
     {
         $this->app->singleton(
-            Monologue::DEFAULT_SLOTS,
+            Speech::DEFAULT_SLOTS,
             function(Conversation $conversation){
 
                 $env = $conversation->getChatbotConfig()->slots;
@@ -48,7 +48,7 @@ class HostConversationalServiceProvider extends BaseServiceProvider
                  * @var User $user
                  */
                 $user = $conversation[User::class];
-                $slots[Monologue::SLOT_USER_NAME] = $user->getName();
+                $slots[Speech::SLOT_USER_NAME] = $user->getName();
 
                 return $slots;
             }

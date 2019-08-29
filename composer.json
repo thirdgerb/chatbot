@@ -1,7 +1,13 @@
 {
     "name": "commune/chatbot",
     "type": "library",
-    "description": "framework to build chatbot which could handle complex multi-turn conversation by engineering, like build website or app",
+    "keywords": [
+        "php",
+        "framework",
+        "chatbot",
+        "commune"
+    ],
+    "description": "chatbot framework, handle complex multi-turn conversation by engineering, like build website or app",
     "license": "MIT",
     "authors": [
         {

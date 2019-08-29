@@ -7,7 +7,7 @@ namespace Commune\Chatbot\App\Components\Configurable\Controllers;
 use Commune\Chatbot\OOHost\Context\Callables\HearingComponent;
 use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
-use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
+use Commune\Chatbot\OOHost\Dialogue\DialogSpeechImpl;
 
 class Operate implements HearingComponent
 {

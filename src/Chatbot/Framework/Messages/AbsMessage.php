@@ -27,6 +27,8 @@ abstract class AbsMessage implements Contract
 
     const USER_COMMAND_MARK = '#';
 
+    const MESSAGE_TYPE = '';
+
     /**
      * @var Carbon
      */
@@ -50,10 +52,10 @@ abstract class AbsMessage implements Contract
         $this->_createdAt = $createdAt ?? new Carbon();
     }
 
-
     public function getMessageType(): string
     {
-        return static::class;
+        $type = static::MESSAGE_TYPE;
+        return empty($type) ? static::class : $type;
     }
 
     /**
@@ -88,8 +90,7 @@ abstract class AbsMessage implements Contract
 
         // 去掉全角符号, 降低复杂性.
         $text = CommandUtils::sbc2dbc($text);
-
-        return $this->_trimmed = trim($text, " \t\n\r\0\x0B.,;");
+        return $this->_trimmed = trim($text, static::TRIMMING_MARKS);
     }
 
     public function getCreatedAt(): Carbon

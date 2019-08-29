@@ -13,6 +13,8 @@ interface NatureLanguageUnit
 
     /**
      * 可以被NLU 单元处理的消息.通常是文本消息.
+     *
+     * determine if message could be handle by nlu
      * @param Message $message
      * @return bool
      */
@@ -20,6 +22,8 @@ interface NatureLanguageUnit
 
 
     /**
+     * use nlu analyse session and get nlu result
+     *
      * @param Session $session
      * @return Matches|null
      */

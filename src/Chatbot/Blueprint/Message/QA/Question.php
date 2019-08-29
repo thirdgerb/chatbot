@@ -9,8 +9,9 @@
 namespace Commune\Chatbot\Blueprint\Message\QA;
 
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 
-interface Question extends Message
+interface Question extends ReplyMsg
 {
     /**
      * 所有的问题都可以有选项的概念.
@@ -20,7 +21,26 @@ interface Question extends Message
      *
      * @return array
      */
-    public function suggestions() : array;
+    public function getSuggestions() : array;
+
+    /**
+     * @return string
+     */
+    public function getQuery() : string;
+
+
+    /**
+     * 默认值.
+     * @return null|mixed
+     */
+    public function getDefaultValue();
+
+
+    /**
+     * default choice of suggestions
+     * @return null|mixed
+     */
+    public function getDefaultChoice();
 
     /**
      * 查看一个消息是不是一个回答
@@ -47,10 +67,5 @@ interface Question extends Message
      */
     public function isNullable() : bool;
 
-    /**
-     * 默认值.
-     * @return null|mixed
-     */
-    public function getDefaultValue();
 
 }

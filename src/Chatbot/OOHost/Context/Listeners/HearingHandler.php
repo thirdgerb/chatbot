@@ -790,7 +790,9 @@ class HearingHandler implements Hearing
         }
 
         //
-        $this->defaultFallback($defaultFallback);
+        if (isset($defaultFallback)) {
+            $this->defaultFallback($defaultFallback);
+        }
         $this->runFallback();
         $this->runDefaultFallback();
 

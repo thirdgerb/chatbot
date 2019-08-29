@@ -9,6 +9,7 @@ namespace Commune\Chatbot\Framework\Messages;
 
 
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
 
 /**
  * 标准的文本消息
@@ -20,42 +21,33 @@ class Verbose extends AbsMessage implements VerboseMsg
 {
     use Verbosely;
 
+    const MESSAGE_TYPE = VerboseMsg::class;
+
     /**
      * @var string
      */
     protected $text;
 
     /**
-     * @var string
-     */
-    protected $input;
-
-    /**
      * Text constructor.
-     * @param string $input
+     * @param string $text
      */
-    public function __construct(string $input)
+    public function __construct(string $text)
     {
-        $this->input = $input;
+        $this->text = $text;
         parent::__construct();
     }
 
     public function getText(): string
     {
-        return $this->text ?? $this->_translation ?? $this->getInput();
+        return $this->text;
     }
-
-    public function getInput(): string
-    {
-        return $this->input;
-    }
-
 
     public function toMessageData(): array
     {
         return [
             'text' => $this->text,
-            'level' => $this->_level
+            'level' => $this->getLevel()
         ];
     }
 

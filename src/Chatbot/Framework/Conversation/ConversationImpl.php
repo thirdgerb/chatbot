@@ -14,15 +14,14 @@ use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
 use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
-use Commune\Chatbot\Blueprint\Conversation\Monologue;
+use Commune\Chatbot\Blueprint\Conversation\Renderer;
+use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
-//use Commune\Chatbot\Blueprint\Conversation\Signal;
 use Commune\Chatbot\Blueprint\Conversation\User;
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\EventDispatcher;
-use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Container\ContainerContract;
 use Commune\Container\RecursiveContainer;
@@ -85,9 +84,6 @@ class ConversationImpl implements Blueprint
     {
         $container = new static($this->parentContainer);
 
-        // 提高效率
-        $container->share(ChatbotConfig::class, $config);
-
         // 绑定自身.
         $container->share(Conversation::class, $container);
 
@@ -97,6 +93,7 @@ class ConversationImpl implements Blueprint
         // 互相持有, 要注意内存泄露的问题.
         $request->withConversation($container);
 
+        // container is instance for request
         $container->asConversation = true;
         $trace = $container->getTraceId();
 
@@ -204,55 +201,96 @@ class ConversationImpl implements Blueprint
 
     public function reply(Message $message, bool $immediately = false): void
     {
-        if ($message instanceof VerboseMsg) {
-            $message->translate(
-                $this->make(Translator::class),
-                $this->locale()
+        $messages = $this->render($message);
+
+
+        foreach ($messages as $msg) {
+            $request = $this->getRequest();
+            $incomingMessage = $this->getIncomingMessage();
+
+            $replyMessage =  new OutgoingMessageImpl(
+                $incomingMessage,
+                $request->generateMessageId(),
+                $msg
             );
+
+            $this->saveConversationReply($request, $replyMessage, $immediately);
         }
-
-        $request = $this->getRequest();
-        $incomingMessage = $this->getIncomingMessage();
-
-        $replyMessage =  new OutgoingMessageImpl(
-            $incomingMessage,
-            $request->generateMessageId(),
-            $message
-        );
-
-        $this->saveConversationReply($request, $replyMessage, $immediately);
     }
 
-    public function deliver(string $userId, Message $message, bool $immediately = false): void
+    protected function defaultSlots() : array
     {
-        if ($message instanceof VerboseMsg) {
-            $message->translate(
-                $this->make(Translator::class),
-                $this->locale()
-            );
+        return $this[Speech::DEFAULT_SLOTS];
+    }
+
+    /**
+     * @param Message $message
+     * @return array
+     * @throws
+     */
+    public function render(Message $message): array
+    {
+        // only reply message should be rendered
+        if (!$message instanceof ReplyMsg) {
+            return [$message];
         }
 
-        $request = $this->getRequest();
-        $chat = new ChatImpl(
-            $request->getPlatformId(),
-            $userId,
-            $request->getChatbotName()
-        );
+        /**
+         * @var Renderer $renderer
+         */
+        $renderer = $this->get(Renderer::class);
+        // only way to merge default slots
+        $message->getSlots()->merge($this->defaultSlots());
+        $id = $message->getId();
 
-        $toChat = new ToChatMessage(
-            $chat,
-            $request->generateMessageId(),
-            $message,
-            $this->getTraceId()
-        );
+        // use template to render message
+        if ($renderer->boundTemplate($id)) {
+            return $renderer
+                ->makeTemplate($id)
+                ->render($message, $this);
+        }
 
-        $this->saveConversationReply($request, $toChat,  $immediately);
+        // default renderer do translate only
+        return $renderer
+            ->makeTemplate(Renderer::DEFAULT_ID)
+            ->render($message, $this);
     }
 
 
-    public function monolog(): Monologue
+    public function deliver(
+        string $userId,
+        Message $message,
+        bool $immediately = false,
+        string $chatId = null
+    ): void
     {
-        return $this->make(Monologue::class);
+
+        $messages = $this->render($message);
+
+
+        foreach ($messages as $msg) {
+            $request = $this->getRequest();
+            $chat = new ChatImpl(
+                $request->getPlatformId(),
+                $userId,
+                $request->getChatbotName(),
+                $chatId
+            );
+
+            $toChat = new ToChatMessage(
+                $chat,
+                $request->generateMessageId(),
+                $msg,
+                $this->getTraceId()
+            );
+            $this->saveConversationReply($request, $toChat,  $immediately);
+        }
+    }
+
+
+    public function getSpeech(): Speech
+    {
+        return $this->make(Speech::class);
     }
 
 

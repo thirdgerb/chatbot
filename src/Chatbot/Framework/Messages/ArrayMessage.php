@@ -9,6 +9,8 @@ use Commune\Chatbot\Blueprint\Message\Tags\Transformed;
 
 class ArrayMessage extends AbsMessage implements \ArrayAccess, Transformed
 {
+    const MESSAGE_TYPE = self::class;
+
     /**
      * @var Message
      */

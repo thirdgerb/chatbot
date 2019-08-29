@@ -121,7 +121,7 @@ class Director
     {
         $this->session
             ->conversation
-            ->monolog()
+            ->getSpeech()
             ->error(
                 $this->session
                     ->chatbotConfig

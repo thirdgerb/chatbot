@@ -4,12 +4,13 @@
 namespace Commune\Chatbot\OOHost\Context\Stages;
 
 
+use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
+use Commune\Chatbot\OOHost\Dialogue\DialogSpeechImpl;
 
 /**
- * @property DialogSpeech $dialogSpeech
+ * @property DialogSpeechImpl $dialogSpeech
  */
 trait StageSpeechTrait
 {

@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @property-read App $app
- * @property-read Speech $talk
+ * @property-read DialogSpeech $talk
  * @property-read Session $session
  * @property-read Redirect $redirect
  * @property-read LoggerInterface $logger
@@ -262,9 +262,9 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     /*--------- talk ---------*/
 
-    public function say(array $slots = []): Speech
+    public function say(array $slots = []): DialogSpeech
     {
-        return new DialogSpeech($this, $slots);
+        return new DialogSpeechImpl($this, $slots);
     }
 
 

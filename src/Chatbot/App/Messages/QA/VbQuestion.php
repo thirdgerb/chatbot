@@ -7,17 +7,18 @@ namespace Commune\Chatbot\App\Messages\QA;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
-use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Messages\QA\AbsQuestion;
-use Commune\Chatbot\Framework\Messages\Verbosely;
+use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
 use Illuminate\Support\Str;
 
 /**
  * Verbose Question
  */
-class VbQuestion extends AbsQuestion implements VerboseMsg
+class VbQuestion extends AbsQuestion
 {
     use Verbosely;
+
+    const QUESTION_ID = 'question';
 
     const SLOT_DEFAULT = '%default%';
     const SLOT_DEFAULT_CHOICE = '%defaultChoice%';
@@ -30,6 +31,13 @@ class VbQuestion extends AbsQuestion implements VerboseMsg
 
     protected $defaultChoice;
 
+    /**
+     * VbQuestion constructor.
+     * @param string $question
+     * @param array $suggestions
+     * @param int|string|null $defaultChoice
+     * @param mixed $default
+     */
     public function __construct(
         string $question,
         array $suggestions,
@@ -38,6 +46,8 @@ class VbQuestion extends AbsQuestion implements VerboseMsg
     )
     {
         $this->defaultChoice = $defaultChoice;
+
+        // default value is a choice?
         $defaultIsSuggestion = isset($defaultChoice)
             && isset($suggestions[$defaultChoice]);
 
@@ -47,75 +57,18 @@ class VbQuestion extends AbsQuestion implements VerboseMsg
         parent::__construct($question, $suggestions, $default);
     }
 
-    protected function getSuggestionStr(array $suggestions) : string
-    {
-        $str = '';
-        if (!empty($suggestions)) {
-            foreach ($suggestions as $index => $suggestion) {
-                $str .= PHP_EOL . "[$index] $suggestion";
-            }
-        }
-        return $str;
-    }
-
-    public function makeQuestion(): string
-    {
-        return $this->_translation ?? $this->getInput();
-    }
-
-    public function getInput() : string
-    {
-        return $this->question;
-    }
-
-    protected function makeText(string $question, array $suggestions) : string
-    {
-        $text = $question;
-        if (isset($this->defaultChoice)) {
-            $text.= ' (' . $this->defaultChoice . ')';
-        }
-        $text .= PHP_EOL . $this->getSuggestionStr($suggestions);
-
-        return $text;
-    }
-
-    protected function doTranslate(Translator $translator, string $locale = null): string
-    {
-        $slots = $this->getSlots();
-        $slots[self::SLOT_DEFAULT] = $this->getDefaultValue();
-        $slots[self::SLOT_DEFAULT_CHOICE] = $this->defaultChoice;
-
-        // suggestion 翻译
-        $suggestions = [];
-        foreach ($this->suggestions as $index => $suggestion) {
-            $suggestions[$index] = $translator->trans(
-                $suggestion,
-                $slots,
-                Translator::MESSAGE_DOMAIN,
-                $locale
-            );
-        }
-
-        $question = $translator->trans(
-            $this->question,
-            $slots,
-            Translator::MESSAGE_DOMAIN,
-            $locale
-        );
-
-        return $this->makeText($question, $suggestions);
-    }
-
-    protected function hasDefault() : bool
-    {
-        return isset($this->answer) || isset($this->default);
-    }
-
     public function getDefaultValue()
     {
         return isset($this->answer)
             ? $this->answer->toResult()
             : $this->default;
+    }
+
+    public function getDefaultChoice()
+    {
+        return isset($this->answer)
+            ? $this->answer->getChoice()
+            : $this->defaultChoice;
     }
 
     public function parseAnswer(Message $message): ? Answer

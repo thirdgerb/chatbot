@@ -4,13 +4,17 @@
 namespace Commune\Chatbot\Framework\Messages\QA;
 
 
+use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Messages\AbsMessage;
+use Illuminate\Support\Collection;
 
 abstract class AbsQuestion extends AbsMessage implements Question
 {
+    const QUESTION_ID = 'question';
+
     /**
      * @var string
      */
@@ -40,9 +44,9 @@ abstract class AbsQuestion extends AbsMessage implements Question
     protected $answer;
 
     /**
-     * @var string
+     * @var Collection
      */
-    protected $text;
+    protected $slots;
 
     /**
      * AbsAsk constructor.
@@ -63,13 +67,23 @@ abstract class AbsQuestion extends AbsMessage implements Question
         parent::__construct();
     }
 
+    public function getQuery(): string
+    {
+        return $this->question;
+    }
+
+
     abstract public function parseAnswer(Message $message): ? Answer;
 
-    abstract public function makeQuestion(): string;
+    /**
+     * default choice for default value
+     * @return mixed|null
+     */
+    abstract public function getDefaultChoice();
 
     public function getText(): string
     {
-        return $this->text ?? $this->text = $this->makeQuestion();
+        return $this->getQuery();
     }
 
     public function isEmpty(): bool
@@ -77,7 +91,7 @@ abstract class AbsQuestion extends AbsMessage implements Question
         return false;
     }
 
-    public function suggestions(): array
+    public function getSuggestions(): array
     {
         return $this->suggestions;
     }
@@ -91,11 +105,12 @@ abstract class AbsQuestion extends AbsMessage implements Question
     public function toMessageData(): array
     {
         return [
+            'id' => $this->getId(),
             'question' => $this->question,
             'suggestions' => $this->suggestions,
             'default' => $this->getDefaultValue(),
+            'defaultChoice' => $this->getDefaultChoice(),
             'nullable' => $this->nullable,
-            'answer' => isset($this->answer) ? $this->answer->toArray() : null
         ];
     }
 
@@ -105,6 +120,21 @@ abstract class AbsQuestion extends AbsMessage implements Question
             parent::namesAsDependency(),
             [Question::class, AbsQuestion::class]
         );
+    }
+
+    public function getId(): string
+    {
+        return static::QUESTION_ID;
+    }
+
+    public function getLevel(): string
+    {
+        return Speech::INFO;
+    }
+
+    public function getSlots(): Collection
+    {
+        return $this->slots ?? $this->slots = new Collection($this->toMessageData());
     }
 
 

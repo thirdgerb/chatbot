@@ -24,7 +24,7 @@ class DefaultReplyPipe implements SessionPipe
                 ->chatbotConfig
                 ->defaultMessages
                 ->farewell;
-            $session->conversation->monolog()->info($farewell);
+            $session->conversation->getSpeech()->info($farewell);
             return $session;
         }
 
@@ -34,7 +34,7 @@ class DefaultReplyPipe implements SessionPipe
                 ->chatbotConfig
                 ->defaultMessages
                 ->messageMissMatched;
-            $session->conversation->monolog()->warning($missMatched);
+            $session->conversation->getSpeech()->warning($missMatched);
 
             return $session;
         }

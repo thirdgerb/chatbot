@@ -15,6 +15,8 @@ use Commune\Chatbot\Framework\Messages\Verbose;
  */
 class Selects extends Choose implements Question
 {
+    const QUESTION_ID = 'question.selects';
+
     protected $onlySuggestion = true;
 
     protected $separator;
@@ -38,14 +40,13 @@ class Selects extends Choose implements Question
             }, $defaultChoices));
         }
 
-
         parent::__construct(
             $question,
             $suggestions,
-            null,
-            $default
+            null
         );
 
+        $this->default = $default;
     }
 
 

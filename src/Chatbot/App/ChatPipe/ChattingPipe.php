@@ -53,7 +53,7 @@ class ChattingPipe extends ChatbotPipeImpl
 
         // 没锁到就直接返回好了.
         if (! $locked) {
-            $conversation->monolog()->warning(
+            $conversation->getSpeech()->warning(
                 $this->config
                     ->defaultMessages
                     ->chatIsTooBusy

@@ -6,7 +6,7 @@ namespace Commune\Chatbot\App\Messages\QA;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Messages\QA\AbsAnswer;
-use Commune\Chatbot\Framework\Messages\Verbosely;
+use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
 
 /**
  * Verbose Answer

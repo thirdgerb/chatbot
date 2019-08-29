@@ -40,10 +40,25 @@ interface Session extends RunningSpy
 {
     /*----- 响应会话 -----*/
 
+    /**
+     * hear incoming message and response
+     * this api could use in middleware, child session etc.
+     *
+     * @param Message $message
+     * @param Navigator|null $navigator
+     */
     public function hear(Message $message, Navigator $navigator = null) : void;
 
+    /**
+     * the incoming message has been heard
+     * @return bool
+     */
     public function isHeard() : bool;
 
+    /**
+     * the current session is told to quit
+     * @return bool
+     */
     public function isQuiting() : bool ;
 
     /*----- nlu 相关 -----*/
@@ -54,6 +69,18 @@ interface Session extends RunningSpy
 
     /*----- 创建一个director -----*/
 
+    /**
+     * goto or create a sub level session.
+     *
+     * parent session can deliver unhandled message to child session
+     * and parent session should handle miss matched message from child session
+     *
+     * like onion middleware
+     *
+     * @param string $belongsTo
+     * @param \Closure $rootMaker
+     * @return Session
+     */
     public function newSession(string $belongsTo, \Closure $rootMaker) : Session;
 
     /*----- 保存必要的数据. -----*/
@@ -64,13 +91,20 @@ interface Session extends RunningSpy
 
     /**
      * 不保存任何数据.
+     *
+     * keep session status same as last turn, do not record any change
      */
     public function beSneak() : void;
 
     /**
      * 需要退出 session
+     *
+     * request session to quit
      */
     public function shouldQuit() : void;
 
+    /**
+     * trigger finish event each turn of conversation
+     */
     public function finish() : void;
 }

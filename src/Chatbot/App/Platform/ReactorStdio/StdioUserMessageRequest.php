@@ -119,7 +119,7 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
             $this->stdio
                 ->getReadline()
                 ->setAutocomplete(function () use ($msg) {
-                    return $msg->suggestions();
+                    return $msg->getSuggestions();
                 });
 
         }

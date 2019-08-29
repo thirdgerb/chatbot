@@ -81,6 +81,7 @@ class ChatbotConfig extends Option
             // 系统预注册的服务.
             'baseServices' => [
                 'translation' => Providers\TranslatorServiceProvider::class,
+                'render' => Providers\ReplyRendererServiceProvider::class,
                 'logger' => Providers\LoggerServiceProvider::class,
                 'event' => Providers\EventServiceProvider::class,
                 'conversational' => Providers\ConversationalServiceProvider::class,

@@ -14,6 +14,10 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  */
 interface Message extends ArrayAndJsonAble
 {
+
+    // will trim when get trimmed text
+    const TRIMMING_MARKS = " \t\n\r\0\x0B.,;";
+
     /**
      * 消息是不是意味着一个null.
      * 比如用户输入了几个空格, 或者某个字符串, 但实际上表示 null 的意思.

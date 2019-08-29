@@ -24,7 +24,7 @@ class QuitClient extends AbsSignal
             ->farewell;
 
         $this->conversation
-            ->monolog()
+            ->getSpeech()
             ->info($bye);
 
         $this->conversation->finish();

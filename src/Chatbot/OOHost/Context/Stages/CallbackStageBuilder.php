@@ -6,7 +6,7 @@ namespace Commune\Chatbot\OOHost\Context\Stages;
 
 use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
-use Commune\Chatbot\OOHost\Dialogue\Speech;
+use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 class CallbackStageBuilder implements OnCallbackStage
@@ -19,7 +19,7 @@ class CallbackStageBuilder implements OnCallbackStage
     protected $stage;
 
     /**
-     * @var Speech
+     * @var DialogSpeech
      */
     protected $dialogSpeech;
 

@@ -5,7 +5,7 @@ namespace Commune\Chatbot\OOHost\Command;
 
 
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
-use Commune\Chatbot\OOHost\Dialogue\Speech;
+use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
 use Symfony\Component\Console\Input\InputOption;
@@ -43,9 +43,9 @@ abstract class SessionCommand
      * 调用 dialog 的对话模块.
      *
      * @param array $slots
-     * @return Speech
+     * @return DialogSpeech
      */
-    public function say(array $slots = []) : Speech
+    public function say(array $slots = []) : DialogSpeech
     {
         return $this->dialog->say($slots);
     }

@@ -8,6 +8,8 @@ use Commune\Chatbot\Blueprint\Message\Event\EventMsg;
 
 class AbsEventMsg extends AbsMessage implements EventMsg
 {
+    const MESSAGE_TYPE = EventMsg::class;
+
     public function getEventName(): string
     {
         return static::class;

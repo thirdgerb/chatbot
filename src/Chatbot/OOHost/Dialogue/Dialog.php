@@ -54,9 +54,9 @@ interface Dialog
      * 使用内置的方法发出格式化的消息.
      *
      * @param array $slots
-     * @return Speech
+     * @return DialogSpeech
      */
-    public function say(array $slots = []) : Speech;
+    public function say(array $slots = []) : DialogSpeech;
 
     /**
      * 向用户发出一个消息.

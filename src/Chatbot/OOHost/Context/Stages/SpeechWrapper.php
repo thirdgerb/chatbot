@@ -4,14 +4,14 @@
 namespace Commune\Chatbot\OOHost\Context\Stages;
 
 
-use Commune\Chatbot\Blueprint\Conversation\Monologue;
+use Commune\Chatbot\Blueprint\Conversation\Speech;
 
-class MonologWrapper
+class SpeechWrapper
 {
     /**
-     * @var Monologue
+     * @var Speech
      */
-    protected $monolog;
+    protected $speech;
 
     /**
      * @var bool
@@ -20,12 +20,12 @@ class MonologWrapper
 
     /**
      * MonologWrapper constructor.
-     * @param Monologue $monolog
+     * @param Speech $speech
      * @param bool $isStart
      */
-    public function __construct(Monologue $monolog, bool $isStart)
+    public function __construct(Speech $speech, bool $isStart)
     {
-        $this->monolog = $monolog;
+        $this->speech = $speech;
         $this->isStart = $isStart;
     }
 
@@ -37,7 +37,7 @@ class MonologWrapper
     public function __call($name, $arguments)
     {
         if ($name === 'trans' || $this->isStart) {
-            return call_user_func_array([$this->monolog, $name], $arguments);
+            return call_user_func_array([$this->speech, $name], $arguments);
         }
         return null;
     }

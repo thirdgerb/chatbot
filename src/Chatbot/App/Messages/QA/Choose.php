@@ -10,6 +10,7 @@ use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 
 class Choose extends VbQuestion implements Question
 {
+    const QUESTION_ID = 'question.choose';
 
     protected $onlySuggestion = true;
 

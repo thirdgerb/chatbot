@@ -9,6 +9,7 @@ use Commune\Chatbot\Blueprint\Message\MediaMsg;
 
 abstract class AbsMedia extends AbsMessage implements MediaMsg
 {
+    const MESSAGE_TYPE = MediaMsg::class;
 
     /**
      * @var string

@@ -13,7 +13,7 @@ use Psr\Log\LogLevel;
  * 独白, 用来回复纯文本给用户.
  * 端上可以根据 level 进行一些处理. 比如颜色和提示等.
  */
-interface Monologue
+interface Speech
 {
     const DEBUG     = LogLevel::DEBUG;
     const INFO      = LogLevel::INFO;
@@ -25,17 +25,15 @@ interface Monologue
     const DEFAULT_SLOTS = 'slots.default';
     const SLOT_USER_NAME = 'user.name';
 
-    public function say(string $message, array $slots = []) : void;
+    public function debug(string $message, array $slots = []) : Speech;
 
-    public function debug(string $message, array $slots = []) : void;
+    public function info(string $message, array $slots = []) : Speech;
 
-    public function info(string $message, array $slots = []) : void;
+    public function warning(string $message, array $slots = []) : Speech;
 
-    public function warning(string $message, array $slots = []) : void;
+    public function notice(string $message, array $slots = []) : Speech;
 
-    public function notice(string $message, array $slots = []) : void;
-
-    public function error(string $message, array $slots = []) : void;
+    public function error(string $message, array $slots = []) : Speech;
 
     public function trans(string $id, array $slots = []) : string;
 }

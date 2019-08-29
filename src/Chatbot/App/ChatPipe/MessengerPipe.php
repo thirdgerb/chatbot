@@ -127,7 +127,7 @@ class MessengerPipe implements InitialPipe
 
     public function replyUnavailable(Conversation $conversation)
     {
-        $conversation->monolog()->error(
+        $conversation->getSpeech()->error(
             $this->app
                 ->getConfig()
                 ->defaultMessages

@@ -12,6 +12,7 @@ namespace Commune\Chatbot\Framework\Bootstrap;
 
 use Commune\Chatbot\Blueprint\Conversation\Chat;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
+use Commune\Chatbot\Blueprint\Conversation\Renderer;
 use Commune\Chatbot\Blueprint\Conversation\User;
 use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\OOHost\Context\Hearing;
@@ -27,7 +28,7 @@ use Commune\Chatbot\Contracts\EventDispatcher;
 use Commune\Chatbot\Contracts\ExceptionHandler;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Kernel;
-use Commune\Chatbot\Blueprint\Conversation\Monologue;
+use Commune\Chatbot\Blueprint\Conversation\Speech;
 
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Psr\Log\LoggerInterface;
@@ -59,6 +60,7 @@ class ContractsValidator implements Bootstrapper
         Kernel::class,
         ExceptionHandler::class,
         // 多请求复用的组件.
+        Renderer::class,
         Translator::class,
         // host
         Feeling::class,
@@ -69,7 +71,7 @@ class ContractsValidator implements Bootstrapper
      * @var array
      */
     protected $conversationContracts = [
-        Monologue::class,
+        Speech::class,
         // 依赖会话级容器的.
         EventDispatcher::class,
         // 有IO 开销, 考虑IO非阻塞实现的
@@ -82,7 +84,6 @@ class ContractsValidator implements Bootstrapper
         SessionDriver::class,
         Session::class,
         Hearing::class,
-        Monologue::class,
     ];
 
     public function bootstrap(Application $app): void

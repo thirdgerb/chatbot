@@ -8,8 +8,6 @@
 
 namespace Commune\Chatbot\Blueprint\Message;
 
-use Commune\Chatbot\Blueprint\Message\Tags\Sendable;
-
 /**
  * 多媒体类型的消息.
  *
@@ -17,7 +15,7 @@ use Commune\Chatbot\Blueprint\Message\Tags\Sendable;
  * @package Commune\Chatbot\Blueprint\Message
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface MediaMsg extends Message, Sendable
+interface MediaMsg extends Message
 {
 
     /**
