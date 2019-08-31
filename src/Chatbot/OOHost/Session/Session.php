@@ -19,25 +19,48 @@ use Psr\Log\LoggerInterface;
 
 /**
  *
- * @property IncomingMessage $incomingMessage
+ * define relative object getter as property not method
+ * make session api more clearly
+ *
+ * ************* incoming ************
+ *
+ * @property-read IncomingMessage $incomingMessage
+ * @property-read Conversation $conversation
+ *
+ * ************* dialog api ************
+ *
+ * @property-read Dialog $dialog
+ * @property-read SessionMemory $memory
+ *
+ * ************* scoping ************
  *
  * @property-read string $sessionId
- * @property-read Conversation $conversation
- * @property-read Scope $scope
- * @property-read LoggerInterface $logger
  *
+ * @property-read string $belongsTo  session 是可嵌套的.内层session都从属于一个外层session. session layer could wrap each other like an onion.
+ *
+ * @property-read Scope $scope   Session目前的作用域.
+ *
+ *
+ * ************* contexts ************
  *
  * @property-read ContextRegistrar $contextRepo
  * @property-read IntentRegistrar $intentRepo
  *
+ * ************* components ************
+ *
+ * @property-read LoggerInterface $logger
  * @property-read Repository $repo
- * @property-read Dialog $dialog
  * @property-read ChatbotConfig $chatbotConfig
  * @property-read OOHostConfig $hostConfig
- * @property-read SessionMemory $memory
+ *
+ *
  */
 interface Session extends RunningSpy
 {
+    // construct method must accept variable "belongsTo"
+    const BELONGS_TO_VAR = 'belongsTo';
+
+
     /*----- 响应会话 -----*/
 
     /**

@@ -59,8 +59,7 @@ class HostConversationalServiceProvider extends BaseServiceProvider
     {
         $this->app->bind(Session::class, function($conversation, $parameters){
             return new SessionImpl(
-                $parameters['belongsTo'],
-                $parameters['cache'],
+                $parameters[Session::BELONGS_TO_VAR],
                 $conversation,
                 $conversation[Driver::class]
             );

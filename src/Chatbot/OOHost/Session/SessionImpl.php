@@ -7,7 +7,6 @@ use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Config\ChatbotConfig;
-use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Exceptions\LogicException;
@@ -26,29 +25,18 @@ use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\Config\Host\OOHostConfig;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
-use Illuminate\Support\Collection;
 use Psr\Log\LoggerInterface;
 
 
 /**
- * Class SessionImpl
- * @package Commune\Chatbot\OOHost\Session
- * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read string $sessionId
- * @property-read IncomingMessage $incomingMessage
- * @property-read Conversation $conversation
- * @property-read Scope $scope
- * @property-read IntentRegistrar $intentRepo
- * @property-read SessionLogger $logger
- * @property-read Repository $repo
- * @property-read Dialog $dialog
- * @property-read ChatbotConfig $chatbotConfig
- * @property-read OOHostConfig $hostConfig
+ * @mixin Session
  */
 class SessionImpl implements Session, HasIdGenerator
 {
     use IdGeneratorHelper, RunningSpyTrait;
+
+
+    /*----- property -----*/
 
     /**
      * @var bool
@@ -60,12 +48,18 @@ class SessionImpl implements Session, HasIdGenerator
      */
     protected $quit = false;
 
-    /*----- components -----*/
 
     /**
      * @var string;
      */
     protected $sessionId;
+
+    /**
+     * @var string;
+     */
+    protected $belongsTo;
+
+    /*----- components -----*/
 
     /**
      * @var Conversation
@@ -96,16 +90,6 @@ class SessionImpl implements Session, HasIdGenerator
      * @var Driver
      */
     protected $driver;
-
-    /**
-     * @var CacheAdapter
-     */
-    protected $cache;
-
-    /**
-     * @var string
-     */
-    protected $cacheKey;
 
     /*----- cached -----*/
 
@@ -157,53 +141,41 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function __construct(
         string $belongsTo,
-        CacheAdapter $cache,
         Conversation $conversation,
         Driver $driver,
         \Closure $rootContextMaker = null
     )
     {
-
+        $this->belongsTo = $belongsTo;
         $this->conversation = $conversation;
 
         $this->traceId = $conversation->getTraceId();
         $this->chatbotConfig = $conversation->getChatbotConfig();
         $this->hostConfig = $this->chatbotConfig->host;
 
-        $this->cache = $cache;
         $this->driver = $driver;
 
         $this->rootContextMaker = $rootContextMaker;
         // host config 没有强类型约束. 注意格式要正确.
 
-        $this->prepareRepo($belongsTo, $driver);
+        $snapshot = $this->getSnapshot($belongsTo);
+        $this->repo = new Repository($this, $driver, $snapshot);
+        $this->sessionId = $snapshot->sessionId;
+
         static::addRunningTrace($this->traceId, $this->sessionId);
     }
 
-    protected function prepareRepo(
-        string $belongsTo,
-        Driver $driver
-    ) : void
+    protected function getSnapshot(string $belongsTo) : Snapshot
     {
-        $this->cacheKey = "chatbot:session:snapshot:$belongsTo";
-        $snapshot = $this->getSnapshot($this->cacheKey);
-        $this->sessionId = $snapshot->sessionId;
-        $this->repo = new Repository($this, $driver, $snapshot);
-    }
-
-    protected function getSnapshot(string $key) : Snapshot
-    {
-        $cached = $this->cache->get($key);
+        $cached = $this->driver->findSnapshot($belongsTo);
 
         if (!empty($cached)) {
-            $us = unserialize($cached);
             // 如果 snapshot 的 saved 为false,
             // 说明出现重大错误, 导致上一轮没有saved.
             // 这时必须从头开始, 否则永远卡在错误这里.
-            if ($us instanceof Snapshot && $us->saved) {
-                // 新的一轮, snapshot saved 自然从头开始.
-                $us->saved = false;
-                return $us;
+            if ($cached instanceof Snapshot && $cached->saved) {
+                $cached->saved = false;
+                return $cached;
             }
         }
 
@@ -270,7 +242,6 @@ class SessionImpl implements Session, HasIdGenerator
     {
         return new SessionImpl(
             $belongsTo,
-            $this->cache,
             $this->conversation,
             $this->driver,
             $rootMaker
@@ -349,6 +320,8 @@ class SessionImpl implements Session, HasIdGenerator
     public function __get($name)
     {
         switch($name) {
+            case 'belongsTo' :
+                return $this->belongsTo;
             case 'sessionId' :
                 return $this->sessionId;
             case 'conversation' :
@@ -398,7 +371,7 @@ class SessionImpl implements Session, HasIdGenerator
     {
         if ($this->isQuiting()) {
             // 也不保存了.
-            $this->cache->forget($this->cacheKey);
+            $this->driver->clearSnapshot($this->belongsTo);
             //$this->flush();
             return;
         }
@@ -409,14 +382,23 @@ class SessionImpl implements Session, HasIdGenerator
 
                 $snapshot = $this->repo->snapshot;
                 $snapshot->saved = true;
-                $this->saveCached($snapshot);
+
+                $this->saveCachedContexts($snapshot);
 
                 // breakpoint
                 $this->driver->saveBreakpoint(
                     $this,
                     $snapshot->breakpoint
                 );
-                $this->saveSnapshot($snapshot);
+
+                // snapshot & extend cache life
+                $this->driver
+                    ->saveSnapshot(
+                        $this->belongsTo,
+                        $snapshot,
+                        $this->hostConfig->sessionExpireSeconds
+                    );
+
                 $this->logTracking();
 
                 $snapshot = null;
@@ -424,7 +406,7 @@ class SessionImpl implements Session, HasIdGenerator
 
             // 存储失败.
             } catch (\Exception $e) {
-                $this->cache->forget($this->cacheKey);
+                $this->driver->clearSnapshot($this->belongsTo);
                 $this->flush();
                 throw new LogicException('finish session failure', $e);
             }
@@ -440,7 +422,6 @@ class SessionImpl implements Session, HasIdGenerator
         $this->dialog = null;
         $this->repo = null;
         $this->driver = null;
-        $this->cache = null;
         $this->matchedIntent = null;
         $this->incomingMessage = null;
         $this->scope = null;
@@ -455,23 +436,15 @@ class SessionImpl implements Session, HasIdGenerator
 
     protected function logTracking() : void
     {
-        $this->getLogger()->info(
-            'session tracking',
-            $this->getHistory()->tracker->tracking
-        );
+        $tracking = implode('|', array_map(function($tracker){
+            return json_encode($tracker);
+        }, $this->getHistory()->tracker->tracking));
+
+        $this->getLogger()->info("sessionTracking $tracking");
     }
 
-    protected function saveSnapshot(Snapshot $snapshot) : void
-    {
-        // cache 快照
-        $this->cache->set(
-            $this->cacheKey,
-            serialize($snapshot),
-            $this->hostConfig->sessionExpireSeconds
-        );
-    }
 
-    protected function saveCached(Snapshot $snapshot) : void
+    protected function saveCachedContexts(Snapshot $snapshot) : void
     {
         // 保存所有的信息.
         // 目前只有context

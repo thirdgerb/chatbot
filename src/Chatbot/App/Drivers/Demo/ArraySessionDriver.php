@@ -13,6 +13,7 @@ use Commune\Chatbot\OOHost\History\Yielding;
 use Commune\Chatbot\OOHost\Session\Driver;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionData;
+use Commune\Chatbot\OOHost\Session\Snapshot;
 use Psr\Log\LoggerInterface;
 
 class ArraySessionDriver implements Driver
@@ -36,6 +37,8 @@ class ArraySessionDriver implements Driver
     protected static $breakpoints = [];
 
     protected static $contexts = [];
+
+    protected static $snapshots = [];
 
     public function __construct(Conversation $conversation)
     {
@@ -113,6 +116,28 @@ class ArraySessionDriver implements Driver
     public function __destruct()
     {
         self::removeRunningTrace($this->traceId);
+    }
+
+    public function saveSnapshot(string $belongsTo, Snapshot $snapshot, int $expireSeconds = 0): void
+    {
+        $serialized = serialize($snapshot);
+        self::$snapshots[$belongsTo] = $serialized;
+    }
+
+    public function findSnapshot(string $belongsTo): ? Snapshot
+    {
+        $unserialized = self::$snapshots[$belongsTo] ?? null;
+
+        if ($unserialized) {
+            return unserialize($unserialized);
+        }
+
+        return null;
+    }
+
+    public function clearSnapshot(string $belongsTo): void
+    {
+        unset(self::$snapshots[$belongsTo]);
     }
 
 

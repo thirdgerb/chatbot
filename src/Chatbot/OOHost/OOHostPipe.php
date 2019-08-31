@@ -9,7 +9,6 @@ use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Config\Host\OOHostConfig;
 use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Config\ChatbotConfig;
-use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Framework\Pipeline\ChatbotPipeImpl;
 use Commune\Chatbot\Framework\Utils\OnionPipeline;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -23,12 +22,6 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 {
     use IdGeneratorHelper;
 
-
-    /**
-     * @var CacheAdapter
-     */
-    public $cache;
-
     /**
      * @var OOHostConfig
      */
@@ -36,9 +29,8 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 
     public $chatbotConfig;
 
-    public function __construct(CacheAdapter $cache, ChatbotConfig $config)
+    public function __construct(ChatbotConfig $config)
     {
-        $this->cache = $cache;
         $this->chatbotConfig = $config;
         $this->hostConfig = $config->host;
     }
@@ -55,6 +47,7 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 
         $session->finish();
 
+        // should close client by event
         if ($session->isQuiting()) {
             $conversation
                 ->onFinish(function(
@@ -110,11 +103,6 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         };
     }
 
-    public function getSessionId(string $key) : string
-    {
-        return $this->cache->get($key) ?? $this->createUuId();
-    }
-
     public function makeSession(
         string $belongsTo,
         Conversation $conversation
@@ -123,8 +111,7 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         return $conversation->make(
             Session::class,
             [
-                'cache' => $this->cache,
-                'belongsTo' => $belongsTo
+                Session::BELONGS_TO_VAR => $belongsTo
             ]
         );
 
