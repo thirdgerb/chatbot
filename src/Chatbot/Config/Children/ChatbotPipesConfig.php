@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\Config\Pipes;
+namespace Commune\Chatbot\Config\Children;
 
 
 use Commune\Chatbot\OOHost\OOHostPipe;

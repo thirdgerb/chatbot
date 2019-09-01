@@ -4,6 +4,8 @@
 namespace Commune\Chatbot\OOHost\Directing;
 
 
+use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
+use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\OOHost\Directing\Backward\Failure;
 use Commune\Chatbot\OOHost\Directing\Backward\Quit;
@@ -13,8 +15,9 @@ use Commune\Chatbot\OOHost\Exceptions\NavigatorException;
 use Commune\Chatbot\OOHost\Exceptions\TooManyRedirectException;
 use Commune\Chatbot\OOHost\Session\SessionImpl;
 
-class Director
+class Director implements RunningSpy
 {
+    use RunningSpyTrait;
 
     /**
      * @var SessionImpl
@@ -37,13 +40,20 @@ class Director
     protected $heard = true;
 
     /**
+     * @var string
+     */
+    protected $sessionId;
+
+    /**
      * Director constructor.
      * @param SessionImpl $session
      */
     public function __construct(SessionImpl $session)
     {
         $this->session = $session;
+        $this->sessionId = $session->sessionId;
         $this->maxTicks = $this->session->hostConfig->maxRedirectTimes;
+        static::addRunningTrace($this->sessionId, $this->sessionId);
     }
 
 
@@ -134,15 +144,7 @@ class Director
 
     public function __destruct()
     {
-        if (CHATBOT_DEBUG) {
-            $this->session
-                ->logger
-                ->debug(
-                    __METHOD__
-                    . ' run navigator times: '
-                    .  $this->ticks
-                );
-        }
+        static::removeRunningTrace($this->sessionId);
     }
 
 

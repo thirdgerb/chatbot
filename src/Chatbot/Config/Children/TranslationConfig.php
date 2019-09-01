@@ -2,16 +2,16 @@
 
 /**
  * Class TranslationConfig
- * @package Commune\Chatbot\Config\Translation
+ * @package Commune\Chatbot\Config\Children
  */
 
-namespace Commune\Chatbot\Config\Translation;
+namespace Commune\Chatbot\Config\Children;
 
 use Commune\Support\Option;
 
 /**
  * Class TranslationConfig
- * @package Commune\Chatbot\Config\Translation
+ * @package Commune\Chatbot\Config\Children
  *
  * @property-read string $loader
  * @property-read string $resourcesPath

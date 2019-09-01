@@ -2,10 +2,10 @@
 
 /**
  * Class DefaultMessage
- * @package Commune\Chatbot\Config\Message
+ * @package Commune\Chatbot\Config\Children
  */
 
-namespace Commune\Chatbot\Config\Message;
+namespace Commune\Chatbot\Config\Children;
 
 
 use Commune\Support\Option;

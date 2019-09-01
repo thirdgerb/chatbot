@@ -118,8 +118,9 @@ class ArraySessionDriver implements Driver
         self::removeRunningTrace($this->traceId);
     }
 
-    public function saveSnapshot(string $belongsTo, Snapshot $snapshot, int $expireSeconds = 0): void
+    public function saveSnapshot(Snapshot $snapshot, int $expireSeconds = 0): void
     {
+        $belongsTo = $snapshot->belongsTo;
         $serialized = serialize($snapshot);
         self::$snapshots[$belongsTo] = $serialized;
     }

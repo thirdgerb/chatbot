@@ -14,7 +14,7 @@ use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\Config\Host\OOHostConfig;
+use Commune\Chatbot\Config\Children\OOHostConfig;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -93,18 +93,23 @@ interface Session extends RunningSpy
     /*----- 创建一个director -----*/
 
     /**
-     * goto or create a sub level session.
+     * 用来创建一个次级的session.
+     * 父级session可把处理不了的消息传递给子session,
+     * 或者处理子session处理不了的消息.
+     * 从而构成一种洋葱式的管道, 就像中间件一样.
      *
+     * goto or create a sub level session.
      * parent session can deliver unhandled message to child session
      * and parent session should handle miss matched message from child session
-     *
      * like onion middleware
      *
-     * @param string $belongsTo
-     * @param \Closure $rootMaker
+     *
+     * @param string $belongsTo  通常用当前session 的sessionId | usually current session id
+     * @param \Closure $rootMaker 生成 根context 的闭包.
+     * @param OOHostConfig|null $config
      * @return Session
      */
-    public function newSession(string $belongsTo, \Closure $rootMaker) : Session;
+    public function newSession(string $belongsTo, \Closure $rootMaker, OOHostConfig $config = null) : Session;
 
     /*----- 保存必要的数据. -----*/
 

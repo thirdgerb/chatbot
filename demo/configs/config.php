@@ -34,6 +34,7 @@ return [
         ],
     ],
     'processProviders' => [
+        \Commune\Demo\App\Providers\EventServiceProvider::class,
     ],
     'conversationProviders' => [
         \Commune\Chatbot\App\Drivers\Demo\CacheServiceProvider::class,
@@ -78,13 +79,6 @@ return [
         
     'host' => [
         'rootContextName' => \Commune\Demo\App\Contexts\TestCase::class,
-        'navigatorIntents' => [
-            \Commune\Chatbot\App\Components\Predefined\Navigation\BackwardInt::class,
-            \Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt::class,
-            \Commune\Chatbot\App\Components\Predefined\Navigation\CancelInt::class,
-            \Commune\Chatbot\App\Components\Predefined\Navigation\RepeatInt::class,
-            \Commune\Chatbot\App\Components\Predefined\Navigation\RestartInt::class,
-        ],
         'sessionPipes' => [
             \Commune\Chatbot\App\SessionPipe\DefaultReplyPipe::class,
             \Commune\Chatbot\App\SessionPipe\EventMsgPipe::class,
@@ -95,6 +89,6 @@ return [
             // \Commune\Chatbot\App\Components\Rasa\RasaNLUPipe::class,
         ],
         'hearingFallback' => \Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction::class,
-    ] + \Commune\Chatbot\Config\Host\OOHostConfig::stub(),
+    ] ,
 
 ];

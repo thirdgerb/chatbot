@@ -4,7 +4,9 @@
 namespace Commune\Chatbot\OOHost\History;
 
 
+use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
+use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Exceptions\DataNotFoundException;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -16,8 +18,9 @@ use Psr\Log\LoggerInterface;
  * @property-read array $breakpointArr
  * @property-read Tracker $tracker
  */
-class History
+class History implements RunningSpy
 {
+    use RunningSpyTrait;
 
     /**
      * @var Breakpoint
@@ -33,6 +36,11 @@ class History
      * @var Session
      */
     protected $session;
+
+    /**
+     * @var string
+     */
+    protected $sessionId;
 
     /**
      * @var Tracker
@@ -51,6 +59,7 @@ class History
     public function __construct(Session $session)
     {
         $this->session = $session;
+        $this->sessionId = $session->sessionId;
         $this->logger = $session->logger;
 
         $snapshot = $this->session->repo->snapshot;
@@ -59,6 +68,8 @@ class History
         //重新赋值
         $this->setBreakpoint(new Breakpoint($session, $this->prevBreakpoint));
         $this->tracker = new Tracker($session->sessionId);
+
+        static::addRunningTrace($this->sessionId, $this->sessionId);
     }
 
     /**
@@ -400,7 +411,7 @@ class History
 
     public function __destruct()
     {
-        if (CHATBOT_DEBUG) $this->logger->debug(__METHOD__);
+        static::removeRunningTrace($this->sessionId);
     }
 
 }

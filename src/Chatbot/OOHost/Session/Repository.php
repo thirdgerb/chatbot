@@ -2,12 +2,15 @@
 
 
 namespace Commune\Chatbot\OOHost\Session;
+use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
+use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 
 /**
  * @property-read Snapshot $snapshot
  */
-class Repository
+class Repository implements RunningSpy
 {
+    use RunningSpyTrait;
 
     /**
      * @var Snapshot
@@ -24,6 +27,8 @@ class Repository
      */
     public $driver;
 
+    protected $sessionId;
+
     /**
      * Repository constructor.
      * @param Session $session
@@ -37,8 +42,11 @@ class Repository
     )
     {
         $this->session = $session;
+        $this->sessionId = $session->sessionId;
         $this->driver = $driver;
         $this->snapshot = $snapshot;
+
+        static::addRunningTrace($this->sessionId, $this->sessionId);
     }
 
 
@@ -88,6 +96,6 @@ class Repository
 
     public function __destruct()
     {
-        $this->session->logger->debug(__METHOD__);
+        static::removeRunningTrace($this->sessionId);
     }
 }

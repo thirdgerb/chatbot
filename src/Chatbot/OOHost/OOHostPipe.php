@@ -6,7 +6,7 @@ namespace Commune\Chatbot\OOHost;
 
 use Closure;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
-use Commune\Chatbot\Config\Host\OOHostConfig;
+use Commune\Chatbot\Config\Children\OOHostConfig;
 use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Framework\Pipeline\ChatbotPipeImpl;
@@ -111,6 +111,7 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         return $conversation->make(
             Session::class,
             [
+
                 Session::BELONGS_TO_VAR => $belongsTo
             ]
         );

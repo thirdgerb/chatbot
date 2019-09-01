@@ -5,19 +5,21 @@ namespace Commune\Chatbot\App\SessionPipe;
 
 
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
-use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
+use Commune\Chatbot\App\Components\Predefined;
 
 class NavigationPipe implements SessionPipe
 {
-    protected $navigationIntents = [];
+    protected $navigationIntents = [
+        Predefined\Navigation\BackwardInt::class,
+        Predefined\Navigation\QuitInt::class,
+        Predefined\Navigation\CancelInt::class,
+        Predefined\Navigation\RepeatInt::class,
+        Predefined\Navigation\RestartInt::class,
+    ];
 
-    public function __construct(ChatbotConfig $config)
-    {
-        $this->navigationIntents = $config->host->navigatorIntents;
-    }
 
     public function handle(Session $session, \Closure $next): Session
     {

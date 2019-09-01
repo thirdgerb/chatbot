@@ -8,62 +8,71 @@
 namespace Commune\Chatbot\Framework\Predefined;
 
 
+use Commune\Chatbot\Blueprint\Conversation\Conversation;
+use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Contracts\EventDispatcher;
+use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Container\ContainerContract;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Commune\Support\Uuid\HasIdGenerator;
+use Commune\Support\Uuid\IdGeneratorHelper;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher as SymfonyDispatcher;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * 基于 Symfony dispatcher 实现事件机制
  */
-class SymfonyEventDispatcher implements EventDispatcher
+class SymfonyEventDispatcher implements EventDispatcher, RunningSpy, HasIdGenerator
 {
+    use RunningSpyTrait, IdGeneratorHelper;
 
     /**
-     * @var ContainerContract
+     * @var string
      */
-    protected $container;
+    protected $id;
 
     /**
-     * @var EventDispatcherInterface
+     * @var Conversation
+     */
+    protected $conversation;
+
+    /**
+     * @var SymfonyDispatcher
      */
     protected $dispatcher;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
 
-    /**
-     * SymfonyEventDispatcher constructor.
-     * @param ContainerContract $container
-     * @param LoggerInterface $logger
-     */
-    public function __construct(ContainerContract $container, LoggerInterface $logger)
+    public function __construct()
     {
-        $this->container = $container;
+        $this->id = $this->createUuId();
         $this->dispatcher = new SymfonyDispatcher();
-        $this->logger = $logger;
+
+        static::addRunningTrace($this->id, $this->id);
     }
 
-    public function dispatchByName(string $eventName, Event $event = null): void
+    public function withConversation(Conversation $conversation): EventDispatcherInterface
     {
-        $this->dispatcher->dispatch($eventName, $event);
+        $this->conversation = $conversation;
+        return $this;
     }
 
-    public function dispatch(Event $event) : void
+
+    public function dispatch(object $event)
     {
-        //todo event
-        $this->dispatcher->dispatch(get_class($event), $event);
+        $eventName = get_class($event);
+        $eventObject = new GenericEvent($event);
+        $this->dispatcher->dispatch($eventName, $eventObject);
     }
+
 
     public function listen(string $eventName, $listener) : void
     {
-        if (is_string($listener)) {
-            $this->listenClass($eventName, $listener);
+        if (is_string($listener) && class_exists($listener)) {
+            $this->listenClassMethod($eventName, [$listener, '__invoke']);
+
+        } elseif ( is_array($listener)) {
+            $this->listenClassMethod($eventName, $listener);
 
         } elseif( is_callable($listener)) {
             $this->listenCallable($eventName, $listener);
@@ -88,47 +97,80 @@ class SymfonyEventDispatcher implements EventDispatcher
         $this->dispatcher
             ->addListener(
                 $eventName,
-                $caller,
-                $priority
-            );
-    }
-
-    public function listenClass(
-        string $eventName,
-        string $clazzOrMethod
-    ): void
-    {
-
-        $first = explode('@', $clazzOrMethod, 2);
-
-        $clazz = $first[0];
-        $methodDefined = $first[1] ?? 'handle#0';
-
-        $second = explode('#', $methodDefined, 2);
-        $method = $second[0] ?? 'handle';
-
-        $priority = intval($second[1] ?? 0);
-
-        $this->dispatcher
-            ->addListener(
-                $eventName,
                 function(
-                    Event $event,
+                    GenericEvent $event,
                     string $eventName,
-                    EventDispatcherInterface $dispatcher
-                ) use ($clazz, $method) : void
-                {
-                    $handler = $this->container->make($clazz);
-                    // 运行
-                    call_user_func([$handler, $method], $event, $eventName, $dispatcher);
+                    SymfonyDispatcherInterface $dispatcher
+                ) use ($caller){
+
+                    $this->call($caller, $event, $eventName, $dispatcher);
+
                 },
                 $priority
             );
     }
 
+    public function listenClassMethod(
+        string $eventName,
+        array $classAndMethod,
+        int $priority = 0
+    ): void
+    {
+
+        $clazz = $classAndMethod[0] ?? '';
+        $method = $classAndMethod[1] ?? '';
+
+        if (empty($clazz) || empty($method) || !class_exists($clazz)) {
+            throw new ConfigureException("register listener to event $eventName with bad definition that class is '$clazz' and method is '$method'");
+        }
+
+        $this->dispatcher
+            ->addListener(
+                $eventName,
+                function(
+                    GenericEvent $event,
+                    string $eventName,
+                    SymfonyDispatcherInterface $dispatcher
+                ) use ($clazz, $method) : void
+                {
+                    $handler = $this->conversation->make($clazz);
+                    // 运行
+                    $this->call(
+                        [$handler, $method],
+                        $event,
+                        $eventName,
+                        $dispatcher
+                    );
+                },
+                $priority
+            );
+    }
+
+    /**
+     * @param callable $caller
+     * @param GenericEvent $event
+     * @param string $eventName
+     * @param SymfonyDispatcherInterface $dispatcher
+     * @throws
+     */
+    protected function call(
+        callable $caller,
+        GenericEvent $event,
+        string $eventName,
+        SymfonyDispatcherInterface $dispatcher
+    ) : void
+    {
+        $subject = $event->getSubject();
+        $a = microtime(true);
+
+        call_user_func($caller, $subject, $event);
+        $b = microtime(true);
+        var_dump($eventName, round(($b - $a) * 1000000));
+
+    }
 
     public function __destruct()
     {
-        if (CHATBOT_DEBUG) $this->logger->debug(__METHOD__);
+        static::removeRunningTrace($this->id);
     }
 }

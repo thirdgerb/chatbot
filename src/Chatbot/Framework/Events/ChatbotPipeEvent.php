@@ -5,9 +5,8 @@ namespace Commune\Chatbot\Framework\Events;
 
 
 use Commune\Chatbot\Blueprint\Pipeline\ChatbotPipe;
-use Symfony\Component\EventDispatcher\Event;
 
-abstract class ChatbotPipeEvent extends Event
+abstract class ChatbotPipeEvent
 {
     /**
      * @var ChatbotPipe

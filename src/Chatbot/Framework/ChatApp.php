@@ -15,7 +15,7 @@ use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Predefined\SimpleConsoleLogger;
-use Commune\Chatbot\Config\Host\OOHostConfig;
+use Commune\Chatbot\Config\Children\OOHostConfig;
 use Commune\Container\ContainerContract;
 use Commune\Chatbot\Blueprint\Kernel;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;

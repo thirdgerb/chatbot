@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\Config\Host;
+namespace Commune\Chatbot\Config\Options;
 
 
 use Commune\Chatbot\OOHost\Session\Scope;
@@ -15,6 +15,8 @@ use Commune\Support\Option;
  */
 class MemoryOption extends Option
 {
+    const IDENTITY = 'name';
+
     public static function stub(): array
     {
         return [

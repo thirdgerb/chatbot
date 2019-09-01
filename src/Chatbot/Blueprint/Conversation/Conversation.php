@@ -154,9 +154,9 @@ interface Conversation extends ConversationContainer, RunningSpy
 
     /**
      * 触发事件.
-     * @param Event $event
+     * @param \object $event
      */
-    public function fire(Event $event) : void;
+    public function fire(object $event) : void;
 
     /*------------ input & output ------------*/
 

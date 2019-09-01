@@ -4,6 +4,8 @@
 namespace Commune\Chatbot\OOHost\Session;
 
 
+use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
+use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 
@@ -14,9 +16,9 @@ use Psr\Log\LoggerTrait;
  *
  * 为 session 定制的 logger, 主要是加入了一些 context
  */
-class SessionLogger implements LoggerInterface
+class SessionLogger implements LoggerInterface, RunningSpy
 {
-    use LoggerTrait;
+    use LoggerTrait, RunningSpyTrait;
 
     /**
      * @var LoggerInterface
@@ -37,6 +39,8 @@ class SessionLogger implements LoggerInterface
     {
         $this->logger = $logger;
         $this->sessionId = $session->sessionId;
+
+        static::addRunningTrace($this->sessionId, $this->sessionId);
     }
 
 
@@ -50,9 +54,7 @@ class SessionLogger implements LoggerInterface
 
     public function __destruct()
     {
-        if (CHATBOT_DEBUG) {
-            $this->logger->debug(__METHOD__);
-        }
+        static::removeRunningTrace($this->sessionId);
     }
 
 }

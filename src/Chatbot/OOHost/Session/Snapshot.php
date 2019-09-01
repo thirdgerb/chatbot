@@ -5,12 +5,17 @@ namespace Commune\Chatbot\OOHost\Session;
 
 use Commune\Chatbot\OOHost\History\Breakpoint;
 
-class Snapshot
+class Snapshot implements \Serializable
 {
     /**
      * @var string
      */
     public $sessionId;
+
+    /**
+     * @var string
+     */
+    public $belongsTo;
 
     /**
      * @var Breakpoint|null
@@ -35,11 +40,13 @@ class Snapshot
 
     /**
      * Snapshot constructor.
+     * @param string $belongsTo
      * @param string $sessionId
      */
-    public function __construct(string $sessionId)
+    public function __construct(string $belongsTo, string $sessionId)
     {
         $this->sessionId = $sessionId;
+        $this->belongsTo = $belongsTo;
     }
 
 
@@ -67,11 +74,11 @@ class Snapshot
             return $this->cachedSessionData[$type][$id];
         }
 
-        if (isset($this->savedSessionData[$type][$id])) {
-            $data = $this->savedSessionData[$type][$id];
-            $this->cacheSessionData($data);
-            return $data;
-        }
+//        if (isset($this->savedSessionData[$type][$id])) {
+//            $data = $this->savedSessionData[$type][$id];
+//            $this->cacheSessionData($data);
+//            return $data;
+//        }
 
         if (isset($finder)) {
             $data = $finder();
@@ -84,11 +91,32 @@ class Snapshot
         return null;
     }
 
+    public function serialize()
+    {
+        $data = [
+            'sessionId' => $this->sessionId,
+            'belongsTo' => $this->belongsTo,
+            'saved' => $this->saved,
+            'breakpoint' => serialize($this->breakpoint),
+        ];
+        return json_encode($data);
+    }
+
+    public function unserialize($serialized)
+    {
+        $data = json_decode($serialized);
+        $this->sessionId = $data->sessionId;
+        $this->belongsTo = $data->belongsTo;
+        $this->saved = $data->saved;
+        $this->breakpoint = unserialize($data->breakpoint);
+    }
+
+
     public function __sleep()
     {
         $this->savedSessionData = $this->cachedSessionData;
         // 不缓存cached. 这样每次反序列化时, cached 为空. 只有上一次被用过的, 才会被快照.
-        return ['sessionId', 'savedSessionData', 'breakpoint', 'saved'];
+        return ['sessionId', 'belongsTo', 'breakpoint', 'saved'];
     }
 
 

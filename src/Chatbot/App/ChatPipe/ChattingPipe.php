@@ -6,7 +6,6 @@ namespace Commune\Chatbot\App\ChatPipe;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\CacheAdapter;
-use Commune\Chatbot\Contracts\EventDispatcher;
 use Commune\Chatbot\Framework\Pipeline\ChatbotPipeImpl;
 
 class ChattingPipe extends ChatbotPipeImpl
@@ -18,11 +17,6 @@ class ChattingPipe extends ChatbotPipeImpl
     public $cache;
 
     /**
-     * @var EventDispatcher
-     */
-    public $dispatcher;
-
-    /**
      * @var ChatbotConfig
      */
     public $config;
@@ -30,12 +24,10 @@ class ChattingPipe extends ChatbotPipeImpl
 
     public function __construct(
         CacheAdapter $cache,
-        EventDispatcher $dispatcher,
         ChatbotConfig $config
     )
     {
         $this->cache = $cache;
-        $this->dispatcher = $dispatcher;
         $this->config = $config;
     }
 

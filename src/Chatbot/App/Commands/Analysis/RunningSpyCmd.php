@@ -5,13 +5,11 @@ namespace Commune\Chatbot\App\Commands\Analysis;
 
 use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
-use Commune\Chatbot\Framework\Conversation\ConversationImpl;
+use Commune\Chatbot\Framework\Conversation\RunningSpies;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Command\SessionCommand;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
-use Commune\Chatbot\OOHost\Dialogue\DialogImpl;
 use Commune\Chatbot\OOHost\Session\Session;
-use Commune\Chatbot\OOHost\Session\SessionImpl;
 
 class RunningSpyCmd extends SessionCommand
 {
@@ -21,17 +19,13 @@ class RunningSpyCmd extends SessionCommand
 
     const DESCRIPTION = '查看一些关键类的实例数量. 用于排查部分内存泄露问题.';
 
-    protected $classes = [
-        ConversationImpl::class,
-        SessionImpl::class,
-        DialogImpl::class,
-    ];
-
     public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe): void
     {
         $detail = $message['--detail'] ?? false;
 
-        foreach ($this->classes as $running) {
+        $classes = RunningSpies::getSpies();
+
+        foreach ($classes as $running) {
             if (!is_a($running, RunningSpy::class, TRUE)) {
                 throw new ConfigureException("$running is not subclass of ". RunningSpy::class);
             }

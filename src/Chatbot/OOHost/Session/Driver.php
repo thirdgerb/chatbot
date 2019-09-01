@@ -14,7 +14,7 @@ interface Driver extends RunningSpy
 
     /*------- snapshot -------*/
 
-    public function saveSnapshot(string $belongsTo, Snapshot $snapshot, int $expireSeconds = 0) : void;
+    public function saveSnapshot(Snapshot $snapshot, int $expireSeconds = 0) : void;
 
     public function findSnapshot(string $belongsTo) : ? Snapshot;
 
@@ -37,17 +37,5 @@ interface Driver extends RunningSpy
     public function saveContext(Session $session, Context $context) : void;
 
     public function findContext(Session $session, string $contextId) : ? Context;
-
-    /*------- common -------*/
-
-    public function saveSessionData(
-        Session $session,
-        SessionData $sessionData
-    ) : void;
-
-    public function findSessionData(
-        string $id,
-        string $dataType = ''
-    ) : ? SessionData;
 
 }

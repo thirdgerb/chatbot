@@ -8,7 +8,7 @@
 namespace Commune\Chatbot\Framework\Predefined;
 
 use Commune\Chatbot\Contracts\Translator;
-use Commune\Chatbot\Config\Translation\TranslationConfig;
+use Commune\Chatbot\Config\Children\TranslationConfig;
 use Commune\Chatbot\Contracts\Translator as Contract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;

@@ -22,7 +22,7 @@ use Commune\Chatbot\OOHost\Directing\Director;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\History\History;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\Config\Host\OOHostConfig;
+use Commune\Chatbot\Config\Children\OOHostConfig;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 use Psr\Log\LoggerInterface;
@@ -30,6 +30,21 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @mixin Session
+ *
+ * @property-read IncomingMessage $incomingMessage
+ * @property-read Conversation $conversation
+ * @property-read Dialog $dialog
+ * @property-read SessionMemory $memory
+ * @property-read string $sessionId
+ * @property-read string $belongsTo
+ * @property-read Scope $scope
+ * @property-read ContextRegistrar $contextRepo
+ * @property-read IntentRegistrar $intentRepo
+ * @property-read LoggerInterface $logger
+ * @property-read Repository $repo
+ * @property-read ChatbotConfig $chatbotConfig
+ * @property-read OOHostConfig $hostConfig
+ *
  */
 class SessionImpl implements Session, HasIdGenerator
 {
@@ -141,26 +156,26 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function __construct(
         string $belongsTo,
+        OOHostConfig $hostConfig,
         Conversation $conversation,
         Driver $driver,
         \Closure $rootContextMaker = null
     )
     {
         $this->belongsTo = $belongsTo;
+        $this->hostConfig = $hostConfig;
         $this->conversation = $conversation;
 
         $this->traceId = $conversation->getTraceId();
         $this->chatbotConfig = $conversation->getChatbotConfig();
-        $this->hostConfig = $this->chatbotConfig->host;
 
         $this->driver = $driver;
-
         $this->rootContextMaker = $rootContextMaker;
-        // host config 没有强类型约束. 注意格式要正确.
 
         $snapshot = $this->getSnapshot($belongsTo);
-        $this->repo = new Repository($this, $driver, $snapshot);
         $this->sessionId = $snapshot->sessionId;
+
+        $this->repo = new Repository($this, $driver, $snapshot);
 
         static::addRunningTrace($this->traceId, $this->sessionId);
     }
@@ -179,7 +194,7 @@ class SessionImpl implements Session, HasIdGenerator
             }
         }
 
-        return new Snapshot($this->createUuId());
+        return new Snapshot($belongsTo, $this->createUuId());
     }
 
 
@@ -224,7 +239,7 @@ class SessionImpl implements Session, HasIdGenerator
         }
 
         // 基于 registrar 来生成.
-        $repo = ContextRegistrar::getIns();
+        $repo = $this->contextRepo;
         $name = $this->hostConfig->rootContextName;
         if ($repo->has($name)) {
             return $repo->get($name)->newContext()->toInstance($this);
@@ -238,10 +253,11 @@ class SessionImpl implements Session, HasIdGenerator
     }
 
 
-    public function newSession(string $belongsTo, \Closure $rootMaker): Session
+    public function newSession(string $belongsTo, \Closure $rootMaker, OOHostConfig $config = null): Session
     {
         return new SessionImpl(
             $belongsTo,
+            $config ?? $this->hostConfig,
             $this->conversation,
             $this->driver,
             $rootMaker
@@ -394,7 +410,6 @@ class SessionImpl implements Session, HasIdGenerator
                 // snapshot & extend cache life
                 $this->driver
                     ->saveSnapshot(
-                        $this->belongsTo,
                         $snapshot,
                         $this->hostConfig->sessionExpireSeconds
                     );

@@ -11,6 +11,7 @@ trait RunningSpyTrait
     public function addRunningTrace(string $traceId, string $id): void
     {
         self::$runningSpyTraces[$traceId] = $id;
+        RunningSpies::addSpy(static::class);
     }
 
     public function removeRunningTrace(string $traceId = null): void

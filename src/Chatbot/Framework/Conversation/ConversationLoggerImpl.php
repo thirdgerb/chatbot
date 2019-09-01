@@ -6,12 +6,13 @@ namespace Commune\Chatbot\Framework\Conversation;
 
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
+use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 
-class ConversationLoggerImpl implements ConversationLogger
+class ConversationLoggerImpl implements ConversationLogger, RunningSpy
 {
-    use LoggerTrait;
+    use LoggerTrait, RunningSpyTrait;
 
     /**
      * @var LoggerInterface
@@ -45,6 +46,7 @@ class ConversationLoggerImpl implements ConversationLogger
         if ($this->isInstanced) {
             $this->conversationId = $conversation->getConversationId();
             $this->traceId = $conversation->getTraceId();
+            static::addRunningTrace($this->traceId, $this->traceId);
         }
     }
 
@@ -60,8 +62,8 @@ class ConversationLoggerImpl implements ConversationLogger
 
     public function __destruct()
     {
-        if (CHATBOT_DEBUG) {
-            $this->logger->debug(__METHOD__);
+        if ($this->traceId) {
+            static::removeRunningTrace($this->traceId);
         }
     }
 }

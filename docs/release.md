@@ -1,0 +1,11 @@
+
+-   强化了 session 的 belongsTo, snapshot根据belongsTo通过session driver 获取
+-   session 嵌套子session时, 可以传入 host config 了.
+-   session driver 支持snapshot 存取, 其它不明确的对象去掉了.
+-   snapshot 不再存储context等对象, 避免重复存储
+-   runningSpy 自动注册发现, 一些需要做内存泄露排查的对象都注册了runningSpy
+-   调整了 chatbotConfig 子类的命名规范和存储路径.
+-   重做了事件模块, 降低对symfony的依赖, 尽可能与psr规范一致
+-   event dispatcher 现在在 process container 注册. 只能用 conversation->fire() 正确触发.
+-   一部分 pipeline 不再强依赖 ChatbotConfig 里直接定义的配置
+-   增加了 QuitEvt

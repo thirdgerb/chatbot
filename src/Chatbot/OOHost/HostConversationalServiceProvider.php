@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost;
 
 
+use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Framework\Providers\BaseServiceProvider;
 use Commune\Container\ContainerContract;
 use Commune\Chatbot\OOHost\Context\Hearing;
@@ -41,7 +42,7 @@ class HostConversationalServiceProvider extends BaseServiceProvider
             Speech::DEFAULT_SLOTS,
             function(Conversation $conversation){
 
-                $env = $conversation->getChatbotConfig()->slots;
+                $env = $conversation->getChatbotConfig()->host->slots;
                 $slots = Arr::dot($env);
 
                 /**
@@ -60,6 +61,7 @@ class HostConversationalServiceProvider extends BaseServiceProvider
         $this->app->bind(Session::class, function($conversation, $parameters){
             return new SessionImpl(
                 $parameters[Session::BELONGS_TO_VAR],
+                $conversation[ChatbotConfig::class]->host,
                 $conversation,
                 $conversation[Driver::class]
             );

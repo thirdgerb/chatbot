@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\Config\Logger;
+namespace Commune\Chatbot\Config\Children;
 
 
 use Commune\Support\Option;

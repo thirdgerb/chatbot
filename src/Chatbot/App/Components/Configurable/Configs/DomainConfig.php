@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\Components\Configurable\Configs;
 
 
-use Commune\Chatbot\Config\Host\MemoryOption;
+use Commune\Chatbot\Config\Options\MemoryOption;
 use Commune\Support\Option;
 
 /**

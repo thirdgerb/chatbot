@@ -25,7 +25,6 @@ use Commune\Chatbot\Contracts\EventDispatcher;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Container\ContainerContract;
 use Commune\Container\RecursiveContainer;
-use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Class Conversation
@@ -111,9 +110,9 @@ class ConversationImpl implements Blueprint
         return $this->make(EventDispatcher::class);
     }
 
-    public function fire(Event $event): void
+    public function fire(object $event): void
     {
-        $this->getEventDispatcher()->dispatch($event);
+        $this->getEventDispatcher()->withConversation($this)->dispatch($event);
     }
 
     public function getLogger(): ConversationLogger

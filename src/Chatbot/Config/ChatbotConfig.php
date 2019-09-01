@@ -7,45 +7,44 @@
 
 namespace Commune\Chatbot\Config;
 
-use Commune\Chatbot\Config\Logger\LoggerConfig;
-use Commune\Chatbot\Config\Message\DefaultMessagesConfig;
-use Commune\Chatbot\Config\Pipes\ChatbotPipesConfig;
-use Commune\Chatbot\Config\Services\BaseServiceConfig;
-use Commune\Chatbot\Config\Translation\TranslationConfig;
-use Commune\Chatbot\Config\Event\EventListenerConfig;
-use Commune\Chatbot\Config\Host\OOHostConfig;
-use Commune\Chatbot\Framework\Providers;
-use Commune\Chatbot\OOHost\HostConversationalServiceProvider;
-use Commune\Chatbot\OOHost\HostProcessServiceProvider;
+use Commune\Chatbot\Config\Children\BaseServicesConfig;
+use Commune\Chatbot\Config\Children\LoggerConfig;
+use Commune\Chatbot\Config\Children\DefaultMessagesConfig;
+use Commune\Chatbot\Config\Children\ChatbotPipesConfig;
+use Commune\Chatbot\Config\Children\TranslationConfig;
+use Commune\Chatbot\Config\Children\OOHostConfig;
+
 use Commune\Support\Option;
 
 /**
  * Interface ChatbotConfig
  * @package Commune\Chatbot\Config
  *
- * @property-read string $chatbotName name of current chatbot
  *
- * @property-read bool $debug
+ * @property-read string $chatbotName  机器人的名字|name of current chatbot
  *
- * @property-read array $configBindings preload config. immutable in process
+ * @property-read bool $debug 是否开启debug
  *
- * @property-read array $baseServices chatbot system service binding. could modify
- * @property-read string[] $processProviders process level service providers
- * @property-read string[] $conversationProviders conversation(request) level service providers
- * @property-read string[] $components register chatbot components
+ * @property-read array $configBindings  注册预加载的配置. 进程中不变|preload config. immutable in the process
  *
- * @property-read TranslationConfig $translation  translator configs
- * @property-read LoggerConfig $logger 系统的日志配置.
+ * @property-read BaseServicesConfig $baseServices 系统默认注册的服务. 可按需更改|chatbot system service binding. could modify
  *
- * @property-read ChatbotPipesConfig $chatbotPipes
+ * @property-read string[] $processProviders 进程级服务注册|process level service providers
  *
- * @property-read EventListenerConfig[] $eventRegister
+ * @property-read string[] $conversationProviders 请求级别服务注册|conversation(request) level service providers
  *
- * @property-read DefaultMessagesConfig $defaultMessages
+ * @property-read string[] $components 注册Chatbot的Component|register chatbot components
  *
- * @property-read OOHostConfig $host  multi-turn conversation kernel config
+ * @property-read TranslationConfig $translation  i18n模块的配置|translator configs
  *
- * @property-read array $slots environment slots. multidimensional array will flatten to key-value array ([a][b][c] to a.b.c)
+ * @property-read LoggerConfig $logger 系统的日志配置|default logger service
+ *
+ * @property-read ChatbotPipesConfig $chatbotPipes 请求流经的管道|pipeline to handle incoming message
+ *
+ * @property-read DefaultMessagesConfig $defaultMessages 默认的回复消息|default message for default event such as tooBusy
+ *
+ * @property-read OOHostConfig $host  多轮对话的核心模块配置|multi-turn conversation kernel config
+ *
  */
 class ChatbotConfig extends Option
 {
@@ -54,11 +53,11 @@ class ChatbotConfig extends Option
 
     protected static $associations = [
         'defaultMessages' => DefaultMessagesConfig::class,
-        'eventRegister[]' => EventListenerConfig::class,
         'chatbotPipes' => ChatbotPipesConfig::class,
         'translation' => TranslationConfig::class,
         'logger' => LoggerConfig::class,
         'host' => OOHostConfig::class,
+        'baseServices' => BaseServicesConfig::class,
     ];
 
     public static function stub(): array
@@ -79,15 +78,7 @@ class ChatbotConfig extends Option
             ],
 
             // 系统预注册的服务.
-            'baseServices' => [
-                'translation' => Providers\TranslatorServiceProvider::class,
-                'render' => Providers\ReplyRendererServiceProvider::class,
-                'logger' => Providers\LoggerServiceProvider::class,
-                'event' => Providers\EventServiceProvider::class,
-                'conversational' => Providers\ConversationalServiceProvider::class,
-                'hostProcess' => HostProcessServiceProvider::class,
-                'hostConversation' => HostConversationalServiceProvider::class,
-            ],
+            'baseServices' => BaseServicesConfig::stub(),
 
             // 用户自定义的进程级组件.
             'processProviders' => [
@@ -103,9 +94,6 @@ class ChatbotConfig extends Option
             'logger' => LoggerConfig::stub(),
 
             'defaultMessages' => DefaultMessagesConfig::stub(),
-            'eventRegister' => [
-                EventListenerConfig::stub(),
-            ],
 
             'host' => OOHostConfig::stub(),
         ];
