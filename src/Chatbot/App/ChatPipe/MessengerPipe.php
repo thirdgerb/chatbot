@@ -33,7 +33,6 @@ use Commune\Chatbot\Framework\Pipeline\PipelineLog;
  */
 class MessengerPipe implements InitialPipe
 {
-
     use PipelineLog;
 
     /**
@@ -76,7 +75,7 @@ class MessengerPipe implements InitialPipe
             }
 
             // 启动
-            $this->startPipe($conversation, $start);
+            $this->startPipe($conversation);
 
             /**
              * @var Conversation $conversation

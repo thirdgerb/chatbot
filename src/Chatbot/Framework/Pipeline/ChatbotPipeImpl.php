@@ -23,7 +23,6 @@ abstract class ChatbotPipeImpl implements Blueprint
 {
     use PipelineLog;
 
-
     public function getPipeName(): string
     {
         return static::class;
@@ -39,10 +38,8 @@ abstract class ChatbotPipeImpl implements Blueprint
     {
         try {
 
-            $this->startPipe(
-                $conversation,
-                $start = CHATBOT_DEBUG ? new Carbon() : null
-            );
+            $start = CHATBOT_DEBUG ? new Carbon() : null;
+            $this->startPipe($conversation);
 
             // 真正运行逻辑
             $result = $this->handleUserMessage($conversation, $next);

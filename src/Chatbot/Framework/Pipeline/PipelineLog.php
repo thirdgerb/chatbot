@@ -21,24 +21,8 @@ use Commune\Chatbot\Framework\Events\ChatbotPipeStart;
  */
 trait PipelineLog
 {
-    protected function startPipe(
-        Conversation $conversation,
-        Carbon $start = null
-    ) : void
+    protected function startPipe(Conversation $conversation) : void
     {
-        if (isset($start)) {
-            $pipeName = $this->getPipeName();
-            $conversation->getLogger()->info(
-                "startChatbotPipe $pipeName at $start",
-                [
-                    'module' => $pipeName,
-                    'start' => $start,
-                    'memory' => memory_get_usage(true)
-                ]
-            );
-
-        }
-
         // 运行启动的事件
         $conversation->fire(new ChatbotPipeStart($this));
 
@@ -47,7 +31,8 @@ trait PipelineLog
     protected function endPipe(
         Conversation $conversation,
         Carbon $start = null,
-        Carbon $end = null
+        Carbon $end = null,
+        bool $debug = true
     ) : void
     {
         if (isset($start) && isset($end)) {
