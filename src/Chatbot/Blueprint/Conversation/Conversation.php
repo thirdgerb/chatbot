@@ -141,7 +141,12 @@ interface Conversation extends ConversationContainer, RunningSpy
     /**
      * @return ConversationMessage[]
      */
-    public function getConversationReplies() : array;
+    public function getReplies() : array;
+
+    /**
+     * @return int
+     */
+    public function countReplies() : int;
 
     /**
      * 清空所有要发送的消息

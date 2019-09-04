@@ -13,6 +13,7 @@ use Commune\Chatbot\App\Components\Predefined;
 class NavigationPipe implements SessionPipe
 {
     protected $navigationIntents = [
+        Predefined\Navigation\HomeInt::class,
         Predefined\Navigation\BackwardInt::class,
         Predefined\Navigation\QuitInt::class,
         Predefined\Navigation\CancelInt::class,
@@ -31,21 +32,15 @@ class NavigationPipe implements SessionPipe
 
         // 检查matched
         $intent = $session->getMatchedIntent();
-        if (isset($intent)) {
-            // 命中的话也是直接执行.
-            return in_array($intent->getName(), $navigation)
-                ? $this->runIntent($intent, $session)
-                : $next($session);
-        }
-
-        $message = $session->incomingMessage->getMessage();
-        if (!$message instanceof VerboseMsg) {
+        $matched = $session->nlu->getMatchedIntent();
+        $noMatched = empty($intent) && empty($matched);
+        $message = $session->incomingMessage->message;
+        if ($noMatched && !$message instanceof VerboseMsg) {
             return $next($session);
         }
 
         $repo = $session->intentRepo;
         foreach ($navigation as $intentName) {
-
             // 匹配到了.
             $intent = $repo->matchCertainIntent($intentName, $session);
             if (isset($intent)) {
@@ -57,7 +52,6 @@ class NavigationPipe implements SessionPipe
 
     protected function runIntent(IntentMessage $intent, Session $session) : ? Session
     {
-
         $navigator = $intent->navigate($session->dialog);
 
         // 导航类
@@ -68,9 +62,6 @@ class NavigationPipe implements SessionPipe
             );
             return $session;
         }
-
-        // 非导航类, 当成了预匹配
-        $session->setMatchedIntent($intent);
         return null;
     }
 

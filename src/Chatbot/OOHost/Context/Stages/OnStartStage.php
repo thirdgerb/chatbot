@@ -6,6 +6,7 @@ namespace Commune\Chatbot\OOHost\Context\Stages;
 
 use Commune\Chatbot\OOHost\Context\Callables\Interceptor;
 use Commune\Chatbot\OOHost\Context\Context;
+use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
@@ -90,6 +91,11 @@ interface OnStartStage extends DialogSpeech
      * @return OnCallbackStage
      */
     public function wait() : OnCallbackStage;
+
+    /**
+     * @return Hearing
+     */
+    public function hearing();
 
     /*--------- 返回 stage ---------*/
 

@@ -18,7 +18,7 @@ class RestartInt extends NavigateIntent
     const EXAMPLES = [
     ];
 
-    protected static function getContextName(): string
+    public static function getContextName(): string
     {
         return 'navigation.'.static::SIGNATURE;
     }

@@ -54,7 +54,7 @@ class SimpleChatTask extends TaskDef
             });
     }
 
-    protected static function getContextName(): string
+    public static function getContextName(): string
     {
         return 'simpleChat.manager';
     }

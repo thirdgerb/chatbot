@@ -68,7 +68,7 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
     }
 
 
-    protected static function getContextName() : string
+    public static function getContextName() : string
     {
         return StringUtils::namespaceSlashToDot(static::class);
     }

@@ -1,14 +1,6 @@
 
--   context registrar 做了重构. 通过容器绑定 interface 来获取.
--   所有 registrar::getIns() 的调用都修改为容器调用. 并且递归地在子容器中查找.
--   incomingMessage 增加了 sessionId, 方便有时候 sessionId 是从request传过来的.
--   消息的 NLU 模块从 incomingMessage 移到了 conversation 上.
--   由于组件的配置加载要重做, 暂时移除了所有组件.
--   OOHost 的 NLU 模块重做中, 暂时代码不可用.
--   Stage 增加了 hearing api.
--   hearing api 现在会主动记录监听的 intent, 并传递给 conversation.nlu模块. 方便反馈给NLU单元.
--   删除了未实现的 configurable, option edit 等组件 (心疼代码)
--   稍稍简化了 context entity 的代码.
--   简化了IntentRegistrar的功能, 例句等放到另一个独立的OOHost NLU 模块里去实现.
--   PHP 的 IntentMatcher 从 IntentRegistrar 转移到了 IntentDefinition 中
--   重做了 quit 和 miss 机制, 现在用 reply message + render 去实现. 方便不同客户端用不同逻辑(并不都是close client)
+-   OOContext::getContextName 现在改为公共方法
+-   StartStage 现在也有 hearing 方法了.
+-   修复了 markedIntentPipe 未及时改动的bug
+-   重做了navigation pipe. 主要解决 intentName 不一致可能导致的问题.
+

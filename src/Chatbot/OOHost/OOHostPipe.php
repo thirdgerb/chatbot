@@ -56,14 +56,13 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
             return $conversation;
         }
 
-
         // 当前 session 没有搞定, 就继续往下走.
         if (!$session->isHeard()) {
-            $session = $next($conversation);
+            $conversation = $next($conversation);
         }
 
-        // 返回的session 仍然没有 heard, 就只好回复了.
-        if (!$session->isHeard()) {
+        $replies = $conversation->getReplies();
+        if (empty($replies)) {
             $conversation->reply(new MissedReply());
         }
 

@@ -47,7 +47,7 @@ class IntentRegistrarImpl extends ContextRegistrarImpl implements IntentRegistra
         foreach ($names as $name) {
             if ($this->hasDef($name)) {
                 $intent = $this->getDef($name)->newContext(
-                    $nlu->getIntentEntities($name)
+                    $nlu->getIntentEntities($name)->all()
                 );
                 break;
             }
@@ -77,9 +77,8 @@ class IntentRegistrarImpl extends ContextRegistrarImpl implements IntentRegistra
         // 必须用definition, 因为intentName 可能有很多种...
         // 牺牲一点性能获取工程上的便利.
         // 但有可能造成歧义. 需要继续权衡.
-        $def = $this->getDef($intentName);
-        $matcher = $def->getMatcher();
-        $intent = $this->doMatch($session, $def, $matcher);
+        $expectDef = $this->getDef($intentName);
+        $intent = $this->doMatch($session, $expectDef);
 
         // 会主动设置到 session 中.
         if (isset($intent)) {
@@ -92,30 +91,43 @@ class IntentRegistrarImpl extends ContextRegistrarImpl implements IntentRegistra
 
 
 
-    protected function doMatch(Session $session, IntentDefinition $def, IntentMatcher $matcher): ? IntentMessage
+    protected function doMatch(Session $session, IntentDefinition $expectDef): ? IntentMessage
     {
-        $name = $def->getName();
+        $name = $expectDef->getName();
         // 检查 matched
         $matched = $session->getMatchedIntent();
-        if (isset($matched) && $matched->getName() === $name) {
-            return $matched;
+        // 已经匹配到了
+        if (isset($matched)) {
+            return $matched->getName() === $name ? $matched : null;
         }
 
-        // 检查incoming message
+        // 检查 nlu 的matched
         $nlu = $session->nlu;
+        $matched = $nlu->getMatchedIntent();
+
+
+        if (
+            isset($matched)
+            && $this->hasDef($matched)
+            && $this->getDef($matched)->getName() === $name
+        ) {
+            $entities = $nlu->getIntentEntities($matched);
+            return $expectDef->newContext($entities->all());
+        }
+
 
         // 必须高于阈值的意图才会被识别.
         // 是否已经包含.
         if ($nlu->hasPossibleIntent($name, true)) {
             $entities = $nlu->getIntentEntities($name);
-            return $def->newContext($entities);
+            return $expectDef->newContext($entities->all());
         }
 
         // 使用matcher
         $origin = $session->incomingMessage->message;
-        $entities = $matcher->match($origin);
+        $entities = $expectDef->getMatcher()->match($origin);
         if (isset($entities)) {
-            return $def->newContext($entities);
+            return $expectDef->newContext($entities);
         }
 
         return null;

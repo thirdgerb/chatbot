@@ -60,6 +60,7 @@ class ContractsValidator implements Bootstrapper
         Kernel::class,
         ExceptionHandler::class,
         // 多请求复用的组件.
+        EventDispatcher::class,
         Renderer::class,
         Translator::class,
         // host
@@ -71,9 +72,8 @@ class ContractsValidator implements Bootstrapper
      * @var array
      */
     protected $conversationContracts = [
-        Speech::class,
         // 依赖会话级容器的.
-        EventDispatcher::class,
+        Speech::class,
         // 有IO 开销, 考虑IO非阻塞实现的
         CacheAdapter::class,
         // conversation

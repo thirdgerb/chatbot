@@ -19,7 +19,7 @@ class CancelInt extends NavigateIntent
     ];
 
 
-    protected static function getContextName(): string
+    public static function getContextName(): string
     {
         return 'navigation.'.static::SIGNATURE;
     }

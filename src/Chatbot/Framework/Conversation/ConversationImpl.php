@@ -332,9 +332,14 @@ class ConversationImpl implements Blueprint
         $this->bufferMessages = [];
     }
 
-    public function getConversationReplies(): array
+    public function getReplies(): array
     {
         return $this->replyMessages;
+    }
+
+    public function countReplies(): int
+    {
+        return count($this->replyMessages);
     }
 
 

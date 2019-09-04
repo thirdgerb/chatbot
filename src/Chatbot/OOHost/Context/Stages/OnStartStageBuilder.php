@@ -150,5 +150,10 @@ class OnStartStageBuilder implements OnStartStage
         return $this->stage;
     }
 
+    public function hearing()
+    {
+        return new FakeHearing($this->stage->dialog, $this->stage->dialog->wait());
+    }
+
 
 }

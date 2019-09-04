@@ -42,8 +42,4 @@ return [
         'mustBeSupervisor' => '只有管理员允许访问当前语境',
     ],
 
-    'messageTypeNames' => [
-        \Commune\Chatbot\App\Messages\Text::class => '文字',
-    ]
-
 ];

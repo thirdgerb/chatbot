@@ -66,7 +66,7 @@ abstract class OOContext
     }
 
 
-    protected static function getContextName() : string
+    public static function getContextName() : string
     {
         return StringUtils::namespaceSlashToDot(static::class);
     }
