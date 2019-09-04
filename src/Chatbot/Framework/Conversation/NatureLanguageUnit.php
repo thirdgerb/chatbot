@@ -117,26 +117,26 @@ class NatureLanguageUnit implements NLU
         }
 
         if (!$this->sorted) {
-            $this->possibleIntents->sort( function ($item1, $item2){
+            $this->possibleIntents = $this->possibleIntents->sort( function ($item1, $item2){
                 $odd1 = $item1[1];
                 $odd2 = $item2[1];
-                return $odd1 === $odd2 ? 0 : ($odd1 > $odd2 ? 1 : -1);
+                return $odd1 === $odd2
+                    ? 0
+                    // 越大排越前面.
+                    : ($odd1 > $odd2 ? -1 : 1);
             });
             $this->sorted = true;
         }
 
-        return array_map(
-            // only intent name
-            function($arr) {
-                return $arr[0];
-            },
-            // filter
-            $highlyOnly
-                ? array_filter($this->possibleIntents->all(), function($arr){
-                    return $arr[2];
-                })
-                : $this->possibleIntents->all()
-        );
+        $result = [];
+        foreach ($this->possibleIntents->all() as $name => list($intentName, $odd, $highlyPossible)) {
+            if (!$highlyOnly || $highlyPossible) {
+                $result[] = $intentName;
+            }
+
+        }
+
+        return $result;
     }
 
 
