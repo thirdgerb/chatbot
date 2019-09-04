@@ -43,7 +43,6 @@ class OOHostConfig extends Option
             'sessionExpireSeconds' => 3600,
             'autoloadPsr4' => [],
             'sessionPipes' => [
-                SessionPipe\DefaultReplyPipe::class,
                 SessionPipe\EventMsgPipe::class,
                 Commands\UserCommandsPipe::class,
                 Commands\AnalyserPipe::class,
