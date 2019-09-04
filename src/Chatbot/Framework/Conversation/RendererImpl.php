@@ -44,12 +44,12 @@ class RendererImpl implements Renderer
         return array_key_exists($id, $this->templates);
     }
 
-    public function bindTemplate(string $id, string $template): void
+    public function bindTemplate(string $id, string $template, bool $force = false): void
     {
         $this->templates[$id] = $template;
 
         // has bound
-        if ($this->container->bound($template)) {
+        if (!$force && $this->container->bound($template)) {
             return;
         }
 

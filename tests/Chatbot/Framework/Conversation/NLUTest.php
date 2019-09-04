@@ -24,6 +24,19 @@ class NLUTest extends TestCase
         $this->assertEquals(['d', 'c', 'b', 'a'], $nlu->getPossibleIntentNames(false));
         $this->assertEquals(['d', 'b',  'a'], $nlu->getPossibleIntentNames(true));
 
+    }
+
+    public function testOrder()
+    {
+        $nlu = new NatureLanguageUnit();
+
+        $nlu->addPossibleIntent('a',  0);
+        $nlu->addPossibleIntent('b', 0);
+        $nlu->addPossibleIntent('c', 1);
+        $nlu->addPossibleIntent('d', 0);
+
+        $this->assertEquals('c', $nlu->getMostPossibleIntent());
+        $this->assertEquals(['c', 'a', 'b', 'd'], $nlu->getPossibleIntentNames());
 
     }
 

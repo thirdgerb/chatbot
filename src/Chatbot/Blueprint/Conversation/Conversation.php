@@ -8,7 +8,6 @@
 namespace Commune\Chatbot\Blueprint\Conversation;
 
 use Commune\Chatbot\Blueprint\Message\Message;
-use Symfony\Component\EventDispatcher\Event;
 
 /**
  * 使用IoC容器来承载一个请求, 将请求内的依赖都包装到这个容器内.

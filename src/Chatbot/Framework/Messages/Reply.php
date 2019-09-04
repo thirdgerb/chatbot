@@ -28,7 +28,7 @@ class Reply extends AbsMessage implements ReplyMsg
 
     public function __construct(
         string $id,
-        Collection $slots,
+        Collection $slots = null,
         string $level = Speech::INFO
     )
     {
@@ -51,7 +51,8 @@ class Reply extends AbsMessage implements ReplyMsg
 
     public function getSlots(): Collection
     {
-        return $this->slots;
+        return $this->slots
+            ?? $this->slots = new Collection();
     }
 
 

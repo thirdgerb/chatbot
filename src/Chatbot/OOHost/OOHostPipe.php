@@ -5,6 +5,8 @@ namespace Commune\Chatbot\OOHost;
 
 
 use Closure;
+use Commune\Chatbot\App\Messages\System\MissedReply;
+use Commune\Chatbot\App\Messages\System\QuitSessionReply;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Config\Children\OOHostConfig;
 use Commune\Chatbot\Contracts\ChatServer;
@@ -50,23 +52,23 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 
         // should close client by event
         if ($session->isQuiting()) {
-            $conversation
-                ->onFinish(function(
-                    ChatServer $server,
-                    Conversation $conversation
-                ) {
-                    $server->closeClient($conversation);
-                });
-        }
-
-
-        // 既然当前 session 已经搞定, 就不往后走了.
-        if ($session->isHeard()) {
+            $conversation->reply(new QuitSessionReply());
             return $conversation;
         }
 
 
-        return $next($conversation);
+        // 当前 session 没有搞定, 就继续往下走.
+        if (!$session->isHeard()) {
+            $session = $next($conversation);
+        }
+
+        // 返回的session 仍然没有 heard, 就只好回复了.
+        if (!$session->isHeard()) {
+            $conversation->reply(new MissedReply());
+        }
+
+        return $conversation;
+
     }
 
     public function callSession(Session $session) : Session

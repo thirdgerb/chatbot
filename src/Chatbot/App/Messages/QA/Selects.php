@@ -15,7 +15,7 @@ use Commune\Chatbot\Framework\Messages\Verbose;
  */
 class Selects extends Choose implements Question
 {
-    const QUESTION_ID = 'question.selects';
+    const REPLY_ID = 'question.selects';
 
     protected $onlySuggestion = true;
 

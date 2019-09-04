@@ -13,6 +13,7 @@ use Commune\Chatbot\OOHost\Directing\Dialog\MissMatch;
 use Commune\Chatbot\OOHost\Exceptions\DataNotFoundException;
 use Commune\Chatbot\OOHost\Exceptions\NavigatorException;
 use Commune\Chatbot\OOHost\Exceptions\TooManyRedirectException;
+use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionImpl;
 
 class Director implements RunningSpy
@@ -46,9 +47,9 @@ class Director implements RunningSpy
 
     /**
      * Director constructor.
-     * @param SessionImpl $session
+     * @param Session $session
      */
-    public function __construct(SessionImpl $session)
+    public function __construct(Session $session)
     {
         $this->session = $session;
         $this->sessionId = $session->sessionId;

@@ -8,6 +8,8 @@ use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 
 /**
+ * @deprecated  方案变更, 不需要这个环节了.
+ *
  * 根据session 的状态, 预定义默认回复.
  */
 class DefaultReplyPipe implements SessionPipe

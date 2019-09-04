@@ -18,7 +18,7 @@ class VbQuestion extends AbsQuestion
 {
     use Verbosely;
 
-    const QUESTION_ID = 'question';
+    const REPLY_ID = 'question';
 
     const SLOT_DEFAULT = '%default%';
     const SLOT_DEFAULT_CHOICE = '%defaultChoice%';

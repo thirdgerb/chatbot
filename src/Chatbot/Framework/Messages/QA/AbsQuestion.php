@@ -13,7 +13,7 @@ use Illuminate\Support\Collection;
 
 abstract class AbsQuestion extends AbsMessage implements Question
 {
-    const QUESTION_ID = 'question';
+    const REPLY_ID = 'question';
 
     /**
      * @var string
@@ -124,7 +124,7 @@ abstract class AbsQuestion extends AbsMessage implements Question
 
     public function getId(): string
     {
-        return static::QUESTION_ID;
+        return static::REPLY_ID;
     }
 
     public function getLevel(): string

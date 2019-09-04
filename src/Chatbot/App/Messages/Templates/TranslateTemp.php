@@ -9,7 +9,6 @@ use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\ReplyTemplate;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\Contracts\Translator;
-use Illuminate\Support\Collection;
 
 class TranslateTemp implements ReplyTemplate
 {

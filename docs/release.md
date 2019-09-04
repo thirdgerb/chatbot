@@ -11,3 +11,4 @@
 -   稍稍简化了 context entity 的代码.
 -   简化了IntentRegistrar的功能, 例句等放到另一个独立的OOHost NLU 模块里去实现.
 -   PHP 的 IntentMatcher 从 IntentRegistrar 转移到了 IntentDefinition 中
+-   重做了 quit 和 miss 机制, 现在用 reply message + render 去实现. 方便不同客户端用不同逻辑(并不都是close client)

@@ -8,7 +8,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 
 class Confirm extends VbQuestion
 {
-    const QUESTION_ID = 'question.confirm';
+    const REPLY_ID = 'question.confirm';
 
     protected $onlySuggestion = true;
 
