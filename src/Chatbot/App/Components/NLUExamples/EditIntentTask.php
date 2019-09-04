@@ -9,12 +9,11 @@ use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\OOHost\Context\Intent\Registrar;
 use Commune\Chatbot\OOHost\Context\OOContext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\NLU\NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
 
 /**
  * @property-read string $editingName
@@ -33,9 +32,9 @@ class EditIntentTask extends OOContext
     {
     }
 
-    protected function getRepo() : Registrar
+    protected function getRepo() : IntentRegistrar
     {
-        return IntentRegistrar::getIns();
+        return $this->getSession()->intentRepo;
     }
 
     public function __onStart(Stage $stage): Navigator
@@ -45,7 +44,7 @@ class EditIntentTask extends OOContext
 
             $name = $this->editingName;
             $examples = $repo->getNLUExamplesByIntentName($name);
-            $desc = $repo->get($name)->getDesc();
+            $desc = $repo->getDef($name)->getDesc();
 
             $exp = array_map(function(NLUExample $example){
                 return  $example->originText;

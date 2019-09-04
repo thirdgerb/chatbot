@@ -5,6 +5,7 @@ namespace Commune\Chatbot\OOHost\Session;
 
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
+use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
@@ -13,7 +14,10 @@ use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\OOHost\Context\Context;
 
 use Commune\Chatbot\OOHost\Context\ContextRegistrar;
+use Commune\Chatbot\OOHost\Context\ContextRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\DialogImpl;
 
@@ -21,7 +25,7 @@ use Commune\Chatbot\OOHost\Directing\Dialog\Hear;
 use Commune\Chatbot\OOHost\Directing\Director;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\History\History;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\Config\Children\OOHostConfig;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
@@ -30,21 +34,6 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @mixin Session
- *
- * @property-read IncomingMessage $incomingMessage
- * @property-read Conversation $conversation
- * @property-read Dialog $dialog
- * @property-read SessionMemory $memory
- * @property-read string $sessionId
- * @property-read string $belongsTo
- * @property-read Scope $scope
- * @property-read ContextRegistrar $contextRepo
- * @property-read IntentRegistrar $intentRepo
- * @property-read LoggerInterface $logger
- * @property-read Repository $repo
- * @property-read ChatbotConfig $chatbotConfig
- * @property-read OOHostConfig $hostConfig
- *
  */
 class SessionImpl implements Session, HasIdGenerator
 {
@@ -139,6 +128,11 @@ class SessionImpl implements Session, HasIdGenerator
     protected $dialog;
 
     /**
+     * @var NLU
+     */
+    protected $nlu;
+
+    /**
      * @var bool
      */
     protected $sneak = false;
@@ -153,6 +147,20 @@ class SessionImpl implements Session, HasIdGenerator
      */
     protected $memory;
 
+    /**
+     * @var IntentRegistrar;
+     */
+    protected $intentRepo;
+
+    /**
+     * @var ContextRegistrar
+     */
+    protected $contextRepo;
+
+    /**
+     * @var MemoryRegistrar
+     */
+    protected $memoryRepo;
 
     public function __construct(
         string $belongsTo,
@@ -239,10 +247,10 @@ class SessionImpl implements Session, HasIdGenerator
         }
 
         // 基于 registrar 来生成.
-        $repo = $this->contextRepo;
+        $repo = $this->getContextRegistrar();
         $name = $this->hostConfig->rootContextName;
-        if ($repo->has($name)) {
-            return $repo->get($name)->newContext()->toInstance($this);
+        if ($repo->hasDef($name)) {
+            return $repo->getDef($name)->newContext()->toInstance($this);
         }
 
         throw new ConfigureException(
@@ -310,10 +318,35 @@ class SessionImpl implements Session, HasIdGenerator
                     ?? $this->conversation->getIncomingMessage();
     }
 
+    public function getNLU() : NLU
+    {
+        return $this->nlu
+            ?? $this->conversation->getNLU();
+    }
+
     public function getMemory() : SessionMemory
     {
         return $this->memory ?? $this->memory = new SessionMemory($this);
     }
+
+    public function getIntentRegistrar() : IntentRegistrar
+    {
+        return $this->intentRepo
+            ?? $this->intentRepo = $this->conversation->get(IntentRegistrar::class);
+    }
+
+    public function getMemoryRegistrar() : MemoryRegistrar
+    {
+        return $this->memoryRepo
+            ?? $this->memoryRepo = $this->conversation->get(MemoryRegistrar::class);
+    }
+
+    public function getContextRegistrar() : ContextRegistrar
+    {
+        return $this->contextRepo
+            ?? $this->contextRepo = $this->conversation->get(ContextRegistrar::class);
+    }
+
 
     /*----------- intent ------------*/
 
@@ -353,14 +386,18 @@ class SessionImpl implements Session, HasIdGenerator
 
 
             case 'intentRepo' :
-                return IntentRegistrar::getIns();
+                return $this->getIntentRegistrar();
             case 'contextRepo' :
-                return ContextRegistrar::getIns();
+                return $this->getContextRegistrar();
+            case 'memoryRepo' :
+                return $this->getMemoryRegistrar();
 
             case 'dialog' :
                 return $this->getDialog();
             case 'incomingMessage' :
                 return $this->getIncomingMessage();
+            case 'nlu' :
+                return $this->getNLU();
             case 'scope' :
                 return $this->getScope();
             case 'memory' :

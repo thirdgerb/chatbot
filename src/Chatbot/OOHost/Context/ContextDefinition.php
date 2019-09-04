@@ -194,7 +194,7 @@ class ContextDefinition implements Definition
         $this->stageMethods[$stage] = $builder;
     }
 
-    public function depends(Context $instance): array
+    public function dependsEntities(Context $instance): array
     {
         $results = [];
         foreach ($this->entities as $entity) {
@@ -205,7 +205,7 @@ class ContextDefinition implements Definition
         return $results;
     }
 
-    public function depending(Context $instance): ? Entity
+    public function dependingEntity(Context $instance): ? Entity
     {
         foreach ($this->entities as $entity) {
             if (!$entity->isPrepared($instance)) {
@@ -233,7 +233,7 @@ class ContextDefinition implements Definition
         $this->checkStageExists($stage);
         // 检查depending
         if ($stage === Context::INITIAL_STAGE) {
-            $entity = $this->depending($self);
+            $entity = $this->dependingEntity($self);
             if (!empty($entity)) {
                 return $dialog->goStagePipes(
                     [ $entity->name, $stage ],
@@ -316,7 +316,7 @@ class ContextDefinition implements Definition
     }
 
 
-    public function onExiting(
+    public function callExiting(
         int $exiting,
         Context $self,
         Dialog $dialog,

@@ -6,7 +6,8 @@ namespace Commune\Chatbot\App\Components\SimpleFileChat;
 
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\OOHost\NLU\NLUExample;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
+use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
 use Symfony\Component\Finder\Finder;
 
 class LoadSimpleFileIntent extends ServiceProvider
@@ -35,7 +36,7 @@ class LoadSimpleFileIntent extends ServiceProvider
             ->in($this->resourcePath)
             ->name('/\.md$/');
 
-        $repo = IntentRegistrar::getIns();
+        $repo = $app->get(IntentRegistrar::class);
         $id = $this->option->id;
 
         foreach ($finder as $fileInfo) {
@@ -54,7 +55,7 @@ class LoadSimpleFileIntent extends ServiceProvider
             );
 
             $def = new SimpleFileIntDefinition($configs);
-            $repo->register($def);
+            $repo->registerDef($def);
 
 
             // 注册意图.

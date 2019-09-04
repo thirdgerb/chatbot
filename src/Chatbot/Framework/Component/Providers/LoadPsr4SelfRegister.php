@@ -7,6 +7,7 @@ namespace Commune\Chatbot\Framework\Component\Providers;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
+use Commune\Container\ContainerContract;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 
@@ -29,7 +30,7 @@ class LoadPsr4SelfRegister extends ServiceProvider
 
     /**
      * LoadPsr4SelfRegister constructor.
-     * @param $app
+     * @param ContainerContract $app
      * @param LoggerInterface $logger
      * @param string $psr4ns
      * @param string $path
@@ -52,9 +53,13 @@ class LoadPsr4SelfRegister extends ServiceProvider
         parent::__construct($app);
     }
 
+    /**
+     * @param ContainerContract $app
+     */
     public function boot($app)
     {
         static::loadSelfRegister(
+            $app,
             $this->domain,
             $this->path,
             $this->logger
@@ -63,6 +68,7 @@ class LoadPsr4SelfRegister extends ServiceProvider
     }
 
     public static function loadSelfRegister(
+        ContainerContract $processContainer,
         string $namespace,
         string $directory,
         LoggerInterface $logger
@@ -97,7 +103,7 @@ class LoadPsr4SelfRegister extends ServiceProvider
 
             $logger->debug("register context $clazz");
             $method = [$clazz, SelfRegister::REGISTER_METHOD];
-            call_user_func($method);
+            call_user_func($method, $processContainer);
             $i ++;
         }
 

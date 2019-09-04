@@ -34,7 +34,7 @@ class SessionMemory implements \ArrayAccess
 
     protected function getRepo() : MemoryRegistrar
     {
-        return MemoryRegistrar::getIns();
+        return $this->session->memoryRepo;
     }
 
     /**
@@ -43,7 +43,7 @@ class SessionMemory implements \ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return isset($this->memories[$offset]) || $this->getRepo()->has($offset);
+        return isset($this->memories[$offset]) || $this->getRepo()->hasDef($offset);
     }
 
     /**
@@ -58,14 +58,14 @@ class SessionMemory implements \ArrayAccess
             return $this->memories[$offset];
         }
 
-        if (!$repo->has($offset)) {
+        if (!$repo->hasDef($offset)) {
             return null;
         }
 
         /**
          * @var Memory $memory
          */
-        $memory = $repo->get($offset)->newContext()->toInstance($this->session);
+        $memory = $repo->getDef($offset)->newContext()->toInstance($this->session);
         return $this->memories[$offset] = $memory;
 
     }

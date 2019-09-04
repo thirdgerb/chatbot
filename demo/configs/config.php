@@ -14,24 +14,24 @@ return [
     ],
     'components' => [
         \Commune\Demo\App\DemoOption::class,
-        \Commune\Chatbot\App\Components\ConfigurableComponent::class,
-        \Commune\Chatbot\App\Components\NLUExamplesComponent::class => [
-            'repository' => __DIR__ .'/repository.json'
-        ],
-        \Commune\Chatbot\App\Components\SimpleFileChatComponent::class,
-        \Commune\Chatbot\App\Components\RasaComponent::class => [
-            'output' => __DIR__ .'/nlu.md',
-        ],
-        \Commune\Chatbot\App\Components\PredefinedIntComponent::class,
-        \Commune\Chatbot\App\Components\SimpleChatComponent::class => [
-            'default' => 'demo',
-            'resources' => [
-                [
-                    'id' => 'demo',
-                    'resource' => __DIR__ .'/chats/example.yml'
-                ]
-            ]
-        ],
+//        \Commune\Chatbot\App\Components\ConfigurableComponent::class,
+//        \Commune\Chatbot\App\Components\NLUExamplesComponent::class => [
+//            'repository' => __DIR__ .'/repository.json'
+//        ],
+//        \Commune\Chatbot\App\Components\SimpleFileChatComponent::class,
+//        \Commune\Chatbot\App\Components\RasaComponent::class => [
+//            'output' => __DIR__ .'/nlu.md',
+//        ],
+//        \Commune\Chatbot\App\Components\PredefinedIntComponent::class,
+//        \Commune\Chatbot\App\Components\SimpleChatComponent::class => [
+//            'default' => 'demo',
+//            'resources' => [
+//                [
+//                    'id' => 'demo',
+//                    'resource' => __DIR__ .'/chats/example.yml'
+//                ]
+//            ]
+//        ],
     ],
     'processProviders' => [
         \Commune\Demo\App\Providers\EventServiceProvider::class,

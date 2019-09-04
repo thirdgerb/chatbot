@@ -9,7 +9,6 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Context\OOContext;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
@@ -68,11 +67,11 @@ class RouteDef extends OOContext
 
     protected function getRouteNameToDesc() : array
     {
-        $repo = ContextRegistrar::getIns();
+        $repo = $this->getSession()->contextRepo;
         $descriptions = [];
         foreach ($this->routes as $routeName) {
-            if ($repo->has($routeName)) {
-                $descriptions[$routeName] = $repo->get($routeName)->getDesc();
+            if ($repo->hasDef($routeName)) {
+                $descriptions[$routeName] = $repo->getDef($routeName)->getDesc();
             }
         }
         return $descriptions;

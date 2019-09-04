@@ -12,6 +12,9 @@ use Symfony\Component\Console\Input\InputOption;
 
 
 /**
+ * 默认的 session command
+ * 会自动依赖注入
+ *
  * 注意command 不应该是单例. 它会持有session
  */
 abstract class SessionCommand

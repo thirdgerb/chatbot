@@ -4,15 +4,17 @@
 namespace Commune\Chatbot\OOHost\Session;
 
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
+use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\ContextRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\Config\Children\OOHostConfig;
 use Psr\Log\LoggerInterface;
@@ -26,6 +28,7 @@ use Psr\Log\LoggerInterface;
  *
  * @property-read IncomingMessage $incomingMessage
  * @property-read Conversation $conversation
+ * @property-read NLU $nlu
  *
  * ************* dialog api ************
  *
@@ -45,6 +48,7 @@ use Psr\Log\LoggerInterface;
  *
  * @property-read ContextRegistrar $contextRepo
  * @property-read IntentRegistrar $intentRepo
+ * @property-read MemoryRegistrar $memoryRepo
  *
  * ************* components ************
  *

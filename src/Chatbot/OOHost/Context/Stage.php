@@ -77,6 +77,23 @@ interface Stage
      */
     public function onFallback(callable $interceptor) : Stage;
 
+    /**
+     * use hearing api
+     * @return Hearing
+     */
+    public function hearing();
+
+    /**
+     * 不做任何事
+     * 等待用户发一个消息.
+     *
+     * @param callable $hearMessage
+     * @return Navigator
+     */
+    public function wait(
+        callable $hearMessage
+    ) : Navigator;
+
 
     /*------ 等待用户输入. ------*/
 
@@ -106,17 +123,6 @@ interface Stage
      * @return OnStartStage
      */
     public function buildTalk() : OnStartStage;
-
-    /**
-     * 不做任何事
-     * 等待用户发一个消息.
-     *
-     * @param callable $hearMessage
-     * @return Navigator
-     */
-    public function wait(
-        callable $hearMessage
-    ) : Navigator;
 
     /*------ 依赖信息 ------*/
 

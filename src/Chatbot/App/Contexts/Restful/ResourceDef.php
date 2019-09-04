@@ -6,7 +6,6 @@ namespace Commune\Chatbot\App\Contexts\Restful;
 
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\Context;
@@ -627,7 +626,7 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
      */
     public function newResource(array $paths, string $key, $id) : ResourceDef
     {
-        $repo = ContextRegistrar::getIns();
+        $repo = $this->getSession()->contextRepo;
 
         $name = self::makeContextName(
             static::MODULE,
@@ -635,7 +634,7 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
             $key
         );
 
-        if (!$repo->has($name)) {
+        if (!$repo->hasDef($name)) {
             throw new ConfigureException(
                 __METHOD__
                 . ' composed context name ' . $name
@@ -643,7 +642,7 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
             );
         }
 
-        $context = $repo->get($name)->newContext($paths, $id);
+        $context = $repo->getDef($name)->newContext($paths, $id);
 
         if ($context instanceof ResourceDef) {
             return $context;

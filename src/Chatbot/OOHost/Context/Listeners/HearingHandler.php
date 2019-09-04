@@ -265,7 +265,7 @@ class HearingHandler implements Hearing
     {
         if (isset($this->navigator)) return $this;
 
-        $entities = $this->dialog->session->incomingMessage->getEntities();
+        $entities = $this->dialog->session->nlu->getEntities();
 
         if (!$entities->isEmpty() && $entities->has($entityName)) {
             $this->heard = true;
@@ -304,7 +304,7 @@ class HearingHandler implements Hearing
 
         // 主动匹配.
         $session = $this->dialog->session;
-        $intent = $session->intentRepo->matchIntent(
+        $intent = $session->intentRepo->matchCertainIntent(
             $intentName,
             $session
         );
@@ -339,7 +339,7 @@ class HearingHandler implements Hearing
         $names = [];
         foreach ($intentNames as $intentName) {
             // 允许从前缀里取.
-            $names = array_merge($names, $repo->getNamesByDomain($intentName));
+            $names = array_merge($names, $repo->getDefNamesByDomain($intentName));
         }
         //  这里是标准名称了.
         $names = array_unique($names);
@@ -383,7 +383,7 @@ class HearingHandler implements Hearing
         $session = $this->dialog->session;
 
         $matched = $session->getMatchedIntent()
-            ?? $session->intentRepo->matchHighlyPossibleIntent($session);
+            ?? $session->intentRepo->matchIntent($session);
 
         if (!isset($matched)) {
             return $this;
@@ -643,8 +643,9 @@ class HearingHandler implements Hearing
             return $this;
         }
 
+        $nlu = $this->dialog->session->nlu;
         $incoming = $this->dialog->session->incomingMessage;
-        $collection = $incoming->getKeywords();
+        $collection = $nlu->getWords();
 
         // 分词得到的关键字不为空, 用分词来做
         if (!$collection->isEmpty()) {

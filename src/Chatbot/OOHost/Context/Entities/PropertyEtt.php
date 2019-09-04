@@ -12,10 +12,12 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Entity;
 use Commune\Chatbot\OOHost\Context\Memory\Memory;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
+/**
+ * 默认的 entity, 可以与 memory 模块结合.
+ */
 class PropertyEtt implements Entity
 {
     // 默认的问题方法前缀, 方法传入Dialog, 返回值是 void.
@@ -81,8 +83,8 @@ class PropertyEtt implements Entity
         $this->name = $name;
         $this->question = empty($question) ? 'ask.default' : $question;
         $this->default = $default;
-        $this->loadMemoryDef($memoryName, $memoryKey);
-        $this->default = $default;
+        $this->memoryName = $memoryName;
+        $this->memoryKey = !empty($memoryKey) ? $memoryKey : $this->name;
         $this->isOptional = isset($default);
     }
 
@@ -200,30 +202,6 @@ class PropertyEtt implements Entity
         ];
     }
 
-
-
-    protected function loadMemoryDef(string $memoryName, string $memoryKey = null) : void
-    {
-        if (empty($memoryName)){
-            return;
-        }
-
-
-        if (MemoryRegistrar::getIns()->has($memoryName) ){
-            $this->memoryName = $memoryName;
-            $this->memoryKey = !empty($memoryKey) ? $memoryKey : $this->name;
-
-        } else {
-            throw new ConfigureException(
-                static::class
-                . ' define entity ' . $this->name
-                . ' with memory ' . $memoryName
-                . ' which is not exists'
-            );
-        }
-    }
-
-
     public function withValidator(callable $validator)
     {
         $this->validator = $validator;
@@ -237,7 +215,7 @@ class PropertyEtt implements Entity
 
     public function set(Context $self, $value): void
     {
-        if (isset($this->memoryName)) {
+        if (!empty($this->memoryName)) {
             $this->setMemory($self, $value);
             return;
         }
@@ -246,7 +224,7 @@ class PropertyEtt implements Entity
 
     public function get(Context $self)
     {
-        if (isset($this->memoryName)) {
+        if (!empty($this->memoryName)) {
             return $this->getMemory($self);
         }
 
@@ -255,38 +233,53 @@ class PropertyEtt implements Entity
 
     public function isPrepared(Context $self): bool
     {
-        if (isset($this->memoryName)) {
+        if (!empty($this->memoryName)) {
             return $this->memoryExists($self);
         }
         return $self->hasAttribute($this->name) || $this->isOptional;
     }
 
-    protected function getMemoryObj() : Memory
+    protected function getMemoryObj(Context $self) : Memory
     {
         /**
          * @var Memory $memory
          */
-        $memory = MemoryRegistrar::getIns()
-            ->get($this->memoryName)
-            ->newContext();
+        $memoryDef = $self
+            ->getSession()
+            ->memoryRepo
+            ->getDef($this->memoryName);
+
+        if (!isset($memoryDef)) {
+            throw new ConfigureException(
+                'context '
+                . $self->getName()
+                . ' define entity '
+                . $this->name
+                . ' with memory '
+                . $this->memoryName
+                . ' which is not defined'
+            );
+        }
+
+        $memory = $memoryDef->newContext();
         return $memory;
     }
 
     protected function setMemory(Context $self, $value): void
     {
-        $memory = $this->getMemoryObj()->toInstance($self->getSession());
+        $memory = $this->getMemoryObj($self)->toInstance($self->getSession());
         $memory->__set($this->memoryKey, $value);
     }
 
     protected function getMemory(Context $self)
     {
-        $memory = $this->getMemoryObj()->toInstance($self->getSession());
+        $memory = $this->getMemoryObj($self)->toInstance($self->getSession());
         return $memory->__get($this->memoryKey) ?? null;
     }
 
     protected function memoryExists(Context $self): bool
     {
-        $memory = $this->getMemoryObj()->toInstance($self->getSession());
+        $memory = $this->getMemoryObj($self)->toInstance($self->getSession());
         return $memory->__isset($this->memoryKey);
     }
 

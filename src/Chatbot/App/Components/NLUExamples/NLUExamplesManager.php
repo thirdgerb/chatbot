@@ -6,7 +6,7 @@ namespace Commune\Chatbot\App\Components\NLUExamples;
 
 use Commune\Chatbot\App\Components\NLUExamplesComponent;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\OOHost\NLU\NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
 
 class NLUExamplesManager
 {
@@ -16,17 +16,25 @@ class NLUExamplesManager
     protected $config;
 
     /**
+     * @var IntentRegistrar
+     */
+    protected $repo;
+
+    /**
      * NLUExamplesManager constructor.
      * @param NLUExamplesComponent $config
+     * @param IntentRegistrar $repo
      */
-    public function __construct(NLUExamplesComponent $config)
+    public function __construct(NLUExamplesComponent $config, IntentRegistrar $repo)
     {
         $this->config = $config;
+        $this->repo = $repo;
     }
+
 
     public function register(string $intentName, NLUExample $example) : void
     {
-        $repo = IntentRegistrar::getIns();
+        $repo = $this->repo;
         $repo->registerNLUExample($intentName, $example);
         $this->generate();
     }
@@ -36,7 +44,7 @@ class NLUExamplesManager
      */
     public function generate() : void
     {
-        $registrar = IntentRegistrar::getIns();
+        $registrar = $this->repo;
         $all = $registrar->getNLUExamplesCollection();
 
         $data = [];

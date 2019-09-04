@@ -67,12 +67,6 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
         return $this->line;
     }
 
-
-    public function generateMessageId(): string
-    {
-        return $this->createUuId();
-    }
-
     public function getPlatformId(): string
     {
         return StdioServer::class;

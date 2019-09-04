@@ -220,7 +220,7 @@ interface Hearing
     /**
      * 判断消息是否符合某种情感.
      *
-     * to feel message match curtain feeling
+     * to feel message match certain feeling
      * parser @see Feeling
      *
      * @param string $emotionName

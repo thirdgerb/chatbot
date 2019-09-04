@@ -6,6 +6,7 @@ namespace Commune\Chatbot\Framework\Conversation;
 
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
+use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Support\Uuid\IdGeneratorHelper;
 
@@ -49,6 +50,16 @@ trait MessageRequestHelper
     public function generateMessageId(): string
     {
         return $this->createUuId();
+    }
+
+    public function fetchNLU() : ? NLU
+    {
+        return null;
+    }
+
+    public function fetchSessionId() : ? string
+    {
+        return null;
     }
 
 

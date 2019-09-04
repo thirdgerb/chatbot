@@ -14,6 +14,7 @@ use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
 use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
+use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Conversation\Renderer;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
@@ -78,6 +79,11 @@ class ConversationImpl implements Blueprint
      * @var \Closure[]
      */
     protected $finishCallers = [];
+
+    /**
+     * @var NLU
+     */
+    protected $nlu;
 
     public function onMessage(MessageRequest $request, ChatbotConfig $config): Blueprint
     {
@@ -184,6 +190,16 @@ class ConversationImpl implements Blueprint
     {
         return $this->shared[MessageRequest::class];
     }
+
+    public function getNLU(): NLU
+    {
+        return $this->nlu
+            ?? $this->nlu = (
+                $this->getRequest()->fetchNLU()
+                ?? new NatureLanguageUnit()
+            );
+    }
+
 
     /**
      * @var string

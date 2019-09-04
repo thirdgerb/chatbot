@@ -37,7 +37,7 @@ abstract class FallbackNavigator extends AbsNavigator
 
         // 防止无限重定向
         if (!$this->skipSelfEvent) {
-            $navigator = $context->getDef()->onExiting(
+            $navigator = $context->getDef()->callExiting(
                 static::EVENT,
                 $context,
                 $this->dialog
@@ -51,7 +51,7 @@ abstract class FallbackNavigator extends AbsNavigator
             $context = $history->getCurrentContext();
             $caller = $context->getDef();
 
-            $navigator = $caller->onExiting(
+            $navigator = $caller->callExiting(
                 static::EVENT,
                 $context,
                 $this->dialog,

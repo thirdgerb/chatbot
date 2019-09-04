@@ -28,10 +28,7 @@ class Hear extends AbsNavigator
     {
         // 意图匹配.
         $session = $this->dialog->session;
-        $intent = $session->intentRepo->matchHighlyPossibleIntent($session);
-        if (isset($intent)) {
-            $session->setMatchedIntent($intent);
-        }
+        $session->intentRepo->matchIntent($session);
 
         // 问题过滤
         $question = $this->dialog->currentQuestion();

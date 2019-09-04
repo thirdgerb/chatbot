@@ -33,7 +33,7 @@ class RedirectCmd extends SessionCommand
 
         $repo = $session->contextRepo;
 
-        if (!$repo->has($name)) {
+        if (!$repo->hasDef($name)) {
             $this->say($message->getEntities())
                 ->info('command.contextNotExists');
             return;
@@ -42,7 +42,7 @@ class RedirectCmd extends SessionCommand
         $this->say($message->getEntities())
             ->info('command.navigateToContext');
 
-        $context = $repo->get($name)->newContext();
+        $context = $repo->getDef($name)->newContext();
         $dialog = $session->dialog;
 
         if ($context instanceof IntentMessage) {

@@ -8,12 +8,18 @@ use Commune\Chatbot\Framework\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Memory\AbsMemory;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryDefinition;
+use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Scope;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
+use Commune\Container\ContainerContract;
 
+/**
+ * 拥有记忆功能的 context.
+ *
+ */
 abstract class MemorialTask extends AbsMemory implements SelfRegister
 {
     const DESCRIPTION = 'define description';
@@ -30,6 +36,8 @@ abstract class MemorialTask extends AbsMemory implements SelfRegister
 
     /**
      * 数据初始化
+     * initialize context properties
+     *
      * @return array
      */
     abstract protected function init() : array;
@@ -72,22 +80,23 @@ abstract class MemorialTask extends AbsMemory implements SelfRegister
         return $memory;
     }
 
-    public static function registerSelfDefinition(): void
+    public static function registerSelfDefinition(ContainerContract $processContainer): void
     {
-        $repo = static::getRegistrar();
+        $repo = $processContainer->get(MemoryRegistrar::class);
         $def = static::buildDefinition();
-        $repo->register($def, true);
+        $repo->registerDef($def, true);
     }
+
 
     public function getDef(): Definition
     {
-        $repo = static::getRegistrar();
+        $repo = $this->getSession()->memoryRepo;
         $name = $this->getName();
-        if (!$repo->has($name)) {
-            static::registerSelfDefinition();
+        if (!$repo->hasDef($name)) {
+            $repo->registerDef(static::buildDefinition());
         }
 
-        return $repo->get($name);
+        return $repo->getDef($name);
     }
 
     protected static function buildDefinition() : Definition

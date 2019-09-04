@@ -31,7 +31,7 @@ class ConversationalServiceProvider extends BaseServiceProvider
 
     public function register(): void
     {
-        $this->registerMonologue();
+        $this->registerSpeech();
         $this->registerIncomingMessage();
         $this->registerUser();
         $this->registerChat();
@@ -77,7 +77,7 @@ class ConversationalServiceProvider extends BaseServiceProvider
 
     }
 
-    protected function registerMonologue() : void
+    protected function registerSpeech() : void
     {
         $this->app->singleton(
             Speech::class,
@@ -100,12 +100,12 @@ class ConversationalServiceProvider extends BaseServiceProvider
                     $chat->getPlatformId(),
                     $chat->getChatId(),
                     null,
+                    $request->fetchSessionId(),
                     $request->fetchTraceId()
                 );
                 return $incomingMessage;
             }
         );
-
     }
 
     protected function registerLogger() : void

@@ -2,6 +2,7 @@
 
 
 namespace Commune\Chatbot\OOHost\Context;
+use Commune\Container\ContainerContract;
 
 
 /**
@@ -11,5 +12,5 @@ interface SelfRegister
 {
     const REGISTER_METHOD = 'registerSelfDefinition';
 
-    public static function registerSelfDefinition() : void;
+    public static function registerSelfDefinition(ContainerContract $processContainer) : void;
 }

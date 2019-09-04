@@ -9,9 +9,11 @@ use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Memory\AbsMemory;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryDefinition;
+use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
 use Commune\Chatbot\OOHost\Session\Scope;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
+use Commune\Container\ContainerContract;
 
 /**
  * 默认的 memory
@@ -35,6 +37,10 @@ class MemoryDef extends AbsMemory implements SelfRegister
         parent::__construct($this->init());
     }
 
+    /**
+     * 默认的 memory 没有数据
+     * @return array
+     */
     protected function init() : array
     {
         return [];
@@ -69,11 +75,11 @@ class MemoryDef extends AbsMemory implements SelfRegister
         return $memory;
     }
 
-    public static function registerSelfDefinition(): void
+    public static function registerSelfDefinition(ContainerContract $app): void
     {
-        $repo = static::getRegistrar();
+        $repo = $app->get(MemoryRegistrar::class);
         $def = static::buildDefinition();
-        $repo->register($def, true);
+        $repo->registerDef($def, true);
     }
 
     public static function __depend(Depending $depending): void
@@ -83,13 +89,13 @@ class MemoryDef extends AbsMemory implements SelfRegister
 
     public function getDef(): Definition
     {
-        $repo = static::getRegistrar();
+        $repo = $this->getSession()->memoryRepo;
         $name = $this->getName();
-        if (!$repo->has($name)) {
-            static::registerSelfDefinition();
+        if (!$repo->hasDef($name)) {
+            $repo->registerDef(static::buildDefinition());
         }
 
-        return $repo->get($name);
+        return $repo->getDef($name);
     }
 
     protected static function buildDefinition() : Definition

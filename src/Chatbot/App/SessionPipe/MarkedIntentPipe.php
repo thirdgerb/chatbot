@@ -31,7 +31,7 @@ class MarkedIntentPipe implements SessionPipe
         }
 
         $intentName = trim($text, '#');
-        if ($session->intentRepo->has($intentName)) {
+        if ($session->intentRepo->hasDef($intentName)) {
             $incoming = $session->incomingMessage;
             $incoming->addPossibleIntent(
                     $intentName,

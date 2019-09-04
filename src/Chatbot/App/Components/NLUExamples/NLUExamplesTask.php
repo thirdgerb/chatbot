@@ -20,12 +20,11 @@ use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
-use Commune\Chatbot\OOHost\Context\Intent\Registrar;
 use Commune\Chatbot\OOHost\Context\OOContext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\NLU\NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
 use Illuminate\Support\Collection;
 
 /**
@@ -70,7 +69,7 @@ class NLUExamplesTask extends OOContext
 
     public function __onStart(Stage $stage): Navigator
     {
-        $repo = IntentRegistrar::getIns();
+        $repo = $this->getSession()->intentRepo;
         $intentCount = $repo->countIntentsHasNLUExamples();
         $expCount = $repo->countNLUExamples();
         return $stage->buildTalk()
@@ -127,7 +126,7 @@ class NLUExamplesTask extends OOContext
 
                 foreach ($items as $name => $collection) {
                     $count = count($collection);
-                    $desc = $repo->get($name)->getDesc();
+                    $desc = $repo->getDef($name)->getDesc();
 
                     $list[] = "$name ($count) : $desc";
                 }
@@ -147,7 +146,7 @@ class NLUExamplesTask extends OOContext
     public function __onListIntents(Stage $stage) : Navigator
     {
         $repo = $this->getRepo();
-        $total = count($repo->getNamesByDomain($this->domain));
+        $total = count($repo->getDefNamesByDomain($this->domain));
         $totalPage = (int) ceil($total / $this->limit);
 
         return $this->doPaginate(
@@ -155,7 +154,7 @@ class NLUExamplesTask extends OOContext
             $totalPage,
             function(Context $self, Dialog $dialog, int $offset, int $limit){
                 $repo = $this->getRepo();
-                $all = $repo->getNamesByDomain($this->domain);
+                $all = $repo->getDefNamesByDomain($this->domain);
                 return (new Collection($all))->splice($offset, $limit);
             },
             function(Context $self, Dialog $dialog, Collection $items){
@@ -165,7 +164,7 @@ class NLUExamplesTask extends OOContext
 
                 foreach ($items as $name) {
                     $count = $repo->countNLUExamples($name);
-                    $desc = $repo->get($name)->getDesc();
+                    $desc = $repo->getDef($name)->getDesc();
                     $list[] = "$name ($count) : $desc";
                 }
 
@@ -216,9 +215,9 @@ class NLUExamplesTask extends OOContext
         return $stage->component($paginator);
     }
 
-    protected function getRepo() : Registrar
+    protected function getRepo() : IntentRegistrar
     {
-        return IntentRegistrar::getIns();
+        return $this->getSession()->intentRepo;
     }
 
     /**
@@ -238,7 +237,7 @@ class NLUExamplesTask extends OOContext
 
                 $this->editingName = $name;
                 $repo = $this->getRepo();
-                if ($repo->has($name) || $repo->countNLUExamples($name) > 0) {
+                if ($repo->hasDef($name) || $repo->countNLUExamples($name) > 0) {
                     return $dialog->goStage('editIntent');
                 }
 
@@ -263,7 +262,7 @@ class NLUExamplesTask extends OOContext
             ->wait()
             ->hearing()
             ->isPositive(function(Dialog $dialog){
-                $this->getRepo()->register(new PlaceHolderIntentDef($this->editingName), false);
+                $this->getRepo()->registerDef(new PlaceHolderIntentDef($this->editingName), false);
                 return $dialog->goStage('editIntent');
 
             })

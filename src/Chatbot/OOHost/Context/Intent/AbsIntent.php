@@ -4,7 +4,6 @@
 namespace Commune\Chatbot\OOHost\Context\Intent;
 
 use Commune\Chatbot\OOHost\Context\AbsContext;
-use Commune\Chatbot\OOHost\Context\Registrar;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -79,15 +78,6 @@ abstract class AbsIntent
         $de[] = IntentMessage::class;
         $de[] = AbsIntent::class;
         return $de;
-    }
-
-
-    /**
-     * @return IntentRegistrar
-     */
-    protected static function getRegistrar(): Registrar
-    {
-        return IntentRegistrar::getIns();
     }
 
 //    public function __sleep(): array

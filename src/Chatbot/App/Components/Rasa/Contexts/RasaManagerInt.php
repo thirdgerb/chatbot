@@ -11,7 +11,7 @@ use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Intent\AbsCmdIntent;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMatcherOption;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -74,7 +74,7 @@ class RasaManagerInt extends AbsCmdIntent
                      * @var RasaNLUPipe $pipe
                      */
                     $pipe = $dialog->app->make(RasaNLUPipe::class);
-                    $pipe->outputIntentExamples(IntentRegistrar::getIns());
+                    $pipe->outputIntentExamples($dialog->session->intentRepo);
                     $dialog->say()->info('保存完毕');
                 } else {
                     $dialog->say()->error('没有权限');
@@ -111,7 +111,7 @@ class RasaManagerInt extends AbsCmdIntent
                         $entities = [];
                     }
 
-                    $intent = $dialog->session->intentRepo->matchHighlyPossibleIntent($dialog->session);
+                    $intent = $dialog->session->intentRepo->matchIntent($dialog->session);
 
 
                     $dialog->say()

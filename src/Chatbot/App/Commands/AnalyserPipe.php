@@ -6,7 +6,6 @@ namespace Commune\Chatbot\App\Commands;
 
 use Commune\Chatbot\App\Abilities\Supervise;
 use Commune\Chatbot\App\Commands\Analysis\ContextRepoCmd;
-use Commune\Chatbot\App\Commands\Analysis\MemoryCmd;
 use Commune\Chatbot\App\Commands\Analysis\RedirectCmd;
 use Commune\Chatbot\App\Commands\Analysis\RunningSpyCmd;
 use Commune\Chatbot\App\Commands\Analysis\WhereCmd;
@@ -20,7 +19,6 @@ class AnalyserPipe extends SessionCommandPipe
     protected $commands = [
         HelpCmd::class,
         WhereCmd::class,
-        MemoryCmd::class,
         RedirectCmd::class,
         ContextRepoCmd::class,
         RunningSpyCmd::class,

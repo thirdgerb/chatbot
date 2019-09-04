@@ -8,6 +8,16 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
+/**
+ * CommuneChatbot 用面向对象的思维定义了多轮对话, 并使用PHP语言为之建模.
+ *
+ * 这相当于用面向对象语言PHP, 简单模拟了一个面向对象语言, 用它来定义多轮对话.
+ * 与编程语言最大区别在于, 多轮对话的数据不是存在内存中, 而是分布式服务器中.
+ *
+ * 每一个 Context 类都可以用来定义一种上下文.
+ * Definition 对象本质上类似 ReflectionClass, 是对多轮对话对象的抽象.
+ *
+ */
 interface Definition
 {
     // existing event
@@ -23,7 +33,10 @@ interface Definition
     const TAG_CONFIGURE = 'configure'; // 通过配置生成的intent
 
     /**
+     * 使用construct 参数创建一个 context 对象.
+     *
      * create a context
+     *
      * @param array $args
      * @return AbsContext
      */
@@ -31,10 +44,30 @@ interface Definition
 
     /*--------- getter ---------*/
 
+    /**
+     * context 类型的名称.
+     *
+     * context type name
+     *
+     * @return string
+     */
     public function getName() : string;
 
+    /**
+     * 上下文 具体实例使用的 php 类
+     * class of context instance
+     *
+     * @return string
+     */
     public function getClazz() : string;
 
+    /**
+     * 上下文 类的描述
+     *
+     * description of the context type
+     *
+     * @return string
+     */
     public function getDesc() : string;
 
     /**
@@ -43,9 +76,18 @@ interface Definition
      */
     public function getTags() : array;
 
-    /*--------- entity ---------*/
 
+    ###########  entity ###########
+    #
+    # context 可以定义 entities 作为一种特殊的属性.
+    # 所有 entity 属性是必要的, 只有 entity 数据存在, 才会正式进入 start stage
+    # 通过 entity 可以快速定义 context 的必填参数和调用流程. 不依赖 stage
+    #
+    ###############################
 
+    /**
+     * @param Entity $entity
+     */
     public function addEntity(Entity $entity) : void;
 
     public function hasEntity(string $entityName) : bool;
@@ -64,19 +106,37 @@ interface Definition
     public function getEntityNames() : array;
 
     /**
+     * 所有依赖中的entity
+     *
      * @param Context $instance
      * @return Entity[]
      */
-    public function depends(Context $instance) : array;
+    public function dependsEntities(Context $instance) : array;
 
     /**
      * 当前正在依赖的entity
+     *
+     * current depending entity
+     *
      * @param Context $instance
      * @return Entity|null
      */
-    public function depending(Context $instance) : ? Entity;
+    public function dependingEntity(Context $instance) : ? Entity;
 
-    /*--------- stage ---------*/
+    ########### stage ###########
+    #
+    #   多轮对话上下文存在分形几何式的嵌套关系.
+    #   可将之拆分成若干层级的单元
+    #
+    #   在 CommuneChatbot 中定义了四种级别的单元, 分别是:
+    #
+    #   - Process : 整个会话只有一个
+    #   - thread : 有上下文依赖关系的一组任务
+    #   - context : 一个独立的任务单元
+    #   - stage : 任务下的一个环节.
+    #
+    #
+    #############################
 
     /**
      * @param string $stageName
@@ -99,6 +159,8 @@ interface Definition
     /*--------- call ---------*/
 
     /**
+     * 运行一个已经实例化的 stage
+     *
      * @param string $stage
      * @param Stage $stageRoute
      * @return Navigator
@@ -109,6 +171,9 @@ interface Definition
     ) : Navigator;
 
     /**
+     * 启动一个stage
+     * 会先检查Entity
+     *
      * @param Context $self
      * @param Dialog $dialog
      * @param string $stage
@@ -121,6 +186,8 @@ interface Definition
     ) : Navigator;
 
     /**
+     * 回调一个stage
+     *
      * @param Context $self
      * @param Dialog $dialog
      * @param string $stage
@@ -135,13 +202,15 @@ interface Definition
     ) : Navigator;
 
     /**
+     * 尝试退出一个 context
+     *
      * @param int $exiting
      * @param Context $self
      * @param Dialog $dialog
      * @param Context|null $callback
      * @return Navigator|null
      */
-    public function onExiting(
+    public function callExiting(
         int $exiting,
         Context $self,
         Dialog $dialog,

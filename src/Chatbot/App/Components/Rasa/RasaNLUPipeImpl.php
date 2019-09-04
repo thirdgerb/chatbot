@@ -7,9 +7,9 @@ namespace Commune\Chatbot\App\Components\Rasa;
 use Commune\Chatbot\App\Components\RasaComponent;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
-use Commune\Chatbot\OOHost\Context\Intent\Registrar;
-use Commune\Chatbot\OOHost\NLU\MatchedIntent;
-use Commune\Chatbot\OOHost\NLU\Matches;
+use Commune\Chatbot\OOHost\Context\Intent\ContextRegistrar;
+use vCommune\Chatbot\OOHost\NLU\Match\MatchedIntent;
+use vCommune\Chatbot\OOHost\NLU\Match\Matches;
 use Commune\Chatbot\OOHost\NLU\NLUSessionPipe;
 use Commune\Chatbot\OOHost\Session\Session;
 use GuzzleHttp\Client;
@@ -188,7 +188,7 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
         return;
     }
 
-    public function outputIntentExamples(Registrar $registrar): void
+    public function outputIntentExamples(ContextRegistrar $registrar): void
     {
         $output = '';
         $output = $this->addIntentToOutput($registrar, $output);
@@ -199,7 +199,7 @@ class RasaNLUPipeImpl extends NLUSessionPipe implements RasaNLUPipe
         file_put_contents($this->config->output, $output);
     }
 
-    protected function addIntentToOutput(Registrar $registrar, string $output) : string
+    protected function addIntentToOutput(ContextRegistrar $registrar, string $output) : string
     {
         $names = $registrar->getNamesByDomain('');
 

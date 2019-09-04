@@ -14,7 +14,7 @@ class Fulfill extends AbsNavigator
     {
         $context = $this->history->getCurrentContext();
         $caller = $context->getDef();
-        $caller->onExiting(
+        $caller->callExiting(
             Definition::FULFILL,
             $context,
             $this->dialog

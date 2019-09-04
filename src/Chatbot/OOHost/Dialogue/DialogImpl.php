@@ -9,7 +9,6 @@ use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Hearing;
 
@@ -18,7 +17,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 use Commune\Chatbot\OOHost\History\History;
 use Commune\Chatbot\OOHost\Session\Session;
-use Commune\Chatbot\OOHost\Session\SessionImpl;
+use Commune\Chatbot\OOHost\Session\SessionInstance;
 use Psr\Log\LoggerInterface;
 
 
@@ -60,7 +59,7 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     /*--------- construct ---------*/
 
-    public function __construct(SessionImpl $session, History $history)
+    public function __construct(Session $session, History $history)
     {
         $this->sessionImpl = $session;
         $this->conversation = $session->conversation;
@@ -233,7 +232,7 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     public function newContext(string $contextName, ...$args): Context
     {
-        $def = ContextRegistrar::getIns()->get($contextName);
+        $def = $this->session->contextRepo->getDef($contextName);
         if (isset($def)) {
             return call_user_func_array([$def, 'newContext'], $args);
         }
@@ -256,7 +255,12 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     public function currentQuestion(): ? Question
     {
-        return $this->history->currentQuestion();
+        $question = $this->history->currentQuestion();
+        // question 可以是一个session instance. 比如 askIntent
+        if ($question instanceof SessionInstance) {
+            $question->toInstance($this->session);
+        }
+        return $question;
     }
 
 
@@ -478,7 +482,7 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         }
 
         if (is_string($context)) {
-            $def = ContextRegistrar::getIns()->get($context);
+            $def = $this->session->contextRepo->getDef($context);
             if (isset($def)) {
                 // 必须是一个不需要参数的 context
                 return $def->newContext();

@@ -7,6 +7,7 @@ namespace Commune\Chatbot\OOHost\Context;
 use Commune\Chatbot\Framework\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
+use Commune\Container\ContainerContract;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 
@@ -55,19 +56,15 @@ abstract class OOContext
 
     public function getDef(): Definition
     {
-        $registrar = $this->getRegistrar();
+        $registrar = $this->getSession()->contextRepo;
         $name = $this->getName();
 
-        if (!$registrar->has($name)) {
-            static::registerSelfDefinition();
+        if (!$registrar->hasDef($name)) {
+            $registrar->registerDef(static::buildDefinition());
         }
-        return $registrar->get($name);
+        return $registrar->getDef($name);
     }
 
-    protected static function getRegistrar(): Registrar
-    {
-        return ContextRegistrar::getIns();
-    }
 
     protected static function getContextName() : string
     {
@@ -85,9 +82,11 @@ abstract class OOContext
         return $def;
     }
 
-    public static function registerSelfDefinition(): void
+    public static function registerSelfDefinition(ContainerContract $processContainer): void
     {
-        static::getRegistrar()->register(static::buildDefinition(), true);
+        $processContainer
+            ->get(ContextRegistrar::class)
+            ->registerDef(static::buildDefinition());
     }
 
 

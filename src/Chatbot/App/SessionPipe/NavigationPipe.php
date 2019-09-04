@@ -38,7 +38,6 @@ class NavigationPipe implements SessionPipe
                 : $next($session);
         }
 
-
         $message = $session->incomingMessage->getMessage();
         if (!$message instanceof VerboseMsg) {
             return $next($session);
@@ -48,7 +47,7 @@ class NavigationPipe implements SessionPipe
         foreach ($navigation as $intentName) {
 
             // 匹配到了.
-            $intent = $repo->matchIntent($intentName, $session);
+            $intent = $repo->matchCertainIntent($intentName, $session);
             if (isset($intent)) {
                 return $this->runIntent($intent, $session) ?? $next($session);
             }

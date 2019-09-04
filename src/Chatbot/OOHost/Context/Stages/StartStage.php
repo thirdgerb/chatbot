@@ -32,6 +32,11 @@ class StartStage extends AbsStage
         return $this->navigator ?? $this->dialog->wait();
     }
 
+    public function hearing()
+    {
+        return new FakeHearing($this->dialog, $this->dialog->wait());
+    }
+
 
     public function wait(
         callable $hearMessage
@@ -89,4 +94,6 @@ class StartStage extends AbsStage
     {
         return false;
     }
+
+
 }

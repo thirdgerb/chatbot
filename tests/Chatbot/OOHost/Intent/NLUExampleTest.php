@@ -4,7 +4,7 @@
 namespace Commune\Test\Chatbot\OOHost\Intent;
 
 
-use Commune\Chatbot\OOHost\NLU\NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
 use PHPUnit\Framework\TestCase;
 
 class NLUExampleTest extends TestCase
@@ -49,6 +49,32 @@ class NLUExampleTest extends TestCase
                 return $i->name;
             }, $e->getExampleEntities())
         );
+    }
+
+    public function testEntitiesPattern()
+    {
+        $e = new NLUExample(
+            '[中文](lang)和english[还有if](and)数字比如[123](num)夹杂在一起'
+        );
+
+        $line = '';
+        $right = '';
+        foreach ($e->entities as $entity) {
+            $line .= $entity->left . $entity->value;
+            $right = $entity->right;
+        }
+        $line .= $right;
+        $this->assertEquals($e->text, $line);
+
+
+        $line = '';
+        $left = null;
+        foreach ($e->entities as $entity) {
+            $left = $left ?? $entity->left;
+            $line .= $entity->value .$entity->right;
+        }
+        $line = $left . $line;
+        $this->assertEquals($e->text, $line);
     }
 
 }

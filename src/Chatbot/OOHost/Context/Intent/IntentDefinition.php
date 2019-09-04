@@ -14,4 +14,5 @@ interface IntentDefinition extends Definition
 
     public function getMatcherOption(): IntentMatcherOption;
 
+    public function getMatcher() : IntentMatcher;
 }

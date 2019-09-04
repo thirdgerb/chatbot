@@ -8,7 +8,6 @@ use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Entity;
 use Commune\Chatbot\OOHost\Context\Memory\Memory;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
@@ -51,9 +50,10 @@ class MemoryEtt implements Entity
         return $self->getAttribute($this->name);
     }
 
-    protected function newMemory() : Memory
+    protected function newMemory(Context $self) : Memory
     {
-        $memory = $this->getMemoryDef()
+        $memory = $this
+            ->getMemoryDef($self)
             ->newContext();
         /**
          * @var Memory $memory
@@ -61,29 +61,32 @@ class MemoryEtt implements Entity
         return $memory;
     }
 
-    protected function getMemoryRealName() : string
+
+    protected function getMemoryDef(Context $self) : Definition
     {
-        return $this->getMemoryDef()->getName();
+        return $self->getSession()
+            ->memoryRepo
+            ->getDef($this->memoryName);
     }
 
-    protected function getMemoryDef() : Definition
-    {
-        return MemoryRegistrar::getIns()->get($this->memoryName);
-    }
 
     public function isPrepared(Context $self): bool
     {
         $memory = $self->getAttribute($this->name);
-        return isset($memory)
+
+        return isset($memory) // 属性存在
+            // 类型正确
             && $memory instanceof Memory
-            && $memory->getName() === $this->getMemoryRealName()
+            // 是同一个memory
+            && $memory->getName() === $this->getMemoryDef($self)->getName()
+            // memory 数据完备
             && $memory->isPrepared();
     }
 
     public function asStage(Stage $stageRoute): Navigator
     {
         return $stageRoute->dependOn(
-            $this->newMemory(),
+            $this->newMemory($stageRoute->self),
             function(Context $self, Dialog $dialog, Memory $message){
                 $self->setAttribute($this->name, $message);
                 return $dialog->next();

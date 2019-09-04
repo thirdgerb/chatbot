@@ -55,6 +55,11 @@ interface ConversationMessage extends ArrayAndJsonAble
     public function getChatId() : string ;
 
     /**
+     * @return null|string
+     */
+    public function getSessionId() : ? string;
+
+    /**
      * user unique id
      * may be platform user id or system generated id
      * decided by request

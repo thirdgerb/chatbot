@@ -27,6 +27,7 @@ class OutgoingMessageImpl extends ConversationMessageImpl
             $incomingMessage->getPlatformId(),
             $incomingMessage->getChatId(),
             $incomingMessage->getId(),
+            $incomingMessage->getSessionId(),
             $incomingMessage->getTraceId()
         );
     }

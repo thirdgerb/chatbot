@@ -7,6 +7,11 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 class CallbackStage extends AbsStage
 {
+    public function hearing()
+    {
+        return $this->dialog->hear($this->value);
+    }
+
     public function isStart(): bool
     {
         return false;

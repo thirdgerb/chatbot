@@ -16,6 +16,11 @@ class IntentDefinitionImpl extends ContextDefinition implements IntentDefinition
     protected $intentOption;
 
     /**
+     * @var IntentMatcher
+     */
+    protected $matcher;
+
+    /**
      * IntentDefinitionImpl constructor.
      * @param string $name
      * @param string $intentClazz
@@ -44,5 +49,24 @@ class IntentDefinitionImpl extends ContextDefinition implements IntentDefinition
     {
         return $this->intentOption;
     }
+
+
+    /**
+     * 获取intentMatcher
+     *
+     * @return IntentMatcher|null
+     */
+    public function getMatcher(): IntentMatcher
+    {
+        if (isset($this->matcher)) {
+            return $this->matcher;
+        }
+
+        $option = $this->getMatcherOption();
+        $matcher = new IntentMatcher($this->getName());
+        $matcher->mergeOption($option);
+        return $this->matcher = $matcher;
+    }
+
 
 }

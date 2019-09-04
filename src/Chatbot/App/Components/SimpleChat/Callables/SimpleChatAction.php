@@ -13,6 +13,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 /**
  * 用在hearing 内作为一个 action, 最好是 end() 方法或者 interceptor() 方法处使用.
+ * 也可以作为 OOHost 的default callback
  */
 class SimpleChatAction implements Action
 {
@@ -56,7 +57,7 @@ class SimpleChatAction implements Action
         $intentMessage = $session->getMatchedIntent()
             ?? $session
                 ->intentRepo
-                ->matchHighlyPossibleIntent($session);
+                ->matchIntent($session);
 
         $intent = isset($intentMessage) ? $intentMessage->getName() : null;
 

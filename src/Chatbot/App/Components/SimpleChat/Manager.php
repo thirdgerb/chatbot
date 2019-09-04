@@ -5,9 +5,9 @@ namespace Commune\Chatbot\App\Components\SimpleChat;
 
 
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
-use Commune\Chatbot\OOHost\NLU\NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
 use Symfony\Component\Yaml\Yaml;
 
 class Manager
@@ -40,6 +40,7 @@ class Manager
      * @var string[][][]
      */
     protected static $examples = [];
+
 
     public static function loadResource(string $index, string $resource) : void
     {
@@ -115,10 +116,10 @@ class Manager
             static::$examples[$index][$intentName][] = (string) $text;
         }
 
-        $repo = IntentRegistrar::getIns();
+        $repo = IntentRegistrarImpl::getIns();
 
-        if (!$repo->has($intentName)) {
-            $repo->register(new PlaceHolderIntentDef($intentName));
+        if (!$repo->hasDef($intentName)) {
+            $repo->registerDef(new PlaceHolderIntentDef($intentName));
         }
 
         foreach ($examples as $example) {

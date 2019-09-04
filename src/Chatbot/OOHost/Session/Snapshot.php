@@ -28,6 +28,7 @@ class Snapshot implements \Serializable
     public $cachedSessionData = [];
 
     /**
+     * @deprecated
      * @var SessionData[][]
      */
     public $savedSessionData = [];
@@ -114,7 +115,7 @@ class Snapshot implements \Serializable
 
     public function __sleep()
     {
-        $this->savedSessionData = $this->cachedSessionData;
+        //$this->savedSessionData = $this->cachedSessionData;
         // 不缓存cached. 这样每次反序列化时, cached 为空. 只有上一次被用过的, 才会被快照.
         return ['sessionId', 'belongsTo', 'breakpoint', 'saved'];
     }

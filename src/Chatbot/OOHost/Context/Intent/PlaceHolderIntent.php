@@ -53,12 +53,12 @@ class PlaceHolderIntent extends AbsIntent
 
     public function getDef(): Definition
     {
-        $repo = static::getRegistrar();
-        if ($repo->has($this->_name)) {
-            return $repo->get($this->_name);
+        $repo = $this->getSession()->contextRepo;
+        if ($repo->hasDef($this->_name)) {
+            return $repo->getDef($this->_name);
         }
         $def = new PlaceHolderIntentDef($this->_name);
-        $repo->register($def, false);
+        $repo->registerDef($def, false);
         return $def;
     }
 

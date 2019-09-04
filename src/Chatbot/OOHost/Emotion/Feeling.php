@@ -12,7 +12,7 @@ interface Feeling
     /**
      * 用 emotion => intentName[] 的数组, 来界定那些intent 属于哪些 emotion
      *
-     * define curtain intents means the given emotion
+     * define certain intents means the given emotion
      *
      * @param string $emotionName
      * @param array $intentNames

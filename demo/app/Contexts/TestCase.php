@@ -208,9 +208,11 @@ class TestCase extends TaskDef
         $result = $result->hearing()
                 ->isPositive(function(Dialog $dialog){
                     $dialog->say()->info('is positive emotion');
+                    return $dialog->goStage('menu');
                 })
                 ->isNegative(function(Dialog $dialog){
                     $dialog->say()->info('is negative emotion');
+                    return $dialog->goStage('menu');
                 })
                 ->end(function(Dialog $dialog){
                     $dialog->say()->warning('nether yes nor no');

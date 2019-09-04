@@ -8,6 +8,7 @@ use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 use Illuminate\Console\Parser;
@@ -38,21 +39,20 @@ class SessionCommandPipe implements SessionPipe
 
     protected static $commandDescriptions = [];
 
-    public function __construct()
+    protected function init(Session $session) : void
     {
         $name = static::class;
         // reactor 内只注册一次.
         if (!isset(self::$commandNames[$name])) {
+            $intentRepo = $session->intentRepo;
             foreach ($this->commands as $commandName) {
-                $this->registerCommandName($commandName);
+                $this->registerCommandName($commandName, $intentRepo);
             }
         }
-
     }
 
-    protected function registerCommandName(string $commandName) : void
+    protected function registerCommandName(string $commandName, IntentRegistrar $repo) : void
     {
-        $repo = IntentRegistrar::getIns();
         // 注册 command
         if (is_a($commandName, SessionCommand::class, TRUE)) {
             $desc = constant("$commandName::DESCRIPTION");
@@ -65,13 +65,13 @@ class SessionCommandPipe implements SessionPipe
 
 
         // 如果有可作为命令的 intent (signature 不为空 ) 存在
-        if ($repo->hasCommandIntent($commandName)) {
-            $matcher = $repo->getMatcher($commandName);
+        if ($repo->isCommandIntent($commandName)) {
+            $matcher = $repo->getDef($commandName)->getMatcher();
             $command = $matcher->getCommand();
             $name = $command->getCommandName();
             self::$commandNames[static::class][$name] = $commandName;
             self::$commandDescriptions[static::class][$name] = $repo
-                ->get($commandName)
+                ->getDef($commandName)
                 ->getDesc();
             return;
         }
@@ -92,6 +92,8 @@ class SessionCommandPipe implements SessionPipe
      */
     public function handle(Session $session, \Closure $next) : Session
     {
+        $this->init($session);
+
         $message = $session->incomingMessage->message;
 
         if (!$message instanceof VerboseMsg) {
@@ -177,9 +179,9 @@ class SessionCommandPipe implements SessionPipe
             return $session->conversation->make($commandID);
         }
 
-        $repo = IntentRegistrar::getIns();
-        if ($repo->hasCommandIntent($commandID)) {
-            return new IntentCmd($commandID);
+        $repo = $session->intentRepo;
+        if ($repo->isCommandIntent($commandID)) {
+            return new IntentCmd($commandID, $session->intentRepo);
         }
 
         throw new ConfigureException(

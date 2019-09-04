@@ -39,9 +39,10 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
     public function handleUserMessage(Conversation $conversation, Closure $next): Conversation
     {
         // 用 sessionId 来唤醒一个session.
-        $chatId = $conversation->getChat()->getChatId();
+        $belongsTo = $conversation->getIncomingMessage()->getSessionId()
+            ?? $conversation->getChat()->getChatId();
 
-        $session = $this->makeSession($chatId, $conversation);
+        $session = $this->makeSession($belongsTo, $conversation);
 
         $session = $this->callSession($session);
 

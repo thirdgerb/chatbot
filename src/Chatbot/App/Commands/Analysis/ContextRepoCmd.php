@@ -7,9 +7,6 @@ namespace Commune\Chatbot\App\Commands\Analysis;
 use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
 use Commune\Chatbot\OOHost\Command\SessionCommand;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
 use Commune\Chatbot\OOHost\Session\Session;
 use Illuminate\Support\Collection;
 
@@ -40,15 +37,15 @@ class ContextRepoCmd extends SessionCommand
         $limit = $limit > 0 ? $limit : 0;
 
         if ($message['--memory']) {
-            $repo = MemoryRegistrar::getIns();
+            $repo = $session->memoryRepo;
             $type = 'memory';
 
         } elseif($message['--intent']) {
-            $repo = IntentRegistrar::getIns();
+            $repo = $session->intentRepo;
             $type = 'intent';
 
         } else {
-            $repo = ContextRegistrar::getIns();
+            $repo = $session->contextRepo;
             $type = 'context';
 
         }
@@ -56,15 +53,15 @@ class ContextRepoCmd extends SessionCommand
         // 参数互斥.
         if ($message['--tag']) {
             $type .= ' of tag';
-            $names = $repo->getNamesByTag($domain);
+            $names = $repo->getDefNamesByTag($domain);
 
         } elseif ($message['--placeholder']) {
             $type .= ' of placeholder';
-            $names=  $repo->getPlaceholders();
+            $names=  $repo->getPlaceholderDefNames();
 
         } else {
             $type .= ' of domain';
-            $names = $repo->getNamesByDomain($domain);
+            $names = $repo->getDefNamesByDomain($domain);
         }
         $total = count($names);
         $limit = $limit > 0 && $limit < $this->maxLimit ? $limit : $this->maxLimit;
@@ -78,7 +75,7 @@ class ContextRepoCmd extends SessionCommand
         $names->sort();
 
         foreach ($names as $name) {
-            $desc = $repo->get($name)->getDesc();
+            $desc = $repo->getDef($name)->getDesc();
             $result[] = "$name : $desc";
         }
 

@@ -13,7 +13,7 @@ use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Intent\AbsIntent;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
@@ -141,7 +141,7 @@ class SimpleFileInt extends AbsIntent
 
         // 特殊字符.
         if (in_array('./', $suggestions)) {
-            $names = $repo->getNamesByDomain($prefix);
+            $names = $repo->getDefNamesByDomain($prefix);
 
             foreach ($names as $name) {
                 if (Str::startsWith($name, $prefix)) {
@@ -185,7 +185,7 @@ class SimpleFileInt extends AbsIntent
             // .. 上一层
             if ($suggestion === '..' ) {
 
-                if ($repo->has($prefix)){
+                if ($repo->hasDef($prefix)){
                     $suggestion = $prefix;
 
                 } else {
@@ -204,14 +204,14 @@ class SimpleFileInt extends AbsIntent
 
 
             // 给出参数直接就是 intent name
-            if ($repo->has($suggestion)) {
+            if ($repo->hasDef($suggestion)) {
                 $optionSuggestions[$index] = $suggestion;
                 $loaded[$suggestion] = true;
                 continue;
             }
 
             // 省略了 sfi.id  开头
-            if ($repo->has($name = "sfi.$id.".$suggestion)) {
+            if ($repo->hasDef($name = "sfi.$id.".$suggestion)) {
                 $optionSuggestions[$index] = $name;
                 $loaded[$suggestion] = true;
                 continue;
@@ -223,7 +223,7 @@ class SimpleFileInt extends AbsIntent
             $secs = explode('.', $name);
             array_pop($secs);
             $newName = implode('.', $secs) . '.' . $suggestion;
-            if ($repo->has($newName)) {
+            if ($repo->hasDef($newName)) {
                 $optionSuggestions[$index] = $newName;
                 $loaded[$suggestion] = true;
                 continue;
@@ -250,7 +250,7 @@ class SimpleFileInt extends AbsIntent
      */
     public function getDef(): Definition
     {
-        return IntentRegistrar::getIns()->get($this->getName());
+        return $this->getSession()->intentRepo->getDef($this->getName());
     }
 
 

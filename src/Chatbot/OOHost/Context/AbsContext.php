@@ -252,12 +252,12 @@ abstract class AbsContext extends AbsMessage implements Context
      */
     public function depends() : array
     {
-        return $this->getDef()->depends($this);
+        return $this->getDef()->dependsEntities($this);
     }
 
     public function depending(): ? Entity
     {
-        return $this->getDef()->depending($this);
+        return $this->getDef()->dependingEntity($this);
     }
 
 

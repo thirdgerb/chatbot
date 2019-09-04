@@ -14,18 +14,18 @@ use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
+use Commune\Chatbot\OOHost\Context\ContextRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Hearing;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Exceptions\NavigatorException;
-use Commune\Chatbot\OOHost\NLU\NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
 
 /**
  * @property string $editIndex
@@ -122,11 +122,11 @@ class SimpleChatTask extends TaskDef
                     $intents = Manager::listResourceIntents($index);
 
                     $results = [];
-                    $repo = IntentRegistrar::getIns();
+                    $repo = $dialog->session->intentRepo;
                     foreach ($intents as $intent) {
-                        if ($repo->has($intent)) {
+                        if ($repo->hasDef($intent)) {
                             $results[] = "- $intent : "
-                                . $repo->get($intent)->getDesc();
+                                . $repo->getDef($intent)->getDesc();
                         }
                     }
 
@@ -152,7 +152,7 @@ class SimpleChatTask extends TaskDef
             ->isInstanceOf(VerboseMsg::class, function(Dialog $dialog, VerboseMsg $msg){
 
                 $incoming = $dialog->session->incomingMessage;
-                $intent = $incoming->getMostPossibleIntent();
+                $intent = $incoming->getNLU()->getMostPossibleIntent();
 
                 if (empty($intent)) {
                     $dialog->say()->warning('没有匹配到任何意图!');
@@ -162,9 +162,10 @@ class SimpleChatTask extends TaskDef
                 $this->editIntent = $intent;
 
 
-                $possible = $incoming->getPossibleIntentCollection();
+                $possible = $incoming->getNLU()->getPossibleIntentNames();
                 $hits = '';
-                foreach ($possible as $name => $odd) {
+                foreach ($possible as $name) {
+                    $odd = $incoming->getNLU()->getOddOfPossibleIntent($name);
                     $hits .= "$name : $odd \n";
                 }
                 $dialog->say()->info("意图可能性如下: \n $hits");
@@ -215,7 +216,7 @@ $text
                 function(Dialog $dialog, VerboseMsg $msg, NLUExamplesManager $manager){
                     $intent = $msg->getTrimmedText();
 
-                    $matched = ContextRegistrar::validateName($intent);
+                    $matched = ContextRegistrarImpl::validateDefName($intent);
 
                     if (!$matched) {
                         $dialog->say()->error('意图命名不合法! 只能是字母+数字加 .');
@@ -227,15 +228,15 @@ $text
                         return $dialog->reject();
                     }
 
-                    $repo = IntentRegistrar::getIns();
+                    $repo = $dialog->session->intentRepo;
 
-                    if ($repo->has($intent)) {
+                    if ($repo->hasDef($intent)) {
                         $repo->registerNLUExample($intent, new NLUExample($this->unmatchedText));
                         $manager->generate();
                         $dialog->say()->info("例句添加到已定义意图 $intent");
 
                     } else {
-                        $repo->register(new PlaceHolderIntentDef($intent));
+                        $repo->registerDef(new PlaceHolderIntentDef($intent));
                         $repo->registerNLUExample($intent, new NLUExample($this->unmatchedText));
                         $manager->generate();
                         $dialog->say()->info("创建意图完毕");
@@ -264,7 +265,7 @@ $text
 
                 $repo = $dialog->session->intentRepo;
 
-                if (!$repo->has($name)) {
+                if (!$repo->hasDef($name)) {
                     $dialog->say()->error("intent $name 不存在或未加载!");
                     return $dialog->repeat();
                 }

@@ -7,6 +7,9 @@ namespace Commune\Chatbot\OOHost\Command;
 use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 
+/**
+ * 帮助命令. 查看当前可用的命令. 或者查看当前命令的选项.
+ */
 class HelpCmd extends SessionCommand
 {
     const SIGNATURE = 'help

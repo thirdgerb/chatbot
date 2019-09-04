@@ -11,8 +11,8 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  * 这些参数必须传入Context 之后, context 才能真正运行 ( __onStart )
  *
  * 只不过这些参数需要通过多轮对话来获取, 而且可以记忆.
- * 每一个 entity 都为多轮对话定义一个环节 (stage). 会实现一轮 checkpoint
- * 可以通过在 context 里定义 __on{$name} 方法, 来重定义该entity的checkpoint
+ * 每一个 entity 都为多轮对话定义一个环节 (stage).
+ * 可以通过在 context 里定义 __on{$name} 方法, 来重定义该entity的stage
  *
  * @property-read string $name
  */

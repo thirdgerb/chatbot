@@ -8,7 +8,7 @@ use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
 use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
+use Commune\Chatbot\OOHost\Context\ContextRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Entity;
@@ -81,23 +81,9 @@ class DependingBuilder implements Depending
     }
 
 
-    public function onContext(string $name, $context): Depending
+    public function onContext(string $name, string $contextName): Depending
     {
-        $repo = ContextRegistrar::getIns();
-        if (!$repo->has($context)){
-            throw new ConfigureException(
-                __METHOD__
-                . ' only accept class name or instance extends '
-                . Context::class
-            );
-        }
-
-        // 从 repo 中生成出来.
-        if (is_string($context)) {
-            $context = ContextRegistrar::getIns()->get($context)->newContext();
-        }
-
-        $this->definition->addEntity(new ContextEtt($name, $context));
+        $this->definition->addEntity(new ContextEtt($name, $contextName));
         return $this;
     }
 

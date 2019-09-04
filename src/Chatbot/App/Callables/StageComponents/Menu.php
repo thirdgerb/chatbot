@@ -8,7 +8,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Callables\StageComponent;
 use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -110,8 +110,8 @@ class Menu implements StageComponent
                 if (is_string($key)) {
                     $suggestions[] = $key;
 
-                } elseif ($repo->has($value)) {
-                    $suggestions[] = $repo->get($value)->getDesc();
+                } elseif ($repo->hasDef($value)) {
+                    $suggestions[] = $repo->getDef($value)->getDesc();
                 }
             }
 
@@ -151,7 +151,7 @@ class Menu implements StageComponent
                     );
 
                 // 第二种情况, 是一个context
-                } elseif (is_string($value) && $repo->has($value)) {
+                } elseif (is_string($value) && $repo->hasDef($value)) {
 
                     $hearing->isChoice(
                         $i,
@@ -214,11 +214,11 @@ class Menu implements StageComponent
             );
         }
 
-        $repo = IntentRegistrar::getIns();
+        $repo = $dialog->session->intentRepo;
 
         // 意图用特殊的方式来处理.
-        if ($repo->has($context)) {
-            $intent = $repo->get($context)->newContext();
+        if ($repo->hasDef($context)) {
+            $intent = $repo->getDef($context)->newContext();
             return $intent->navigate($dialog);
         }
 

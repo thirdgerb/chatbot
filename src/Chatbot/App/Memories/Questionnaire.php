@@ -13,7 +13,8 @@ use Illuminate\Support\Str;
 
 
 /**
- * 问卷调查组件.
+ * 与记忆结合的问卷调查组件.
+ * 算是一个示例.
  *
  * @property bool $finish
  * @property array $answers

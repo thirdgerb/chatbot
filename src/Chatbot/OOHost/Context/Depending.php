@@ -67,10 +67,10 @@ interface Depending
      * 当依赖的 context fulfill 的时候, 会回调过来.
      *
      * @param string $name
-     * @param Context|string $context
+     * @param string $contextName
      * @return Depending
      */
-    public function onContext(string $name, $context) : Depending;
+    public function onContext(string $name, string $contextName) : Depending;
 
     /**
      * 依赖一个memory实例.

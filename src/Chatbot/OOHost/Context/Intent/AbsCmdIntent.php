@@ -9,7 +9,8 @@ use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\NLU\NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
+use Commune\Container\ContainerContract;
 
 /**
  * Intent 一种更具体的实现.
@@ -31,14 +32,6 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
     // 用关键字来匹配.
     const KEYWORDS = [];
 
-    /**
-     * @var string[] 例句.
-     * entity 用markdown link 语法标记.
-     * 例如: 请问[北京](city)的天气如何
-     */
-    const EXAMPLES = [];
-
-
     public static function getMatcherOption(): IntentMatcherOption
     {
         return new IntentMatcherOption([
@@ -59,32 +52,19 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
      */
     public function getDef() : Definition
     {
-        $repo = static::getRegistrar();
+        $repo = $this->getSession()->intentRepo;
         $name = $this->getName();
 
-        if (!$repo->has($name)) {
-            static::registerSelfDefinition();
+        if (!$repo->hasDef($name)) {
+            $repo->registerDef(static::buildDefinition());
         }
-        return $repo->get($name);
+        return $repo->getDef($name);
     }
 
-
-    public static function registerSelfDefinition(): void
+    public static function registerSelfDefinition(ContainerContract $processContainer): void
     {
-        $def = static::buildDefinition();
-        $repo = static::getRegistrar();
-        // 强制.
-        $repo->register($def, true);
-
-        // 注册 nlu. 非强制, 可以被 intentManager 改写.
-        if (!empty(static::EXAMPLES)) {
-            foreach (static::EXAMPLES as $str) {
-                $repo->registerNLUExample(
-                    static::getContextName(),
-                    new NLUExample($str)
-                );
-            }
-        }
+        $repo = $processContainer->get(IntentRegistrar::class);
+        $repo->registerDef(static::buildDefinition(), true);
     }
 
 

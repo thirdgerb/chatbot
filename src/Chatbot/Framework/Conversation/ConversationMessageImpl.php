@@ -18,6 +18,7 @@ use Commune\Support\Arr\ArrayAbleToJson;
  *
  * @property-read string $id
  * @property-read string $chatId
+ * @property-read string|null $sessionId
  * @property-read string $userId
  * @property-read string $traceId
  * @property-read string $platformId
@@ -70,9 +71,9 @@ class ConversationMessageImpl implements ConversationMessage
     protected $replyToId;
 
     /**
-     * @var null|Message
+     * @var string | null
      */
-    protected $replyToMessage;
+    protected $sessionId;
 
     /**
      * @var string|null
@@ -87,6 +88,7 @@ class ConversationMessageImpl implements ConversationMessage
         string $platformId,
         string $chatId,
         string $replyToId = null,
+        string $sessionId = null,
         string $traceId = null
     )
     {
@@ -97,6 +99,7 @@ class ConversationMessageImpl implements ConversationMessage
         $this->chatId = $chatId;
 
         $this->replyToId = $replyToId;
+        $this->sessionId  = $sessionId;
         $this->platformId = $platformId;
 
         $this->createdAt = $message->getCreatedAt();
@@ -163,6 +166,12 @@ class ConversationMessageImpl implements ConversationMessage
         return $this->chatId;
     }
 
+    public function getSessionId(): ? string
+    {
+        return $this->sessionId;
+    }
+
+
     public function getReplyToId(): ? string
     {
         return $this->replyToId;
@@ -174,7 +183,6 @@ class ConversationMessageImpl implements ConversationMessage
             'messageId' => $this->messageId,
             'message' => $this->message,
             'replyTo' => $this->replyToId,
-            'replyToMessage' => $this->replyToMessage,
             'chatId' => $this->chatId,
             'platformId' => $this->platformId,
             'userId' => $this->userId,

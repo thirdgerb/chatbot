@@ -20,7 +20,7 @@ class Backward extends AbsNavigator
         // 只在回调的对象会执行backward
         $context = $this->history->getCurrentContext();
         $caller = $context->getDef();
-        $navigator = $caller->onExiting(
+        $navigator = $caller->callExiting(
             Definition::BACKWARD,
             $context,
             $this->dialog

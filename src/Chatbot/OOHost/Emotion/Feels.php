@@ -60,7 +60,7 @@ class Feels implements Feeling
         }
 
         // NLU 正确解析了.
-        if ($session->incomingMessage->getEmotions()->contains($emotionName)) {
+        if ($session->nlu->getEmotions()->contains($emotionName)) {
             return true;
         }
 

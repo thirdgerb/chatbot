@@ -51,11 +51,11 @@ class MemoryBag extends AbsMemory
      */
     public function getDef(): Definition
     {
-        $registrar = $this->getRegistrar();
+        $registrar = $this->getSession()->memoryRepo;
         $name = $this->getName();
 
-        if ($registrar->has($name)) {
-            return $registrar->get($name);
+        if ($registrar->hasDef($name)) {
+            return $registrar->getDef($name);
         }
 
         throw new ConfigureException(

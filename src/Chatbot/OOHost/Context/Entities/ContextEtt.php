@@ -10,6 +10,9 @@ use Commune\Chatbot\OOHost\Context\Entity;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
+/**
+ * 用一个 context 作为当前 context 的 entity
+ */
 class ContextEtt implements Entity
 {
 
@@ -24,16 +27,16 @@ class ContextEtt implements Entity
     protected $desc = '';
 
     /**
-     * @var Context
+     * @var string
      */
     protected $to;
 
     /**
      * ContextEtt constructor.
      * @param string $name
-     * @param Context $to
+     * @param string $to
      */
-    public function __construct(string $name, Context $to)
+    public function __construct(string $name,string $to)
     {
         $this->name = $name;
         $this->to = $to;
@@ -67,7 +70,7 @@ class ContextEtt implements Entity
     public function asStage(Stage $stageRoute): Navigator
     {
         return $stageRoute->dependOn(
-            clone $this->to,
+            $this->to,
             function (Context $self, Dialog $dialog, Context $message) {
                 $self->setAttribute($this->name, $message);
                 return $dialog->next();

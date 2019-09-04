@@ -77,12 +77,26 @@ interface MessageRequest
     public function fetchMessageId() : string;
 
     /**
+     * fetch nlu information from request
+     * return null if request don't has any nature language information
+     *
+     * @return NLU|null
+     */
+    public function fetchNLU() : ? NLU;
+
+    /**
      * 获取 trace id, 可能是生成的, 也可能是从input中继承的. 方便上下文追踪.
      *
      * usually traceId is MessageId
      * @return string
      */
     public function fetchTraceId() : string;
+
+
+    /**
+     * @return null|string
+     */
+    public function fetchSessionId() : ? string;
 
     /**
      * if could not fetch chat id from request

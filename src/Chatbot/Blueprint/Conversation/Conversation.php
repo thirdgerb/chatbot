@@ -81,6 +81,11 @@ interface Conversation extends ConversationContainer, RunningSpy
     public function getRequest() : MessageRequest;
 
     /**
+     * @return NLU
+     */
+    public function getNLU() : NLU;
+
+    /**
      * 和用户对话的模块.
      * @return Speech
      */
@@ -105,7 +110,7 @@ interface Conversation extends ConversationContainer, RunningSpy
     /**
      * 转发消息不是给当前用户, 而是给指定的用户.
      *
-     * deliver message to curtain user
+     * deliver message to certain user
      *
      * @param string $userId
      * @param Message $message

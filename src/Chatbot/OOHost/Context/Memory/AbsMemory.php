@@ -7,7 +7,6 @@ namespace Commune\Chatbot\OOHost\Context\Memory;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\AbsContext;
 use Commune\Chatbot\OOHost\Context\Exiting;
-use Commune\Chatbot\OOHost\Context\Registrar;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Exceptions\DataNotFoundException;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -71,19 +70,12 @@ abstract class AbsMemory extends AbsContext implements Memory
 
     public function __onStart(Stage $stage): Navigator
     {
+        // use memory as data not context
         return $stage->dialog->fulfill();
     }
 
     public function __exiting(Exiting $listener): void
     {
-    }
-
-    /**
-     * @return MemoryRegistrar
-     */
-    protected static function getRegistrar() : Registrar
-    {
-        return MemoryRegistrar::getIns();
     }
 
     public function namesAsDependency(): array
