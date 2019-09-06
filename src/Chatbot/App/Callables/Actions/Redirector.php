@@ -13,6 +13,63 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
  */
 class Redirector
 {
+
+    public static function goStage(string $stage) : \Closure
+    {
+        return function(Dialog $dialog) use ($stage){
+            return $dialog->goStage($stage);
+        };
+    }
+
+    public static function goStageThrough(array $stages) : \Closure
+    {
+        return function(Dialog $dialog) use ($stages) {
+            return $dialog->goStagePipes($stages);
+        };
+    }
+
+    public static function goBackward() : callable
+    {
+        return [static::class, str_replace('go', '', __FUNCTION__)];
+    }
+
+    public static function goNext() : callable
+    {
+        return [static::class, str_replace('go', '', __FUNCTION__)];
+    }
+
+    public static function goFulfill() : callable
+    {
+        return [static::class, str_replace('go', '', __FUNCTION__)];
+    }
+
+    public static function goRepeat() : callable
+    {
+        return [static::class, str_replace('go', '', __FUNCTION__)];
+    }
+
+    public static function goRewind() : callable
+    {
+        return [static::class, str_replace('go', '', __FUNCTION__)];
+    }
+
+    public static function goCancel() : callable
+    {
+        return [static::class, str_replace('go', '', __FUNCTION__)];
+    }
+
+    public static function goRestart() : callable
+    {
+        return [static::class, str_replace('go', '', __FUNCTION__)];
+    }
+
+    public static function goWait() : callable
+    {
+        return [static::class, str_replace('go', '', __FUNCTION__)];
+    }
+
+
+
     public static function backward(Dialog $dialog)
     {
         return $dialog->backward();

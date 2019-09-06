@@ -156,17 +156,30 @@ class NatureLanguageUnit implements NLU
     }
 
 
-    public function getEntities(): Collection
+    public function getGlobalEntities(): Collection
     {
-        return $this->entities
-            ?? $this->entities = new Collection();
+        return $this->entities ?? $this->entities = new Collection();
     }
 
 
     public function getIntentEntities(string $intentName): Collection
     {
-        return $this->intentEntities[$intentName] ?? $this->getEntities();
+        $entities = $this->getGlobalEntities();
+        if (isset($this->intentEntities[$intentName])) {
+            return $entities->merge($this->intentEntities[$intentName]);
+        }
+        return $entities;
     }
+
+    public function getMatchedEntities(): Collection
+    {
+        if (!isset($this->matchedIntentName)) {
+            return $this->getGlobalEntities();
+        }
+
+        return $this->getIntentEntities($this->matchedIntentName);
+    }
+
 
     public function getDefaultReplies(): Collection
     {

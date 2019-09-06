@@ -85,15 +85,23 @@ interface NLU
     public function setIntentEntities(string $intentName, array $entities) : void;
 
     /**
+     * 全局的entity. 有些 NLU 的 entity 和 intent 是分开匹配的.
      * @return Collection of entities map
      */
-    public function getEntities() : Collection;
+    public function getGlobalEntities() : Collection;
+
+    /**
+     * 获取 全局entities + 命中意图的 entities
+     * @return Collection of global and matched intent entities
+     */
+    public function getMatchedEntities() : Collection;
 
     /**
      * @param string $intentName
      * @return Collection
      */
     public function getIntentEntities(string $intentName) : Collection;
+
 
     /*----- extra -----*/
 

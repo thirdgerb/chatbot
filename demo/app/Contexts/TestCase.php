@@ -4,6 +4,7 @@
 namespace Commune\Demo\App\Contexts;
 
 
+use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Stage;
@@ -12,6 +13,7 @@ use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
+use Commune\Demo\App\Cases\Maze\MazeTask;
 use Commune\Demo\App\Memories\Sandbox;
 
 /**
@@ -47,7 +49,8 @@ class TestCase extends TaskDef
                             '#tellWeather : 用命令命中意图, 查询天气',
                             5 => 'dependencies: 测试依赖注入参数',
                             6 => '测试 todo -> otherwise api',
-                            7 => 'test confirmation with emotion'
+                            7 => 'test confirmation with emotion',
+                            8 => '迷宫小游戏',
                         ]
                     );
             },
@@ -134,12 +137,21 @@ class TestCase extends TaskDef
                     ->isChoice(7, function(Dialog $dialog){
                         return $dialog->goStage('testConfirmation');
                     })
+                    ->isChoice(8, Redirector::goStage('maze'))
                     ->end(function(Dialog $dialog, Message $message){
 
                         $dialog->say()->info("输入了:" . $message->getText());
                         return $dialog->missMatch();
                     });
             });
+    }
+
+    public function __onMaze(Stage $stage) : Navigator
+    {
+        return $stage->dependOn(MazeTask::class, function(Dialog $dialog){
+            $dialog->say()->info('迷宫小游戏退出');
+            return $dialog->goStage('menu');
+        });
     }
 
     public function __onTest(Stage $stage): Navigator

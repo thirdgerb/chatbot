@@ -299,6 +299,21 @@ interface Hearing
         callable $interceptor = null
     ) : Hearing;
 
+
+    /**
+     * 存在entity, 并且值 equals(==) $expect
+     *
+     * @param string $entityName
+     * @param mixed $expect
+     * @param callable|null $interceptor
+     * @return Hearing
+     */
+    public function hasEntityValue(
+        string $entityName,
+        $expect,
+        callable $interceptor = null
+    ) : Hearing;
+
     /**
      * 判断message 的 $message->getMessageType 是否符合.
      *

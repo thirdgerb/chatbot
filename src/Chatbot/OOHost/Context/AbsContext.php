@@ -40,7 +40,7 @@ abstract class AbsContext extends AbsMessage implements Context
     public $_props = [];
 
     /**
-     * context 持有数据的地方.
+     * context 真正持有属性数据的地方.
      * @var array
      */
     protected $_attributes = [];
@@ -65,8 +65,19 @@ abstract class AbsContext extends AbsMessage implements Context
      */
     public function __construct(array $props = [])
     {
-        $this->_props = $props;
+        $this->fillProperties($props);
         parent::__construct();
+    }
+
+    public function fillProperties(array $props)
+    {
+        if (!$this->isInstanced()) {
+            $this->_props = $props + $this->_props;
+        } else {
+            foreach ($props as $key => $value) {
+                $this->__set($key, $value);
+            }
+        }
     }
 
 

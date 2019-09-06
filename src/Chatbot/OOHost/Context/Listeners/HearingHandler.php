@@ -265,9 +265,33 @@ class HearingHandler implements Hearing
     {
         if (isset($this->navigator)) return $this;
 
-        $entities = $this->dialog->session->nlu->getEntities();
+        $nlu = $this->dialog->session->nlu;
+        $entities = $nlu->getMatchedEntities();
 
         if (!$entities->isEmpty() && $entities->has($entityName)) {
+            $this->heard = true;
+            return $this->callInterceptor($interceptor);
+        }
+
+        return $this;
+    }
+
+    public function hasEntityValue(
+        string $entityName,
+        $expect,
+        callable $interceptor = null
+    ): Hearing
+    {
+        if (isset($this->navigator)) return $this;
+
+        $nlu = $this->dialog->session->nlu;
+        $entities = $nlu->getMatchedEntities();
+
+        if (
+            !$entities->isEmpty()
+            && $entities->has($entityName)
+            && $entities->get($entityName) == $expect
+        ) {
             $this->heard = true;
             return $this->callInterceptor($interceptor);
         }

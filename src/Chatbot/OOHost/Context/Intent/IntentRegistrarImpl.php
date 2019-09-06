@@ -119,7 +119,7 @@ class IntentRegistrarImpl extends ContextRegistrarImpl implements IntentRegistra
         // 必须高于阈值的意图才会被识别.
         // 是否已经包含.
         if ($nlu->hasPossibleIntent($name, true)) {
-            $entities = $nlu->getIntentEntities($name);
+            $entities = $nlu->getIntentEntities($matched);
             return $expectDef->newContext($entities->all());
         }
 
