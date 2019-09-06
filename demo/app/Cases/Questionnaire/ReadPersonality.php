@@ -7,7 +7,7 @@ namespace Commune\Demo\App\Cases\Questionnaire;
 use Carbon\Carbon;
 use Commune\Chatbot\App\Memories\Questionnaire;
 use Commune\Chatbot\OOHost\Context\Depending;
-use Commune\Chatbot\OOHost\Context\Hearing;
+use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;

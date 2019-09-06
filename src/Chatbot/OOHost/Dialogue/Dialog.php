@@ -5,7 +5,7 @@ namespace Commune\Chatbot\OOHost\Dialogue;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\Context\Hearing;
+use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
 use Psr\Log\LoggerInterface;

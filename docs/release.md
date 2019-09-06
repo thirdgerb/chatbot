@@ -8,3 +8,4 @@
 -   Question 的 parseAnswer 方法现在传入 session 而不是 message, 方便做更多互动.
 -   Predefined intent 现在默认加载.
 -   redirector 增加 goQuit 功能.
+-   完善了 hearing api. 厘清了 then (修改自heard) 和 todo 的实现

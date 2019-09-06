@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context\Stages;
 
 
-use Commune\Chatbot\OOHost\Context\Hearing;
+use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 

@@ -1,0 +1,275 @@
+<?php
+
+
+namespace Commune\Chatbot\OOHost\Dialogue\Hearing;
+
+use Commune\Chatbot\OOHost\Context\Callables\Action;
+use Commune\Chatbot\OOHost\Context\Callables\Prediction;
+use Commune\Chatbot\OOHost\Emotion\Feeling;
+
+interface Matcher
+{
+
+    /**
+     * 如果不主动拦截, 则event 消息都会被忽视.
+     * @param string $eventName
+     * @param callable|Action|null $action    $message is EventMessage
+     * @return static
+     */
+    public function isEvent(string $eventName, callable $action = null) : Matcher;
+
+    /**
+     * @param string[] $eventName
+     * @param callable|null $action
+     * @return static
+     */
+    public function isEventIn(array $eventName, callable $action = null) : Matcher;
+
+    /**
+     * 自定义的监听.
+     * 用一个 prediction callable 判断是否命中条件.
+     * 命中后执行 interceptor
+     *
+     * run action only if expecting prediction return true
+     *
+     * @param Prediction|callable $prediction  return bool
+     * @param Action|callable $action
+     * @return static
+     */
+    public function expect(
+        callable $prediction,
+        callable $action = null
+    ) : Matcher;
+
+
+    /**
+     * message 是一个字符串.
+     *
+     * if message->getText() exactly match the $text
+     *
+     * @param string $text
+     * @param callable|null $action
+     * @return static
+     */
+    public function is(
+        string $text,
+        callable $action = null
+    ) : Matcher;
+
+    /**
+     * Message->isEmpty() === true
+     *
+     * @param callable|null $action
+     * @return static
+     */
+    public function isEmpty(
+        callable $action = null
+    ) : Matcher;
+
+    /**
+     * 通过正则匹配获取数据.
+     * keys 命中的参数会作为变量传递给 interceptor
+     * 最好不要用这一步.
+     *
+     * use regex to define condition.
+     * the variable extract by regex pattern,
+     * will assign to arrayMessage variables, named by $keys
+     *
+     * @param string $pattern
+     * @param string[] $keys
+     * @param Action|callable $action   message is ArrayMessage
+     * @return static
+     */
+    public function pregMatch(
+        string $pattern,
+        array $keys = [],
+        callable $action = null
+    ): Matcher;
+
+
+    /**
+     * 判断消息是否符合某种情感.
+     *
+     * to feel message match certain feeling
+     * parser @see Feeling
+     *
+     * @param string $emotionName
+     * @param Action|callable $action
+     * @return static
+     */
+    public function feels(
+        string $emotionName,
+        callable $action = null
+    ) : Matcher;
+
+    /**
+     * @param callable $action
+     * @return static
+     */
+    public function isPositive(callable $action = null) : Matcher;
+
+    /**
+     * @param callable|null $action
+     * @return static
+     */
+    public function isNegative(callable $action = null) : Matcher;
+
+    /**
+     * 由 NLU 传递来的intent 如果存在
+     * 则执行不为null 的intentAction
+     * 否则 执行 intent 自带的 action
+     *
+     * @param callable|null $intentAction    $message is IntentMessage
+     * @return static
+     */
+    public function isAnyIntent(
+        callable $intentAction = null
+    ) : Matcher;
+
+    /**
+     * 主动匹配一个 intent.
+     * 即便 NLU 没有传递, 也会去尝试匹配.
+     *
+     * @param string $intentName
+     * @param callable|null $intentAction   $message is IntentMessage
+     * @return static
+     */
+    public function isIntent(
+        string $intentName,
+        callable $intentAction = null
+    ) : Matcher;
+
+    /**
+     * 尝试从一批intents 中匹配一个intent.
+     * 无论 NLU 是否有传递, 会主动进行匹配.
+     *
+     * intentName 可以传递前缀.
+     *
+     * 命中后, 优先执行不为null 的intentAction
+     * 否则执行 intent 自己的action
+     *
+     * @param array $intentNames
+     * @param callable|null $intentAction  $message is IntentMessage
+     * @return static
+     */
+    public function isIntentIn(
+        array $intentNames,
+        callable $intentAction = null
+    ) : Matcher;
+
+    /**
+     * 是否匹配到了entity 类型
+     *
+     * @param string $entityName
+     * @param callable|null $interceptor
+     * @return static
+     */
+    public function hasEntity(
+        string $entityName,
+        callable $interceptor = null
+    ) : Matcher;
+
+
+    /**
+     * 存在entity, 并且值 equals(==) $expect
+     *
+     * @param string $entityName
+     * @param mixed $expect
+     * @param callable|null $interceptor
+     * @return static
+     */
+    public function hasEntityValue(
+        string $entityName,
+        $expect,
+        callable $interceptor = null
+    ) : Matcher;
+
+    /**
+     * 判断message 的 $message->getMessageType 是否符合.
+     *
+     * @param string $messageType
+     * @param Action|callable $action
+     * @return static
+     */
+    public function isTypeOf(
+        string $messageType,
+        callable $action = null
+    ) : Matcher;
+
+    /**
+     * 判断传入的 message 是否是某个 MessageSubClass 的实例.
+     *
+     * @param string $messageClazz
+     * @param Action|callable $action
+     * @return static
+     */
+    public function isInstanceOf(
+        string $messageClazz,
+        callable $action = null
+    ) : Matcher;
+
+
+    /**
+     * 只要有answer, 不管上文有没有命中过.
+     *
+     * @param Action|callable $action   $message could be Answer
+     * @return static
+     */
+    public function isAnswer(callable $action = null) : Matcher;
+
+
+    /**
+     * 之前提了一个问题, 答案命中了问题的一个建议的情况.
+     * 可以与 answered 挑选使用.
+     *
+     * @param int|string $suggestionIndex
+     * @param Action|callable $action   $message could be Choice
+     * @return static
+     */
+    public function isChoice(
+        $suggestionIndex,
+        callable $action = null
+    ) : Matcher;
+
+    /**
+     * 有多个choice 中的一个
+     * @param int[] $choices
+     * @param callable|null $action
+     * @return static
+     */
+    public function hasChoice(
+        array $choices,
+        callable $action = null
+    ) : Matcher;
+
+    /**
+     * 尝试匹配一个临时定义的命令
+     * 并把匹配成功的 CommandMessage 传递给interceptor
+     *
+     * @param string $signature
+     * @param Action|callable $action  $message is CommandMessage
+     * @return static
+     */
+    public function isCommand(
+        string $signature,
+        callable $action = null
+    ) : Matcher;
+
+
+    /**
+     * 用php做比较脏的关键词检查.
+     * 最好不要沦落到这一步.
+     *
+     * @param array $keyWords   [ 'word1', 'word2', ['synonym1', 'synonym2']]
+     * @param Action|callable $action
+     * @return static
+     */
+    public function hasKeywords(
+        array $keyWords,
+        callable $action = null
+    ) : Matcher;
+
+
+
+
+}

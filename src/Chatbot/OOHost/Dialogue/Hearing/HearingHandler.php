@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\OOHost\Context\Listeners;
+namespace Commune\Chatbot\OOHost\Dialogue\Hearing;
 
 
 use Commune\Chatbot\Blueprint\Message\Event\EventMsg;
@@ -12,8 +12,7 @@ use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Messages\ArrayMessage;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
 use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\Context\Hearing;
-use Commune\Chatbot\OOHost\Context\ToDoWhileHearingMessage;
+use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Emotion\Emotion;
@@ -52,7 +51,7 @@ class HearingHandler implements Hearing
     /**
      * @var bool
      */
-    public $heard = false;
+    public $isMatched = false;
 
     /**
      * @var bool
@@ -63,12 +62,6 @@ class HearingHandler implements Hearing
      * @var callable[]
      */
     protected $fallback = [];
-
-    /**
-     * heard 方法是否未被调用.
-     * @var bool
-     */
-    protected $heardUncaught = true;
 
     /**
      * @var callable
@@ -189,7 +182,7 @@ class HearingHandler implements Hearing
     public function expect(
         callable $prediction,
         callable $interceptor = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -203,20 +196,20 @@ class HearingHandler implements Hearing
             return $this;
         }
 
-        $this->heard = true;
+        $this->isMatched = true;
         return $this->callInterceptor($interceptor);
     }
 
     public function is(
         string $text,
         callable $interceptor = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
         // 避免大小写问题.
         if (strtolower($this->message->getTrimmedText()) == strtolower($text)) {
-            $this->heard = true;
+            $this->isMatched = true;
             return $this->callInterceptor($interceptor);
         }
 
@@ -225,12 +218,12 @@ class HearingHandler implements Hearing
 
     public function isEmpty(
         callable $interceptor = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
         if ($this->message->isEmpty()) {
-            $this->heard = true;
+            $this->isMatched = true;
             return $this->callInterceptor($interceptor);
         }
 
@@ -240,7 +233,7 @@ class HearingHandler implements Hearing
     public function hasChoice(
         array $choices,
         callable $interceptor = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -250,7 +243,7 @@ class HearingHandler implements Hearing
 
         foreach ($choices as $choice) {
             if ($this->message->hasChoice($choice)) {
-                $this->heard = true;
+                $this->isMatched = true;
                 return $this->callInterceptor($interceptor);
             }
         }
@@ -261,7 +254,7 @@ class HearingHandler implements Hearing
     public function hasEntity(
         string $entityName,
         callable $interceptor = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -269,7 +262,7 @@ class HearingHandler implements Hearing
         $entities = $nlu->getMatchedEntities();
 
         if (!$entities->isEmpty() && $entities->has($entityName)) {
-            $this->heard = true;
+            $this->isMatched = true;
             return $this->callInterceptor($interceptor);
         }
 
@@ -280,7 +273,7 @@ class HearingHandler implements Hearing
         string $entityName,
         $expect,
         callable $interceptor = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -292,7 +285,7 @@ class HearingHandler implements Hearing
             && $entities->has($entityName)
             && $entities->get($entityName) == $expect
         ) {
-            $this->heard = true;
+            $this->isMatched = true;
             return $this->callInterceptor($interceptor);
         }
 
@@ -310,7 +303,7 @@ class HearingHandler implements Hearing
     public function isIntent(
         string $intentName,
         callable $intentAction = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -352,7 +345,7 @@ class HearingHandler implements Hearing
     public function isIntentIn(
         array $intentNames,
         callable $intentAction = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -394,7 +387,7 @@ class HearingHandler implements Hearing
 
     public function isAnyIntent(
         callable $intentAction = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -434,16 +427,14 @@ class HearingHandler implements Hearing
     {
         // 有拦截的情况
         if (isset($intentAction)) {
-            $this->heard = true;
-            $this->heardUncaught = false;
+            $this->isMatched = true;
             return $this->callInterceptor($intentAction, $matched);
         }
 
         // intent 自己有navigator 的情况
         $navigator = $matched->navigate($this->dialog);
         if (isset($navigator)) {
-            $this->heard = true;
-            $this->heardUncaught = false;
+            $this->isMatched = true;
             return $this->setNavigator($navigator);
         }
 
@@ -462,7 +453,7 @@ class HearingHandler implements Hearing
         callable $interceptor = null
     ) : Hearing
     {
-        $this->heard = true;
+        $this->isMatched = true;
 
         // 如果有拦截器存在, 则执行拦截器
         if (isset($interceptor)) {
@@ -478,12 +469,12 @@ class HearingHandler implements Hearing
     public function isTypeOf(
         string $messageType,
         callable $interceptor = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
         if ($this->message->getMessageType() === $messageType) {
-            $this->heard = true;
+            $this->isMatched = true;
             return $this->callInterceptor($interceptor);
         }
 
@@ -493,7 +484,7 @@ class HearingHandler implements Hearing
     public function isChoice(
         $suggestionIndex,
         callable $interceptor = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -502,7 +493,7 @@ class HearingHandler implements Hearing
         }
 
         if ($this->message->hasChoice($suggestionIndex)) {
-            $this->heard = true;
+            $this->isMatched = true;
             return $this->callInterceptor($interceptor);
         }
 
@@ -512,7 +503,7 @@ class HearingHandler implements Hearing
     public function feels(
         string $emotionName,
         callable $action = null
-    ): Hearing
+    ) : Matcher
     {
 
         if (isset($this->navigator)) return $this;
@@ -527,7 +518,7 @@ class HearingHandler implements Hearing
 
 
         if ($this->doFeels($emotionName)) {
-            $this->heard = true;
+            $this->isMatched = true;
             $this->callInterceptor($action);
         }
 
@@ -543,7 +534,7 @@ class HearingHandler implements Hearing
         return $feels->feel($this->dialog->session, $emotionName)    ;
     }
 
-    public function isNegative(callable $action = null): Hearing
+    public function isNegative(callable $action = null): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -551,13 +542,13 @@ class HearingHandler implements Hearing
         $is = $is || $this->doFeels(Negative::class);
 
         if ($is) {
-            $this->heard = true;
+            $this->isMatched = true;
             $this->callInterceptor($action);
         }
         return $this;
     }
 
-    public function isPositive(callable $action = null): Hearing
+    public function isPositive(callable $action = null): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -565,18 +556,18 @@ class HearingHandler implements Hearing
         $is = $is || $this->doFeels(Positive::class);
 
         if ($is) {
-            $this->heard = true;
+            $this->isMatched = true;
             $this->callInterceptor($action);
         }
         return $this;
     }
 
-    public function isAnswer(callable $interceptor = null): Hearing
+    public function isAnswer(callable $interceptor = null): Matcher
     {
         if (isset($this->navigator)) return $this;
 
         if ($this->message instanceof Answer) {
-            $this->heard = true;
+            $this->isMatched = true;
             return $this->callInterceptor($interceptor);
         }
 
@@ -586,12 +577,12 @@ class HearingHandler implements Hearing
     public function isInstanceOf(
         string $messageClazz,
         callable $interceptor = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
         if (is_a($this->message, $messageClazz, TRUE)) {
-            $this->heard = true;
+            $this->isMatched = true;
             return $this->callInterceptor($interceptor);
         }
 
@@ -601,7 +592,7 @@ class HearingHandler implements Hearing
     public function isCommand(
         string $signature,
         callable $interceptor = null
-    ): Hearing
+    ): Matcher
     {
 
         if (isset($this->navigator)) return $this;
@@ -615,7 +606,7 @@ class HearingHandler implements Hearing
         $cmdMessage = IntentMatcher::matchCommand($this->message, $cmd);
 
         if (isset($cmdMessage)) {
-            $this->heard = true;
+            $this->isMatched = true;
             return $this->callInterceptor($interceptor, $cmdMessage);
         }
 
@@ -626,7 +617,7 @@ class HearingHandler implements Hearing
         string $pattern,
         array $keys = [],
         callable $interceptor = null
-    ): Hearing
+    ): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -640,7 +631,7 @@ class HearingHandler implements Hearing
             return $this;
         }
 
-        $this->heard = true;
+        $this->isMatched = true;
 
         return $this->callInterceptor(
             $interceptor,
@@ -653,7 +644,7 @@ class HearingHandler implements Hearing
         array $keywords,
         callable $interceptor = null,
         array $notAny = null
-    ): Hearing
+    ): Matcher
     {
 
         if (empty($keywords)) {
@@ -688,28 +679,27 @@ class HearingHandler implements Hearing
                 }
             }
 
-            $this->heard = true;
+            $this->isMatched = true;
             return $this->callInterceptor($interceptor);
         }
 
         // 最脏的办法, 自己去循环匹配.
         $text = $incoming->getMessage()->getTrimmedText();
         if (IntentMatcher::matchWords($text, $keywords, false)) {
-            $this->heard = true;
+            $this->isMatched = true;
             return $this->callInterceptor($interceptor);
         }
 
         return $this;
     }
 
-    public function heard(callable $interceptor): Hearing
+    public function then(callable $interceptor): Hearing
     {
-        if ($this->heard && $this->heardUncaught) {
-            // heard 只会执行一次.
-            $this->heardUncaught = false;
-            return $this->callInterceptor($interceptor);
-        }
-        return $this;
+        if (isset($this->navigator)) return $this;
+
+        $matched = $this->isMatched;
+        $this->isMatched = false;
+        return $matched ? $this->callInterceptor($interceptor) : $this;
     }
 
     public function fallback(callable $fallback, bool $addToEndNotHead = true): Hearing
@@ -729,12 +719,12 @@ class HearingHandler implements Hearing
     }
 
 
-    public function isEvent(string $eventName, callable $action = null): Hearing
+    public function isEvent(string $eventName, callable $action = null): Matcher
     {
         if (isset($this->navigator)) return $this;
 
         if ($this->message instanceof EventMsg && $this->message->getEventName() == $eventName) {
-            $this->heard = true;
+            $this->isMatched = true;
             $this->callInterceptor($action);
         }
 
@@ -742,7 +732,7 @@ class HearingHandler implements Hearing
     }
 
 
-    public function isEventIn(array $eventName, callable $action = null): Hearing
+    public function isEventIn(array $eventName, callable $action = null): Matcher
     {
         if (isset($this->navigator)) return $this;
 
@@ -751,7 +741,7 @@ class HearingHandler implements Hearing
         }
 
         if (in_array($this->message->getEventName(), $eventName)) {
-            $this->heard = true;
+            $this->isMatched = true;
             $this->callInterceptor($action);
         }
 
@@ -824,9 +814,10 @@ class HearingHandler implements Hearing
         return $this->navigator ?? $this->dialog->missMatch();
     }
 
-    public function todo(callable $todo): ToDoWhileHearingMessage
+    public function todo(callable $todo): ToDoWhileHearing
     {
-        return new TodoWhileHearMessageBeMessage($this, $todo);
+        $this->isMatched = false;
+        return new TodoImpl($this, $todo);
     }
 
 

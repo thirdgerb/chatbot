@@ -10,7 +10,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
-use Commune\Chatbot\OOHost\Context\Hearing;
+use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
@@ -127,9 +127,10 @@ class MazeTask extends TaskDef
     public function __hearing(Hearing $hearing)
     {
         $hearing
-            ->is('退出', function(Dialog $dialog){
-                return $dialog->fulfill();
-            })->is('坐标', function(Dialog $dialog) {
+            ->todo(Redirector::goCancel())
+                ->is('退出')
+                ->is('quit')
+            ->todo(function(Dialog $dialog) {
 
 
                 $dialog->say()->info($this->locationMessage, [
@@ -141,7 +142,9 @@ class MazeTask extends TaskDef
 
                 return $dialog->repeat();
 
-            });
+            })
+                ->is('坐标')
+            ->otherwise();
         ;
     }
 

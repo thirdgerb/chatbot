@@ -6,7 +6,7 @@ namespace Commune\Chatbot\App\Components\SimpleChat\Callables;
 
 use Commune\Chatbot\App\Callables\Actions\ToNext;
 use Commune\Chatbot\OOHost\Context\Callables\HearingComponent;
-use Commune\Chatbot\OOHost\Context\Hearing;
+use Commune\Chatbot\OOHost\Dialogue\Hearing;
 
 /**
  * 用于 hearing->component 的组件.

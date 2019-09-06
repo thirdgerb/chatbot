@@ -61,21 +61,21 @@ class TestCase extends TaskDef
                     ->isIntentIn(['Commune.Demo'])
                     ->isChoice(0)
                     ->pregMatch('/^hello/', [])
-                    ->heard(function(Dialog $dialog) : Navigator {
+                    ->then(function(Dialog $dialog) : Navigator {
                         $dialog->say()->info('hello world!');
                         return $dialog->repeat();
 
                     })
                     ->isChoice(1)
                     ->pregMatch('/^test$/')
-                        ->heard(function(Dialog $dialog) {
+                        ->then(function(Dialog $dialog) {
                             $dialog->say()->info('go to test');
                             return $dialog->goStagePipes(['test', 'start']);
                         })
 
                     ->isChoice(2)
                     ->is('sandbox')
-                        ->heard(function(Dialog $dialog, Session $session) {
+                        ->then(function(Dialog $dialog, Session $session) {
                             $test = $session->memory['sandbox']['test'] ?? 0;
                             $dialog->say()
                                 ->info("test is :")
@@ -185,27 +185,25 @@ class TestCase extends TaskDef
             ->hearing()
 
                 ->todo(function(Dialog $dialog, Message $message){
-                    $dialog->say()->info('matched ' . $message->getText());
+                    $dialog->say()->info('matched case1 ' . $message->getText());
                     return $dialog->wait();
                 })
                     ->is('123')
                     ->is('456')
-                    ->otherwise()
 
                 ->todo(function(Dialog $dialog){
 
-                    $dialog->say()->info('matched 789');
+                    $dialog->say()->info('matched case2 789');
                     return $dialog->wait();
                 })
-                    ->pregMatch('/^789$/')
-                    ->otherwise()
+                    ->pregMatch('/^789/')
 
                 ->todo(function(Dialog $dialog){
                     return $dialog->goStage('menu');
                 })
                     ->is('quit')
-                    ->otherwise()
-            ->end();
+
+                ->end();
 
     }
 

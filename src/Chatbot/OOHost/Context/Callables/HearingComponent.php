@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context\Callables;
 
 
-use Commune\Chatbot\OOHost\Context\Hearing;
+use Commune\Chatbot\OOHost\Dialogue\Hearing;
 
 interface HearingComponent
 {

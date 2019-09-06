@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\OOHost\Context\Listeners;
+namespace Commune\Chatbot\OOHost\Context\Exiting;
 
 
 use Commune\Chatbot\OOHost\Context\Definition;
