@@ -14,7 +14,6 @@ use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\OOHost\Context\Context;
 
 use Commune\Chatbot\OOHost\Context\ContextRegistrar;
-use Commune\Chatbot\OOHost\Context\ContextRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
@@ -25,7 +24,6 @@ use Commune\Chatbot\OOHost\Directing\Dialog\Hear;
 use Commune\Chatbot\OOHost\Directing\Director;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\History\History;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\Config\Children\OOHostConfig;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
@@ -360,7 +358,16 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function getMatchedIntent(): ? IntentMessage
     {
-        return $this->matchedIntent;
+        if (isset($this->matchedIntent)) {
+            return $this->matchedIntent;
+        }
+
+        $message = $this->incomingMessage->message;
+        if ($message instanceof IntentMessage) {
+            return $this->matchedIntent = $message;
+        }
+
+        return null;
     }
 
 
