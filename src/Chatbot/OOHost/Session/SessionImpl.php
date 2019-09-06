@@ -362,7 +362,7 @@ class SessionImpl implements Session, HasIdGenerator
             return $this->matchedIntent;
         }
 
-        $message = $this->incomingMessage->message;
+        $message = $this->getIncomingMessage()->message;
         if ($message instanceof IntentMessage) {
             return $this->matchedIntent = $message;
         }
@@ -411,13 +411,6 @@ class SessionImpl implements Session, HasIdGenerator
                 return $this->getMemory();
             default:
                 return null;
-        }
-    }
-
-    public function __set($name, $value)
-    {
-        if ($name === 'incomingMessage' && $value instanceof IncomingMessage) {
-            $this->incomingMessage = $value;
         }
     }
 
