@@ -68,6 +68,12 @@ class Redirector
         return [static::class, str_replace('go', '', __FUNCTION__)];
     }
 
+    public static function goQuit() : callable
+    {
+        return [static::class, str_replace('go', '', __FUNCTION__)];
+    }
+
+
 
 
     public static function backward(Dialog $dialog)
@@ -108,6 +114,11 @@ class Redirector
     public static function wait(Dialog $dialog)
     {
         return $dialog->wait();
+    }
+
+    public static function quit(Dialog $dialog)
+    {
+        return $dialog->quit();
     }
 
 }
