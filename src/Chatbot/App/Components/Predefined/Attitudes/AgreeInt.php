@@ -6,10 +6,10 @@ namespace Commune\Chatbot\App\Components\Predefined\Attitudes;
 
 use Commune\Chatbot\OOHost\Emotion\Emotions\Positive;
 
-class AffirmInt extends AttitudeInt implements Positive
+class AgreeInt extends AttitudeInt implements Positive
 {
-    const SIGNATURE = 'affirm';
+    const SIGNATURE = 'agree';
 
-    const DESCRIPTION = '确认';
+    const DESCRIPTION = '同意';
 
 }

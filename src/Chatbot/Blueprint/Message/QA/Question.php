@@ -10,6 +10,7 @@ namespace Commune\Chatbot\Blueprint\Message\QA;
 
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
+use Commune\Chatbot\OOHost\Session\Session;
 
 interface Question extends ReplyMsg
 {
@@ -46,10 +47,10 @@ interface Question extends ReplyMsg
      * 查看一个消息是不是一个回答
      * 如果是回答, 包装成一个answer
      *
-     * @param Message $message
+     * @param Session $session
      * @return Answer|null
      */
-    public function parseAnswer(Message $message) : ? Answer;
+    public function parseAnswer(Session $session) : ? Answer;
 
     /**
      * 如果一个问题已经被回答过 (parse answer)

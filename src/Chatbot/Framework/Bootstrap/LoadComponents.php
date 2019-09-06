@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\Framework\Bootstrap;
 
 
+use Commune\Chatbot\App\Components\PredefinedIntComponent;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Framework\Component\ComponentOption;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
@@ -28,6 +29,11 @@ class LoadComponents implements Bootstrapper
         $config = $app->getConfig();
         $logger = $app->getConsoleLogger();
 
+
+        // 系统默认的意图是预加载的.
+        static::dependComponent('system', PredefinedIntComponent::class);
+
+        // 遍历系统注册的components, 一一注册.
         foreach ($config->components as $index => $name) {
 
             if (is_string($index) && is_array($name)) {
@@ -56,6 +62,13 @@ class LoadComponents implements Bootstrapper
         }
     }
 
+    /**
+     * 标记依赖一个component, 如果在chatbotConfig 里没有注册这个Component, 会最后加载.
+     *
+     * @param string $dependBy
+     * @param string $componentName
+     * @param array $data
+     */
     public static function dependComponent(
         string $dependBy,
         string $componentName,
@@ -65,6 +78,14 @@ class LoadComponents implements Bootstrapper
         self::$registerLater[$dependBy] =  [$componentName, $data];
     }
 
+    /**
+     * 执行逻辑注册一个component
+     *
+     * @param Application $app
+     * @param LoggerInterface $logger
+     * @param string $clazz
+     * @param array $data
+     */
     public static function registerComponent(
         Application $app,
         LoggerInterface $logger,

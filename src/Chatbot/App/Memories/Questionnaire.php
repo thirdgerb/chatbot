@@ -16,10 +16,10 @@ use Illuminate\Support\Str;
  * 与记忆结合的问卷调查组件.
  * 算是一个示例.
  *
- * @property bool $finish
- * @property array $answers
- * @property int $nowQuestion
- * @property-read int $questionTotal
+ * @property bool $finish  问卷是否已经有结果.
+ * @property array $answers  问题编号 => 答案
+ * @property int $questionNumber 当前问题编号.
+ * @property-read int $questionTotal 总题目数.
  */
 abstract class Questionnaire extends MemorialTask
 {
@@ -27,11 +27,12 @@ abstract class Questionnaire extends MemorialTask
 
     const DESCRIPTION = "请撰写问题说明";
 
-    // 默认用户级别的.
+    // 记忆域. 默认用户级别的.
     const SCOPES = [Scope::USER_ID];
 
     /*------- 系统设置 -------*/
 
+    // question stage 默认定义为 on_question_number;
     const QUESTION_STAGE_PREFIX = '_question_';
 
     /*------- 缓存参数 -------*/
@@ -47,23 +48,46 @@ abstract class Questionnaire extends MemorialTask
         return [
             'finish' => false,
             'answers' => [],
-            'nowQuestion' => 0
+            'questionNumber' => 0
         ];
     }
 
 
     /**
+     *
      * @return array   格式是  [
-     *  '问题' => [ '选项1', '选项2','选项3', ],
+     *  '问题' => [
+     *      '序号1' => '选项1',
+     *      '序号2' => '选项2',
+     *      '序号3' => '选项3',
+     *      ],
      * ]
      */
     abstract public static function getQuestionDefinition() : array;
 
+    /**
+     * 用户回答结束时做的操作.
+     *
+     * @param Dialog $dialog
+     * @return Navigator|null  返回为 null 时会直接退出.
+     */
     abstract public function doFinal(Dialog $dialog) : ? Navigator;
 
+    /**
+     * 用户的回答如果不在选项内时, 默认应该怎么处理.
+     * @return callable|null
+     */
     abstract protected function defaultFallback() : ? callable ;
 
-    abstract protected function specialHandler(Dialog $dialog, int $questionIndex, $choice) : ? Navigator;
+    /**
+     * 每次回答完问题, 是否要做额外的处理.
+     *
+     * @param Dialog $dialog
+     * @param int $questionIndex
+     * @param $choice
+     * @return Navigator|null
+     */
+    abstract protected function onAnswered(Dialog $dialog, int $questionIndex, $choice) : ? Navigator;
 
     /**
      * 拿到结果之后的处理.
@@ -87,7 +111,7 @@ abstract class Questionnaire extends MemorialTask
         $questions = array_keys($definition);
         $answers = array_values($definition);
 
-        $index = $this->nowQuestion;
+        $index = $this->questionNumber;
         return $stage->buildTalk()
             ->askChoose(
                 $this->wrapQuestion($questions[$index]),
@@ -98,11 +122,11 @@ abstract class Questionnaire extends MemorialTask
             ->isAnswer(function(Dialog $dialog, Choice $choice) {
                 $answer = $choice->getChoice();
                 $answers = $this->answers;
-                $answers[$this->nowQuestion] = $answer;
+                $answers[$this->questionNumber] = $answer;
                 $this->answers = $answers;
 
                 // 可以在这里做一些特殊的处理.
-                $navigator = $this->specialHandler($dialog, $this->nowQuestion, $answer);
+                $navigator = $this->onAnswered($dialog, $this->questionNumber, $answer);
                 // 否则按题目顺序前进.
                 return $navigator ?? $this->next($dialog);
             })
@@ -116,30 +140,9 @@ abstract class Questionnaire extends MemorialTask
      */
     protected function wrapQuestion(string $question) : string
     {
-        $id = $this->nowQuestion + 1;
+        $id = $this->questionNumber + 1;
         $total = $this->questionTotal;
         return "第 $id/$total 题: $question";
-    }
-
-    /**
-     * @param Dialog $dialog
-     * @param int|null $index
-     * @return Navigator
-     */
-    protected function next(Dialog $dialog, $index = null) : Navigator
-    {
-        $index = $index ?? $this->nowQuestion + 1;
-        // 最后一题
-        if ($index >= $this->questionTotal) {
-            return $dialog->goStage('final');
-        }
-        return $dialog->goStage(static::QUESTION_STAGE_PREFIX . $index);
-    }
-
-
-    public function __getQuestionTotal()
-    {
-        return $this->_total ?? $this->_total = count($this->getQuestionDefinition());
     }
 
     /**
@@ -150,6 +153,33 @@ abstract class Questionnaire extends MemorialTask
     protected function wrapAnswers(array $answers) : array
     {
         return $answers;
+    }
+
+    /**
+     * 自动进入下一题. 不给index的话, 默认是题目编号加1
+     *
+     * @param Dialog $dialog
+     * @param int|null $index
+     * @return Navigator
+     */
+    protected function next(Dialog $dialog, $index = null) : Navigator
+    {
+        $index = $index ?? $this->questionNumber + 1;
+        // 最后一题
+        if ($index >= $this->questionTotal) {
+            return $dialog->goStage('final');
+        }
+        return $dialog->goStage(static::QUESTION_STAGE_PREFIX . $index);
+    }
+
+
+    /**
+     * questionTotal 的 getter 方法
+     * @return int
+     */
+    public function __getQuestionTotal()
+    {
+        return $this->_total ?? $this->_total = count($this->getQuestionDefinition());
     }
 
     public static function buildDefinition(): Definition
@@ -175,13 +205,20 @@ abstract class Questionnaire extends MemorialTask
         return $def;
     }
 
+    /**
+     * 用魔术方法来调用 question stage
+     *
+     * @param string $name
+     * @param array $arguments
+     * @return mixed
+     */
     public function __call($name, $arguments)
     {
         $method = static::STAGE_METHOD_PREFIX . static::QUESTION_STAGE_PREFIX;
         if (Str::startsWith($name, $method)) {
             $questionIndex = substr($name, strlen($method));
             $index = intval($questionIndex);
-            $this->nowQuestion = $index;
+            $this->questionNumber = $index;
             return call_user_func_array([$this, 'doAsk'], $arguments);
 
         }

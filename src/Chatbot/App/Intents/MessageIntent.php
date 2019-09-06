@@ -27,8 +27,6 @@ abstract class MessageIntent extends AbsCmdIntent
     const REGEX = [];
     // 用关键字来匹配.
     const KEYWORDS = [];
-    // 给NLU用的例句.
-    const EXAMPLES = [];
 
     public function navigate(Dialog $dialog): ? Navigator
     {

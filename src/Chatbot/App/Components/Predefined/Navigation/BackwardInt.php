@@ -14,10 +14,6 @@ class BackwardInt extends NavigateIntent
 
     const DESCRIPTION = '回到上一轮对话';
 
-    const EXAMPLES = [
-    ];
-
-
     public static function getContextName(): string
     {
         return 'navigation.'.static::SIGNATURE;

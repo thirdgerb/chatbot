@@ -15,9 +15,6 @@ class RestartInt extends NavigateIntent
 
     const DESCRIPTION = '重启当前语境';
 
-    const EXAMPLES = [
-    ];
-
     public static function getContextName(): string
     {
         return 'navigation.'.static::SIGNATURE;

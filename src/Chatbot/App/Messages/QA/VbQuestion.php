@@ -9,6 +9,7 @@ use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Messages\QA\AbsQuestion;
 use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
+use Commune\Chatbot\OOHost\Session\Session;
 use Illuminate\Support\Str;
 
 /**
@@ -71,10 +72,12 @@ class VbQuestion extends AbsQuestion
             : $this->defaultChoice;
     }
 
-    public function parseAnswer(Message $message): ? Answer
+    public function parseAnswer(Session $session): ? Answer
     {
+        $message = $session->incomingMessage->message;
+
         // 如果本来就是answer, 不再处理了.
-        if ($message instanceof VbAnswer) {
+        if ($message instanceof Answer) {
             return $message;
         }
 
@@ -98,6 +101,11 @@ class VbQuestion extends AbsQuestion
             }
         }
 
+        return $this->doParseAnswer($message);
+    }
+
+    protected function doParseAnswer(Message $message) : ? Answer
+    {
         return $this->isIndexOfSuggestions($message)
             ?? $this->isSuggestionStartPart($message)
             ?? $this->acceptAnyAnswer($message)

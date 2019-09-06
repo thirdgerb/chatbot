@@ -53,7 +53,7 @@ class ReadPersonality extends Questionnaire
                 return $dialog->goStage('retest');
             }
 
-            if ($this->nowQuestion > 0) {
+            if ($this->questionNumber > 0) {
                 $dialog->say()->info(
                     '您于 '
                     . $this->createdAt->format('Y-m-d H:i:s')
@@ -85,7 +85,7 @@ class ReadPersonality extends Questionnaire
                 $this->createdAt = new Carbon();
                 $this->finish = false;
                 $this->finishAt = null;
-                $this->nowQuestion = 0;
+                $this->questionNumber = 0;
                 return $this->next($dialog, 0);
             })
             ->isNegative(function(Dialog $dialog){
@@ -101,7 +101,7 @@ class ReadPersonality extends Questionnaire
             ->wait()
             ->hearing()
             ->isPositive( function(Dialog $dialog){
-                return $this->next($dialog, $this->nowQuestion);
+                return $this->next($dialog, $this->questionNumber);
             })
             ->isNegative(function(Dialog $dialog){
                 return $dialog->goStage('retest');
@@ -419,7 +419,7 @@ class ReadPersonality extends Questionnaire
         };
     }
 
-    protected function specialHandler(Dialog $dialog, int $questionIndex, $choice): ? Navigator
+    protected function onAnswered(Dialog $dialog, int $questionIndex, $choice): ? Navigator
     {
         if ($choice == '0') {
             return $dialog->goStage('cancel');

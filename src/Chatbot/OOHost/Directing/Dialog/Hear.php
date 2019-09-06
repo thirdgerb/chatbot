@@ -33,7 +33,7 @@ class Hear extends AbsNavigator
         // 问题过滤
         $question = $this->dialog->currentQuestion();
         if (isset($question)) {
-            $answer = $question->parseAnswer($this->message);
+            $answer = $question->parseAnswer($this->dialog->session);
             if (isset($answer)) {
                 $this->message = $answer;
             }

@@ -15,10 +15,6 @@ class CancelInt extends NavigateIntent
 
     const DESCRIPTION = '退出当前语境';
 
-    const EXAMPLES = [
-    ];
-
-
     public static function getContextName(): string
     {
         return 'navigation.'.static::SIGNATURE;

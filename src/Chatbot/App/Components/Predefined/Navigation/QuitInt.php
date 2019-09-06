@@ -15,10 +15,6 @@ class QuitInt extends NavigateIntent
 
     const DESCRIPTION = '退出当前会话';
 
-    const EXAMPLES = [
-    ];
-
-
     public static function getContextName(): string
     {
         return 'navigation.'.static::SIGNATURE;

@@ -55,7 +55,7 @@ class Selects extends Choose implements Question
         return $this->default;
     }
 
-    public function parseAnswer(Message $message): ? Answer
+    public function doParseAnswer(Message $message): ? Answer
     {
         $text = $message->getTrimmedText();
         $choices = explode($this->separator, $text);
@@ -65,7 +65,7 @@ class Selects extends Choose implements Question
         }, $choices);
 
         foreach ($answers as $answer) {
-            parent::parseAnswer($answer);
+            parent::doParseAnswer($answer);
         }
 
         return $this->answer;

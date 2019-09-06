@@ -19,8 +19,11 @@ class HomeInt extends NavigateIntent
 
     const DESCRIPTION = '回到起点';
 
-    const EXAMPLES = [
-    ];
+
+    public static function getContextName(): string
+    {
+        return 'navigation.'.static::SIGNATURE;
+    }
 
     public function navigate(Dialog $dialog): ? Navigator
     {

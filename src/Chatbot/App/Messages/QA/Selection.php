@@ -6,6 +6,9 @@ namespace Commune\Chatbot\App\Messages\QA;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 
+/**
+ * @method null getChoice()
+ */
 class Selection extends VbAnswer implements Answer
 {
     protected $choices = [];
@@ -23,6 +26,14 @@ class Selection extends VbAnswer implements Answer
             $this->choices[] = $choice;
         }
         parent::__construct($origin, $answer);
+    }
+
+    /**
+     * @return array
+     */
+    public function getChoices(): array
+    {
+        return $this->choices;
     }
 
     /**

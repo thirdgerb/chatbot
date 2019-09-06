@@ -9,6 +9,7 @@ use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Messages\AbsMessage;
+use Commune\Chatbot\OOHost\Session\Session;
 use Illuminate\Support\Collection;
 
 abstract class AbsQuestion extends AbsMessage implements Question
@@ -73,7 +74,7 @@ abstract class AbsQuestion extends AbsMessage implements Question
     }
 
 
-    abstract public function parseAnswer(Message $message): ? Answer;
+    abstract public function parseAnswer(Session $message): ? Answer;
 
     /**
      * default choice for default value

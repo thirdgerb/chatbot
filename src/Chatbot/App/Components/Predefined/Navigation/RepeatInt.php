@@ -14,11 +14,7 @@ class RepeatInt extends NavigateIntent
 
     const SIGNATURE = 'repeat';
 
-    const DESCRIPTION = '重复当前语境.';
-
-    const EXAMPLES = [
-    ];
-
+    const DESCRIPTION = '重复当前语境';
 
     public static function getContextName(): string
     {
