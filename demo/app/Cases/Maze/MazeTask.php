@@ -154,8 +154,7 @@ class MazeTask extends TaskDef
             ->isPositive(Redirector::goStage('intro'))
             ->isNegative(Redirector::goStage('born'))
             ->end(function(Dialog $dialog){
-                $dialog->say()->info($this->quitMessage);
-                return $dialog->fulfill();
+                return $dialog->cancel();
             });
     }
 
@@ -166,9 +165,9 @@ class MazeTask extends TaskDef
             ->askConfirm($this->confirmStart)
             ->hearing()
             ->isPositive(Redirector::goStage('born'))
+            ->isNegative(Redirector::goFulfill())
             ->end(function(Dialog $dialog){
-                $dialog->say()->info($this->quitMessage);
-                return $dialog->fulfill();
+                return $dialog->cancel();
             });
     }
 
@@ -258,16 +257,17 @@ class MazeTask extends TaskDef
 
     public function __exiting(Exiting $listener): void
     {
-        $quit = function(Dialog $dialog) {
+        $cancel = function(Dialog $dialog) {
             if (isset($this->score) || !isset($this->map)) {
                 $dialog->say()->info($this->falwellMessage);
             } else {
 
                 $dialog->say()->info($this->cancelMessage);
             }
+            return null;
         };
 
-        $listener->onFulfill($quit);
+        $listener->onCancel($cancel);
     }
 
 

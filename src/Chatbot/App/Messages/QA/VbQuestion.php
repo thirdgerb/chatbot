@@ -116,7 +116,7 @@ class VbQuestion extends AbsQuestion
     {
         // 看看是否只允许在建议中.
         if (!$this->onlySuggestion) {
-            return $this->answer = $this->newAnswer($message, $message->getText(), null);
+            return $this->answer = $this->newAnswer($message, $message->getTrimmedText(), null);
         }
         return null;
     }

@@ -13,7 +13,7 @@ return [
         ],
     ],
     'components' => [
-        \Commune\Demo\App\DemoOption::class,
+        \Commune\Demo\App\DemoComponent::class,
 //        \Commune\Chatbot\App\Components\ConfigurableComponent::class,
 //        \Commune\Chatbot\App\Components\NLUExamplesComponent::class => [
 //            'repository' => __DIR__ .'/repository.json'

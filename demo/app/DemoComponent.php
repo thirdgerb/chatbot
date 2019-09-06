@@ -6,7 +6,7 @@ namespace Commune\Demo\App;
 
 use Commune\Chatbot\App\Components\SelfRegisterComponent;
 
-class DemoOption extends SelfRegisterComponent
+class DemoComponent extends SelfRegisterComponent
 {
 
     public static function stub(): array
