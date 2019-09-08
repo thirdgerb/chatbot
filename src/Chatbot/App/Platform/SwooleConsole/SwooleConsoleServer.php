@@ -8,7 +8,7 @@ use Commune\Chatbot\App\Platform\ConsoleConfig;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Contracts\ChatServer;
-use Commune\Chatbot\Framework\Messages\Events\ConnectionEvt;
+use Commune\Chatbot\App\Messages\Events\ConnectionEvt;
 use Swoole\Coroutine;
 use Swoole\Runtime;
 use Swoole\Server;

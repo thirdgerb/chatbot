@@ -3,16 +3,16 @@
 
 namespace Commune\Chatbot\App\Messages\Media;
 
-use Commune\Chatbot\Framework\Messages\AbsMedia;
-use Commune\Chatbot\Blueprint\Message\Media\ImageMsg;
 
-class Image extends AbsMedia implements ImageMsg
+use Commune\Chatbot\Blueprint\Message\Media\AudioMsg;
+use Commune\Chatbot\Framework\Messages\AbsMedia;
+
+class Audio extends AbsMedia implements AudioMsg
 {
     public function namesAsDependency(): array
     {
         $names = parent::namesAsDependency();
-        $names[] = ImageMsg::class;
+        $names[] = AudioMsg::class;
         return $names;
     }
-
 }

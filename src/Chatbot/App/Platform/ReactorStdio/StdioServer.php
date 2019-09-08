@@ -12,7 +12,7 @@ use Commune\Chatbot\App\Platform\ConsoleConfig;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Contracts\ChatServer;
-use Commune\Chatbot\Framework\Messages\Events\ConnectionEvt;
+use Commune\Chatbot\App\Messages\Events\ConnectionEvt;
 use React\EventLoop\Factory;
 use Clue\React\Stdio\Stdio;
 use React\EventLoop\LoopInterface;

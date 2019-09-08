@@ -14,17 +14,17 @@ abstract class AbsMedia extends AbsMessage implements MediaMsg
     /**
      * @var string
      */
-    protected $mediaId = '';
+    protected $source = '';
 
-    public function __construct(string $mediaId, Carbon $createdAt = null)
+    public function __construct(string $resource, Carbon $createdAt = null)
     {
-        $this->mediaId = $mediaId;
+        $this->source = $resource;
         parent::__construct($createdAt);
     }
 
-    public function getMediaId(): string
+    public function getSource(): string
     {
-        return $this->mediaId;
+        return $this->source;
     }
 
 
@@ -32,6 +32,19 @@ abstract class AbsMedia extends AbsMessage implements MediaMsg
     {
         return null;
     }
+
+    public function getText(): string
+    {
+        return $this->toJson();
+    }
+
+    public function toMessageData(): array
+    {
+        return [
+            'src' => $this->source
+        ];
+    }
+
 
     public function namesAsDependency(): array
     {

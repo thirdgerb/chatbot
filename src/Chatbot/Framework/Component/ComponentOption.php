@@ -14,6 +14,17 @@ use Commune\Chatbot\Framework\Component\Providers\LoadPsr4SelfRegister;
 use Commune\Chatbot\Framework\Component\Providers\LoadTranslationConfig;
 use Commune\Support\Option;
 
+/**
+ * 组件的功能:
+ * 0. 依赖其它组件.
+ * 1. 提供服务注册.  service provider
+ * 2. 提供一套配置
+ * 3. 提供一些默认的功能.
+ * - self register 模块
+ * - translation 模块
+ * - feeling模块
+ *
+ */
 abstract class ComponentOption extends Option implements Bootstrapper
 {
     /**
@@ -103,11 +114,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
 
 
     /**
-     * @var LoadEmotions
-     */
-    protected $loadEmotions;
-
-    /**
+     * 增加情感的映射
      * @param string $emotionName
      * @param string|callable $experience
      */
@@ -124,6 +131,12 @@ abstract class ComponentOption extends Option implements Bootstrapper
         }
         $this->loadEmotions->addExperience($emotionName, $experience);
     }
+
+    /**
+     * @var LoadEmotions
+     */
+    protected $loadEmotions;
+
 
 
     /**

@@ -75,6 +75,12 @@ class Reply extends AbsMessage implements ReplyMsg
         ];
     }
 
+    public function namesAsDependency(): array
+    {
+        $names = parent::namesAsDependency();
+        $names[] = ReplyMsg::class;
+        return $names;
+    }
 
 
 }

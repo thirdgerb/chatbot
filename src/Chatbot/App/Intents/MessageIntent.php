@@ -12,8 +12,8 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 /**
- * 信息类Intent.
- * 它的作用是实现一个多轮对话, 填满所有参数后返回.
+ * 这种 Intent 主要作为消息来提供.
+ * 不直接控制多轮对话.
  * 可以用注解等方式来定义参数.
  */
 abstract class MessageIntent extends AbsCmdIntent

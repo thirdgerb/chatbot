@@ -8,6 +8,8 @@ use Commune\Chatbot\App\Messages\Text;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\ReplyTemplate;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
+use Commune\Chatbot\Blueprint\Message\Tags\NoTranslate;
+use Commune\Chatbot\Blueprint\Message\Tags\SelfTranslating;
 use Commune\Chatbot\Contracts\Translator;
 
 class TranslateTemp implements ReplyTemplate
@@ -29,9 +31,27 @@ class TranslateTemp implements ReplyTemplate
 
     public function render(ReplyMsg $reply, Conversation $conversation): array
     {
-        $id = $reply->getText();
-        $slots = $this->dot($reply->getSlots());
-        $text = $this->translator->trans($id, $slots);
+        // 自己翻译自己. 高优先级
+        if ($reply instanceof SelfTranslating) {
+            return [ $reply->translateBy($this->translator)];
+
+        // 低优先级. 不翻译
+        } elseif ($reply instanceof NoTranslate) {
+            return [ $reply ];
+        }
+
+        $id = $reply->getId();
+
+        // 纯数字不能用来做模板. 用这种方式也可以规避掉翻译.
+        if (!empty($id) && !is_numeric($id)) {
+            $slots = $this->dot($reply->getSlots());
+            $text = $this->translator->trans($id, $slots);
+
+        } else {
+            $text = $reply->getText();
+
+        }
+
         $message = (new Text($text))->withLevel($reply->getLevel());
         return [$message];
     }

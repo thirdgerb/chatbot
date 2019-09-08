@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\Messages\Recognitions;
 
 
-use Commune\Chatbot\App\Messages\Media\Voice;
+use Commune\Chatbot\App\Messages\Media\Audio;
 use Commune\Chatbot\Blueprint\Message\MediaMsg;
 use Commune\Chatbot\Blueprint\Message\RecognitionMsg;
 use Commune\Chatbot\Framework\Messages\Verbose;
@@ -13,14 +13,14 @@ class VoiceRecognition extends Verbose implements RecognitionMsg
 {
     protected $voice;
 
-    public function __construct(Voice $voice, string $recognition)
+    public function __construct(Audio $voice, string $recognition)
     {
         $this->voice = $voice;
         parent::__construct($recognition);
     }
 
     /**
-     * @return Voice
+     * @return Audio
      */
     public function getMedia(): MediaMsg
     {

@@ -46,6 +46,4 @@ interface VerboseMsg extends Message
      * @return string
      */
     public function getLevel() : string;
-
-
 }

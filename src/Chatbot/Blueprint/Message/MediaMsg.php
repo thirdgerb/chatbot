@@ -23,6 +23,6 @@ interface MediaMsg extends Message
      * 至于ID具体是什么意思, 可能有很多种.
      * @return string
      */
-    public function getMediaId() : string;
+    public function getSource() : string;
 
 }

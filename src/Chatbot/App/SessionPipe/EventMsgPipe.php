@@ -4,15 +4,19 @@
 namespace Commune\Chatbot\App\SessionPipe;
 
 
+use Commune\Chatbot\Blueprint\Message\Event\Connect;
+use Commune\Chatbot\Blueprint\Message\Event\EndSession;
 use Commune\Chatbot\Blueprint\Message\Event\EventMsg;
-use Commune\Chatbot\Framework\Messages\Events\ConnectionEvt;
-use Commune\Chatbot\Framework\Messages\Events\QuitEvt;
+use Commune\Chatbot\Blueprint\Message\Event\StartSession;
+use Commune\Chatbot\App\Messages\Events\ConnectionEvt;
+use Commune\Chatbot\App\Messages\Events\QuitEvt;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 
 /**
  * 全局的处理事件消息的拦截器
+ * 根据事件做额外的处理逻辑.
  */
 class EventMsgPipe implements SessionPipe
 {
@@ -39,19 +43,19 @@ class EventMsgPipe implements SessionPipe
 
     protected function handleEvent(EventMsg $message, Session $session) : ? Navigator
     {
-        // 连接事件, 重启当前会话.
-        switch ($message->getEventName()) {
-            case ConnectionEvt::class:
-                return $session->dialog->repeat();
-            case QuitEvt::class:
-                return $session->dialog->quit();
-
-
-            default:
-                return null;
+        if ($message instanceof Connect) {
+            return $session->dialog->repeat();
         }
 
+        if ($message instanceof StartSession) {
+            return $session->dialog->redirect->home();
+        }
 
+        if ($message instanceof EndSession) {
+            return $session->dialog->quit();
+        }
+
+        return null;
     }
 
 }
