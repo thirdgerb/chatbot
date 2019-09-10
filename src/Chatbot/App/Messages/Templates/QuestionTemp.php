@@ -92,7 +92,7 @@ class QuestionTemp implements ReplyTemplate
     protected function renderQuery(Question $question) : string
     {
         $slots = $question->getSlots();
-        return $this->translator->trans($question, $slots->all());
+        return $this->translator->trans($question->getQuery(), $slots->all());
     }
 
     protected function renderSuggestionStr(Question $question) : string
