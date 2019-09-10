@@ -37,6 +37,10 @@ return [
         'continue' => '输入 "." 继续',
     ],
 
+    'question' => [
+        'default' => "{query}{default}\n{suggestions}",
+    ],
+
     'errors' => [
         'badAnswer' => '您输入的信息不正确, 请重新输入',
         'mustBeSupervisor' => '只有管理员允许访问当前语境',

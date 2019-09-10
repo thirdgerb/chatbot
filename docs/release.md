@@ -12,3 +12,8 @@
 -   修复了 Selects 一直存在的问题. 补充了单元测试.
 -   backwardInt 修改指令为 backward . 感觉 back 太容易重名了.
 -   maze 中大部分回复都改为了用 translate. DemoComponent也增加了相关功能. 为的是测试翻译功能.
+
+
+-   question 设置了默认的 slots 用于翻译. 主要解决格式化的问题.
+-   之前 translator 没有用 ICU Message, 调整了相关功能.
+-   添加了问题默认的 ICU 模板

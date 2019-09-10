@@ -8,12 +8,22 @@
 
 namespace Commune\Chatbot\Blueprint\Message\QA;
 
-use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\OOHost\Session\Session;
 
+/**
+ * 与用户进行单轮对话的问题
+ */
 interface Question extends ReplyMsg
 {
+
+    // 默认的 slots, 可以用于翻译或渲染
+    const SLOT_QUERY = 'query';
+    const SLOT_SUGGESTIONS = 'suggestions' ; //array
+    const SLOT_DEFAULT_VALUE = 'defaultValue';
+    const SLOT_DEFAULT_CHOICE = 'defaultChoice';
+    const SLOT_SUGGESTION_STR = 'suggestionStr'; //implode suggestion with glue ","
+
     /**
      * 所有的问题都可以有选项的概念.
      * confirmation 的选项是 yes 或 no

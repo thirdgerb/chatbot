@@ -7,7 +7,6 @@ namespace Commune\Chatbot\Framework\Messages\QA;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
-use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Messages\AbsMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 use Illuminate\Support\Collection;
@@ -135,7 +134,19 @@ abstract class AbsQuestion extends AbsMessage implements Question
 
     public function getSlots(): Collection
     {
-        return $this->slots ?? $this->slots = new Collection($this->toMessageData());
+        return $this->slots
+            ?? $this->slots = new Collection($this->makeDefaultSlots());
+    }
+
+    protected function makeDefaultSlots() : array
+    {
+        return [
+            static::SLOT_QUERY => $this->getQuery(),
+            static::SLOT_SUGGESTIONS => $suggestions = $this->getSuggestions(),
+            static::SLOT_SUGGESTION_STR => implode(',', $suggestions),
+            static::SLOT_DEFAULT_CHOICE => $this->getDefaultChoice(),
+            static::SLOT_DEFAULT_VALUE => $this->getDefaultValue(),
+        ];
     }
 
 

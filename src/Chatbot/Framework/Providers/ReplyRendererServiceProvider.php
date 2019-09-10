@@ -4,25 +4,12 @@
 namespace Commune\Chatbot\Framework\Providers;
 
 
-use Commune\Chatbot\App\Messages\QA\Choose;
-use Commune\Chatbot\App\Messages\QA\Confirm;
-use Commune\Chatbot\App\Messages\QA\Contextual\AskEntity;
-use Commune\Chatbot\App\Messages\QA\Contextual\ChooseEntity;
-use Commune\Chatbot\App\Messages\QA\Contextual\ChooseIntent;
-use Commune\Chatbot\App\Messages\QA\Contextual\ConfirmIntent;
-use Commune\Chatbot\App\Messages\QA\Contextual\SelectEntity;
-use Commune\Chatbot\App\Messages\QA\Selects;
-use Commune\Chatbot\App\Messages\QA\VbQuestion;
-use Commune\Chatbot\App\Messages\Templates\ConfirmTemp;
-use Commune\Chatbot\App\Messages\Templates\MissedTemp;
-use Commune\Chatbot\App\Messages\Templates\QuestionTemp;
-use Commune\Chatbot\App\Messages\Templates\QuitTemp;
-use Commune\Chatbot\App\Messages\Templates\TranslateTemp;
+use Commune\Chatbot\App\Messages\QA;
+use Commune\Chatbot\App\Messages\Templates;
+use Commune\Chatbot\App\Messages\System;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Renderer;
 use Commune\Chatbot\Framework\Conversation\RendererImpl;
-use Commune\Chatbot\App\Messages\System\QuitSessionReply;
-use Commune\Chatbot\App\Messages\System\MissedReply;
 
 /**
  * register default reply message renderer
@@ -35,26 +22,26 @@ class ReplyRendererServiceProvider extends BaseServiceProvider
     protected $templates = [
 
         // default
-        Renderer::DEFAULT_ID => TranslateTemp::class,
+        Renderer::DEFAULT_ID => Templates\TranslateTemp::class,
 
         // base question
-        VbQuestion::REPLY_ID => QuestionTemp::class,
-        Confirm::REPLY_ID => ConfirmTemp::class,
-        Choose::REPLY_ID => QuestionTemp::class,
-        Selects::REPLY_ID => QuestionTemp::class,
+        QA\VbQuestion::REPLY_ID => Templates\QuestionTemp::class,
+        QA\Confirm::REPLY_ID => Templates\ConfirmTemp::class,
+        QA\Choose::REPLY_ID => Templates\QuestionTemp::class,
+        QA\Selects::REPLY_ID => Templates\QuestionTemp::class,
 
         // intent question
-        AskEntity::REPLY_ID => QuestionTemp::class,
-        ConfirmIntent::REPLY_ID => ConfirmTemp::class,
-        ChooseIntent::REPLY_ID => QuestionTemp::class,
-        SelectEntity::REPLY_ID => QuestionTemp::class,
-        ChooseEntity::REPLY_ID => QuestionTemp::class,
-        SelectEntity::REPLY_ID => QuestionTemp::class,
+        QA\Contextual\AskEntity::REPLY_ID => Templates\QuestionTemp::class,
+        QA\Contextual\ConfirmIntent::REPLY_ID => Templates\ConfirmTemp::class,
+        QA\Contextual\ChooseIntent::REPLY_ID => Templates\QuestionTemp::class,
+        QA\Contextual\SelectEntity::REPLY_ID => Templates\QuestionTemp::class,
+        QA\Contextual\ChooseEntity::REPLY_ID => Templates\QuestionTemp::class,
+        QA\Contextual\SelectEntity::REPLY_ID => Templates\QuestionTemp::class,
 
 
         // event
-        QuitSessionReply::REPLY_ID => QuitTemp::class,
-        MissedReply::REPLY_ID => MissedTemp::class,
+        System\QuitSessionReply::REPLY_ID => Templates\QuitTemp::class,
+        System\MissedReply::REPLY_ID => Templates\MissedTemp::class,
 
     ];
 

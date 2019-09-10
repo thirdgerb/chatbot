@@ -21,9 +21,6 @@ class VbQuestion extends AbsQuestion
 
     const REPLY_ID = QuestionReplyIds::ASK;
 
-    const SLOT_DEFAULT = '%default%';
-    const SLOT_DEFAULT_CHOICE = '%defaultChoice%';
-
     /**
      * 判断回答是否只允许用建议值.
      * @var bool

@@ -10,6 +10,7 @@ use Commune\Chatbot\Blueprint\Conversation\ReplyTemplate;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\Contracts\Translator;
+use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 
 /**
  * default message template for verbose question
@@ -37,10 +38,10 @@ class QuestionTemp implements ReplyTemplate
     public function render(ReplyMsg $reply, Conversation $conversation): array
     {
         if ($reply instanceof Question) {
-            return $this->renderQuestion($reply);
+            return $this->renderQuestion($reply, $conversation);
         }
 
-        throw new \InvalidArgumentException(
+        throw new ConfigureException(
             static::class
             . ' only accept QuestionMsg'
         );
@@ -49,32 +50,34 @@ class QuestionTemp implements ReplyTemplate
 
     /**
      * @param Question $question
+     * @param Conversation $conversation
      * @return array
      */
-    protected function renderQuestion(Question $question) : array
+    protected function renderQuestion(Question $question, Conversation $conversation) : array
     {
         $query = $this->renderQuery($question);
         $default = $this->renderDefault($question);
         $suggestion = $this->renderSuggestionStr($question);
 
-        $text = $this->composeText($query, $default, $suggestion);
+
+        $text = $this->composeText($query, $suggestion, $default);
 
         return $this->wrapText($question, $text);
+    }
+
+    protected function composeText(string $query, string $suggestion, string $default) : string
+    {
+        return $this->translator->trans('question.default', [
+            'query' => $query,
+            'suggestions' => $suggestion,
+            'default' => $default,
+        ]);
     }
 
     protected function wrapText(Question $question, string $text) : array
     {
         $message = (new Text($text))->withLevel($question->getLevel());
         return [ $message ];
-    }
-
-    protected function composeText(
-        string $question,
-        string $default,
-        string $suggestion
-    ) : string
-    {
-        return "$question$default\n$suggestion";
     }
 
     protected function renderDefault(Question $question) : string

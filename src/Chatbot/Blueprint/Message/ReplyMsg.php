@@ -13,6 +13,8 @@ use Illuminate\Support\Collection;
 interface ReplyMsg extends Message
 {
     /**
+     * 返回 reply 消息的 ID, 用于选择模板.
+     *
      * id of the messages template
      * @return string
      */
@@ -29,5 +31,4 @@ interface ReplyMsg extends Message
      * @return Collection
      */
     public function getSlots() : Collection;
-
 }
