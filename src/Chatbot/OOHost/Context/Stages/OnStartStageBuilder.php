@@ -4,6 +4,8 @@
 namespace Commune\Chatbot\OOHost\Context\Stages;
 
 
+use Commune\Chatbot\Blueprint\Message\QA\Question;
+use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
@@ -12,7 +14,6 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 class OnStartStageBuilder implements OnStartStage
 {
-
     use StageSpeechTrait;
 
     /**
@@ -24,11 +25,6 @@ class OnStartStageBuilder implements OnStartStage
      * @var bool
      */
     protected $isStart;
-
-    /**
-     * @var DialogSpeech
-     */
-    protected $dialogSpeech;
 
 
     public function __construct(Stage $stage)
@@ -158,6 +154,7 @@ class OnStartStageBuilder implements OnStartStage
 
         return $this->stage->dialog->hear($this->stage->value);
     }
+
 
 
 }

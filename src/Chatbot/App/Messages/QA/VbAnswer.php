@@ -10,6 +10,7 @@ use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
 
 /**
  * Verbose Answer
+ * 用户回答的文字结果. 默认类型是字符串. 需要自己做类型转换.
  */
 class VbAnswer extends AbsAnswer implements VerboseMsg
 {
@@ -20,8 +21,8 @@ class VbAnswer extends AbsAnswer implements VerboseMsg
     /**
      * VbAnswer constructor.
      * @param Message $origin
-     * @param string $answer
-     * @param null|int $choice
+     * @param mixed $answer
+     * @param null|int|string $choice
      */
     public function __construct(
         Message $origin,
@@ -32,6 +33,9 @@ class VbAnswer extends AbsAnswer implements VerboseMsg
         parent::__construct($origin, $choice);
     }
 
+    /**
+     * @return string
+     */
     public function toResult()
     {
         return $this->answer;

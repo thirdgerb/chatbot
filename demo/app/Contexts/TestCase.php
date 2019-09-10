@@ -57,8 +57,8 @@ class TestCase extends TaskDef
             function(Dialog $dialog, Message $message){
 
                 return $dialog->hear($message)
-                    ->isAnyIntent()
-                    ->isIntentIn(['Commune.Demo'])
+                    ->runAnyIntent()
+                    ->runIntentIn(['Commune.Demo'])
                     ->isChoice(0)
                     ->pregMatch('/^hello/', [])
                     ->then(function(Dialog $dialog) : Navigator {

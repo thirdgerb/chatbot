@@ -216,7 +216,7 @@ EOF
     public function __hearing(Hearing $hearing) : void
     {
         $hearing
-            ->isIntent(static::class, function(Dialog $dialog, TellWeatherInt $intent){
+            ->runIntent(static::class, function(Dialog $dialog, TellWeatherInt $intent){
 
                 if (isset($this->city) && !isset($intent->city)) {
                     $intent->city = $this->city;

@@ -113,14 +113,14 @@ class RouteDef extends OOContext
         $hearMessage = $dialog->hear($message);
 
         if ($this->hearAnyIntent) {
-            $hearMessage->isAnyIntent(function(Dialog $dialog, IntentMessage $intent){
+            $hearMessage->runAnyIntent(function(Dialog $dialog, IntentMessage $intent){
                 $this->routeTo = $intent;
                 return $dialog->goStage('redirect');
             });
         }
 
         if (!empty($this->domain)) {
-            $hearMessage->isIntentIn([$this->domain], function(Dialog $dialog, IntentMessage $intent){
+            $hearMessage->runIntentIn([$this->domain], function(Dialog $dialog, IntentMessage $intent){
                 $this->routeTo = $intent;
                 return $dialog->goStage('redirect');
             });

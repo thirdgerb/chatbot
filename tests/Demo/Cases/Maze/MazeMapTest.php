@@ -68,19 +68,24 @@ EOF
     public function testFetchItemSections()
     {
         $sections = Map::randomSections();
+
+        // 生成 item 对应的区域
         $itemSections = Map::fetchItemSections($sections);
 
         foreach (Manager::CELL_ITEMS as $item) {
 
+            // 所有道具应该都有对应区域.
             $this->assertArrayHasKey($item, $itemSections);
             $trap = $sections[$itemSections[$item]];
+
+            // 普通房间不能出现 key
             if ($trap === Manager::CELL_NORMAL) {
                 $this->assertNotEquals(Manager::ITEM_KEY, $item);
+
             } else {
                 $this->assertNotEquals(Manager::TRAP_TO_ITEM[$trap], $item);
             }
         }
-
     }
 
     public function testFinalMap()

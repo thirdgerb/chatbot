@@ -6,8 +6,8 @@ namespace Commune\Chatbot\OOHost\Context\Entities;
 use Commune\Chatbot\App\Messages\QA\VbQuestion;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
-use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Entity;
@@ -32,7 +32,6 @@ class PropertyEtt implements Entity
      */
     protected $name;
 
-
     /**
      * @var string
      */
@@ -55,7 +54,7 @@ class PropertyEtt implements Entity
     protected $isOptional;
 
     /**
-     * @var string|Question|callable
+     * @var string
      */
     protected $question;
 
@@ -67,14 +66,14 @@ class PropertyEtt implements Entity
     /**
      * AbsEntity constructor.
      * @param string $name
-     * @param string|Question|callable $question
+     * @param string $question
      * @param null $default
      * @param string $memoryName
      * @param string|null $memoryKey
      */
     public function __construct(
         string $name,
-        $question = '',
+        string $question = '',
         $default = null,
         string $memoryName = '',
         string $memoryKey = null
@@ -162,6 +161,14 @@ class PropertyEtt implements Entity
         $dialog->say($this->getSlots())->warning('errors.badAnswer');
         return $dialog->rewind();
     }
+
+
+    /**
+     * 选择太多了一点都不好. 删掉了callable 等提问方式.
+     *
+     * @param Context $self
+     * @param Dialog $dialog
+     */
     protected function askDefaultQuestion(Context $self, Dialog $dialog) : void
     {
         // 方法存在, 优先用方法来提问.
@@ -171,18 +178,14 @@ class PropertyEtt implements Entity
             return;
         }
 
-        // question 是callable 对象的情况. 比如function
-        if (isset($this->question) && is_callable($this->question)) {
-            $dialog->app->call($this->question, ['self'=>$self]);
-            return;
-        }
-
-        // 如果entity 定义的的直接是 question 实例, 用它来提问.
-        if (isset($this->question) && $this->question instanceof Question) {
-            // 要 clone, 避免污染.
-            $dialog->say($this->getSlots())
-                ->withContext($self, $self->getDef()->getEntityNames())
-                ->ask(clone $this->question);
+        // 如果是 intent, 直接请求 entity, 拿到结果会自动赋值, 从而跳过这一步.
+        if ($self instanceof IntentMessage) {
+            $dialog->say($this->getSlots())->askIntentEntity(
+                $this->question,
+                $self,
+                $this->name,
+                $this->default
+            );
             return;
         }
 
@@ -197,8 +200,8 @@ class PropertyEtt implements Entity
     protected function getSlots() : array
     {
         return [
-            '%default%' => $this->default,
-            '%name%' => $this->name,
+            '%entity_default%' => $this->default,
+            '%entity_name%' => $this->name,
         ];
     }
 

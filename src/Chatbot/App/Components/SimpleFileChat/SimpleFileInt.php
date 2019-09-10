@@ -97,7 +97,7 @@ class SimpleFileInt extends AbsIntent
                 ->hearing(function(Hearing $hearing) {
                     // 监听任何意图
                     $hearing
-                        ->isAnyIntent()
+                        ->runAnyIntent()
                         ->runDefaultFallback();
                 })
             );
@@ -285,7 +285,7 @@ class SimpleFileInt extends AbsIntent
                 $stageName = static::STAGE_PREFIX . $index;
                 return $dialog->goStage($stageName, true);
             })
-            ->isAnyIntent()
+            ->runAnyIntent()
             ->end(function(Dialog $dialog){
                 return $dialog->next();
             });

@@ -95,6 +95,8 @@ class SessionImpl implements Session, HasIdGenerator
 
     /*----- cached -----*/
 
+    protected $intentMatchingTried = false;
+
     /**
      * @var History
      */
@@ -116,9 +118,14 @@ class SessionImpl implements Session, HasIdGenerator
     protected $scope;
 
     /**
-     * @var IntentMessage
+     * @var string|null
      */
     protected $matchedIntent;
+
+    /**
+     * @var IntentMessage[]
+     */
+    protected $possibleIntents = [];
 
     /**
      * @var DialogImpl
@@ -350,24 +357,66 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function setMatchedIntent(IntentMessage $intent): void
     {
-        if (!$intent->isInstanced()) {
-            $intent = $intent->toInstance($this);
-        }
-        $this->matchedIntent = $intent;
+        $this->matchedIntent = $intent->getName();
+        $this->setPossibleIntent($intent);
     }
 
     public function getMatchedIntent(): ? IntentMessage
     {
         if (isset($this->matchedIntent)) {
-            return $this->matchedIntent;
+            return $this->getPossibleIntent($this->matchedIntent);
         }
 
+        if ($this->intentMatchingTried) {
+            return null;
+        }
+
+        // try matching once, still could set matched intent
+        $this->intentMatchingTried = true;
         $message = $this->getIncomingMessage()->message;
         if ($message instanceof IntentMessage) {
-            return $this->matchedIntent = $message;
+            $this->setPossibleIntent($message);
+            return $this->matchedIntent = $message->getName();
         }
 
-        return null;
+        $intent = $this->getIntentRegistrar()->matchIntent($this);
+        if (isset($intent)) {
+            $this->setPossibleIntent($intent);
+            $this->matchedIntent = $intent->getName();
+        }
+        return $intent;
+    }
+
+    public function setPossibleIntent(IntentMessage $intent): void
+    {
+        if (!$intent->isInstanced()) {
+            $intent = $intent->toInstance($this);
+        }
+        $this->possibleIntents[$intent->getName()] = $intent;
+    }
+
+    public function getPossibleIntent(string $intentName): ? IntentMessage
+    {
+        if (array_key_exists($intentName, $this->possibleIntents)) {
+            return $this->possibleIntents[$intentName];
+        }
+
+        // 防止 matchedIntent 没有执行过.
+        $matched = $this->getMatchedIntent();
+        if (isset($matched) && $matched->nameEquals($intentName)) {
+            $this->setPossibleIntent($matched);
+            return $matched;
+        }
+
+        // 执行主动匹配逻辑.
+        $intent = $this->getIntentRegistrar()->matchCertainIntent($intentName, $this);
+        if (isset($intent)) {
+            $this->setPossibleIntent($intent);
+        } else {
+            $this->possibleIntents[$intentName] = null;
+        }
+
+        return $intent;
     }
 
 
@@ -475,6 +524,7 @@ class SessionImpl implements Session, HasIdGenerator
         $this->repo = null;
         $this->driver = null;
         $this->matchedIntent = null;
+        $this->possibleIntents = [];
         $this->incomingMessage = null;
         $this->scope = null;
         $this->history = null;

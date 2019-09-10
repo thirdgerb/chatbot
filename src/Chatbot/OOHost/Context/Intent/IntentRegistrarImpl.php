@@ -16,16 +16,13 @@ class IntentRegistrarImpl extends ContextRegistrarImpl implements IntentRegistra
 
     /**
      * 根据有可能存在的intent, 进行匹配.
+     * 通常在 Session 内部使用.
+     *
      * @param Session $session
      * @return IntentMessage|null
      */
     public function matchIntent(Session $session) : ? IntentMessage
     {
-        $matched = $session->getMatchedIntent();
-        if (isset($matched)) {
-            return $matched;
-        }
-
         $nlu = $session->nlu;
 
         // matched 是排他的
@@ -83,7 +80,6 @@ class IntentRegistrarImpl extends ContextRegistrarImpl implements IntentRegistra
         // 会主动设置到 session 中.
         if (isset($intent)) {
             $intent = $intent->toInstance($session);
-            $session->setMatchedIntent($intent);
         }
 
         return $intent;

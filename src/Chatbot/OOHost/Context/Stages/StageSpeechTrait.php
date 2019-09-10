@@ -3,10 +3,9 @@
 
 namespace Commune\Chatbot\OOHost\Context\Stages;
 
-
-use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Context\Context;
+use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Dialogue\DialogSpeechImpl;
 
 /**
@@ -144,5 +143,75 @@ trait StageSpeechTrait
         return $this;
     }
 
+    public function askIntentEntity(
+        string $question,
+        IntentMessage $intent,
+        string $entityName,
+        $default = null
+    )
+    {
+        if ($this->isAvailable()) {
+            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+        }
+        return $this;
+    }
 
+    public function askConfirmIntent(string $question, IntentMessage $intent)
+    {
+        if ($this->isAvailable()) {
+            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+        }
+        return $this;
+    }
+
+    public function askConfirmEntity(string $question, IntentMessage $intent, string $entityName)
+    {
+        if ($this->isAvailable()) {
+            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+        }
+        return $this;
+    }
+
+
+    public function askChooseIntents(
+        string $question,
+        array $options,
+        array $intentNames,
+        $defaultChoice = null
+    )
+    {
+        if ($this->isAvailable()) {
+            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+        }
+        return $this;
+    }
+
+    public function askSelectEntity(
+        string $question,
+        IntentMessage $intent,
+        string $entityName,
+        array $suggestion,
+        $defaultChoice = null,
+        bool $multiple = false
+    )
+    {
+        if ($this->isAvailable()) {
+            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+        }
+        return $this;
+    }
+
+
+    public function askChooseEntity(
+        string $question,
+        IntentMessage $intent,
+        string $entityName,
+        array $suggestions
+    )
+    {
+        if ($this->isAvailable()) {
+            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+        }
+        return $this;
+    }
 }

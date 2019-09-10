@@ -24,6 +24,20 @@ abstract class AbsContext extends AbsMessage implements Context
     const GETTER_PREFIX = '__get';
     const SETTER_PREFIX = '__set';
 
+    const CASTS_TYPES = [
+        'float' => 'floatval',
+        'int' => 'intval',
+        'string' => 'strval',
+        'bool' => 'boolval',
+    ];
+
+    /**
+     * 需要进行类型转换的属性.
+     */
+    const CASTS = [
+        // 'property name' => 'float' ## scalar type such as float
+    ];
+
     /**
      * @var Session
      */
@@ -108,7 +122,7 @@ abstract class AbsContext extends AbsMessage implements Context
         $value = $this->_attributes[$name] ?? null;
 
         if (is_null($value)) {
-            return $value;
+            return $this->cast($name, $value);
         }
 
         if ($value instanceof SessionDataIdentity) {
@@ -122,6 +136,47 @@ abstract class AbsContext extends AbsMessage implements Context
         return $value;
     }
 
+    /**
+     * 赋值的时候进行类型转换.
+     * @param string $name
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function cast(string $name, $value)
+    {
+        if (array_key_exists($name, static::CASTS)) {
+
+            if (is_null($value)) {
+                return null;
+            }
+
+            // 数组的情况. 有时候 NLU 返回的是一个数组, 但接受的却是一个 scalar 值.
+            // 总之还是很脏. NLU 应该避免导致脏值的场景.
+            if (is_array($value)) {
+                $value = current($value);
+            }
+
+            if (!is_scalar($value)) {
+                $type = gettype($value);
+                $this->getSession()->logger->error(
+                    static::class
+                    . " try to cast property $name to scalar value failed, type $type given"
+                );
+                return null;
+            }
+
+            $type = static::CASTS[$name];
+            $action = static::CASTS_TYPES[$type] ?? null;
+            if (isset($action)) {
+                return call_user_func($action, $value);
+            }
+        }
+
+        return $value;
+    }
+
+
+
     public function setAttribute(string $name, $value) : void
     {
         $this->hasInstanced();
@@ -132,8 +187,9 @@ abstract class AbsContext extends AbsMessage implements Context
         if ($value instanceof SessionData) {
             $this->_session->repo->cacheSessionData($value);
         }
+
         $this->_changed = true;
-        $this->_attributes[$name] = $value;
+        $this->_attributes[$name] = $this->cast($name, $value);
     }
 
     public function hasAttribute(string $name)

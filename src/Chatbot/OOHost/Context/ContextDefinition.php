@@ -9,7 +9,7 @@ use Commune\Chatbot\OOHost\Context\Entities\DependingBuilder;
 use ReflectionMethod;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Utils\StringUtils;
-use Commune\Chatbot\OOHost\Context\Listeners\ExitingCatcher;
+use Commune\Chatbot\OOHost\Context\Exiting\ExitingCatcher;
 use Commune\Chatbot\OOHost\Exceptions\NavigatorException;
 use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\OOHost\Context\Stages\CallbackStage;

@@ -9,6 +9,10 @@ use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
+/**
+ * @deprecated
+ * @see Redirector
+ */
 class ToNext implements Interceptor
 {
     /**

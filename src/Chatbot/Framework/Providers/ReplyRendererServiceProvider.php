@@ -6,6 +6,11 @@ namespace Commune\Chatbot\Framework\Providers;
 
 use Commune\Chatbot\App\Messages\QA\Choose;
 use Commune\Chatbot\App\Messages\QA\Confirm;
+use Commune\Chatbot\App\Messages\QA\Contextual\AskEntity;
+use Commune\Chatbot\App\Messages\QA\Contextual\ChooseEntity;
+use Commune\Chatbot\App\Messages\QA\Contextual\ChooseIntent;
+use Commune\Chatbot\App\Messages\QA\Contextual\ConfirmIntent;
+use Commune\Chatbot\App\Messages\QA\Contextual\SelectEntity;
 use Commune\Chatbot\App\Messages\QA\Selects;
 use Commune\Chatbot\App\Messages\QA\VbQuestion;
 use Commune\Chatbot\App\Messages\Templates\ConfirmTemp;
@@ -29,13 +34,25 @@ class ReplyRendererServiceProvider extends BaseServiceProvider
 
     protected $templates = [
 
+        // default
         Renderer::DEFAULT_ID => TranslateTemp::class,
 
+        // base question
         VbQuestion::REPLY_ID => QuestionTemp::class,
         Confirm::REPLY_ID => ConfirmTemp::class,
         Choose::REPLY_ID => QuestionTemp::class,
         Selects::REPLY_ID => QuestionTemp::class,
 
+        // intent question
+        AskEntity::REPLY_ID => QuestionTemp::class,
+        ConfirmIntent::REPLY_ID => ConfirmTemp::class,
+        ChooseIntent::REPLY_ID => QuestionTemp::class,
+        SelectEntity::REPLY_ID => QuestionTemp::class,
+        ChooseEntity::REPLY_ID => QuestionTemp::class,
+        SelectEntity::REPLY_ID => QuestionTemp::class,
+
+
+        // event
         QuitSessionReply::REPLY_ID => QuitTemp::class,
         MissedReply::REPLY_ID => MissedTemp::class,
 

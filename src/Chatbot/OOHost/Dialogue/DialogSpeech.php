@@ -5,6 +5,7 @@ namespace Commune\Chatbot\OOHost\Dialogue;
 
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Context\Context;
+use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 
 interface DialogSpeech
 {
@@ -114,11 +115,6 @@ interface DialogSpeech
         array $suggestions,
         string $default = null
     );
-//
-//    public function askMessageTypes(
-//        string $question,
-//        array $allowedTypes
-//    ) : Talk;
 
     /**
      * @param string $question
@@ -135,6 +131,97 @@ interface DialogSpeech
     );
 
 
+    /*------ 基于 NLU + Intent 实现的对话. 吸收了 DuerOS 的做法. 但不完全兼容. ------*/
+
+    /**
+     * 向用户提问要求意图的一个值.
+     * 会把匹配到意图的值作为答案来处理.
+     * 同时会修改原来Intent的该值.
+     *
+     * ask value for context->{entityName}
+     *
+     * @param string $question
+     * @param IntentMessage $intent
+     * @param string $entityName
+     * @param mixed $default
+     * @return static
+     */
+    public function askIntentEntity(
+        string $question,
+        IntentMessage $intent,
+        string $entityName,
+        $default = null
+    ) ;
+
+    /**
+     * 要求用户确认当前意图.
+     * 确认后会返回结果.
+     *
+     * @param string $question
+     * @param IntentMessage $intent
+     * @return static
+     */
+    public function askConfirmIntent(string $question, IntentMessage $intent) ;
+
+    /**
+     * 向用户提问确认一个值.
+     * 会根据意图匹配的结果来处理答案.
+     * 如果
+     *
+     * @param string $question
+     * @param IntentMessage $intent
+     * @param string $entityName
+     * @return static
+     */
+    public function askConfirmEntity(string $question, IntentMessage $intent, string $entityName) ;
 
 
+    /**
+     * 向用户提问选择多个值.
+     *
+     * @param string $question
+     * @param IntentMessage $intent
+     * @param string $entityName
+     * @param array $suggestions
+     * @return static
+     */
+    public function askSelectEntity(
+        string $question,
+        IntentMessage $intent,
+        string $entityName,
+        array $suggestions
+    ) ;
+
+    /**
+     * 向用户提问选择一个值.
+     *
+     * @param string $question
+     * @param IntentMessage $intent
+     * @param string $entityName
+     * @param array $suggestions
+     * @return static
+     */
+    public function askChooseEntity(
+        string $question,
+        IntentMessage $intent,
+        string $entityName,
+        array $suggestions
+    );
+
+
+    /**
+     * 要求用户做选择. 不过选项用意图来表述.
+     *
+     * @param string $question
+     * @param array $options
+     * @param array $intentNames
+     * @param null $defaultChoice
+     * @return static
+     */
+    public function askChooseIntents(
+        string $question,
+        array $options,
+        array $intentNames,
+        $defaultChoice = null
+    );
 }

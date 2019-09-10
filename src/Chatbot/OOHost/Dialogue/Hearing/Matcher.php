@@ -10,6 +10,8 @@ use Commune\Chatbot\OOHost\Emotion\Feeling;
 interface Matcher
 {
 
+    /*------- event matcher -------*/
+
     /**
      * 如果不主动拦截, 则event 消息都会被忽视.
      * @param string $eventName
@@ -24,6 +26,9 @@ interface Matcher
      * @return static
      */
     public function isEventIn(array $eventName, callable $action = null) : Matcher;
+
+
+    /*------- expect -------*/
 
     /**
      * 自定义的监听.
@@ -41,6 +46,7 @@ interface Matcher
         callable $action = null
     ) : Matcher;
 
+    /*------- php matcher -------*/
 
     /**
      * message 是一个字符串.
@@ -86,103 +92,6 @@ interface Matcher
         callable $action = null
     ): Matcher;
 
-
-    /**
-     * 判断消息是否符合某种情感.
-     *
-     * to feel message match certain feeling
-     * parser @see Feeling
-     *
-     * @param string $emotionName
-     * @param Action|callable $action
-     * @return static
-     */
-    public function feels(
-        string $emotionName,
-        callable $action = null
-    ) : Matcher;
-
-    /**
-     * @param callable $action
-     * @return static
-     */
-    public function isPositive(callable $action = null) : Matcher;
-
-    /**
-     * @param callable|null $action
-     * @return static
-     */
-    public function isNegative(callable $action = null) : Matcher;
-
-    /**
-     * 由 NLU 传递来的intent 如果存在
-     * 则执行不为null 的intentAction
-     * 否则 执行 intent 自带的 action
-     *
-     * @param callable|null $intentAction    $message is IntentMessage
-     * @return static
-     */
-    public function isAnyIntent(
-        callable $intentAction = null
-    ) : Matcher;
-
-    /**
-     * 主动匹配一个 intent.
-     * 即便 NLU 没有传递, 也会去尝试匹配.
-     *
-     * @param string $intentName
-     * @param callable|null $intentAction   $message is IntentMessage
-     * @return static
-     */
-    public function isIntent(
-        string $intentName,
-        callable $intentAction = null
-    ) : Matcher;
-
-    /**
-     * 尝试从一批intents 中匹配一个intent.
-     * 无论 NLU 是否有传递, 会主动进行匹配.
-     *
-     * intentName 可以传递前缀.
-     *
-     * 命中后, 优先执行不为null 的intentAction
-     * 否则执行 intent 自己的action
-     *
-     * @param array $intentNames
-     * @param callable|null $intentAction  $message is IntentMessage
-     * @return static
-     */
-    public function isIntentIn(
-        array $intentNames,
-        callable $intentAction = null
-    ) : Matcher;
-
-    /**
-     * 是否匹配到了entity 类型
-     *
-     * @param string $entityName
-     * @param callable|null $interceptor
-     * @return static
-     */
-    public function hasEntity(
-        string $entityName,
-        callable $interceptor = null
-    ) : Matcher;
-
-
-    /**
-     * 存在entity, 并且值 equals(==) $expect
-     *
-     * @param string $entityName
-     * @param mixed $expect
-     * @param callable|null $interceptor
-     * @return static
-     */
-    public function hasEntityValue(
-        string $entityName,
-        $expect,
-        callable $interceptor = null
-    ) : Matcher;
 
     /**
      * 判断message 的 $message->getMessageType 是否符合.
@@ -270,6 +179,104 @@ interface Matcher
     ) : Matcher;
 
 
+
+
+
+    /*------- nlu matcher -------*/
+
+    /**
+     * 判断消息是否符合某种情感.
+     *
+     * to feel message match certain feeling
+     * parser @see Feeling
+     *
+     * @param string $emotionName
+     * @param Action|callable $action
+     * @return static
+     */
+    public function feels(
+        string $emotionName,
+        callable $action = null
+    ) : Matcher;
+
+    /**
+     * @param callable $action
+     * @return static
+     */
+    public function isPositive(callable $action = null) : Matcher;
+
+    /**
+     * @param callable|null $action
+     * @return static
+     */
+    public function isNegative(callable $action = null) : Matcher;
+
+
+    /**
+     * 由 NLU 传递来的任何intent.
+     * 不会直接执行. 需要定义 then()
+     *
+     * @param callable|null $intentAction    $message is IntentMessage
+     * @return static
+     */
+    public function isAnyIntent(
+        callable $intentAction = null
+    ) : Matcher;
+
+
+
+    /**
+     * 如果没有 intentAction, 不会立刻执行.
+     *
+     * @param string $intentName
+     * @param callable|null $intentAction
+     * @return static
+     */
+    public function isIntent(
+        string $intentName,
+        callable $intentAction = null
+    ) : Matcher;
+
+
+    /**
+     * 如果没有 intentAction, 不会立刻执行.
+     *
+     * @param array $intentNames
+     * @param callable|null $intentAction
+     * @return static
+     */
+    public function isIntentIn(
+        array $intentNames,
+        callable $intentAction = null
+    ) : Matcher;
+
+
+    /**
+     * 是否匹配到了entity 类型
+     *
+     * @param string $entityName
+     * @param callable|null $interceptor
+     * @return static
+     */
+    public function hasEntity(
+        string $entityName,
+        callable $interceptor = null
+    ) : Matcher;
+
+
+    /**
+     * 存在entity, 并且值 equals(==) $expect
+     *
+     * @param string $entityName
+     * @param mixed $expect
+     * @param callable|null $interceptor
+     * @return static
+     */
+    public function hasEntityValue(
+        string $entityName,
+        $expect,
+        callable $interceptor = null
+    ) : Matcher;
 
 
 }

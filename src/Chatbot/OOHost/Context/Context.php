@@ -12,15 +12,21 @@ use Commune\Support\Arr\Dictionary;
  * Context 是 chatbot 最核心的概念.
  *
  * 它包含以下方面:
- * 1. 上下文记忆
- * 2. 对多轮对话的定义 ( 多轮对话每一个阶段称之为一个 stage )
- * 3. 对多轮对话每一轮的定义 ( checkpoint )
- * 4. 控制 context 之间的跳转.
+ * 1. 上下文记忆 ( 包括属性 )
+ * 2. 对多轮对话的定义 ( 各种方法 )
+ * 3. 对多轮对话每一轮的定义 ( stage )
+ * 4. 控制 context 之间的跳转 ( redirect ) .
  *
  *
  * 运行过程
  *
  * __depend -> __onStart -> _on{stageName}... -> __existing
+ *
+ *
+ * 注意!!
+ * 如果 property 是数组, 直接进行数组操作是无效的, 会触发:
+ * Indirect modification of overloaded property
+ * 需要先建立临时变量, 赋值, 然后赋值回去才行.
  *
  */
 interface Context extends
@@ -75,6 +81,11 @@ interface Context extends
      */
     public function getName() : string;
 
+    /**
+     * intent name 可能会有别名, 比如类名, 用这个方法来省略代码.
+     * @param string $name
+     * @return bool
+     */
     public function nameEquals(string $name) : bool;
 
     public static function __depend(Depending $depending) : void;

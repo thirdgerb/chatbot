@@ -26,16 +26,12 @@ class Hear extends AbsNavigator
 
     public function doDisplay(): ? Navigator
     {
-        // 意图匹配.
-        $session = $this->dialog->session;
-        $session->intentRepo->matchIntent($session);
-
         // 问题过滤
         $question = $this->dialog->currentQuestion();
         if (isset($question)) {
             $answer = $question->parseAnswer($this->dialog->session);
             if (isset($answer)) {
-                $this->message = $answer;
+                return $this->callbackCurrent($answer);
             }
         }
 

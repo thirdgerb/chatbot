@@ -6,15 +6,17 @@ namespace Commune\Demo\App\Cases\Maze;
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Contexts\TaskDef;
-use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
-use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Demo\App\Cases\Maze\Intents\LocationInt;
+use Commune\Demo\App\Cases\Maze\Intents\TowardBackInt;
+use Commune\Demo\App\Cases\Maze\Intents\TowardFrontInt;
+use Commune\Demo\App\Cases\Maze\Intents\TowardLeftInt;
+use Commune\Demo\App\Cases\Maze\Intents\TowardRightInt;
 use Commune\Demo\App\Cases\Maze\Logic\Manager;
 
 /**
@@ -23,7 +25,6 @@ use Commune\Demo\App\Cases\Maze\Logic\Manager;
  * @property-read string $cell
  * @property-read int $y
  * @property-read int $x
- * @property-read string|null $toward
  * @property-read string[][] $map
  * @property-read string[] $items
  * @property-read null|int $score
@@ -34,48 +35,43 @@ class MazeTask extends TaskDef
 
 
     protected $towardMessages = [
-        Manager::TOWARD_FRONT => '推开了面前的门',
-        Manager::TOWARD_LEFT => '推开了左手边的门',
-        Manager::TOWARD_RIGHT => '推开了右手边的门',
-        Manager::TOWARD_BACK => '退回了背后的门',
+        Manager::TOWARD_FRONT => 'demo.maze.toward.front',
+        Manager::TOWARD_LEFT => 'demo.maze.toward.left',
+        Manager::TOWARD_RIGHT => 'demo.maze.toward.right',
+        Manager::TOWARD_BACK => 'demo.maze.toward.back',
     ];
 
-    protected $oneMore = '还想再来一局吗?';
+    protected $oneMore = 'demo.maze.dialog.oneMore';
 
-    protected $locationMessage = "当前所在房间编号是横坐标%x%, 纵坐标%y%, 面朝%direction%";
+    protected $locationMessage = 'demo.maze.info.location';
 
-    protected $bornMessage = '游戏开始! 
-我被传送到了一个神秘的迷宫, 自己赤手空拳还光着脚.  
-房间里只有一个锁住的升降电梯, 什么别的都没有. 看来要拿到钥匙才能出去. 
-前,后,左,右四面墙的中央各有一张可以打开的门.';
+    protected $bornMessage = 'demo.maze.info.born';
 
-    protected $failToEnter = '我赶紧退了回去';
+    protected $failToEnter = 'demo.maze.actions.back';
 
-    protected $falwellMessage = '再见. 欢迎再来!';
+    protected $falwellMessage = 'demo.maze.info.falwell';
 
-    protected $cancelMessage = '告诉您一个秘诀, 可以说"坐标"知道自己位置哦. 再见! 希望下次再挑战.';
+    protected $cancelMessage = 'demo.maze.info.cancel';
 
-    protected $thenWhat = '接下来要往哪个方向走呢';
+    protected $thenWhat = 'demo.maze.dialog.then';
 
-    protected $quitMessage = '对不起, 没有明白您的意思, 游戏退出';
+    protected $incomprehension = 'demo.maze.info.incomprehension';
 
-    protected $sameRoomMessage = '进入了同样的房间';
+    protected $sameRoomMessage = 'demo.maze.info.sameRoom';
 
-    protected $welcome = '欢迎来到迷宫小游戏!';
+    protected $welcome = 'demo.maze.info.welcome';
 
-    protected $wantIntro = '您要听游戏介绍吗?';
+    protected $wantIntro = 'demo.maze.dialog.wantIntro';
 
-    protected $introduce = '这是一个由25个房间组成的小迷宫, 每个房间都是正方形的, 四个方向有四张门.
-在游戏里您只能发出指令说: 向前, 向后, 向左, 向右. 控制角色前进.
-任何时候说 "退出" 则会退出游戏. ';
+    protected $introduce = 'demo.maze.info.introduce';
 
-    protected $confirmStart = '您要开始这个游戏吗?';
+    protected $confirmStart = 'demo.maze.dialog.start';
 
-    protected $winMessage = '我用找到的钥匙打开了电梯, 惴惴不安地走了进去.';
+    protected $winMessage = 'demo.maze.info.win';
 
-    protected $endGameMessage = '游戏结束! 您的得分是%score%. 恭喜您获得胜利!';
+    protected $endGameMessage = 'demo.maze.info.end';
 
-    protected $noticeMessage = '没能明白您的意思. 您可以说"往前", "往后", "往左", "往右"来进入下一个房间, 或者说"退出"以退出游戏';
+    protected $noticeMessage = 'demo.maze.info.notice';
 
     protected $cellsMessages = [
         Manager::CELL_BORN => [
@@ -131,8 +127,6 @@ class MazeTask extends TaskDef
                 ->is('退出')
                 ->is('quit')
             ->todo(function(Dialog $dialog) {
-
-
                 $dialog->say()->info($this->locationMessage, [
                     'x' => $this->x + 1,
                     'y' => $this->y + 1,
@@ -144,8 +138,8 @@ class MazeTask extends TaskDef
 
             })
                 ->is('坐标')
-            ->otherwise();
-        ;
+                ->isIntent(LocationInt::class)
+            ->otherwise();;
     }
 
     public function __onStart(Stage $stage): Navigator
@@ -200,51 +194,51 @@ class MazeTask extends TaskDef
 
     public function __onPlay(Stage $stage) : Navigator
     {
-
         return $stage->buildTalk()
-            ->askVerbose($this->thenWhat)
-            ->hearing()
-            ->expect(
-                function(Message $message){
-                    if (!$message instanceof VerboseMsg) {
-                        return false;
-                    }
-
-                    $text = $message->getText();
-
-                    $keys = [
-                        '前' => Manager::TOWARD_FRONT,
-                        'f' => Manager::TOWARD_FRONT,
-                        '后' => Manager::TOWARD_BACK,
-                        'b' => Manager::TOWARD_BACK,
-                        '退' => Manager::TOWARD_BACK,
-                        '左' => Manager::TOWARD_LEFT,
-                        'l' => Manager::TOWARD_LEFT,
-                        '右' => Manager::TOWARD_RIGHT,
-                        'r' => Manager::TOWARD_RIGHT,
-                    ];
-
-                    foreach ($keys as $key => $toward) {
-                        if (strpos($text, $key) !== false) {
-                            $this->toward = $toward;
-                            break;
-                        }
-                    }
-
-                    return isset($this->toward);
-
-                }, function(Dialog $dialog){
-                    $toward = $this->toward;
-                    $this->toward = null;
-                    return $this->goToward($dialog, $toward);
-                }
+            ->askChooseIntents(
+                $this->thenWhat,
+                [
+                    '前',
+                    '后',
+                    '左',
+                    '右',
+                ],
+                [
+                    TowardFrontInt::getContextName(),
+                    TowardBackInt::getContextName(),
+                    TowardLeftInt::getContextName(),
+                    TowardRightInt::getContextName(),
+                ]
             )
+            ->hearing()
+            ->todo($this->doToward(Manager::TOWARD_FRONT))
+                ->isIntent(TowardFrontInt::class)
+                ->isChoice(0)
+
+            ->todo($this->doToward(Manager::TOWARD_BACK))
+                ->isIntent(TowardBackInt::class)
+                ->isChoice(1)
+
+            ->todo($this->doToward(Manager::TOWARD_LEFT))
+                ->isIntent(TowardLeftInt::class)
+                ->isChoice(2)
+
+            ->todo($this->doToward(Manager::TOWARD_RIGHT))
+                ->isIntent(TowardRightInt::class)
+                ->isChoice(3)
+
             ->end(function(Dialog $dialog){
                 $dialog->say()
                     ->warning($this->noticeMessage);
-
                 return $dialog->wait();
             });
+    }
+
+    protected function doToward(int $toward) : \Closure
+    {
+        return function(Dialog $dialog) use ($toward) {
+            return $this->goToward($dialog, $toward);
+        };
     }
 
     public function __onEndGame(Stage $stage) : Navigator
@@ -255,6 +249,10 @@ class MazeTask extends TaskDef
             ->askConfirm($this->oneMore)
             ->hearing()
                 ->isPositive(Redirector::goStage('born'))
+                ->isNegative(function(Dialog $dialog) {
+                    $dialog->say()->info($this->falwellMessage);
+                    return $dialog->fulfill();
+                })
                 ->end(Redirector::goFulfill());
     }
 
@@ -328,9 +326,12 @@ class MazeTask extends TaskDef
 
             $last = $this->failToEnter;
         }
-
-        $output = "$first.$middle.$itemMessage.$last";
-        $dialog->say()->info($output);
+        $speech = $dialog->say();
+        foreach ([$first, $middle, $itemMessage, $last] as $info) {
+            if (!empty($info)) {
+                $speech->info($info);
+            }
+        }
 
         // 赢了, 游戏结束
         if ($win) {
@@ -347,6 +348,7 @@ class MazeTask extends TaskDef
 
         // 退了回去
         } else {
+            // 面向不改.
             $this->cell = null; // 下一次一定介绍.
             return $dialog->repeat();
         }

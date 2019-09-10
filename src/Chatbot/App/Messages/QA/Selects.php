@@ -8,20 +8,24 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Framework\Messages\Verbose;
+use Commune\Chatbot\OOHost\Session\Session;
 
 /**
  * 多选.
  * @property Selection $answer
+ * @method Selection|null parseAnswer(Session $session): ? Answer
  */
 class Selects extends Choose implements Question
 {
-    const REPLY_ID = 'question.selects';
+    const REPLY_ID = QuestionReplyIds::SELECTS;
 
     protected $onlySuggestion = true;
 
     protected $separator;
 
     protected $defaultAllChoices = [];
+
+    protected $defaultAnswers = [];
 
     public function __construct(
         string $question,
@@ -33,12 +37,15 @@ class Selects extends Choose implements Question
         $this->separator = $separator;
         $this->defaultAllChoices = $defaultChoices;
 
-        $default = null;
+        $defaultAnswers = [];
         if (!empty($defaultChoices)) {
-            $default = implode($separator, array_map(function($choice) use ($suggestions){
-                return $suggestions[$choice];
-            }, $defaultChoices));
+            foreach ($suggestions as $index => $value) {
+                if (in_array($index, $defaultChoices)) {
+                    $defaultAnswers[] = $value;
+                }
+            }
         }
+        $this->defaultAnswers = $defaultAnswers;
 
         parent::__construct(
             $question,
@@ -46,7 +53,7 @@ class Selects extends Choose implements Question
             null
         );
 
-        $this->default = $default;
+        $this->default = implode($separator, $defaultAnswers);
     }
 
 
@@ -57,24 +64,39 @@ class Selects extends Choose implements Question
 
     public function doParseAnswer(Message $message): ? Answer
     {
-        $text = $message->getTrimmedText();
-        $choices = explode($this->separator, $text);
+        $this->answer = new Selection($message, [], []);
 
+        $text = $message->getTrimmedText();
+
+        // 将隔开的结果
+        $choices = explode($this->separator, $text);
         $answers = array_map(function(string $str){
             return new Verbose($str);
         }, $choices);
+
 
         foreach ($answers as $answer) {
             parent::doParseAnswer($answer);
         }
 
+        $choices = $this->answer->getChoices();
+        if (empty($choices)) {
+            if (empty($this->defaultAllChoices)) {
+                return $this->answer = null;
+            }
+
+            return $this->answer = new Selection($message, $this->defaultAnswers, $this->defaultAllChoices);
+        }
+
         return $this->answer;
     }
 
-    protected function newAnswer(Message $origin, string $value, $choice = null): VbAnswer
+    protected function newAnswer(Message $origin, $value, $choice = null): VbAnswer
     {
         if (!isset($this->answer)) {
-            return new Selection($origin, $value, $choice);
+            $answers = isset($value) ? [$value] : [];
+            $choices = isset($choice) ? [$choice] : [];
+            return $this->answer = new Selection($origin, $answers, $choices);
         }
 
         $this->answer->addResult($value, $choice);

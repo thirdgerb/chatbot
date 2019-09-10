@@ -38,6 +38,10 @@ class TranslateTemp implements ReplyTemplate
         // 低优先级. 不翻译
         } elseif ($reply instanceof NoTranslate) {
             return [ $reply ];
+
+        // 空消息不翻译.
+        } elseif ($reply->isEmpty()) {
+            return [$reply];
         }
 
         $id = $reply->getId();

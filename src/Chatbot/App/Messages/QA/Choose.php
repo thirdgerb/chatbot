@@ -10,7 +10,7 @@ use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 
 class Choose extends VbQuestion implements Question
 {
-    const REPLY_ID = 'question.choose';
+    const REPLY_ID = QuestionReplyIds::CHOOSE;
 
     protected $onlySuggestion = true;
 
@@ -49,9 +49,9 @@ class Choose extends VbQuestion implements Question
         parent::__construct($question, $options, $defaultChoice, $default);
     }
 
-    protected function newAnswer(Message $origin, string $value, $choice = null) : VbAnswer
+    protected function newAnswer(Message $origin, $value, $choice = null) : VbAnswer
     {
         $choice = $choice ?? $this->defaultChoice;
-        return new Choice($origin, $value, $choice);
+        return new Choice($origin, strval($value), $choice);
     }
 }

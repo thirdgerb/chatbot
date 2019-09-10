@@ -19,7 +19,7 @@ class VbQuestion extends AbsQuestion
 {
     use Verbosely;
 
-    const REPLY_ID = 'question';
+    const REPLY_ID = QuestionReplyIds::ASK;
 
     const SLOT_DEFAULT = '%default%';
     const SLOT_DEFAULT_CHOICE = '%defaultChoice%';
@@ -37,13 +37,13 @@ class VbQuestion extends AbsQuestion
      * @param string $question
      * @param array $suggestions
      * @param int|string|null $defaultChoice
-     * @param mixed $default
+     * @param string|null $default
      */
     public function __construct(
         string $question,
         array $suggestions,
         $defaultChoice = null,
-        $default = null
+        string $default = null
     )
     {
         $this->defaultChoice = $defaultChoice;
@@ -75,7 +75,6 @@ class VbQuestion extends AbsQuestion
     public function parseAnswer(Session $session): ? Answer
     {
         $message = $session->incomingMessage->message;
-
         // 如果本来就是answer, 不再处理了.
         if ($message instanceof Answer) {
             return $message;
@@ -100,8 +99,7 @@ class VbQuestion extends AbsQuestion
                 return null;
             }
         }
-
-        return $this->doParseAnswer($message);
+        return $this->answer = $this->doParseAnswer($message);
     }
 
     protected function doParseAnswer(Message $message) : ? Answer
@@ -116,7 +114,7 @@ class VbQuestion extends AbsQuestion
     {
         // 看看是否只允许在建议中.
         if (!$this->onlySuggestion) {
-            return $this->answer = $this->newAnswer($message, $message->getTrimmedText(), null);
+            return $this->newAnswer($message, $message->getTrimmedText(), null);
         }
         return null;
     }
@@ -127,7 +125,7 @@ class VbQuestion extends AbsQuestion
         // 再匹配suggestions 的开头
         foreach ($this->suggestions as $index => $suggestion) {
             if (Str::startsWith($suggestion, $text)) {
-                return $this->answer = $this->newAnswer(
+                return $this->newAnswer(
                     $message,
                     $this->suggestions[$index],
                     $index
@@ -153,7 +151,7 @@ class VbQuestion extends AbsQuestion
 
         if (isset($originIndexes[$text])) {
             $originIndex = $originIndexes[$text];
-            return $this->answer = $this->newAnswer(
+            return $this->newAnswer(
                 $message,
                 $this->suggestions[$originIndex],
                 $originIndex
@@ -165,13 +163,13 @@ class VbQuestion extends AbsQuestion
 
     /**
      * @param Message $origin
-     * @param string $value
+     * @param mixed $value
      * @param null|int|string $choice
      * @return VbAnswer
      */
-    protected function newAnswer(Message $origin, string $value,  $choice = null) : VbAnswer
+    protected function newAnswer(Message $origin, $value,  $choice = null) : VbAnswer
     {
-        return new VbAnswer($origin, $value, $choice);
+        return new VbAnswer($origin, strval($value), $choice);
     }
 
     public function getAnswer(): ? Answer

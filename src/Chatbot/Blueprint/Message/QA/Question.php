@@ -45,7 +45,7 @@ interface Question extends ReplyMsg
 
     /**
      * 查看一个消息是不是一个回答
-     * 如果是回答, 包装成一个answer
+     * 如果是回答, 通常包装成一个answer
      *
      * @param Session $session
      * @return Answer|null

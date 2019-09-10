@@ -292,6 +292,35 @@ class HearingHandler implements Hearing
         return $this;
     }
 
+    public function runAnyIntent(
+        callable $intentAction = null
+    ): Matcher
+    {
+        return $this->isAnyIntent(function(IntentMessage $intent, Dialog $dialog){
+            return $intent->navigate($dialog);
+        });
+    }
+
+    public function runIntent(
+        string $intentName,
+        callable $intentAction = null
+    ): Matcher
+    {
+        return $this->isIntent($intentName, function(IntentMessage $intent, Dialog $dialog){
+            return $intent->navigate($dialog);
+        });
+    }
+
+    public function runIntentIn(
+        array $intentNames,
+        callable $intentAction = null
+    ): Matcher
+    {
+        return $this->isIntentIn($intentNames, function(IntentMessage $intent, Dialog $dialog){
+            return $intent->navigate($dialog);
+        });
+    }
+
 
     /**
      * 主动匹配一个意图
@@ -306,25 +335,8 @@ class HearingHandler implements Hearing
     ): Matcher
     {
         if (isset($this->navigator)) return $this;
-
-        // 如果消息本身是intent, 说明是dependOn 的回调.
-        // 任何用户发过来的消息, 不应该把message 变为intent
-        // 而应该 session->setMatchedIntent() 去设定.
-        if ($this->message instanceof IntentMessage){
-
-            if (!$this->message->nameEquals($intentName)) {
-                return $this;
-            }
-
-            return $this->heardIntent($this->message, $intentAction);
-        }
-
-        // 主动匹配.
         $session = $this->dialog->session;
-        $intent = $session->intentRepo->matchCertainIntent(
-            $intentName,
-            $session
-        );
+        $intent = $session->getPossibleIntent($intentName);
 
         // 没有命中.
         if (!isset($intent)) {
@@ -334,6 +346,7 @@ class HearingHandler implements Hearing
         // 命中了.
         return $this->heardIntent($intent, $intentAction);
     }
+
 
     /**
      * 共享同一个拦截器.
@@ -349,10 +362,10 @@ class HearingHandler implements Hearing
     {
         if (isset($this->navigator)) return $this;
 
-
         $session = $this->dialog->session;
         $repo = $session->intentRepo;
 
+        // 获取完整的 intentNames
         $names = [];
         foreach ($intentNames as $intentName) {
             // 允许从前缀里取.
@@ -361,7 +374,7 @@ class HearingHandler implements Hearing
         //  这里是标准名称了.
         $names = array_unique($names);
 
-
+        // 校验 message 本身.
         if ($this->message instanceof IntentMessage) {
             $name = $this->message->getName();
             if (in_array($name, $names)) {
@@ -371,16 +384,18 @@ class HearingHandler implements Hearing
             return $this;
         }
 
-
+        // 校验 session matched intent
         $matched = $session->getMatchedIntent();
         if (isset($matched) && in_array($matched->getName(), $names)) {
             return $this->heardIntent($matched, $intentAction);
         }
 
+        // 逐个校验. 主动匹配.
         foreach ($names as $name) {
             $this->isIntent($name, $intentAction);
             if (isset($this->navigator)) return $this;
         }
+
         return $this;
     }
 
@@ -391,22 +406,15 @@ class HearingHandler implements Hearing
     {
         if (isset($this->navigator)) return $this;
 
-        // 如果消息本身就是 intent, 则视作回调.
         if ($this->message instanceof IntentMessage) {
             return $this->heardIntent($this->message, $intentAction);
         }
 
-        // 否则, 视作第一次进入的intent 解析.
         $session = $this->dialog->session;
-
-        $matched = $session->getMatchedIntent()
-            ?? $session->intentRepo->matchIntent($session);
-
+        $matched = $session->getMatchedIntent();
         if (!isset($matched)) {
             return $this;
         }
-
-        $session->setMatchedIntent($matched);
 
         return $this->heardIntent(
             $matched,
@@ -425,16 +433,17 @@ class HearingHandler implements Hearing
         callable $intentAction = null
     ) : Hearing
     {
+
+        $this->isMatched = true;
+
         // 有拦截的情况
         if (isset($intentAction)) {
-            $this->isMatched = true;
             return $this->callInterceptor($intentAction, $matched);
         }
 
         // intent 自己有navigator 的情况
         $navigator = $matched->navigate($this->dialog);
         if (isset($navigator)) {
-            $this->isMatched = true;
             return $this->setNavigator($navigator);
         }
 
@@ -444,6 +453,8 @@ class HearingHandler implements Hearing
 
     /**
      * @deprecated
+     * 放弃的方法. 还可能拿出来用, 先不删
+     *
      * @param IntentMessage $message
      * @param callable|null $interceptor
      * @return Hearing

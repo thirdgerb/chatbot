@@ -8,7 +8,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 
 class Confirm extends VbQuestion
 {
-    const REPLY_ID = 'question.confirm';
+    const REPLY_ID = QuestionReplyIds::CONFIRM;
 
     protected $onlySuggestion = true;
 
@@ -34,9 +34,15 @@ class Confirm extends VbQuestion
         );
     }
 
-    protected function newAnswer(Message $origin, string $value, $choice = null): VbAnswer
+    /**
+     * @param Message $origin
+     * @param string $value
+     * @param int|null $choice
+     * @return VbAnswer
+     */
+    protected function newAnswer(Message $origin, $value, $choice = null): VbAnswer
     {
         $choice = $choice ?? $this->defaultChoice;
-        return new Confirmation($origin, $value, $choice);
+        return new Confirmation($origin, strval($value), $choice);
     }
 }

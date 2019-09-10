@@ -4,7 +4,9 @@
 namespace Commune\Chatbot\App\Callables\Actions;
 
 
+use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
+use Commune\Chatbot\OOHost\Directing\Navigator;
 
 /**
  * 方便定义极简的 callable 对象.
@@ -13,27 +15,47 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
  */
 class Redirector
 {
+    public static function runIntent() : \Closure
+    {
+        return function (IntentMessage $message, Dialog $dialog) : ? Navigator {
+            return $message->navigate($dialog);
+        };
+    }
+
+    /**
+     * @param string ...$stages
+     * @return \Closure
+     */
+    public static function goNext(string ...$stages) : \Closure
+    {
+        return function(Dialog $dialog) use ($stages) : Navigator {
+            $count = count($stages);
+
+            if ($count === 0) {
+                return $dialog->next();
+            } elseif ($count === 1) {
+                return $dialog->goStage($stages[0]);
+            }
+
+            return $dialog->goStagePipes($stages);
+        };
+    }
 
     public static function goStage(string $stage) : \Closure
     {
-        return function(Dialog $dialog) use ($stage){
+        return function(Dialog $dialog) use ($stage)  : Navigator {
             return $dialog->goStage($stage);
         };
     }
 
     public static function goStageThrough(array $stages) : \Closure
     {
-        return function(Dialog $dialog) use ($stages) {
+        return function(Dialog $dialog) use ($stages)  : Navigator {
             return $dialog->goStagePipes($stages);
         };
     }
 
     public static function goBackward() : callable
-    {
-        return [static::class, str_replace('go', '', __FUNCTION__)];
-    }
-
-    public static function goNext() : callable
     {
         return [static::class, str_replace('go', '', __FUNCTION__)];
     }

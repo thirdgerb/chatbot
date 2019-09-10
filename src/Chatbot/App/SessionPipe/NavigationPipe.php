@@ -32,17 +32,14 @@ class NavigationPipe implements SessionPipe
 
         // 检查matched
         $intent = $session->getMatchedIntent();
-        $matched = $session->nlu->getMatchedIntent();
-        $noMatched = empty($intent) && empty($matched);
         $message = $session->incomingMessage->message;
-        if ($noMatched && !$message instanceof VerboseMsg) {
+        if (!isset($intent) && !$message instanceof VerboseMsg) {
             return $next($session);
         }
 
-        $repo = $session->intentRepo;
         foreach ($navigation as $intentName) {
             // 匹配到了.
-            $intent = $repo->matchCertainIntent($intentName, $session);
+            $intent = $session->getPossibleIntent($intentName);
             if (isset($intent)) {
                 return $this->runIntent($intent, $session) ?? $next($session);
             }

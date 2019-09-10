@@ -42,9 +42,14 @@ class Map
         $traps = array_keys(Manager::TRAP_TO_ITEM);
         $trapItems = array_values(Manager::TRAP_TO_ITEM);
 
+        // 随机选了一个区域做放钥匙的地方.
         $keySection = self::arrRandom($traps);
         $result[Manager::ITEM_KEY] = $trapToSections[$keySection];
         unset($trapToSections[$keySection]);
+
+        // 不参与排序, 只选剩下的.
+        $normalSection = $trapToSections[Manager::CELL_NORMAL];
+        unset($trapToSections[Manager::CELL_NORMAL]);
 
         foreach ($trapToSections as $trap => $section) {
             $item = array_shift($trapItems);
@@ -53,11 +58,13 @@ class Map
                 && $item === Manager::TRAP_TO_ITEM[$trap]
             ) {
                 $trapItems[] = $item;
+                // 不行就换下位置.
                 $item = array_shift($trapItems);
             }
             $result[$item] = $section;
         }
 
+        $result[array_shift($trapItems)] = $normalSection;
         return $result;
     }
 

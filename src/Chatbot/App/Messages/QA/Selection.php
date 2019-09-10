@@ -11,21 +11,28 @@ use Commune\Chatbot\Blueprint\Message\QA\Answer;
  */
 class Selection extends VbAnswer implements Answer
 {
+    /**
+     * 多个选项.
+     * @var array
+     */
     protected $choices = [];
 
-    protected $answers = [];
+    /**
+     * 多个答案
+     * @var array
+     */
+    protected $results = [];
 
     public function __construct(
         Message $origin,
-        string $answer,
-        int $choice = null
+        array $answers,
+        array $choices
     )
     {
-        $this->answers[] = $answer;
-        if (isset($choice)) {
-            $this->choices[] = $choice;
-        }
-        parent::__construct($origin, $answer);
+        $this->results = $answers;
+        $this->choices = $choices;
+
+        parent::__construct($origin, implode(',', $answers));
     }
 
     /**
@@ -37,6 +44,15 @@ class Selection extends VbAnswer implements Answer
     }
 
     /**
+     * @return array
+     */
+    public function getResults(): array
+    {
+        return $this->results;
+    }
+
+
+    /**
      * @param int|string $choice
      * @return bool
      */
@@ -45,10 +61,22 @@ class Selection extends VbAnswer implements Answer
         return in_array($choice, $this->choices);
     }
 
+    /**
+     *
+     * @param string $value
+     * @param int $choice
+     */
     public function addResult(string $value, int $choice) : void
     {
-        $this->answers[] = $value;
+        $this->results[] = $value;
         $this->choices[] = $choice;
-        $this->answer .= ',' . $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function toResult()
+    {
+        return implode(',', $this->results);
     }
 }

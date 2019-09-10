@@ -90,9 +90,30 @@ interface Session extends RunningSpy
 
     /*----- nlu 相关 -----*/
 
+    /**
+     * @param IntentMessage $intent
+     */
     public function setMatchedIntent(IntentMessage $intent) : void;
 
+    /**
+     * @return IntentMessage|null
+     */
     public function getMatchedIntent() : ? IntentMessage;
+
+    /**
+     * 主动设置一个可能的 intent
+     * @param IntentMessage $intent
+     */
+    public function setPossibleIntent(IntentMessage $intent) : void;
+
+    /**
+     * 尝试根据intent名字, 获取一个intent.
+     * 会主动进行匹配.
+     *
+     * @param string $intentName
+     * @return IntentMessage|null
+     */
+    public function getPossibleIntent(string $intentName) : ? IntentMessage;
 
     /*----- 创建一个director -----*/
 
