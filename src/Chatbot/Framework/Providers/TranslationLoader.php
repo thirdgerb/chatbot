@@ -5,10 +5,10 @@ namespace Commune\Chatbot\Framework\Providers;
 
 
 use Commune\Chatbot\Config\ChatbotConfig;
+use Commune\Chatbot\Contracts\Translator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Translation\Translator as SymfonyTranslator;
 use Commune\Container\ContainerContract;
 
 trait TranslationLoader
@@ -34,9 +34,9 @@ trait TranslationLoader
 
         /**
          * 获取translator 实例. 通常是在 work process 环节就获取.
-         * @var SymfonyTranslator $translator
+         * @var Translator $translator
          */
-        $translator = $app->make(SymfonyTranslator::class);
+        $translator = $app->make(Translator::class);
 
         // 遍历翻译文件所在目录.
         $dirFinder = new Finder();
@@ -73,7 +73,6 @@ trait TranslationLoader
 
                 // 加载资源成功.
                 $translator->addResource(
-                    $loader,
                     $path,
                     $locale,
                     $domain

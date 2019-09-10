@@ -3,7 +3,7 @@
 
 return [
     'hello' => [
-        'world'  => '您好,世界',
+        'world'  => '您好,世界, 你输入的是{input}',
     ],
 
     'system' => [
@@ -22,16 +22,16 @@ return [
     ],
 
     'command' => [
-        'notExists' => '命令 %name% 不存在',
-        'invalidArgument' => '参数 %name% 不正确',
-        'notValid' => '%name% 不是合法的命令',
-        'available' => "可用的命令: \n%available%",
-        'contextNotExists' => 'context %contextName% 未注册',
-        'navigateToContext' => '导航到 context %contextName%',
+        'notExists' => '命令 {name} 不存在',
+        'invalidArgument' => '参数 {name} 不正确',
+        'notValid' => '{name} 不是合法的命令',
+        'available' => "可用的命令: \n{available}",
+        'contextNotExists' => 'context {contextName} 未注册',
+        'navigateToContext' => '导航到 context {contextName}',
     ],
 
     'ask' => [
-        'default' => '请输入 %name% (%default%)',
+        'entity' => '请输入{entity_name}',
         'needs' => '您可能需要:',
         'needMore' => '您还有别的需要吗?',
         'continue' => '输入 "." 继续',

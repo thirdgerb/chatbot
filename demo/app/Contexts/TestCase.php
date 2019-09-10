@@ -59,19 +59,22 @@ class TestCase extends TaskDef
                 return $dialog->hear($message)
                     ->runAnyIntent()
                     ->runIntentIn(['Commune.Demo'])
+
                     ->isChoice(0)
                     ->pregMatch('/^hello/', [])
-                    ->then(function(Dialog $dialog) : Navigator {
-                        $dialog->say()->info('hello world!');
+                    ->then(function(Dialog $dialog, Message $message) : Navigator {
+                        $dialog->say()->info('hello.world', ['input' => $message->getText()]);
                         return $dialog->repeat();
 
                     })
+
                     ->isChoice(1)
                     ->pregMatch('/^test$/')
                         ->then(function(Dialog $dialog) {
                             $dialog->say()->info('go to test');
                             return $dialog->goStagePipes(['test', 'start']);
                         })
+
 
                     ->isChoice(2)
                     ->is('sandbox')

@@ -80,7 +80,7 @@ class PropertyEtt implements Entity
     )
     {
         $this->name = $name;
-        $this->question = empty($question) ? 'ask.default' : $question;
+        $this->question = empty($question) ? 'ask.entity' : $question;
         $this->default = $default;
         $this->memoryName = $memoryName;
         $this->memoryKey = !empty($memoryKey) ? $memoryKey : $this->name;
@@ -200,8 +200,8 @@ class PropertyEtt implements Entity
     protected function getSlots() : array
     {
         return [
-            '%entity_default%' => $this->default,
-            '%entity_name%' => $this->name,
+            'entity_default' => $this->default,
+            'entity_name' => $this->name,
         ];
     }
 

@@ -10,8 +10,7 @@ namespace Commune\Chatbot\Framework\Predefined;
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Config\Children\TranslationConfig;
 use Commune\Chatbot\Contracts\Translator as Contract;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\Translator as SymfonyTranslator;
 
 /**
@@ -75,7 +74,7 @@ class SymfonyTranslatorAdapter implements Contract
             $loader,
             $resource,
             $locale,
-            $domain
+            $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX
         );
     }
 
