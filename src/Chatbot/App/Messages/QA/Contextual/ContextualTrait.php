@@ -27,16 +27,29 @@ trait ContextualTrait
      */
     protected $intentName;
 
+    /**
+     * @var IntentMessage
+     */
+    protected $intent;
+
     protected function init(
         IntentMessage $intent,
         string $entityName = null
     )
     {
+        $this->intent = $intent;
         $this->entityName = $entityName;
         $this->intentName = $intent->getName();
-        $this->intentDataId = $intent->getSessionDataId();
+        $this->intentDataId = $intent->toSessionIdentity();
     }
 
+    /**
+     * @return IntentMessage
+     */
+    public function getIntent(): ? IntentMessage
+    {
+        return $this->intent;
+    }
 
     public function parseAnswer(Session $session): ? Answer
     {
@@ -94,6 +107,12 @@ trait ContextualTrait
     public function getIntentName(): string
     {
         return $this->intentName;
+    }
+
+    public function __sleep()
+    {
+        $props = parent::__sleep();
+        return array_merge($props, ['intentDataId', 'intentName', 'entityName']);
     }
 
 

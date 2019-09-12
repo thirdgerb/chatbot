@@ -8,11 +8,6 @@ use Commune\Chatbot\App\Messages\QA\Choice;
 use Commune\Chatbot\App\Messages\QA\Choose;
 use Commune\Chatbot\App\Messages\Text;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
-use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Config\Children\OOHostConfig;
-use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
-use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
 use PHPUnit\Framework\TestCase;
 
@@ -29,6 +24,7 @@ class ChooseTest extends TestCase
         ]);
 
         $session = \Mockery::mock(Session::class);
+        $session->expects('getPossibleIntent')->andReturn(null);
 
         /**
          * @var \stdClass $incoming

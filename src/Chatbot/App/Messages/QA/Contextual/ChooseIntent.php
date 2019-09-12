@@ -7,7 +7,6 @@ namespace Commune\Chatbot\App\Messages\QA\Contextual;
 use Commune\Chatbot\App\Messages\QA\Choose;
 use Commune\Chatbot\App\Messages\QA\QuestionReplyIds;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
-use Commune\Chatbot\OOHost\Context\Intent\IntentDefinition;
 use Commune\Chatbot\OOHost\Session\Session;
 
 class ChooseIntent extends Choose
@@ -41,4 +40,11 @@ class ChooseIntent extends Choose
         return parent::parseAnswer($session);
     }
 
+    /**
+     * @return array
+     */
+    public function getIntents(): array
+    {
+        return $this->intents;
+    }
 }

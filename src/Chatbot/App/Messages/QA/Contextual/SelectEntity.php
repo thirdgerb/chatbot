@@ -11,7 +11,7 @@ use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 
-class SelectEntity extends Selects
+class SelectEntity extends Selects implements ContextualQ
 {
     use ContextualTrait;
 

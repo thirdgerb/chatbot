@@ -3,8 +3,6 @@
 
 namespace Commune\Chatbot\OOHost\Context\Intent;
 
-use Commune\Chatbot\App\Messages\QA\Contextual\AskEntity;
-use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Context\AbsContext;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -19,6 +17,19 @@ abstract class AbsIntent
     implements IntentMessage, HasIdGenerator
 {
     use IdGeneratorHelper;
+
+    // 例句
+    const NLU_EXAMPLES = [];
+
+    /**
+     * @var bool|null
+     */
+    protected $_isConfirmed = null;
+
+    /**
+     * @var boolean[]
+     */
+    protected $_confirmedEntities = [];
 
     public function getId(): string
     {
@@ -64,4 +75,36 @@ abstract class AbsIntent
         return $de;
     }
 
+    public function __getIsConfirmed() : ? bool
+    {
+        return $this->_isConfirmed;
+    }
+
+    public function __setIsConfirmed($confirmed) : void
+    {
+        $this->_isConfirmed = boolval($confirmed);
+    }
+
+    public function __getConfirmedEntities() : array
+    {
+        return $this->_confirmedEntities;
+    }
+
+    /**
+     * @param boolean[] $values
+     */
+    public function __setConfirmedEntities(array $values) : void
+    {
+        $this->_confirmedEntities = array_map(function($i){
+            return boolval($i);
+        }, $values);
+    }
+
+    public function __sleep(): array
+    {
+        $names = parent::__sleep();
+        $names[] = '_isConfirmed';
+        $names[] = '_confirmedEntities';
+        return $names;
+    }
 }

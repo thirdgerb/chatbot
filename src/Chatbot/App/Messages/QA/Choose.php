@@ -15,11 +15,6 @@ class Choose extends VbQuestion implements Question
     protected $onlySuggestion = true;
 
     /**
-     * @var string|int|null
-     */
-    protected $defaultChoice;
-
-    /**
      * Choose constructor.
      * @param string $question
      * @param array $options

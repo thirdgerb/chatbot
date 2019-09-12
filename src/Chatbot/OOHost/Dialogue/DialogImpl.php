@@ -10,7 +10,6 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\Dialogue\Hearing;
 
 use Commune\Chatbot\OOHost\Directing;
 use Commune\Chatbot\OOHost\Directing\Navigator;

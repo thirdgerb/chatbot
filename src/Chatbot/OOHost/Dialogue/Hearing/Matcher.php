@@ -184,6 +184,8 @@ interface Matcher
 
     /*------- nlu matcher -------*/
 
+    /*------- feelings -------*/
+
     /**
      * 判断消息是否符合某种情感.
      *
@@ -211,6 +213,7 @@ interface Matcher
      */
     public function isNegative(callable $action = null) : Matcher;
 
+    /*------- intents -------*/
 
     /**
      * 由 NLU 传递来的任何intent.
@@ -233,6 +236,19 @@ interface Matcher
      * @return static
      */
     public function isIntent(
+        string $intentName,
+        callable $intentAction = null
+    ) : Matcher;
+
+
+    /**
+     * 如果是intent, 并且没有fulfill, 会先完成entity的输入.
+     *
+     * @param string $intentName
+     * @param callable|null $intentAction
+     * @return static
+     */
+    public function isFulfillIntent(
         string $intentName,
         callable $intentAction = null
     ) : Matcher;

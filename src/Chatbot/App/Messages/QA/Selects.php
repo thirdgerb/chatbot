@@ -103,5 +103,15 @@ class Selects extends Choose implements Question
         return $this->answer;
     }
 
+    public function __sleep()
+    {
+        $props = parent::__sleep();
+        $props = array_merge($props, [
+            'separator',
+            'defaultAllChoices',
+            'defaultAnswers',
+        ]);
+        return $props;
+    }
 
 }

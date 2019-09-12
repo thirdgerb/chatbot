@@ -4,7 +4,7 @@
 namespace Commune\Demo\App\Cases\Maze\Intents;
 
 
-class TowardRightInt extends AbsTowardInt
+class MazeRightInt extends AbsMazeInt
 {
     const SIGNATURE = 'right';
     const DESCRIPTION = '向右';

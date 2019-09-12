@@ -33,8 +33,8 @@ class ReplyRendererServiceProvider extends BaseServiceProvider
         // intent question
         QA\Contextual\AskEntity::REPLY_ID => Templates\QuestionTemp::class,
         QA\Contextual\ConfirmIntent::REPLY_ID => Templates\ConfirmTemp::class,
+        QA\Contextual\ConfirmEntity::REPLY_ID => Templates\ConfirmTemp::class,
         QA\Contextual\ChooseIntent::REPLY_ID => Templates\QuestionTemp::class,
-        QA\Contextual\SelectEntity::REPLY_ID => Templates\QuestionTemp::class,
         QA\Contextual\ChooseEntity::REPLY_ID => Templates\QuestionTemp::class,
         QA\Contextual\SelectEntity::REPLY_ID => Templates\QuestionTemp::class,
 

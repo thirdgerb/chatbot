@@ -12,8 +12,6 @@ class Confirm extends VbQuestion
 
     protected $onlySuggestion = true;
 
-    protected $defaultChoice;
-
     public function __construct(
         string $question,
         bool $default = true,

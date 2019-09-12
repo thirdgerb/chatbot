@@ -156,10 +156,12 @@ class DialogSpeechImpl implements DialogSpeech
     public function askConfirm(
         string $question,
         bool $default = true,
-        string $yes = 'y',
-        string $no = 'n'
+        string $yes = null,
+        string $no = null
     )
     {
+        $yes = $yes ?? $this->dialog->session->chatbotConfig->defaultMessages->yes;
+        $no = $no ?? $this->dialog->session->chatbotConfig->defaultMessages->no;
         $question = new Confirm($question, $default, $yes, $no);
         $result = $this->ask($question);
         return $result;

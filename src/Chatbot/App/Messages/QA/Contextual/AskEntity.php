@@ -13,7 +13,7 @@ use Commune\Chatbot\OOHost\Session\Session;
 /**
  * 通过 intent 返回的 entity 来生成回答的结果.
  */
-class AskEntity extends VbQuestion
+class AskEntity extends VbQuestion implements ContextualQ
 {
     use ContextualTrait;
 
@@ -61,5 +61,6 @@ class AskEntity extends VbQuestion
             $session->setPossibleIntent($intent);
         }
     }
+
 
 }

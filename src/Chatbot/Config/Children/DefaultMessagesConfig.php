@@ -16,6 +16,8 @@ use Commune\Support\Option;
  * @property-read string $systemError
  * @property-read string $messageMissMatched
  * @property-read string $farewell
+ * @property-read string $yes
+ * @property-read string $no
  *
  */
 class DefaultMessagesConfig extends Option
@@ -28,6 +30,8 @@ class DefaultMessagesConfig extends Option
             'systemError' => 'system.systemError',
             'farewell' => 'dialog.farewell',
             'messageMissMatched' => 'dialog.missMatched',
+            'yes' => 'ask.yes',
+            'no' => 'ask.no',
         ];
     }
 

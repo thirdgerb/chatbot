@@ -6,6 +6,9 @@ namespace Commune\Demo\App\Cases\Maze;
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Contexts\TaskDef;
+use Commune\Chatbot\App\Intents\ActionIntent;
+use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
@@ -13,10 +16,11 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Demo\App\Cases\Maze\Intents\LocationInt;
-use Commune\Demo\App\Cases\Maze\Intents\TowardBackInt;
-use Commune\Demo\App\Cases\Maze\Intents\TowardFrontInt;
-use Commune\Demo\App\Cases\Maze\Intents\TowardLeftInt;
-use Commune\Demo\App\Cases\Maze\Intents\TowardRightInt;
+use Commune\Demo\App\Cases\Maze\Intents\MazeBackInt;
+use Commune\Demo\App\Cases\Maze\Intents\MazeFrontInt;
+use Commune\Demo\App\Cases\Maze\Intents\MazeLeftInt;
+use Commune\Demo\App\Cases\Maze\Intents\MazeRightInt;
+use Commune\Demo\App\Cases\Maze\Intents\TowardsInt;
 use Commune\Demo\App\Cases\Maze\Logic\Manager;
 
 /**
@@ -29,8 +33,10 @@ use Commune\Demo\App\Cases\Maze\Logic\Manager;
  * @property-read string[] $items
  * @property-read null|int $score
  */
-class MazeTask extends TaskDef
+class MazeInt extends ActionIntent
 {
+
+    const SIGNATURE = 'maze';
     const DESCRIPTION = '迷宫小游戏';
 
 
@@ -87,7 +93,7 @@ class MazeTask extends TaskDef
             '带着面罩进入了充满雾气的房间',
         ],
         Manager::CELL_DARKNESS => [
-            '这个房间里乌漆嘛黑, 什么也看不见',
+            '这个房间里黑咕隆咚, 什么也看不见',
             '火把的光芒着照亮了黑暗的房间',
         ],
         Manager::CELL_ICE => [
@@ -142,7 +148,7 @@ class MazeTask extends TaskDef
             ->otherwise();;
     }
 
-    public function __onStart(Stage $stage): Navigator
+    public function action(Stage $stage): Navigator
     {
         return $stage->buildTalk()
             ->info($this->welcome)
@@ -204,28 +210,39 @@ class MazeTask extends TaskDef
                     '右',
                 ],
                 [
-                    TowardFrontInt::getContextName(),
-                    TowardBackInt::getContextName(),
-                    TowardLeftInt::getContextName(),
-                    TowardRightInt::getContextName(),
+                    MazeFrontInt::getContextName(),
+                    MazeBackInt::getContextName(),
+                    MazeLeftInt::getContextName(),
+                    MazeRightInt::getContextName(),
+
                 ]
             )
             ->hearing()
-            ->todo($this->doToward(Manager::TOWARD_FRONT))
-                ->isIntent(TowardFrontInt::class)
+
+            ->isIntent(TowardsInt::class, function(Dialog $dialog, TowardsInt $towards) : ? Navigator{
+                return $this->parseTowardAndGo($dialog, $towards->toward);
+
+            })
+
+            ->todo($this->hearToward(Manager::TOWARD_FRONT))
+                ->isIntent(MazeFrontInt::class)
                 ->isChoice(0)
 
-            ->todo($this->doToward(Manager::TOWARD_BACK))
-                ->isIntent(TowardBackInt::class)
+            ->todo($this->hearToward(Manager::TOWARD_BACK))
+                ->isIntent(MazeBackInt::class)
                 ->isChoice(1)
 
-            ->todo($this->doToward(Manager::TOWARD_LEFT))
-                ->isIntent(TowardLeftInt::class)
+            ->todo($this->hearToward(Manager::TOWARD_LEFT))
+                ->isIntent(MazeLeftInt::class)
                 ->isChoice(2)
 
-            ->todo($this->doToward(Manager::TOWARD_RIGHT))
-                ->isIntent(TowardRightInt::class)
+            ->todo($this->hearToward(Manager::TOWARD_RIGHT))
+                ->isIntent(MazeRightInt::class)
                 ->isChoice(3)
+
+            ->isInstanceOf(VerboseMsg::class, function(Message $message, Dialog $dialog){
+                return $this->parseTowardAndGo($dialog, $message->getText());
+            })
 
             ->end(function(Dialog $dialog){
                 $dialog->say()
@@ -234,7 +251,7 @@ class MazeTask extends TaskDef
             });
     }
 
-    protected function doToward(int $toward) : \Closure
+    protected function hearToward(int $toward) : \Closure
     {
         return function(Dialog $dialog) use ($toward) {
             return $this->goToward($dialog, $toward);
@@ -276,6 +293,26 @@ class MazeTask extends TaskDef
     {
     }
 
+    protected function parseTowardAndGo(Dialog $dialog, string $input) : ? Navigator
+    {
+        if (strstr($input, '前')) {
+            return $this->goToward($dialog, Manager::TOWARD_FRONT);
+        }
+
+        if (strstr($input, '后')) {
+            return $this->goToward($dialog, Manager::TOWARD_BACK);
+        }
+
+        if (strstr($input, '左')) {
+            return $this->goToward($dialog, Manager::TOWARD_LEFT);
+        }
+
+        if (strstr($input, '右')) {
+            return $this->goToward($dialog, Manager::TOWARD_RIGHT);
+        }
+
+        return null;
+    }
 
 
     public function goToward(Dialog $dialog, int $toward) : Navigator

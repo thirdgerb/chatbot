@@ -123,7 +123,8 @@ class IntentRegistrarImpl extends ContextRegistrarImpl implements IntentRegistra
         $origin = $session->incomingMessage->message;
         $entities = $expectDef->getMatcher()->match($origin);
         if (isset($entities)) {
-            return $expectDef->newContext($entities);
+            $matched = $expectDef->newContext($entities);
+            return $matched;
         }
 
         return null;

@@ -7,6 +7,11 @@ namespace Commune\Chatbot\Framework\Utils;
 class StringUtils
 {
 
+    public static function couldBeString($value) : bool
+    {
+        return is_scalar($value) || (is_object($value) && method_exists($value, '__toString'));
+    }
+
     public static function namespaceSlashToDot(string $name) : string
     {
         return str_replace('\\', '.', $name);
@@ -32,7 +37,7 @@ class StringUtils
     {
         $matches = [];
         preg_match_all(
-            '/@property[^\$]+\$(\w+)(.*)/',
+            '/@property\s+[^\$]+\$(\w+)(.*)/',
             $docComment,
             $matches,
             PREG_SET_ORDER

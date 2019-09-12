@@ -18,7 +18,7 @@ abstract class AbsQuestion extends AbsMessage implements Question
     /**
      * @var string
      */
-    protected $question;
+    protected $query;
 
     /**
      * @var array
@@ -60,7 +60,7 @@ abstract class AbsQuestion extends AbsMessage implements Question
         $default = null
     )
     {
-        $this->question = $question;
+        $this->query = $question;
         $this->suggestions = $suggestions;
         $this->default = $default;
         $this->nullable = isset($this->default);
@@ -69,7 +69,7 @@ abstract class AbsQuestion extends AbsMessage implements Question
 
     public function getQuery(): string
     {
-        return $this->question;
+        return $this->query;
     }
 
 
@@ -106,7 +106,7 @@ abstract class AbsQuestion extends AbsMessage implements Question
     {
         return [
             'id' => $this->getId(),
-            'question' => $this->question,
+            'question' => $this->query,
             'suggestions' => $this->suggestions,
             'default' => $this->getDefaultValue(),
             'defaultChoice' => $this->getDefaultChoice(),
@@ -149,5 +149,18 @@ abstract class AbsQuestion extends AbsMessage implements Question
         ];
     }
 
+    /**
+     * 只应该保留对 parse answer 有用的信息, 而不需要保留其它信息.
+     * @return array
+     */
+    public function __sleep()
+    {
+        return [
+            'query',
+            'suggestions',
+            'default',
+            'nullable',
+        ];
+    }
 
 }

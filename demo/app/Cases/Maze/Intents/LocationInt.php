@@ -4,11 +4,8 @@
 namespace Commune\Demo\App\Cases\Maze\Intents;
 
 
-use Commune\Chatbot\App\Intents\MessageIntent;
-
-class LocationInt extends MessageIntent
+class LocationInt extends AbsMazeInt
 {
     const SIGNATURE = 'location';
     const DESCRIPTION = '查看坐标';
-
 }

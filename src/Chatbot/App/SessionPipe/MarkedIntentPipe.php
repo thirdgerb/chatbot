@@ -7,7 +7,6 @@ namespace Commune\Chatbot\App\SessionPipe;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
-use Illuminate\Support\Collection;
 
 class MarkedIntentPipe implements SessionPipe
 {

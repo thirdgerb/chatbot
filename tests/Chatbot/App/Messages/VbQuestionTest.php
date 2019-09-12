@@ -16,6 +16,7 @@ class VbQuestionTest extends TestCase
     public function testVbQuestion()
     {
         $session = \Mockery::mock(Session::class);
+        $session->expects('getPossibleIntent')->andReturn(null);
 
         /**
          * @var \stdClass $incoming

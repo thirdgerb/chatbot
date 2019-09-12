@@ -19,6 +19,7 @@ class SelectsTest extends TestCase
 
 
         $session = Mockery::mock(Session::class);
+        $session->expects('getPossibleIntent')->andReturn(null);
         $incoming = Mockery::mock(IncomingMessage::class);
         /**
          * @var \stdClass $incoming

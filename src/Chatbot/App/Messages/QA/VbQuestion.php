@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\App\Messages\QA;
 
 
+use Commune\Chatbot\App\Components\Predefined\Dialogue\OrdinalInt;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
@@ -27,6 +28,9 @@ class VbQuestion extends AbsQuestion
      */
     protected $onlySuggestion = false;
 
+    /**
+     * @var int|null|string
+     */
     protected $defaultChoice;
 
     /**
@@ -96,7 +100,39 @@ class VbQuestion extends AbsQuestion
                 return null;
             }
         }
-        return $this->answer = $this->doParseAnswer($message);
+
+
+
+        return $this->answer = $this->parseAnswerByOrdinal($session)
+            ?? $this->doParseAnswer($message);
+    }
+
+    protected function parseAnswerByOrdinal(Session $session) : ? Answer
+    {
+        /**
+         * @var OrdinalInt $ordinal
+         */
+        $ordinal = $session->getPossibleIntent(OrdinalInt::getContextName());
+        if (isset($ordinal) && isset($ordinal->ordinal)) {
+            $index = $ordinal->ordinal[0];
+            if (empty($index)) {
+                return null;
+            }
+
+            $max = count($this->suggestions);
+            $abs = abs($index);
+            if ($abs > 0 && $abs <= $max) {
+                $indexes = array_keys($this->suggestions);
+                $suggestions = array_values($this->suggestions);
+                $order = $index > 0 ? $index -1 : ($max + $index);
+                return $this->newAnswer(
+                    $session->incomingMessage->message,
+                    $suggestions[$order],
+                    $indexes[$order]
+                );
+            }
+        }
+        return null;
     }
 
     protected function doParseAnswer(Message $message) : ? Answer
@@ -174,4 +210,10 @@ class VbQuestion extends AbsQuestion
         return $this->answer;
     }
 
+    public function __sleep()
+    {
+        $properties = parent::__sleep();
+        $properties[] = 'defaultChoice';
+        return $properties;
+    }
 }

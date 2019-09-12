@@ -347,6 +347,30 @@ class HearingHandler implements Hearing
         return $this->heardIntent($intent, $intentAction);
     }
 
+    public function isFulfillIntent(
+        string $intentName,
+        callable $intentAction = null
+    ): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        $session = $this->dialog->session;
+        $intent = $session->getPossibleIntent($intentName);
+
+        // 没有命中.
+        if (!isset($intent)) {
+            return $this;
+        }
+
+        if ($intent->isPrepared()) {
+            // 命中了.
+            return $this->heardIntent($intent, $intentAction);
+        }
+
+        $this->setNavigator($this->dialog->redirect->dependOn($intent));
+        return $this;
+    }
+
 
     /**
      * 共享同一个拦截器.

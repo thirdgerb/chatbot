@@ -10,6 +10,6 @@ class DontInt extends AttitudeInt implements Negative
 {
     const SIGNATURE = 'dont';
 
-    const DESCRIPTION = '不要';
+    const DESCRIPTION = '拒绝';
 
 }

@@ -11,6 +11,7 @@ use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Exceptions\LogicException;
+use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Chatbot\OOHost\Context\Context;
 
 use Commune\Chatbot\OOHost\Context\ContextRegistrar;
@@ -567,6 +568,10 @@ class SessionImpl implements Session, HasIdGenerator
 
     }
 
+    public function __sleep()
+    {
+        throw new RuntimeException('try to serialize session which is forbidden, this occur usually because the serializing object use session as property');
+    }
 
 
     public function __destruct()

@@ -118,7 +118,7 @@ class ConversationImpl implements Blueprint
 
     public function fire(object $event): void
     {
-        $this->getEventDispatcher()->withConversation($this)->dispatch($event);
+        $this->getEventDispatcher()->dispatch($event, $this);
     }
 
     public function getLogger(): ConversationLogger

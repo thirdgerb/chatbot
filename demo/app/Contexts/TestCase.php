@@ -13,7 +13,8 @@ use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
-use Commune\Demo\App\Cases\Maze\MazeTask;
+use Commune\Demo\App\Cases\Maze\MazeInt;
+use Commune\Demo\App\Cases\Wheather\TellWeatherInt;
 use Commune\Demo\App\Memories\Sandbox;
 
 /**
@@ -57,6 +58,13 @@ class TestCase extends TaskDef
             function(Dialog $dialog, Message $message){
 
                 return $dialog->hear($message)
+
+                    ->isFulfillIntent(TellWeatherInt::class, function(Dialog $dialog) {
+                        $dialog->say()->info('命中已完成的天气测试');
+
+                        return $dialog->repeat();
+                    })
+
                     ->runAnyIntent()
                     ->runIntentIn(['Commune.Demo'])
 
@@ -151,7 +159,7 @@ class TestCase extends TaskDef
 
     public function __onMaze(Stage $stage) : Navigator
     {
-        return $stage->dependOn(MazeTask::class, function(Dialog $dialog){
+        return $stage->dependOn(MazeInt::class, function(Dialog $dialog){
             $dialog->say()->info('迷宫小游戏退出');
             return $dialog->goStage('menu');
         });

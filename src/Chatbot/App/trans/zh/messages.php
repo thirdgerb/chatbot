@@ -35,6 +35,8 @@ return [
         'needs' => '您可能需要:',
         'needMore' => '您还有别的需要吗?',
         'continue' => '输入 "." 继续',
+        'yes' => 'y',
+        'no' => 'n',
     ],
 
     'question' => [

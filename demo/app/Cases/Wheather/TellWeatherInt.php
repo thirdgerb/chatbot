@@ -229,7 +229,7 @@ EOF
 
                 return $dialog->redirect->replaceTo($intent, Redirect::NODE_LEVEL);
             })
-            ->is('b', [Redirector::class, 'cancel']);
+            ->is('b', [Redirector::class, 'fulfill']);
     }
 
     protected function matchCity(string $text) : ? string

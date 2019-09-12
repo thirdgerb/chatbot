@@ -3,7 +3,6 @@
 
 namespace Commune\Chatbot\OOHost\Context\Intent;
 
-use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -18,6 +17,8 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  *
  * 这是因为在语音OS 等场景下, 意图匹配的结果不一定正确, 需要逐个校验.
  * 校验完就应该有个地方来设置.
+ *
+ * 理论上所有的来自匹配获得的 entity 都应该是数组.
  */
 interface IntentMessage extends Context
 {

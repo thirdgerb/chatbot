@@ -10,7 +10,7 @@ use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 
-class ChooseEntity extends Choose
+class ChooseEntity extends Choose  implements ContextualQ
 {
     use ContextualTrait;
 
@@ -66,6 +66,7 @@ class ChooseEntity extends Choose
         $origin = $this->getOriginIntent($session);
         if (isset($origin)) {
             $origin->__set($this->entityName, $value);
+            $session->setPossibleIntent($origin);
         }
     }
 

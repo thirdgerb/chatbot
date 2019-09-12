@@ -7,6 +7,7 @@ namespace Commune\Chatbot\OOHost\Context;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Chatbot\Framework\Messages\AbsMessage;
 use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Chatbot\OOHost\Context\Helpers\ScalarParser;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionData;
 use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
@@ -24,18 +25,20 @@ abstract class AbsContext extends AbsMessage implements Context
     const GETTER_PREFIX = '__get';
     const SETTER_PREFIX = '__set';
 
-    const CASTS_TYPES = [
-        'float' => 'floatval',
-        'int' => 'intval',
-        'string' => 'strval',
-        'bool' => 'boolval',
-    ];
+    const CAST_TYPE_STRING = 'string';
+    const CAST_TYPE_STRING_LIST = 'string[]';
+    const CAST_TYPE_INT = 'int';
+    const CAST_TYPE_INT_LIST = 'int[]';
+    const CAST_TYPE_FLOAT = 'float';
+    const CAST_TYPE_FLOAT_LIST = 'float[]';
+    const CAST_TYPE_BOOL = 'bool';
+    const CAST_TYPE_BOOL_LIST = 'bool[]';
 
     /**
      * 需要进行类型转换的属性.
      */
     const CASTS = [
-        // 'property name' => 'float' ## scalar type such as float
+        // 'property name' => 'float[]' ## defined type from CASTS_TYPES, such as float[]
     ];
 
     /**
@@ -122,7 +125,7 @@ abstract class AbsContext extends AbsMessage implements Context
         $value = $this->_attributes[$name] ?? null;
 
         if (is_null($value)) {
-            return $this->cast($name, $value);
+            return null;
         }
 
         if ($value instanceof SessionDataIdentity) {
@@ -133,11 +136,16 @@ abstract class AbsContext extends AbsMessage implements Context
             $value = $value->toInstance($this->_session);
         }
 
-        return $value;
+        return $this->cast($name, $value);
     }
 
     /**
      * 赋值的时候进行类型转换.
+     *
+     * 意图匹配时很可能获取一个或者多个同类型实体. 每个实体都是字符串.
+     * 而实际需求的值是数组或需要转换的 scalar type.
+     * 所以在赋值时做检查, 在取值时做过滤.
+     *
      * @param string $name
      * @param mixed $value
      * @return mixed
@@ -146,36 +154,39 @@ abstract class AbsContext extends AbsMessage implements Context
     {
         if (array_key_exists($name, static::CASTS)) {
 
-            if (is_null($value)) {
-                return null;
+            $type = static::CASTS[$name] ?? null;
+
+            if (empty($type)) {
+                return $value;
             }
 
-            // 数组的情况. 有时候 NLU 返回的是一个数组, 但接受的却是一个 scalar 值.
-            // 总之还是很脏. NLU 应该避免导致脏值的场景.
-            if (is_array($value)) {
-                $value = current($value);
-            }
-
-            if (!is_scalar($value)) {
-                $type = gettype($value);
-                $this->getSession()->logger->error(
-                    static::class
-                    . " try to cast property $name to scalar value failed, type $type given"
-                );
-                return null;
-            }
-
-            $type = static::CASTS[$name];
-            $action = static::CASTS_TYPES[$type] ?? null;
-            if (isset($action)) {
-                return call_user_func($action, $value);
+            switch($type) {
+                case self::CAST_TYPE_STRING :
+                    return ScalarParser::toString($value);
+                case self::CAST_TYPE_STRING_LIST :
+                    return ScalarParser::toStringArr($value);
+                case self::CAST_TYPE_INT :
+                    return ScalarParser::toInt($value);
+                case self::CAST_TYPE_INT_LIST :
+                    return ScalarParser::toIntArr($value);
+                case self::CAST_TYPE_FLOAT :
+                    return ScalarParser::toFloat($value);
+                case self::CAST_TYPE_FLOAT_LIST :
+                    return ScalarParser::toFloatArr($value);
+                case self::CAST_TYPE_BOOL :
+                    return ScalarParser::toBool($value);
+                case self::CAST_TYPE_BOOL_LIST :
+                    return ScalarParser::toBoolArr($value);
+                default :
+                    $this->getSession()->logger->error(
+                        static::class
+                        . " try to cast property $name to scalar value failed, type $type given"
+                    );
+                    return null;
             }
         }
-
         return $value;
     }
-
-
 
     public function setAttribute(string $name, $value) : void
     {
@@ -188,8 +199,43 @@ abstract class AbsContext extends AbsMessage implements Context
             $this->_session->repo->cacheSessionData($value);
         }
 
+
+        // 检查赋值的类型是否正确.
+        if (array_key_exists($name, static::CASTS)) {
+            $this->scalarCheck($name, $value);
+        }
+
         $this->_changed = true;
-        $this->_attributes[$name] = $this->cast($name, $value);
+        $this->_attributes[$name] = $value;
+    }
+
+    protected function scalarCheck(string $name, $value) : void
+    {
+        if (is_array($value)) {
+            foreach ($value as $i) {
+                if (! is_scalar($i)) {
+                    $this->scalarWarning($name, $value);
+                    return;
+                }
+            }
+
+        } else {
+            if (! is_scalar($value)) {
+                $this->scalarWarning($name, $value);
+            }
+        }
+    }
+
+    protected function scalarWarning(string $name, $value) : void
+    {
+        if (!$this->isInstanced()) {
+            return;
+        }
+        $type = is_object($value) ? get_class($value) : gettype($value);
+        $this->getSession()->logger->warning(
+            static::class
+            . " try to set property $name with non scalar value type $type"
+        );
     }
 
     public function hasAttribute(string $name)

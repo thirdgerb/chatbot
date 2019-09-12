@@ -10,7 +10,7 @@ use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 
-class ConfirmIntent extends Confirm
+class ConfirmIntent extends Confirm  implements ContextualQ
 {
    use ContextualTrait;
 
