@@ -53,7 +53,7 @@ class IntentRegistrarImpl extends ContextRegistrarImpl implements IntentRegistra
         // 如果都没有注册的, 则用个占位符.
         return $intent ?? new PlaceHolderIntent(
             $first,
-            $nlu->getIntentEntities($first)
+            $nlu->getIntentEntities($first)->all()
         );
     }
 
