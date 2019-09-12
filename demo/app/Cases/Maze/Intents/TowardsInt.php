@@ -12,7 +12,7 @@ class TowardsInt extends AbsMazeInt
     const SIGNATURE = 'towards {toward : 前进的方向}';
     const DESCRIPTION = '前进的方向';
 
-    protected $_casts = ['toward' => 'string'];
+    const CASTS = ['toward' => 'string'];
 
     public static function getContextName(): string
     {

@@ -5,6 +5,7 @@ namespace Commune\Chatbot\Framework\Providers;
 
 
 use Commune\Chatbot\Config\ChatbotConfig;
+use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\Contracts\Translator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
@@ -101,7 +102,7 @@ trait TranslationLoader
      */
     protected function getLogger($app) : LoggerInterface
     {
-        return $app->make(LoggerInterface::class);
+        return $app->make(ConsoleLogger::class);
     }
 
     /**
