@@ -7,8 +7,6 @@ namespace Commune\Chatbot\OOHost\Context\Entities;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
-use Commune\Chatbot\OOHost\Context\AbsContext;
-use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Entity;
@@ -111,7 +109,7 @@ class DependingBuilder implements Depending
         $this->memoryNeverDependOnMemory();
 
         $this->definition->addEntity(
-            new PropertyEtt($name, '', $memoryName, $memoryKey)
+            new PropertyEtt($name, '', null, $memoryName, $memoryKey)
         );
         return $this;
     }

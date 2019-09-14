@@ -28,7 +28,7 @@ class DemoComponent extends SelfRegisterComponent
     public static function stub(): array
     {
         return [
-            'langPath' => __DIR__ .'/../langs',
+            'langPath' => realpath(__DIR__ .'/../langs'),
             'langLoader' => Translator::FORMAT_PHP,
         ];
     }

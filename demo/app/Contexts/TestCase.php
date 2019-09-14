@@ -16,23 +16,33 @@ use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Demo\App\Cases\Maze\MazeInt;
 use Commune\Demo\App\Cases\Wheather\TellWeatherInt;
 use Commune\Demo\App\Memories\Sandbox;
+use Commune\Demo\App\Memories\UserInfo;
 
 /**
- * 用于测试功能的简单 test case
- *
- * @property string $name  请输入您的名字, 测试depend 功能.
+ * @property-read UserInfo $userInfo
  */
 class TestCase extends TaskDef
 {
     public static function __depend(Depending $depending): void
     {
-        $depending->onAnnotations();
+        $depending->onMemory('userInfo', UserInfo::class);
     }
+
+
+    public function __exiting(Exiting $listener): void
+    {
+        $listener
+            ->onQuit(function(Dialog $dialog){
+                $dialog->say()->info('bye from event');
+            })
+            ->onCancel(Redirector::goQuit());
+    }
+
 
     public function __onStart(Stage $stage): Navigator
     {
         return $stage->buildTalk()
-            ->info('您好!'.$this->name)
+            ->info('您好!'.$this->userInfo->name)
             ->goStage('menu');
     }
 
@@ -241,13 +251,6 @@ class TestCase extends TaskDef
                 });
 
         return $result;
-    }
-
-    public function __exiting(Exiting $listener): void
-    {
-        $listener->onQuit(function(Dialog $dialog){
-            $dialog->say()->info('bye from event');
-        });
     }
 
 

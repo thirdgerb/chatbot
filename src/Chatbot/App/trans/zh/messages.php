@@ -31,6 +31,7 @@ return [
     ],
 
     'ask' => [
+        'name' => '您好! 请问我该如何称呼您',
         'entity' => '请输入{entity_name}',
         'needs' => '您可能需要:',
         'needMore' => '您还有别的需要吗?',
