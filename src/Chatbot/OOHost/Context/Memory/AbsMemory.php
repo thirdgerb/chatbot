@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context\Memory;
 
 
+use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\AbsContext;
 use Commune\Chatbot\OOHost\Context\Exiting;
@@ -14,6 +15,7 @@ use Commune\Chatbot\OOHost\Session\SessionInstance;
 
 abstract class AbsMemory extends AbsContext implements Memory
 {
+    const MEMORY_LOCKER_PREFIX = 'commune:chatbot:memory:lock:';
 
     public function getId(): string
     {
@@ -86,5 +88,29 @@ abstract class AbsMemory extends AbsContext implements Memory
             static::class
         ];
     }
+
+    public function lock(int $expire = 1): bool
+    {
+        $this->hasInstanced();
+        $cache = $this->getCacheAdapter();
+        return $cache->lock($this->getLockerName(), $expire);
+    }
+
+    public function unlock(): void
+    {
+        $this->hasInstanced();
+        $this->getCacheAdapter()->unlock($this->getLockerName());
+    }
+
+    protected function getLockerName() : string
+    {
+        return self::MEMORY_LOCKER_PREFIX . $this->getId();
+    }
+
+    protected function getCacheAdapter() : CacheAdapter
+    {
+        return $this->getSession()->conversation->make(CacheAdapter::class);
+    }
+
 
 }

@@ -173,7 +173,11 @@ class Scope implements ArrayAndJsonAble
         }
 
         // 用chatId 隔离其他用户.
-        $hash = "$type:{$this->chatId}";
+        // $hash = "$type:{$this->chatId}";
+
+
+        // 不再隔离用户. 要增加一个默认的 lock 方法.
+        $hash = "$type:";
         foreach ($scopes as $scope) {
             $hash.= ':' . $scope . ':' . $this->{$scope};
         }
