@@ -201,6 +201,14 @@ class MazeInt extends ActionIntent
     public function __onPlay(Stage $stage) : Navigator
     {
         return $stage->buildTalk()
+            // 并非必要, 只是为了测试.
+            // 其实一个 towardInt 就够了.
+
+            // 使用这种方式build, 上下文中有以下几种情况可以命中选项:
+            // 1. 命中了 供选择的intent, 例如 MazeFrontInt
+            // 2. 命中了 选项  0, 1, 2, 3
+            // 3. 命中了 意图 TowardsInt
+            // 4. 命中了 意图 ordinalInt, 说第一个, 第二个等等.
             ->askChooseIntents(
                 $this->thenWhat,
                 [
@@ -240,11 +248,13 @@ class MazeInt extends ActionIntent
                 ->isIntent(MazeRightInt::class)
                 ->isChoice(3)
 
+            ->otherwise()
             ->isInstanceOf(VerboseMsg::class, function(Message $message, Dialog $dialog){
                 return $this->parseTowardAndGo($dialog, $message->getText());
             })
 
             ->end(function(Dialog $dialog){
+
                 $dialog->say()
                     ->warning($this->noticeMessage);
                 return $dialog->wait();

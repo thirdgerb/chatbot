@@ -121,7 +121,11 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         $result = $this->callContextCallable(
             $self,
             $interceptor,
-            $message,
+            // 当外部不传 message 时, 通常是一个 fallback 的场景.
+            // onFallback 的时候也允许使用默认的incoming message
+            // 可以真正起到fallback 的效果, 同时又可以让 interceptor 的api 一致化.
+            // 避免 message 不存在导致 fatal error 或逻辑谬误
+            $message ?? $this->session->incomingMessage->message,
             __METHOD__
         );
 

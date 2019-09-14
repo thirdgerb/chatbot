@@ -7,9 +7,9 @@ namespace Commune\Chatbot\OOHost\Context;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Callables\Interceptor;
 use Commune\Chatbot\OOHost\Context\Callables\StageComponent;
-use Commune\Chatbot\OOHost\Context\Stages\CallbackStage;
+use Commune\Chatbot\OOHost\Context\Stages\CallbackStageRoute;
 use Commune\Chatbot\OOHost\Context\Stages\OnStartStage;
-use Commune\Chatbot\OOHost\Context\Stages\StartStage;
+use Commune\Chatbot\OOHost\Context\Stages\StartStageRoute;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -21,8 +21,8 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  * @property-read null|Message $value
  * @property-read Navigator|null $navigator
  *
- * @see StartStage
- * @see CallbackStage
+ * @see StartStageRoute
+ * @see CallbackStageRoute
  */
 interface Stage
 {

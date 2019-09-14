@@ -20,6 +20,7 @@ use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
 use Commune\Chatbot\Blueprint\Conversation\User;
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\EventDispatcher;
@@ -59,6 +60,11 @@ class ConversationImpl implements Blueprint
      * @var Message[]
      */
     protected $replies = [];
+
+    /**
+     * @var bool
+     */
+    protected $asked = false;
 
     /**
      * @var ConversationMessage[]
@@ -216,8 +222,11 @@ class ConversationImpl implements Blueprint
 
     public function reply(Message $message, bool $immediately = false): void
     {
-        $messages = $this->render($message);
+        if ($message instanceof Question) {
+            $this->asked = true;
+        }
 
+        $messages = $this->render($message);
 
         foreach ($messages as $msg) {
             $request = $this->getRequest();
@@ -232,6 +241,12 @@ class ConversationImpl implements Blueprint
             $this->saveConversationReply($request, $replyMessage, $immediately);
         }
     }
+
+    public function hasAsked(): bool
+    {
+        return $this->asked;
+    }
+
 
     protected function defaultSlots() : array
     {

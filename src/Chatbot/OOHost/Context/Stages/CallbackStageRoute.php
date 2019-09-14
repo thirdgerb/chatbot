@@ -5,7 +5,7 @@ namespace Commune\Chatbot\OOHost\Context\Stages;
 
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
-class CallbackStage extends AbsStage
+class CallbackStageRoute extends AbsStageRoute
 {
     public function hearing()
     {

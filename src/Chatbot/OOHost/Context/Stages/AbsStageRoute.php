@@ -12,7 +12,10 @@ use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
 
-abstract class AbsStage implements Stage
+/**
+ * Stage 路由
+ */
+abstract class AbsStageRoute implements Stage
 {
     /**
      * @var string string

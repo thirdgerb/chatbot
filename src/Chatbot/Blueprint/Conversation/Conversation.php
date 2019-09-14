@@ -149,6 +149,12 @@ interface Conversation extends ConversationContainer, RunningSpy
     public function countReplies() : int;
 
     /**
+     * 是否有向用户提出问题, 从而构成对话.
+     * @return bool
+     */
+    public function hasAsked() : bool;
+
+    /**
      * 清空所有要发送的消息
      */
     public function flushConversationReplies() : void;

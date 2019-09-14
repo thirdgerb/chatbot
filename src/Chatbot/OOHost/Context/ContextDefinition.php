@@ -12,8 +12,8 @@ use Commune\Chatbot\Framework\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Context\Exiting\ExitingCatcher;
 use Commune\Chatbot\OOHost\Exceptions\NavigatorException;
 use Commune\Chatbot\Framework\Exceptions\LogicException;
-use Commune\Chatbot\OOHost\Context\Stages\CallbackStage;
-use Commune\Chatbot\OOHost\Context\Stages\StartStage;
+use Commune\Chatbot\OOHost\Context\Stages\CallbackStageRoute;
+use Commune\Chatbot\OOHost\Context\Stages\StartStageRoute;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Illuminate\Support\Str;
@@ -244,7 +244,7 @@ class ContextDefinition implements Definition
 
         // 正常启动.
         // 理论上不会有死循环.
-        $stageRoute = new StartStage(
+        $stageRoute = new StartStageRoute(
             $stage,
             $self,
             $dialog
@@ -262,7 +262,7 @@ class ContextDefinition implements Definition
     {
         $this->checkStageExists($stage);
 
-        $stageRoute = new CallbackStage(
+        $stageRoute = new CallbackStageRoute(
             $stage,
             $self,
             $dialog,
