@@ -340,9 +340,9 @@ class History implements RunningSpy
      * 回退到上一个可用的 task.
      * -> intend -> block -> sleep -> root 的回调路径.
      *
-     * @return History
+     * @return History |null
      */
-    public function fallback() : History
+    public function fallback() : ? History
     {
         $process = $this->breakpoint->process();
         $thread = $process->wake();
@@ -351,7 +351,7 @@ class History implements RunningSpy
             return $this;
         }
 
-        return $this->home();
+        return null;
     }
 
 

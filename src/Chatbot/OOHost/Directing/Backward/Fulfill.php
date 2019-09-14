@@ -5,10 +5,9 @@ namespace Commune\Chatbot\OOHost\Directing\Backward;
 
 
 use Commune\Chatbot\OOHost\Context\Definition;
-use Commune\Chatbot\OOHost\Directing\AbsNavigator;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
-class Fulfill extends AbsNavigator
+class Fulfill extends FallbackNavigator
 {
     public function doDisplay(): ? Navigator
     {
@@ -25,8 +24,7 @@ class Fulfill extends AbsNavigator
             return $this->callbackCurrent($context);
         }
 
-        $this->history->fallback();
-        return $this->callbackCurrent();
+        return $this->then();
     }
 
 }

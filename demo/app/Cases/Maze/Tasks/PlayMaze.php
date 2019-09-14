@@ -93,7 +93,7 @@ class PlayMaze extends TaskDef
             '鞋子踩在房间的冰面上, 发出嘎吱嘎吱的响声',
         ],
         Manager::CELL_WALL => [
-            '门根本无法推开, 看来是条死路.',
+            '门外一片沉寂, 脚下是一个深不见底的悬崖.',
         ],
     ];
 

@@ -70,8 +70,14 @@ abstract class FallbackNavigator extends AbsNavigator
 
     protected function then() : ? Navigator
     {
-        $this->history->fallback();
-        return $this->callbackCurrent();
+        $history = $this->history->fallback();
+        if (isset($history)) {
+            return $this->callbackCurrent();
+        }
+
+        // 如果不能fallback, 说明没有起点了, 就直接退出.
+        // 测试一段时间.
+        return new Quit($this->dialog, $this->history);
     }
 
 }
