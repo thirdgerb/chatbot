@@ -6,3 +6,5 @@
 -   修复了 depend property entity with memory 的bug
 
 -   重大改动: history->fallback 如果无路可退了则会 quit 会话. 先看看效果.
+
+-   暴露了一个问题, translator 不能传入空的 pattern, 会导致 intl 错误. 调整了trans的逻辑, 但messages.php 文件需要开发者自己注意不要传空.

@@ -210,7 +210,7 @@ class PlayMaze extends TaskDef
             // 3. 命中了 意图 TowardsInt
             // 4. 命中了 意图 ordinalInt, 说第一个, 第二个等等.
             ->askChooseIntents(
-                $this->thenWhat,
+                '',
                 [
                     '前',
                     '后',

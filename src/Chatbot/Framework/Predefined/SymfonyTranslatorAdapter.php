@@ -46,6 +46,12 @@ class SymfonyTranslatorAdapter implements Contract
         string $locale = null
     ): string
     {
+
+        // 空内容不校验.
+        if (empty($id)) {
+            return $id;
+        }
+
         $params = [];
         // 过滤掉不合适翻译用的值.
         $marker = static::MARKER;
