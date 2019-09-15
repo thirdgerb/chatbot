@@ -18,11 +18,11 @@ interface Redirect
     const NODE_LEVEL = 'node';
 
     /**
-     *
-     * @param Context|string $dependency
+     * @param $dependency
+     * @param array|null $certainStages 可以指定运行的 stage. 通常不需要设置.
      * @return Navigator
      */
-    public function dependOn($dependency) : Navigator;
+    public function dependOn($dependency, array $certainStages = null) : Navigator;
 
     /**
      * 忘记当前的thread, 进入一个新的thread

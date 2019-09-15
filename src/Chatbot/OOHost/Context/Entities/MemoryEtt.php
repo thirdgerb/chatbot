@@ -26,6 +26,8 @@ class MemoryEtt implements Entity
      */
     protected $memoryName;
 
+    protected $question = '';
+
     /**
      * MemoryEtt constructor.
      * @param string $name

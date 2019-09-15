@@ -138,11 +138,13 @@ interface Stage
      *
      * @param string|Context $dependency
      * @param callable|null $callback
+     * @param array|null $stages  是否要指定 stages. 通常不用.
      * @return Navigator
      */
     public function dependOn(
         $dependency,
-        callable $callback = null
+        callable $callback = null,
+        array $stages = null
     ) : Navigator;
 
 

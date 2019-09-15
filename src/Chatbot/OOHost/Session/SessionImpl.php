@@ -502,7 +502,6 @@ class SessionImpl implements Session, HasIdGenerator
                     );
 
                 $this->logTracking();
-
                 $snapshot = null;
 
 
@@ -539,11 +538,17 @@ class SessionImpl implements Session, HasIdGenerator
 
     protected function logTracking() : void
     {
+        if (!$this->hostConfig->logRedirectTracking ) {
+            return;
+        }
+
+        $trackingData = $this->getHistory()->tracker->tracking;
+        $count = count($trackingData);
         $tracking = implode('|', array_map(function($tracker){
             return json_encode($tracker);
-        }, $this->getHistory()->tracker->tracking));
+        }, $trackingData));
 
-        $this->getLogger()->info("sessionTracking $tracking");
+        $this->getLogger()->info("sessionTracking $count times : $tracking");
     }
 
 

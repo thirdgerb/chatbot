@@ -89,9 +89,10 @@ interface Depending
      * @param string $name
      * @param string $memoryName
      * @param string $memoryKey
+     * @param string|null $question
      * @return Depending
      */
-    public function onMemoryVal(string $name, string $memoryName, string $memoryKey) : Depending;
+    public function onMemoryVal(string $name, string $memoryName, string $memoryKey, string $question = '') : Depending;
 
 
     /**

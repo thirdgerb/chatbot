@@ -65,7 +65,8 @@ class GoStagePipes extends AbsNavigator
         return $caller->startStage(
             $context,
             $this->dialog,
-            $this->history->currentTask()->getStage()
+            $this->history->currentTask()->getStage(),
+            false // 不需要检查 depending
         );
     }
 

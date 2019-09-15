@@ -15,6 +15,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  * 可以通过在 context 里定义 __on{$name} 方法, 来重定义该entity的stage
  *
  * @property-read string $name
+ * @property-read string $question
  */
 interface Entity
 {

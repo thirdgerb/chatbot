@@ -3,9 +3,10 @@
 
 
 return [
-    'debug' => true,
 
     'chatbotName' => 'demo',
+
+    'debug' => true,
 
     'configBindings' => [
         \Commune\Chatbot\App\Platform\ConsoleConfig::class => [

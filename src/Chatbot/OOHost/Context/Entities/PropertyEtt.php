@@ -7,6 +7,7 @@ use Commune\Chatbot\App\Messages\QA\VbQuestion;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\Context;
@@ -80,7 +81,7 @@ class PropertyEtt implements Entity
     )
     {
         $this->name = $name;
-        $this->question = empty($question) ? 'ask.entity' : $question;
+        $this->question = $question;
         $this->default = $default;
         $this->memoryName = $memoryName;
         $this->memoryKey = !empty($memoryKey) ? $memoryKey : $this->name;
@@ -90,7 +91,6 @@ class PropertyEtt implements Entity
 
     public function asStage(Stage $stageRoute) : Navigator
     {
-
         // context 定义的 stage 最高优.
         // stage method 存在的时候, stage 使用该方法.
         $stageMethod = Context::STAGE_METHOD_PREFIX . $this->name;
@@ -99,8 +99,14 @@ class PropertyEtt implements Entity
         }
 
         // 如果数据存在, 则走下一步.
-        if (isset($stageRoute->self->{$this->name})) {
+        $value = $stageRoute->self->{$this->name};
+        if (isset($value)) {
             return $stageRoute->dialog->next();
+        }
+
+        // 如果是记忆的话, 用记忆的stage 取代当前的stage
+        if (!empty($this->memoryName)) {
+            return $stageRoute->dependOn($this->memoryName, null, [$this->memoryKey]);
         }
 
         // 默认用entity 自己的 stage 方法
@@ -189,9 +195,11 @@ class PropertyEtt implements Entity
             return;
         }
 
+        $question = empty($this->question) ? 'ask.entity' : $this->question;
+
         // 如果都没有, question 是个字符串, 就只好用默认提问.
         $dialog->say($this->getSlots())->ask(new VbQuestion(
-            $this->question,
+            $question,
             [],
             null
         ));
@@ -219,7 +227,7 @@ class PropertyEtt implements Entity
     public function set(Context $self, $value): void
     {
         if (!empty($this->memoryName)) {
-            $this->setMemory($self, $value);
+            $this->setMemoryVal($self, $value);
             return;
         }
         $self->setAttribute($this->name, $value);
@@ -228,7 +236,7 @@ class PropertyEtt implements Entity
     public function get(Context $self)
     {
         if (!empty($this->memoryName)) {
-            return $this->getMemory($self);
+            return $this->getMemoryVal($self);
         }
 
         return $self->getAttribute($this->name) ?? $this->default;
@@ -242,15 +250,19 @@ class PropertyEtt implements Entity
         return $self->hasAttribute($this->name) || $this->isOptional;
     }
 
+    protected function getMemoryDef(Context $self) : Definition
+    {
+        return $self->getSession()
+            ->memoryRepo
+            ->getDef($this->memoryName);
+    }
+
     protected function getMemoryObj(Context $self) : Memory
     {
         /**
          * @var Memory $memory
          */
-        $memoryDef = $self
-            ->getSession()
-            ->memoryRepo
-            ->getDef($this->memoryName);
+        $memoryDef = $this->getMemoryDef($self);
 
         if (!isset($memoryDef)) {
             throw new ConfigureException(
@@ -265,24 +277,24 @@ class PropertyEtt implements Entity
         }
 
         $memory = $memoryDef->newContext();
-        return $memory;
+        return $memory->toInstance($self->getSession());
     }
 
-    protected function setMemory(Context $self, $value): void
+    protected function setMemoryVal(Context $self, $value): void
     {
-        $memory = $this->getMemoryObj($self)->toInstance($self->getSession());
+        $memory = $this->getMemoryObj($self);
         $memory->__set($this->memoryKey, $value);
     }
 
-    protected function getMemory(Context $self)
+    protected function getMemoryVal(Context $self)
     {
-        $memory = $this->getMemoryObj($self)->toInstance($self->getSession());
+        $memory = $this->getMemoryObj($self);
         return $memory->__get($this->memoryKey) ?? null;
     }
 
     protected function memoryExists(Context $self): bool
     {
-        $memory = $this->getMemoryObj($self)->toInstance($self->getSession());
+        $memory = $this->getMemoryObj($self);
         return $memory->__isset($this->memoryKey);
     }
 

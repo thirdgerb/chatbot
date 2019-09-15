@@ -172,17 +172,18 @@ interface Definition
 
     /**
      * 启动一个stage
-     * 会先检查Entity
      *
      * @param Context $self
      * @param Dialog $dialog
      * @param string $stage
+     * @param bool $dependingCheck 是否先检查 depending entity
      * @return Navigator
      */
     public function startStage(
         Context $self,
         Dialog $dialog,
-        string $stage
+        string $stage,
+        bool $dependingCheck = true
     ) : Navigator;
 
     /**

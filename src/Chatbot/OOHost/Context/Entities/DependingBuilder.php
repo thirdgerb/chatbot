@@ -104,12 +104,12 @@ class DependingBuilder implements Depending
         return $this;
     }
 
-    public function onMemoryVal(string $name, string $memoryName, string $memoryKey): Depending
+    public function onMemoryVal(string $name, string $memoryName, string $memoryKey, string $question = ''): Depending
     {
         $this->memoryNeverDependOnMemory();
 
         $this->definition->addEntity(
-            new PropertyEtt($name, '', null, $memoryName, $memoryKey)
+            new PropertyEtt($name, $question, null, $memoryName, $memoryKey)
         );
         return $this;
     }

@@ -31,6 +31,8 @@ class ContextEtt implements Entity
      */
     protected $to;
 
+    protected $question = '';
+
     /**
      * ContextEtt constructor.
      * @param string $name

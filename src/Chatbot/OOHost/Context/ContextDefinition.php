@@ -227,12 +227,14 @@ class ContextDefinition implements Definition
     public function startStage(
         Context $self,
         Dialog $dialog,
-        string $stage
+        string $stage,
+        bool $dependingCheck = true
     ): Navigator
     {
         $this->checkStageExists($stage);
-        // 检查depending
-        if ($stage === Context::INITIAL_STAGE) {
+
+        // 检查depending entity
+        if ($dependingCheck && $stage === Context::INITIAL_STAGE) {
             $entity = $this->dependingEntity($self);
             if (!empty($entity)) {
                 return $dialog->goStagePipes(

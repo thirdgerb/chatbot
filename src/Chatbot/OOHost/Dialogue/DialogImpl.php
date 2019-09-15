@@ -427,13 +427,14 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     /*--------- redirect ---------*/
 
-    public function dependOn($dependency): Navigator
+    public function dependOn($dependency, array $stages = null): Navigator
     {
         $dependency = $this->wrapContext($dependency, __METHOD__);
         return new Directing\Redirects\DependOn(
             $this,
             $this->history,
-            $dependency
+            $dependency,
+            $stages ?? []
         );
     }
 

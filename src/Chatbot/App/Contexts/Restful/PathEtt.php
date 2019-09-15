@@ -27,7 +27,7 @@ class PathEtt implements Entity
     /**
      * @var string
      */
-    protected $askForValue ;
+    protected $question ;
 
     /**
      * PathEtt constructor.
@@ -38,7 +38,7 @@ class PathEtt implements Entity
     {
         $this->realName = $name;
         $this->name = 'pathValueOf'.ucfirst($name);
-        $this->askForValue = $askForValue;
+        $this->question = $askForValue;
     }
 
     protected function except(string $clazz)
@@ -78,7 +78,7 @@ class PathEtt implements Entity
     {
         return $stageRoute->buildTalk()
             ->withSlots(['name' => $this->realName])
-            ->askVerbose($this->askForValue)
+            ->askVerbose($this->question)
             ->wait()
             ->hearing()
             ->isAnswer(function(ResourceDef $self, Dialog $dialog, Answer $answer){

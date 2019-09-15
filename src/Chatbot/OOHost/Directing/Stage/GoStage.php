@@ -55,7 +55,8 @@ class GoStage extends AbsNavigator
         return $caller->startStage(
             $context,
             $this->dialog,
-            $this->stageName
+            $this->stageName,
+            false // 不需要检查
         );
     }
 

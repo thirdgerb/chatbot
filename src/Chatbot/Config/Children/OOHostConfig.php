@@ -11,7 +11,12 @@ use Commune\Chatbot\App\Commands;
 /**
  * @property-read int $maxBreakpointHistory 单个会话可追溯的历史记录个数.| max breakpoint num record in history of one session
  *
- * @property-read int $maxRedirectTimes 单次请求最大重定向次数, 超过就怀疑发生循环定向.| max redirect times for one request. over it will trigger too many redirect exception
+ * @property-read int $maxRedirectTimes
+ *  单次请求上下文最大重定向次数, 超过就怀疑发生循环定向.
+ *  max context redirect times for one request. over it will trigger too many redirect exception
+ *
+ * @property-read bool $logRedirectTracking
+ *  是否记录上下文重定向的数据到日志.
  *
  * @property-read int $sessionExpireSeconds 会话过期的时间.|if no request come in, session will expire at ...
  *
@@ -40,6 +45,7 @@ class OOHostConfig extends Option
             'rootContextName' => 'rootContextName',
             'maxBreakpointHistory' => 5,
             'maxRedirectTimes' => 20,
+            'logRedirectTracking' => true,
             'sessionExpireSeconds' => 3600,
             'autoloadPsr4' => [],
             'sessionPipes' => [

@@ -65,7 +65,8 @@ class CallbackStageRoute extends AbsStageRoute
 
     public function dependOn(
         $dependency,
-        callable $callback = null
+        callable $callback = null,
+        array $stages = null
     ): Navigator
     {
         if (isset($this->navigator)) return $this->navigator;
