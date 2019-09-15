@@ -165,6 +165,11 @@ class Scope implements ArrayAndJsonAble
         }, self::getProperties());
     }
 
+    /**
+     * @param string $type  通常是 context name
+     * @param array $scopes
+     * @return string
+     */
     public function makeScopingId(string $type, array $scopes) : string
     {
 

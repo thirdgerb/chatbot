@@ -5,13 +5,18 @@ namespace Commune\Chatbot\Framework\Component;
 
 
 use Commune\Chatbot\Blueprint\Application;
+use Commune\Chatbot\Config\Options\MemoryOption;
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Bootstrap\Bootstrapper;
 use Commune\Chatbot\Framework\Bootstrap\LoadComponents;
+use Commune\Chatbot\Framework\Component\Providers\LoadConversationalEvents;
 use Commune\Chatbot\Framework\Component\Providers\LoadEmotions;
+use Commune\Chatbot\Framework\Component\Providers\LoadMemoryBag;
 use Commune\Chatbot\Framework\Component\Providers\LoadNLUExamplesFromJson;
 use Commune\Chatbot\Framework\Component\Providers\LoadPsr4SelfRegister;
+use Commune\Chatbot\Framework\Component\Providers\LoadReplyRenders;
 use Commune\Chatbot\Framework\Component\Providers\LoadTranslationConfig;
+use Commune\Chatbot\OOHost\HostProcessServiceProvider;
 use Commune\Support\Option;
 
 /**
@@ -66,9 +71,62 @@ abstract class ComponentOption extends Option implements Bootstrapper
                 $path
             )
         );
-
     }
 
+    /**
+     * 注册 replyId 的专属 render
+     *
+     * @param array $renders
+     * @param bool $force
+     */
+    public function registerReplyRender(
+        array $renders,
+        bool $force = true
+    ) : void
+    {
+        $this->app->registerProcessService(
+            new LoadReplyRenders(
+                $this->app->getProcessContainer(),
+                $renders,
+                $force
+            )
+        );
+    }
+
+    /**
+     * 注册会话级的事件.
+     * @param array $eventToListeners
+     */
+    public function registerConversationalEvents(
+        array $eventToListeners
+    ) : void
+    {
+        $this->app->registerProcessService(
+            new LoadConversationalEvents(
+                $this->app->getProcessContainer(),
+                $eventToListeners
+            )
+        );
+    }
+
+
+    /**
+     * 像 hostConfig 那样定义默认的 memory
+     * @see HostProcessServiceProvider
+     * @param array $memoryOptions
+     */
+    public function registerMemoryBag(
+        array $memoryOptions
+    ) : void
+    {
+        $this->app->registerProcessService(
+            new LoadMemoryBag(
+                $this->app->getProcessContainer(),
+                $memoryOptions
+            )
+        );
+
+    }
 
     /**
      * 添加翻译文件的资源.

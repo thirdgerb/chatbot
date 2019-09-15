@@ -31,4 +31,12 @@ interface ReplyMsg extends Message
      * @return Collection
      */
     public function getSlots() : Collection;
+
+    /**
+     * 增加 slots
+     * merge slots to origin slots
+     * @param array $slots
+     */
+    public function withSlots(array $slots) : void;
+
 }

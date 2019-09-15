@@ -138,6 +138,12 @@ abstract class AbsQuestion extends AbsMessage implements Question
             ?? $this->slots = new Collection($this->makeDefaultSlots());
     }
 
+    public function withSlots(array $slots): void
+    {
+        $this->slots = $this->getSlots()->merge($slots);
+    }
+
+
     protected function makeDefaultSlots() : array
     {
         return [

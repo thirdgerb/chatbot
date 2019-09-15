@@ -118,7 +118,7 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
      * @param array $data
      * @return null|string
      */
-    public function validate(array $data) : ? string
+    public static function validate(array $data) : ? string
     {
         return null;
     }

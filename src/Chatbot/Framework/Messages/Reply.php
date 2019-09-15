@@ -55,6 +55,11 @@ class Reply extends AbsMessage implements ReplyMsg
             ?? $this->slots = new Collection();
     }
 
+    public function withSlots(array $slots): void
+    {
+        $this->slots = $this->getSlots()->merge($slots);
+    }
+
 
     public function isEmpty(): bool
     {

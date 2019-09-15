@@ -7,26 +7,40 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Illuminate\Support\Collection;
 
 /**
- * NLU protocol
+ * Conversation 的自然语言识别单元
  *
+ * NLU protocol
  * to set or get nlu information of incoming message
  *
  */
 interface NLU
 {
 
+    /**
+     * 标记 NLU 已经完成过信息获取.
+     * mark nlu has be handled
+     */
     public function done() : void;
 
+
+    /**
+     * NLU的数据已经处理过.
+     * 通常有多个NLU的情况下, 也只处理一次.
+     */
     public function isHandled() : bool;
 
     /*----- matched intent -----*/
 
     /**
+     * 获取已匹配到的intent
+     *
      * @return null|string
      */
     public function getMatchedIntent() : ? string;
 
     /**
+     * 设置一个匹配到的intent
+     *
      * @param string $intentName
      */
     public function setMatchedIntent(string $intentName) : void;
