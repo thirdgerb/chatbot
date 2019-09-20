@@ -29,9 +29,14 @@ interface Redirect
      *
      * @param Context|string $to
      * @param string $level
+     * @param string|null $resetStage
      * @return Navigator
      */
-    public function replaceTo($to, string $level = Redirect::THREAD_LEVEL) : Navigator;
+    public function replaceTo(
+        $to,
+        string $level = Redirect::THREAD_LEVEL,
+        string $resetStage = null
+    ) : Navigator;
 
     /**
      * @param Context|string $to

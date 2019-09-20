@@ -3,7 +3,7 @@
 
 namespace Commune\Chatbot\OOHost\Context\Memory;
 
-use Commune\Chatbot\OOHost\Context\ContextRegistrar as ContextRegistrar;
+use Commune\Chatbot\OOHost\Context\ContextRegistrar;
 
 /**
  * memory registrar interface

@@ -27,11 +27,11 @@ class GoStage extends AbsNavigator
     public function __construct(
         Dialog $dialog,
         History $history,
-        string $stageName,
+        string $resetStageName,
         bool $reset
     )
     {
-        $this->stageName = $stageName;
+        $this->stageName = $resetStageName;
         $this->reset = $reset;
         parent::__construct($dialog, $history);
     }

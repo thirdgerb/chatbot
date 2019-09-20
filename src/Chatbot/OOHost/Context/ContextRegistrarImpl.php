@@ -6,7 +6,6 @@ use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
-use Commune\Container\ContainerContract;
 
 class ContextRegistrarImpl implements ContextRegistrar
 {
@@ -26,12 +25,6 @@ class ContextRegistrarImpl implements ContextRegistrar
      * @var string[][]
      */
     protected $tagToName = [];
-
-    /**
-     * @var ContextRegistrar[]
-     */
-    private static $instances;
-
 
     /**
      * 仍然是placeholder 的context
@@ -60,8 +53,25 @@ class ContextRegistrarImpl implements ContextRegistrar
         $this->chatApp = $app;
         if (isset($parent)) {
             $this->parent = $parent;
-            $this->parent->addSubRegistrar(static::class, $this);
+            $this->registerSelfToParent($parent);
         }
+    }
+
+    protected function registerSelfToParent(ContextRegistrar $parent) : void
+    {
+        $id = $this->getRegistrarId();
+        if ($parent->hasSubRegistrar($id)) {
+            $parentId = $parent->getRegistrarId();
+            throw new ConfigureException(
+                "parent context registrar $parentId already has sub context registrar named $id"
+            );
+        }
+        $parent->addSubRegistrar($id, $this);
+    }
+
+    public function getRegistrarId() : string
+    {
+        return static::class;
     }
 
     public function getParent(): ? ContextRegistrar
@@ -72,6 +82,23 @@ class ContextRegistrarImpl implements ContextRegistrar
     public function getChatApp(): Application
     {
         return $this->chatApp;
+    }
+
+    public function hasSubRegistrar(string $registrarName): bool
+    {
+        if ($registrarName == $this->getRegistrarId()) {
+            return true;
+        }
+
+        if (array_key_exists($registrarName, $this->subRegistrars)) {
+            return true;
+        }
+
+        if (isset($this->parent)) {
+            return $this->parent->hasSubRegistrar($registrarName);
+        }
+
+        return false;
     }
 
 
@@ -89,9 +116,17 @@ class ContextRegistrarImpl implements ContextRegistrar
         $this->subRegistrars[$name] = $registrar;
     }
 
-    public function getSubRegistrars(): array
+    public function getSubRegistrars($recursive = true): array
     {
-        return $this->subRegistrars;
+        $subs = $this->subRegistrars;
+
+        $registrars = $subs;
+        if ($recursive) {
+            foreach ($subs as $sub) {
+                array_merge($registrars, $sub->getSubRegistrars());
+            }
+        }
+        return $registrars;
     }
 
     public function registerDef(Definition $def, bool $force = false) : bool
@@ -351,7 +386,7 @@ class ContextRegistrarImpl implements ContextRegistrar
         $name = StringUtils::namespaceSlashToDot($contextName);
         $secs = explode('.', $name);
         foreach ($secs as $sec) {
-            if (! preg_match('/^[a-zA-Z0-9_]+$/', $sec)) {
+            if (! preg_match('/^[a-z0-9_]+$/', $sec)) {
                 return false;
             }
         }

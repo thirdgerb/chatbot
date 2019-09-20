@@ -5,7 +5,6 @@ namespace Commune\Chatbot\OOHost\Dialogue;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
 use Psr\Log\LoggerInterface;
@@ -38,6 +37,32 @@ interface Dialog
      */
     public function currentQuestion() : ? Question;
 
+    /*-------- 状态校验. --------*/
+
+    /**
+     * Dialog 是否属于某个Context的上下文.
+     * 需要 currentContext()->getId() === $context->getId()
+     *
+     * @param Context $context
+     * @return bool
+     */
+    public function belongsTo(Context $context) : bool;
+
+    /**
+     * 当前对话被另一个Context 所依赖.
+     *
+     * @return bool
+     */
+    public function isDepended() : bool;
+
+    /**
+     * 当前Context被哪个context所依赖.
+     * @return null|string
+     */
+    public function isDependedBy() : ? string;
+
+    /*-------- 创建一个对象 --------*/
+
     /**
      * 根据contextName 生成一个context 实例.
      *
@@ -47,6 +72,13 @@ interface Dialog
      * @throws \InvalidArgumentException
      */
     public function newContext(string $contextName, ...$args) : Context;
+
+    /**
+     * 在dialog 里找到一个 context实例, 前提是掌握了contextId
+     * @param string $id
+     * @return Context|null
+     */
+    public function findContext(string $id) : ? Context;
 
     /*-------- 消息 --------*/
 

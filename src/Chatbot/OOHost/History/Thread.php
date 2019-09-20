@@ -42,6 +42,15 @@ class Thread implements ArrayAndJsonAble
         return $this->question;
     }
 
+    public function callbackTask() : ? Node
+    {
+        if (empty($this->stacks)) {
+            return null;
+        }
+        $node = end($this->stacks);
+        return $node;
+    }
+
 
     public function setQuestion(Question $question = null) : void
     {
@@ -95,6 +104,7 @@ class Thread implements ArrayAndJsonAble
         }
         return null;
     }
+
 
 
     public function toArray(): array

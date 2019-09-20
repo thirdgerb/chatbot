@@ -11,6 +11,7 @@ use Commune\Chatbot\OOHost\Context\Stages\CallbackStageRoute;
 use Commune\Chatbot\OOHost\Context\Stages\OnStartStage;
 use Commune\Chatbot\OOHost\Context\Stages\StartStageRoute;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
+use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
@@ -44,6 +45,8 @@ interface Stage
      * @return bool
      */
     public function isFallback() : bool;
+
+    /*------ 组件化 ------*/
 
     /**
      * 用组件的方式定义一个 checkpoint
@@ -120,9 +123,10 @@ interface Stage
      * 用链式调用的 api 来定义 talk 的流程.
      * talk 之外的情况并不适用.
      *
+     * @param array $slots 默认的slots
      * @return OnStartStage
      */
-    public function buildTalk() : OnStartStage;
+    public function buildTalk(array $slots = []) : OnStartStage;
 
     /*------ 依赖信息 ------*/
 

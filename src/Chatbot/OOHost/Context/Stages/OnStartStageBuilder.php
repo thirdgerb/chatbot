@@ -27,13 +27,13 @@ class OnStartStageBuilder implements OnStartStage
     protected $isStart;
 
 
-    public function __construct(Stage $stage)
+    public function __construct(Stage $stage, array $slots)
     {
         $this->stage = $stage;
         $this->isStart = $stage->isStart();
         if ($this->isStart) {
             $this->dialogSpeech = $stage->dialog
-                ->say()
+                ->say($slots)
                 ->withContext($stage->self);
         }
     }

@@ -6,6 +6,7 @@ namespace Commune\Chatbot\OOHost\Directing;
 
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Stage\CallbackStage;
+use Commune\Chatbot\OOHost\Directing\Stage\GoStage;
 use Commune\Chatbot\OOHost\Directing\Stage\StartStage;
 use Commune\Chatbot\OOHost\History\History;
 

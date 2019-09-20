@@ -12,4 +12,8 @@ class MemoryRegistrarImpl extends ContextRegistrarImpl implements MemoryRegistra
 {
     const DEF_CLAZZ = MemoryDefinition::class;
 
+    public function getRegistrarId(): string
+    {
+        return MemoryRegistrar::class;
+    }
 }

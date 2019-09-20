@@ -86,7 +86,7 @@ class PlayMaze extends TaskDef
         ],
         Manager::CELL_DARKNESS => [
             '这个房间里黑咕隆咚, 什么也看不见',
-            '火把的光芒着照亮了黑暗的房间',
+            '火把的光芒, 照亮了黑暗的房间',
         ],
         Manager::CELL_ICE => [
             '房间地面结着厚厚的冰, 根本无法落脚',

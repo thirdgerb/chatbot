@@ -129,9 +129,9 @@ abstract class AbsStageRoute implements Stage
         return $this->navigator ?? $this->dialog->redirect->replaceTo($to, $level);
     }
 
-    public function buildTalk(): OnStartStage
+    public function buildTalk(array $slots = []): OnStartStage
     {
-        return new OnStartStageBuilder($this);
+        return new OnStartStageBuilder($this, $slots);
     }
 
 

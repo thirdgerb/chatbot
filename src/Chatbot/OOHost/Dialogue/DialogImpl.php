@@ -16,6 +16,8 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 use Commune\Chatbot\OOHost\History\History;
 use Commune\Chatbot\OOHost\Session\Session;
+use Commune\Chatbot\OOHost\Session\SessionData;
+use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
 use Psr\Log\LoggerInterface;
 
@@ -321,7 +323,7 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
                 function() use ($hearing, $context, $after) {
                     $context->{$after}($hearing);
                 },
-                false
+                true
             );
         }
 
@@ -424,6 +426,39 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         return new Directing\Backward\Cancel($this, $this->history, $skipSelfExitingEvent);
     }
 
+    /*--------- status ---------*/
+    public function belongsTo(Context $context): bool
+    {
+        if (!$context->isInstanced()) {
+            $context = $context->toInstance($this->session);
+        }
+
+        return $context->getId() === $this->currentContext()->getId();
+    }
+
+    public function isDepended(): bool
+    {
+        return ! is_null($this->isDependedBy());
+    }
+
+    public function isDependedBy(): ? string
+    {
+        $callback = $this->history
+            ->getBreakPoint()
+            ->process()
+            ->currentThread()
+            ->callbackTask();
+
+        return isset($callback) ? $callback->getContextId() : null;
+    }
+
+    public function findContext(string $id): ? Context
+    {
+        $datum = $this->session->repo->fetchSessionData(new SessionDataIdentity($id, SessionData::CONTEXT_TYPE));
+
+        return $datum instanceof Context ? $datum : null;
+    }
+
 
     /*--------- redirect ---------*/
 
@@ -439,16 +474,20 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
     }
 
 
-    public function replaceTo($to, string $level = Redirect::THREAD_LEVEL): Navigator
+    public function replaceTo(
+        $to,
+        string $level = Redirect::THREAD_LEVEL,
+        string $resetStage = null
+    ): Navigator
     {
         $to = $this->wrapContext($to, __METHOD__);
         switch($level) {
             case Redirect::NODE_LEVEL:
-                return new Directing\Redirects\ReplaceNodeTo($this, $this->history, $to);
+                return new Directing\Redirects\ReplaceNodeTo($this, $this->history, $to, $resetStage);
             case Redirect::PROCESS_LEVEL:
-                return new Directing\Redirects\ReplaceProcessTo($this, $this->history, $to);
+                return new Directing\Redirects\ReplaceProcessTo($this, $this->history, $to, $resetStage);
             default:
-                return new Directing\Redirects\ReplaceThreadTo($this, $this->history, $to);
+                return new Directing\Redirects\ReplaceThreadTo($this, $this->history, $to, $resetStage);
         }
     }
 
@@ -486,7 +525,9 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         }
 
         if (is_string($context)) {
-            $def = $this->session->contextRepo->getDef($context);
+            $contextRepo = $this->session->contextRepo;
+            $def = $contextRepo->getDef($context);
+
             if (isset($def)) {
                 // 必须是一个不需要参数的 context
                 return $def->newContext();

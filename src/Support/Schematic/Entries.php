@@ -7,7 +7,7 @@ use InvalidArgumentException;
 use Iterator;
 
 
-class Entries implements Iterator, IEntries
+class Entries implements Iterator, IEntries, \ArrayAccess
 {
 
 	/**
@@ -37,7 +37,6 @@ class Entries implements Iterator, IEntries
 
 		$this->rewind();
 	}
-
 
 	/**
 	 * @return Entry[]
@@ -186,5 +185,32 @@ class Entries implements Iterator, IEntries
 			throw new InvalidArgumentException('Missing entries with keys: ' . implode(', ', array_keys($missingKeys)) . '.');
 		}
 	}
+
+    public function offsetExists($offset)
+    {
+        return isset($this->items[$offset]);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        throw new \BadMethodCallException(
+            __METHOD__
+            . ' not allowed'
+        );
+    }
+
+    public function offsetUnset($offset)
+    {
+        throw new \BadMethodCallException(
+            __METHOD__
+            . ' not allowed'
+        );
+    }
+
 
 }

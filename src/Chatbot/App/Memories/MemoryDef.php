@@ -32,7 +32,7 @@ class MemoryDef extends AbsMemory implements SelfRegister
     /**
      * 可以唯一new 出来.
      */
-    final public function __construct()
+    public function __construct()
     {
         parent::__construct($this->init());
     }

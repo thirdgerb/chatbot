@@ -14,6 +14,12 @@ class IntentRegistrarImpl extends ContextRegistrarImpl implements IntentRegistra
 {
     const DEF_CLAZZ = IntentDefinition::class;
 
+
+    public function getRegistrarId(): string
+    {
+        return IntentRegistrar::class;
+    }
+
     /**
      * 根据有可能存在的intent, 进行匹配.
      * 通常在 Session 内部使用.

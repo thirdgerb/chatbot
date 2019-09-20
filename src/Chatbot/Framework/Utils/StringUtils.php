@@ -14,7 +14,7 @@ class StringUtils
 
     public static function namespaceSlashToDot(string $name) : string
     {
-        return str_replace('\\', '.', $name);
+        return strtolower(str_replace('\\', '.', $name));
     }
 
     public static function dotToNamespaceSlash(string $name) : string

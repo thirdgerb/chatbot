@@ -9,7 +9,6 @@ use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
 use Commune\Container\ContainerContract;
 
 /**
