@@ -292,7 +292,6 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
     {
         $context =$this->history->getCurrentContext();
         $method = Context::HEARING_MIDDLEWARE_METHOD;
-        $after = Context::HEARD_MIDDLEWARE_METHOD;
 
         /**
          * @var Hearing $hearing
@@ -315,16 +314,6 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
                 $defaultFallback = $this->app->make($defaultFallback);
             }
             $hearing->defaultFallback($defaultFallback);
-        }
-
-        // 注册 heard 的component
-        if (method_exists($context, $after)) {
-            $hearing->fallback(
-                function() use ($hearing, $context, $after) {
-                    $context->{$after}($hearing);
-                },
-                true
-            );
         }
 
         // 运行 __hearing 的component

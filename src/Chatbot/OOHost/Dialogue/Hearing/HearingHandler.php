@@ -806,7 +806,9 @@ class HearingHandler implements Hearing
         }
 
         $this->calledFallback = true;
-        foreach ($this->fallback as $fallback) {
+        // 避免出现意想不到的情况. 用复制不是
+        $fallbackStack = $this->fallback;
+        foreach ($fallbackStack as $fallback) {
             $this->callInterceptor($fallback);
         }
 
