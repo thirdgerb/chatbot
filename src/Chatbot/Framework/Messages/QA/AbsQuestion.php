@@ -149,10 +149,29 @@ abstract class AbsQuestion extends AbsMessage implements Question
         return [
             static::SLOT_QUERY => $this->getQuery(),
             static::SLOT_SUGGESTIONS => $suggestions = $this->getSuggestions(),
-            static::SLOT_SUGGESTION_STR => implode(',', $suggestions),
+            static::SLOT_SUGGESTION_STR => $this->parseSuggestionsToStr(),
             static::SLOT_DEFAULT_CHOICE => $this->getDefaultChoice(),
             static::SLOT_DEFAULT_VALUE => $this->getDefaultValue(),
         ];
+    }
+
+    protected function parseSuggestionsToStr() : string
+    {
+        if (empty($this->suggestions)) {
+            return '';
+        }
+
+        $str = '';
+        foreach ($this->suggestions as $key => $value) {
+            if (is_string($key)) {
+                $str.= "$key, $value;";
+            } else {
+                $str .= "$value;";
+            }
+        }
+
+        return rtrim($str, ';');
+
     }
 
     /**
