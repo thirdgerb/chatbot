@@ -85,7 +85,7 @@ class ChattingPipe extends ChatbotPipeImpl
 
     public function getChatLockerKey(string $chatId) : string
     {
-        return "commune:chatbot:chatLocker:" . $chatId;
+        return "chatbot:chatLocker:" . $chatId;
     }
 
 }

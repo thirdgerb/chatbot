@@ -15,7 +15,7 @@ use Commune\Chatbot\OOHost\Session\SessionInstance;
 
 abstract class AbsMemory extends AbsContext implements Memory
 {
-    const MEMORY_LOCKER_PREFIX = 'commune:chatbot:memory:lock:';
+    const MEMORY_LOCKER_PREFIX = 'chatbot:memoryLock:';
 
     public function getId(): string
     {
