@@ -17,6 +17,10 @@ class Rewind extends AbsNavigator
     public function doDisplay(): ? Navigator
     {
         $this->history->rewind();
+        $question = $this->history->currentQuestion();
+        if (isset($question)) {
+            $this->dialog->say()->ask($question);
+        }
         return null;
     }
 
