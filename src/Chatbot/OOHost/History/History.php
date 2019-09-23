@@ -12,15 +12,27 @@ use Commune\Chatbot\OOHost\Exceptions\DataNotFoundException;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionData;
 use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
+use Commune\Chatbot\OOHost\Session\Snapshot;
 use Psr\Log\LoggerInterface;
 
 /**
  * @property-read array $breakpointArr
- * @property-read Tracker $tracker
+ * @property-read string $belongsTo
+ * @property-read Snapshot $snapshot
  */
 class History implements RunningSpy
 {
     use RunningSpyTrait;
+
+    /**
+     * @var string
+     */
+    protected $belongsTo;
+
+    /**
+     * @var Snapshot
+     */
+    protected $snapshot;
 
     /**
      * @var Breakpoint
@@ -28,7 +40,7 @@ class History implements RunningSpy
     protected $breakpoint;
 
     /**
-     * @var Breakpoint
+     * @var Breakpoint|null
      */
     protected $prevBreakpoint;
 
@@ -52,24 +64,64 @@ class History implements RunningSpy
      */
     protected $logger;
 
-    /**
-     * History constructor.
-     * @param Session $session
-     */
-    public function __construct(Session $session)
+    protected $rootContextMaker;
+
+    public function __construct(
+        Session $session,
+        string $belongsTo,
+        callable $rootContextMaker
+    )
     {
         $this->session = $session;
-        $this->sessionId = $session->sessionId;
-        $this->logger = $session->logger;
+        $this->belongsTo = $belongsTo;
+        $this->rootContextMaker = $rootContextMaker;
 
-        $snapshot = $this->session->repo->snapshot;
-        $this->prevBreakpoint = $snapshot->breakpoint;
+        $this->sessionId = $sessionId = $session->sessionId;
+        $this->logger = $session->logger;
+        $this->snapshot = $this->session->repo->getSnapshot($belongsTo, $sessionId);
+        $this->prevBreakpoint = $this->snapshot->breakpoint;
 
         //重新赋值
-        $this->setBreakpoint(new Breakpoint($session, $this->prevBreakpoint));
+        $this->setBreakpoint($this->makeBreakpoint($this->prevBreakpoint));
         $this->tracker = new Tracker($session->sessionId);
-
         static::addRunningTrace($this->sessionId, $this->sessionId);
+    }
+
+    protected function makeBreakpoint(Breakpoint $prev = null)
+    {
+
+        if (isset($prev)) {
+            $backtrace = $prev->backtrace;
+            $prevId = $prev->id;
+            $process = clone $prev->process();
+
+        } else {
+            $backtrace = [];
+            $prevId = null;
+            /**
+             * @var Context $context
+             */
+            $context = call_user_func($this->rootContextMaker);
+            if (!$context->isInstanced()) {
+                $context->toInstance($this->session);
+            }
+
+            $process = new Process(
+                $this->sessionId,
+                new Thread(
+                    new Node($context)
+                )
+            );
+        }
+
+        return new Breakpoint(
+            $this->session->conversation->getConversationId(),
+            $this->sessionId,
+            $this->session->chatbotConfig->host->maxBreakpointHistory,
+            $process,
+            $prevId,
+            $backtrace
+        );
     }
 
     /**
@@ -86,6 +138,7 @@ class History implements RunningSpy
             return null;
         }
         $breakpoint = $this->session->repo->fetchSessionData(
+            $this->session,
             $identity = new SessionDataIdentity(
                 $this->breakpoint->prevId,
                 SessionData::BREAK_POINT
@@ -125,6 +178,7 @@ class History implements RunningSpy
         $context = $this->session
             ->repo
             ->fetchSessionData(
+                $this->session,
                 $identity = new SessionDataIdentity(
                     $id,
                     SessionData::CONTEXT_TYPE
@@ -174,6 +228,7 @@ class History implements RunningSpy
         }
 
         $breakpoint = $this->session->repo->fetchSessionData(
+            $this->session,
             $identity = new SessionDataIdentity(
                 $lastId,
                 SessionData::BREAK_POINT
@@ -192,7 +247,7 @@ class History implements RunningSpy
     public function setBreakpoint(Breakpoint $breakpoint) : void
     {
         $this->breakpoint = $breakpoint;
-        $this->session->repo->snapshot->breakpoint = $breakpoint;
+        $this->snapshot->breakpoint = $breakpoint;
     }
 
     /*------ 前进 ------*/
@@ -305,7 +360,7 @@ class History implements RunningSpy
         // 保存起来.
         $yielding = new Yielding($this->breakpoint->process()->currentThread());
         $session = $this->session;
-        $session->repo->driver->saveYielding($session, $yielding);
+        $session->repo->getDriver()->saveYielding($session, $yielding);
 
 
         if (isset($context)) {
@@ -402,8 +457,10 @@ class History implements RunningSpy
         switch($name) {
             case 'breakpointArr' :
                 return $this->breakpoint->toArray();
-            case 'tracker' :
-                return $this->tracker;
+            case 'belongsTo' :
+                return $this->belongsTo;
+            case 'snapshot' :
+                return $this->snapshot;
             default:
                 return null;
         }

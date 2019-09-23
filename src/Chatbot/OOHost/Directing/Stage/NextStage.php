@@ -20,7 +20,7 @@ class NextStage extends AbsNavigator
             return $this->startCurrent();
         }
 
-        return new Fulfill($this->dialog, $this->history);
+        return new Fulfill($this->dialog);
     }
 
 }

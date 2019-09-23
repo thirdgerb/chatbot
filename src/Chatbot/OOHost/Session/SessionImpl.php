@@ -21,15 +21,14 @@ use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\DialogImpl;
 
-use Commune\Chatbot\OOHost\Directing\Dialog\Hear;
 use Commune\Chatbot\OOHost\Directing\Director;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\History\History;
 use Commune\Chatbot\Config\Children\OOHostConfig;
+use Commune\Chatbot\OOHost\History\Tracker;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 use Psr\Log\LoggerInterface;
-
 
 /**
  * @mixin Session
@@ -44,7 +43,7 @@ class SessionImpl implements Session, HasIdGenerator
     /**
      * @var bool
      */
-    protected $heard = false;
+    protected $handled = false;
 
     /**
      * @var bool
@@ -84,24 +83,17 @@ class SessionImpl implements Session, HasIdGenerator
      */
     protected $chatbotConfig;
 
-    /**
-     * @var \Closure
-     */
-    protected $rootContextMaker;
-
-    /**
-     * @var Driver
-     */
-    protected $driver;
-
     /*----- cached -----*/
 
+    /**
+     * @var bool
+     */
     protected $intentMatchingTried = false;
 
     /**
      * @var History
      */
-    protected $history;
+    protected $rootHistory;
 
     /**
      * @var IncomingMessage
@@ -131,7 +123,7 @@ class SessionImpl implements Session, HasIdGenerator
     /**
      * @var DialogImpl
      */
-    protected $dialog;
+    protected $rootDialog;
 
     /**
      * @var NLU
@@ -172,44 +164,24 @@ class SessionImpl implements Session, HasIdGenerator
         string $belongsTo,
         OOHostConfig $hostConfig,
         Conversation $conversation,
-        Driver $driver,
-        \Closure $rootContextMaker = null
+        Repository $repository
     )
     {
         $this->belongsTo = $belongsTo;
         $this->hostConfig = $hostConfig;
         $this->conversation = $conversation;
+        $this->repo = $repository;
+
 
         $this->traceId = $conversation->getTraceId();
         $this->chatbotConfig = $conversation->getChatbotConfig();
-
-        $this->driver = $driver;
-        $this->rootContextMaker = $rootContextMaker;
-
-        $snapshot = $this->getSnapshot($belongsTo);
+        $snapshot = $this->repo->getSnapshot($belongsTo);
         $this->sessionId = $snapshot->sessionId;
-
-        $this->repo = new Repository($this, $driver, $snapshot);
+        $this->tracker = new Tracker($this->sessionId);
 
         static::addRunningTrace($this->traceId, $this->sessionId);
     }
 
-    protected function getSnapshot(string $belongsTo) : Snapshot
-    {
-        $cached = $this->driver->findSnapshot($belongsTo);
-
-        if (!empty($cached)) {
-            // 如果 snapshot 的 saved 为false,
-            // 说明出现重大错误, 导致上一轮没有saved.
-            // 这时必须从头开始, 否则永远卡在错误这里.
-            if ($cached instanceof Snapshot && $cached->saved) {
-                $cached->saved = false;
-                return $cached;
-            }
-        }
-
-        return new Snapshot($belongsTo, $this->createUuId());
-    }
 
 
     /**
@@ -218,26 +190,17 @@ class SessionImpl implements Session, HasIdGenerator
     public function shouldQuit() : void
     {
         $this->quit = true;
-
     }
 
-    public function hear(Message $message, Navigator $navigator = null): void
+    public function handle(Message $message, Navigator $navigator = null): void
     {
-        if (!isset($navigator)) {
-            $navigator = new Hear(
-                $this->getDialog(),
-                $this->getHistory(),
-                $message
-            );
-        }
-
         $director = new Director($this);
-        $this->heard = $director->hear($navigator);
+        $this->handled = $director->handle($navigator);
     }
 
-    public function isHeard(): bool
+    public function isHandled(): bool
     {
-        return $this->heard;
+        return $this->handled;
     }
 
     public function isQuiting(): bool
@@ -248,10 +211,6 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function makeRootContext() : Context
     {
-        if (isset($this->rootContextMaker)) {
-            return call_user_func($this->rootContextMaker);
-        }
-
         // 基于 registrar 来生成.
         $repo = $this->getContextRegistrar();
         $name = $this->hostConfig->rootContextName;
@@ -266,27 +225,19 @@ class SessionImpl implements Session, HasIdGenerator
         );
     }
 
-
-    public function newSession(string $belongsTo, \Closure $rootMaker, OOHostConfig $config = null): Session
-    {
-        return new SessionImpl(
-            $belongsTo,
-            $config ?? $this->hostConfig,
-            $this->conversation,
-            $this->driver,
-            $rootMaker
-        );
-    }
-
-
     /*----------- cached value ------------*/
 
     /**
      * @return DialogImpl
      */
-    public function getDialog() : Dialog
+    public function getRootDialog() : Dialog
     {
-        return $this->dialog ?? $this->dialog = new DialogImpl($this, $this->getHistory());
+        return $this->rootDialog
+            ?? $this->rootDialog = new DialogImpl(
+                $this,
+                $this->getRootHistory(),
+                $this->getIncomingMessage()->getMessage()
+            );
     }
 
     public function getScope() : Scope
@@ -294,6 +245,7 @@ class SessionImpl implements Session, HasIdGenerator
         return $this->scope
             ?? $this->scope = Scope::make(
                 $this->sessionId,
+                $this->belongsTo,
                 $this->conversation
             );
     }
@@ -313,9 +265,9 @@ class SessionImpl implements Session, HasIdGenerator
             );
     }
 
-    public function getHistory() : History
+    public function getRootHistory() : History
     {
-        return $this->history ?? $this->history = new History($this);
+        return $this->rootHistory ?? $this->rootHistory = new History($this, $this->belongsTo,[$this, 'makeRootContext']);
     }
 
     public function getIncomingMessage() : IncomingMessage
@@ -426,6 +378,8 @@ class SessionImpl implements Session, HasIdGenerator
     public function __get($name)
     {
         switch($name) {
+
+            // 直接可取的.
             case 'belongsTo' :
                 return $this->belongsTo;
             case 'sessionId' :
@@ -434,23 +388,25 @@ class SessionImpl implements Session, HasIdGenerator
                 return $this->conversation;
             case 'repo' :
                 return $this->repo;
+            case 'tracker':
+                return $this->tracker;
             case 'chatbotConfig' :
                 return $this->chatbotConfig;
             case 'hostConfig' :
                 return $this->hostConfig;
+
+
+            // 过程中生成的.
             case 'logger' :
                 return $this->getLogger();
-
-
             case 'intentRepo' :
                 return $this->getIntentRegistrar();
             case 'contextRepo' :
                 return $this->getContextRegistrar();
             case 'memoryRepo' :
                 return $this->getMemoryRegistrar();
-
             case 'dialog' :
-                return $this->getDialog();
+                return $this->getRootDialog();
             case 'incomingMessage' :
                 return $this->getIncomingMessage();
             case 'nlu' :
@@ -467,68 +423,39 @@ class SessionImpl implements Session, HasIdGenerator
     public function beSneak(): void
     {
         $this->sneak = true;
-        $this->heard = true;
+        $this->handled = true;
     }
 
     public function finish(): void
     {
-        if ($this->isQuiting()) {
-            // 也不保存了.
-            $this->driver->clearSnapshot($this->belongsTo);
-            //$this->flush();
-            return;
-        }
-
         // 如果是sneak, 什么也不做. 也不会存储.
         if (!$this->sneak) {
             try {
-
-                $snapshot = $this->repo->snapshot;
-                $snapshot->saved = true;
-
-                $this->saveCachedContexts($snapshot);
-
-                // breakpoint
-                $this->driver->saveBreakpoint(
-                    $this,
-                    $snapshot->breakpoint
-                );
-
-                // snapshot & extend cache life
-                $this->driver
-                    ->saveSnapshot(
-                        $snapshot,
-                        $this->hostConfig->sessionExpireSeconds
-                    );
-
+                $this->repo->flush($this);
                 $this->logTracking();
-                $snapshot = null;
-
 
             // 存储失败.
             } catch (\Exception $e) {
-                $this->driver->clearSnapshot($this->belongsTo);
-                $this->flush();
+                $this->repo->getDriver()->clearSnapshot($this->belongsTo);
+                $this->flushProperties();
                 throw new LogicException('finish session failure', $e);
             }
         }
 
-        $this->flush();
+        $this->flushProperties();
     }
 
-    public function flush() : void
+    public function flushProperties() : void
     {
         // session 垃圾回收不掉时 写的排查代码.
         // 不删了, 通过它们容易暴露问题.
-        $this->dialog = null;
+        $this->rootDialog = null;
         $this->repo = null;
-        $this->driver = null;
         $this->matchedIntent = null;
         $this->possibleIntents = [];
         $this->incomingMessage = null;
         $this->scope = null;
-        $this->history = null;
-        $this->rootContextMaker = null;
+        $this->rootHistory = null;
         $this->hostConfig = null;
         $this->chatbotConfig = null;
         $this->conversation = null;
@@ -542,35 +469,13 @@ class SessionImpl implements Session, HasIdGenerator
             return;
         }
 
-        $trackingData = $this->getHistory()->tracker->tracking;
+        $trackingData = $this->tracker->tracking;
         $count = count($trackingData);
         $tracking = implode('|', array_map(function($tracker){
             return json_encode($tracker);
         }, $trackingData));
 
         $this->getLogger()->info("sessionTracking $count times : $tracking");
-    }
-
-
-    protected function saveCachedContexts(Snapshot $snapshot) : void
-    {
-        // 保存所有的信息.
-        // 目前只有context
-        foreach ($snapshot->cachedSessionData as $type => $typeData) {
-            foreach ($typeData as $id => $data) {
-
-                switch($type) {
-                    case SessionData::CONTEXT_TYPE:
-                        /**
-                         * @var Context $data
-                         */
-                        if ($data->shouldSave()) {
-                            $this->driver->saveContext($this, $data);
-                        }
-                }
-            }
-        }
-
     }
 
     public function __sleep()

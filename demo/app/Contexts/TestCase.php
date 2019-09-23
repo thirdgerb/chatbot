@@ -62,6 +62,7 @@ class TestCase extends TaskDef
                             6 => '测试 todo -> otherwise api',
                             7 => 'test confirmation with emotion',
                             8 => '迷宫小游戏',
+                            9 => '测试子会话',
                         ]
                     );
             },
@@ -159,6 +160,9 @@ class TestCase extends TaskDef
                         return $dialog->goStage('testConfirmation');
                     })
                     ->isChoice(8, Redirector::goStage('maze'))
+
+                    ->isChoice(9, Redirector::goStage('subDialog'))
+
                     ->end(function(Dialog $dialog, Message $message){
 
                         $dialog->say()->info("输入了:" . $message->getText());
@@ -254,4 +258,72 @@ class TestCase extends TaskDef
     }
 
 
+    /**
+     * 测试子会话的各种功能.
+     * 可以测试的点:
+     *
+     *
+     * 1. before : 父dialog 拦截到, 仍然进入子dialog
+     * 2. stop  : 父dialog 拦截到, 不进入子dialog
+     * 3. miss : 子dialog miss, 父dialog 返回拦截到
+     * 4. quit : 子dialog quit, 父dialog 拦截到, 返回菜单.
+     * 5. fulfill : 子dialog fulfill, 触发 quit
+     * 6. next : 子dialog 切换stage, 直到触发 fulfill
+     * 7. maze : 子dialog 进入迷宫游戏
+     * 8. stage : 查看子dialog 的stage
+     *
+     * @param Stage $stage
+     * @return Navigator
+     */
+    public function __onSubDialog(Stage $stage) : Navigator
+    {
+        return $stage
+            ->onStart(function(Dialog $dialog){
+                $dialog->say()->info('sub dialog start');
+            })
+            ->onCallback(function(Dialog $dialog){
+                $dialog->say()->info('sub dialog callback');
+            })
+            ->onFallback(function(Dialog $dialog){
+                $dialog->say()->info('sub dialog fallback');
+            })
+            ->onSubDialog(
+                    $this->getId(),
+                    function(){
+                        return new SubDialogCase();
+                    }
+                )
+                ->onBefore(function(Dialog $dialog){
+                    return $dialog->hear()
+                        ->is('before', function(Dialog $dialog){
+                            $dialog->say()->info('hit before');
+                            return null;
+                        })
+                        ->is('stop', function(Dialog $dialog) {
+                            $dialog->say()->info('stop sub dialog');
+                            return $dialog->wait();
+                        })
+                        ->heardOrMiss();
+                })
+                ->onWait(function(Dialog $dialog){
+                    $dialog->say()->info('sub dialog is wait');
+                    return $dialog->wait();
+                })
+                ->onMiss(function(Dialog $dialog){
+                    $dialog->say()->info('sub dialog miss match');
+                    return $dialog->hear()
+                        ->is('miss', function(Dialog $dialog){
+                            $dialog->say()->info('catch miss');
+                            return $dialog->wait();
+                        })
+                        ->end();
+                })
+                ->onQuit(function(Dialog $dialog){
+                    $dialog->say()->info('sub dialog want quit');
+                    return $dialog->goStage('menu');
+                })
+                ->end();
+
+
+    }
 }

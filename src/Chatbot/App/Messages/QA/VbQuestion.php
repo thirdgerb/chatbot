@@ -10,8 +10,8 @@ use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Messages\QA\AbsQuestion;
 use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
+use Commune\Chatbot\Framework\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Session\Session;
-use Illuminate\Support\Str;
 
 /**
  * Verbose Question
@@ -73,9 +73,9 @@ class VbQuestion extends AbsQuestion
             : $this->defaultChoice;
     }
 
-    public function parseAnswer(Session $session): ? Answer
+    public function parseAnswer(Session $session, Message $message = null): ? Answer
     {
-        $message = $session->incomingMessage->message;
+        $message = $message ?? $session->incomingMessage->message;
         // 如果本来就是answer, 不再处理了.
         if ($message instanceof Answer) {
             return $message;
@@ -103,8 +103,7 @@ class VbQuestion extends AbsQuestion
 
 
 
-        return $this->answer = $this->parseAnswerByOrdinal($session)
-            ?? $this->doParseAnswer($message);
+        return $this->answer = $this->parseAnswerByOrdinal($session) ?? $this->doParseAnswer($message);
     }
 
     protected function parseAnswerByOrdinal(Session $session) : ? Answer
@@ -156,14 +155,18 @@ class VbQuestion extends AbsQuestion
     {
         $text = $message->getTrimmedText();
         // 再匹配suggestions 的开头
+        $matchedIndex = [];
         foreach ($this->suggestions as $index => $suggestion) {
-            if (Str::startsWith($suggestion, $text)) {
-                return $this->newAnswer(
-                    $message,
-                    $this->suggestions[$index],
-                    $index
-                );
+            if (strstr($suggestion, $text) !== false) {
+                $matchedIndex[] = $index;
             }
+        }
+
+        // 当唯一匹配的时候.
+        if (count($matchedIndex) === 1) {
+            $index = $matchedIndex[0];
+            $answer = $this->suggestions[$index];
+            return $this->newAnswer($message, $answer, $index);
         }
 
         return null;
@@ -173,17 +176,35 @@ class VbQuestion extends AbsQuestion
     {
         $text = $message->getTrimmedText();
         $text = strtolower($text);
+
+        // 做了一个拷贝, 都用小写.
         $originIndexes = [];
         foreach ($this->suggestions as $index => $suggestion) {
             if (is_string($index)) {
-                $originIndexes[strtolower($index)] = $index;
+                $newIndex = StringUtils::sbc2dbc(strtolower($index));
+                $originIndexes[$newIndex] = $index;
             } else {
                 $originIndexes[$index] = $index;
             }
         }
 
-        if (isset($originIndexes[$text])) {
-            $originIndex = $originIndexes[$text];
+        $matchedIndexes = [];
+        foreach ($originIndexes as $index => $originIndex) {
+            if ($index === $text) {
+                return $this->newAnswer(
+                    $message,
+                    $this->suggestions[$originIndex],
+                    $originIndex
+                );
+            }
+
+            if (strstr($index, $text) !== false) {
+                $matchedIndexes[] = $originIndex;
+            }
+        }
+
+        if (count($matchedIndexes) === 1) {
+            $originIndex = $matchedIndexes[0];
             return $this->newAnswer(
                 $message,
                 $this->suggestions[$originIndex],

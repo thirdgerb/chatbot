@@ -3,6 +3,7 @@
 
 namespace Commune\Chatbot\OOHost\Dialogue\Hearing;
 
+use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Context\Callables\Action;
 use Commune\Chatbot\OOHost\Context\Callables\Prediction;
 use Commune\Chatbot\OOHost\Emotion\Feeling;
@@ -117,6 +118,15 @@ interface Matcher
         callable $action = null
     ) : Matcher;
 
+
+    /*------- question matcher -------*/
+
+    /**
+     * 主动匹配一个question
+     * @param Question $question
+     * @return static
+     */
+    public function matchQuestion(Question $question) : Matcher;
 
     /**
      * 只要有answer, 不管上文有没有命中过.

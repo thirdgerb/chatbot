@@ -13,7 +13,7 @@ use Commune\Chatbot\OOHost\Session\Session;
 /**
  * 多选.
  * @property Selection $answer
- * @method Selection|null parseAnswer(Session $session): ? Answer
+ * @method Selection|null parseAnswer(Session $session, Message $message = null): ? Answer
  */
 class Selects extends Choose implements Question
 {

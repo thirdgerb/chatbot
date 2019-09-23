@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\Directing\Backward;
 
 use Commune\Chatbot\OOHost\Context\Definition;
+use Commune\Chatbot\OOHost\Directing\End\QuitSession;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 class Quit extends FallbackNavigator
@@ -12,11 +13,7 @@ class Quit extends FallbackNavigator
 
     public function then(): ? Navigator
     {
-        $this->dialog
-            ->session
-            ->shouldQuit();
-
-        return null;
+        return new QuitSession($this->dialog);
     }
 
 

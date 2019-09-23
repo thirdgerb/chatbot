@@ -25,17 +25,15 @@ class SleepTo extends AbsNavigator
     /**
      * Redirector constructor.
      * @param Dialog $dialog
-     * @param History $history
      * @param Context|null $to
      */
     public function __construct(
         Dialog $dialog,
-        History $history,
         Context $to = null
     )
     {
         $this->to = $to;
-        parent::__construct($dialog, $history);
+        parent::__construct($dialog);
     }
 
     public function doDisplay(): ? Navigator

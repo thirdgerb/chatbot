@@ -6,15 +6,18 @@ use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Chatbot\OOHost\History\History;
 use Commune\Chatbot\OOHost\Session\Session;
 use Psr\Log\LoggerInterface;
 
 
 /**
+ * @property-read string $belongsTo
  * @property-read App $app
  * @property-read Session $session
  * @property-read Redirect $redirect
  * @property-read LoggerInterface $logger
+ * @property-read History $history
  *
  */
 interface Dialog
@@ -22,20 +25,32 @@ interface Dialog
     // 用这个做参数, 可以拿到所有依赖注入的键名.
     const DEPENDENCIES = 'dependencies';
 
+    /*-------- 当前属性 --------*/
+
     /**
+     * 当前对话要处理的消息.
+     * @return Message
+     */
+    public function currentMessage() : Message;
+
+    /**
+     * 获取当前dialog 所在的 context
      * @return Context
      */
     public function currentContext() : Context;
 
     /**
+     * 获取当前 dialog 所在的 context 的 stage
      * @return string
      */
     public function currentStage() : string;
 
     /**
+     * 获取当前 dialog 已经提出的问题.
      * @return Question|null
      */
     public function currentQuestion() : ? Question;
+
 
     /*-------- 状态校验. --------*/
 
@@ -46,7 +61,7 @@ interface Dialog
      * @param Context $context
      * @return bool
      */
-    public function belongsTo(Context $context) : bool;
+    public function isCurrent(Context $context) : bool;
 
     /**
      * 当前对话被另一个Context 所依赖.
@@ -98,10 +113,10 @@ interface Dialog
 
     /**
      * 聆听一个消息并作出响应.
-     * @param Message $message
+     * @param Message $message  为空则用 incomingMessage 默认的.
      * @return Hearing
      */
-    public function hear(Message $message) : Hearing;
+    public function hear(Message $message = null) : Hearing;
 
     ########## 导航类逻辑 ##########
 
@@ -155,15 +170,22 @@ interface Dialog
     /*-------- history --------*/
 
     /**
-     * 当做什么都没发生过.
-     * 有问题重复问题.
-     * 而不是repeat 当前stage
+     * 当做什么都没发生过. 语境还原到上一轮对话状态.
+     * 中间经历过语境跳转, 也会重置会上一轮对话时.
+     *
+     * 有问题的话, 只重复问题.
+     *
+     * 与repeat的区别在于, 如果这轮对话 stage从 a->b->c
+     *
+     * 然后执行 repeat, 所在的stage 是 c.
+     * 如果执行 rewind, 则所在的是 a.
+     *
      * @return Navigator
      */
     public function rewind() : Navigator;
 
     /**
-     * 明确告诉用户 miss match. 然后执行 rewind
+     * 明确返回 miss match. 不需要经过 $dialog->hear()->end();
      * @return Navigator
      */
     public function missMatch() : Navigator;
@@ -214,5 +236,37 @@ interface Dialog
      * @return Navigator
      */
     public function cancel(bool $skipSelfExitingEvent = false) : Navigator;
+
+
+
+    /*-------- subDialog 子会话. --------*/
+
+    // 子会话是一个特殊的功能. 类似于 middleware 中间件.
+    // 消息会先经过父会话, 然后进到子会话, 再回到父会话, 再往下走.
+
+    // 父子会话拥有独立的生命周期, 独立的流程.
+    // 父会话可以让子会话来处理消息. 子会话不能操作父会话.
+
+    // 子会话的调度, 让父会话能感知的只有三种情况:
+    // - quit
+    // - missMatch
+    // - wait
+
+    // 父子会话并不相互通信. 它们的关系类似于中间件管道之间.
+    // 如果一定要通信, 还是得通过共享的内存数据. 不过可能会有难以控制的情况.
+
+    /**
+     * 获取一个子对话. 可能存在着, 也可能要重新创建.
+     *
+     * @param string $belongsTo
+     * @param callable $rootMaker
+     * @param Message|null $message
+     * @return SubDialog
+     */
+    public function getSubDialog(
+        string $belongsTo,
+        callable $rootMaker,
+        Message $message = null
+    ) : SubDialog ;
 
 }

@@ -22,13 +22,14 @@ class Tracker
     }
 
 
-    public function log(string $navigation, Node $task)
+    public function log(string $navigation, Node $task , string $belongsTo)
     {
         $this->tracking[] = [
             'run' => $navigation,
             'name' => $task->getContextName(),
             'id' => $task->getContextId(),
             'stage' => $task->getStage(),
+            'belongsTo' => $belongsTo,
         ];
     }
 

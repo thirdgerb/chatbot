@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\Dialogue\Hearing;
 
 
+use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
@@ -218,6 +219,12 @@ class TodoImpl implements ToDoWhileHearing
         string $intentName,
         callable $intentAction = null
     ): Matcher
+    {
+        call_user_func_array([$this->hearing, __FUNCTION__], func_get_args());
+        return $this;
+    }
+
+    public function matchQuestion(Question $question): Matcher
     {
         call_user_func_array([$this->hearing, __FUNCTION__], func_get_args());
         return $this;

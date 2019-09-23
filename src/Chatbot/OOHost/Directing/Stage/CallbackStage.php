@@ -8,7 +8,6 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\AbsNavigator;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\History\History;
 
 /**
  * 回调context 当前的stage
@@ -19,6 +18,7 @@ use Commune\Chatbot\OOHost\History\History;
  *
  * 如果 callback value 不存在,
  * 则说明是一个fallback 启动.
+ *
  * sleep 的context wake 了
  */
 class CallbackStage extends AbsNavigator
@@ -27,12 +27,11 @@ class CallbackStage extends AbsNavigator
 
     public function __construct(
         Dialog $dialog,
-        History $history,
         Message $callbackValue = null
     )
     {
         $this->callbackValue = $callbackValue;
-        parent::__construct($dialog, $history);
+        parent::__construct($dialog);
     }
 
 

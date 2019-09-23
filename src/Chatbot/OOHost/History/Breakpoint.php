@@ -3,26 +3,33 @@
 
 namespace Commune\Chatbot\OOHost\History;
 
-use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionData;
 use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\ArrayAndJsonAble;
+use Commune\Support\Uuid\HasIdGenerator;
+use Commune\Support\Uuid\IdGeneratorHelper;
 
 /**
  * @property-read  string $id
+ * @property-read  string $conversationId
  * @property-read  string $sessionId
  * @property-read  string $prevId
  * @property-read  string[] $backtrace
  */
-class Breakpoint implements ArrayAndJsonAble, SessionData
+class Breakpoint implements ArrayAndJsonAble, SessionData, HasIdGenerator
 {
-    use ArrayAbleToJson;
+    use ArrayAbleToJson, IdGeneratorHelper;
 
     /**
      * @var string
      */
     protected $id;
+
+    /**
+     * @var string
+     */
+    protected $conversationId;
 
     /**
      * @var string
@@ -52,42 +59,21 @@ class Breakpoint implements ArrayAndJsonAble, SessionData
     protected $maxHistory;
 
     public function __construct(
-        Session $session,
-        Breakpoint $prev = null
+        string $conversationId,
+        string $sessionId,
+        int $maxBreakpointHistory,
+        Process $process,
+        string $prevId = null,
+        array $backtrace = []
     )
     {
-        $this->id = $session->conversation->getConversationId();
-        $this->sessionId = $session->sessionId;
-        $this->maxHistory = $session->hostConfig->maxBreakpointHistory;
+        $this->id = $conversationId;
+        $this->sessionId = $sessionId;
+        $this->maxHistory = $maxBreakpointHistory;
+        $this->process = $process;
+        $this->prevId = $prevId;
+        $this->backtrace = $backtrace;
 
-        if (isset($prev)) {
-            $this->fromPrev($prev);
-        } else {
-            $this->fromRoot($session);
-        }
-    }
-
-
-    protected function fromPrev(Breakpoint $prev) : void
-    {
-        $this->prevId = $prev->getSessionDataId();
-        $this->backtrace = $prev->backtrace;
-        $this->process = clone $prev->process;
-
-        if (isset($prev->prevId)) {
-            $this->pushPrev(
-                $prev->prevId,
-                $this->maxHistory
-            );
-        }
-    }
-
-    protected function fromRoot(Session $session) : void
-    {
-        $this->process = new Process(
-            $session->sessionId,
-            new Thread(new Node($session->makeRootContext()))
-        );
     }
 
     protected function pushPrev(string $breakPointId, int $num) : void

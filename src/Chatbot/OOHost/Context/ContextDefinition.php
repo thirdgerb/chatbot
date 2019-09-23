@@ -4,7 +4,6 @@
 namespace Commune\Chatbot\OOHost\Context;
 
 use Closure;
-use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Entities\DependingBuilder;
 use Commune\Chatbot\OOHost\Context\Helpers\ContextCaller;
 use ReflectionMethod;

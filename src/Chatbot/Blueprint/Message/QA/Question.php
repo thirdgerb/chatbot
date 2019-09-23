@@ -8,6 +8,7 @@
 
 namespace Commune\Chatbot\Blueprint\Message\QA;
 
+use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\OOHost\Session\Session;
 
@@ -58,9 +59,10 @@ interface Question extends ReplyMsg
      * 如果是回答, 通常包装成一个answer
      *
      * @param Session $session
+     * @param Message|null $message  为null 则默认用 incomingMessage 做 parse 的对象.
      * @return Answer|null
      */
-    public function parseAnswer(Session $session) : ? Answer;
+    public function parseAnswer(Session $session, Message $message = null) : ? Answer;
 
     /**
      * 如果一个问题已经被回答过 (parse answer)

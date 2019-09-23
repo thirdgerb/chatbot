@@ -7,6 +7,7 @@ namespace Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\Blueprint\Message\Event\EventMsg;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Messages\ArrayMessage;
@@ -14,6 +15,7 @@ use Commune\Chatbot\OOHost\Command\CommandDefinition;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
+use Commune\Chatbot\OOHost\Directing\End\MissMatch;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Emotion\Emotion;
 use Commune\Chatbot\OOHost\Emotion\Emotions\Negative;
@@ -49,14 +51,22 @@ class HearingHandler implements Hearing
     public $navigator;
 
     /**
+     * 是否已经命中了匹配的条件.
      * @var bool
      */
     public $isMatched = false;
 
     /**
+     * 消息已经经过了问题的检查.
      * @var bool
      */
-    public $throw;
+    public $parsedByQuestion  = false;
+
+    /**
+     * 如果已经拿到了 navigator, 是抛出异常终止流程, 还是继续往下走.
+     * @var bool
+     */
+    public $throw = false;
 
     /**
      * @var callable[]
@@ -64,15 +74,28 @@ class HearingHandler implements Hearing
     protected $fallback = [];
 
     /**
-     * @var callable
+     * 注册的default fallback, 最终一步.
+     * @var callable|null
      */
     protected $defaultFallback;
 
-
+    /**
+     * 已经执行过fallback了
+     * @var bool
+     */
     protected $calledFallback = false;
 
+    /**
+     * 已经执行过default fallback
+     * @var bool
+     */
     protected $calledDefaultFallback = false;
 
+
+    /**
+     * @var Question|null
+     */
+    protected $question;
 
     public function __construct(
         Context $self,
@@ -178,6 +201,7 @@ class HearingHandler implements Hearing
         return $this;
     }
 
+    /*----------- php 条件 -----------*/
 
     public function expect(
         callable $prediction,
@@ -230,6 +254,179 @@ class HearingHandler implements Hearing
         return $this;
     }
 
+
+    public function isCommand(
+        string $signature,
+        callable $interceptor = null
+    ): Matcher
+    {
+
+        if (isset($this->navigator)) return $this;
+
+        $cmdText = $this->message->getCmdText();
+        if (empty($cmdText)) {
+            return $this;
+        }
+
+        $cmd = CommandDefinition::makeBySignature($signature);
+        $cmdMessage = IntentMatcher::matchCommand($this->message, $cmd);
+
+        if (isset($cmdMessage)) {
+            $this->isMatched = true;
+            return $this->callInterceptor($interceptor, $cmdMessage);
+        }
+
+        return $this;
+    }
+
+    public function pregMatch(
+        string $pattern,
+        array $keys = [],
+        callable $interceptor = null
+    ): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        $data = IntentMatcher::matchRegex(
+            $this->message->getTrimmedText(),
+            $pattern,
+            $keys
+        );
+
+        if (!isset($data)) {
+            return $this;
+        }
+
+        $this->isMatched = true;
+
+        return $this->callInterceptor(
+            $interceptor,
+            new ArrayMessage($this->message, $data)
+        );
+
+    }
+
+    public function hasKeywords(
+        array $keywords,
+        callable $interceptor = null,
+        array $notAny = null
+    ): Matcher
+    {
+
+        if (empty($keywords)) {
+            return $this;
+        }
+
+        if (isset($this->navigator)) return $this;
+
+        // 关键字匹配只检查文本类型.
+        if (!$this->message instanceof VerboseMsg) {
+            return $this;
+        }
+
+        $nlu = $this->dialog->session->nlu;
+        $incoming = $this->dialog->session->incomingMessage;
+        $collection = $nlu->getWords();
+
+        // 分词得到的关键字不为空, 用分词来做
+        if (!$collection->isEmpty()) {
+            foreach ($keywords as $item) {
+
+                // 或关系
+                if (
+                    is_array($item)  // 表示同义词
+                    && $collection->intersect($item)->isEmpty() //交集为空, 说明不存在
+                ) {
+                    return $this;
+                }
+
+                if (!$collection->contains($item)) {
+                    return $this;
+                }
+            }
+
+            $this->isMatched = true;
+            return $this->callInterceptor($interceptor);
+        }
+
+        // 最脏的办法, 自己去循环匹配.
+        $text = $incoming->getMessage()->getTrimmedText();
+        if (IntentMatcher::matchWords($text, $keywords, false)) {
+            $this->isMatched = true;
+            return $this->callInterceptor($interceptor);
+        }
+
+        return $this;
+    }
+
+
+    public function isTypeOf(
+        string $messageType,
+        callable $interceptor = null
+    ): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        if ($this->message->getMessageType() === $messageType) {
+            $this->isMatched = true;
+            return $this->callInterceptor($interceptor);
+        }
+
+        return $this;
+    }
+
+    public function isInstanceOf(
+        string $messageClazz,
+        callable $interceptor = null
+    ): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        if (is_a($this->message, $messageClazz, TRUE)) {
+            $this->isMatched = true;
+            return $this->callInterceptor($interceptor);
+        }
+
+        return $this;
+    }
+
+
+    /*----------- 问答 条件 -----------*/
+
+    protected function getMatchedAnswer() : ? Answer
+    {
+        // 如果已经匹配过
+        // $this->question 存在, 一定匹配过. 反之则不是.
+        // 要么就没有问题, 要么没有答案, 要么有答案.
+        if (!$this->parsedByQuestion) {
+
+            $this->parsedByQuestion = true;
+            // 只有一种可能, 就是默认问题还没parse过.
+            $question = $this->dialog->currentQuestion();
+            if (isset($question)) {
+                $this->question = $question;
+                $this->question->parseAnswer($this->dialog->session, $this->message);
+            }
+        }
+
+        return isset($this->question)
+            ? $this->question->getAnswer()
+            : (
+                $this->message instanceof Answer   // message 自己是 answer 是低优先级.
+                ? $this->message
+                : null
+            );
+    }
+
+    public function matchQuestion(Question $question): Matcher
+    {
+        $question->parseAnswer($this->dialog->session);
+        $this->question = $question;
+        $this->parsedByQuestion = true;
+        return $this;
+    }
+
+
     public function hasChoice(
         array $choices,
         callable $interceptor = null
@@ -237,19 +434,94 @@ class HearingHandler implements Hearing
     {
         if (isset($this->navigator)) return $this;
 
-        if (!$this->message instanceof Answer) {
+        $answer = $this->getMatchedAnswer();
+        if (!isset($answer)) {
             return $this;
         }
 
         foreach ($choices as $choice) {
-            if ($this->message->hasChoice($choice)) {
+            if ($answer->hasChoice($choice)) {
                 $this->isMatched = true;
-                return $this->callInterceptor($interceptor);
+                return $this->callInterceptor($interceptor, $answer);
             }
         }
 
         return $this;
     }
+
+    public function isChoice(
+        $suggestionIndex,
+        callable $interceptor = null
+    ): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        $answer = $this->getMatchedAnswer();
+        if (!isset($answer)) {
+            return $this;
+        }
+
+        if ($answer->hasChoice($suggestionIndex)) {
+            $this->isMatched = true;
+            return $this->callInterceptor($interceptor, $answer);
+        }
+
+        return $this;
+    }
+
+    public function isNegative(callable $action = null): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        $answer = $this->getMatchedAnswer();
+
+        $is = isset($answer)
+            && $answer instanceof Confirmation
+            && ! $answer->isPositive();
+
+        $is = $is || $this->doFeels(Negative::class);
+
+        if ($is) {
+            $this->isMatched = true;
+            $this->callInterceptor($action);
+        }
+        return $this;
+    }
+
+    public function isPositive(callable $action = null): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        $answer = $this->getMatchedAnswer();
+
+        $is = isset($answer)
+            && $answer instanceof Confirmation
+            && $answer->isPositive();
+
+        $is = $is || $this->doFeels(Positive::class);
+
+        if ($is) {
+            $this->isMatched = true;
+            $this->callInterceptor($action);
+        }
+        return $this;
+    }
+
+    public function isAnswer(callable $interceptor = null): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        $answer = $this->getMatchedAnswer();
+        if (isset($answer)) {
+            $this->isMatched = true;
+            return $this->callInterceptor($interceptor, $answer);
+        }
+
+        return $this;
+    }
+
+
+    /*----------- nlu 条件 -----------*/
 
     public function hasEntity(
         string $entityName,
@@ -501,40 +773,6 @@ class HearingHandler implements Hearing
         return $this;
     }
 
-    public function isTypeOf(
-        string $messageType,
-        callable $interceptor = null
-    ): Matcher
-    {
-        if (isset($this->navigator)) return $this;
-
-        if ($this->message->getMessageType() === $messageType) {
-            $this->isMatched = true;
-            return $this->callInterceptor($interceptor);
-        }
-
-        return $this;
-    }
-
-    public function isChoice(
-        $suggestionIndex,
-        callable $interceptor = null
-    ): Matcher
-    {
-        if (isset($this->navigator)) return $this;
-
-        if (!$this->message instanceof Answer) {
-            return $this;
-        }
-
-        if ($this->message->hasChoice($suggestionIndex)) {
-            $this->isMatched = true;
-            return $this->callInterceptor($interceptor);
-        }
-
-        return $this;
-    }
-
     public function feels(
         string $emotionName,
         callable $action = null
@@ -569,164 +807,6 @@ class HearingHandler implements Hearing
         return $feels->feel($this->dialog->session, $emotionName)    ;
     }
 
-    public function isNegative(callable $action = null): Matcher
-    {
-        if (isset($this->navigator)) return $this;
-
-        $is = $this->message instanceof Confirmation && ! $this->message->isPositive();
-        $is = $is || $this->doFeels(Negative::class);
-
-        if ($is) {
-            $this->isMatched = true;
-            $this->callInterceptor($action);
-        }
-        return $this;
-    }
-
-    public function isPositive(callable $action = null): Matcher
-    {
-        if (isset($this->navigator)) return $this;
-
-        $is = $this->message instanceof Confirmation && $this->message->isPositive();
-        $is = $is || $this->doFeels(Positive::class);
-
-        if ($is) {
-            $this->isMatched = true;
-            $this->callInterceptor($action);
-        }
-        return $this;
-    }
-
-    public function isAnswer(callable $interceptor = null): Matcher
-    {
-        if (isset($this->navigator)) return $this;
-
-        if ($this->message instanceof Answer) {
-            $this->isMatched = true;
-            return $this->callInterceptor($interceptor);
-        }
-
-        return $this;
-    }
-
-    public function isInstanceOf(
-        string $messageClazz,
-        callable $interceptor = null
-    ): Matcher
-    {
-        if (isset($this->navigator)) return $this;
-
-        if (is_a($this->message, $messageClazz, TRUE)) {
-            $this->isMatched = true;
-            return $this->callInterceptor($interceptor);
-        }
-
-        return $this;
-    }
-
-    public function isCommand(
-        string $signature,
-        callable $interceptor = null
-    ): Matcher
-    {
-
-        if (isset($this->navigator)) return $this;
-
-        $cmdText = $this->message->getCmdText();
-        if (empty($cmdText)) {
-            return $this;
-        }
-
-        $cmd = CommandDefinition::makeBySignature($signature);
-        $cmdMessage = IntentMatcher::matchCommand($this->message, $cmd);
-
-        if (isset($cmdMessage)) {
-            $this->isMatched = true;
-            return $this->callInterceptor($interceptor, $cmdMessage);
-        }
-
-        return $this;
-    }
-
-    public function pregMatch(
-        string $pattern,
-        array $keys = [],
-        callable $interceptor = null
-    ): Matcher
-    {
-        if (isset($this->navigator)) return $this;
-
-        $data = IntentMatcher::matchRegex(
-            $this->message->getTrimmedText(),
-            $pattern,
-            $keys
-        );
-
-        if (!isset($data)) {
-            return $this;
-        }
-
-        $this->isMatched = true;
-
-        return $this->callInterceptor(
-            $interceptor,
-            new ArrayMessage($this->message, $data)
-        );
-
-    }
-
-    public function hasKeywords(
-        array $keywords,
-        callable $interceptor = null,
-        array $notAny = null
-    ): Matcher
-    {
-
-        if (empty($keywords)) {
-            return $this;
-        }
-
-        if (isset($this->navigator)) return $this;
-
-        // 关键字匹配只检查文本类型.
-        if (!$this->message instanceof VerboseMsg) {
-            return $this;
-        }
-
-        $nlu = $this->dialog->session->nlu;
-        $incoming = $this->dialog->session->incomingMessage;
-        $collection = $nlu->getWords();
-
-        // 分词得到的关键字不为空, 用分词来做
-        if (!$collection->isEmpty()) {
-            foreach ($keywords as $item) {
-
-                // 或关系
-                if (
-                    is_array($item)  // 表示同义词
-                    && $collection->intersect($item)->isEmpty() //交集为空, 说明不存在
-                ) {
-                    return $this;
-                }
-
-                if (!$collection->contains($item)) {
-                    return $this;
-                }
-            }
-
-            $this->isMatched = true;
-            return $this->callInterceptor($interceptor);
-        }
-
-        // 最脏的办法, 自己去循环匹配.
-        $text = $incoming->getMessage()->getTrimmedText();
-        if (IntentMatcher::matchWords($text, $keywords, false)) {
-            $this->isMatched = true;
-            return $this->callInterceptor($interceptor);
-        }
-
-        return $this;
-    }
 
     public function then(callable $interceptor): Hearing
     {
@@ -828,6 +908,11 @@ class HearingHandler implements Hearing
 
         // 没有navigator 的话就往后走
         return $this->callInterceptor($this->defaultFallback);
+    }
+
+    public function heardOrMiss(): Navigator
+    {
+        return $this->navigator ?? new MissMatch($this->dialog);
     }
 
 

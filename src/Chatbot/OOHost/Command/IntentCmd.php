@@ -84,7 +84,7 @@ class IntentCmd extends SessionCommand
             ->newContext($message->getEntities());
 
         $navigator = $intent->navigate($session->dialog);
-        $session->hear(
+        $session->handle(
             $session->incomingMessage->message,
             $navigator
         );

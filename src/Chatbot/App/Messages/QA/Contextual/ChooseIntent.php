@@ -6,6 +6,7 @@ namespace Commune\Chatbot\App\Messages\QA\Contextual;
 
 use Commune\Chatbot\App\Messages\QA\Choose;
 use Commune\Chatbot\App\Messages\QA\QuestionReplyIds;
+use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\OOHost\Session\Session;
 
@@ -21,14 +22,16 @@ class ChooseIntent extends Choose
         parent::__construct($question, $options, $defaultChoice);
     }
 
-    public function parseAnswer(Session $session): ? Answer
+    public function parseAnswer(Session $session, Message $message = null): ? Answer
     {
+        $message = $message ?? $session->incomingMessage->message;
+
         $intent = $session->getMatchedIntent();
         if (isset($intent)) {
             foreach ($this->intents as $index => $intentName) {
                 if ($intent->nameEquals($intentName)) {
                     return $this->answer = $this->newAnswer(
-                        $session->incomingMessage->message,
+                        $message,
                         $this->suggestions[$index] ?? '',
                         $index
                     );
@@ -37,7 +40,7 @@ class ChooseIntent extends Choose
         }
 
         // choose intent 不能反向匹配. 命中答案不意味着有正确的 intent 解析.
-        return parent::parseAnswer($session);
+        return parent::parseAnswer($session, $message);
     }
 
     /**

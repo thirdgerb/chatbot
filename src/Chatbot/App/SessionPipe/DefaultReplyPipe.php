@@ -30,7 +30,7 @@ class DefaultReplyPipe implements SessionPipe
             return $session;
         }
 
-        if (!$session->isHeard()) {
+        if (!$session->isHandled()) {
 
             $missMatched = $session
                 ->chatbotConfig

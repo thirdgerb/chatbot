@@ -51,7 +51,7 @@ class RedirectCmd extends SessionCommand
             $navigator = $dialog->redirect->sleepTo($context);
         }
 
-        $session->hear(
+        $session->handle(
             $session->incomingMessage->message,
             $navigator
         );

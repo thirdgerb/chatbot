@@ -17,6 +17,7 @@ use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\Config\Children\OOHostConfig;
+use Commune\Chatbot\OOHost\History\Tracker;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -56,6 +57,7 @@ use Psr\Log\LoggerInterface;
  * @property-read Repository $repo
  * @property-read ChatbotConfig $chatbotConfig
  * @property-read OOHostConfig $hostConfig
+ * @property-read Tracker $tracker
  *
  *
  */
@@ -74,13 +76,13 @@ interface Session extends RunningSpy
      * @param Message $message
      * @param Navigator|null $navigator
      */
-    public function hear(Message $message, Navigator $navigator = null) : void;
+    public function handle(Message $message, Navigator $navigator = null) : void;
 
     /**
      * the incoming message has been heard
      * @return bool
      */
-    public function isHeard() : bool;
+    public function isHandled() : bool;
 
     /**
      * the current session is told to quit
@@ -114,27 +116,6 @@ interface Session extends RunningSpy
      * @return IntentMessage|null
      */
     public function getPossibleIntent(string $intentName) : ? IntentMessage;
-
-    /*----- 创建一个director -----*/
-
-    /**
-     * 用来创建一个次级的session.
-     * 父级session可把处理不了的消息传递给子session,
-     * 或者处理子session处理不了的消息.
-     * 从而构成一种洋葱式的管道, 就像中间件一样.
-     *
-     * goto or create a sub level session.
-     * parent session can deliver unhandled message to child session
-     * and parent session should handle miss matched message from child session
-     * like onion middleware
-     *
-     *
-     * @param string $belongsTo  通常用当前session 的sessionId | usually current session id
-     * @param \Closure $rootMaker 生成 根context 的闭包.
-     * @param OOHostConfig|null $config
-     * @return Session
-     */
-    public function newSession(string $belongsTo, \Closure $rootMaker, OOHostConfig $config = null) : Session;
 
     /*----- 保存必要的数据. -----*/
 

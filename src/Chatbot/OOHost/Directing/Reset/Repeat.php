@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\OOHost\Directing\Dialog;
+namespace Commune\Chatbot\OOHost\Directing\Reset;
 
 
 use Commune\Chatbot\OOHost\Directing\AbsNavigator;

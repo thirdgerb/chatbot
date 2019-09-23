@@ -9,7 +9,6 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\AbsNavigator;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Directing\Stage\GoStage;
-use Commune\Chatbot\OOHost\History\History;
 
 abstract class Redirector extends AbsNavigator
 {
@@ -27,20 +26,18 @@ abstract class Redirector extends AbsNavigator
     /**
      * Redirector constructor.
      * @param Dialog $dialog
-     * @param History $history
      * @param Context $to
      * @param string|null $stage
      */
     public function __construct(
         Dialog $dialog,
-        History $history,
         Context $to,
         string $stage = null
     )
     {
         $this->to = $to;
         $this->resetStage = $stage;
-        parent::__construct($dialog, $history);
+        parent::__construct($dialog);
     }
 
     public function startCurrent(): Navigator
@@ -48,7 +45,6 @@ abstract class Redirector extends AbsNavigator
         if (isset($this->resetStage)) {
             return new GoStage(
                 $this->dialog,
-                $this->history,
                 $this->resetStage,
                 true
             );

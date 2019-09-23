@@ -8,8 +8,6 @@ use Commune\Chatbot\Blueprint\Message\Event\Connect;
 use Commune\Chatbot\Blueprint\Message\Event\EndSession;
 use Commune\Chatbot\Blueprint\Message\Event\EventMsg;
 use Commune\Chatbot\Blueprint\Message\Event\StartSession;
-use Commune\Chatbot\App\Messages\Events\ConnectionEvt;
-use Commune\Chatbot\App\Messages\Events\QuitEvt;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
@@ -33,7 +31,7 @@ class EventMsgPipe implements SessionPipe
             return $next($session);
         }
 
-        $session->hear(
+        $session->handle(
             $message,
             $navigator
         );

@@ -8,6 +8,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Callables\Action;
 use Commune\Chatbot\OOHost\Context\Callables\HearingComponent;
 use Commune\Chatbot\OOHost\Dialogue\Hearing\Matcher;
+use Commune\Chatbot\OOHost\Directing\End\MissMatch;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Hearing\ToDoWhileHearing;
@@ -113,6 +114,7 @@ interface Hearing extends Matcher
      */
     public function always(callable $callable) : Hearing;
 
+
     /**
      * 作为链式调用的结尾.
      *
@@ -130,6 +132,14 @@ interface Hearing extends Matcher
      * @return Navigator
      */
     public function end(callable $defaultFallback = null) : Navigator;
+
+
+    /**
+     * 不执行 end 的各种fallback
+     * 命中就直接返回navigator
+     * 否则直接返回 missMatch
+     */
+    public function heardOrMiss() : Navigator;
 
 
     /*---------- to do api ----------*/

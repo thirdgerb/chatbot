@@ -9,7 +9,6 @@ use Commune\Chatbot\App\Messages\System\MissedReply;
 use Commune\Chatbot\App\Messages\System\QuitSessionReply;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Config\Children\OOHostConfig;
-use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Framework\Pipeline\ChatbotPipeImpl;
 use Commune\Chatbot\Framework\Utils\OnionPipeline;
@@ -57,7 +56,7 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         }
 
         // 当前 session 没有搞定, 就继续往下走.
-        if (!$session->isHeard()) {
+        if (!$session->isHandled()) {
             $conversation = $next($conversation);
         }
 
@@ -93,7 +92,7 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 
     public function doCallSession(Session $session) : Session
     {
-        $session->hear($session->incomingMessage->message);
+        $session->handle($session->incomingMessage->message);
         return $session;
     }
 

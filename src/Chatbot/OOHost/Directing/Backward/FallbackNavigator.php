@@ -8,7 +8,6 @@ use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\AbsNavigator;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\History\History;
 
 abstract class FallbackNavigator extends AbsNavigator
 {
@@ -21,12 +20,11 @@ abstract class FallbackNavigator extends AbsNavigator
 
     public function __construct(
         Dialog $dialog,
-        History $history,
         bool $skipSelfEvent = false
     )
     {
         $this->skipSelfEvent = $skipSelfEvent;
-        parent::__construct($dialog, $history);
+        parent::__construct($dialog);
     }
 
     public function doDisplay() : ? Navigator
@@ -77,7 +75,7 @@ abstract class FallbackNavigator extends AbsNavigator
 
         // 如果不能fallback, 说明没有起点了, 就直接退出.
         // 测试一段时间.
-        return new Quit($this->dialog, $this->history);
+        return new Quit($this->dialog);
     }
 
 }

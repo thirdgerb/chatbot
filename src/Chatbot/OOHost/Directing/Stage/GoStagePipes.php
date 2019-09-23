@@ -28,14 +28,13 @@ class GoStagePipes extends AbsNavigator
 
     public function __construct(
         Dialog $dialog,
-        History $history,
         array $pipes,
         bool $reset
     )
     {
         $this->reset = $reset;
         $this->pipes = $pipes;
-        parent::__construct($dialog, $history);
+        parent::__construct($dialog);
     }
 
     public function doDisplay(): ? Navigator

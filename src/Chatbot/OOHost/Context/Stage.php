@@ -10,6 +10,7 @@ use Commune\Chatbot\OOHost\Context\Callables\StageComponent;
 use Commune\Chatbot\OOHost\Context\Stages\CallbackStageRoute;
 use Commune\Chatbot\OOHost\Context\Stages\OnStartStage;
 use Commune\Chatbot\OOHost\Context\Stages\StartStageRoute;
+use Commune\Chatbot\OOHost\Context\Stages\SubDialogBuilder;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
@@ -151,6 +152,25 @@ interface Stage
         array $stages = null
     ) : Navigator;
 
+
+    /**
+     * 开启一个子会话. 与当前会话的生命周期完全隔离.
+     * 共享 session 内的记忆.
+     *
+     * 相当于当前会话是一个中间件.
+     *
+     * @param string $belongsTo
+     * @param callable $rootContextMaker
+     * @param Message|null $message 如果不传, 就继承当前 dialog 的 currentMessage
+     * @param bool $keepAlive
+     * @return SubDialogBuilder
+     */
+    public function onSubDialog(
+        string $belongsTo,
+        callable $rootContextMaker,
+        Message $message = null,
+        bool $keepAlive = true
+    ) : SubDialogBuilder;
 
     /**
      * 主要的跳转策略.

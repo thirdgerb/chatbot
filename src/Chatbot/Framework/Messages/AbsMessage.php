@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\Tags\Transformed;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
+use Commune\Chatbot\Framework\Utils\StringUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Chatbot\Blueprint\Message\Message as Contract;
 
@@ -89,7 +90,7 @@ abstract class AbsMessage implements Contract
         $text = $this->getText();
 
         // 去掉全角符号, 降低复杂性.
-        $text = CommandUtils::sbc2dbc($text);
+        $text = StringUtils::sbc2dbc($text);
         return $this->_trimmed = trim($text, static::TRIMMING_MARKS);
     }
 

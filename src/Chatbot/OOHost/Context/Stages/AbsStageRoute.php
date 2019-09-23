@@ -134,6 +134,23 @@ abstract class AbsStageRoute implements Stage
         return new OnStartStageBuilder($this, $slots);
     }
 
+    public function onSubDialog(
+        string $belongsTo,
+        callable $rootContextMaker,
+        Message $message = null,
+        bool $keepAlive = true
+    ): SubDialogBuilder
+    {
+        return new SubDialogBuilderImpl(
+            $this,
+            $belongsTo,
+            $rootContextMaker,
+            $message,
+            $keepAlive
+        );
+
+    }
+
 
     public function __get($name)
     {

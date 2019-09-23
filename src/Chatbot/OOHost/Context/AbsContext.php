@@ -129,7 +129,7 @@ abstract class AbsContext extends AbsMessage implements Context
         }
 
         if ($value instanceof SessionDataIdentity) {
-            $value = $this->_session->repo->fetchSessionData($value);
+            $value = $this->_session->repo->fetchSessionData($this->_session, $value);
         }
 
         if ($value instanceof SessionInstance) {

@@ -15,8 +15,7 @@ class WhereCmd extends SessionCommand
             {--s|scope : 查看当前 scope}
             {--n|snapshot : 查看当前 snapshot}
             {--c|context : 查看当前 context}
-            {--a|cached : 查看 cache 到snapshot的数据}
-            {--b|breakpoint : 查看当前 breakpoint}';
+            ';
 
     const DESCRIPTION = '查看维持多轮对话的关键数据.';
 
@@ -33,12 +32,11 @@ class WhereCmd extends SessionCommand
             $talk->info('snapshot is :')
                 ->info(
                     json_encode(
-                        $session->repo->snapshot,
+                        $session->repo->getSnapshots(),
                         JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
                     )
                 );
         }
-
 
         if ($message['--context']) {
             $talk
@@ -46,23 +44,6 @@ class WhereCmd extends SessionCommand
                 ->info($session->dialog->currentContext()->toPrettyJson());
         }
 
-        if ($message['--breakpoint']) {
-            $talk
-                ->info('breakpoint data is :')
-                ->info($session->repo->snapshot->breakpoint->toPrettyJson());
-        }
-
-        if ($message['--cached']) {
-            $s = json_encode(
-                $session->repo->snapshot->cachedSessionData,
-                JSON_PRETTY_PRINT
-                    | JSON_UNESCAPED_SLASHES
-                    |JSON_UNESCAPED_UNICODE
-            );
-            $talk
-                ->info("snapshot cached data is :\n" . $s);
-
-        }
 
         if ($message->isEmpty()) {
             $talk->info("需要结合参数, 请输入 where -h 查看参数");

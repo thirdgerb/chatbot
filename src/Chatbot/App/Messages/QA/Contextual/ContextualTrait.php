@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\App\Messages\QA\Contextual;
 
 
+use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -51,7 +52,7 @@ trait ContextualTrait
         return $this->intent;
     }
 
-    public function parseAnswer(Session $session): ? Answer
+    public function parseAnswer(Session $session, Message $message = null): ? Answer
     {
         $intent = $session->getMatchedIntent();
 
@@ -65,7 +66,7 @@ trait ContextualTrait
         }
 
         // 正常匹配结果.
-        $this->answer = parent::parseAnswer($session);
+        $this->answer = parent::parseAnswer($session, $message);
 
         if (!isset($this->answer)) {
             return null;
@@ -77,7 +78,7 @@ trait ContextualTrait
 
     protected function getOriginIntent(Session $session) : ? IntentMessage
     {
-        $intent = $session->repo->fetchSessionData($this->intentDataId);
+        $intent = $session->repo->fetchSessionData($session, $this->intentDataId);
         return $intent instanceof IntentMessage ? $intent : null;
     }
 

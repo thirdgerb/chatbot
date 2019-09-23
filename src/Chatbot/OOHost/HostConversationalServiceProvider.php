@@ -6,6 +6,8 @@ namespace Commune\Chatbot\OOHost;
 
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Framework\Providers\BaseServiceProvider;
+use Commune\Chatbot\OOHost\Session\Repository;
+use Commune\Chatbot\OOHost\Session\RepositoryImpl;
 use Commune\Container\ContainerContract;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\Hearing\HearingHandler;
@@ -32,6 +34,7 @@ class HostConversationalServiceProvider extends BaseServiceProvider
     {
         $this->registerDefaultSlots();
         $this->registerHearing();
+        $this->registerRepository();
         $this->registerSession();
     }
 
@@ -63,8 +66,25 @@ class HostConversationalServiceProvider extends BaseServiceProvider
                 $parameters[Session::BELONGS_TO_VAR],
                 $conversation[ChatbotConfig::class]->host,
                 $conversation,
-                $conversation[Driver::class]
+                $conversation[Repository::class]
             );
+        });
+    }
+
+    protected function registerRepository() : void
+    {
+        $this->app->singleton(Repository::class, function($app)
+        {
+            /**
+             * @var Conversation $conversation
+             */
+            $conversation = $app[Conversation::class];
+
+            return new RepositoryImpl(
+                $conversation->getTraceId(),
+                $app[Driver::class]
+            );
+
         });
     }
 

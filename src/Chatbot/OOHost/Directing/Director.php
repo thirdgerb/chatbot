@@ -8,8 +8,8 @@ use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\OOHost\Directing\Backward\Failure;
-use Commune\Chatbot\OOHost\Directing\Backward\Quit;
-use Commune\Chatbot\OOHost\Directing\Dialog\MissMatch;
+use Commune\Chatbot\OOHost\Directing\End\EndNavigator;
+use Commune\Chatbot\OOHost\Directing\Stage\CallbackStage;
 use Commune\Chatbot\OOHost\Exceptions\DataNotFoundException;
 use Commune\Chatbot\OOHost\Exceptions\NavigatorException;
 use Commune\Chatbot\OOHost\Exceptions\TooManyRedirectException;
@@ -68,31 +68,33 @@ class Director implements RunningSpy
                 . ' times more than max times '
                 . $this->maxTicks
                 . ', tracking:'
-                . $this->session->getHistory()->tracker
+                . $this->session->tracker
             );
         }
     }
 
     /**
-     * @param Navigator $navigator
+     * @param Navigator|null $navigator
      * @return bool
      */
-    public function hear(Navigator $navigator) : bool
+    public function handle(Navigator $navigator = null) : bool
     {
+        $navigator = $navigator ?? new CallbackStage(
+            $rootDialog = $this->session->getRootDialog(),
+            $rootDialog->currentMessage()
+        );
+
         do {
             $this->tick();
+            $dialog = $navigator->getDialog();
 
             try {
-
-                // 退出的逻辑
-                if ($navigator instanceof Quit) {
-                    $this->tick();
-                    $navigator->display();
+                if (!isset($navigator)) {
                     return $this->heard;
                 }
 
-                if ($navigator instanceof MissMatch) {
-                    $this->heard = false;
+                if ($navigator instanceof EndNavigator) {
+                    $this->heard = $navigator->beingHeard();
                 }
 
                 $navigator = $navigator->display();
@@ -115,10 +117,7 @@ class Director implements RunningSpy
             } catch (LogicException $e) {
 
                 $this->session->getLogger()->warning($e);
-                $navigator = new Failure(
-                    $this->session->dialog,
-                    $this->session->getHistory()
-                );
+                $navigator = new Failure($dialog);
             }
 
         // 其它的异常不会捕获.

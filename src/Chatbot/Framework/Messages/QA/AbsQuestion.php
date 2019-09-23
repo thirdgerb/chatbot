@@ -5,6 +5,7 @@ namespace Commune\Chatbot\Framework\Messages\QA;
 
 
 use Commune\Chatbot\Blueprint\Conversation\Speech;
+use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Framework\Messages\AbsMessage;
@@ -73,7 +74,7 @@ abstract class AbsQuestion extends AbsMessage implements Question
     }
 
 
-    abstract public function parseAnswer(Session $message): ? Answer;
+    abstract public function parseAnswer(Session $session, Message $message = null): ? Answer;
 
     /**
      * default choice for default value

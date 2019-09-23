@@ -21,7 +21,7 @@ abstract class AbsNavigatorCmd extends SessionCommand
 
     public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe): void
     {
-        $session->hear(
+        $session->handle(
             $session->incomingMessage->message,
             $this->navigate($session->dialog)
         );

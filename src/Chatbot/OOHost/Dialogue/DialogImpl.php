@@ -22,14 +22,6 @@ use Commune\Chatbot\OOHost\Session\SessionInstance;
 use Psr\Log\LoggerInterface;
 
 
-/**
- * @property-read App $app
- * @property-read DialogSpeech $talk
- * @property-read Session $session
- * @property-read Redirect $redirect
- * @property-read LoggerInterface $logger
- *
- */
 class DialogImpl implements Dialog, Redirect, App, RunningSpy
 {
     use RunningSpyTrait;
@@ -51,6 +43,16 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
      */
     protected $conversation;
 
+    /**
+     * @var string
+     */
+    protected $belongsTo;
+
+    /**
+     * @var Message
+     */
+    protected $message;
+
     /*--------- cached ---------*/
 
     /**
@@ -58,15 +60,26 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
      */
     protected $history;
 
+    /**
+     * @var SubDialog[]
+     */
+    protected $subDialogs = [];
+
     /*--------- construct ---------*/
 
-    public function __construct(Session $session, History $history)
+    public function __construct(
+        Session $session,
+        History $history,
+        Message $message
+    )
     {
+        $this->message = $message;
         $this->sessionImpl = $session;
         $this->conversation = $session->conversation;
-        $this->history = $history;
         $this->sessionId = $session->sessionId;
-        self::addRunningTrace($this->sessionId, $this->sessionId);
+        $this->history = $history;
+        $this->belongsTo = $history->belongsTo;
+        self::addRunningTrace($this->belongsTo, $this->sessionId);
     }
 
     /*--------- app ---------*/
@@ -127,7 +140,7 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
             // onFallback 的时候也允许使用默认的incoming message
             // 可以真正起到fallback 的效果, 同时又可以让 interceptor 的api 一致化.
             // 避免 message 不存在导致 fatal error 或逻辑谬误
-            $message ?? $this->session->incomingMessage->message,
+            $message ?? $this->message,
             __METHOD__
         );
 
@@ -154,17 +167,15 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         string $method = ''
     )
     {
-        $parameters  = [];
-
         // 为message 设计各种依赖.
-        if (isset($message)) {
-            $parameters = array_fill_keys(
-                $message->namesAsDependency(),
-                $message
-            );
-            $parameters['message'] = $message;
-            $parameters[Message::class] = $message;
-        }
+        $message = $message ?? $this->message;
+
+        $parameters = array_fill_keys(
+            $message->namesAsDependency(),
+            $message
+        );
+        $parameters['message'] = $message;
+        $parameters[Message::class] = $message;
 
         $parameters['self'] = $self;
         return $this->call($caller, $parameters, $method);
@@ -268,6 +279,11 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         return $question;
     }
 
+    public function currentMessage(): Message
+    {
+        return $this->message;
+    }
+
 
     /*--------- talk ---------*/
 
@@ -288,8 +304,9 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     /*--------- dialog navigator ---------*/
 
-    public function hear(Message $message): Hearing
+    public function hear(Message $message = null): Hearing
     {
+        $message = $message ?? $this->session->incomingMessage->message;
         $context =$this->history->getCurrentContext();
         $method = Context::HEARING_MIDDLEWARE_METHOD;
 
@@ -327,7 +344,7 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     public function fulfill(): Navigator
     {
-        return new Directing\Backward\Fulfill($this, $this->history);
+        return new Directing\Backward\Fulfill($this);
     }
 
 
@@ -341,7 +358,7 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     public function next(): Navigator
     {
-        return new Directing\Stage\NextStage($this, $this->history);
+        return new Directing\Stage\NextStage($this);
     }
 
 
@@ -349,7 +366,6 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
     {
         return new Directing\Stage\GoStage(
             $this,
-            $this->history,
             $stageName,
             $resetPipe
         );
@@ -357,7 +373,7 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     public function repeat(): Navigator
     {
-        return new Directing\Dialog\Repeat($this, $this->history);
+        return new Directing\Reset\Repeat($this);
     }
 
 
@@ -372,7 +388,6 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
         return new Directing\Stage\GoStagePipes(
             $this,
-            $this->history,
             $stages,
             $resetPipe
         );
@@ -380,43 +395,43 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     public function backward(): Navigator
     {
-        return new Directing\Backward\Backward($this, $this->history);
+        return new Directing\Backward\Backward($this);
     }
 
     public function rewind(): Navigator
     {
-        return new Directing\Backward\Rewind($this, $this->history);
+        return new Directing\Reset\Rewind($this);
     }
 
     public function missMatch(): Navigator
     {
-        return new Directing\Dialog\MissMatch($this, $this->history);
+        return new Directing\End\MissMatch($this);
     }
 
     public function wait(): Navigator
     {
-        return new Directing\Dialog\Wait($this, $this->history);
+        return new Directing\End\Wait($this);
     }
 
     /*--------- backward ---------*/
 
     public function quit(bool $skipSelfExitingEvent = false): Navigator
     {
-        return new Directing\Backward\Quit($this, $this->history, $skipSelfExitingEvent);
+        return new Directing\Backward\Quit($this, $skipSelfExitingEvent);
     }
 
     public function reject(bool $skipSelfExitingEvent = false): Navigator
     {
-        return new Directing\Backward\Reject($this, $this->history, $skipSelfExitingEvent);
+        return new Directing\Backward\Reject($this, $skipSelfExitingEvent);
     }
 
     public function cancel(bool $skipSelfExitingEvent = false): Navigator
     {
-        return new Directing\Backward\Cancel($this, $this->history, $skipSelfExitingEvent);
+        return new Directing\Backward\Cancel($this, $skipSelfExitingEvent);
     }
 
     /*--------- status ---------*/
-    public function belongsTo(Context $context): bool
+    public function isCurrent(Context $context): bool
     {
         if (!$context->isInstanced()) {
             $context = $context->toInstance($this->session);
@@ -443,7 +458,12 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     public function findContext(string $id): ? Context
     {
-        $datum = $this->session->repo->fetchSessionData(new SessionDataIdentity($id, SessionData::CONTEXT_TYPE));
+        $datum = $this->session
+            ->repo
+            ->fetchSessionData(
+                $this->session,
+                new SessionDataIdentity($id, SessionData::CONTEXT_TYPE)
+            );
 
         return $datum instanceof Context ? $datum : null;
     }
@@ -456,7 +476,6 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         $dependency = $this->wrapContext($dependency, __METHOD__);
         return new Directing\Redirects\DependOn(
             $this,
-            $this->history,
             $dependency,
             $stages ?? []
         );
@@ -472,11 +491,11 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         $to = $this->wrapContext($to, __METHOD__);
         switch($level) {
             case Redirect::NODE_LEVEL:
-                return new Directing\Redirects\ReplaceNodeTo($this, $this->history, $to, $resetStage);
+                return new Directing\Redirects\ReplaceNodeTo($this,  $to, $resetStage);
             case Redirect::PROCESS_LEVEL:
-                return new Directing\Redirects\ReplaceProcessTo($this, $this->history, $to, $resetStage);
+                return new Directing\Redirects\ReplaceProcessTo($this, $to, $resetStage);
             default:
-                return new Directing\Redirects\ReplaceThreadTo($this, $this->history, $to, $resetStage);
+                return new Directing\Redirects\ReplaceThreadTo($this, $to, $resetStage);
         }
     }
 
@@ -485,7 +504,7 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         if (isset($to)) {
             $to = $this->wrapContext($to, __METHOD__);
         }
-        return new Directing\Redirects\SleepTo($this, $this->history, $to);
+        return new Directing\Redirects\SleepTo($this,$to);
     }
 
     public function yieldTo($to = null): Navigator
@@ -493,12 +512,12 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         if (isset($to)) {
             $to = $this->wrapContext($to, __METHOD__);
         }
-        return new Directing\Redirects\YieldTo($this, $this->history, $to);
+        return new Directing\Redirects\YieldTo($this, $to);
     }
 
     public function home(): Navigator
     {
-        return new Directing\Redirects\Home($this, $this->history);
+        return new Directing\Redirects\Home($this);
     }
 
 
@@ -537,19 +556,21 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
     public function getLogger() : LoggerInterface
     {
-        return $this->session->logger;
+        return $this->sessionImpl->logger;
     }
 
 
     public function __get($name)
     {
         switch ($name) {
+            case 'history' :
+                return $this->history;
+            case 'belongsTo' :
+                return $this->belongsTo;
             case 'session' :
                 return $this->sessionImpl;
             case 'app' :
                 return $this;
-            case 'talk' :
-                return $this->say();
             case 'redirect' :
                 return $this;
             case 'logger' :
@@ -559,7 +580,6 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         }
 
     }
-
 
 
     /**
@@ -581,8 +601,32 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         return $parameters;
     }
 
+    /*--------- subDialog ---------*/
+
+    public function getSubDialog(
+        string $belongsTo,
+        callable $rootMaker,
+        Message $message = null
+    ): SubDialog
+    {
+        if (isset($this->subDialogs[$belongsTo])) {
+            return $this->subDialogs[$belongsTo];
+        }
+
+        $history = new History($this->session, $belongsTo, $rootMaker);
+        $message = $message ?? $this->message;
+
+        return $this->subDialogs[$belongsTo] = new SubDialogImpl(
+            $this->session,
+            $history,
+            $this,
+            $message
+        );
+    }
+
+
     public function __destruct()
     {
-        self::removeRunningTrace($this->sessionId);
+        self::removeRunningTrace($this->belongsTo);
     }
 }

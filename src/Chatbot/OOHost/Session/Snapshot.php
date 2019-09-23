@@ -23,17 +23,6 @@ class Snapshot implements \Serializable
     public $breakpoint;
 
     /**
-     * @var SessionData[][]
-     */
-    public $cachedSessionData = [];
-
-    /**
-     * @deprecated
-     * @var SessionData[][]
-     */
-    public $savedSessionData = [];
-
-    /**
      * 如果没有saved, 则可能出错了.
      * @var bool
      */
@@ -48,48 +37,6 @@ class Snapshot implements \Serializable
     {
         $this->sessionId = $sessionId;
         $this->belongsTo = $belongsTo;
-    }
-
-
-    public function cacheSessionData(SessionData $data)
-    {
-        $type = $data->getSessionDataType();
-        $id = $data->getSessionDataId();
-        $this->cachedSessionData[$type][$id] = $data;
-    }
-
-    /**
-     * @param SessionDataIdentity $identity
-     * @param \Closure|null $finder
-     * @return SessionData|null
-     */
-    public function fetchSessionData(
-        SessionDataIdentity $identity,
-        \Closure $finder = null
-    ) : ? SessionData
-    {
-        $type = $identity->type;
-        $id = $identity->id;
-
-        if (isset($this->cachedSessionData[$type][$id])) {
-            return $this->cachedSessionData[$type][$id];
-        }
-
-//        if (isset($this->savedSessionData[$type][$id])) {
-//            $data = $this->savedSessionData[$type][$id];
-//            $this->cacheSessionData($data);
-//            return $data;
-//        }
-
-        if (isset($finder)) {
-            $data = $finder();
-            if ($data instanceof SessionData) {
-                $this->cacheSessionData($data);
-                return $data;
-            }
-        }
-
-        return null;
     }
 
     public function serialize()

@@ -20,6 +20,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property string $conversationId
  * @property string $incomingMessageId
  * @property string $sessionId
+ * @property string $belongsTo
  * @property string $date
  * @property string $year
  * @property string $month
@@ -32,13 +33,14 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  */
 class Scope implements ArrayAndJsonAble
 {
+    const SESSION_ID = 'sessionId';
+    const BELONGS_TO_ID = 'belongsTo';
     const USER_ID = 'userId';
     const PLATFORM_ID = 'platformId';
     const CHATBOT_USER_ID = 'chatbotName';
     const CHAT_ID = 'chatId';
     const CONVERSATION_ID = 'conversationId';
     const INCOMING_MESSAGE_ID = 'incomingMessageId';
-    const SESSION_ID = 'sessionId';
     const DATE = 'date';
     const YEAR = 'year';
     const MONTH = 'month';
@@ -101,10 +103,11 @@ class Scope implements ArrayAndJsonAble
     }
 
 
-    public static function make(string $sessionId, Conversation $conversation) : Scope
+    public static function make(string $sessionId, string $belongsTo, Conversation $conversation) : Scope
     {
         $scope = new self();
         $scope->sessionId = $sessionId;
+        $scope->belongsTo = $belongsTo;
 
         $message = $conversation->getIncomingMessage();
         $scope->userId = $message->getUserId();

@@ -53,7 +53,7 @@ class NavigationPipe implements SessionPipe
 
         // 导航类
         if (isset($navigator)) {
-            $session->hear(
+            $session->handle(
                 $session->incomingMessage->message,
                 $navigator
             );
