@@ -60,11 +60,6 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
      */
     protected $history;
 
-    /**
-     * @var SubDialog[]
-     */
-    protected $subDialogs = [];
-
     /*--------- construct ---------*/
 
     public function __construct(
@@ -609,14 +604,10 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         Message $message = null
     ): SubDialog
     {
-        if (isset($this->subDialogs[$belongsTo])) {
-            return $this->subDialogs[$belongsTo];
-        }
-
         $history = new History($this->session, $belongsTo, $rootMaker);
         $message = $message ?? $this->message;
 
-        return $this->subDialogs[$belongsTo] = new SubDialogImpl(
+        return new SubDialogImpl(
             $this->session,
             $history,
             $this,

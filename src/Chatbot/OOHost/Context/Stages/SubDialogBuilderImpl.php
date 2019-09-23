@@ -8,15 +8,18 @@
 namespace Commune\Chatbot\OOHost\Context\Stages;
 
 
+use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\SubDialog;
 use Commune\Chatbot\OOHost\Directing\End\MissMatch;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Directing\Stage\CallbackStage;
 
-class SubDialogBuilderImpl implements SubDialogBuilder
+class SubDialogBuilderImpl implements SubDialogBuilder, RunningSpy
 {
+    use RunningSpyTrait;
 
     /**
      * @var Stage
@@ -77,6 +80,7 @@ class SubDialogBuilderImpl implements SubDialogBuilder
                 ->repo
                 ->clearSnapshot($this->belongsTo);
         }
+        static::addRunningTrace($this->belongsTo, $this->belongsTo);
     }
 
 
@@ -154,4 +158,8 @@ class SubDialogBuilderImpl implements SubDialogBuilder
         return $this->subDialog = $this->stage->dialog->getSubDialog($this->belongsTo, $this->rootContextMaker, $this->message);
     }
 
+    public function __destruct()
+    {
+        static::removeRunningTrace($this->belongsTo);
+    }
 }

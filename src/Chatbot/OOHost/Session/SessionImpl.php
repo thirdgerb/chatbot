@@ -267,7 +267,8 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function getRootHistory() : History
     {
-        return $this->rootHistory ?? $this->rootHistory = new History($this, $this->belongsTo,[$this, 'makeRootContext']);
+        return $this->rootHistory
+            ?? $this->rootHistory = new History($this, $this->belongsTo,[$this, 'makeRootContext']);
     }
 
     public function getIncomingMessage() : IncomingMessage
@@ -455,6 +456,7 @@ class SessionImpl implements Session, HasIdGenerator
         $this->possibleIntents = [];
         $this->incomingMessage = null;
         $this->scope = null;
+        $this->rootDialog = null;
         $this->rootHistory = null;
         $this->hostConfig = null;
         $this->chatbotConfig = null;

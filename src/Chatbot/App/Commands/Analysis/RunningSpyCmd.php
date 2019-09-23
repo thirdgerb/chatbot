@@ -44,9 +44,9 @@ class RunningSpyCmd extends SessionCommand
 
         $slices = array_slice($traces, 0, 20);
 
-        $output = "$type 运行中实例共 $c 个 \n";
+        $output = "$type 运行中实例共 $c 个";
         if ($showDetail) {
-            $output .= "列举最多20个如下:\n";
+            $output .= "\n列举最多20个如下:\n";
             foreach ($slices as $trace => $id) {
                 $output .= "  $trace : $id\n";
             }

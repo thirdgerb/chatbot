@@ -84,7 +84,8 @@ class History implements RunningSpy
         //重新赋值
         $this->setBreakpoint($this->makeBreakpoint($this->prevBreakpoint));
         $this->tracker = new Tracker($session->sessionId);
-        static::addRunningTrace($this->sessionId, $this->sessionId);
+
+        static::addRunningTrace($this->belongsTo, $this->belongsTo);
     }
 
     protected function makeBreakpoint(Breakpoint $prev = null)
@@ -105,7 +106,6 @@ class History implements RunningSpy
             if (!$context->isInstanced()) {
                 $context->toInstance($this->session);
             }
-
             $process = new Process(
                 $this->sessionId,
                 new Thread(
@@ -113,6 +113,9 @@ class History implements RunningSpy
                 )
             );
         }
+
+        // 看看能不能防止内存泄露.
+        unset($this->rootContextMaker);
 
         return new Breakpoint(
             $this->session->conversation->getConversationId(),
@@ -468,7 +471,7 @@ class History implements RunningSpy
 
     public function __destruct()
     {
-        static::removeRunningTrace($this->sessionId);
+        static::removeRunningTrace($this->belongsTo);
     }
 
 }
