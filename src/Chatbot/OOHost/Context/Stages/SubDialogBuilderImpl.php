@@ -73,7 +73,8 @@ class SubDialogBuilderImpl implements SubDialogBuilder, RunningSpy
         $this->message = $message;
 
         // 强迫清空掉
-        if (!$this->keepAlive) {
+        // 也只是进入的时候才清空.
+        if ($stage->isStart() && !$this->keepAlive) {
             $this->stage
                 ->dialog
                 ->session
