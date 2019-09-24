@@ -10,6 +10,7 @@ use Commune\Chatbot\App\Messages\System\QuitSessionReply;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Config\Children\OOHostConfig;
 use Commune\Chatbot\Config\ChatbotConfig;
+use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Framework\Pipeline\ChatbotPipeImpl;
 use Commune\Chatbot\Framework\Utils\OnionPipeline;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -23,15 +24,26 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 {
     use IdGeneratorHelper;
 
+    const SESSION_ID_KEY = 'chatbot:sessionId:%s';
+
     /**
      * @var OOHostConfig
      */
     public $hostConfig;
 
+    /**
+     * @var ChatbotConfig
+     */
     public $chatbotConfig;
 
-    public function __construct(ChatbotConfig $config)
+    /**
+     * @var CacheAdapter
+     */
+    public $cache;
+
+    public function __construct(CacheAdapter $cache, ChatbotConfig $config)
     {
+        $this->cache = $cache;
         $this->chatbotConfig = $config;
         $this->hostConfig = $config->host;
     }
@@ -43,7 +55,9 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         $belongsTo = $conversation->getIncomingMessage()->getSessionId()
             ?? $conversation->getChat()->getChatId();
 
-        $session = $this->makeSession($belongsTo, $conversation);
+        $sessionId = $this->fetchSessionId($belongsTo);
+
+        $session = $this->makeSession($sessionId, $conversation);
 
         $session = $this->callSession($session);
 
@@ -52,6 +66,7 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         // should close client by event
         if ($session->isQuiting()) {
             $conversation->reply(new QuitSessionReply());
+            $this->forgetSession($belongsTo);
             return $conversation;
         }
 
@@ -67,6 +82,25 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 
         return $conversation;
 
+    }
+
+    public function fetchSessionId(string $belongsTo) : string
+    {
+        $key = sprintf(self::SESSION_ID_KEY, $belongsTo);
+
+        $sessionId = $this->cache->get($key);
+        if (empty($sessionId)) {
+            $sessionId = $this->createUuId();
+            $this->cache->set($key, $sessionId, $this->hostConfig->sessionExpireSeconds);
+        }
+
+        return $sessionId;
+    }
+
+    public function forgetSession(string $belongsTo) : void
+    {
+        $key = sprintf(self::SESSION_ID_KEY, $belongsTo);
+        $this->cache->forget($key);
     }
 
     public function callSession(Session $session) : Session
@@ -105,7 +139,7 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
     }
 
     public function makeSession(
-        string $belongsTo,
+        string $sessionId,
         Conversation $conversation
     ) : Session
     {
@@ -113,7 +147,7 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
             Session::class,
             [
 
-                Session::BELONGS_TO_VAR => $belongsTo
+                Session::SESSION_ID_VAR => $sessionId
             ]
         );
 

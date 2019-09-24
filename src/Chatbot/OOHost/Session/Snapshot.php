@@ -30,13 +30,13 @@ class Snapshot implements \Serializable
 
     /**
      * Snapshot constructor.
-     * @param string $belongsTo
      * @param string $sessionId
+     * @param string $belongsTo
      */
-    public function __construct(string $belongsTo, string $sessionId)
+    public function __construct(string $sessionId, string $belongsTo)
     {
-        $this->sessionId = $sessionId;
         $this->belongsTo = $belongsTo;
+        $this->sessionId = $sessionId;
     }
 
     public function serialize()

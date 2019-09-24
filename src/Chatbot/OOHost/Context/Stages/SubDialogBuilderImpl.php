@@ -77,9 +77,8 @@ class SubDialogBuilderImpl implements SubDialogBuilder, RunningSpy
         if ($stage->isStart() && !$this->keepAlive) {
             $this->stage
                 ->dialog
-                ->session
-                ->repo
-                ->clearSnapshot($this->belongsTo);
+                ->history
+                ->refresh();
         }
         static::addRunningTrace($this->belongsTo, $this->belongsTo);
     }

@@ -122,12 +122,12 @@ class ArraySessionDriver implements Driver
     {
         $belongsTo = $snapshot->belongsTo;
         $serialized = serialize($snapshot);
-        self::$snapshots[$belongsTo] = $serialized;
+        self::$snapshots[$snapshot->sessionId][$belongsTo] = $serialized;
     }
 
-    public function findSnapshot(string $belongsTo): ? Snapshot
+    public function findSnapshot(string $sessionId, string $belongsTo): ? Snapshot
     {
-        $unserialized = self::$snapshots[$belongsTo] ?? null;
+        $unserialized = self::$snapshots[$sessionId][$belongsTo] ?? null;
 
         if ($unserialized) {
             return unserialize($unserialized);
@@ -136,9 +136,9 @@ class ArraySessionDriver implements Driver
         return null;
     }
 
-    public function clearSnapshot(string $belongsTo): void
+    public function clearSnapshot(string $sessionId, string $belongsTo): void
     {
-        unset(self::$snapshots[$belongsTo]);
+        unset(self::$snapshots[$sessionId][$belongsTo]);
     }
 
 

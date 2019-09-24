@@ -39,9 +39,6 @@ use Psr\Log\LoggerInterface;
  * ************* scoping ************
  *
  * @property-read string $sessionId
- *
- * @property-read string $belongsTo  session 是可嵌套的.内层session都从属于一个外层session. session layer could wrap each other like an onion.
- *
  * @property-read Scope $scope   Session目前的作用域.
  *
  *
@@ -63,8 +60,8 @@ use Psr\Log\LoggerInterface;
  */
 interface Session extends RunningSpy
 {
-    // construct method must accept variable "belongsTo"
-    const BELONGS_TO_VAR = 'belongsTo';
+    // construct method must accept variable "sessionId"
+    const SESSION_ID_VAR = 'sessionId';
 
 
     /*----- 响应会话 -----*/

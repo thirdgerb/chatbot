@@ -110,13 +110,13 @@ class RepositoryImpl implements Repository, RunningSpy, HasIdGenerator
     }
 
 
-    public function getSnapshot(string $belongsTo, string $sessionId = null) : Snapshot
+    public function getSnapshot(string $sessionId, string $belongsTo) : Snapshot
     {
         if (isset($this->snapshots[$belongsTo])) {
             return $this->snapshots[$belongsTo];
         }
 
-        $cached = $this->getDriver()->findSnapshot($belongsTo);
+        $cached = $this->getDriver()->findSnapshot($sessionId, $belongsTo);
         if (!empty($cached)) {
             // 如果 snapshot 的 saved 为false,
             // 说明出现重大错误, 导致上一轮没有saved.
@@ -128,14 +128,14 @@ class RepositoryImpl implements Repository, RunningSpy, HasIdGenerator
         }
 
         // 创建一个新的snapshot
-        return $this->snapshots[$belongsTo] = new Snapshot($belongsTo, $sessionId ?? $this->createUuId());
+        return $this->snapshots[$belongsTo] = new Snapshot($sessionId, $belongsTo);
     }
 
-    public function clearSnapshot(string $belongsTo): void
+    public function clearSnapshot(string $sessionId, string $belongsTo): void
     {
         // 这样就不会保存了. 但是 snapshot 并不会立刻从别的history里清除掉.
         unset($this->snapshots[$belongsTo]);
-        $this->driver->clearSnapshot($belongsTo); // 系统也不保存了.
+        $this->driver->clearSnapshot($sessionId, $belongsTo); // 系统也不保存了.
     }
 
     /**

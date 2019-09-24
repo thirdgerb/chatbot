@@ -63,7 +63,7 @@ class HostConversationalServiceProvider extends BaseServiceProvider
     {
         $this->app->bind(Session::class, function($conversation, $parameters){
             return new SessionImpl(
-                $parameters[Session::BELONGS_TO_VAR],
+                $parameters[Session::SESSION_ID_VAR],
                 $conversation[ChatbotConfig::class]->host,
                 $conversation,
                 $conversation[Repository::class]

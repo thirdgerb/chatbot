@@ -57,11 +57,6 @@ class SessionImpl implements Session, HasIdGenerator
      */
     protected $sessionId;
 
-    /**
-     * @var string;
-     */
-    protected $belongsTo;
-
     /*----- components -----*/
 
     /**
@@ -162,24 +157,21 @@ class SessionImpl implements Session, HasIdGenerator
     protected $memoryRepo;
 
     public function __construct(
-        string $belongsTo,
+        string $sessionId,
         OOHostConfig $hostConfig,
         Conversation $conversation,
         Repository $repository
     )
     {
-        $this->belongsTo = $belongsTo;
         $this->hostConfig = $hostConfig;
         $this->conversation = $conversation;
         $this->repo = $repository;
+        $this->sessionId = $sessionId;
 
 
         $this->traceId = $conversation->getTraceId();
         $this->chatbotConfig = $conversation->getChatbotConfig();
-        $snapshot = $this->repo->getSnapshot($belongsTo);
-        $this->sessionId = $snapshot->sessionId;
         $this->tracker = new Tracker($this->sessionId);
-
         static::addRunningTrace($this->traceId, $this->sessionId);
     }
 
@@ -246,7 +238,6 @@ class SessionImpl implements Session, HasIdGenerator
         return $this->scope
             ?? $this->scope = Scope::make(
                 $this->sessionId,
-                $this->belongsTo,
                 $this->conversation
             );
     }
@@ -269,7 +260,7 @@ class SessionImpl implements Session, HasIdGenerator
     public function getRootHistory() : History
     {
         return $this->rootHistory
-            ?? $this->rootHistory = new History($this, $this->belongsTo,[$this, 'makeRootContext']);
+            ?? $this->rootHistory = new History($this, $this->sessionId, [$this, 'makeRootContext']);
     }
 
     public function getIncomingMessage() : IncomingMessage
@@ -392,8 +383,6 @@ class SessionImpl implements Session, HasIdGenerator
         switch($name) {
 
             // 直接可取的.
-            case 'belongsTo' :
-                return $this->belongsTo;
             case 'sessionId' :
                 return $this->sessionId;
             case 'conversation' :
@@ -448,7 +437,6 @@ class SessionImpl implements Session, HasIdGenerator
 
             // 存储失败.
             } catch (\Exception $e) {
-                $this->repo->getDriver()->clearSnapshot($this->belongsTo);
                 $this->flushProperties();
                 throw new LogicException('finish session failure', $e);
             }

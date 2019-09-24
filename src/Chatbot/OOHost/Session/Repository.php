@@ -14,11 +14,12 @@ interface Repository
         \Closure $makeDefault = null
     ) : ? SessionData;
 
-    public function getSnapshot(string $belongsTo, string $sessionId = null) : Snapshot;
+    public function getSnapshot(string $sessionId, string $belongsTo) : Snapshot;
+
+    public function clearSnapshot(string $sessionId, string $belongsTo) : void;
 
     public function getSnapshots() : array;
 
-    public function clearSnapshot(string $belongsTo) : void;
 
     public function flush(Session $session) : void;
 

@@ -16,10 +16,7 @@ class QuitSession extends EndNavigator
     public function doDisplay(): ? Navigator
     {
         // 不管怎样, snapshot先清除掉.
-        $this->dialog
-            ->session
-            ->repo
-            ->clearSnapshot($this->dialog->history->belongsTo);
+        $this->dialog->history->refresh();
 
         if ($this->dialog instanceof SubDialog) {
             $navigator = $this->dialog->fireQuit();

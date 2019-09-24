@@ -16,9 +16,9 @@ interface Driver extends RunningSpy
 
     public function saveSnapshot(Snapshot $snapshot, int $expireSeconds = 0) : void;
 
-    public function findSnapshot(string $belongsTo) : ? Snapshot;
+    public function findSnapshot(string $sessionId, string $belongsTo) : ? Snapshot;
 
-    public function clearSnapshot(string $belongsTo) : void;
+    public function clearSnapshot(string $sessionId, string $belongsTo) : void;
 
     /*------- yielding -------*/
 
