@@ -6,6 +6,7 @@ namespace Commune\Chatbot\Framework\Conversation;
 
 use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Framework\Utils\StringUtils;
 use Illuminate\Support\Collection;
 
 class NatureLanguageUnit implements NLU
@@ -78,11 +79,13 @@ class NatureLanguageUnit implements NLU
 
     public function setMatchedIntent(string $intentName): void
     {
+        $intentName = StringUtils::normalizeContextName($intentName);
         $this->matchedIntentName = $intentName;
     }
 
     public function addPossibleIntent(string $intentName, int $odd, bool $highlyPossible = true)
     {
+        $intentName = StringUtils::normalizeContextName($intentName);
         $this->getPossibleIntents()->put($intentName, [$intentName, $odd, $highlyPossible]);
         $this->sorted = false;
     }
@@ -102,6 +105,7 @@ class NatureLanguageUnit implements NLU
 
     public function hasPossibleIntent(string $intentName, bool $highlyOnly = true): bool
     {
+        $intentName = StringUtils::normalizeContextName($intentName);
         $exists = $this->getPossibleIntents()->has($intentName);
         if (!$exists || !$highlyOnly) {
             return $exists;
@@ -142,6 +146,7 @@ class NatureLanguageUnit implements NLU
 
     public function getOddOfPossibleIntent(string $intentName): ? int
     {
+        $intentName = StringUtils::normalizeContextName($intentName);
         return $this->possibleIntents[$intentName][1] ?? null;
     }
 
@@ -152,6 +157,7 @@ class NatureLanguageUnit implements NLU
 
     public function setIntentEntities(string $intentName, array $entities): void
     {
+        $intentName = StringUtils::normalizeContextName($intentName);
         $this->intentEntities[$intentName] = new Collection($entities);
     }
 
@@ -164,6 +170,7 @@ class NatureLanguageUnit implements NLU
 
     public function getIntentEntities(string $intentName): Collection
     {
+        $intentName = StringUtils::normalizeContextName($intentName);
         $entities = $this->getGlobalEntities();
         if (isset($this->intentEntities[$intentName])) {
             return $entities->merge($this->intentEntities[$intentName]);
@@ -210,6 +217,7 @@ class NatureLanguageUnit implements NLU
 
     public function focusIntent(string $intentName): void
     {
+        $intentName = StringUtils::normalizeContextName($intentName);
         $this->getFocusIntents()->add($intentName);
     }
 

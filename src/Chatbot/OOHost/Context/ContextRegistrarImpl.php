@@ -140,7 +140,7 @@ class ContextRegistrarImpl implements ContextRegistrar
             );
         }
 
-        $id = $this->filterContextName($def->getName());
+        $id = $this->normalizeContextName($def->getName());
 
         // 占位符逻辑 占位符低优先, 不能覆盖.
         if (
@@ -189,9 +189,9 @@ class ContextRegistrarImpl implements ContextRegistrar
         return true;
     }
 
-    protected function filterContextName(string $name ) : string
+    protected function normalizeContextName(string $name ) : string
     {
-        return StringUtils::namespaceSlashToDot($name);
+        return StringUtils::normalizeContextName($name);
     }
 
     /*--------- has ----------*/
@@ -278,7 +278,7 @@ class ContextRegistrarImpl implements ContextRegistrar
         ) {
             $id = $this->classToName[$contextName];
         } else {
-            $id = $this->filterContextName($contextName);
+            $id = $this->normalizeContextName($contextName);
         }
 
         return $id;
@@ -317,7 +317,7 @@ class ContextRegistrarImpl implements ContextRegistrar
             return array_keys($this->definitionsByName);
         }
 
-        $domain = $this->filterContextName($domain);
+        $domain = $this->normalizeContextName($domain);
         $domain = trim($domain, '.');
 
         $results = [];
@@ -383,7 +383,7 @@ class ContextRegistrarImpl implements ContextRegistrar
 
     final public static function validateDefName(string $contextName): bool
     {
-        $name = StringUtils::namespaceSlashToDot($contextName);
+        $name = StringUtils::normalizeContextName($contextName);
         $secs = explode('.', $name);
         foreach ($secs as $sec) {
             if (! preg_match('/^[a-z0-9_]+$/', $sec)) {

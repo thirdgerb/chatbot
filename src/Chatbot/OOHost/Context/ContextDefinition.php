@@ -62,7 +62,7 @@ class ContextDefinition implements Definition
             );
         }
 
-        $this->contextName = StringUtils::namespaceSlashToDot($contextName);
+        $this->contextName = StringUtils::normalizeContextName($contextName);
         $this->contextClazz = $contextClazz;
         $this->description = $description;
         $this->contextMaker = $contextMaker;

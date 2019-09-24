@@ -12,9 +12,14 @@ class StringUtils
         return is_scalar($value) || (is_object($value) && method_exists($value, '__toString'));
     }
 
+    public static function normalizeContextName(string $name) : string
+    {
+        return static::namespaceSlashToDot($name);
+    }
+
     public static function namespaceSlashToDot(string $name) : string
     {
-        return strtolower(str_replace('\\', '.', $name));
+        return str_replace('\\', '.', $name);
     }
 
     public static function dotToNamespaceSlash(string $name) : string

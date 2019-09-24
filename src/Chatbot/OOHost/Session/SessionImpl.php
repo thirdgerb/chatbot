@@ -12,6 +12,7 @@ use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
+use Commune\Chatbot\Framework\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Context\Context;
 
 use Commune\Chatbot\OOHost\Context\ContextRegistrar;
@@ -321,18 +322,16 @@ class SessionImpl implements Session, HasIdGenerator
             return $this->getPossibleIntent($this->matchedIntent);
         }
 
+        // 已经运行过, 说明没有匹配到过
         if ($this->intentMatchingTried) {
             return null;
         }
 
-        // try matching once, still could set matched intent
+        // 只匹配一次
+        // try matching once
         $this->intentMatchingTried = true;
-        $message = $this->getIncomingMessage()->message;
-        if ($message instanceof IntentMessage) {
-            $this->setPossibleIntent($message);
-            return $this->matchedIntent = $message->getName();
-        }
 
+        // 用默认的规范匹配.
         $intent = $this->getIntentRegistrar()->matchIntent($this);
         if (isset($intent)) {
             $this->setPossibleIntent($intent);
@@ -351,6 +350,13 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function getPossibleIntent(string $intentName): ? IntentMessage
     {
+        // 对 intent name 进行标准化.
+        if ($this->intentRepo->hasDef($intentName)) {
+            $intentName = $this->intentRepo->getDef($intentName)->getName();
+        } else {
+            $intentName = StringUtils::normalizeContextName($intentName);
+        }
+
         if (array_key_exists($intentName, $this->possibleIntents)) {
             return $this->possibleIntents[$intentName];
         }
@@ -358,12 +364,15 @@ class SessionImpl implements Session, HasIdGenerator
         // 防止 matchedIntent 没有执行过.
         $matched = $this->getMatchedIntent();
         if (isset($matched) && $matched->nameEquals($intentName)) {
-            $this->setPossibleIntent($matched);
             return $matched;
         }
 
         // 执行主动匹配逻辑.
-        $intent = $this->getIntentRegistrar()->matchCertainIntent($intentName, $this);
+        $intent = $this
+            ->getIntentRegistrar()
+            ->matchCertainIntent($intentName, $this);
+
+        // 缓存环节.
         if (isset($intent)) {
             $this->setPossibleIntent($intent);
         } else {

@@ -1,31 +1,4 @@
-## 2019-09-23
+## 2019-09-24
 
--   核心改动 : 重做了session内核, 以实现中间件式的上下文嵌套
-    -   session repository 拆分成 conversation 唯一, 缓存所有 SessionData
-    -   snapshot 的 cache 全都转移到了 repository, snapshot 变成了 breakpoint 的快照.
-    -   session 去掉了 newSession. newSession 无法做出中间件, 因为 session data 难以共享.
-    -   tracker 从 history 转移到了 session. session 现在是会话级唯一的
-    -   history 变成 dialog 专属, 一个请求可能会有多个 history, 对应多个Dialog
-    -   现在用 belongsTo 来管理 history 链. 每个history 都 belongsTo 一个唯一ID.
-        -   唯一ID 需要用户自己来设计, 以避免冲突.
-    -   Scope 现在将 belongsTo 列入元素之一.
-    -   breakpoint 的 construct 做了基于值的简化, 这应该成为一个原则. 不需要组件化的, 就传值.
-    -   重新定位了 history, 使之从组件上升为独立存储上下文关系的角色.
-        -   history 现在是 dialog 持有, 每个 conversation 可以有多个 dialog
-    -   Navigator 改动
-        -   所有的 Navigator 都不再传入 history, 而是通过 Dialog 直接获取. 有可能有 bug
-        -   使用 EndNavigator 来调度 子会话 到 父会话 的关系.
-        -   取消了 hear navigator, 改成 director 的默认机制.
-    -   Dialog 增加了 getSubDialog 的 api
-    -   Stage 增加了 onSubDialog 的 api
--   消息匹配相关改动
-    -   问答的 parse 环节不再为 session 必然执行, 而是放到了 hearing 里.
-    -   question 的 parse 可以传入 message, 而不是默认的 incomingMessage
-    -   VbQuestion 现在采用模糊匹配 (目前是 strstr ) 的办法匹配索引和内容.
-    -   session, dialog 都可以在 hear 中传入别的 message. 不一定是 incomingMessage.
-    -   包括问题的索引匹配在内, 都对字符串做了一致化 ( sbc2dbc + 小写 )
--   Hearing 改动
-    -   基于 question 匹配改动, 允许在 hearing 里 matchQuestion, 从而匹配自定义问题.
-    -   增加了 heardOrMiss, 跳出 end 方法.
--   其它改动
-    -   sbc2dbc 移动到 stringUtils 内. 未来可能需要一个组件来做这件事.
+-   调整了 intentRegistrar 的匹配规则和顺序, 在确保匹配的前提下让代码更清晰
+-   在必要的地方加入了 context name 的 normalize. 未来考虑全部去掉.
