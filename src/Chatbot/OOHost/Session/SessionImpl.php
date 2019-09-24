@@ -318,8 +318,11 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function getMatchedIntent(): ? IntentMessage
     {
-        if (isset($this->matchedIntent)) {
-            return $this->getPossibleIntent($this->matchedIntent);
+        if (
+            isset($this->matchedIntent)
+            && array_key_exists($this->matchedIntent, $this->possibleIntents)
+        ) {
+            return $this->possibleIntents[$this->matchedIntent];
         }
 
         // 已经运行过, 说明没有匹配到过
@@ -350,9 +353,10 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function getPossibleIntent(string $intentName): ? IntentMessage
     {
+        $repo = $this->getIntentRegistrar();
         // 对 intent name 进行标准化.
-        if ($this->intentRepo->hasDef($intentName)) {
-            $intentName = $this->intentRepo->getDef($intentName)->getName();
+        if ($repo->hasDef($intentName)) {
+            $intentName = $repo->getDef($intentName)->getName();
         } else {
             $intentName = StringUtils::normalizeContextName($intentName);
         }
@@ -368,9 +372,7 @@ class SessionImpl implements Session, HasIdGenerator
         }
 
         // 执行主动匹配逻辑.
-        $intent = $this
-            ->getIntentRegistrar()
-            ->matchCertainIntent($intentName, $this);
+        $intent = $repo->matchCertainIntent($intentName, $this);
 
         // 缓存环节.
         if (isset($intent)) {
