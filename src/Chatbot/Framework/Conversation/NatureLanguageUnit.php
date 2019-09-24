@@ -81,6 +81,7 @@ class NatureLanguageUnit implements NLU
     {
         $intentName = StringUtils::normalizeContextName($intentName);
         $this->matchedIntentName = $intentName;
+        $this->addPossibleIntent($intentName, 100);
     }
 
     public function addPossibleIntent(string $intentName, int $odd, bool $highlyPossible = true)
