@@ -110,11 +110,18 @@ class MazeInt extends ActionIntent
         // 用户第一次玩.
         return $stage->buildTalk()
             ->info($this->welcome)
-            ->askConfirm($this->wantIntro)
+            ->askConfirm($this->wantIntro, true, '是的', '好的')
             ->hearing()
-            ->isPositive(Redirector::goStage('intro'))
-            ->isNegative(Redirector::goStage('born'))
-            ->end();
+            ->todo(Redirector::goStage('born'))
+                ->hasKeywords([['不', '别']])
+                ->isNegative()
+            ->todo(Redirector::goStage('intro'))
+                ->hasKeywords([['是', '好', '要', '可以']])
+                ->isPositive()
+            ->end(function(Dialog $dialog){
+                $dialog->say()->info('没有明白什么意思');
+                return $dialog->rewind();
+            });
     }
 
     /**
