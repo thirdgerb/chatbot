@@ -34,6 +34,7 @@ class History implements RunningSpy
      */
     protected $snapshot;
 
+
     /**
      * @var Breakpoint
      */
@@ -64,6 +65,9 @@ class History implements RunningSpy
      */
     protected $logger;
 
+    /**
+     * @var callable
+     */
     protected $rootContextMaker;
 
     public function __construct(
@@ -94,6 +98,7 @@ class History implements RunningSpy
     {
         $this->session->repo->clearSnapshot($this->sessionId, $this->belongsTo);
         $this->snapshot = $this->session->repo->getSnapshot($this->sessionId, $this->belongsTo);
+        $this->setBreakpoint($this->makeBreakpoint($this->prevBreakpoint));
     }
 
     protected function makeBreakpoint(Breakpoint $prev = null)
