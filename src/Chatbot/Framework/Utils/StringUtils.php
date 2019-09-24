@@ -14,7 +14,7 @@ class StringUtils
 
     public static function normalizeContextName(string $name) : string
     {
-        return static::namespaceSlashToDot($name);
+        return strtolower(static::namespaceSlashToDot($name));
     }
 
     public static function namespaceSlashToDot(string $name) : string
