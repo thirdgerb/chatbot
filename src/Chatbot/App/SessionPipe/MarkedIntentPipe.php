@@ -7,7 +7,6 @@ namespace Commune\Chatbot\App\SessionPipe;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
-use Illuminate\Support\Collection;
 
 class MarkedIntentPipe implements SessionPipe
 {
@@ -31,7 +30,9 @@ class MarkedIntentPipe implements SessionPipe
         }
 
         $intentName = trim($text, '#');
-        $session->nlu->setMatchedIntent($intentName);
+        if (!empty($intentName)) {
+            $session->nlu->setMatchedIntent($intentName);
+        }
         return $next($session);
     }
 
