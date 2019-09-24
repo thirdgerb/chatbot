@@ -97,7 +97,7 @@ class History implements RunningSpy
     public function refresh() : void
     {
         $this->session->repo->clearSnapshot($this->sessionId, $this->belongsTo);
-        $this->snapshot = $this->session->repo->getSnapshot($this->sessionId, $this->belongsTo);
+        $this->snapshot = $this->session->repo->getSnapshot($this->sessionId, $this->belongsTo, true);
         $this->prevBreakpoint = null;
         $this->setBreakpoint($this->makeBreakpoint());
     }
@@ -117,6 +117,7 @@ class History implements RunningSpy
              * @var Context $context
              */
             $context = call_user_func($this->rootContextMaker);
+
             if (!$context->isInstanced()) {
                 $context->toInstance($this->session);
             }
@@ -127,9 +128,6 @@ class History implements RunningSpy
                 )
             );
         }
-
-        // 看看能不能防止内存泄露.
-        unset($this->rootContextMaker);
 
         return new Breakpoint(
             $this->session->conversation->getConversationId(),

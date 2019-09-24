@@ -110,10 +110,14 @@ class RepositoryImpl implements Repository, RunningSpy, HasIdGenerator
     }
 
 
-    public function getSnapshot(string $sessionId, string $belongsTo) : Snapshot
+    public function getSnapshot(string $sessionId, string $belongsTo, bool $refresh = false) : Snapshot
     {
         if (isset($this->snapshots[$belongsTo])) {
             return $this->snapshots[$belongsTo];
+        }
+
+        if ($refresh) {
+            return $this->snapshots[$belongsTo] = new Snapshot($sessionId, $belongsTo);
         }
 
         $cached = $this->getDriver()->findSnapshot($sessionId, $belongsTo);

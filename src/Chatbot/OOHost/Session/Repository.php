@@ -14,7 +14,7 @@ interface Repository
         \Closure $makeDefault = null
     ) : ? SessionData;
 
-    public function getSnapshot(string $sessionId, string $belongsTo) : Snapshot;
+    public function getSnapshot(string $sessionId, string $belongsTo, bool $refresh = false) : Snapshot;
 
     public function clearSnapshot(string $sessionId, string $belongsTo) : void;
 

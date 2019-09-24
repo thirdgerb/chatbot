@@ -75,10 +75,7 @@ class SubDialogBuilderImpl implements SubDialogBuilder, RunningSpy
         // 强迫清空掉
         // 也只是进入的时候才清空.
         if ($stage->isStart() && !$this->keepAlive) {
-            $this->stage
-                ->dialog
-                ->history
-                ->refresh();
+            $this->getSubDialog()->history->refresh();
         }
         static::addRunningTrace($this->belongsTo, $this->belongsTo);
     }

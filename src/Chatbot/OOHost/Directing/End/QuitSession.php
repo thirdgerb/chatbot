@@ -15,10 +15,9 @@ class QuitSession extends EndNavigator
 {
     public function doDisplay(): ? Navigator
     {
-        // 不管怎样, snapshot先清除掉.
-        $this->dialog->history->refresh();
-
         if ($this->dialog instanceof SubDialog) {
+            // 只有 sub dialog 需要refresh.
+            $this->dialog->history->refresh();
             $navigator = $this->dialog->fireQuit();
         }
 
