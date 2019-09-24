@@ -29,6 +29,10 @@ class SoundLikeManager implements SoundLikeInterface
         string $lang = self::ZH
     ): bool
     {
+        if (empty($input) || empty($expect)) {
+            return false;
+        }
+
         $input = StringUtils::normalizeString($input);
         $expect = StringUtils::normalizeString($expect);
         $parser = $this->parsers[$lang] ?? null;
