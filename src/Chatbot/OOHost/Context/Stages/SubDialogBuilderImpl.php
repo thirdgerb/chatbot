@@ -57,6 +57,11 @@ class SubDialogBuilderImpl implements SubDialogBuilder, RunningSpy
     protected $navigator;
 
     /**
+     * @var callable|null
+     */
+    protected $init;
+
+    /**
      * SubDialogBuilderImpl constructor.
      * @param Stage $stage
      * @param string $belongsTo
@@ -78,6 +83,12 @@ class SubDialogBuilderImpl implements SubDialogBuilder, RunningSpy
             $this->getSubDialog()->history->refresh();
         }
         static::addRunningTrace($this->belongsTo, $this->belongsTo);
+    }
+
+    public function onInit(callable $callable): SubDialogBuilder
+    {
+        $this->init = $callable;
+        return $this;
     }
 
 
@@ -136,7 +147,15 @@ class SubDialogBuilderImpl implements SubDialogBuilder, RunningSpy
         }
 
         if ($this->stage->isStart()) {
-            return $this->getSubDialog()->repeat();
+            if (isset($this->init)) {
+                $subDialog = $this->getSubDialog();
+                $navigator = $subDialog->app->callContextInterceptor(
+                    $subDialog->currentContext(),
+                    $this->init,
+                    $this->message
+                );
+            }
+            return $navigator ?? $this->getSubDialog()->repeat();
         }
 
         if ($this->stage->isCallback()) {

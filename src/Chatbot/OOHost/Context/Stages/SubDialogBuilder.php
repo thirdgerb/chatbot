@@ -16,6 +16,16 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  */
 interface SubDialogBuilder
 {
+
+    /**
+     * 子会话启动的时候执行的逻辑.
+     * 如果不传入的话, 则会 repeat root context
+     *
+     * @param callable $callable
+     * @return SubDialogBuilder
+     */
+    public function onInit(callable  $callable) : SubDialogBuilder;
+
     /**
      * 进入子会话之前, 由父会话做的拦截.
      *
