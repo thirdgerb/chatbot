@@ -7,6 +7,7 @@ namespace Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Support\SoundLike\SoundLikeInterface;
 
 class TodoImpl implements ToDoWhileHearing
 {
@@ -225,6 +226,27 @@ class TodoImpl implements ToDoWhileHearing
     }
 
     public function matchQuestion(Question $question): Matcher
+    {
+        call_user_func_array([$this->hearing, __FUNCTION__], func_get_args());
+        return $this;
+    }
+
+    public function soundLike(
+        string $text,
+        callable $action = null,
+        string $lang = SoundLikeInterface::ZH
+    ): Matcher
+    {
+        call_user_func_array([$this->hearing, __FUNCTION__], func_get_args());
+        return $this;
+    }
+
+    public function soundLikePart(
+        string $text,
+        int $type = SoundLikeInterface::COMPARE_ANY_PART,
+        callable $action = null,
+        string $lang = SoundLikeInterface::ZH
+    ): Matcher
     {
         call_user_func_array([$this->hearing, __FUNCTION__], func_get_args());
         return $this;

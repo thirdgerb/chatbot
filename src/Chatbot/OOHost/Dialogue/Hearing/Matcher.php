@@ -7,6 +7,7 @@ use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Context\Callables\Action;
 use Commune\Chatbot\OOHost\Context\Callables\Prediction;
 use Commune\Chatbot\OOHost\Emotion\Feeling;
+use Commune\Support\SoundLike\SoundLikeInterface;
 
 interface Matcher
 {
@@ -63,6 +64,7 @@ interface Matcher
         callable $action = null
     ) : Matcher;
 
+
     /**
      * Message->isEmpty() === true
      *
@@ -117,6 +119,35 @@ interface Matcher
         string $messageClazz,
         callable $action = null
     ) : Matcher;
+
+    /**
+     * 发音相似. 目前应该只支持中文.
+     * 用于弥补其它系统对语音识别有限的问题.
+     *
+     * @param string $text
+     * @param callable $action
+     * @param string $lang
+     * @return static
+     */
+    public function soundLike(
+        string $text,
+        callable $action = null,
+        string $lang = SoundLikeInterface::ZH
+    ) : Matcher ;
+
+    /**
+     * @param string $text
+     * @param int $type
+     * @param callable|null $action
+     * @param string $lang
+     * @return static
+     */
+    public function soundLikePart(
+        string $text,
+        int $type = SoundLikeInterface::COMPARE_ANY_PART,
+        callable $action = null,
+        string $lang = SoundLikeInterface::ZH
+    ) : Matcher ;
 
 
     /*------- question matcher -------*/

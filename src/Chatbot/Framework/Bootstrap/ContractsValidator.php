@@ -31,6 +31,7 @@ use Commune\Chatbot\Blueprint\Kernel;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Support\SoundLike\SoundLikeInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -63,6 +64,7 @@ class ContractsValidator implements Bootstrapper
         EventDispatcher::class,
         Renderer::class,
         Translator::class,
+        SoundLikeInterface::class,
         // host
         Feeling::class,
     ];

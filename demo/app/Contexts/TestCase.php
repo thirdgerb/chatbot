@@ -215,6 +215,8 @@ class TestCase extends TaskDef
                 })
                     ->is('123')
                     ->is('456')
+                    ->soundLike('一二三四')
+                    ->soundLikePart('二三四五')
 
                 ->todo(function(Dialog $dialog){
 

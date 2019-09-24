@@ -53,7 +53,7 @@ class MemoryDef extends AbsMemory implements SelfRegister
 
     final public static function getContextName() : string
     {
-        return StringUtils::namespaceSlashToDot(static::class);
+        return StringUtils::normalizeContextName(static::class);
     }
 
     final public function getScopingTypes(): array

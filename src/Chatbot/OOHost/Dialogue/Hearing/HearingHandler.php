@@ -27,6 +27,7 @@ use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 use Commune\Chatbot\Blueprint\Message\QA\Confirmation;
+use Commune\Support\SoundLike\SoundLikeInterface;
 
 class HearingHandler implements Hearing
 {
@@ -278,6 +279,66 @@ class HearingHandler implements Hearing
 
         return $this;
     }
+
+    public function soundLike(
+        string $text,
+        callable $action = null,
+        string $lang = SoundLikeInterface::ZH
+    ): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        /**
+         * @var SoundLikeInterface $soundLike
+         */
+        $soundLike = $this->dialog->session->conversation->get(SoundLikeInterface::class);
+        $input = $this->message->getTrimmedText();
+
+        $result = $soundLike->soundLike(
+            $input,
+            $text,
+            SoundLikeInterface::COMPARE_EXACTLY,
+            $lang
+        );
+
+        if ($result) {
+            $this->isMatched = $result;
+            return $this->callInterceptor($action, $this->message);
+        }
+
+        return $this;
+    }
+
+    public function soundLikePart(
+        string $text,
+        int $type = SoundLikeInterface::COMPARE_ANY_PART,
+        callable $action = null,
+        string $lang = SoundLikeInterface::ZH
+    ): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        /**
+         * @var SoundLikeInterface $soundLike
+         */
+        $soundLike = $this->dialog->session->conversation->get(SoundLikeInterface::class);
+        $input = $this->message->getTrimmedText();
+
+        $result = $soundLike->soundLike(
+            $input,
+            $text,
+            $type,
+            $lang
+        );
+
+        if ($result) {
+            $this->isMatched = $result;
+            return $this->callInterceptor($action, $this->message);
+        }
+
+        return $this;
+    }
+
 
     public function pregMatch(
         string $pattern,

@@ -56,7 +56,7 @@ abstract class MemorialTask extends AbsMemory implements SelfRegister
 
     public static function getContextName() : string
     {
-        return StringUtils::namespaceSlashToDot(static::class);
+        return StringUtils::normalizeContextName(static::class);
     }
 
     final public function getScopingTypes(): array

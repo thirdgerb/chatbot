@@ -2,3 +2,4 @@
 
 -   调整了 intentRegistrar 的匹配规则和顺序, 在确保匹配的前提下让代码更清晰
 -   在必要的地方加入了 context name 的 normalize. 未来考虑全部去掉.
+-   添加了 SoundLike 模块, 以解决中文模糊匹配的问题

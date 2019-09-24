@@ -104,6 +104,11 @@ class StringUtils
         return null;
     }
 
+    public static function normalizeString(string $str) : string
+    {
+        return static::sbc2dbc(strtolower($str));
+    }
+
     /**
      * 把全角符号做一些替换.
      * @see https://www.bbsmax.com/A/Ae5Ry6bAJQ/
