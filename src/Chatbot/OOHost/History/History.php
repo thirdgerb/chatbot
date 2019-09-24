@@ -82,13 +82,13 @@ class History implements RunningSpy
 
         $this->sessionId = $sessionId = $session->sessionId;
         $this->logger = $session->logger;
+
         $this->snapshot = $this->session->repo->getSnapshot($sessionId, $belongsTo);
-
-
         $this->prevBreakpoint = $this->snapshot->breakpoint;
+        $this->setBreakpoint($this->makeBreakpoint($this->prevBreakpoint));
+
 
         //重新赋值
-        $this->setBreakpoint($this->makeBreakpoint($this->prevBreakpoint));
         $this->tracker = new Tracker($session->sessionId);
 
         static::addRunningTrace($this->belongsTo, $this->belongsTo);
@@ -98,7 +98,8 @@ class History implements RunningSpy
     {
         $this->session->repo->clearSnapshot($this->sessionId, $this->belongsTo);
         $this->snapshot = $this->session->repo->getSnapshot($this->sessionId, $this->belongsTo);
-        $this->setBreakpoint($this->makeBreakpoint($this->prevBreakpoint));
+        $this->prevBreakpoint = null;
+        $this->setBreakpoint($this->makeBreakpoint());
     }
 
     protected function makeBreakpoint(Breakpoint $prev = null)
