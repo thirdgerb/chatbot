@@ -7,6 +7,7 @@ namespace Commune\Chatbot\OOHost\History;
 use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
+use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Exceptions\DataNotFoundException;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -104,35 +105,26 @@ class History implements RunningSpy
 
     protected function makeBreakpoint(Breakpoint $prev = null)
     {
+        $max = $this->session->chatbotConfig->host->maxBreakpointHistory;
 
         if (isset($prev)) {
             $backtrace = $prev->backtrace;
+            $backtrace[] = $prev->prevId;
+            if (count($backtrace) > $max) {
+                array_shift($backtrace);
+            }
             $prevId = $prev->id;
             $process = clone $prev->process();
 
         } else {
             $backtrace = [];
             $prevId = null;
-            /**
-             * @var Context $context
-             */
-            $context = call_user_func($this->rootContextMaker);
-
-            if (!$context->isInstanced()) {
-                $context->toInstance($this->session);
-            }
-            $process = new Process(
-                $this->sessionId,
-                new Thread(
-                    new Node($context)
-                )
-            );
+            $process = $this->homeProcess();
         }
 
         return new Breakpoint(
             $this->session->conversation->getConversationId(),
             $this->sessionId,
-            $this->session->chatbotConfig->host->maxBreakpointHistory,
             $process,
             $prevId,
             $backtrace
@@ -250,6 +242,7 @@ class History implements RunningSpy
             )
         );
 
+
         if (!$breakpoint instanceof Breakpoint) {
             throw new DataNotFoundException($identity);
         }
@@ -305,9 +298,22 @@ class History implements RunningSpy
 
     protected function homeProcess() : Process
     {
+        /**
+         * @var Context $context
+         */
+        $context =call_user_func($this->rootContextMaker);
+
+        if (!$context instanceof Context) {
+            throw new RuntimeException("history root context make do not return context object . sessionId: {$this->sessionId}; belongsTo: {$this->belongsTo}");
+        }
+
+        if (!$context->isInstanced()) {
+            $context = $context->toInstance($this->session);
+        }
+
         return new Process(
             $this->session->sessionId,
-            new Thread(new Node($this->session->makeRootContext()))
+            new Thread(new Node($context))
         );
     }
 

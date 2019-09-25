@@ -53,35 +53,20 @@ class Breakpoint implements ArrayAndJsonAble, SessionData, HasIdGenerator
 
     /*----- cached -----*/
 
-    /**
-     * @var int
-     */
-    protected $maxHistory;
-
     public function __construct(
         string $conversationId,
         string $sessionId,
-        int $maxBreakpointHistory,
         Process $process,
         string $prevId = null,
         array $backtrace = []
     )
     {
-        $this->id = $conversationId;
+        $this->id = $this->createUuId();
+        $this->conversationId = $conversationId;
         $this->sessionId = $sessionId;
-        $this->maxHistory = $maxBreakpointHistory;
         $this->process = $process;
         $this->prevId = $prevId;
         $this->backtrace = $backtrace;
-
-    }
-
-    protected function pushPrev(string $breakPointId, int $num) : void
-    {
-        $this->backtrace[] = $breakPointId;
-        if (count($this->backtrace) > $num) {
-            array_shift($this->backtrace);
-        }
     }
 
     public function process() : Process
@@ -142,6 +127,7 @@ class Breakpoint implements ArrayAndJsonAble, SessionData, HasIdGenerator
     {
         return [
             'id',
+            'conversationId',
             'sessionId',
             'prevId',
             'backtrace',

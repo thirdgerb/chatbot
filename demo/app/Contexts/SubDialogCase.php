@@ -37,6 +37,7 @@ class SubDialogCase extends TaskDef
             ->is('fulfill', Redirector::goFulfill())
             ->is('next', Redirector::goNext())
             ->is('maze', Redirector::goStageThrough(['maze']))
+            ->is('back', Redirector::goBackward())
             ->is('stage', function(Dialog $dialog){
                 $dialog->say()->info("current stage is %stage%", [
                    'stage' => $dialog->currentStage(),
