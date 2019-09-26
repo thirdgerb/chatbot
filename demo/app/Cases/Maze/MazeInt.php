@@ -88,7 +88,11 @@ class MazeInt extends ActionIntent
                 ->is('退出')
                 ->is('quit')
 
-            ->otherwise();
+            ->otherwise()
+            ->defaultFallback(function(Dialog $dialog){
+                $dialog->say()->info('没有明白您的意思, 可以说"退出"以退出游戏.');
+                return $dialog->rewind();
+            });
     }
 
     /*------------ stages ------------*/
@@ -112,16 +116,16 @@ class MazeInt extends ActionIntent
             ->info($this->welcome)
             ->askConfirm($this->wantIntro, true, '是的', '好的')
             ->hearing()
+            // negative
             ->todo(Redirector::goStage('born'))
                 ->hasKeywords([['不', '别']])
                 ->isNegative()
+            // positive
             ->todo(Redirector::goStage('intro'))
-                ->hasKeywords([['是', '好', '要', '可以']])
+                ->hasKeywords([['是', '好', '要', '可以', '开始']])
                 ->isPositive()
-            ->end(function(Dialog $dialog){
-                $dialog->say()->info('没有明白什么意思');
-                return $dialog->rewind();
-            });
+            // 默认就进入, 避免用户
+            ->end(Redirector::goStage('intro'));
     }
 
     /**
@@ -140,7 +144,8 @@ class MazeInt extends ActionIntent
             ->hearing()
             ->isPositive(Redirector::goStage('born'))
             ->isNegative(Redirector::goFulfill())
-            ->end();
+            // 避免输入错误. 默认
+            ->end(Redirector::goStage('born'));
     }
 
 
