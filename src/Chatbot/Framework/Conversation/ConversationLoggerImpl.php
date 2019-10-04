@@ -35,6 +35,11 @@ class ConversationLoggerImpl implements ConversationLogger, RunningSpy
     protected $isInstanced;
 
     /**
+     * @var array
+     */
+    protected $defaultContext;
+
+    /**
      * ConversationLogger constructor.
      * @param LoggerInterface $logger
      * @param Conversation $conversation
@@ -43,9 +48,10 @@ class ConversationLoggerImpl implements ConversationLogger, RunningSpy
     {
         $this->logger = $logger;
         $this->isInstanced = $conversation->isInstanced();
+
         if ($this->isInstanced) {
-            $this->conversationId = $conversation->getConversationId();
             $this->traceId = $conversation->getTraceId();
+            $this->defaultContext = $conversation->getRequest()->getLogContext();
             static::addRunningTrace($this->traceId, $this->traceId);
         }
     }
@@ -53,8 +59,7 @@ class ConversationLoggerImpl implements ConversationLogger, RunningSpy
     public function log($level, $message, array $context = array())
     {
         if ($this->isInstanced) {
-            $context['traceId'] = $this->traceId;
-            $context['conversationId'] = $this->conversationId;
+            $context = $context + $this->defaultContext;
         }
         $this->logger->log($level, $message, $context);
     }

@@ -25,6 +25,8 @@ use Commune\Support\Option;
  *
  * @property-read bool $debug 是否开启debug
  *
+ * @property-read int $chatLockerExpire 会话通道锁自动解锁的时间. 单位为秒
+ *
  * @property-read array $configBindings  注册预加载的配置. 进程中不变|preload config. immutable in the process
  *
  * @property-read BaseServicesConfig $baseServices 系统默认注册的服务. 可按需更改|chatbot system service binding. could modify
@@ -66,6 +68,11 @@ class ChatbotConfig extends Option
             'chatbotName' => 'chatbotName',
 
             'debug' => true,
+
+            // 通道默认的锁定时间.
+            // 当 chat 被锁的时候, 会告诉用户系统忙, 输入太频繁
+            // 如果通道死锁的话, 则会在该时间之后自动解锁.
+            'chatLockerExpire' => 3,
 
             // 预定义的 slots
             'slots' => [],

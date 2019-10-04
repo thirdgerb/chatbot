@@ -5,6 +5,7 @@ namespace Commune\Chatbot\Framework\Conversation;
 
 use Commune\Chatbot\Blueprint\Conversation\Renderer;
 use Commune\Chatbot\Blueprint\Conversation\ReplyTemplate;
+use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Container\ContainerContract;
 
 class RendererImpl implements Renderer
@@ -49,8 +50,15 @@ class RendererImpl implements Renderer
         $this->templates[$id] = $template;
 
         // has bound
-        if (!$force && $this->container->bound($template)) {
-            return;
+        if ($this->container->bound($template)) {
+
+            // record message logger
+            if ($force) {
+                $logger = $this->container->get(ConsoleLogger::class);
+                $logger->debug("renderer template for reply id $id has been overwrite by $template");
+            } else {
+                return;
+            }
         }
 
 

@@ -23,6 +23,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\Config\ChatbotConfig;
+use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Contracts\EventDispatcher;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Container\ContainerContract;
@@ -93,21 +94,21 @@ class ConversationImpl implements Blueprint
 
     public function onMessage(MessageRequest $request, ChatbotConfig $config): Blueprint
     {
-        $container = new static($this->parentContainer);
+        $container = new static($this->getProcessContainer());
+        // container is instance for request
+        $container->asConversation = true;
 
         // 绑定自身.
         $container->share(Conversation::class, $container);
 
         // share request
+
+        // 互相持有, 要注意内存泄露的问题.
         $container->share( MessageRequest::class, $request);
         $container->share(get_class($request), $request);
-        // 互相持有, 要注意内存泄露的问题.
         $request->withConversation($container);
 
-        // container is instance for request
-        $container->asConversation = true;
         $trace = $container->getTraceId();
-
         static::addRunningTrace($trace, $container->getConversationId());
         return $container;
     }
@@ -301,6 +302,7 @@ class ConversationImpl implements Blueprint
         foreach ($messages as $msg) {
             $request = $this->getRequest();
             $chat = new ChatImpl(
+                $this->make(CacheAdapter::class),
                 $request->getPlatformId(),
                 $userId,
                 $request->getChatbotName(),
@@ -332,7 +334,7 @@ class ConversationImpl implements Blueprint
     {
         if ($immediatelyBuffer) {
             // 先缓冲起消息来. 是不是立刻发送, request 自己决定.
-            $request->bufferConversationMessage($message);
+            $request->bufferMessage($message);
         } else {
             // 这个和buffer 不一样, 用于别的处理, 比如存储消息.
             $this->bufferMessages[] = $message;
@@ -408,15 +410,13 @@ class ConversationImpl implements Blueprint
             $request = $this->getRequest();
 
             foreach ($this->bufferMessages as $message) {
-                $request->bufferConversationMessage($message);
+                $request->bufferMessage($message);
             }
 
             $this->flushConversationReplies();
 
             // 发送所有消息.
-            $request->flushChatMessages();
-            // 这一步.
-            $request->finish();
+            $request->sendResponse();
 
         } catch (\Exception $e) {
             throw new RuntimeException($e);

@@ -12,6 +12,7 @@ use Commune\Chatbot\Blueprint\Pipeline\ChatbotPipe as Blueprint;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Framework\Exceptions\ConversationalException;
 
+use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\Framework\Exceptions\PipelineException;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 
@@ -56,18 +57,6 @@ abstract class ChatbotPipeImpl implements Blueprint
         // 但还是要执行 finally
         } catch (ConversationalException $e) {
             return $e->getConversation();
-
-        // 出现已知的 pipeline 异常, 会继续往上抛出
-        } catch (RuntimeException $e) {
-            throw $e;
-
-        // 未知的异常会重新在pipeline里包装.
-        // LogicException 理论上都应该被处理掉了.
-        } catch (\Exception $e) {
-            throw new PipelineException(
-                $this->getPipeName() . ':' . $e->getMessage(),
-                $e
-            );
 
         } finally {
             $this->onUserMessageFinally($conversation);

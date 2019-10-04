@@ -29,7 +29,6 @@ trait MessageRequestHelper
      */
     protected $messageId;
 
-
     /**
      * @var Message|null
      */
@@ -108,9 +107,17 @@ trait MessageRequestHelper
         return null;
     }
 
-    public function validate() : bool
+    public function getLogContext() : array
     {
-        return true;
+        return [
+            'req' => [
+                'scene' => $this->getScene(),
+                'traceId' => $this->fetchTraceId(),
+                'msgId' => $this->fetchMessageId(),
+                'chatId' => $this->fetchChatId(),
+                'chatName' => $this->getChatbotName(),
+                'sessionId' => $this->fetchSessionId(),
+            ],
+        ];
     }
-
 }

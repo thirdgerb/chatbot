@@ -15,6 +15,7 @@ use Commune\Chatbot\Blueprint\Kernel;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Contracts\ExceptionHandler;
+use Commune\Chatbot\Framework\Exceptions\FatalErrorException;
 use Commune\Chatbot\Framework\Utils\OnionPipeline;
 use Commune\Container\ContainerContract;
 
@@ -75,12 +76,16 @@ class ChatKernel implements Kernel
 
             $conversation = $this->sendConversationThoughPipe($conversation, $chatbotConfig);
 
+            // 做 destruct 的准备.
+            $request->finish();
             $conversation->finish();
 
-        // 理论上不出现任何异常.
+        // 理论上不应该在这里出现任何异常.
         } catch (\Throwable $e) {
 
-            $this->app->getConsoleLogger()->critical($e);
+            $this->app->getConsoleLogger()->critical(strval($e));
+            $this->app->setAvailable(false);
+
             // 直接exit
             $this->server->fail();
         }

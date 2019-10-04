@@ -44,6 +44,10 @@ class EventServiceProvider extends BaseServiceProvider
 
     public function register(): void
     {
+        if ($this->app->bound(EventDispatcher::class)) {
+            return;
+        }
+
         // event dispatcher 绑定到 conversation 容器
         // 所有请求共享同一个实例.
         // conversation->fire() 方法会替换conversation 实例并生成 listener

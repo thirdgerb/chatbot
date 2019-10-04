@@ -41,6 +41,11 @@ class TranslatorServiceProvider extends BaseServiceProvider
 
     public function register(): void
     {
+        if ($this->app->bound(Translator::class)) {
+            return;
+        }
+
+
         // 注册symfony 的组件.
         $this->app->singleton(SymfonyTranslator::class, function(\ArrayAccess $app){
             /**

@@ -7,30 +7,37 @@
 
 namespace Commune\Chatbot\Contracts;
 
-use Commune\Chatbot\Blueprint\Exceptions\RuntimeExceptionInterface;
-use Commune\Chatbot\Blueprint\Exceptions\StopServiceExceptionInterface;
+use Commune\Chatbot\App\ChatPipe\MessengerPipe;
+use Commune\Chatbot\Blueprint\Conversation\Conversation;
+use Commune\Chatbot\Framework\Exceptions\FatalExceptionHandler;
 
 /**
- * 处理 conversation 中异常的 handler
+ * 处理无法正常用消息来响应的异常.
+ *
+ * @see MessengerPipe
+ * @see FatalExceptionHandler
  */
 interface ExceptionHandler
 {
 
     /**
-     * @param string $method
-     * @param StopServiceExceptionInterface $e
+     * 处理无法响应的异常.
+     *
+     * @param Conversation $conversation
+     * @param \Throwable $e
+     * @return Conversation
      */
-    public function reportServiceStopException(
-        string $method,
-        StopServiceExceptionInterface $e
-    ) : void;
+    public function handleException(Conversation $conversation, \Throwable $e) : Conversation;
 
     /**
-     * @param string $method
-     * @param RuntimeExceptionInterface $e
+     * 记录异常. 比如发送给 sentry
+     *
+     * @param Conversation $conversation
+     * @param \Throwable $e
      */
-    public function reportRuntimeException(
-        string $method,
-        RuntimeExceptionInterface $e
+    public function reportException(
+        Conversation $conversation,
+        \Throwable $e
     ) : void;
+
 }

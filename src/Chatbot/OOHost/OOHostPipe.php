@@ -51,14 +51,14 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 
     public function handleUserMessage(Conversation $conversation, Closure $next): Conversation
     {
-        // 用 sessionId 来唤醒一个session.
-        $belongsTo = $conversation->getIncomingMessage()->getSessionId()
-            ?? $conversation->getChat()->getChatId();
+        $belongsTo = $this->fetchBelongsTo($conversation);
 
         $sessionId = $this->fetchSessionId($belongsTo);
 
+        // 生成 session
         $session = $this->makeSession($sessionId, $conversation);
 
+        // 运行管道.
         $session = $this->callSession($session);
 
         $session->finish();
@@ -84,6 +84,24 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 
     }
 
+
+    public function fetchBelongsTo(Conversation $conversation) : string
+    {
+        // 根据 scene 来做差异化. 只要输入有 scene, 就会拥有独立的 session
+        $scene = $conversation->getRequest()->getScene();
+        $sceneStr = isset($scene) ? "::$scene" : '';
+
+        // 用 sessionId 来唤醒一个session.
+        return ($conversation->getIncomingMessage()->getSessionId()
+            ?? $conversation->getChat()->getChatId()) . $sceneStr;
+    }
+
+    /**
+     * 从缓存里读取 belongsTo 背后存储的 sessionId
+     *
+     * @param string $belongsTo
+     * @return string
+     */
     public function fetchSessionId(string $belongsTo) : string
     {
         $key = sprintf(self::SESSION_ID_KEY, $belongsTo);

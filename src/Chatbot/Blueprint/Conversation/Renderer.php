@@ -25,7 +25,7 @@ interface Renderer
      * actually register concrete for id to container
      * usually process level singleton
      *
-     * @param string $id
+     * @param string $id  replyId
      * @param string $template  abstract of template
      * @param bool $force
      * @throws \InvalidArgumentException

@@ -25,14 +25,12 @@ trait PipelineLog
     {
         // 运行启动的事件
         $conversation->fire(new ChatbotPipeStart($this));
-
     }
 
     protected function endPipe(
         Conversation $conversation,
         Carbon $start = null,
-        Carbon $end = null,
-        bool $debug = true
+        Carbon $end = null
     ) : void
     {
         if (isset($start) && isset($end)) {

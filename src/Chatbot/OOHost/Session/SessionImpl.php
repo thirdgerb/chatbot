@@ -204,9 +204,18 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function makeRootContext() : Context
     {
+        $scene = $this->conversation->getRequest()->getScene();
+
+        // 根据场景决定是否用不同的根路径.
+        $sceneContextNames = $this->hostConfig->sceneContextNames;
+        if (isset($scene) && isset($sceneContextNames[$scene])) {
+            $name = $sceneContextNames[$scene];
+        } else {
+            $name = $this->hostConfig->rootContextName;
+        }
+
         // 基于 registrar 来生成.
         $repo = $this->getContextRegistrar();
-        $name = $this->hostConfig->rootContextName;
         if ($repo->hasDef($name)) {
             return $repo->getDef($name)->newContext()->toInstance($this);
         }

@@ -19,9 +19,6 @@ use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Framework\Exceptions\FatalErrorException;
 use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\Framework\Pipeline\PipelineLog;
-use Commune\Chatbot\Blueprint\Exceptions\RequestExceptionInterface;
-use Commune\Chatbot\Blueprint\Exceptions\RuntimeExceptionInterface;
-use Commune\Chatbot\Blueprint\Exceptions\StopServiceExceptionInterface;
 
 
 
@@ -71,14 +68,16 @@ class MessengerPipe implements InitialPipe
     {
         $start = new Carbon();
         $traceId = null;
+        $request = $conversation->getRequest();
 
         // 核心三校验
         try {
 
             // 如果校验不通过, 会话直接结束.
-            $request = $conversation->getRequest();
             if (!$request->validate()) {
-                return $this->receiveConversation($conversation, $start);
+                // 拒绝请求
+                $request->sendRejectResponse();
+                return $this->receiveConversation($conversation, $start, false);
             }
 
             // 系统不可用.
@@ -87,6 +86,7 @@ class MessengerPipe implements InitialPipe
                 return $this->receiveConversation($conversation, $start);
             }
 
+            // 消息类型不支持.
             if ($request->fetchMessage() instanceof UnsupportedMsg) {
                 $this->replyUnsupported($conversation);
                 return $this->receiveConversation($conversation, $start);
@@ -99,51 +99,40 @@ class MessengerPipe implements InitialPipe
              * @var Conversation $conversation
              */
             $conversation = $next($conversation);
+
             return $this->receiveConversation($conversation, $start);
 
-        // 偶发的逻辑错误, 无法对用户进行响应了.
-        } catch (RequestExceptionInterface $e) {
-            $conversation->getLogger()->error(strval($e));
-            return $conversation;
+        // 逻辑上的异常. 偶发. 可以继续响应.
+        } catch (LogicException $e) {
+            $handler = $this->getExpHandler();
+            $handler->reportException($conversation, $e);
 
-        // kill 掉当前的会话, 仍然允许 server 继续运行
-        } catch (RuntimeExceptionInterface $e) {
-            // 抛出后会关闭当前客户端.
-            $this->getExpHandler()->reportRuntimeException(__METHOD__, $e);
-            $this->getServer()->closeClient($conversation);
-            return $conversation;
+            $this->replyLogicFailure($conversation);
+            return $this->receiveConversation($conversation, $start);
 
-        // 致命的错误
-        } catch (StopServiceExceptionInterface $e) {
-
-            $this->getExpHandler()->reportServiceStopException(__METHOD__, $e);
-            $this->app->setAvailable(false);
-            $this->getServer()->fail();
-
-            // 如果下游抛出了致命异常
-            // 直接到上层, 关闭掉chatbotApp
-            return $conversation;
-
-        // 不是允许的异常, 则抛到上一层. 关闭掉客户端.
+        // 无法对用户进行响应的异常.
         } catch (\Throwable $e) {
 
-            $re = new FatalErrorException( $e);
+            $handler = $this->getExpHandler();
+            $handler->reportException($conversation, $e);
 
-            $this->getExpHandler()->reportServiceStopException(__METHOD__, $re);
-            $this->app->setAvailable(false);
-            $this->getServer()->fail();
-            return $conversation;
+            $conversation = $this->getExpHandler()->handleException($conversation, $e);
+            return $this->receiveConversation($conversation, $start, false);
+
         }
     }
 
     public function receiveConversation(
         Conversation $conversation,
-        Carbon $start
+        Carbon $start,
+        bool $isNormalResponse = true
     ) : Conversation
     {
         // 结束
         $this->endPipe($conversation, $start, new Carbon());
-        $conversation->finishRequest();
+        if ($isNormalResponse) {
+            $conversation->finishRequest();
+        }
         return $conversation;
     }
 
@@ -164,7 +153,7 @@ class MessengerPipe implements InitialPipe
             $this->app
                 ->getConfig()
                 ->defaultMessages
-                ->platformNotAvailable
+                ->unsupported
         );
 
     }

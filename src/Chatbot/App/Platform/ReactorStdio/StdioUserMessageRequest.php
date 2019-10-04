@@ -93,12 +93,12 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
         return [];
     }
 
-    public function bufferConversationMessage(ConversationMessage $message): void
+    public function bufferMessage(ConversationMessage $message): void
     {
         $this->buffers[] = $message;
     }
 
-    public function flushChatMessages(): void
+    public function sendResponse(): void
     {
         while ($message = array_shift($this->buffers)) {
             $this->write($message->getMessage());
@@ -151,6 +151,36 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
 
     protected function onBindConversation()
     {
+    }
+
+    public function validate(): bool
+    {
+        return true;
+    }
+
+    public function getScene(): ? string
+    {
+        return null;
+    }
+
+    public function sendRejectResponse(): void
+    {
+        $this->stdio->write(
+            SimpleConsoleLogger::wrapMessage(
+                'error',
+                __METHOD__
+            )
+        );
+    }
+
+    public function sendFailureResponse(): void
+    {
+        $this->stdio->write(
+            SimpleConsoleLogger::wrapMessage(
+                'error',
+                __METHOD__
+            )
+        );
     }
 
 

@@ -1,14 +1,23 @@
-## 2019-10-04
+## 2019-10-04 (2)
 
--   增加了默认的 unsupported message, 作为平台消息不支持的默认解决方案.
--   重做了 media 类型的信息. 在缺乏实践的情况下, 还是不够满意. 目前认为 media source 都是url
--   CacheAdapter 增加了对 psr-16 cache 的支持, 从而方便兼容各种组件的需要而不要做两套.
--   对 framework 的 exception 做了
--   Message Request 改动
-    -   Message Request 当赋予 Conversation 时会调用 onBindConversation 方法. 可以做一些初始化.
-    -   增加了 Validate 方法和逻辑. 如果 Message Request 是 invalid, 则在 MessengerPipe 会直接返回. 这样方便把一些端上的校验逻辑转移到 Message Request 内部.
-    -   增加了 RequestExceptionInterface . 会记录异常, 造成对用户不响应.
--   统一了 finish 逻辑. 当一个请求级对象调用 finish 方法时, 是在为 destruct 做准备.
--   conversational service provider 现在增加了 bound 检验, 方便覆盖系统默认的服务注册
-
+-   功能改动
+    -   MessageRequest 增加了 Scene, 允许根据 scene 的不同, 开启不同 root context 的 session
+    -   调整 message request 方法名, 增加了 sendFailureResponse 和 sendRejectResponse
+    -   debug 状态下默认 error_reporting 为 E_ALL
+-   重构了异常体系
+    -   调整了 MessengerPipe 异常处理机制. 区分了两种异常: 可发消息的, 无法响应的.
+    -   无法响应的异常又分为 三种
+        -   不做特殊处理的 : request exception, 请求和渲染环节的异常.
+        -   关闭客户端的 : runtime exception
+        -   关闭 worker 的 : stop service exception
+    -   分离了 reject 和 failure 两种无法返回消息的异常响应.
+    -   exception handler 给出了默认的实现.
+-   api 调整
+    -   增加了 ClientFactory 用于生成 guzzle 的 client. 提前对 swoole + 协程的情况做兼容.
+    -   Chat 增加了 lock 和 unlock 方法, 相应地修改了 chattingPipe, 并增加了锁过期的配置
+    -   logger 现在默认用 chatbotName 作为 log name.
+    -   conversation logger 现在从 message request 里获取默认的日志参数.
+-   bug fix
+    -   修复了 ChatApp registerProcessService 类型约束的问题.
+    -   Messenger 接受到 RequestException, 仍会尝试响应. 因为已经有 validate 机制了.
 

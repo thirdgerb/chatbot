@@ -14,12 +14,15 @@ use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Conversation\User;
+use Commune\Chatbot\Contracts\CacheAdapter;
+use Commune\Chatbot\Contracts\ClientFactory;
 use Commune\Chatbot\Framework\Conversation\ChatImpl;
 use Commune\Chatbot\Framework\Conversation\ConversationLoggerImpl;
 use Commune\Chatbot\Framework\Conversation\IncomingMessageImpl;
 use Commune\Chatbot\Framework\Conversation\SpeechImpl;
 use Commune\Chatbot\Framework\Conversation\UserImpl;
 
+use Commune\Chatbot\Framework\Utils\GuzzleClientFactory;
 use Psr\Log\LoggerInterface;
 
 class ConversationalServiceProvider extends BaseServiceProvider
@@ -36,6 +39,7 @@ class ConversationalServiceProvider extends BaseServiceProvider
         $this->registerUser();
         $this->registerChat();
         $this->registerLogger();
+        $this->registerClientFactory();
     }
 
 
@@ -72,6 +76,7 @@ class ConversationalServiceProvider extends BaseServiceProvider
             function(Conversation $app) {
                 $request = $app->getRequest();
                 $chat = new ChatImpl(
+                    $app[CacheAdapter::class],
                     $request->getPlatformId(),
                     $request->fetchUserId(),
                     $request->getChatbotName(),
@@ -125,15 +130,29 @@ class ConversationalServiceProvider extends BaseServiceProvider
 
     protected function registerLogger() : void
     {
+        // 如果已经绑定, 就跳过
         if ($this->app->bound(ConversationLogger::class)) {
             return;
         }
+
         $this->app->singleton(ConversationLogger::class, function($app){
             return new ConversationLoggerImpl(
                 $app[LoggerInterface::class],
-                $app
+                $app[Conversation::class]
             );
         });
 
+
+    }
+
+    protected function registerClientFactory() : void
+    {
+        if ($this->app->bound(ClientFactory::class)) {
+            return;
+        }
+
+        $this->app->singleton(ClientFactory::class, function($app){
+            return new GuzzleClientFactory();
+        });
     }
 }

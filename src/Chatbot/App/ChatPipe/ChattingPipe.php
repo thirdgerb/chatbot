@@ -38,10 +38,10 @@ class ChattingPipe extends ChatbotPipeImpl
     public function handleUserMessage(Conversation $conversation, \Closure $next): Conversation
     {
         $chat = $conversation->getChat();
-        $chatId = $chat->getChatId();
+        $ttl = $conversation->getChatbotConfig()->chatLockerExpire;
 
-        // 锁chat 失败
-        $locked = $this->lockChat($chatId);
+        // 锁chat
+        $locked = $chat->lock($ttl);
 
         // 没锁到就直接返回好了.
         if (! $locked) {
@@ -50,6 +50,7 @@ class ChattingPipe extends ChatbotPipeImpl
                     ->defaultMessages
                     ->chatIsTooBusy
             );
+            $conversation->getLogger()->warning(__METHOD__ . ' chat is too busy');
             return $conversation;
         }
 
@@ -58,7 +59,7 @@ class ChattingPipe extends ChatbotPipeImpl
          */
         $replyConversation = $next($conversation);
 
-        $this->unlockChat($chatId);
+        $conversation->getChat()->unlock();
         return $replyConversation;
 
     }
@@ -67,25 +68,9 @@ class ChattingPipe extends ChatbotPipeImpl
 
     public function onUserMessageFinally(Conversation $conversation): void
     {
-        $this->unlockChat($conversation->getChat()->getChatId());
+        // 出错后主动解锁.
+        $conversation->getChat()->unlock();
     }
 
-
-    /*----------- chat 管理 -----------*/
-
-    public function lockChat(string $chatId) : bool
-    {
-        return $this->cache->lock($this->getChatLockerKey($chatId), 2);
-    }
-
-    public function unlockChat(string $chatId) : void
-    {
-        $this->cache->forget($this->getChatLockerKey($chatId));
-    }
-
-    public function getChatLockerKey(string $chatId) : string
-    {
-        return "chatbot:chatLocker:" . $chatId;
-    }
 
 }

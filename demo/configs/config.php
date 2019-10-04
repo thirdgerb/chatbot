@@ -58,7 +58,6 @@ return [
         ],
     'logger' =>
         [
-            'name' => 'chatbot',
             'path' => __DIR__ . '/cache/tmp.log',
             'days' => 0,
             'level' => 'debug',

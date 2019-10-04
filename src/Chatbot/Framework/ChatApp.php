@@ -134,6 +134,11 @@ class ChatApp implements Blueprint
             define('CHATBOT_DEBUG', boolval($this->config->debug));
         }
 
+        // 最好强制进行类型检查. 避免致命的notice
+        if (CHATBOT_DEBUG) {
+            error_reporting(E_ALL);
+        }
+
         // 默认的组件
         $this->processContainer = $processContainer
             ?? new IlluminateAdapter(new Container());

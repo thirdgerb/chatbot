@@ -12,12 +12,21 @@ use Commune\Chatbot\Blueprint\Conversation\Renderer;
 use Commune\Chatbot\Framework\Conversation\RendererImpl;
 
 /**
+ * 注册默认的 reply message 渲染模块.
+ * 能够根据 reply message 的ID, 选择使用哪个 template 对象来渲染成一般 messages
+ *
  * register default reply message renderer
  * and default template for questions
  */
 class ReplyRendererServiceProvider extends BaseServiceProvider
 {
     const IS_PROCESS_SERVICE_PROVIDER = true;
+
+    /**
+     * 是否强制覆盖可能存在的配置.
+     * @var bool
+     */
+    protected $force = false;
 
     protected $templates = [
 
@@ -57,13 +66,18 @@ class ReplyRendererServiceProvider extends BaseServiceProvider
 
         // default binding.
         foreach ($this->templates as $id => $tempId) {
-            $renderer->bindTemplate($id, $tempId);
+            $renderer->bindTemplate($id, $tempId, $this->force);
         }
 
     }
 
     public function register()
     {
+        // 只有在未绑定的情况下, 才注册默认的服务.
+        if ($this->app->bound(Renderer::class)) {
+            return;
+        }
+
         $this->app->singleton(Renderer::class, function($app){
             /**
              * @var Application $chatApp

@@ -9,6 +9,7 @@ namespace Commune\Chatbot\Blueprint\Conversation;
 
 
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\Blueprint\Exceptions\RequestExceptionInterface;
 
 /**
  * conversation request from user message input
@@ -36,6 +37,26 @@ interface MessageRequest
      * @return mixed
      */
     public function getInput();
+
+
+    /**
+     * 获取场景名称. 对一个 chatbot 而言, 可能有多个不同的请求入口, 称之为场景.
+     * 每一个已定义的场景, 都能拥有一个独立的session.
+     * 如果在 hostConfig->sceneContextNames 里有定义, 会该 context name 作为根路径, 并进入一个独立的 session.
+     *
+     * 用这种方式可以快速实现同一个机器人, 多场景分别启动. 而不用配置很多套相同的机器人.
+     *
+     * @return null|string
+     */
+    public function getScene() : ? string;
+
+    /**
+     * 获取需要记录到日志里的参数. 会传递到 conversation logger
+     * 方便排查端上的问题. 理论上只记录有维度价值的参数, 太多的话也不利于记录日志.
+     *
+     * @return array
+     */
+    public function getLogContext() : array;
 
     /*-------- generate --------*/
 
@@ -151,15 +172,27 @@ interface MessageRequest
      *
      * @param ConversationMessage $message
      */
-    public function bufferConversationMessage(ConversationMessage $message) : void;
+    public function bufferMessage(ConversationMessage $message) : void;
 
     /**
      * 将当前准备要发送的信息, 全部发送给用户.
      *
      * send all messages from buffer and clear buffer
-     * @throws RequestException
+     *
+     * @throws RequestExceptionInterface
      */
-    public function flushChatMessages() : void;
+    public function sendResponse() : void;
+
+    /**
+     * 告知请求不合法. 这样的信息不走机器人, 直接拒绝掉.
+     */
+    public function sendRejectResponse() : void;
+
+    /**
+     * 系统响应失败, 而且无法用消息管道通知用户.
+     * 通常因为异常导致.
+     */
+    public function sendFailureResponse() : void;
 
     /*-------- finish --------*/
 

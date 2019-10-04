@@ -29,6 +29,10 @@ class SoundLikeServiceProvider extends BaseServiceProvider
 
     public function register()
     {
+        if ($this->app->bound(SoundLikeInterface::class)) {
+            return;
+        }
+
         $this->app->singleton(SoundLikeInterface::class, function(){
 
             $pinyin = new Pinyin(MemoryFileDictLoader::class);

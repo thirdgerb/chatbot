@@ -20,6 +20,10 @@ class LoggerServiceProvider extends BaseServiceProvider
 
     public function register(): void
     {
+        if ($this->app->bound(LoggerInterface::class)) {
+            return;
+        }
+
         $this->app->instance(
             LoggerInterface::class,
             $this->makeLogger()
@@ -56,9 +60,10 @@ class LoggerServiceProvider extends BaseServiceProvider
             );
         }
 
-        $logger = new Monolog($config->name, [
-            $handler
-        ]);
+        $logger = new Monolog(
+            $chatbotConfig->chatbotName,
+            [$handler]
+        );
 
         return $logger;
     }
