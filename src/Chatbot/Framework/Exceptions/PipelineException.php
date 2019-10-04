@@ -9,6 +9,9 @@ namespace Commune\Chatbot\Framework\Exceptions;
 
 use Throwable;
 
+/**
+ * 管道异常的记录点.
+ */
 class PipelineException extends RuntimeException
 {
 

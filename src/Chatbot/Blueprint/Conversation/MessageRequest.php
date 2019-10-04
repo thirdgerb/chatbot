@@ -16,7 +16,19 @@ use Commune\Chatbot\Blueprint\Message\Message;
 interface MessageRequest
 {
 
+    /**
+     * request 和 conversation 合体时调用.
+     * @param Conversation $conversation
+     */
     public function withConversation(Conversation $conversation) : void;
+
+
+    /**
+     * 在平台上可以有自己的请求校验策略.
+     * 校验失败自行返回结果.
+     * @return bool
+     */
+    public function validate() : bool ;
 
     /**
      * origin input
@@ -145,17 +157,18 @@ interface MessageRequest
      * 将当前准备要发送的信息, 全部发送给用户.
      *
      * send all messages from buffer and clear buffer
+     * @throws RequestException
      */
     public function flushChatMessages() : void;
 
     /*-------- finish --------*/
 
     /**
-     * 完成一次请求.
+     * 完成请求. 清理掉可能造成内存泄露的属性.
      *
      * complete request and do some cleanup
      */
-    public function finishRequest() : void;
+    public function finish() : void;
 
 
 

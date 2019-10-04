@@ -19,10 +19,9 @@ interface MediaMsg extends Message
 {
 
     /**
-     * 资源都要有一个id, 可以让别的逻辑与之互动.
-     * 至于ID具体是什么意思, 可能有很多种.
+     * 资源都要有一个url
      * @return string
      */
-    public function getSource() : string;
+    public function getUrl() : string;
 
 }

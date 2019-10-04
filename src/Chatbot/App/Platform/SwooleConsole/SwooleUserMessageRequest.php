@@ -168,4 +168,9 @@ class SwooleUserMessageRequest implements MessageRequest, HasIdGenerator
         }
     }
 
+    protected function onBindConversation()
+    {
+    }
+
+
 }

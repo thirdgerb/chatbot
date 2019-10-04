@@ -14,6 +14,7 @@ use Commune\Support\Option;
  * @property-read string $platformNotAvailable
  * @property-read string $chatIsTooBusy
  * @property-read string $systemError
+ * @property-read string $unsupported
  * @property-read string $messageMissMatched
  * @property-read string $farewell
  * @property-read string $yes
@@ -27,6 +28,7 @@ class DefaultMessagesConfig extends Option
         return [
             'platformNotAvailable' => 'system.platformNotAvailable',
             'chatIsTooBusy' => 'system.chatIsTooBusy',
+            'unsupported' => 'system.unsupported',
             'systemError' => 'system.systemError',
             'farewell' => 'dialog.farewell',
             'messageMissMatched' => 'dialog.missMatched',

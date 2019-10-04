@@ -11,6 +11,7 @@ use Throwable;
 
 /**
  * Chatbot 系统内的逻辑异常.
+ * 偶发的才是逻辑异常. 否则都是系统异常.
  *
  * @package Commune\Chatbot\Framework\Exceptions
  */

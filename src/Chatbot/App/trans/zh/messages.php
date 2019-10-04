@@ -10,6 +10,7 @@ return [
         'platformNotAvailable' => '系统不可用',
         'chatIsTooBusy' => '输入太频繁',
         'systemError' => '系统错误',
+        'unsupported' => '输入消息类型暂不支持',
     ],
 
     'dialog' => [

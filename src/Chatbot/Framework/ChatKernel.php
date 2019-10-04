@@ -12,6 +12,7 @@ use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
 use Commune\Chatbot\Blueprint\Kernel;
+use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Contracts\ExceptionHandler;
 use Commune\Chatbot\Framework\Utils\OnionPipeline;
@@ -72,22 +73,7 @@ class ChatKernel implements Kernel
             // 对对话容器进行boot
             $this->app->bootConversation($conversation);
 
-            // 创建pipeline
-            $pipeline = $this->buildPipeline(
-                    $conversation,
-                    $chatbotConfig->chatbotPipes->onUserMessage
-                );
-
-            // 发送会话
-            /**
-             * @var Conversation $conversation
-             */
-            $conversation = $pipeline->send(
-                $conversation,
-                function (Conversation $conversation): Conversation {
-                    return $conversation;
-                }
-            );
+            $conversation = $this->sendConversationThoughPipe($conversation, $chatbotConfig);
 
             $conversation->finish();
 
@@ -98,6 +84,29 @@ class ChatKernel implements Kernel
             // 直接exit
             $this->server->fail();
         }
+    }
+
+    protected function sendConversationThoughPipe(
+        Conversation $conversation,
+        ChatbotConfig $chatbotConfig
+    ) : Conversation
+    {
+        // 创建pipeline
+        $pipeline = $this->buildPipeline(
+            $conversation,
+            $chatbotConfig->chatbotPipes->onUserMessage
+        );
+
+        // 发送会话
+        /**
+         * @var Conversation $conversation
+         */
+        return $pipeline->send(
+            $conversation,
+            function (Conversation $conversation): Conversation {
+                return $conversation;
+            }
+        );
     }
 
     /**

@@ -41,6 +41,10 @@ class ConversationalServiceProvider extends BaseServiceProvider
 
     protected function registerUser() : void
     {
+        if ($this->app->bound(User::class)) {
+            return;
+        }
+
         $this->app->singleton(
             User::class,
             function(Conversation $app) {
@@ -59,6 +63,10 @@ class ConversationalServiceProvider extends BaseServiceProvider
 
     protected function registerChat() : void
     {
+        if ($this->app->bound(Chat::class)) {
+            return;
+        }
+
         $this->app->singleton(
             Chat::class,
             function(Conversation $app) {
@@ -79,6 +87,9 @@ class ConversationalServiceProvider extends BaseServiceProvider
 
     protected function registerSpeech() : void
     {
+        if ($this->app->bound(Speech::class)) {
+            return;
+        }
         $this->app->singleton(
             Speech::class,
             SpeechImpl::class
@@ -87,6 +98,10 @@ class ConversationalServiceProvider extends BaseServiceProvider
 
     protected function registerIncomingMessage()
     {
+        if ($this->app->bound(IncomingMessage::class)) {
+            return;
+        }
+
         $this->app->singleton(
             IncomingMessage::class,
             function(Conversation $app) {
@@ -110,6 +125,9 @@ class ConversationalServiceProvider extends BaseServiceProvider
 
     protected function registerLogger() : void
     {
+        if ($this->app->bound(ConversationLogger::class)) {
+            return;
+        }
         $this->app->singleton(ConversationLogger::class, function($app){
             return new ConversationLoggerImpl(
                 $app[LoggerInterface::class],

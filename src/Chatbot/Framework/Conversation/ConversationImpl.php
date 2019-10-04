@@ -416,7 +416,7 @@ class ConversationImpl implements Blueprint
             // 发送所有消息.
             $request->flushChatMessages();
             // 这一步.
-            $request->finishRequest();
+            $request->finish();
 
         } catch (\Exception $e) {
             throw new RuntimeException($e);

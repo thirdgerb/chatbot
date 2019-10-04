@@ -10,14 +10,18 @@ namespace Commune\Chatbot\App\ChatPipe;
 
 
 use Carbon\Carbon;
+use Commune\Chatbot\Blueprint\Message\UnsupportedMsg;
 use Commune\Chatbot\Blueprint\Pipeline\InitialPipe;
 use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Contracts\ExceptionHandler;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Framework\Exceptions\FatalErrorException;
-use Commune\Chatbot\Framework\Exceptions\RuntimeException;
+use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\Framework\Pipeline\PipelineLog;
+use Commune\Chatbot\Blueprint\Exceptions\RequestExceptionInterface;
+use Commune\Chatbot\Blueprint\Exceptions\RuntimeExceptionInterface;
+use Commune\Chatbot\Blueprint\Exceptions\StopServiceExceptionInterface;
 
 
 
@@ -67,10 +71,24 @@ class MessengerPipe implements InitialPipe
     {
         $start = new Carbon();
         $traceId = null;
+
+        // 核心三校验
         try {
 
+            // 如果校验不通过, 会话直接结束.
+            $request = $conversation->getRequest();
+            if (!$request->validate()) {
+                return $this->receiveConversation($conversation, $start);
+            }
+
+            // 系统不可用.
             if (!$this->app->isAvailable()) {
                 $this->replyUnavailable($conversation);
+                return $this->receiveConversation($conversation, $start);
+            }
+
+            if ($request->fetchMessage() instanceof UnsupportedMsg) {
+                $this->replyUnsupported($conversation);
                 return $this->receiveConversation($conversation, $start);
             }
 
@@ -83,15 +101,20 @@ class MessengerPipe implements InitialPipe
             $conversation = $next($conversation);
             return $this->receiveConversation($conversation, $start);
 
+        // 偶发的逻辑错误, 无法对用户进行响应了.
+        } catch (RequestExceptionInterface $e) {
+            $conversation->getLogger()->error(strval($e));
+            return $conversation;
+
         // kill 掉当前的会话, 仍然允许 server 继续运行
-        } catch (RuntimeException $e) {
+        } catch (RuntimeExceptionInterface $e) {
             // 抛出后会关闭当前客户端.
             $this->getExpHandler()->reportRuntimeException(__METHOD__, $e);
             $this->getServer()->closeClient($conversation);
             return $conversation;
 
         // 致命的错误
-        } catch (FatalErrorException $e) {
+        } catch (StopServiceExceptionInterface $e) {
 
             $this->getExpHandler()->reportServiceStopException(__METHOD__, $e);
             $this->app->setAvailable(false);
@@ -102,7 +125,7 @@ class MessengerPipe implements InitialPipe
             return $conversation;
 
         // 不是允许的异常, 则抛到上一层. 关闭掉客户端.
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
 
             $re = new FatalErrorException( $e);
 
@@ -124,7 +147,29 @@ class MessengerPipe implements InitialPipe
         return $conversation;
     }
 
-    public function replyUnavailable(Conversation $conversation)
+    public function replyLogicFailure(Conversation $conversation) : void
+    {
+        $conversation->getSpeech()->error(
+            $this->app
+                ->getConfig()
+                ->defaultMessages
+                ->systemError
+        );
+    }
+
+
+    public function replyUnsupported(Conversation $conversation) : void
+    {
+        $conversation->getSpeech()->warning(
+            $this->app
+                ->getConfig()
+                ->defaultMessages
+                ->platformNotAvailable
+        );
+
+    }
+
+    public function replyUnavailable(Conversation $conversation) : void
     {
         $conversation->getSpeech()->error(
             $this->app

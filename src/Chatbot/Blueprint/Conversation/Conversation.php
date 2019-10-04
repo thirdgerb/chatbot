@@ -162,6 +162,7 @@ interface Conversation extends ConversationContainer, RunningSpy
 
     /**
      * 完成一个请求, 把所有消息发送出去.
+     * 要调用 MessageRequest 的 flushChatMessage 与 finishRequest
      */
     public function finishRequest() : void;
 

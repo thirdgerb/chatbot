@@ -39,12 +39,18 @@ trait MessageRequestHelper
     {
         $this->conversation = $conversation;
         $this->logger = $conversation->getLogger();
+        $this->onBindConversation();
     }
 
-    public function finishRequest() : void
+
+    abstract protected function onBindConversation();
+
+
+    public function finish() : void
     {
         $this->conversation = null;
         $this->logger = null;
+        $this->inputMessage = null;
     }
 
     public function generateMessageId(): string
@@ -102,5 +108,9 @@ trait MessageRequestHelper
         return null;
     }
 
+    public function validate() : bool
+    {
+        return true;
+    }
 
 }

@@ -9,6 +9,7 @@ namespace Commune\Chatbot\Contracts;
 
 use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Exceptions\RuntimeExceptionInterface;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * 默认是 conversation 的组件.
@@ -21,14 +22,16 @@ use Commune\Chatbot\Blueprint\Exceptions\RuntimeExceptionInterface;
 interface CacheAdapter extends RunningSpy
 {
 
+    public function getPSR16Cache() : CacheInterface;
+
     /**
      * @param string $key
      * @param string $value
-     * @param int $ttl 单位是秒
+     * @param int|null $ttl 单位是秒
      * @return bool
      * @throws RuntimeExceptionInterface
      */
-    public function set(string $key, string $value, int $ttl) : bool;
+    public function set(string $key, string $value, int $ttl = null) : bool;
 
     /**
      * @param string $key
@@ -43,6 +46,26 @@ interface CacheAdapter extends RunningSpy
      */
     public function get(string $key) : ? string;
 
+
+    /**
+     * @param array $keys
+     * @param null $default
+     * @return array
+     */
+    public function getMultiple(array $keys, $default = null) : array;
+
+    /**
+     * @param array $values
+     * @param int|null $ttl
+     * @return bool
+     */
+    public function setMultiple(array $values, int $ttl = null) : bool;
+
+    /**
+     * @param array $keys
+     * @return bool
+     */
+    public function delMultiple(array $keys) : bool;
 
     /**
      * 分布式的锁
