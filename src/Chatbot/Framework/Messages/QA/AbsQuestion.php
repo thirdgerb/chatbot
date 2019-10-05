@@ -51,17 +51,17 @@ abstract class AbsQuestion extends AbsMessage implements Question
 
     /**
      * AbsAsk constructor.
-     * @param string $question
+     * @param string $query
      * @param array $suggestions
      * @param mixed $default
      */
     public function __construct(
-        string $question,
+        string $query,
         array $suggestions,
         $default = null
     )
     {
-        $this->query = $question;
+        $this->query = $query;
         $this->suggestions = $suggestions;
         $this->default = $default;
         $this->nullable = isset($this->default);

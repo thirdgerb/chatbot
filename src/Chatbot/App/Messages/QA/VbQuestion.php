@@ -11,6 +11,7 @@ use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Messages\QA\AbsQuestion;
 use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
 use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Chatbot\OOHost\NLU\Corpus\Example;
 use Commune\Chatbot\OOHost\Session\Session;
 
 /**
@@ -32,6 +33,12 @@ class VbQuestion extends AbsQuestion
      * @var int|null|string
      */
     protected $defaultChoice;
+
+
+    /**
+     * @var string[]
+     */
+    protected $aliases = [];
 
     /**
      * VbQuestion constructor.
@@ -56,7 +63,14 @@ class VbQuestion extends AbsQuestion
         $default = $default
             ?? ($defaultIsSuggestion ? $suggestions[$defaultChoice] : null);
 
-        parent::__construct($question, $suggestions, $default);
+        // 问题中的标注处理. 如果用户回答了标注的关键字, 会转义为标注的对象
+        $example = new Example($question);
+        $query = $example->text;
+        foreach ($example->entities as $entity) {
+            $this->aliases[$entity->value] = $entity->name;
+        }
+
+        parent::__construct($query, $suggestions, $default);
     }
 
     public function getDefaultValue()
@@ -137,7 +151,7 @@ class VbQuestion extends AbsQuestion
     protected function doParseAnswer(Message $message) : ? Answer
     {
         return $this->isIndexOfSuggestions($message)
-            ?? $this->isSuggestionStartPart($message)
+            ?? $this->isSuggestionPart($message)
             ?? $this->acceptAnyAnswer($message)
             ?? null;
     }
@@ -151,12 +165,17 @@ class VbQuestion extends AbsQuestion
         return null;
     }
 
-    protected function isSuggestionStartPart(Message $message) : ? Answer
+    protected function isSuggestionPart(Message $message) : ? Answer
     {
         $text = $message->getTrimmedText();
+        $text = $this->normalizeInput($text);
+
         // 再匹配suggestions 的开头
         $matchedIndex = [];
         foreach ($this->suggestions as $index => $suggestion) {
+
+            $suggestion = StringUtils::normalizeString($suggestion);
+            // 如果是其中一部分.
             if (strstr($suggestion, $text) !== false) {
                 $matchedIndex[] = $index;
             }
@@ -172,24 +191,29 @@ class VbQuestion extends AbsQuestion
         return null;
     }
 
+    protected function normalizeInput(string $input) : string
+    {
+        $text = $this->aliases[$input] ?? $input;
+        return strtolower($text);
+    }
+
     protected function isIndexOfSuggestions(Message $message) : ? Answer
     {
         $text = $message->getTrimmedText();
-        $text = strtolower($text);
+        $text = $this->normalizeInput($text);
 
         // 做了一个拷贝, 都用小写.
         $originIndexes = [];
         foreach ($this->suggestions as $index => $suggestion) {
-            if (is_string($index)) {
-                $newIndex = StringUtils::sbc2dbc(strtolower($index));
-                $originIndexes[$newIndex] = $index;
-            } else {
-                $originIndexes[$index] = $index;
-            }
+            // 将原来的 index 进行了normalize
+            $newIndex = StringUtils::normalizeString(strval($index));
+            $originIndexes[$newIndex] = $index;
+
         }
 
         $matchedIndexes = [];
         foreach ($originIndexes as $index => $originIndex) {
+            // 完全相等的时候.
             if ($index === $text) {
                 return $this->newAnswer(
                     $message,
@@ -198,6 +222,7 @@ class VbQuestion extends AbsQuestion
                 );
             }
 
+            // 匹配是部分相等或者是全部.
             if (strstr($index, $text) !== false) {
                 $matchedIndexes[] = $originIndex;
             }

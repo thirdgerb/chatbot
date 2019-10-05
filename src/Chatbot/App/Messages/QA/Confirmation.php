@@ -12,7 +12,7 @@ class Confirmation extends VbAnswer implements Contract
      */
     public function toResult()
     {
-        return $this->choice == 0 ;
+        return !($this->choice == 0) ;
     }
 
     public function isPositive(): bool

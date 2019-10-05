@@ -9,8 +9,8 @@ namespace Commune\Chatbot\OOHost\NLU\Corpus;
  * 每个元素是一个样本. 用类似markdown link 的语法来标记entity.
  * 例如 "这句话的Entity就在[句尾](where)"
  *
- * @property-read string $example
- * @property-read string $text
+ * @property-read string $example  带有Entity标记的样本文本.
+ * @property-read string $text 去掉了Entity标记的原始文本.
  * @property-read ExampleEntity[] $entities
  */
 class Example
