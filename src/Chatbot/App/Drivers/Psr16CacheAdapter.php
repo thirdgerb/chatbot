@@ -35,12 +35,15 @@ class Psr16CacheAdapter implements CacheInterface
     public function get($key, $default = null)
     {
         $this->checkKey(__METHOD__, $key);
-        return $this->cache->get($key) ?? $default;
+        $value = $this->cache->get($key);
+        $value = isset($value) ? unserialize($value) : null;
+        return $value ?? $default;
     }
 
     public function set($key, $value, $ttl = null)
     {
         $this->checkKey(__METHOD__, $key);
+        $value = serialize($value);
         $this->cache->set($key, $value, intval($ttl));
     }
 
@@ -60,15 +63,21 @@ class Psr16CacheAdapter implements CacheInterface
         foreach ($keys as $key) {
             $this->checkKey(__METHOD__, $key);
         }
-        return $this->cache->getMultiple($keys, $default);
+        $values = $this->cache->getMultiple($keys);
+
+        return array_map(function($value) use ($default){
+            return is_string($value) ? unserialize($value) : $default;
+        }, $values);
     }
 
     public function setMultiple($values, $ttl = null)
     {
+        $inputs = [];
         foreach ($values as $key => $value) {
             $this->checkKey(__METHOD__, $key);
+            $inputs[$key] = serialize($value);
         }
-        return $this->cache->setMultiple($values, $ttl);
+        return $this->cache->setMultiple($inputs, $ttl);
     }
 
     public function deleteMultiple($keys)
