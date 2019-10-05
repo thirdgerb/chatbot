@@ -12,10 +12,6 @@ use Commune\Chatbot\Blueprint\Pipeline\ChatbotPipe as Blueprint;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Framework\Exceptions\ConversationalException;
 
-use Commune\Chatbot\Framework\Exceptions\LogicException;
-use Commune\Chatbot\Framework\Exceptions\PipelineException;
-use Commune\Chatbot\Framework\Exceptions\RuntimeException;
-
 /**
  * Class ChatbotPipe
  * @package Commune\Chatbot\Framework\Pipeline
@@ -31,10 +27,15 @@ abstract class ChatbotPipeImpl implements Blueprint
 
     abstract public function handleUserMessage(Conversation $conversation, \Closure $next) : Conversation;
 
-    abstract public function onUserMessageFinally(Conversation $conversation) : void;
+    abstract public function onException(Conversation $conversation, \Throwable $e) : void;
 
 
-
+    /**
+     * @param Conversation $conversation
+     * @param \Closure $next
+     * @return Conversation
+     * @throws \Throwable
+     */
     public function handle(Conversation $conversation, \Closure $next) : Conversation
     {
         try {
@@ -58,9 +59,9 @@ abstract class ChatbotPipeImpl implements Blueprint
         } catch (ConversationalException $e) {
             return $e->getConversation();
 
-        } finally {
-            $this->onUserMessageFinally($conversation);
-
+        } catch (\Throwable $e) {
+            $this->onException($conversation, $e);
+            throw $e;
         }
     }
 

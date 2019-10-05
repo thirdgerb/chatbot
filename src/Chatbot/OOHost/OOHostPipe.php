@@ -171,7 +171,7 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 
     }
 
-    public function onUserMessageFinally(Conversation $conversation): void
+    public function onException(Conversation $conversation, \Throwable $e): void
     {
     }
 
