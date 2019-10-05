@@ -87,13 +87,9 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 
     public function fetchBelongsTo(Conversation $conversation) : string
     {
-        // 根据 scene 来做差异化. 只要输入有 scene, 就会拥有独立的 session
-        $scene = $conversation->getRequest()->getScene();
-        $sceneStr = isset($scene) ? "::$scene" : '';
-
         // 用 sessionId 来唤醒一个session.
-        return ($conversation->getIncomingMessage()->getSessionId()
-            ?? $conversation->getChat()->getChatId()) . $sceneStr;
+        return $conversation->getIncomingMessage()->getSessionId()
+            ?? $conversation->getChat()->getChatId() ;
     }
 
     /**

@@ -35,11 +35,17 @@ class ChatImpl implements Chat
     protected $cache;
 
     /**
+     * @var string|null
+     */
+    protected $scene;
+
+    /**
      * ChatImpl constructor.
      * @param CacheAdapter $cacheAdapter
      * @param string $platformId
      * @param string $userId
      * @param string $chatbotUserName
+     * @param null|string $scene
      * @param string|null $chatId
      */
     public function __construct(
@@ -47,6 +53,7 @@ class ChatImpl implements Chat
         string $platformId,
         string $userId,
         string $chatbotUserName,
+        ?string $scene,
         string $chatId = null
     )
     {
@@ -54,7 +61,11 @@ class ChatImpl implements Chat
         $this->platformId = $platformId;
         $this->userId = $userId;
         $this->chatbotUserName = $chatbotUserName;
-        $this->chatId = $chatId ?? md5("p:$platformId:u:$userId:c:$chatbotUserName");
+        $this->scene = $scene;
+        $sceneStr = isset($scene) ? ":$scene" : '';
+        $this->chatId = $chatId ?? md5("p:$platformId:u:$userId:c:$chatbotUserName:$sceneStr");
+
+
     }
 
     public function getUserId(): string
@@ -75,6 +86,14 @@ class ChatImpl implements Chat
     public function getChatId(): string
     {
         return $this->chatId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getScene(): ?string
+    {
+        return $this->scene;
     }
 
     public function lock(int $ttl = null): bool

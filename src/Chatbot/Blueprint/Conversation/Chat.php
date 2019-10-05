@@ -34,6 +34,11 @@ interface Chat
     public function getChatId() : string;
 
     /**
+     * @return null|string
+     */
+    public function getScene() : ? string;
+
+    /**
      * 锁定一个通道
      * 允许系统在特殊的情况下, 手动锁通道.
      *

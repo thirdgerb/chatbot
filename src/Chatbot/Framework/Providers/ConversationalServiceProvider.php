@@ -80,6 +80,7 @@ class ConversationalServiceProvider extends BaseServiceProvider
                     $request->getPlatformId(),
                     $request->fetchUserId(),
                     $request->getChatbotName(),
+                    $request->getScene(),
                     // chatId could be null
                     $request->fetchChatId()
                 );
