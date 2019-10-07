@@ -58,8 +58,7 @@ class ChattingPipe extends ChatbotPipeImpl
          * @var Conversation $replyConversation
          */
         $replyConversation = $next($conversation);
-
-        $conversation->getChat()->unlock();
+        $chat->unlock();
         return $replyConversation;
 
     }

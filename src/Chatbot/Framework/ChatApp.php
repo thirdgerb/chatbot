@@ -167,6 +167,14 @@ class ChatApp implements Blueprint
         );
 
         if (isset($provider)) {
+            if (
+                $provider instanceof ServiceProvider
+                && !$provider->isProcessServiceProvider()
+            ) {
+                $name = get_class($provider);
+                $this->getConsoleLogger()->warning("register process provider $name which declare not process provider");
+            }
+
             $this->processProviders[] = $provider;
         }
     }
@@ -180,6 +188,14 @@ class ChatApp implements Blueprint
         );
 
         if (isset($provider)) {
+            if (
+                $provider instanceof ServiceProvider
+                && $provider->isProcessServiceProvider()
+            ) {
+                $name = get_class($provider);
+                $this->getConsoleLogger()->warning("register conversation provider $name which declare process provider");
+            }
+
             $this->conversationProviders[] = $provider;
         }
     }

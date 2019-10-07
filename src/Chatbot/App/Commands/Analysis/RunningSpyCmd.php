@@ -25,26 +25,29 @@ class RunningSpyCmd extends SessionCommand
 
         $classes = RunningSpies::getSpies();
 
+        $str = '';
         foreach ($classes as $running) {
             if (!is_a($running, RunningSpy::class, TRUE)) {
                 throw new ConfigureException("$running is not subclass of ". RunningSpy::class);
             }
 
-            $this->showRunningTrace(
+            $str .= $this->showRunningTrace(
                 $running,
                 call_user_func([$running, 'getRunningTraces']),
                 $detail
             );
         }
+
+        $this->say()->info($str);
     }
 
-    protected function showRunningTrace(string $type, array $traces, bool $showDetail) : void
+    protected function showRunningTrace(string $type, array $traces, bool $showDetail) : string
     {
         $c = count($traces);
 
         $slices = array_slice($traces, 0, 20);
 
-        $output = "$type 运行中实例共 $c 个";
+        $output = "\n$type 运行中实例共 $c 个";
         if ($showDetail) {
             $output .= "\n列举最多20个如下:\n";
             foreach ($slices as $trace => $id) {
@@ -52,8 +55,7 @@ class RunningSpyCmd extends SessionCommand
             }
         }
 
-        $this->say()
-            ->info($output);
+        return $output;
     }
 
 }

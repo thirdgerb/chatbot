@@ -4,12 +4,9 @@
 namespace Commune\Chatbot\OOHost\Context\Stages;
 
 
-use Commune\Chatbot\Blueprint\Message\QA\Question;
-use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
-use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 class OnStartStageBuilder implements OnStartStage

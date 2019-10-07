@@ -106,7 +106,7 @@ abstract class AbsQuestion extends AbsMessage implements Question
     public function toMessageData(): array
     {
         return [
-            'id' => $this->getId(),
+            'id' => $this->getReplyId(),
             'question' => $this->query,
             'suggestions' => $this->suggestions,
             'default' => $this->getDefaultValue(),
@@ -123,7 +123,7 @@ abstract class AbsQuestion extends AbsMessage implements Question
         );
     }
 
-    public function getId(): string
+    public function getReplyId(): string
     {
         return static::REPLY_ID;
     }

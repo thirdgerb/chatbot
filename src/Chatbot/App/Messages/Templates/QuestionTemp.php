@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\Messages\Templates;
 
 
-use Commune\Chatbot\App\Messages\Text;
+use Commune\Chatbot\App\Messages\Query;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\ReplyTemplate;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
@@ -57,12 +57,17 @@ class QuestionTemp implements ReplyTemplate
     {
         $query = $this->renderQuery($question);
         $default = $this->renderDefault($question);
-        $suggestion = $this->renderSuggestionStr($question);
+        $suggestions = $this->parseSuggestions($question);
+        $suggestionStr = $this->renderSuggestionStr($question, $suggestions);
+        $text = $this->composeText($query, $suggestionStr, $default);
+        return $this->wrapText($question, $text, $suggestions);
+    }
 
-
-        $text = $this->composeText($query, $suggestion, $default);
-
-        return $this->wrapText($question, $text);
+    protected function parseSuggestions(Question $question) : array
+    {
+        return array_map(function($suggestion) use ($question){
+            return $this->translator->trans((string) $suggestion, $question->getSlots()->all());
+        }, $question->getSuggestions());
     }
 
     protected function composeText(string $query, string $suggestion, string $default) : string
@@ -74,9 +79,10 @@ class QuestionTemp implements ReplyTemplate
         ]);
     }
 
-    protected function wrapText(Question $question, string $text) : array
+    protected function wrapText(Question $question, string $text, array $suggestions) : array
     {
-        $message = (new Text($text))->withLevel($question->getLevel());
+        $message = (new Query($text, $suggestions))
+            ->withLevel($question->getLevel());
         return [ $message ];
     }
 
@@ -95,20 +101,15 @@ class QuestionTemp implements ReplyTemplate
         return $this->translator->trans($question->getQuery(), $slots->all());
     }
 
-    protected function renderSuggestionStr(Question $question) : string
+    protected function renderSuggestionStr(Question $question, array $suggestions) : string
     {
-        $suggestions = $question->getSuggestions();
-        $slots = $question->getSlots();
-
         $str = '';
         if (!empty($suggestions)) {
             foreach ($suggestions as $index => $suggestion) {
-                $suggestion = $this->translator->trans($suggestion, $slots->all());
                 $str .= PHP_EOL . "[$index] $suggestion";
             }
         }
         return $str;
     }
-
 
 }

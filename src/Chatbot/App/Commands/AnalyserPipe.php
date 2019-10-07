@@ -27,7 +27,7 @@ class AnalyserPipe extends SessionCommandPipe
     // 定义一个 command mark
     protected $commandMark = '/';
 
-    public function handle(Session $session, \Closure $next): Session
+    public function matchCommand(string $cmdStr, Session $session, \Closure $next): Session
     {
         $isSupervisor = $session->conversation
             ->isAbleTo(Supervise::class);
@@ -36,7 +36,7 @@ class AnalyserPipe extends SessionCommandPipe
             return $next($session);
         }
 
-        return parent::handle($session, $next);
+        return parent::matchCommand($cmdStr, $session, $next);
     }
 
 

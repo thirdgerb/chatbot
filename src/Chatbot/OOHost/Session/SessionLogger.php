@@ -46,9 +46,10 @@ class SessionLogger implements LoggerInterface, RunningSpy
 
     public function log($level, $message, array $context = array())
     {
+        $message = (string) $message;
         $context = $context + [
-                'sessionId' => $this->sessionId,
-            ];
+            'sessionId' => $this->sessionId,
+        ];
         $this->logger->log($level, $message, $context);
     }
 

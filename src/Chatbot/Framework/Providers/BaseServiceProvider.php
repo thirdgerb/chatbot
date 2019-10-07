@@ -11,6 +11,4 @@ use Commune\Chatbot\Blueprint\ServiceProvider;
 
 abstract class BaseServiceProvider extends ServiceProvider
 {
-    const IS_PROCESS_SERVICE_PROVIDER = false;
-
 }

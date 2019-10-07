@@ -9,10 +9,9 @@ namespace Commune\Chatbot\Framework\Conversation;
 
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Messages\Reply;
-use Commune\Chatbot\Framework\Messages\Verbose;
+use Commune\Chatbot\Blueprint\Message\VerboseMsg as Verbose;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
-use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
 use Illuminate\Support\Collection;
 
 class SpeechImpl implements Speech
@@ -23,11 +22,6 @@ class SpeechImpl implements Speech
     protected $conversation;
 
     /**
-     * @var MessageRequest
-     */
-    protected $request;
-
-    /**
      * @var Collection
      */
     protected $defaultSlots;
@@ -35,48 +29,45 @@ class SpeechImpl implements Speech
     /**
      * Monologue constructor.
      * @param Conversation $conversation
-     * @param MessageRequest $request
      */
     public function __construct(
-        Conversation $conversation,
-        MessageRequest $request
+        Conversation $conversation
     )
     {
         $this->conversation = $conversation;
-        $this->request = $request;
     }
 
-    public function error(string $message, array $slots = array()) : Speech
+    public function error(string $message, array $slots = array()) 
     {
         $this->log(Verbose::ERROR, $message, $slots);
         return $this;
     }
 
-    public function warning(string $message, array $slots = array()) : Speech
+    public function warning(string $message, array $slots = array()) 
     {
         $this->log(Verbose::WARN, $message, $slots);
         return $this;
     }
 
-    public function notice(string $message, array $slots = array()) : Speech
+    public function notice(string $message, array $slots = array()) 
     {
         $this->log(Verbose::NOTICE, $message, $slots);
         return $this;
     }
 
-    public function info(string $message, array $slots = array()) : Speech
+    public function info(string $message, array $slots = array()) 
     {
         $this->log(Verbose::INFO, $message, $slots);
         return $this;
     }
 
-    public function debug(string $message, array $slots = array()) : Speech
+    public function debug(string $message, array $slots = array()) 
     {
         $this->log(Verbose::DEBUG, $message, $slots);
         return $this;
     }
 
-    public function say( string $message, array $slots = []): Speech
+    public function say( string $message, array $slots = [])
     {
         $this->info($message, $slots );
         return $this;
@@ -91,11 +82,8 @@ class SpeechImpl implements Speech
         return $trans->trans($id, $slots, Translator::MESSAGE_DOMAIN, null);
     }
 
-    public function log(string $level, string $message, array $slots = array()) : Speech
+    public function log(string $level, string $message, array $slots = array()) : void
     {
         $this->conversation->reply(new Reply($message, new Collection($slots), $level));
-        return $this;
     }
-
-
 }

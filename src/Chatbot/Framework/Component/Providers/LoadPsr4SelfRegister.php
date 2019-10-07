@@ -13,6 +13,8 @@ use Symfony\Component\Finder\Finder;
 
 class LoadPsr4SelfRegister extends ServiceProvider
 {
+    const IS_PROCESS_SERVICE_PROVIDER = true;
+
     /**
      * @var string
      */

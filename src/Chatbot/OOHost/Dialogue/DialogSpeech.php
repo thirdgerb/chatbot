@@ -3,11 +3,12 @@
 
 namespace Commune\Chatbot\OOHost\Dialogue;
 
+use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 
-interface DialogSpeech
+interface DialogSpeech extends Speech
 {
 
     /**
@@ -30,49 +31,20 @@ interface DialogSpeech
      */
     public function withContext(Context $from = null, array $keys = []);
 
-    /*------ implements speech --------*/
 
-    /**
-     * @param string $message
-     * @param array $slots
-     * @return static
-     */
-    public function debug(string $message, array $slots = []);
+    /*------ 段落 ------*/
 
 
     /**
-     * @param string $message
-     * @param array $slots
      * @return static
      */
-    public function info(string $message, array $slots = []);
-
+    public function beginParagraph();
 
     /**
-     * @param string $message
-     * @param array $slots
      * @return static
      */
-    public function warning(string $message, array $slots = []);
+    public function endParagraph();
 
-
-    /**
-     * @param string $message
-     * @param array $slots
-     * @return static
-     */
-    public function notice(string $message, array $slots = []);
-
-
-    /**
-     * @param string $message
-     * @param array $slots
-     * @return static
-     */
-    public function error(string $message, array $slots = []);
-
-
-    public function trans(string $id, array $slots = []) : string;
 
     /*------ 默认的问题. ------*/
 
@@ -119,15 +91,15 @@ interface DialogSpeech
     /**
      * @param string $question
      * @param bool $default
-     * @param string $yes
-     * @param string $no
+     * @param string|null $yes
+     * @param string|null $no
      * @return static
      */
     public function askConfirm(
         string $question,
         bool $default = true,
-        string $yes = 'y',
-        string $no = 'n'
+        string $yes = null,
+        string $no = null
     );
 
 

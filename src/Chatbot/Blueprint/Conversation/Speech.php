@@ -25,15 +25,45 @@ interface Speech
     const DEFAULT_SLOTS = 'slots.default';
     const SLOT_USER_NAME = 'user.name';
 
-    public function debug(string $message, array $slots = []) : Speech;
+    /**
+     * @param string $message
+     * @param array $slots
+     * @return static
+     */
+    public function debug(string $message, array $slots = []) ;
 
-    public function info(string $message, array $slots = []) : Speech;
 
-    public function warning(string $message, array $slots = []) : Speech;
+    /**
+     * @param string $message
+     * @param array $slots
+     * @return static
+     */
+    public function info(string $message, array $slots = []) ;
 
-    public function notice(string $message, array $slots = []) : Speech;
 
-    public function error(string $message, array $slots = []) : Speech;
+    /**
+     * @param string $message
+     * @param array $slots
+     * @return static
+     */
+    public function warning(string $message, array $slots = []) ;
+
+
+    /**
+     * @param string $message
+     * @param array $slots
+     * @return static
+     */
+    public function notice(string $message, array $slots = []) ;
+
+
+    /**
+     * @param string $message
+     * @param array $slots
+     * @return static
+     */
+    public function error(string $message, array $slots = []) ;
+
 
     public function trans(string $id, array $slots = []) : string;
 }

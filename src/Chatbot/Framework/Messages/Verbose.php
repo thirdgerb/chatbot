@@ -26,7 +26,7 @@ class Verbose extends AbsMessage implements VerboseMsg
     /**
      * @var string
      */
-    protected $text;
+    protected $_text;
 
     /**
      * Text constructor.
@@ -34,19 +34,19 @@ class Verbose extends AbsMessage implements VerboseMsg
      */
     public function __construct(string $text)
     {
-        $this->text = $text;
+        $this->_text = $text;
         parent::__construct();
     }
 
     public function getText(): string
     {
-        return $this->text;
+        return $this->_text;
     }
 
     public function toMessageData(): array
     {
         return [
-            'text' => $this->text,
+            'text' => $this->_text,
             'level' => $this->getLevel()
         ];
     }

@@ -272,7 +272,7 @@ class ConversationImpl implements Blueprint
         $renderer = $this->get(Renderer::class);
         // only way to merge default slots
         $message->getSlots()->merge($this->defaultSlots());
-        $id = $message->getId();
+        $id = $message->getReplyId();
 
         // use template to render message
         if ($renderer->boundTemplate($id)) {

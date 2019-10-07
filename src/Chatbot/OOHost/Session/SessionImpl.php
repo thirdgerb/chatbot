@@ -253,17 +253,13 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function getLogger() : SessionLogger
     {
+        if (isset($this->logger)) {
+            return $this->logger;
+        }
+
         $logger = $this->conversation->getLogger();
-        return $this->logger
-            ?? $this->logger = $this->conversation->make(
-                SessionLogger::class,
-                [
-                    'logger' => $logger,
-                    LoggerInterface::class => $logger,
-                    'session' => $this,
-                    Session::class => $this,
-                ]
-            );
+        $this->logger = new SessionLogger($logger, $this);
+        return $this->logger;
     }
 
     public function getRootHistory() : History

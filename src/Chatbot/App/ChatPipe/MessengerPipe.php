@@ -77,13 +77,13 @@ class MessengerPipe implements InitialPipe
             if (!$request->validate()) {
                 // 拒绝请求
                 $request->sendRejectResponse();
-                return $this->receiveConversation($conversation, $start, false);
+                return $this->receiveConversation($conversation, null, false);
             }
 
             // 系统不可用.
             if (!$this->app->isAvailable()) {
                 $this->replyUnavailable($conversation);
-                return $this->receiveConversation($conversation, $start);
+                return $this->receiveConversation($conversation, null);
             }
 
             // 消息类型不支持.
@@ -124,12 +124,14 @@ class MessengerPipe implements InitialPipe
 
     public function receiveConversation(
         Conversation $conversation,
-        Carbon $start,
+        Carbon $start = null,
         bool $isNormalResponse = true
     ) : Conversation
     {
         // 结束
-        $this->endPipe($conversation, $start, new Carbon());
+        if (isset($start)) {
+            $this->endPipe($conversation, $start, new Carbon());
+        }
         if ($isNormalResponse) {
             $conversation->finishRequest();
         }

@@ -10,12 +10,13 @@ namespace Commune\Chatbot\Blueprint\Message\QA;
 
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
+use Commune\Chatbot\Blueprint\Message\Tags\Conversational;
 use Commune\Chatbot\OOHost\Session\Session;
 
 /**
  * 与用户进行单轮对话的问题
  */
-interface Question extends ReplyMsg
+interface Question extends ReplyMsg, Conversational
 {
 
     // 默认的 slots, 可以用于翻译或渲染

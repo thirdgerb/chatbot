@@ -36,7 +36,7 @@ class HelpCmd extends SessionCommand
         }
 
         $available = $this->rangeMessages($messages);
-        $this->say(['%available%' => $available])
+        $this->say(['available' => $available])
             ->info('command.available');
     }
 
@@ -48,7 +48,7 @@ class HelpCmd extends SessionCommand
     {
         if (!$pipe->hasCommand($commandName)) {
             $this->say([
-                '%name%' => $commandName
+                'name' => $commandName
             ])->warning('command.notExists');
             return;
         }

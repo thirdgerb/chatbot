@@ -9,65 +9,65 @@ use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Dialogue\DialogSpeechImpl;
 
 /**
+ * implements dialogSpeech
  * @property DialogSpeechImpl $dialogSpeech
  */
 trait StageSpeechTrait
 {
+    public function callDialogSpeech(string $method, array $args)
+    {
+        if ($this->isAvailable()) {
+            call_user_func_array([$this->dialogSpeech, $method], $args);
+        }
+        return $this;
+    }
 
     public function withSlots(array $slots)
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech->withSlots($slots);
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
+    }
+
+
+    public function beginParagraph()
+    {
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
+    }
+
+    public function endParagraph()
+    {
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     public function withContext(Context $from = null, array $keys = [])
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech->withContext($from, $keys);
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
+
+
 
     public function info(string $message, array $slots = [])
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech->info($message, $slots);
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     public function debug(string $message, array $slots = [])
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech->debug($message, $slots);
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     public function warning(string $message, array $slots = [])
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech->warning($message, $slots);
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     public function notice(string $message, array $slots = [])
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech->notice($message, $slots);
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     public function error(string $message, array $slots = [])
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech->error($message, $slots);
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     public function trans(string $message, array $slots = []): string
@@ -77,10 +77,7 @@ trait StageSpeechTrait
 
     public function ask(Question $question)
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech->ask($question);
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     public function askVerbose(
@@ -88,10 +85,7 @@ trait StageSpeechTrait
         array $suggestions = []
     )
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech->askVerbose($question, $suggestions);
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -106,10 +100,7 @@ trait StageSpeechTrait
         $default = null
     )
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech->askChoose($question, $suggestions, $default);
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     public function askSelects(
@@ -118,29 +109,17 @@ trait StageSpeechTrait
         string $default = null
     )
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech->askSelects($question, $suggestions, $default);
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     public function askConfirm(
         string $question,
         bool $default = true,
-        string $yes = 'y',
-        string $no = 'n'
+        string $yes = null,
+        string $no = null
     )
     {
-        if ($this->isAvailable()) {
-            $this->dialogSpeech
-                ->askConfirm(
-                    $question,
-                    $default,
-                    $yes,
-                    $no
-                );
-        }
-        return $this;
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     public function askIntentEntity(

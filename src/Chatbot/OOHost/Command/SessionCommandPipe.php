@@ -51,7 +51,7 @@ class SessionCommandPipe implements SessionPipe
         }
     }
 
-    protected function registerCommandName(string $commandName, IntentRegistrar $repo) : void
+    public static function registerCommandName(string $commandName, IntentRegistrar $repo) : void
     {
         // 注册 command
         if (is_a($commandName, SessionCommand::class, TRUE)) {
@@ -104,12 +104,16 @@ class SessionCommandPipe implements SessionPipe
         $mark = $this->getCommandMark();
         $cmdStr = CommandUtils::getCommandStr($text, $mark);
 
-
         // 不是命令的话, 跳走.
         if (!isset($cmdStr)) {
             return $next($session);
         }
 
+        return $this->matchCommand($cmdStr, $session, $next);
+    }
+
+    public function matchCommand(string $cmdStr, Session $session, \Closure $next) : Session
+    {
         // 匹配原理很简单, 就看命令是否命中了.
         $commands = $this->getCommands();
         foreach ($commands as $name => $clazz) {

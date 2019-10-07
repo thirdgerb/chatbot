@@ -11,6 +11,8 @@ use Commune\Chatbot\Framework\Providers\TranslationLoader;
 
 class LoadTranslationConfig extends ServiceProvider
 {
+    const IS_PROCESS_SERVICE_PROVIDER = true;
+
     use TranslationLoader;
 
     /**

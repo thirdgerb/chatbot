@@ -18,7 +18,7 @@ interface ReplyMsg extends Message
      * id of the messages template
      * @return string
      */
-    public function getId() : string;
+    public function getReplyId() : string;
 
     /**
      * Speech Level

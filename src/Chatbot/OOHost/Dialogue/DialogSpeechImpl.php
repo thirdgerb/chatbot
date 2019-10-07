@@ -2,6 +2,7 @@
 
 namespace Commune\Chatbot\OOHost\Dialogue;
 
+use Commune\Chatbot\App\Messages\ParagraphText;
 use Commune\Chatbot\App\Messages\QA\Choose;
 use Commune\Chatbot\App\Messages\QA\Confirm;
 use Commune\Chatbot\App\Messages\QA\Contextual\AskEntity;
@@ -12,12 +13,14 @@ use Commune\Chatbot\App\Messages\QA\Contextual\ConfirmIntent;
 use Commune\Chatbot\App\Messages\QA\Contextual\SelectEntity;
 use Commune\Chatbot\App\Messages\QA\Selects;
 use Commune\Chatbot\App\Messages\QA\VbQuestion;
-use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
+use Commune\Chatbot\Framework\Conversation\SpeechImpl;
+use Commune\Chatbot\Framework\Messages\Reply;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
+use Illuminate\Support\Collection;
 
-class DialogSpeechImpl implements DialogSpeech
+class DialogSpeechImpl extends SpeechImpl implements DialogSpeech
 {
 
     /**
@@ -31,9 +34,9 @@ class DialogSpeechImpl implements DialogSpeech
     protected $slots = [];
 
     /**
-     * @var Speech|null
+     * @var ParagraphText
      */
-    protected $speech;
+    protected $paragraph;
 
     /**
      * DialogTalk constructor.
@@ -44,6 +47,7 @@ class DialogSpeechImpl implements DialogSpeech
     {
         $this->dialog = $dialog;
         $this->slots = $slots;
+        parent::__construct($dialog->session->conversation);
     }
 
 
@@ -75,45 +79,33 @@ class DialogSpeechImpl implements DialogSpeech
         return $slots + $this->slots;
     }
 
-    /**
-     * @return Speech
-     */
-    protected function getSpeech()
-    {
-        return $this->speech ?? $this->speech = $this->dialog
-                ->session
-                ->conversation
-                ->getSpeech();
-    }
 
-    public function debug(string $message, array $slots = [])
+    public function beginParagraph()
     {
-        $this->getSpeech()->debug($message, $this->mergeSlots($slots));
+        $this->paragraph = new ParagraphText([]);
         return $this;
     }
 
-    public function info(string $message, array $slots = [])
+    public function endParagraph()
     {
-        $this->getSpeech()->info($message, $this->mergeSlots($slots));
+        $this->conversation->reply($this->paragraph);
+        $this->paragraph = null;
         return $this;
     }
 
-    public function warning(string $message, array $slots = [])
+    public function log(string $level, string $message, array $slots = array()) : void
     {
-        $this->getSpeech()->warning($message, $this->mergeSlots($slots));
-        return $this;
-    }
+        if (isset($this->paragraph)) {
+            $reply = new Reply(
+                $message,
+                new Collection($this->mergeSlots($slots)),
+                $level
+            );
+            $this->paragraph->add($reply);
+        } else {
+            parent::log($level, $message, $this->mergeSlots($slots));
+        }
 
-    public function notice(string $message, array $slots = [])
-    {
-        $this->getSpeech()->notice($message, $this->mergeSlots($slots));
-        return $this;
-    }
-
-    public function error(string $message, array $slots = [])
-    {
-        $this->getSpeech()->error($message, $this->mergeSlots($slots));
-        return $this;
     }
 
     public function ask(Question $question)
@@ -169,7 +161,7 @@ class DialogSpeechImpl implements DialogSpeech
 
     public function trans(string $message, array $slots = []): string
     {
-        return $this->getSpeech()->trans($message, $this->mergeSlots($slots));
+        return $this->trans($message, $this->mergeSlots($slots));
     }
 
     /**
@@ -227,6 +219,5 @@ class DialogSpeechImpl implements DialogSpeech
     {
         return $this->ask(new ChooseIntent($question, $options, $intentNames, $defaultChoice));
     }
-
 
 }

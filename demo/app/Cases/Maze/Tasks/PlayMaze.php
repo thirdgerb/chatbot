@@ -360,11 +360,14 @@ class PlayMaze extends TaskDef
             $last = $this->failToEnter;
         }
         $speech = $dialog->say();
-        foreach ([$first, $middle, $itemMessage, $last] as $info) {
+        $speech->info($first);
+        $paragraph = $speech->beginParagraph();
+        foreach ([$middle, $itemMessage, $last] as $info) {
             if (!empty($info)) {
-                $speech->info($info);
+                $paragraph->info($info);
             }
         }
+        $paragraph->endParagraph();
 
         // 赢了, 游戏结束
         if ($win) {

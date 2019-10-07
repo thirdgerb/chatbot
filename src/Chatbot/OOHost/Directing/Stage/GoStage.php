@@ -55,7 +55,7 @@ class GoStage extends AbsNavigator
             $context,
             $this->dialog,
             $this->stageName,
-            false // 不需要检查
+            $this->reset // 如果重置了, 就要重新检查.
         );
     }
 

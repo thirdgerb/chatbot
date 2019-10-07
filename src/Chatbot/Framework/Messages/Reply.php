@@ -39,7 +39,7 @@ class Reply extends AbsMessage implements ReplyMsg
     }
 
 
-    public function getId(): string
+    public function getReplyId(): string
     {
         return $this->id;
     }

@@ -11,6 +11,9 @@ use Commune\Container\ContainerContract;
 
 abstract class ServiceProvider
 {
+
+    const IS_PROCESS_SERVICE_PROVIDER = false;
+
     /**
      * @var ContainerContract
      */
@@ -23,6 +26,11 @@ abstract class ServiceProvider
     public function __construct($app)
     {
         $this->app = $app;
+    }
+
+    public function isProcessServiceProvider() : bool
+    {
+        return static::IS_PROCESS_SERVICE_PROVIDER;
     }
 
     /**

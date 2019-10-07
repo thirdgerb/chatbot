@@ -33,7 +33,7 @@ class TranslateTemp implements ReplyTemplate
     {
         // 自己翻译自己. 高优先级
         if ($reply instanceof SelfTranslating) {
-            return [ $reply->translateBy($this->translator)];
+            return $reply->translateBy($this->translator);
 
         // 低优先级. 不翻译
         } elseif ($reply instanceof NoTranslate) {
@@ -44,7 +44,7 @@ class TranslateTemp implements ReplyTemplate
             return [$reply];
         }
 
-        $id = $reply->getId();
+        $id = $reply->getReplyId();
 
         // 纯数字不能用来做模板. 用这种方式也可以规避掉翻译.
         if (!empty($id) && !is_numeric($id)) {

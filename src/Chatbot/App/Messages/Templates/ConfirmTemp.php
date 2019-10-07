@@ -13,14 +13,17 @@ class ConfirmTemp extends QuestionTemp
     {
         $default = $question->getDefaultValue();
 
-        return isset($default)
-            ? " ($default)"
-            : '';
+        if (!isset($default)) {
+            return '';
+        }
+
+        $default = $this->translator->trans($default, $question->getSlots()->all());
+
+        return  " ($default)";
     }
 
-    protected function renderSuggestionStr(Question $question): string
+    protected function renderSuggestionStr(Question $question, array $suggestions): string
     {
-        $suggestions = $question->getSuggestions();
         return " [{$suggestions[1]}|{$suggestions[0]}]";
     }
 
