@@ -7,9 +7,7 @@
 
 namespace Commune\Support;
 
-
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Support\Utils\StringUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\Schematic\Entry;
@@ -27,13 +25,10 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
     use ArrayAbleToJson;
 
     /**
+     * 定义 option 的ID 字段是哪一个
      * determine getId() method use which key as id
      */
-    const IDENTITY = 'name';
-
-    protected static $dataGetter;
-
-    protected static $dataSetter;
+    const IDENTITY = '';
 
     public function __construct(array $data = [])
     {
@@ -44,7 +39,7 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
         // you can validate input array
         $error = $this->validate($data);
         if (!empty($error)){
-            throw new ConfigureException(
+            throw new \InvalidArgumentException(
                 static::class
                 . ' error, ' . $error
                 . ', ' . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
@@ -63,7 +58,7 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
      * when there are list of options,
      * getId() could identify them
      *
-     * @return string
+     * @return string|mixed
      */
     public function getId()
     {
@@ -77,6 +72,30 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
 
 
     /**
+     * option 数据的哈希, 可以用来比较异同.
+     * @return string
+     */
+    public function getHash() : string
+    {
+        return md5(static::class . '::' . $this->toJson());
+    }
+
+    /**
+     * 当前 Option 对象的自我简介.
+     * 适合用于列表场景. 用 id => brief 的形式列出多个 option
+     * 也适合用于全文搜索.
+     *
+     * @return string
+     */
+    public function getBrief() : string
+    {
+        return (string) $this->getId();
+    }
+
+
+    /**
+     * 使用ID + stub, 创建一个 option对象.
+     *
      * generate a option object by ID and stub data
      *
      * @param $id
@@ -85,12 +104,16 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
      */
     public static function createById($id, array $data = [])
     {
-        $data[static::IDENTITY] = $id;
+        if (!empty(static::IDENTITY)) {
+            $data[static::IDENTITY] = $id;
+        }
 
         return new static($data);
     }
 
     /**
+     * 合并一个数组到当前option, 生成一个新的option对象.
+     *
      * merge $data to current option
      * @param array $data
      * @return static
@@ -111,6 +134,7 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
 
     /**
      * 默认的校验方法. 如果有错误, 将错误提示字符串返回.
+     * 会作为 抛出异常的 message
      *
      * if validate success, return null
      * otherwise return error message as string
@@ -120,11 +144,14 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
      */
     public static function validate(array $data) : ? string
     {
+        if (!empty(static::IDENTITY) && !isset($data[static::IDENTITY])) {
+            return 'identity field is empty';
+        }
         return null;
     }
 
     /**
-     * 转成数组. 由于Entry 类用了private 方法, 所以只能用反射
+     * 转成数组. 由于 Schematic/Entry 类用了private 方法, 所以只好复制了该库
      * 强烈建议写公共库时少用private
      * 看起来符合设计理念的地方, 往往实际用起来是需要改的.
      * 从这个角度来看, python 的做法反而好.
@@ -142,10 +169,20 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
      */
     public function toArray() : array
     {
+        return $this->toRecursiveArray();
+    }
+
+    /**
+     * 获取当前 option 的原始数组.
+     * @return array
+     */
+    public function getData(): array
+    {
         return $this->data;
     }
 
     /**
+     * 递归地获取对象的值.
      * @return array
      */
     public function toRecursiveArray() : array
@@ -186,7 +223,7 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
     }
 
     /**
-     * 获取
+     * 获取 sub option 的定义.
      * @return array
      */
     public static function getAssociations()
@@ -216,6 +253,12 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
         return isset(static::$associations[$index]);
     }
 
+    /**
+     * 获取已有的 sub option class
+     *
+     * @param string $key
+     * @return null|string
+     */
     public static function getAssociationClass(string $key) : ? string
     {
         return static::$associations[$key]

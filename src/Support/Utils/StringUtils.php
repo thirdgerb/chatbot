@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\Framework\Utils;
+namespace Commune\Support\Utils;
 
 
 class StringUtils

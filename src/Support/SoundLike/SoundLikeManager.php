@@ -8,7 +8,7 @@
 namespace Commune\Support\SoundLike;
 
 
-use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Support\Utils\StringUtils;
 
 class SoundLikeManager implements SoundLikeInterface
 {
