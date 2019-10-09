@@ -6,7 +6,7 @@ namespace Commune\Chatbot\OOHost\Context;
 
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Chatbot\Framework\Messages\AbsMessage;
-use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Context\Helpers\ScalarParser;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionData;

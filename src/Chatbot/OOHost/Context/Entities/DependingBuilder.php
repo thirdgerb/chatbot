@@ -5,7 +5,7 @@ namespace Commune\Chatbot\OOHost\Context\Entities;
 
 
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;

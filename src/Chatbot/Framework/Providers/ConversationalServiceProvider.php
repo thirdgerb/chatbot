@@ -21,8 +21,7 @@ use Commune\Chatbot\Framework\Conversation\ConversationLoggerImpl;
 use Commune\Chatbot\Framework\Conversation\IncomingMessageImpl;
 use Commune\Chatbot\Framework\Conversation\SpeechImpl;
 use Commune\Chatbot\Framework\Conversation\UserImpl;
-
-use Commune\Chatbot\Framework\Utils\GuzzleClientFactory;
+use Commune\Chatbot\Framework\Predefined\GuzzleClientFactory;
 use Psr\Log\LoggerInterface;
 
 class ConversationalServiceProvider extends BaseServiceProvider

@@ -12,7 +12,7 @@ use Carbon\Carbon;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\Tags\Transformed;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
-use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Support\Utils\StringUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Chatbot\Blueprint\Message\Message as Contract;
 

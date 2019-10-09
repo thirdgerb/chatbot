@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context\Intent;
 
 
-use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;

@@ -4,7 +4,7 @@
 namespace Commune\Test\Chatbot\Framework\Utils;
 
 
-use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Support\Utils\StringUtils;
 use PHPUnit\Framework\TestCase;
 
 /**

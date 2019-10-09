@@ -5,7 +5,7 @@
  * @package Commune\Chatbot\Framework\Utils
  */
 
-namespace Commune\Chatbot\Framework\Utils;
+namespace Commune\Chatbot\Framework\Predefined;
 
 
 use Commune\Chatbot\Contracts\ClientFactory;

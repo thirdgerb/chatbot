@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context\Helpers;
 
 
-use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Support\Utils\StringUtils;
 
 class ScalarParser
 {

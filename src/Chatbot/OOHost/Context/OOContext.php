@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context;
 
 
-use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
 use Commune\Container\ContainerContract;

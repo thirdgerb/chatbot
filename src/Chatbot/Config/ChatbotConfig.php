@@ -52,7 +52,6 @@ class ChatbotConfig extends Option
 {
     const IDENTITY = 'chatbotName';
 
-
     protected static $associations = [
         'defaultMessages' => DefaultMessagesConfig::class,
         'chatbotPipes' => ChatbotPipesConfig::class,

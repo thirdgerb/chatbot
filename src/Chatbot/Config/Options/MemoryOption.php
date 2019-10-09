@@ -8,6 +8,8 @@ use Commune\Chatbot\OOHost\Session\Scope;
 use Commune\Support\Option;
 
 /**
+ * 在 Session 中定义 memory
+ *
  * @property-read string $name
  * @property-read string $desc
  * @property-read string[] $scopes

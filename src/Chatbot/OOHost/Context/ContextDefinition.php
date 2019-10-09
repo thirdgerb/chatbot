@@ -8,7 +8,7 @@ use Commune\Chatbot\OOHost\Context\Entities\DependingBuilder;
 use Commune\Chatbot\OOHost\Context\Helpers\ContextCaller;
 use ReflectionMethod;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Illuminate\Support\Str;
 

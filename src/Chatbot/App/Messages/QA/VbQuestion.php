@@ -10,7 +10,7 @@ use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Messages\QA\AbsQuestion;
 use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
-use Commune\Chatbot\Framework\Utils\StringUtils;
+use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\NLU\Corpus\Example;
 use Commune\Chatbot\OOHost\Session\Session;
 

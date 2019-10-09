@@ -8,13 +8,12 @@
 namespace Commune\Chatbot\Contracts;
 
 
-use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 
 /**
  * 端上的 server
- * 主要是 close, closeClient 对kernel的流程很重要.
- *
+ * 负责让业务逻辑直接操作服务端.
+ * 常用功能是 close, closeClient 对kernel的流程很重要.
  */
 interface ChatServer
 {
