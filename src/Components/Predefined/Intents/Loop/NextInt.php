@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Components\Predefined\Loop;
+namespace Commune\Components\Predefined\Intents\Loop;
 
 
 use Commune\Chatbot\App\Intents\MessageIntent;

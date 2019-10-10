@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Components\Predefined\Attitudes;
+namespace Commune\Components\Predefined\Intents\Attitudes;
 
 
 use Commune\Chatbot\App\Intents\MessageIntent;

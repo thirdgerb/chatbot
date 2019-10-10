@@ -1,20 +1,19 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Components\Predefined\Navigation;
+namespace Commune\Components\Predefined\Intents\Navigation;
 
 
 use Commune\Chatbot\App\Intents\NavigateIntent;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
-class RepeatInt extends NavigateIntent
+class CancelInt extends NavigateIntent
 {
 
+    const SIGNATURE = 'cancel';
 
-    const SIGNATURE = 'repeat';
-
-    const DESCRIPTION = '重复当前语境';
+    const DESCRIPTION = '退出当前语境';
 
     public static function getContextName(): string
     {
@@ -23,7 +22,8 @@ class RepeatInt extends NavigateIntent
 
     public function navigate(Dialog $dialog): ? Navigator
     {
-        return $dialog->repeat();
+        return $dialog->cancel();
     }
+
 
 }

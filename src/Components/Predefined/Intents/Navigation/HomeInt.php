@@ -1,19 +1,24 @@
 <?php
 
+/**
+ * Class HomeInt
+ * @package Commune\Components\Predefined\Intents\Navigation
+ */
 
-namespace Commune\Chatbot\App\Components\Predefined\Navigation;
+namespace Commune\Components\Predefined\Intents\Navigation;
 
 
 use Commune\Chatbot\App\Intents\NavigateIntent;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
-class RestartInt extends NavigateIntent
+class HomeInt extends NavigateIntent
 {
 
-    const SIGNATURE = 'restart';
+    const SIGNATURE = 'home';
 
-    const DESCRIPTION = '重启当前语境';
+    const DESCRIPTION = '回到起点';
+
 
     public static function getContextName(): string
     {
@@ -22,7 +27,7 @@ class RestartInt extends NavigateIntent
 
     public function navigate(Dialog $dialog): ? Navigator
     {
-        return $dialog->restart();
+        return $dialog->redirect->home();
     }
 
 

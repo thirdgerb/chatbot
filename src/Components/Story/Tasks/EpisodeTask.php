@@ -5,8 +5,8 @@ namespace Commune\Components\Story\Tasks;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
-use Commune\Chatbot\App\Components\Predefined\Navigation\BackwardInt;
-use Commune\Chatbot\App\Components\Predefined\Navigation\RestartInt;
+use Commune\Components\Predefined\Intents\Navigation\BackwardInt;
+use Commune\Components\Predefined\Intents\Navigation\RestartInt;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Stage;

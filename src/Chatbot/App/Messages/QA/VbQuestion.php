@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\Messages\QA;
 
 
-use Commune\Chatbot\App\Components\Predefined\Dialogue\OrdinalInt;
+use Commune\Components\Predefined\Intents\Dialogue\OrdinalInt;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;

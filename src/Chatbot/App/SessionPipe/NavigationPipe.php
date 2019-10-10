@@ -7,7 +7,7 @@ namespace Commune\Chatbot\App\SessionPipe;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
-use Commune\Chatbot\App\Components\Predefined;
+use Commune\Components\Predefined\Intents;
 
 class NavigationPipe implements SessionPipe
 {

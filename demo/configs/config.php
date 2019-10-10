@@ -23,7 +23,7 @@ return [
 //        \Commune\Chatbot\App\Components\RasaComponent::class => [
 //            'output' => __DIR__ .'/nlu.md',
 //        ],
-//        \Commune\Chatbot\App\Components\PredefinedIntComponent::class,
+//        \Commune\Components\Predefined\IntentsIntComponent::class,
 //        \Commune\Chatbot\App\Components\SimpleChatComponent::class => [
 //            'default' => 'demo',
 //            'resources' => [

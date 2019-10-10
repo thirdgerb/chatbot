@@ -5,9 +5,9 @@ namespace Commune\Components\Story\Basic;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
-use Commune\Chatbot\App\Components\Predefined\Navigation\BackwardInt;
-use Commune\Chatbot\App\Components\Predefined\Navigation\RepeatInt;
-use Commune\Chatbot\App\Components\Predefined\Navigation\RestartInt;
+use Commune\Components\Predefined\Intents\Navigation\BackwardInt;
+use Commune\Components\Predefined\Intents\Navigation\RepeatInt;
+use Commune\Components\Predefined\Intents\Navigation\RestartInt;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Definition;

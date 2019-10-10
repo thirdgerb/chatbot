@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Components\Predefined\Dialogue;
+namespace Commune\Components\Predefined\Intents\Dialogue;
 
 use Commune\Chatbot\App\Intents\MessageIntent;
 

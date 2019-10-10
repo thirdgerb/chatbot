@@ -5,11 +5,11 @@ namespace Commune\Chatbot\App\Commands;
 
 
 use Commune\Chatbot\App\Commands\Analysis\WhoAmICmd;
-use Commune\Chatbot\App\Components\Predefined\Navigation\BackwardInt;
-use Commune\Chatbot\App\Components\Predefined\Navigation\CancelInt;
-use Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt;
-use Commune\Chatbot\App\Components\Predefined\Navigation\RepeatInt;
-use Commune\Chatbot\App\Components\Predefined\Navigation\RestartInt;
+use Commune\Components\Predefined\Intents\Navigation\BackwardInt;
+use Commune\Components\Predefined\Intents\Navigation\CancelInt;
+use Commune\Components\Predefined\Intents\Navigation\QuitInt;
+use Commune\Components\Predefined\Intents\Navigation\RepeatInt;
+use Commune\Components\Predefined\Intents\Navigation\RestartInt;
 use Commune\Chatbot\OOHost\Command\HelpCmd;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
 

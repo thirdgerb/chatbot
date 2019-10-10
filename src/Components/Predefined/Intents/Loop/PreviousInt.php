@@ -2,10 +2,10 @@
 
 /**
  * Class PreviousInt
- * @package Commune\Chatbot\App\Components\Predefined\Loop
+ * @package Commune\Components\Predefined\Intents\Loop
  */
 
-namespace Commune\Chatbot\App\Components\Predefined\Loop;
+namespace Commune\Components\Predefined\Intents\Loop;
 
 
 use Commune\Chatbot\App\Intents\MessageIntent;

@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\Framework\Bootstrap;
 
 
-use Commune\Chatbot\App\Components\PredefinedIntComponent;
+use Commune\Components\Predefined\PredefinedComponent;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Framework\Component\ComponentOption;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
@@ -31,7 +31,7 @@ class LoadComponents implements Bootstrapper
 
 
         // 系统默认的意图是预加载的.
-        static::dependComponent('system', PredefinedIntComponent::class);
+        static::dependComponent('system', PredefinedComponent::class);
 
         // 遍历系统注册的components, 一一注册.
         foreach ($config->components as $index => $name) {

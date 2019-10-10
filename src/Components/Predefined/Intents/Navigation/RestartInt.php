@@ -1,19 +1,19 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Components\Predefined\Navigation;
+namespace Commune\Components\Predefined\Intents\Navigation;
 
 
 use Commune\Chatbot\App\Intents\NavigateIntent;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
-class QuitInt extends NavigateIntent
+class RestartInt extends NavigateIntent
 {
 
-    const SIGNATURE = 'quit';
+    const SIGNATURE = 'restart';
 
-    const DESCRIPTION = '退出当前会话';
+    const DESCRIPTION = '重启当前语境';
 
     public static function getContextName(): string
     {
@@ -22,7 +22,7 @@ class QuitInt extends NavigateIntent
 
     public function navigate(Dialog $dialog): ? Navigator
     {
-        return $dialog->quit();
+        return $dialog->restart();
     }
 
 

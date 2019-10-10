@@ -6,7 +6,7 @@ namespace Commune\Components\Story\Tasks;
 
 use Closure;
 use Commune\Chatbot\App\Callables\Actions\Redirector;
-use Commune\Chatbot\App\Components\Predefined\Dialogue\HelpInt;
+use Commune\Components\Predefined\Intents\Dialogue\HelpInt;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
