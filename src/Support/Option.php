@@ -34,7 +34,7 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
     {
         // 注意不要让错误的stub 污染配置.
         // stub array will fill missed keys of data
-        $data = $data + static::stub();
+        $data = $this->init($data);
 
         // you can validate input array
         $error = $this->validate($data);
@@ -48,6 +48,11 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
         }
 
         parent::__construct($data);
+    }
+
+    protected function init(array $data) : array
+    {
+        return $data + static::stub();
     }
 
     /**

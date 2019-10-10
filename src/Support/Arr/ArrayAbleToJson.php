@@ -16,9 +16,7 @@ trait ArrayAbleToJson
     public function toPrettyJson() : string
     {
         return $this->toJson(
-            JSON_UNESCAPED_UNICODE
-            | JSON_UNESCAPED_SLASHES
-            | JSON_PRETTY_PRINT
+            static::PRETTY_JSON
         );
     }
 

@@ -15,6 +15,7 @@ namespace Commune\Support\Arr;
  */
 interface ArrayAndJsonAble extends \JsonSerializable
 {
+    const PRETTY_JSON = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT;
     /**
      * Get the instance as an array.
      *
