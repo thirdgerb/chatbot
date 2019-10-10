@@ -5,268 +5,347 @@ namespace Commune\Support\OptionRepo\Storage;
 
 
 use Commune\Support\Option;
+use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\StorageMeta;
 use Commune\Support\OptionRepo\Contracts\RootOptionStage;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * 从文件读取数据的存储介质. 通常用于根介质.
+ * 用文件修改, 方便在仓库里携带, 同时也比后台的 web 界面更加方便.
+ *
+ * 文件仓库有两种:
+ *
+ * - 一种是, 直接把目录做成仓库, 每个文件是一个独立的option.
+ * - 另一种是, 把一个文件当成仓库, 里面是一个大数组, 每一个元素是一个独立的option.
+ *
+ */
 abstract class RootFileStorage implements RootOptionStage
 {
+    protected $ext = '';
 
     /**
      * @var Option[][]
      */
-    protected $options = [];
-
-    protected $ext = '';
-
-    abstract protected function parseOptionToString(Option $option) : string;
-
-    abstract protected function parseStringToOption(string $optionName, string $content) : ? Option;
+    protected $optionCaches = [];
 
     /**
+     * 已读取的资源.  categoryId => directory
+     * @var  string[]
+     */
+    protected $resources = [];
+
+    /**
+     * option 与文件的关系. [categoryId][optionId] => fileName
+     * @var string[][]
+     */
+    protected $optionFromFile = [];
+
+    abstract protected function parseArrayToString(array $option, FileStorageMeta $meta): string;
+
+    abstract protected function parseStringToArray(string $content): array;
+
+    /**
+     * @param CategoryMeta $category
+     * @param FileStorageMeta $storage
      * @param Option $option
-     * @param FileStorageMeta $meta
      */
     public function save(
-        Option $option,
-        StorageMeta $meta
+        CategoryMeta $category,
+        StorageMeta $storage,
+        Option $option
     ): void
     {
-        $meta->caching && $this->setLoaded(get_class($option), $option->getId(), $option);
-        $content = $this->parseOptionToString($option);
-        $file = $this->getFilePath($meta, $option->getId());
-        file_put_contents($file, $content);
+        $this->optionCaches[$category->getId()][$option->getId()] = $option;
+        if ($storage->isDir) {
+            $this->saveToDir($category, $storage, $option);
+        } else {
+            $this->saveToFile($category, $storage);
+        }
     }
 
-    protected function hasLoaded(string $optionName, string $id) : bool
+    protected function saveToFile(CategoryMeta $category, FileStorageMeta $meta) : void
     {
-        return isset($this->options[$optionName][$id]);
-    }
-
-    protected function getLoaded(string $optionName, string $id) : ? Option
-    {
-        $loaded = $this->options[$optionName][$id];
-        return $loaded !== false ? $loaded : null;
-    }
-
-    protected function setLoaded(string $optionName, string $id, Option $option = null) : void
-    {
-        $this->options[$optionName][$id] = $option ?? false;
-    }
-
-    protected function unsetLoaded(string $optionName, string $id) : void
-    {
-        unset($this->options[$optionName][$id]);
+        $data = $this->getCategoryData($category);
+        $content = $this->parseArrayToString($data, $meta);
+        file_put_contents($meta->path, $content);
     }
 
 
-
-    /**
-     * @param string $optionName
-     * @param string $id fileBaseName
-     * @param FileStorageMeta $meta
-     * @return Option|null
-     */
-    public function get(
-        string $optionName,
-        string $id,
-        StorageMeta $meta
-    ): ? Option
+    protected function getCategoryData(CategoryMeta $category) : array
     {
-        if ($meta->caching && $this->hasLoaded($optionName, $id)) {
-            return $this->getLoaded($optionName, $id);
+
+        $data = [];
+        if (isset($this->optionCaches[$category->getId()])) {
+            foreach ($this->optionCaches[$category->getId()] as $option) {
+                $data[$option->getId()] = $option->toArray();
+            }
+        }
+        return $data;
+    }
+
+    protected function saveToDir(CategoryMeta $category, FileStorageMeta $meta, Option $option) : void
+    {
+        $cateId = $category->getId();
+        $optionId = $option->getId();
+
+        $path = $this->optionFromFile[$cateId][$optionId] ?? null;
+        $path = $path ?? $this->getFileName($meta, $optionId);
+
+        $content = $this->parseArrayToString($option->toArray(), $meta);
+
+        file_put_contents($path, $content);
+        $this->optionFromFile[$cateId][$optionId] = $path;
+    }
+
+    protected function getFileName(FileStorageMeta $meta, string $id = null) : string
+    {
+        $id = isset($id) ? DIRECTORY_SEPARATOR . $id : '';
+        return rtrim($meta->path, DIRECTORY_SEPARATOR) . $id . '.' . $this->ext;
+    }
+
+    protected function readFromOptionCache(CategoryMeta $category, string $id) : ? Option
+    {
+        return $this->optionCaches[$category->getId()][$id] ?? null;
+    }
+
+    protected function loadFile(CategoryMeta $category, FileStorageMeta $meta) : void
+    {
+        if ($meta->isDir) {
+            $this->loadDirAllFiles($category, $meta);
+            return;
+        }
+        $cateId = $category->getId();
+        if (isset($this->resources[$cateId])) {
+            return;
         }
 
-        $path = $this->getFilePath($meta, $id);
+        $path = $meta->path;
+        $data = $this->readFileArr($path);
+        $this->resources[$cateId] = $meta->getId();
 
-        if (!file_exists($path)) {
-            $meta->caching and $this->setLoaded($optionName, $id, null);
+        foreach ($data as $optionArr) {
+            $option = $category->newOption($optionArr);
+            $optionId = $option->getId();
+            $this->optionCaches[$cateId][$optionId] = $option;
+            $this->optionFromFile[$cateId][$optionId] = $path;
         }
+    }
 
-        $result = $this->readOption($path, $optionName);
-
-        if (empty($result)) {
-            $meta->caching and $this->setLoaded($optionName, $id, null);
+    protected function readFileArr(string $path) : ? array
+    {
+        $content = file_get_contents($path);
+        if (empty($content)) {
             return null;
         }
 
-        $option = new $optionName($result);
-        $meta->caching and $this->setLoaded($optionName, $id, $option);
-
-        return $option;
+        return $this->parseStringToArray($content);
     }
 
-    protected function readOption(string $path, string $optionName) : ? Option
+    protected function loadDirAllFiles(CategoryMeta $category, FileStorageMeta $meta) : void
     {
-        $data = file_get_contents($path);
-        return $this->parseStringToOption($optionName, $data);
-    }
+        $cateId = $category->getId();
+        if (isset($this->resources[$cateId])) {
+            return;
+        }
 
-    protected function getFilePath(FileStorageMeta $meta, string $id) : string
-    {
-        $dir = $meta->directory;
-        $filename = $id;
-        return rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename . '.' . $this->ext;
-    }
+        $this->resources[$cateId] = $meta->getId();
 
-    /**
-     * @param string $optionName
-     * @param string $id
-     * @param FileStorageMeta $meta
-     * @return bool
-     */
-    public function has(
-        string $optionName,
-        string $id,
-        StorageMeta $meta
-    ): bool
-    {
-        return $this->hasLoaded($optionName, $id) || file_exists($this->getFilePath($meta, $id));
-    }
+        $finder = new Finder();
+        $finder = $finder->in($meta->path)->depth(0)->name('/\.' . $this->ext . '$/');
 
-
-    /**
-     * @param string $optionName
-     * @param FileStorageMeta $meta
-     * @param string ...$ids
-     */
-    public function delete(string $optionName, StorageMeta $meta, string ...$ids): void
-    {
-        foreach ($ids as $id) {
-            $this->unsetLoaded($optionName, $id);
-            $path = $this->getFilePath($meta, $id);
-            if (file_exists($path)) {
-                @unlink($path);
+        foreach ($finder as $file) {
+            /**
+             * @var \SplFileInfo $file
+             */
+            $filePath = $file->getRealPath();
+            $optionArr = $this->readFileArr($filePath);
+            if (isset($optionArr)) {
+                $option = $category->newOption($optionArr);
+                $optionId = $option->getId();
+                $this->optionCaches[$cateId][$optionId] = $option;
+                $this->optionFromFile[$cateId][$optionId] = $filePath;
             }
         }
     }
 
-    public function lockId(string $optionName, string $id, StorageMeta $meta): bool
+    protected function readFromFile(CategoryMeta $category, FileStorageMeta $meta, string $id) : ? Option
     {
-        // 文件作为 root 层, 不锁了, 太麻烦.
+        $this->loadFile($category, $meta);
+        return $this->readFromOptionCache($category, $id);
+
+    }
+
+    /**
+     * @param CategoryMeta $category
+     * @param FileStorageMeta $storage
+     * @param string $id
+     * @return Option|null
+     */
+    public function get(
+        CategoryMeta $category,
+        StorageMeta $storage,
+        string $id
+    ): ? Option
+    {
+        return $this->readFromOptionCache($category, $id) ?? $this->readFromFile($category, $storage, $id);
+    }
+
+    public function has(
+        CategoryMeta $category,
+        StorageMeta $storage,
+        string $id
+    ): bool
+    {
+        $option = $this->get($category, $storage, $id);
+        return isset($option);
+    }
+
+    /**
+     * @param CategoryMeta $category
+     * @param FileStorageMeta $storage
+     * @param string ...$ids
+     */
+    public function delete(
+        CategoryMeta $category,
+        StorageMeta $storage,
+        string ...$ids
+    ): void
+    {
+        $cateId = $category->getId();
+        $unset = [];
+        foreach ($ids as $id) {
+            $option = $this->get($category, $storage, $id);
+            if (isset($option)) {
+                unset($this->optionCaches[$cateId][$id]);
+                $unset[] = $id;
+            }
+        }
+
+        if ($unset) {
+            $this->deleteToFile($category, $storage, $unset);
+        }
+    }
+
+
+    protected function deleteToFile(
+        CategoryMeta $category,
+        FileStorageMeta $storage,
+        array $deletes
+    ) : void
+    {
+        if (!$storage->isDir) {
+            $this->saveToFile($category, $storage);
+            return;
+        }
+
+        $cateId = $category->getId();
+        foreach ($deletes as $id) {
+            $fileName = $this->optionFromFile[$cateId][$id] ?? $this->getFileName($storage, $id);
+            unset($this->optionFromFile[$cateId][$id]);
+            @unlink($fileName);
+        }
+    }
+
+
+    public function lockId(
+        CategoryMeta $category,
+        StorageMeta $storage,
+        string $id
+    ): bool
+    {
+        // 这一层通常做 root, 所以不锁了.
         return true;
     }
 
-    protected function prepareFinder(FileStorageMeta $meta, string $pattern = null) : Finder
-    {
-        $pattern = $pattern ?? '/\.'.$this->ext.'$/';
-        return (new Finder())
-            ->in($meta->directory)
-            ->depth(0)
-            ->name($pattern);
-
-    }
-
     /**
-     * @param string $optionName
-     * @param FileStorageMeta $meta
+     * @param CategoryMeta $category
+     * @param FileStorageMeta $storage
      * @return int
      */
-    public function count(string $optionName, StorageMeta $meta): int
+    public function count(CategoryMeta $category, StorageMeta $storage): int
     {
-        return $this->prepareFinder($meta)->count();
+        $this->loadFile($category, $storage);
+        return count($this->optionCaches[$category->getId()] ?? []);
     }
 
-    public function paginateIdToBrief(string $optionName, StorageMeta $meta, int $page = 1, int $lines = 20): array
+    public function paginateIdToBrief(CategoryMeta $category, StorageMeta $storage, int $page = 1, int $lines = 20): array
     {
-        $page --;
+        $page -- ;
         $page = $page > 0 ? $page : 0;
-
-        $start = $page * $lines;
-        $end = ($page + 1 ) * $lines;
+        $start = $lines * $page;
+        $end = $lines * ($page + 1);
 
         $i = 0;
-
         $result = [];
-        foreach ($this->eachOption($optionName, $meta) as $option) {
-            /**
-             * @var Option $option
-             */
-            if ($i >= $start && $i < $end) {
-                $result[$option->getId()]  = $option->getBrief();
+        foreach ($this->eachOption($category, $storage) as $option) {
+
+            if ($i >= $end) {
+                break;
+            }
+
+            if ($i >= $start) {
+                $result[$option->getId()] = $option;
             }
             $i ++;
         }
-
         return $result;
     }
 
     /**
-     * @param string $optionName
-     * @param FileStorageMeta $meta
-     * @return string[]
+     * @param CategoryMeta $category
+     * @param FileStorageMeta $storage
+     * @return array
      */
-    public function getAllOptionIds(string $optionName, StorageMeta $meta): array
+    public function getAllOptionIds(CategoryMeta $category, StorageMeta $storage): array
     {
-        $ids = [];
-        foreach ($this->prepareFinder($meta) as $file) {
-            $ids[] = $this->getIdOfFile($file);
-        }
-
-        return $ids;
-    }
-
-    protected function getIdOfFile(\SplFileInfo $file) : string
-    {
-        return str_replace('.'.$file->getExtension(), '', $file->getBasename());
+        $this->loadFile($category, $storage);
+        return array_map(function(Option $option) {
+            return $option->getId();
+        }, $this->optionCaches[$category->getId()] ?? []);
     }
 
     /**
-     * @param string $optionName
+     * @param CategoryMeta $category
+     * @param FileStorageMeta $storage
      * @param array $ids
-     * @param FileStorageMeta $meta
-     * @return array
+     * @return Option[]
      */
-    public function findOptionsByIds(string $optionName, array $ids, StorageMeta $meta): array
+    public function findOptionsByIds(CategoryMeta $category, StorageMeta $storage, array $ids): array
     {
-        $pattern  = '/\(' . implode('|', $ids) . '\)\.'. $this->ext .'$/';
-        $options = [];
-        foreach ($this->prepareFinder($meta, $pattern) as $file) {
-            $id = $this->getIdOfFile($file);
-            $option = $this->get($optionName, $id, $meta);
-            $options[$id] = $option;
+        $this->loadFile($category, $storage);
+        $result = [];
+        foreach ($ids as $id) {
+            $option = $this->get($category, $storage, $id);
+            if (isset($option)) $result[$option->getId()] = $option;
         }
-
-        return $options;
+        return $result;
     }
 
-    /**
-     * @param string $optionName
-     * @param FileStorageMeta $meta
-     * @return \Generator
-     */
-    public function eachOption(string $optionName, StorageMeta $meta): \Generator
-    {
-        foreach ($this->prepareFinder($meta) as $file) {
-            $id = $this->getIdOfFile($file);
-            $option = $this->get($optionName, $id, $meta);
-            if (isset($option)) {
-                yield $option;
-            }
-        }
-    }
-
-
-    /**
-     * @param string $optionName
-     * @param string $query
-     * @param FileStorageMeta $meta
-     * @return array
-     */
-    public function searchOptionsByQuery(string $optionName, string $query, StorageMeta $meta): array
+    public function searchOptionsByQuery(CategoryMeta $category, StorageMeta $storage, string $query): array
     {
         $result = [];
-        foreach ($this->eachOption($optionName, $meta) as $option) {
-            /**
-             * @var Option $option
-             */
+        foreach ($this->eachOption($category, $storage) as $option) {
+
             if (strstr($option->getBrief(), $query)) {
-                $result[] = $option;
+                $result[$option->getId()] = $option;
             }
         }
         return $result;
     }
 
-
+    /**
+     * @param CategoryMeta $category
+     * @param FileStorageMeta $storage
+     * @return Option[]
+     */
+    public function eachOption(CategoryMeta $category, StorageMeta $storage): \Generator
+    {
+        $this->loadFile($category, $storage);
+        $options = $this->optionCaches[$category->getId()] ?? [];
+        foreach ($options as $option) {
+            yield $option;
+        }
+    }
 
 }

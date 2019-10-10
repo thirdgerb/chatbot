@@ -1,11 +1,9 @@
 <?php
 
 
-namespace Commune\Chatbot\Config\Options;
-use Commune\Support\Option;
-use Commune\Support\OptionRepo\Contracts\RootOptionStage;
-use Commune\Support\OptionRepo\Options\StorageMeta;
+namespace Commune\Support\OptionRepo\Options;
 
+use Commune\Support\Option;
 
 /**
  * OptionRepo 是一个配置中心的抽象层.
@@ -13,6 +11,7 @@ use Commune\Support\OptionRepo\Options\StorageMeta;
  *
  * 当前类则用于定义配置中心的源数据.
  *
+ * @property-read string $name 仓库的唯一ID
  *
  * @property-read string $optionClazz
  * storage 里存储的 option的名称.
@@ -20,26 +19,28 @@ use Commune\Support\OptionRepo\Options\StorageMeta;
  * @property-read array[] $constants
  * 作为常量预加载的option. 不可被修改.
  *
- * @property-read StorageMeta $rootStorage
+ * @property-read MetaHolder $rootStorage
  * 根 storage. 所有 storage 节点的数据以它为准.
  *
- * @property-read StorageMeta[] $storagePipeline
+ * @property-read MetaHolder[] $storagePipeline
  * 获取数据的中间层.
  * 读取数据时, 从上往下读, 读到任何合法数据则返回.
  * 更新数据时数据从根节点往上同步.
  */
-class OptionRepoMeta extends Option
+class CategoryMeta extends Option
 {
-    const IDENTITY = 'optionClazz';
+    const IDENTITY = 'name';
 
     protected static $associations = [
-        'rootStorage' => StorageMeta::class,
-        'storagePipeline[]' =>  StorageMeta::class,
+        'rootStorage' => MetaHolder::class,
+        'storagePipeline[]' =>  MetaHolder::class,
     ];
 
     public static function stub(): array
     {
         return [
+            'name' => '',
+
             'optionClazz' => '',
 
             'rootStorage' => null,
@@ -62,6 +63,10 @@ class OptionRepoMeta extends Option
 
     public static function validate(array $data): ? string
     {
+        if (empty($data['name'])) {
+            return 'category name should not be empty';
+        }
+
         if (empty($data['optionClazz'])) {
             return 'optionClazz should not be empty';
         }
@@ -80,13 +85,23 @@ class OptionRepoMeta extends Option
             return 'root storage must not be empty';
         }
 
-        $driver = $data['rootStorage']['driver'];
-
-        if (!is_a($driver, RootOptionStage::class, TRUE)) {
-            return 'root storage driver must be instance of ' . RootOptionStage::class . ", $driver given";
-        }
-
         return null;
+    }
+
+
+    public function getRootStorage() : StorageMeta
+    {
+        return $this->rootStorage->getStorageMeta();
+    }
+
+    /**
+     * @return StorageMeta[]
+     */
+    public function getStoragePipeline() : \Generator
+    {
+        foreach ($this->storagePipeline as $metaHolder) {
+            yield $metaHolder->getStorageMeta();
+        }
     }
 
 }

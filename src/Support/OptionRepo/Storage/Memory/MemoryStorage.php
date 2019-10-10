@@ -6,6 +6,7 @@ namespace Commune\Support\OptionRepo\Storage\Memory;
 
 use Commune\Support\Option;
 use Commune\Support\OptionRepo\Contracts\OptionStorage;
+use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\StorageMeta;
 
 class MemoryStorage implements OptionStorage
@@ -14,25 +15,27 @@ class MemoryStorage implements OptionStorage
     protected static $options = [];
 
     /**
+     * @param CategoryMeta $category
+     * @param MemoryStorageMeta $storage
      * @param Option $option
-     * @param MemoryStorageMeta $meta
      */
     public function save(
-        Option $option,
-        StorageMeta $meta
+        CategoryMeta $category,
+        StorageMeta $storage,
+        Option $option
     ): void
     {
-        $expire = $meta->expire ? time() + $meta->expire : 0;
-        static::$options[get_class($option)][$option->getId()] = [$option, $expire];
+        $expire = $storage->expire ? time() + $storage->expire : 0;
+        static::$options[$category->getId()][$option->getId()] = [$option, $expire];
     }
 
     public function get(
-        string $optionName,
-        string $id,
-        StorageMeta $meta
+        CategoryMeta $category,
+        StorageMeta $storage,
+        string $id
     ): ? Option
     {
-        $data = static::$options[$optionName][$id] ?? null;
+        $data = static::$options[$category->getId()][$id] ?? null;
 
         if (empty($data)) {
             return null;
@@ -44,17 +47,17 @@ class MemoryStorage implements OptionStorage
             return $option;
         }
 
-        $this->delete($optionName, $meta, $id);
+        $this->delete($category, $storage, $id);
         return null;
     }
 
     public function has(
-        string $optionName,
-        string $id,
-        StorageMeta $meta
+        CategoryMeta $category,
+        StorageMeta $storage,
+        string $id
     ): bool
     {
-        $data = static::$options[$optionName][$id] ?? null;
+        $data = static::$options[$category->getId()][$id] ?? null;
         if (empty($data)) {
             return false;
         }
@@ -62,14 +65,18 @@ class MemoryStorage implements OptionStorage
         return time() < $expire;
     }
 
-    public function delete(string $optionName, StorageMeta $meta, string ...$ids): void
+    public function delete(CategoryMeta $category, StorageMeta $storage, string ...$ids): void
     {
         foreach ($ids as $id ) {
-            unset(static::$options[$optionName][$id]);
+            unset(static::$options[$category->getId()][$id]);
         }
     }
 
-    public function lockId(string $optionName, string $id, StorageMeta $meta): bool
+    public function lockId(
+        CategoryMeta $category,
+        StorageMeta $storage,
+        string $id
+    ): bool
     {
         return true;
     }

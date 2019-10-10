@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Commune\Support\OptionRepo\Storage\Json;
+namespace Commune\Support\OptionRepo\Storage\Yaml;
 
 
-use Commune\Support\Option;
+use Commune\Support\OptionRepo\Storage\FileStorageMeta;
 use Symfony\Component\Yaml\Yaml;
 use Commune\Support\OptionRepo\Storage\RootFileStorage;
 
@@ -12,16 +12,20 @@ class YamlRootStorage extends RootFileStorage
 {
     protected $ext = 'yaml';
 
-    protected function parseOptionToString(Option $option): string
+    /**
+     * @param array $option
+     * @param YamlStorageMeta $meta
+     * @return string
+     */
+    protected function parseArrayToString(array $option, FileStorageMeta $meta): string
     {
-        return Yaml::dump($option->toArray());
+        return Yaml::dump($option, $meta->inline, $meta->intent);
     }
 
-    protected function parseStringToOption(string $optionName, string $content): ? Option
+    protected function parseStringToArray(string $content): array
     {
         $data = Yaml::parse($content);
-        return !empty($data) && is_array($data)  ? new $optionName($data) : null;
+        return $data;
     }
-
 
 }

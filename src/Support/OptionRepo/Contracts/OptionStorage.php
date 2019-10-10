@@ -5,6 +5,7 @@ namespace Commune\Support\OptionRepo\Contracts;
 
 
 use Commune\Support\Option;
+use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\StorageMeta;
 
 /**
@@ -20,18 +21,26 @@ interface OptionStorage
     /**
      * 保存一个数据. 更新或者存储.
      *
+     * @param CategoryMeta $category
+     * @param StorageMeta $storage
      * @param Option $option
-     * @param StorageMeta $meta
      */
     public function save(
-        Option $option,
-        StorageMeta $meta
+        CategoryMeta $category,
+        StorageMeta $storage,
+        Option $option
     ) : void;
 
+    /**
+     * @param CategoryMeta $category
+     * @param StorageMeta $storage
+     * @param string $id
+     * @return Option|null
+     */
     public function get(
-        string $optionName,
-        string $id,
-        StorageMeta $meta
+        CategoryMeta $category,
+        StorageMeta $storage,
+        string $id
     ) : ? Option;
 
     /**
@@ -40,31 +49,39 @@ interface OptionStorage
      * 否则可能会导致管道层层向下.
      * 所以 root Storage 的 has 方法必须做到高性能.
      *
-     * @param string $optionName
+     * @param CategoryMeta $category
+     * @param StorageMeta $storage
      * @param string $id
-     * @param StorageMeta $meta
      * @return bool
      */
     public function has(
-        string $optionName,
-        string $id,
-        StorageMeta $meta
+        CategoryMeta $category,
+        StorageMeta $storage,
+        string $id
     ) : bool;
 
     /**
-     * @param string $optionName
-     * @param StorageMeta $meta
+     * @param CategoryMeta $category
+     * @param StorageMeta $storage
      * @param string ...$ids
      */
-    public function delete(string $optionName, StorageMeta $meta, string ...$ids) : void;
+    public function delete(
+        CategoryMeta $category,
+        StorageMeta $storage,
+        string ...$ids
+    ) : void;
 
     /**
      * 锁定一个要存储的id. 锁定成功了可以去存. 避免抢占.
      *
-     * @param string $optionName
+     * @param CategoryMeta $category
      * @param string $id
-     * @param StorageMeta $meta
+     * @param StorageMeta $storage
      * @return bool
      */
-    public function lockId(string $optionName, string $id, StorageMeta $meta) : bool;
+    public function lockId(
+        CategoryMeta $category,
+        StorageMeta $storage,
+        string $id
+    ) : bool;
 }

@@ -2,7 +2,7 @@
 
 namespace Commune\Support\OptionRepo\Contracts;
 
-use Commune\Chatbot\Config\Options\OptionRepoMeta;
+use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\Option;
 use Commune\Support\OptionRepo\Exceptions\OptionNotFoundException;
 use Commune\Support\OptionRepo\Exceptions\RepositoryMetaNotExistsException;
@@ -21,149 +21,194 @@ use Psr\Container\ContainerInterface;
  * 有一个抽象层, 则可以解决这种问题.
  *
  */
-interface OptionRepo
+interface OptionRepository
 {
     /*---- meta ----*/
 
     /**
      * 注册一个 option 仓库的元数据.
-     * @param OptionRepoMeta $meta
+     * @param CategoryMeta $meta
      */
-    public function registerMeta(OptionRepoMeta $meta) : void;
+    public function registerCategory(CategoryMeta $meta) : void;
 
     /**
      * 获取一个 option 仓库的元数据. 不存在会抛出异常.
-     * @param string $optionName
-     * @return OptionRepoMeta
+     * @param string $category
+     * @return CategoryMeta
      * @throws RepositoryMetaNotExistsException
      */
-    public function getMeta(string $optionName) :  OptionRepoMeta;
+    public function getCategoryMeta(string $category) :  CategoryMeta;
 
     /**
      * 仓库是否存在.
-     * @param string $optionName
+     * @param string $category
      * @return bool
      */
-    public function hasMeta(string $optionName) : bool ;
+    public function hasCategory(string $category) : bool ;
 
     /*---- 单个 option 管理 ----*/
 
     /**
      * 检查 option 是否存在.
-     * @param string $optionName
-     * @param string $id
      * @param ContainerInterface $container
+     * @param string $category
+     * @param string $optionId
      * @throws RepositoryMetaNotExistsException
      * @return bool
      */
-    public function has(string $optionName, string $id, ContainerInterface $container) : bool;
+    public function has(
+        ContainerInterface $container,
+        string $category,
+        string $optionId
+    ) : bool;
 
     /**
      * 获取一个 option
-     * @param string $optionName
-     * @param string $id
      * @param ContainerInterface $container
+     * @param string $category
+     * @param string $optionId
      * @return Option|null
      *
      * @throws RepositoryMetaNotExistsException
      * @throws OptionNotFoundException
      */
-    public function find(string $optionName, string $id, ContainerInterface $container) : Option;
+    public function find(
+        ContainerInterface $container,
+        string $category,
+        string $optionId
+    ) : Option;
 
     /**
      * 获取一个 option 在所有 storage 中的版本.
-     * @param string $optionName
-     * @param string $id
      * @param ContainerInterface $container
+     * @param string $category
+     * @param string $optionId
      * @return Option[]
      */
-    public function findEach(string $optionName, string $id, ContainerInterface $container) : array;
+    public function findEach(
+        ContainerInterface $container,
+        string $category,
+        string $optionId
+    ) : array;
 
     /**
      * 更新, 或者创建一个 option. meta 必须存在.
      *
+     * @param ContainerInterface $container
+     * @param string $category
      * @param Option $option
      * @param bool $draft 如果是草稿, 则不会立刻同步.
-     * @param ContainerInterface $container
      *
      * @throws RepositoryMetaNotExistsException
      * @throws OptionNotFoundException
      * @throws SynchroniseFailException
      */
-    public function save(Option $option, bool $draft = false, ContainerInterface $container) : void;
+    public function save(
+        ContainerInterface $container,
+        string $category,
+        Option $option,
+        bool $draft = false
+    ) : void;
 
     /**
      * 删除掉一个 option
-     * @param string $optionName
-     * @param string $id
      * @param ContainerInterface $container
+     * @param string $category
+     * @param string $id
      * @throws RepositoryMetaNotExistsException
      */
-    public function delete(string $optionName, string $id, ContainerInterface $container) : void;
+    public function delete(
+        ContainerInterface $container,
+        string $category,
+        string $id
+    ) : void;
 
     /**
      * 强制同步一个 option
-     * @param string $optionName
      * @param ContainerInterface $container
+     * @param string $category
      * @param string $id
      *
      * @throws RepositoryMetaNotExistsException
      * @throws OptionNotFoundException
      * @throws SynchroniseFailException
      */
-    public function sync(string $optionName, string $id, ContainerInterface $container) : void;
+    public function sync(
+        ContainerInterface $container,
+        string $category,
+        string $id
+    ) : void;
 
 
 
     /*---- 多个 option 管理 ----*/
     /**
      * 获取一种 option 存储的总数.
-     * @param string $optionName
      * @param ContainerInterface $container
+     * @param string $category
      * @return int
      */
-    public function count(string $optionName, ContainerInterface $container) : int;
+    public function count(
+        ContainerInterface $container,
+        string $category
+    ) : int;
 
     /**
      * 分页列举一种 option 的 id => brief
      *
-     * @param string $optionName
      * @param ContainerInterface $container
+     * @param string $category
      * @param int $page
      * @param int $lines
      * @return string[]
      */
-    public function paginateIdToBrief(string $optionName, ContainerInterface $container, int $page = 1, int $lines = 20) : array;
+    public function paginateIdToBrief(
+        ContainerInterface $container,
+        string $category,
+        int $page = 1,
+        int $lines = 20
+    ) : array;
 
 
     /**
      * 取出所有 option 的ID
      *
-     * @param string $optionName
      * @param ContainerInterface $container
+     * @param string $category
      * @return array
      */
-    public function getAllOptionIds(string $optionName, ContainerInterface $container) : array;
+    public function getAllOptionIds(
+        ContainerInterface $container,
+        string $category
+    ) : array;
 
 
     /**
-     * @param string $optionName
-     * @param array $ids
      * @param ContainerInterface $container
+     * @param string $category
+     * @param array $ids
      * @return Option[]
      */
-    public function findOptionsByIds(string $optionName, array $ids, ContainerInterface $container) : array;
+    public function findOptionsByIds(
+        ContainerInterface $container,
+        string $category,
+        array $ids
+    ) : array;
 
 
     /**
      * 使用关键词从 option brief 中搜索 option
      * query 是什么就不关心了. 由root storage 自身决定.
      *
-     * @param string $optionName
-     * @param string $query
      * @param ContainerInterface $container
+     * @param string $category
+     * @param string $query
      * @return Option[]
      */
-    public function searchInBriefs(string $optionName, string $query, ContainerInterface $container) : array;
+    public function searchInBriefs(
+        ContainerInterface $container,
+        string $category,
+        string $query
+    ) : array;
 
 }

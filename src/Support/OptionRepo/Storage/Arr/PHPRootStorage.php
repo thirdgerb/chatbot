@@ -4,38 +4,33 @@
 namespace Commune\Support\OptionRepo\Storage\Arr;
 
 
-use Commune\Support\Option;
+use Commune\Support\OptionRepo\Storage\FileStorageMeta;
 use Commune\Support\OptionRepo\Storage\RootFileStorage;
 
 class PHPRootStorage extends RootFileStorage
 {
     protected $ext = 'php';
 
-    protected function parseOptionToString(Option $option): string
+    protected function parseArrayToString(array $option, FileStorageMeta $meta): string
     {
-        $string = var_export($option->toArray(), true);
+        $arr =  var_export($option, true);
         return <<<EOF
 <?php
 
-return $string;
+return $arr;
 EOF;
 
     }
 
-
-    protected function readOption(string $path, string $optionName) : ? Option
+    protected function readFileArr(string $path): array
     {
-        $data = include $path;
-
-        return !empty($data) && is_array($data) ? new $optionName($data) : null;
+        return include $path;
     }
 
-    protected function parseStringToOption(string $optionName, string $content): ? Option
+    protected function parseStringToArray(string $content): array
     {
-        return null;
+        return [];
     }
-
-
 
 
 }

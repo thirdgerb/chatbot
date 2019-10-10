@@ -22,7 +22,7 @@ class TestOption extends Option
     public static function stub(): array
     {
         return [
-            'id' => 123,
+            'id' => '1',
             'a' => 'A',
             'b' => 'B',
             'c' => []

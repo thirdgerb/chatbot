@@ -14,12 +14,12 @@ use Commune\Support\OptionRepo\Options\StorageMeta;
  */
 class MemoryStorageMeta extends StorageMeta
 {
+    const DRIVER = MemoryStorage::class;
 
     public static function stub(): array
     {
         return [
             'name' => '',
-            'driver' => '',
             'expire' => 0,
         ];
     }
