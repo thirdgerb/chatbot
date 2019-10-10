@@ -9,9 +9,8 @@ use Traversable;
 interface IEntries extends Traversable, Countable
 {
 
-	/**
-	 * @return Entry[]
-	 */
-	public function toArray();
-
+    /**
+     * @return array
+     */
+    public function toArray();
 }

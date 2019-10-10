@@ -40,6 +40,32 @@ class OptionTest extends TestCase
         $this->assertEquals(Option3::stub(), $c->toRecursiveArray());
     }
 
+    public function testOptionIterator()
+    {
+        $c = new Option3([
+            'option1' => Option1::stub(),
+            'option2' => [
+                Option2::createById(1)->toArray(),
+                Option2::createById(2)->toArray(),
+                Option2::createById(3)->toArray(),
+            ]
+        ]);
+
+
+        $t = $c->toArray()['option2'] ?? [];
+        $this->assertTrue(is_array($t));
+
+        $this->assertEquals(3, count($c->option2));
+        foreach ($c->option2 as $i => $o) {
+            $this->assertTrue($o instanceof Option2);
+            $this->assertEquals($i + 1, $o->getId());
+
+            $this->assertEquals($t[$i], $o->toArray());
+        }
+
+
+    }
+
 }
 
 
@@ -75,6 +101,8 @@ class Option1 extends Option
  */
 class Option2 extends Option
 {
+    const IDENTITY = 'a';
+
     public static function stub(): array
     {
         return [
@@ -85,6 +113,10 @@ class Option2 extends Option
 
 }
 
+/**
+ * @property-read Option1 $option1
+ * @property-read Option2[] $option2
+ */
 class Option3 extends Option
 {
     protected static $associations =[
