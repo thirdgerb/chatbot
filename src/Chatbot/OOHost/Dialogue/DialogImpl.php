@@ -415,9 +415,9 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         return new Directing\Backward\Quit($this, $skipSelfExitingEvent);
     }
 
-    public function reject(bool $skipSelfExitingEvent = false): Navigator
+    public function reject(string $reason = null, bool $skipSelfExitingEvent = false): Navigator
     {
-        return new Directing\Backward\Reject($this, $skipSelfExitingEvent);
+        return new Directing\Backward\Reject($this, $reason, $skipSelfExitingEvent);
     }
 
     public function cancel(bool $skipSelfExitingEvent = false): Navigator

@@ -69,6 +69,7 @@ class TestCase extends TaskDef
                     4 => 'dependencies: 测试依赖注入参数',
                     5 => '测试 todo -> otherwise api',
                     6 => 'test confirmation with emotion',
+                    7 => '返回菜单',
                 ]
             )
             ->hearing()
@@ -141,6 +142,7 @@ class TestCase extends TaskDef
                     return $dialog->goStage('testConfirmation');
                 })
 
+                ->isChoice(7, Redirector::goStage('menu'))
 
                 ->hasKeywords([
                     '测试', ['关键字', 'keyword']

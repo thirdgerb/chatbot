@@ -224,10 +224,11 @@ interface Dialog
     /**
      * 机器人拒绝用户进入当前的语境.
      *
-     * @param bool $skipSelfExitingEvent
+     * @param string|null $reason 为null 会使用默认的回复. 为空值, 则不做任何回复.
+     * @param bool $skipSelfExitingEvent 决定是否被当前context 的 onReject 补获
      * @return Navigator
      */
-    public function reject(bool $skipSelfExitingEvent = false) : Navigator;
+    public function reject(string $reason = null, bool $skipSelfExitingEvent = false) : Navigator;
 
     /**
      * 用户主动取消当前的语境.

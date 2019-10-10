@@ -11,6 +11,8 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 /**
  * @deprecated
+ *
+ * 都整合到了 Redirector
  * @see Redirector
  */
 class ToNext implements Interceptor

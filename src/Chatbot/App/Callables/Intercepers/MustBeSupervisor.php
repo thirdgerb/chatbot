@@ -10,6 +10,9 @@ use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
+/**
+ * 必须是超级管理员.
+ */
 class MustBeSupervisor implements Interceptor
 {
     public function __invoke(
@@ -25,8 +28,7 @@ class MustBeSupervisor implements Interceptor
             return null;
         }
 
-        // 添加消息
-        $dialog->say()->error('errors.mustBeSupervisor');
+        // 使用默认的拒绝进入消息.
         return $dialog->reject();
     }
 
