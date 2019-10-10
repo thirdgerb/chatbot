@@ -17,16 +17,16 @@ use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Demo\App\Cases\Maze\MazeInt;
 use Commune\Demo\App\Cases\Wheather\TellWeatherInt;
 use Commune\Demo\App\Memories\Sandbox;
-use Commune\Demo\App\Memories\UserInfo;
+use Commune\Components\Predefined\Memories\UserInfoMem;
 
 /**
- * @property-read UserInfo $userInfo
+ * @property-read UserInfoMem $userInfo
  */
 class TestCase extends TaskDef
 {
     public static function __depend(Depending $depending): void
     {
-        $depending->onMemory('userInfo', UserInfo::class);
+        $depending->onMemory('userInfo', UserInfoMem::class);
     }
 
 

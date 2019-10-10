@@ -6,3 +6,4 @@
 -   component 目录调整
     -   story component
     -   predefined component
+        -   UserInfoMem 移动为系统自带的组件. 用于示范. 
