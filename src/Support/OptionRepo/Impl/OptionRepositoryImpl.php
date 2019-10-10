@@ -152,7 +152,7 @@ class OptionRepositoryImpl implements OptionRepository
 
     }
 
-    public function findEach(
+    public function findAllVersions(
         ContainerInterface $container,
         string $category,
         string $optionId
@@ -393,6 +393,22 @@ class OptionRepositoryImpl implements OptionRepository
          */
         $driver = $container->get($root->getDriver());
         return $driver->searchOptionsByQuery($meta, $root, $query);
+    }
+
+    public function eachOption(
+        ContainerInterface $container,
+        string $category
+    ): \Generator
+    {
+        $meta = $this->getCategoryMeta($category);
+        $root = $meta->getRootStorage();
+        /**
+         * @var RootOptionStage $driver
+         */
+        $driver = $container->get($root->getDriver());
+        foreach ($driver->eachOption($meta, $root) as $option) {
+            yield $option;
+        }
     }
 
 

@@ -31,6 +31,7 @@ use Commune\Chatbot\Blueprint\Kernel;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Support\OptionRepo\Contracts\OptionRepository;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Psr\Log\LoggerInterface;
 
@@ -60,6 +61,7 @@ class ContractsValidator implements Bootstrapper
         // 内核绑定.
         Kernel::class,
         ExceptionHandler::class,
+        OptionRepository::class,
         // 多请求复用的组件.
         EventDispatcher::class,
         Renderer::class,

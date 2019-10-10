@@ -48,7 +48,7 @@ class ContextRegistrarImpl implements ContextRegistrar
      */
     protected $chatApp;
 
-    final public function __construct(Application $app, ContextRegistrar $parent = null)
+    public function __construct(Application $app, ContextRegistrar $parent = null)
     {
         $this->chatApp = $app;
         if (isset($parent)) {

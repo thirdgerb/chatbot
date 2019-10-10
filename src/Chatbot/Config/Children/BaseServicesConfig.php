@@ -30,6 +30,7 @@ class BaseServicesConfig extends Option
     {
         return [
             'exp' => Providers\ExpHandlerServiceProvider::class,
+            'optionRepo' => Providers\OptionRepoServiceProvider::class,
             'translation' => Providers\TranslatorServiceProvider::class,
             'render' => Providers\ReplyRendererServiceProvider::class,
             'logger' => Providers\LoggerServiceProvider::class,

@@ -7,10 +7,13 @@ namespace Commune\Chatbot\Framework\Component\Providers;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
 use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
 
+/**
+ * @deprecated
+ * 使用 Option Repository 取代.
+ */
 class LoadNLUExamplesFromJson extends ServiceProvider
 {
     /**

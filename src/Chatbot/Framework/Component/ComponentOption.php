@@ -5,19 +5,13 @@ namespace Commune\Chatbot\Framework\Component;
 
 
 use Commune\Chatbot\Blueprint\Application;
-use Commune\Chatbot\Config\Options\MemoryOption;
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Bootstrap\Bootstrapper;
 use Commune\Chatbot\Framework\Bootstrap\LoadComponents;
-use Commune\Chatbot\Framework\Component\Providers\LoadConversationalEvents;
-use Commune\Chatbot\Framework\Component\Providers\LoadEmotions;
-use Commune\Chatbot\Framework\Component\Providers\LoadMemoryBag;
-use Commune\Chatbot\Framework\Component\Providers\LoadNLUExamplesFromJson;
-use Commune\Chatbot\Framework\Component\Providers\LoadPsr4SelfRegister;
-use Commune\Chatbot\Framework\Component\Providers\LoadReplyRenders;
-use Commune\Chatbot\Framework\Component\Providers\LoadTranslationConfig;
+use Commune\Chatbot\Framework\Component\Providers;
 use Commune\Chatbot\OOHost\HostProcessServiceProvider;
 use Commune\Support\Option;
+use Commune\Support\OptionRepo\Options\CategoryMeta;
 
 /**
  * 组件的功能:
@@ -49,6 +43,24 @@ abstract class ComponentOption extends Option implements Bootstrapper
     /*------ method for do bootstrap ------*/
 
     /**
+     * 注册一个配置仓库.
+     *
+     * @param CategoryMeta $meta
+     */
+    public function loadOptionRepoCategoryMeta(
+        CategoryMeta $meta
+    ) : void
+    {
+        $this->app->registerProcessService(
+            new Providers\LoadOptionRepoCategoryMeta(
+                $this->app->getProcessContainer(),
+                $meta
+            )
+        );
+
+    }
+
+    /**
      * 启动的时候预加载 SelfRegister 类
      * 这样做到基于配置文件可以预加载 intent, memory, context 等.
      *
@@ -64,7 +76,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
     ) : void
     {
         $this->app->registerProcessService(
-            new LoadPsr4SelfRegister(
+            new Providers\LoadPsr4SelfRegister(
                 $this->app->getProcessContainer(),
                 $this->app->getConsoleLogger(),
                 $namespace,
@@ -85,7 +97,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
     ) : void
     {
         $this->app->registerProcessService(
-            new LoadReplyRenders(
+            new Providers\LoadReplyRenders(
                 $this->app->getProcessContainer(),
                 $renders,
                 $force
@@ -102,7 +114,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
     ) : void
     {
         $this->app->registerProcessService(
-            new LoadConversationalEvents(
+            new Providers\LoadConversationalEvents(
                 $this->app->getProcessContainer(),
                 $eventToListeners
             )
@@ -120,7 +132,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
     ) : void
     {
         $this->app->registerProcessService(
-            new LoadMemoryBag(
+            new Providers\LoadMemoryBag(
                 $this->app->getProcessContainer(),
                 $memoryOptions
             )
@@ -145,7 +157,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
     ) : void
     {
         $this->app->registerProcessService(
-            new LoadTranslationConfig(
+            new Providers\LoadTranslationConfig(
                 $this->app->getProcessContainer(),
                 $resourcePath,
                 $loader
@@ -153,23 +165,23 @@ abstract class ComponentOption extends Option implements Bootstrapper
         );
     }
 
-
-    /**
-     * @param string $resourcePath
-     * @deprecated
-     */
-    public function loadNLUExampleFromJsonFile(
-        string $resourcePath
-    ) : void
-    {
-        $this->app->registerProcessService(
-            new LoadNLUExamplesFromJson(
-                $this->app->getProcessContainer(),
-                $resourcePath
-            )
-        );
-    }
-
+//
+//    /**
+//     * @param string $resourcePath
+//     * @deprecated
+//     */
+//    public function loadNLUExampleFromJsonFile(
+//        string $resourcePath
+//    ) : void
+//    {
+//        $this->app->registerProcessService(
+//            new Providers\LoadNLUExamplesFromJson(
+//                $this->app->getProcessContainer(),
+//                $resourcePath
+//            )
+//        );
+//    }
+//
 
     /**
      * 增加情感的映射
@@ -183,7 +195,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
     {
         if (!isset($this->loadEmotions)) {
 
-            $loadEmotions = new LoadEmotions($this->app->getProcessContainer());
+            $loadEmotions = new Providers\LoadEmotions($this->app->getProcessContainer());
             $this->loadEmotions = $loadEmotions;
             $this->app->registerProcessService($loadEmotions);
         }
@@ -191,14 +203,15 @@ abstract class ComponentOption extends Option implements Bootstrapper
     }
 
     /**
-     * @var LoadEmotions
+     * @var Providers\LoadEmotions
      */
     protected $loadEmotions;
 
 
 
     /**
-     * 注册别的组件.
+     * 依赖别的组件. 如果该组件已经注册, 则不会改动
+     * 否则会按当前的配置加载一个该组件.
      *
      * depend on another component
      *

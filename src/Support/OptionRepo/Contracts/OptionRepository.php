@@ -80,12 +80,13 @@ interface OptionRepository
 
     /**
      * 获取一个 option 在所有 storage 中的版本.
+     *
      * @param ContainerInterface $container
      * @param string $category
      * @param string $optionId
      * @return Option[]
      */
-    public function findEach(
+    public function findAllVersions(
         ContainerInterface $container,
         string $category,
         string $optionId
@@ -211,4 +212,16 @@ interface OptionRepository
         string $query
     ) : array;
 
+
+    /**
+     * 迭代一个category 下所有的option实例.
+     *
+     * @param ContainerInterface $container
+     * @param string $category
+     * @return \Generator
+     */
+    public function eachOption(
+        ContainerInterface $container,
+        string $category
+    ) : \Generator;
 }

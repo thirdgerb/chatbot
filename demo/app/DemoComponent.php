@@ -4,14 +4,14 @@
 namespace Commune\Demo\App;
 
 
-use Commune\Chatbot\App\Components\SelfRegisterComponent;
 use Commune\Chatbot\Contracts\Translator;
+use Commune\Chatbot\Framework\Component\ComponentOption;
 
 /**
  * @property-read string $langPath
  * @property-read string $langLoader
  */
-class DemoComponent extends SelfRegisterComponent
+class DemoComponent extends ComponentOption
 {
     protected function doBootstrap(): void
     {

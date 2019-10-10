@@ -3,6 +3,7 @@
 namespace Commune\Chatbot\Framework\Utils;
 
 use Commune\Support\RegexPatterns;
+use Commune\Support\Utils\StringUtils;
 use Illuminate\Support\Str;
 
 /**
