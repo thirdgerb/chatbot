@@ -7,7 +7,7 @@ namespace Commune\Chatbot\App\Components\SimpleFileChat;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
-use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\IntExample as NLUExample;
 use Symfony\Component\Finder\Finder;
 
 class LoadSimpleFileIntent extends ServiceProvider

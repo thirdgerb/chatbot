@@ -4,33 +4,81 @@
 namespace Commune\Chatbot\OOHost\NLU\Contracts;
 
 
-use Commune\Chatbot\OOHost\NLU\Corpus\Example;
+use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
+use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 
 /**
  * 语料库. 用于标注意图.
+ * 管理 example 例句和 entity 词典.
  */
 interface Corpus
 {
-    /*-------- 增, 删, 改 -------*/
-
-    public function addExample(string $intentName, Example $example) : void;
 
     /**
-     * @param string $intentName
-     * @param Example[] $example
+     * 同步所有的 corpus 配置 (有的在存储介质里, 有的是别的组件加载的)
+     * 存储到公共的 corpus 存储介质里. ( OptionRepository )
      */
-    public function setExamples(string $intentName, array $example) : void;
+    public function sync() : void;
 
-    /*-------- 查 --------*/
+    /*-------- intent option --------*/
 
-    public function hasExample(string $intentName) : bool;
+    /**
+     * 不存在也会自动生成一个.
+     * @param string $intentName
+     * @return IntentCorpusOption
+     */
+    public function getIntentCorpus(string $intentName) : IntentCorpusOption;
 
-    public function getExamples(string $intentName) : array;
+
+    public function hasIntentCorpus(string $intentName) : bool;
+
+    /**
+     * 删除一个已存储的 intentOption
+     * @param string $intentName
+     */
+    public function removeIntentCorpus(string $intentName) : void;
+
+    /**
+     * 迭代所有的 intentOption
+     * @return IntentCorpusOption[]
+     */
+    public function eachIntentCorpus() : \Generator;
 
     /**
      * @param string[] $intentNames
-     * @return Example[][]
+     * @return IntentCorpusOption[]
      */
-    public function getExamplesMap(array $intentNames) : array;
+    public function getIntentCorpusMap(array $intentNames) : array;
+
+
+    /*-------- entity option --------*/
+
+    /**
+     * @param string $entityName
+     * @return bool
+     */
+    public function hasEntityDict(string $entityName) : bool;
+
+    /**
+     * @param string $entityName
+     * @return EntityDictOption
+     */
+    public function getEntityDict(string $entityName) : EntityDictOption;
+
+    /**
+     * @return \Generator
+     */
+    public function eachEntityDict() : \Generator;
+
+    /**
+     * @param string $entityName
+     */
+    public function removeEntityDict(string $entityName) : void;
+
+    /**
+     * @param array $entityNames
+     * @return array
+     */
+    public function getEntityDictMap(array $entityNames) : array;
 
 }

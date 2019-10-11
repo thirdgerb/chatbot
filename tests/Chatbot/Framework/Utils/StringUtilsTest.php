@@ -89,4 +89,12 @@ EOF;
 
     }
 
+    public function testNormalize()
+    {
+        $this->assertEquals('0', StringUtils::normalizeString('零。'));
+
+        $this->assertEquals('00', StringUtils::normalizeString('零零。'));
+
+        $this->assertEquals('第十2个', StringUtils::normalizeString('第十二个'));
+    }
 }

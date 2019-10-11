@@ -98,6 +98,13 @@ class ChatApp implements Blueprint
      */
     protected $registeredProviders = [];
 
+
+    /**
+     * @var ServiceProvider[]
+     */
+    protected $configProviders = [];
+
+
     /**
      * @var ServiceProvider[]
      */
@@ -155,6 +162,27 @@ class ChatApp implements Blueprint
     {
         return $this->consoleLogger;
     }
+
+    public function registerConfigService($provider): void
+    {
+        $provider = $this->parseProvider(
+            $provider,
+            $this->processContainer
+        );
+
+        if (isset($provider)) {
+            if (
+                $provider instanceof ServiceProvider
+                && !$provider->isProcessServiceProvider()
+            ) {
+                $name = get_class($provider);
+                $this->getConsoleLogger()->warning("register process provider $name which declare not process provider");
+            }
+
+            $this->configProviders[] = $provider;
+        }
+    }
+
 
     /**
      * @param string|ServiceProvider $provider
@@ -278,8 +306,14 @@ class ChatApp implements Blueprint
             );
 
             $logger->info(static::class . ' booting chatbot app');
+
+            /**
+             * @var ServiceProvider[] $providers
+             */
+            $providers = array_merge($this->configProviders, $this->processProviders);
+
             // baseContainer 执行boot流程.
-            foreach ($this->processProviders as $provider) {
+            foreach ($providers as $provider) {
                 $logger->debug("boot provider " . get_class($provider));
                 $provider->boot($this->processContainer);
             }

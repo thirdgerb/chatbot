@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\Config\Children;
 
 use Commune\Chatbot\Config\Options\MemoryOption;
+use Commune\Chatbot\OOHost\NLU\Pipe\NLUServicePipe;
 use Commune\Support\Option;
 use Commune\Chatbot\App\SessionPipe;
 use Commune\Chatbot\App\Commands;
@@ -67,11 +68,18 @@ class OOHostConfig extends Option
             'sessionExpireSeconds' => 3600,
             'autoloadPsr4' => [],
             'sessionPipes' => [
+                // 事件类消息的转义
                 SessionPipe\EventMsgPipe::class,
+                // 用户命令
                 Commands\UserCommandsPipe::class,
+                // 管理员命令
                 Commands\AnalyserPipe::class,
+                // 将特殊标记转化为意图的中间件. 用于测试.
                 SessionPipe\MarkedIntentPipe::class,
+                // 导航类意图的中间件. 拥有最高优先级
                 SessionPipe\NavigationPipe::class,
+                // nlu 服务.
+                NLUServicePipe::class,
             ],
             'navigatorIntents' => [
                 //intentName

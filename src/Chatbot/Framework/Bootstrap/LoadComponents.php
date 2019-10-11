@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\Framework\Bootstrap;
 
 
+use Commune\Chatbot\OOHost\NLU\NLUComponent;
 use Commune\Components\Predefined\PredefinedComponent;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Framework\Component\ComponentOption;
@@ -31,7 +32,10 @@ class LoadComponents implements Bootstrapper
 
 
         // 系统默认的意图是预加载的.
-        static::dependComponent('system', PredefinedComponent::class);
+        static::dependComponent('system-predefined', PredefinedComponent::class);
+
+        // 预加载默认的 nlu 管理.
+        static::dependComponent('system-nlu', NLUComponent::class);
 
         // 遍历系统注册的components, 一一注册.
         foreach ($config->components as $index => $name) {

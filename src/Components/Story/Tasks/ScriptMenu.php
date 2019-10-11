@@ -271,11 +271,14 @@ class ScriptMenu extends AbsScriptTask
                 $this->getScriptOption()->parseReplyId('confirmPlay')
             )
             ->hearing()
+
             ->isPositive(function(Dialog $dialog){
                 $this->restartEpisode = true;
                 return $dialog->goStage('playEpisode');
             })
+
             ->isNegative(Redirector::goStage('chooseEpisode'))
+
             ->end();
 
     }

@@ -4,12 +4,10 @@ namespace Commune\Support\Arr;
 
 
 /**
+ * 对象转数组, 转json的简单封装.
+ *
  * Easy way for Arrayable to serialize to json
- *
  * Trait ArrayAbleToJson
- * @package Commune\Chatbot\Framework\Support
- *
- * @method toArray() : array
  */
 trait ArrayAbleToJson
 {
@@ -19,6 +17,8 @@ trait ArrayAbleToJson
             static::PRETTY_JSON
         );
     }
+
+    abstract public function toArray() : array;
 
     /**
      * implements Jsonable

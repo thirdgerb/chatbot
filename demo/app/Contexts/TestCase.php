@@ -13,7 +13,9 @@ use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\Session\Session;
+use Commune\Components\Predefined\Intents\Dialogue\OrdinalInt;
 use Commune\Demo\App\Cases\Maze\MazeInt;
 use Commune\Demo\App\Cases\Wheather\TellWeatherInt;
 use Commune\Demo\App\Memories\Sandbox;
@@ -41,21 +43,38 @@ class TestCase extends TaskDef
 
     public function __hearing(Hearing $hearing) : void
     {
-        $hearing->fallback(function(Dialog $dialog, Message $message){
-            $dialog->say()->info("输入了:" . $message->getText());
-            return $dialog->missMatch();
-        });
+        $hearing
+            ->is('menu', Redirector::goStage('menu'))
+            ->fallback(function(Dialog $dialog, Message $message){
+                $dialog->say()->info("输入了:" . $message->getText());
+                return $dialog->missMatch();
+            });
     }
 
 
 
     public function __onStart(Stage $stage): Navigator
     {
-        return $stage->buildTalk()
+        return $stage
+            ->onStart(function(Dialog $dialog, Corpus $corpus){
+
+                $speech = $dialog->say();
+                foreach ($corpus->eachIntentCorpus() as $o) {
+                    $speech->info($o->toPrettyJson());
+                }
+
+                return null;
+            })
+            ->buildTalk()
             ->info('您好!'.$this->userInfo->name)
             ->goStage('menu');
     }
 
+    /**
+     * 功能点测试
+     * @param Stage $stage
+     * @return Navigator
+     */
     public function __onFeatureTest(Stage $stage) : Navigator
     {
         return $stage->buildTalk()
@@ -144,19 +163,48 @@ class TestCase extends TaskDef
 
                 ->isChoice(7, Redirector::goStage('menu'))
 
+
+
+            ->end();
+    }
+
+    /**
+     * 匹配逻辑测试.
+     * @param Stage $stage
+     * @return Navigator
+     */
+    public function __onMatcherTest(Stage $stage) :Navigator
+    {
+        return $stage->buildTalk()
+            ->askVerbose('测试各种输入匹配')
+            ->hearing()
+
+                // 适用 第n个 这种形式, 匹配
+                ->isIntent(OrdinalInt::class, function(OrdinalInt $int, Dialog $dialog){
+                    $dialog->say()->info('匹配到了%ord%', [
+                        'ord' => implode(',', $int->ordinal)
+                    ]);
+
+                    return $dialog->repeat();
+
+                })
+
                 ->hasKeywords([
                     '测试', ['关键字', 'keyword']
-                ],
+                    ],
                     function (Dialog $dialog) {
                         $dialog->say()->info('命中测试关键字');
                         return $dialog->repeat();
                     }
                 )
-
             ->end();
-
     }
 
+    /**
+     * 默认菜单.
+     * @param Stage $stage
+     * @return Navigator
+     */
     public function __onMenu(Stage $stage): Navigator
     {
         return $stage->talk(function(Dialog $dialog){
@@ -165,10 +213,11 @@ class TestCase extends TaskDef
                     ->askVerbose(
                         '请输入:',
                         [
-                            '功能点测试',
-                            '#tellWeather : 用命令命中意图, 查询天气',
-                            8 => '迷宫小游戏',
-                            9 => '测试子会话',
+                            1 => '#tellWeather : 用命令命中意图, 查询天气',
+                            2 => '迷宫小游戏',
+                            3 => '测试子会话',
+                            4 => '功能点测试',
+                            5 => '匹配逻辑测试',
                         ]
                     );
 
@@ -185,9 +234,8 @@ class TestCase extends TaskDef
                     ->runAnyIntent()
                     ->runIntentIn(['Commune.Demo'])
 
-                    ->isChoice(0, Redirector::goStage('featureTest'))
 
-                    ->isChoice(4, function(Dialog $dialog){
+                    ->isChoice(1, function(Dialog $dialog){
                         $dialog->say()->info(
                             "请输入 #tellWeather [城市] [时间]"
                         );
@@ -195,9 +243,13 @@ class TestCase extends TaskDef
                         return $dialog->wait();
                     })
 
-                    ->isChoice(8, Redirector::goStage('maze'))
+                    ->isChoice(2, Redirector::goStage('maze'))
 
-                    ->isChoice(9, Redirector::goStage('subDialog'))
+                    ->isChoice(3, Redirector::goStage('subDialog'))
+
+                    ->isChoice(4, Redirector::goStage('featureTest'))
+
+                    ->isChoice(5, Redirector::goStage('matcherTest'))
 
                     ->end();
             });

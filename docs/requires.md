@@ -5,4 +5,4 @@
     -   redis
     -   intl
 -   系统
-    -   ICU
+    -   ICU (国际化)

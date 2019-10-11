@@ -33,7 +33,7 @@ class NLUExamplesComponent extends ComponentOption
             __DIR__ .'/NLUExamples/'
         );
 
-        $this->loadNLUExampleFromJsonFile($this->repository);
+        $this->loadIntentCorpusFromYaml($this->repository);
     }
 
 

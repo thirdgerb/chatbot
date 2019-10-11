@@ -10,7 +10,7 @@ use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Contracts\ChatServer;
 
-class SwooleConsoleServiceProvider  extends ServiceProvider
+class SwooleConsoleServiceProvider extends ServiceProvider
 {
     public function boot($app): void
     {

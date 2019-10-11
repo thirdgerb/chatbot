@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\Blueprint\Conversation;
 
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Support\Arr\ArrayAndJsonAble;
 use Illuminate\Support\Collection;
 
 /**
@@ -13,21 +14,26 @@ use Illuminate\Support\Collection;
  * to set or get nlu information of incoming message
  *
  */
-interface NLU
+interface NLU extends ArrayAndJsonAble
 {
 
     /**
-     * 标记 NLU 已经完成过信息获取.
+     * 标记 NLU 已经完成过信息获取. 并记录是谁获取的.
      * mark nlu has be handled
+     *
+     * @param string|null $nluId
      */
-    public function done() : void;
+    public function done(string $nluId = null) : void;
 
 
     /**
      * NLU的数据已经处理过.
      * 通常有多个NLU的情况下, 也只处理一次.
+     * 返回处理者的ID
+     *
+     * @return null|string
      */
-    public function isHandled() : bool;
+    public function isHandledBy() : ? string;
 
     /*----- matched intent -----*/
 
@@ -148,7 +154,6 @@ interface NLU
     public function setEmotions(array $emotionNames) : void;
 
     /*----- words 分词 -----*/
-
 
     /**
      * @param array $words

@@ -19,7 +19,7 @@ class MemoryStorageMeta extends StorageMeta
     public static function stub(): array
     {
         return [
-            'name' => '',
+            'name' => static::class,
             'expire' => 0,
         ];
     }

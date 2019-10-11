@@ -1,0 +1,135 @@
+attitudes.affirm:
+  intentName: attitudes.affirm
+  desc: ''
+  examples:
+    - null
+  entityNames: {  }
+attitudes.agree:
+  intentName: attitudes.agree
+  desc: ''
+  examples: {  }
+  entityNames: {  }
+attitudes.deny:
+  intentName: attitudes.deny
+  desc: ''
+  examples:
+    - 'no'
+    - nope
+    - negative
+    - 'not ok'
+    - 否认
+    - 否定
+    - 不是
+    - 不是的
+    - 不对
+    - 错了
+    - 并非如此
+  entityNames: {  }
+attitudes.dont:
+  intentName: attitudes.dont
+  desc: ''
+  examples:
+    - 不要
+    - 不好
+    - 不用了
+    - 不需要
+    - 算了吧
+    - 别这样
+    - 不用
+    - 别这么做
+    - 算逑
+    - 我不用
+  entityNames: {  }
+dialogue.help:
+  intentName: dialogue.help
+  desc: ''
+  examples:
+    - 帮帮我
+    - 我该干什么
+    - 可以做什么
+    - 现在要干啥
+    - 教我怎么做
+    - 教教我
+    - 接下来该怎么办
+  entityNames: {  }
+dialogue.ordinal:
+  intentName: dialogue.ordinal
+  desc: ''
+  examples:
+    - '第[一](ordinal)个'
+    - '第[二](ordinal)个'
+    - '第[三](ordinal)个'
+    - '[最后](ordinal)一个'
+  entityNames: {  }
+loop.break:
+  intentName: loop.break
+  desc: ''
+  examples: {  }
+  entityNames: {  }
+loop.continue:
+  intentName: loop.continue
+  desc: ''
+  examples: {  }
+  entityNames: {  }
+loop.next:
+  intentName: loop.next
+  desc: ''
+  examples: {  }
+  entityNames: {  }
+loop.previous:
+  intentName: loop.previous
+  desc: ''
+  examples: {  }
+  entityNames: {  }
+navigation.backward:
+  intentName: navigation.backward
+  desc: ''
+  examples:
+    - 回到上一步
+    - 返回上一步
+    - 回到上个问题
+    - 回到刚才那个问题
+    - 返回前面的问题
+    - 再说一次上一个问题
+  entityNames: {  }
+navigation.cancel:
+  intentName: navigation.cancel
+  desc: ''
+  examples: {  }
+  entityNames: {  }
+navigation.home:
+  intentName: navigation.home
+  desc: ''
+  examples: {  }
+  entityNames: {  }
+navigation.quit:
+  intentName: navigation.quit
+  desc: ''
+  examples: {  }
+  entityNames: {  }
+navigation.repeat:
+  intentName: navigation.repeat
+  desc: ''
+  examples:
+    - 再说一遍
+    - 刚才说什么
+    - 现在说的是啥
+    - 你问什么
+    - 你要干什么来着
+    - 你刚才要我干嘛
+    - 我现在要做什么
+    - 现在要干嘛
+    - 我们在干什么
+  entityNames: {  }
+navigation.restart:
+  intentName: navigation.restart
+  desc: ''
+  examples:
+    - restart
+    - 重来一遍吧
+    - 从头开始吧
+    - 重新来一次
+    - 从第一步再来
+    - 能不能重新开始
+    - 我想要重来一遍
+  entityNames: {  }

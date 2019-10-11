@@ -19,16 +19,26 @@ interface OptionStorage
 {
 
     /**
+     * 清空一组缓存.
+     * @param CategoryMeta $category
+     * @param StorageMeta $storage
+     */
+    public function flush(
+        CategoryMeta $category,
+        StorageMeta $storage
+    ) : void;
+
+    /**
      * 保存一个数据. 更新或者存储.
      *
      * @param CategoryMeta $category
      * @param StorageMeta $storage
-     * @param Option $option
+     * @param Option[] $options
      */
     public function save(
         CategoryMeta $category,
         StorageMeta $storage,
-        Option $option
+        Option ...$options
     ) : void;
 
     /**

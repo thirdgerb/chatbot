@@ -6,11 +6,14 @@ namespace Commune\Chatbot\Framework\Conversation;
 
 use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Utils\StringUtils;
 use Illuminate\Support\Collection;
 
 class NatureLanguageUnit implements NLU
 {
+    use ArrayAbleToJson;
+
     /**
      * @var string
      */
@@ -57,16 +60,16 @@ class NatureLanguageUnit implements NLU
     protected $words;
 
     /**
-     * @var bool
+     * @var string|null
      */
-    protected $handled = false;
+    protected $handled;
 
-    public function done(): void
+    public function done(string $nluId = null): void
     {
-        $this->handled = true;
+        $this->handled = $nluId ?? '??';
     }
 
-    public function isHandled(): bool
+    public function isHandledBy(): ? string
     {
         return $this->handled;
     }
@@ -237,6 +240,39 @@ class NatureLanguageUnit implements NLU
     {
         return $this->words
             ?? $this->words = new Collection();
+    }
+
+    public function toArray(): array
+    {
+        $names = self::getProperties();
+        $result = [];
+        foreach ($names as $name) {
+            $property = $this->{$name};
+            $result[$name] = $property instanceof Collection
+                ? $property->toArray()
+                : $property;
+        }
+        return $result;
+    }
+
+    private static $properties;
+
+    /**
+     * @return string[]
+     */
+    public static function getProperties() : array
+    {
+        if (isset(self::$properties)) {
+            return self::$properties;
+        }
+
+        $r = new \ReflectionClass(self::class);
+
+        static::$properties = [];
+        foreach ($r->getProperties() as $property) {
+            self::$properties[] = $property->getName();
+        }
+        return self::$properties;
     }
 
 

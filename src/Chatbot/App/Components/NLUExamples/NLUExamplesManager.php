@@ -6,7 +6,7 @@ namespace Commune\Chatbot\App\Components\NLUExamples;
 
 use Commune\Chatbot\App\Components\NLUExamplesComponent;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\IntExample as NLUExample;
 
 class NLUExamplesManager
 {

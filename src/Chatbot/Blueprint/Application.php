@@ -66,6 +66,13 @@ interface Application
     public function bootApp() : Application;
 
     /**
+     * 最高优先级的服务注册.
+     * 本质上还是 process service provider, 但会先于其他 process service 执行.
+     * @param $provider
+     */
+    public function registerConfigService($provider) : void;
+
+    /**
      * 使用 ServiceProvider 注册进程级的服务
      * @param string|ServiceProvider $provider
      */

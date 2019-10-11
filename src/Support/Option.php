@@ -50,6 +50,11 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
         parent::__construct($data);
     }
 
+    public function getIdentityName() : string
+    {
+        return static::IDENTITY;
+    }
+
     protected function init(array $data) : array
     {
         return $data + static::stub();
@@ -65,12 +70,12 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
      *
      * @return string|mixed
      */
-    public function getId()
+    public function getId() :  string
     {
         $stub = static::stub();
         if (isset($stub[static::IDENTITY])) {
             $key = static::IDENTITY;
-            return $this->{$key};
+            return (string) $this->{$key};
         }
         return static::class;
     }

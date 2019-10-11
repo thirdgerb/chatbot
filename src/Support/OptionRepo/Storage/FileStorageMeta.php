@@ -17,7 +17,7 @@ abstract class FileStorageMeta extends StorageMeta
     public static function stub(): array
     {
         return [
-            'name' => '',
+            'name' => static::class,
             'path' => '',
             'isDir' => true,
         ];

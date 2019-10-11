@@ -17,17 +17,28 @@ class MemoryStorage implements OptionStorage
     /**
      * @param CategoryMeta $category
      * @param MemoryStorageMeta $storage
-     * @param Option $option
+     * @param Option ...$options
      */
     public function save(
         CategoryMeta $category,
         StorageMeta $storage,
-        Option $option
+        Option ...$options
     ): void
     {
         $expire = $storage->expire ? time() + $storage->expire : 0;
-        static::$options[$category->getId()][$option->getId()] = [$option, $expire];
+        foreach ($options as $option) {
+            static::$options[$category->getId()][$option->getId()] = [$option, $expire];
+        }
     }
+
+    public function flush(
+        CategoryMeta $category,
+        StorageMeta $storage
+    ): void
+    {
+        unset(static::$options[$category->getId()]);
+    }
+
 
     public function get(
         CategoryMeta $category,

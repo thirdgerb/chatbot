@@ -12,6 +12,8 @@ use Commune\Support\Option;
  */
 class LookupOption extends Option
 {
+    const IDENTITY = 'name';
+
     public static function stub(): array
     {
         return [
@@ -20,9 +22,5 @@ class LookupOption extends Option
         ];
     }
 
-    public function getId()
-    {
-        return $this->name;
-    }
 
 }

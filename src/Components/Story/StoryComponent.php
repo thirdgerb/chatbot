@@ -34,21 +34,18 @@ class StoryComponent extends ComponentOption
     public static function stub(): array
     {
         return [
-            'translationPath' => __DIR__ . '/langs',
+            'translationPath' => __DIR__ . '/resources/langs',
             'rootStorage' => [
                 'meta' => YamlStorageMeta::class,
                 'config' => [
                     'name' => 'yaml',
-                    'path' => __DIR__ . '/examples/',
+                    'path' => __DIR__ . '/resources/stories/',
                     'isDir' => true,
                 ],
             ],
             'storagePipeline' => [
                 'mem' => [
                     'meta' => MemoryStorageMeta::class,
-                    'config' => [
-                        'name' => 'mem',
-                    ],
                 ],
             ],
         ];

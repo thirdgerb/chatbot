@@ -8,7 +8,6 @@ use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 use Illuminate\Console\Parser;

@@ -25,7 +25,7 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Exceptions\NavigatorException;
-use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\IntExample as NLUExample;
 
 /**
  * @property string $editIndex

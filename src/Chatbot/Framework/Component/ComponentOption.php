@@ -51,7 +51,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
         CategoryMeta $meta
     ) : void
     {
-        $this->app->registerProcessService(
+        $this->app->registerConfigService(
             new Providers\LoadOptionRepoCategoryMeta(
                 $this->app->getProcessContainer(),
                 $meta
@@ -165,23 +165,39 @@ abstract class ComponentOption extends Option implements Bootstrapper
         );
     }
 
-//
-//    /**
-//     * @param string $resourcePath
-//     * @deprecated
-//     */
-//    public function loadNLUExampleFromJsonFile(
-//        string $resourcePath
-//    ) : void
-//    {
-//        $this->app->registerProcessService(
-//            new Providers\LoadNLUExamplesFromJson(
-//                $this->app->getProcessContainer(),
-//                $resourcePath
-//            )
-//        );
-//    }
-//
+
+    /**
+     * 从 yaml 中读取意图的语料
+     * @param string $resourcePath
+     */
+    public function loadIntentCorpusFromYaml(
+        string $resourcePath
+    ) : void
+    {
+        $this->app->registerProcessService(
+            new Providers\LoadNLUExamplesFromYaml(
+                $this->app->getProcessContainer(),
+                $resourcePath
+            )
+        );
+    }
+
+    /**
+     * 从 yaml 中读取实体词典.
+     * @param string $resourcePath
+     */
+    public function loadEntityDictionFromYaml(
+        string $resourcePath
+    ) : void
+    {
+        $this->app->registerProcessService(
+            new Providers\LoadNLUEntityDictionFromYaml(
+                $this->app->getProcessContainer(),
+                $resourcePath
+            )
+        );
+    }
+
 
     /**
      * 增加情感的映射

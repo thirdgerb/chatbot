@@ -11,7 +11,7 @@ use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Messages\QA\AbsQuestion;
 use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
 use Commune\Support\Utils\StringUtils;
-use Commune\Chatbot\OOHost\NLU\Corpus\Example;
+use Commune\Chatbot\OOHost\NLU\Corpus\IntExample;
 use Commune\Chatbot\OOHost\Session\Session;
 
 /**
@@ -64,7 +64,7 @@ class VbQuestion extends AbsQuestion
             ?? ($defaultIsSuggestion ? $suggestions[$defaultChoice] : null);
 
         // 问题中的标注处理. 如果用户回答了标注的关键字, 会转义为标注的对象
-        $example = new Example($question);
+        $example = new IntExample($question);
         $query = $example->text;
         foreach ($example->entities as $entity) {
             $this->aliases[$entity->value] = $entity->name;

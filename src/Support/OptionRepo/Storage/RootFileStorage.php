@@ -41,6 +41,23 @@ abstract class RootFileStorage implements RootOptionStage
      */
     protected $optionFromFile = [];
 
+    public function flush(
+        CategoryMeta $category,
+        StorageMeta $storage
+    ): void
+    {
+        $options = $this->optionCaches[$category->getId()] ?? [];
+
+        if (empty($options)) {
+            return;
+        }
+
+        $this->delete($category, $storage, array_map(function(Option $o){
+            return $o->getId();
+        }, $options));
+    }
+
+
     abstract protected function parseArrayToString(array $option, FileStorageMeta $meta): string;
 
     abstract protected function parseStringToArray(string $content): array;
@@ -48,15 +65,18 @@ abstract class RootFileStorage implements RootOptionStage
     /**
      * @param CategoryMeta $category
      * @param FileStorageMeta $storage
-     * @param Option $option
+     * @param Option[] $options
      */
     public function save(
         CategoryMeta $category,
         StorageMeta $storage,
-        Option $option
+        Option ...$options
     ): void
     {
-        $this->optionCaches[$category->getId()][$option->getId()] = $option;
+        foreach ($options as $option) {
+            $this->optionCaches[$category->getId()][$option->getId()] = $option;
+        }
+
         if ($storage->isDir) {
             $this->saveToDir($category, $storage, $option);
         } else {
@@ -123,6 +143,9 @@ abstract class RootFileStorage implements RootOptionStage
         $path = $meta->path;
         $data = $this->readFileArr($path);
         $this->resources[$cateId] = $meta->getId();
+        if (empty($data)) {
+            return;
+        }
 
         foreach ($data as $optionArr) {
             $option = $category->newOption($optionArr);

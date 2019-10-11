@@ -4,11 +4,8 @@
 namespace Commune\Chatbot\OOHost\NLU\Contracts;
 
 
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-
 interface Manager
 {
-    public function getIntentRegistrar() : IntentRegistrar;
 
     /**
      * 语料库
@@ -24,10 +21,9 @@ interface Manager
     public function getDictionary() : Dictionary;
 
     /**
-     * @return Matcher
+     * @return NLUService
      */
-    public function getMatcher() : Matcher;
-
+    public function getMatcher() : NLUService;
 
     /**
      * 与远端同步配置.

@@ -233,22 +233,23 @@ class PlayMaze extends TaskDef
             })
 
             ->todo($this->hearToward(Manager::TOWARD_FRONT))
-            ->isIntent(MazeFrontInt::class)
-            ->isChoice(0)
+                ->isIntent(MazeFrontInt::class)
+                ->isChoice(0)
 
             ->todo($this->hearToward(Manager::TOWARD_BACK))
-            ->isIntent(MazeBackInt::class)
-            ->isChoice(1)
+                ->isIntent(MazeBackInt::class)
+                ->isChoice(1)
 
             ->todo($this->hearToward(Manager::TOWARD_LEFT))
-            ->isIntent(MazeLeftInt::class)
-            ->isChoice(2)
+                ->isIntent(MazeLeftInt::class)
+                ->isChoice(2)
 
             ->todo($this->hearToward(Manager::TOWARD_RIGHT))
-            ->isIntent(MazeRightInt::class)
-            ->isChoice(3)
+                ->isIntent(MazeRightInt::class)
+                ->isChoice(3)
 
             ->otherwise()
+
             ->isInstanceOf(VerboseMsg::class, function(Message $message, Dialog $dialog){
                 return $this->parseTowardAndGo($dialog, $message->getText());
             })

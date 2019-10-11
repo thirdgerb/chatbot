@@ -7,7 +7,7 @@ namespace Commune\Chatbot\App\Components\SimpleChat;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
-use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\IntExample as NLUExample;
 use Symfony\Component\Yaml\Yaml;
 
 class Manager

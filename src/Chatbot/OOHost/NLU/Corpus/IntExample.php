@@ -7,13 +7,17 @@ namespace Commune\Chatbot\OOHost\NLU\Corpus;
 /**
  * 符合NLU需求的训练样本.
  * 每个元素是一个样本. 用类似markdown link 的语法来标记entity.
- * 例如 "这句话的Entity就在[句尾](where)"
+ *
+ * 例如 :
+ * - "这句话的Entity就在[句尾](where)"
+ * - "[北京](city)[明天](when)的天气怎么样?"
+ * - "我想要来一杯[可乐](production)"
  *
  * @property-read string $example  带有Entity标记的样本文本.
  * @property-read string $text 去掉了Entity标记的原始文本.
  * @property-read ExampleEntity[] $entities
  */
-class Example
+class IntExample
 {
     /**
      * @var string

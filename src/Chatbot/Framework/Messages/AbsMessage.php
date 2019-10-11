@@ -90,7 +90,7 @@ abstract class AbsMessage implements Contract
         $text = $this->getText();
 
         // 去掉全角符号, 降低复杂性.
-        $text = StringUtils::sbc2dbc($text);
+        $text = StringUtils::normalizeString($text);
         return $this->_trimmed = trim($text, static::TRIMMING_MARKS);
     }
 

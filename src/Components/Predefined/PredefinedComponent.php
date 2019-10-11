@@ -11,20 +11,25 @@ use Commune\Chatbot\Framework\Component\ComponentOption;
  */
 class PredefinedComponent extends ComponentOption
 {
-    protected function doBootstrap(): void
-    {
-        $namespace = "Commune\\Components\\Predefined\\";
-        $path = __DIR__  ;
-        $this->loadSelfRegisterByPsr4(
-            $namespace,
-            $path
-        );
-    }
 
     public static function stub(): array
     {
         return [];
     }
+
+    protected function doBootstrap(): void
+    {
+        $namespace = "Commune\\Components\\Predefined\\";
+        $path = __DIR__  ;
+
+        $this->loadSelfRegisterByPsr4(
+            $namespace,
+            $path
+        );
+
+        $this->loadIntentCorpusFromYaml(__DIR__ .'/resources/intents.yaml');
+    }
+
 
 
 }

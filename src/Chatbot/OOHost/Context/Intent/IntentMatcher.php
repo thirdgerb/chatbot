@@ -33,7 +33,7 @@ class IntentMatcher
     protected $signature = '';
 
     /**
-     * @var array  [int][pattern, matches]
+     * @var array  [int][pattern, ...matches]
      */
     protected $regex = [];
 
@@ -188,13 +188,29 @@ class IntentMatcher
             return null;
         }
 
+        array_shift($matches);
         $entities = [];
-        //todo
         foreach ($args as $index => $name) {
-            $entities[$name] = $matches[$index] ?? null;
+            $entities[$name][] = $matches[$index] ?? null;
         }
 
-        return $entities;
+        $result = [];
+        foreach ($entities as $name => $values) {
+            if (empty($values)) {
+                $result[$name] = null;
+
+            } elseif (count($values) === 1) {
+                $result[$name] = current($values);
+
+            } else {
+                $result[$name] = array_filter($values, function($v){
+                    return isset($v);
+                });
+            }
+
+        }
+
+        return $result;
     }
 
     public static function matchCommand(

@@ -4,7 +4,7 @@
 namespace Commune\Test\Chatbot\OOHost\Intent;
 
 
-use Commune\Chatbot\OOHost\NLU\Corpus\Example as NLUExample;
+use Commune\Chatbot\OOHost\NLU\Corpus\IntExample as NLUExample;
 use PHPUnit\Framework\TestCase;
 
 class NLUExampleTest extends TestCase

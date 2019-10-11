@@ -139,6 +139,11 @@ abstract class AbsContext extends AbsMessage implements Context
         return $this->cast($name, $value);
     }
 
+    public function getCasts() : array
+    {
+        return static::CASTS;
+    }
+
     /**
      * 赋值的时候进行类型转换.
      *
@@ -152,9 +157,10 @@ abstract class AbsContext extends AbsMessage implements Context
      */
     protected function cast(string $name, $value)
     {
-        if (array_key_exists($name, static::CASTS)) {
+        $casts = $this->getCasts();
+        if (array_key_exists($name, $casts)) {
 
-            $type = static::CASTS[$name] ?? null;
+            $type = $casts[$name] ?? null;
 
             if (empty($type)) {
                 return $value;

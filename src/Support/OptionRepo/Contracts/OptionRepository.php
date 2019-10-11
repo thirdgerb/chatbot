@@ -111,17 +111,47 @@ interface OptionRepository
         bool $draft = false
     ) : void;
 
+
+    /**
+     * 更新, 或者创建一个 option. meta 必须存在.
+     *
+     * @param ContainerInterface $container
+     * @param string $category
+     * @param bool $draft 是否立刻同步.
+     * @param Option[] $options
+     *
+     * @throws RepositoryMetaNotExistsException
+     * @throws OptionNotFoundException
+     * @throws SynchroniseFailException
+     */
+    public function saveBatch(
+        ContainerInterface $container,
+        string $category,
+        bool $draft,
+        Option ...$options
+    ) : void;
+
+    /**
+     * 同步整个 category
+     * @param ContainerInterface $container
+     * @param string $category
+     */
+    public function syncCategory(
+        ContainerInterface $container,
+        string $category
+    ) : void;
+
     /**
      * 删除掉一个 option
      * @param ContainerInterface $container
      * @param string $category
-     * @param string $id
+     * @param string[] $ids
      * @throws RepositoryMetaNotExistsException
      */
     public function delete(
         ContainerInterface $container,
         string $category,
-        string $id
+        string ...$ids
     ) : void;
 
     /**

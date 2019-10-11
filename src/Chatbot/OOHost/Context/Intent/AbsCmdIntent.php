@@ -26,9 +26,16 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
 
     // 命令名. 可以用命令的方式来匹配
     const SIGNATURE = '';
-    // 用正则来匹配
+    /**
+     * 用正则来匹配
+     * 写法 @see IntentMatcherOption
+     */
     const REGEX = [];
-    // 用关键字来匹配.
+
+    /**
+     * 用关键字来匹配
+     * 写法 @see IntentMatcherOption
+     */
     const KEYWORDS = [];
 
     public static function getMatcherOption(): IntentMatcherOption

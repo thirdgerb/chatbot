@@ -1,0 +1,81 @@
+- intentName : attitudes.affirm
+  examples : 
+    - 
+- intentName : attitudes.agree
+- intentName : attitudes.deny
+  examples :
+    - no
+    - nope
+    - negative
+    - not ok
+    - 否认
+    - 否定
+    - 不是
+    - 不是的
+    - 不对
+    - 错了
+    - 并非如此
+- intentName : attitudes.dont
+  examples :
+    - 不要
+    - 不好
+    - 不用了
+    - 不需要
+    - 算了吧
+    - 别这样
+    - 不用
+    - 别这么做
+    - 算逑
+    - 我不用
+- intentName : dialogue.help
+  examples :
+    - 帮帮我
+    - 我该干什么
+    - 可以做什么
+    - 现在要干啥
+    - 教我怎么做
+    - 教教我
+    - 接下来该怎么办
+- intentName : dialogue.ordinal
+  examples :
+    - 第[一](ordinal)个
+    - 第[二](ordinal)个
+    - 第[三](ordinal)个
+    - "[最后](ordinal)一个"
+- intentName : loop.break
+- intentName : loop.continue
+- intentName : loop.next
+- intentName : loop.previous
+- intentName : navigation.backward
+  examples :
+    - 回到上一步
+    - 返回上一步
+    - 回到上个问题
+    - 回到刚才那个问题
+    - 返回前面的问题
+    - 再说一次上一个问题
+- intentName : navigation.cancel
+- intentName : navigation.home
+- intentName : navigation.quit
+- intentName : navigation.repeat
+  examples:
+    - 再说一遍
+    - 刚才说什么
+    - 现在说的是啥
+    - 你问什么
+    - 你要干什么来着
+    - 你刚才要我干嘛
+    - 我现在要做什么
+    - 现在要干嘛
+    - 我们在干什么
+- intentName : navigation.restart
+  examples :
+    - restart
+    - 重来一遍吧
+    - 从头开始吧
+    - 重新来一次
+    - 从第一步再来
+    - 能不能重新开始
+    - 我想要重来一遍
+
+
