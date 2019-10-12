@@ -9,6 +9,10 @@ use Commune\Chatbot\OOHost\Context\Callables\Prediction;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 
+/**
+ * 用于 hearing::expect(), 作为条件.
+ * 示范如何实现一个可以复用的 Prediction
+ */
 class IsContext implements Prediction
 {
     /**

@@ -9,12 +9,17 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Scope;
+use Commune\Support\OptionRepo\Contracts\OptionRepository;
 use Illuminate\Support\Str;
 
 
 /**
- * 与记忆结合的问卷调查组件.
- * 算是一个示例.
+ * 与记忆结合的问卷调查组件. 算是一个示例.
+ * 用这个 context 可以快速实现定制好的问卷调查.
+ *
+ * 更好的实现办法, 是定义一个 QuestionnaireComponent
+ * 在 @see OptionRepository 里用 Option 定义问卷
+ * 然后用独立的 QuestionnaireRegistrar 生成问卷专用的 Definition
  *
  * @property bool $finish  问卷是否已经有结果.
  * @property array $answers  问题编号 => 答案

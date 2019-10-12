@@ -347,9 +347,9 @@ class ContextRegistrarImpl implements ContextRegistrar
 
     public function getDefNamesByTag(string ...$tags): array
     {
-        $names = $this->getSelfDefNamesByTag($tags);
+        $names = $this->getSelfDefNamesByTag(...$tags);
         foreach ($this->subRegistrars as $registrar) {
-            $names = array_merge($names, $registrar->getDefNamesByTag($tags));
+            $names = array_merge($names, $registrar->getDefNamesByTag(...$tags));
         }
         return array_unique($names);
     }

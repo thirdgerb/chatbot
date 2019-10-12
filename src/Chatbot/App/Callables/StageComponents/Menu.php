@@ -8,7 +8,6 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Callables\StageComponent;
 use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -63,8 +62,8 @@ class Menu implements StageComponent
      *      'contextName',
      *    ]
      * @param callable|null $redirector   // 跳转到菜单上context 的方式, 默认是 dependOn, 拿到了结果就认为是回调.
-     * @param callable|null $fallback
-     * @param callable|null $hearingComponent //可定义组件
+     * @param callable|null $fallback // 菜单没命中的 fallback
+     * @param callable|null $hearingComponent //可定义hearing组件
      */
     public function __construct(
         string $question,

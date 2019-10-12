@@ -11,7 +11,6 @@ use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Chatbot\OOHost\NLU\Predefined\FakeNLUService;
 use Commune\Chatbot\OOHost\NLU\Predefined\SimpleNLULogger;
-use Commune\Chatbot\OOHost\NLU\Providers\CorpusRepoServiceProvider;
 use Commune\Chatbot\OOHost\NLU\Providers\NLUServiceProvider;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\MetaHolder;
@@ -106,6 +105,13 @@ class NLUComponent extends ComponentOption
                 $this
             )
         );
+
+        // 注册管理工具.
+        $this->loadSelfRegisterByPsr4(
+            "Commune\\Chatbot\\OOHost\\NLU\\Contexts",
+            __DIR__ . '/Contexts'
+        );
+
 
     }
 

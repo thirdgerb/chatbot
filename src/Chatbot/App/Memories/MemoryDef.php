@@ -17,13 +17,14 @@ use Commune\Container\ContainerContract;
 
 /**
  * 默认的 memory
- * 用类 来定义 memory
+ * 用类来快速定义 memory 上下文.
+ * 可以飞快地定义出新的 memory
  *
  * 1. 类名就是 memory 的ID.
- * 2. 使用 "@property [type] $name [$description]" 的注解来预定义参数.
+ * 2. 使用 "@property [type] $name [$description]" 的注解来预定义 Entity.
  * 3. 使用常量 SCOPE_TYPES 来定义作用域.
  */
-class MemoryDef extends AbsMemory implements SelfRegister
+abstract class MemoryDef extends AbsMemory implements SelfRegister
 {
     const DESCRIPTION = 'define description';
 

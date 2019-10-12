@@ -12,6 +12,8 @@ use Commune\Chatbot\Contracts\ChatServer;
 
 class RSServerProvider extends ServiceProvider
 {
+    const IS_PROCESS_SERVICE_PROVIDER = true;
+
     public function boot($app): void
     {
     }

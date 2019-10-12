@@ -270,7 +270,9 @@ class NatureLanguageUnit implements NLU
 
         static::$properties = [];
         foreach ($r->getProperties() as $property) {
-            self::$properties[] = $property->getName();
+            if (!$property->isStatic()) {
+                self::$properties[] = $property->getName();
+            }
         }
         return self::$properties;
     }

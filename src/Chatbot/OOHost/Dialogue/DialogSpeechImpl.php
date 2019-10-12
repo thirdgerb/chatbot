@@ -161,7 +161,7 @@ class DialogSpeechImpl extends SpeechImpl implements DialogSpeech
 
     public function trans(string $message, array $slots = []): string
     {
-        return $this->trans($message, $this->mergeSlots($slots));
+        return parent::trans($message, $this->mergeSlots($slots));
     }
 
     /**

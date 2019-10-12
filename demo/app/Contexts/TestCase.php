@@ -13,7 +13,6 @@ use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Components\Predefined\Intents\Dialogue\OrdinalInt;
 use Commune\Demo\App\Cases\Maze\MazeInt;
@@ -56,15 +55,6 @@ class TestCase extends TaskDef
     public function __onStart(Stage $stage): Navigator
     {
         return $stage
-            ->onStart(function(Dialog $dialog, Corpus $corpus){
-
-                $speech = $dialog->say();
-                foreach ($corpus->eachIntentCorpus() as $o) {
-                    $speech->info($o->toPrettyJson());
-                }
-
-                return null;
-            })
             ->buildTalk()
             ->info('您好!'.$this->userInfo->name)
             ->goStage('menu');
@@ -88,7 +78,8 @@ class TestCase extends TaskDef
                     4 => 'dependencies: 测试依赖注入参数',
                     5 => '测试 todo -> otherwise api',
                     6 => 'test confirmation with emotion',
-                    7 => '返回菜单',
+                    7 => '测试子会话',
+                    'b' => '返回菜单',
                 ]
             )
             ->hearing()
@@ -157,11 +148,14 @@ class TestCase extends TaskDef
                 ->isChoice(5, function(Dialog $dialog){
                     return $dialog->goStage('testTodo');
                 })
+
                 ->isChoice(6, function(Dialog $dialog){
                     return $dialog->goStage('testConfirmation');
                 })
 
-                ->isChoice(7, Redirector::goStage('menu'))
+                ->isChoice(7, Redirector::goStage('subDialog'))
+
+                ->isChoice('b', Redirector::goStage('menu'))
 
 
 
@@ -169,7 +163,7 @@ class TestCase extends TaskDef
     }
 
     /**
-     * 匹配逻辑测试.
+     * 常用匹配逻辑测试.
      * @param Stage $stage
      * @return Navigator
      */
@@ -215,7 +209,6 @@ class TestCase extends TaskDef
                         [
                             1 => '#tellWeather : 用命令命中意图, 查询天气',
                             2 => '迷宫小游戏',
-                            3 => '测试子会话',
                             4 => '功能点测试',
                             5 => '匹配逻辑测试',
                         ]

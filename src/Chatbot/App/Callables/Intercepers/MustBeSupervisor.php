@@ -11,7 +11,8 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 /**
- * 必须是超级管理员.
+ * 拦截器, 检查用户必须是超级管理员.
+ * 作为一个拦截器的示范.
  */
 class MustBeSupervisor implements Interceptor
 {
