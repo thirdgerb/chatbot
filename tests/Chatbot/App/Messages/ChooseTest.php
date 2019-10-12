@@ -6,16 +6,13 @@ namespace Commune\Test\Chatbot\App\Messages;
 
 use Commune\Chatbot\App\Messages\QA\Choice;
 use Commune\Chatbot\App\Messages\QA\Choose;
-use Commune\Chatbot\App\Messages\Text;
-use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
-use Commune\Chatbot\OOHost\Session\Session;
+use Commune\Chatbot\App\Mock\MockSession;
 use PHPUnit\Framework\TestCase;
 
 class ChooseTest extends TestCase
 {
+    use MockSession;
 
-    /**
-     */
     public function testChoice()
     {
         $c = new Choose('test', [
@@ -23,21 +20,7 @@ class ChooseTest extends TestCase
             'b',
         ]);
 
-        $session = \Mockery::mock(Session::class);
-        $session->expects('getPossibleIntent')->andReturn(null);
-
-        /**
-         * @var \stdClass $incoming
-         */
-        $incoming = \Mockery::mock(IncomingMessage::class);
-
-
-        /**
-         * @var \stdClass $session
-         */
-        $session->incomingMessage = $incoming;
-        $incoming->message = new Text('1');
-
+        $session = $this->createSessionMocker('1');
 
         $a = $c->parseAnswer($session);
         $this->assertTrue($a instanceof Choice);
@@ -52,36 +35,27 @@ class ChooseTest extends TestCase
             'fghijklmn',
         ]);
 
-        $session = \Mockery::mock(Session::class);
-        $session->expects('getPossibleIntent')->andReturn(null);
+        $session = $this->createSessionMocker('bcde');
+        $this->fakeSession->expects('getPossibleIntent')->andReturn(null);
 
-        /**
-         * @var \stdClass $incoming
-         */
-        $incoming = \Mockery::mock(IncomingMessage::class);
-
-
-        /**
-         * @var \stdClass $session
-         */
-        $session->incomingMessage = $incoming;
-
-        // case 1
-        $incoming->message = new Text('bcde'); // 没有'a', 不必从a开始.
         $a = $c->parseAnswer($session);
         $this->assertTrue($a instanceof Choice);
         $this->assertEquals(0, $a->getChoice());
         $this->assertEquals($choices[0], $a->toResult());
 
         // case 2
-        $incoming->message = new Text('jklmn');
+        $session = $this->createSessionMocker('jklmn');
+        $this->fakeSession->expects('getPossibleIntent')->andReturn(null);
+
         $a = $c->parseAnswer($session);
         $this->assertTrue($a instanceof Choice);
         $this->assertEquals(1, $a->getChoice());
         $this->assertEquals($choices[1], $a->toResult());
 
         // case 3 same part
-        $incoming->message = new Text('ghi');
+        $session = $this->createSessionMocker('ghi');
+        $this->fakeSession->expects('getPossibleIntent')->andReturn(null);
+
         $a = $c->parseAnswer($session);
         $this->assertNull($a);
 
@@ -96,36 +70,21 @@ class ChooseTest extends TestCase
 
         $keys = array_keys($choices);
 
-        $session = \Mockery::mock(Session::class);
-        $session->expects('getPossibleIntent')->andReturn(null);
-
-        /**
-         * @var \stdClass $incoming
-         */
-        $incoming = \Mockery::mock(IncomingMessage::class);
-
-
-        /**
-         * @var \stdClass $session
-         */
-        $session->incomingMessage = $incoming;
-
-        // case 1
-        $incoming->message = new Text('bcde'); // 没有'a', 不必从a开始.
+        $session = $this->createSessionMocker('bcde'); // 没有'a', 不必从a开始.
         $a = $c->parseAnswer($session);
         $this->assertTrue($a instanceof Choice);
         $this->assertEquals($keys[0], $a->getChoice());
         $this->assertEquals($choices[$keys[0]], $a->toResult());
 
         // case 2
-        $incoming->message = new Text('jklmn');
+        $session = $this->createSessionMocker('jklmn'); // 没有'a', 不必从a开始.
         $a = $c->parseAnswer($session);
         $this->assertTrue($a instanceof Choice);
         $this->assertEquals($keys[1], $a->getChoice());
         $this->assertEquals($choices[$keys[1]], $a->toResult());
 
         // case 3 same part
-        $incoming->message = new Text('ghi');
+        $session = $this->createSessionMocker('ghi'); // 没有'a', 不必从a开始.
         $a = $c->parseAnswer($session);
         $this->assertNull($a);
 

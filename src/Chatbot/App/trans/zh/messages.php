@@ -4,6 +4,7 @@
 return [
     'hello' => [
         'world'  => '您好,世界, 你输入的是{input}',
+        'user' => '您好, {name}, 欢迎您来到 {appName} '
     ],
 
     'system' => [

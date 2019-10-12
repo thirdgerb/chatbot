@@ -11,4 +11,6 @@
     -   情景游戏脚本的 context 添加了 configure tag
     -   新建了 Talker 链式调用 action, 生成纯对话的 callable
     -   大幅度重构了 Menu 组件, 简化了许多功能. 越简单越好.
+    -   优化了 QA 的代码, 创建了SessionMock, 进一步完善了单元测试.
+
 

@@ -66,8 +66,11 @@ class VbQuestion extends AbsQuestion
         // 问题中的标注处理. 如果用户回答了标注的关键字, 会转义为标注的对象
         $example = new IntExample($question);
         $query = $example->text;
+
+        // 匹配的位置都是要做 normalize
         foreach ($example->entities as $entity) {
-            $this->aliases[$entity->value] = $entity->name;
+            $key = StringUtils::normalizeString($entity->value);
+            $this->aliases[$key] = $entity->name;
         }
 
         parent::__construct($query, $suggestions, $default);
@@ -89,6 +92,9 @@ class VbQuestion extends AbsQuestion
 
     public function parseAnswer(Session $session, Message $message = null): ? Answer
     {
+        // parse 之前要清空
+        $this->answer = null;
+
         $message = $message ?? $session->incomingMessage->message;
         // 如果本来就是answer, 不再处理了.
         if ($message instanceof Answer) {
@@ -114,8 +120,6 @@ class VbQuestion extends AbsQuestion
                 return null;
             }
         }
-
-
 
         return $this->answer = $this->parseAnswerByOrdinal($session) ?? $this->doParseAnswer($message);
     }
@@ -150,10 +154,47 @@ class VbQuestion extends AbsQuestion
 
     protected function doParseAnswer(Message $message) : ? Answer
     {
-        return $this->isIndexOfSuggestions($message)
-            ?? $this->isSuggestionPart($message)
+        return $this->isInSuggestions($message, $this->normalizeInput($message))
             ?? $this->acceptAnyAnswer($message)
             ?? null;
+    }
+
+    protected function isInSuggestions(Message $message, string $text) : ? Answer
+    {
+        $matchedIndexes = [];
+        $matchedSuggestions = [];
+        foreach ($this->suggestions as $index => $suggestion) {
+            $indexStr = StringUtils::normalizeString(strval($index));
+
+            // 完全匹配的情况.
+            if ($indexStr === $text) {
+                return $this->newAnswer($message, $suggestion, $index);
+            }
+
+            // 对索引进行部分匹配.
+            if (strstr($indexStr, $text) !== false) {
+                $matchedIndexes[] = $index;
+            }
+
+            // 对内容进行部分匹配
+            $suggestion = StringUtils::normalizeString($suggestion);
+            // 如果是其中一部分.
+            if (strstr($suggestion, $text) !== false) {
+                $matchedSuggestions[] = $index;
+            }
+        }
+
+        if (count($matchedIndexes) === 1) {
+            $index = current($matchedIndexes);
+            return $this->newAnswer($message, $this->suggestions[$index], $index);
+        }
+
+        if (count($matchedSuggestions) === 1) {
+            $index = current($matchedSuggestions);
+            return $this->newAnswer($message, $this->suggestions[$index], $index);
+        }
+
+        return null;
     }
 
     protected function acceptAnyAnswer(Message $message) : ? Answer
@@ -165,79 +206,11 @@ class VbQuestion extends AbsQuestion
         return null;
     }
 
-    protected function isSuggestionPart(Message $message) : ? Answer
+    protected function normalizeInput(Message $message) : string
     {
         $text = $message->getTrimmedText();
-        $text = $this->normalizeInput($text);
-
-        // 再匹配suggestions 的开头
-        $matchedIndex = [];
-        foreach ($this->suggestions as $index => $suggestion) {
-
-            $suggestion = StringUtils::normalizeString($suggestion);
-            // 如果是其中一部分.
-            if (strstr($suggestion, $text) !== false) {
-                $matchedIndex[] = $index;
-            }
-        }
-
-        // 当唯一匹配的时候.
-        if (count($matchedIndex) === 1) {
-            $index = $matchedIndex[0];
-            $answer = $this->suggestions[$index];
-            return $this->newAnswer($message, $answer, $index);
-        }
-
-        return null;
-    }
-
-    protected function normalizeInput(string $input) : string
-    {
-        $text = $this->aliases[$input] ?? $input;
-        return strtolower($text);
-    }
-
-    protected function isIndexOfSuggestions(Message $message) : ? Answer
-    {
-        $text = $message->getTrimmedText();
-        $text = $this->normalizeInput($text);
-
-        // 做了一个拷贝, 都用小写.
-        $originIndexes = [];
-        foreach ($this->suggestions as $index => $suggestion) {
-            // 将原来的 index 进行了normalize
-            $newIndex = StringUtils::normalizeString(strval($index));
-            $originIndexes[$newIndex] = $index;
-
-        }
-
-        $matchedIndexes = [];
-        foreach ($originIndexes as $index => $originIndex) {
-            // 完全相等的时候.
-            if ($index === $text) {
-                return $this->newAnswer(
-                    $message,
-                    $this->suggestions[$originIndex],
-                    $originIndex
-                );
-            }
-
-            // 匹配是部分相等或者是全部.
-            if (strstr($index, $text) !== false) {
-                $matchedIndexes[] = $originIndex;
-            }
-        }
-
-        if (count($matchedIndexes) === 1) {
-            $originIndex = $matchedIndexes[0];
-            return $this->newAnswer(
-                $message,
-                $this->suggestions[$originIndex],
-                $originIndex
-            );
-        }
-
-        return null;
+        $text = strtolower($text);
+        return $this->aliases[$text] ?? $text;
     }
 
     /**
