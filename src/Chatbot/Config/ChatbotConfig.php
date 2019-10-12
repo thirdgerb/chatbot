@@ -47,6 +47,9 @@ use Commune\Support\Option;
  *
  * @property-read OOHostConfig $host  多轮对话的核心模块配置|multi-turn conversation kernel config
  *
+ * @property-read array $defaultSlots
+ * 默认的slots.方便 speech 等逻辑调用.
+ * environment slots. multidimensional array will flatten to key-value array ([a][b][c] to a.b.c)
  */
 class ChatbotConfig extends Option
 {
@@ -102,6 +105,8 @@ class ChatbotConfig extends Option
             'defaultMessages' => DefaultMessagesConfig::stub(),
 
             'host' => OOHostConfig::stub(),
+
+            'defaultSlots' => [],
         ];
     }
 

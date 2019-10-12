@@ -5,7 +5,7 @@
  * @package Commune\Demo\App\Contexts
  */
 
-namespace Commune\Demo\App\Contexts;
+namespace Commune\Demo\App\Contexts\Features;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;

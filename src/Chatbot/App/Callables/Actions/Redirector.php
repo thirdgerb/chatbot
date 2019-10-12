@@ -96,6 +96,13 @@ class Redirector
     }
 
 
+    public static function goHome() : callable
+    {
+        return function(Dialog $dialog){
+            return $dialog->redirect->home();
+        };
+    }
+
 
 
     public static function backward(Dialog $dialog)

@@ -2,6 +2,32 @@
 
 return [
     'demo' => [
+
+        'contexts' => [
+            'welcomeUser' => 'welcome user (欢迎用户的正式入口)',
+
+            'testGames' => 'test games (测试用的小游戏)',
+
+            'devTools' => 'dev tools (开发工具)',
+
+        ],
+
+        'dialog' => [
+            'welcomeUser' => '欢迎您, {name}!! 这是您第{count}次访问.',
+
+            'introduceDevTools' => 'CommuneChatbot 开发了一批用多轮对话管理机器人自己的工具.',
+
+            'introduceGames' => 'CommuneChatbot 用多轮对话做了几个对话小游戏, 用于展示如何开发复杂的多轮对话任务. ',
+
+            'chooseGames' => '请选择您想要尝试的小游戏 ',
+
+            'chooseDevTools' => '请选择您要使用的开发工具: ',
+
+        ],
+
+
+
+
         'maze' => [
             'toward' => [
                 'front' => '推开了面前的门.',

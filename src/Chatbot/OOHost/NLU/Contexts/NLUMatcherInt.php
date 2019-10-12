@@ -2,6 +2,7 @@
 
 namespace Commune\Chatbot\OOHost\NLU\Contexts;
 
+use Commune\Chatbot\App\Callables\Intercepers\MustBeSupervisor;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
@@ -27,6 +28,15 @@ class NLUMatcherInt extends AbsCmdIntent
     public static function getContextName(): string
     {
         return 'nlu.component.matcher';
+    }
+
+    /**
+     * 要求管理员才能访问.
+     * @param Stage $stage
+     */
+    public function __staging(Stage $stage) : void
+    {
+        $stage->onStart(new MustBeSupervisor());
     }
 
     public function navigate(Dialog $dialog): ? Navigator

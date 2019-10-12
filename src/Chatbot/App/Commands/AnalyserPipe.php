@@ -9,6 +9,7 @@ use Commune\Chatbot\App\Commands\Analysis\ContextRepoCmd;
 use Commune\Chatbot\App\Commands\Analysis\RedirectCmd;
 use Commune\Chatbot\App\Commands\Analysis\RunningSpyCmd;
 use Commune\Chatbot\App\Commands\Analysis\WhereCmd;
+use Commune\Chatbot\App\Commands\Analysis\WhoAmICmd;
 use Commune\Chatbot\OOHost\Command\HelpCmd;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -19,6 +20,7 @@ class AnalyserPipe extends SessionCommandPipe
     protected $commands = [
         HelpCmd::class,
         WhereCmd::class,
+        WhoAmICmd::class,
         RedirectCmd::class,
         ContextRepoCmd::class,
         RunningSpyCmd::class,

@@ -78,7 +78,7 @@ return [
     ],
         
     'host' => [
-        'rootContextName' => \Commune\Demo\App\Contexts\TestCase::class,
+        'rootContextName' => \Commune\Demo\App\Contexts\DemoHome::class,
         'sessionPipes' => [
             \Commune\Chatbot\App\SessionPipe\EventMsgPipe::class,
             \Commune\Chatbot\App\Commands\UserCommandsPipe::class,
@@ -87,7 +87,7 @@ return [
             \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
             \Commune\Chatbot\OOHost\NLU\Pipe\NLUServicePipe::class,
         ],
-        'hearingFallback' => \Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction::class,
+        'hearingFallback' => null,
     ] ,
 
 ];

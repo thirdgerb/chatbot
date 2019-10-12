@@ -18,6 +18,8 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 use Illuminate\Support\Arr;
 
 /**
+ * 询问天气的测试用例. 这个例子的实现并不够好.
+ *
  * @property string $city
  * @property string $date
  */

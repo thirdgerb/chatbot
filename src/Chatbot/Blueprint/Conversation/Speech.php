@@ -6,6 +6,8 @@
  */
 
 namespace Commune\Chatbot\Blueprint\Conversation;
+use Commune\Chatbot\Framework\Providers\ConversationalServiceProvider;
+use Commune\Chatbot\OOHost\HostConversationalServiceProvider;
 use Psr\Log\LogLevel;
 
 
@@ -22,8 +24,14 @@ interface Speech
     const ERROR     = LogLevel::ERROR;
 
 
-    const DEFAULT_SLOTS = 'slots.default';
-    const SLOT_USER_NAME = 'user.name';
+    /**
+     * 注册到默认的 slots 给 conversation.
+     * @see ConversationalServiceProvider
+     */
+    const DEFAULT_SLOTS = 'slots.default';  // bind id, 绑定到容器的 id
+
+    const SLOT_USER_NAME = 'default.username'; //用户名
+    const SLOT_CHATBOT_NAME = 'default.chatbotName'; //机器人的名称.
 
     /**
      * @param string $message
@@ -63,7 +71,6 @@ interface Speech
      * @return static
      */
     public function error(string $message, array $slots = []) ;
-
 
     public function trans(string $id, array $slots = []) : string;
 }

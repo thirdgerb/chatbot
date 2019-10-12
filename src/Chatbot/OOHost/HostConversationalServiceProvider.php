@@ -32,32 +32,11 @@ class HostConversationalServiceProvider extends BaseServiceProvider
 
     public function register()
     {
-        $this->registerDefaultSlots();
         $this->registerHearing();
         $this->registerRepository();
         $this->registerSession();
     }
 
-
-    protected function registerDefaultSlots() : void
-    {
-        $this->app->singleton(
-            Speech::DEFAULT_SLOTS,
-            function(Conversation $conversation){
-
-                $env = $conversation->getChatbotConfig()->host->slots;
-                $slots = Arr::dot($env);
-
-                /**
-                 * @var User $user
-                 */
-                $user = $conversation[User::class];
-                $slots[Speech::SLOT_USER_NAME] = $user->getName();
-
-                return $slots;
-            }
-        );
-    }
 
     protected function registerSession() : void
     {

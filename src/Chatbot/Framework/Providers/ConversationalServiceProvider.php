@@ -22,6 +22,7 @@ use Commune\Chatbot\Framework\Conversation\IncomingMessageImpl;
 use Commune\Chatbot\Framework\Conversation\SpeechImpl;
 use Commune\Chatbot\Framework\Conversation\UserImpl;
 use Commune\Chatbot\Framework\Predefined\GuzzleClientFactory;
+use Illuminate\Support\Arr;
 use Psr\Log\LoggerInterface;
 
 class ConversationalServiceProvider extends BaseServiceProvider
@@ -39,6 +40,7 @@ class ConversationalServiceProvider extends BaseServiceProvider
         $this->registerChat();
         $this->registerLogger();
         $this->registerClientFactory();
+        $this->registerDefaultSlots();
     }
 
 
@@ -154,4 +156,34 @@ class ConversationalServiceProvider extends BaseServiceProvider
             return new GuzzleClientFactory();
         });
     }
+
+
+    /**
+     * 注册默认slots
+     */
+    protected function registerDefaultSlots() : void
+    {
+        $this->app->singleton(
+            Speech::DEFAULT_SLOTS,
+            function(Conversation $conversation){
+
+                $config = $conversation->getChatbotConfig();
+                $env = $config->defaultSlots;
+                $slots = Arr::dot($env);
+
+                /**
+                 * @var User $user
+                 */
+                $user = $conversation[User::class];
+
+                // 用户名
+                $slots[Speech::SLOT_USER_NAME] = $user->getName();
+                $slots[Speech::SLOT_CHATBOT_NAME] = $config->chatbotName;
+
+
+                return $slots;
+            }
+        );
+    }
+
 }

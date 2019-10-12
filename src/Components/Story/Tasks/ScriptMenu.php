@@ -6,6 +6,7 @@ namespace Commune\Components\Story\Tasks;
 
 use Closure;
 use Commune\Chatbot\App\Callables\Actions\Redirector;
+use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Components\Predefined\Intents\Dialogue\HelpInt;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Depending;
@@ -28,6 +29,8 @@ use Commune\Components\Story\Options\ScriptOption;
  */
 class ScriptMenu extends AbsScriptTask
 {
+    const CONTEXT_TAGS = [Definition::TAG_CONFIGURE];
+
     public function __construct(string $scriptName)
     {
         parent::__construct($scriptName, $scriptName);
@@ -216,6 +219,11 @@ class ScriptMenu extends AbsScriptTask
     {
         $scriptOption = $this->getScriptOption();
         $episodes = $this->unlockEpisodes;
+
+        if (count($episodes) === 1) {
+            $this->mem->playingEpisode = current($episodes);
+            return $stage->buildTalk()->goStage('playEpisode');
+        }
 
         // 与用户问答.
         return $stage->talk(

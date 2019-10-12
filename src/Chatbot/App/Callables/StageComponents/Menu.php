@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\App\Callables\StageComponents;
 
 
+use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Callables\StageComponent;
@@ -14,6 +15,15 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 /**
  * 一个菜单式的组件. 方便做常见的菜单导航.
+ * 原版比较复杂, 越复杂越不利于用户使用, 于是做了简化.
+ *
+ * - 现在是纯数字索引的菜单选项.
+ * - 选项如果是 context, 会 sleepTo 该 context, 返回当前stage时默认执行 repeat
+ *
+ * 简化的原因, 想通了两个事情:
+ * - 用户本来需要简单功能, 功能越多, 反而上手越困难.
+ * - Menu 组件做得复杂没有意义, 因为 stage 本身的 api 已经够用了, 反而比 menu 简单.
+ *
  */
 class Menu implements StageComponent
 {
@@ -28,21 +38,6 @@ class Menu implements StageComponent
     protected $menu;
 
     /**
-     * @var callable|null
-     */
-    protected $fallback;
-
-    /**
-     * @var callable|null
-     */
-    protected $redirector;
-
-    /**
-     * @var callable|null
-     */
-    protected $hearingComponent;
-
-    /**
      * @var boolean
      */
     protected $hasDefault = false;
@@ -53,44 +48,61 @@ class Menu implements StageComponent
     protected $defaultChoice;
 
     /**
+     * @var callable|null
+     */
+    protected $hearingComponent;
+
+    /**
+     * @var callable|null
+     */
+    protected $fallback;
+
+    /**
      * Menu constructor.
      * @param string $question
      * @param callable[] $menu   预定义的菜单. 结构是:
      *    [
      *      '字符串作为suggestion' => callable ,
-     *      '字符串作为suggestion' => stageName ,
+     *      '字符串作为suggestion' => stageName , //推荐使用的方式
      *      'contextName',
      *    ]
-     * @param callable|null $redirector   // 跳转到菜单上context 的方式, 默认是 dependOn, 拿到了结果就认为是回调.
-     * @param callable|null $fallback // 菜单没命中的 fallback
-     * @param callable|null $hearingComponent //可定义hearing组件
+     * @param int|null $default
      */
     public function __construct(
         string $question,
         array $menu,
-        callable $redirector = null,
-        callable $fallback = null,
-        callable $hearingComponent = null
+        int $default = null
     )
     {
         $this->question = $question;
         $this->menu = $menu;
-        $this->fallback = $fallback;
-        $this->redirector = $redirector;
-        $this->hearingComponent = $hearingComponent;
+        $this->defaultChoice = $default;
+        $this->hasDefault = isset($default);
     }
 
-    public function hearing(callable $hearing) : Menu
+    /**
+     * 添加一个 hearing 的组件.
+     * @param callable $hearing
+     * @return Menu
+     */
+    public function onHearing(callable $hearing) : Menu
     {
         $this->hearingComponent = $hearing;
         return $this;
     }
 
+    public function onFallback(callable $fallback) : Menu
+    {
+        $this->fallback = $fallback;
+        return $this;
+    }
+
     /**
-     * @param int|float|string $choice
+     * 给选项一个默认值.
+     * @param int $choice
      * @return Menu
      */
-    public function defaultChoice($choice) : Menu
+    public function withDefault(int $choice) : Menu
     {
         $this->hasDefault = true;
         $this->defaultChoice = $choice;
@@ -99,6 +111,13 @@ class Menu implements StageComponent
 
     public function __invoke(Stage $stage) : Navigator
     {
+        // 默认跳转到别的 context, 再跳转回来, 执行 repeat
+        if (isset($this->fallback)) {
+            $stage->onFallback($this->fallback);
+        } else {
+            $stage->onFallback(Redirector::goRepeat());
+        }
+
         return $stage->talk(function(Dialog $dialog){
 
             $suggestions = [];
@@ -106,9 +125,11 @@ class Menu implements StageComponent
 
             foreach ($this->menu as $key => $value) {
 
+                // 第一种情况, 键名是 suggestion
                 if (is_string($key)) {
                     $suggestions[] = $key;
 
+                // 第二种情况, 键名是整数, 则值是 contextName
                 } elseif ($repo->hasDef($value)) {
                     $suggestions[] = $repo->getDef($value)->getDesc();
                 }
@@ -118,6 +139,7 @@ class Menu implements StageComponent
                 ->askChoose(
                     $this->question,
                     $suggestions,
+                    // 默认第一个值就是默认值.
                     $this->hasDefault
                         ? $this->defaultChoice
                         : array_keys($suggestions)[0]
@@ -154,11 +176,10 @@ class Menu implements StageComponent
 
                     $hearing->isChoice(
                         $i,
-                        function(Dialog $dialog) use ($value, $i){
+                        function(Dialog $dialog) use ($value){
                             return $this->redirect(
                                 $value,
-                                $dialog,
-                                $i
+                                $dialog
                             );
                         }
                     );
@@ -190,29 +211,20 @@ class Menu implements StageComponent
                 $hearing->component($this->hearingComponent);
             }
 
-            return $hearing->end($this->fallback);
+            return $hearing->end();
         });
     }
 
     /**
      * @param string $context
      * @param Dialog $dialog
-     * @param int $index  选项.
      * @return Navigator
      */
     protected function redirect(
         string $context,
-        Dialog $dialog,
-        int $index
+        Dialog $dialog
     ) : Navigator
     {
-        if (isset($this->redirector)) {
-            return call_user_func_array(
-                $this->redirector,
-                func_get_args()
-            );
-        }
-
         $repo = $dialog->session->intentRepo;
 
         // 意图用特殊的方式来处理.

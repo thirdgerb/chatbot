@@ -4,18 +4,14 @@
 namespace Commune\Components\Story\Tasks;
 
 
-use Commune\Chatbot\App\Callables\Actions\Redirector;
-use Commune\Components\Predefined\Intents\Navigation\BackwardInt;
-use Commune\Components\Predefined\Intents\Navigation\RestartInt;
+use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Stage;
-use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\Directing\Reset\Repeat;
 use Commune\Components\Story\Basic\AbsScriptTask;
+use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Components\Story\Basic\EpisodeDefinition;
-use Commune\Components\Story\Intents\SkipInt;
 use Commune\Components\Story\Options\ScriptOption;
 
 /**
@@ -24,6 +20,9 @@ use Commune\Components\Story\Options\ScriptOption;
  */
 class EpisodeTask extends AbsScriptTask
 {
+
+    const CONTEXT_TAGS = [Definition::TAG_CONFIGURE];
+
     const STAGE_GOOD_ENDING = 'goodEnding';
     const STAGE_BAD_ENDING = 'badEnding';
     const STAGE_UNLOCK_EPISODE = 'unlockEpisode';

@@ -1,10 +1,14 @@
-## 2019-10-12
+## 2019-10-12 (2)
 
--   迁移部分文件, 准备下一步功能整合.
--   补充了一些注释
--   bug fix
-    -   nlu::toArray() 不再输出静态变量.
-    -   AbsMessage::getTrimmedText() 取消了normalize, 统一小写反而复杂了.
-    -   修复 ContextRegistrar 用 tag 获取 def 时的bug
-    -   修复了 DialogSpeech::trans() 的bug, 自调用死循环.
+-   重构 Demo 的 Context, 做一个更通用的对话用例.
+    -   删除掉废弃的事件监听.
+    -   调整了若干文件路径
+    -   创建了许多新的 context
+-   default slots 从 host config 迁移到了 chat config
+    -   绑定关系也从 host 转移到了 conversation
+    -   增加了 default.chatbotName slot
+-   其它
+    -   情景游戏脚本的 context 添加了 configure tag
+    -   新建了 Talker 链式调用 action, 生成纯对话的 callable
+    -   大幅度重构了 Menu 组件, 简化了许多功能. 越简单越好.
 

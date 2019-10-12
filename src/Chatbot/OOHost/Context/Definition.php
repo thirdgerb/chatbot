@@ -30,7 +30,7 @@ interface Definition
 
     // predefined tags
     const TAG_MANAGER = 'manager';  // 管理工具
-    const TAG_CONFIGURE = 'configure'; // 通过配置生成的intent
+    const TAG_CONFIGURE = 'configure'; // 通过配置生成的Context
 
     /**
      * 使用construct 参数创建一个 context 对象.

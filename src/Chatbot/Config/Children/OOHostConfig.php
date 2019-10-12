@@ -46,9 +46,6 @@ use Commune\Chatbot\App\Commands;
  * @property-read callable|string|null $hearingFallback
  * Hearing环节默认的fallback单元.
  *
- * @property-read array $slots
- * 默认的slots.方便 speech 等逻辑调用.
- * environment slots. multidimensional array will flatten to key-value array ([a][b][c] to a.b.c)
  */
 
 class OOHostConfig extends Option
@@ -87,9 +84,6 @@ class OOHostConfig extends Option
             'hearingFallback' => null,
             'memories' => [
                  MemoryOption::stub()
-            ],
-            'slots' => [
-
             ],
         ];
     }

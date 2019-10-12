@@ -93,8 +93,8 @@ class SimpleFileInt extends AbsIntent
                             ->replaceTo($context, Redirect::NODE_LEVEL);
                     }
                 ))
-                ->defaultChoice(null)
-                ->hearing(function(Hearing $hearing) {
+                ->withDefault(null)
+                ->onHearing(function(Hearing $hearing) {
                     // 监听任何意图
                     $hearing
                         ->runAnyIntent()

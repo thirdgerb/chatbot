@@ -63,8 +63,11 @@ interface Context extends
     // 可以给所有的stage 定义公共流程.
     const STAGE_MIDDLEWARE_METHOD = '__staging';
 
-    // 用tag 可以为context 在registrar 里归类.
-    // tag 的类型在 Definition 里有定义.
+    /**
+     * 用 tag 可以为context 在registrar 里归类.
+     * tag 的类型在 Definition 里有定义.
+     * @see Definition
+     */
     const CONTEXT_TAGS = [];
 
     /**
