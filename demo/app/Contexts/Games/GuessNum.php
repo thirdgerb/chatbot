@@ -44,7 +44,7 @@ class GuessNum extends TaskDef
 
         return $stage->buildTalk()
             ->info(<<<EOF
-欢迎您, %user.name%, 这里是猜数字小游戏 (用于测试多轮对话) 
+欢迎来到猜数字小游戏 (用于测试多轮对话) 
 
 请您在心中设想一个1 到 1000之间的整数, 我来猜它是什么.
 

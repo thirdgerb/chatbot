@@ -20,19 +20,10 @@ class SimpleNLULogger implements NLULogger
         $scope = $session->scope->toArray();
         $message = $session->incomingMessage->getMessage();
 
-        $messageType = $message->getMessageType();
-        $messageClass = get_class($message);
-        $messageText = $message->getText();
-
         $nluResult = $session->nlu->toArray();
 
-
         $logger->info(NLULogger::class, [
-            'message' => [
-                'text' => $messageText,
-                'clazz' => $messageClass,
-                'type' => $messageType,
-            ],
+            'message' => $message->toArray(),
             'nlu' => $nluResult,
             'scope' => $scope
         ]);

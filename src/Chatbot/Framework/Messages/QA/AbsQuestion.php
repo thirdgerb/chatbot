@@ -8,11 +8,11 @@ use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
-use Commune\Chatbot\Framework\Messages\AbsMessage;
+use Commune\Chatbot\Framework\Messages\AbsConvoMsg;
 use Commune\Chatbot\OOHost\Session\Session;
 use Illuminate\Support\Collection;
 
-abstract class AbsQuestion extends AbsMessage implements Question
+abstract class AbsQuestion extends AbsConvoMsg implements Question
 {
     const REPLY_ID = 'question';
 
@@ -33,11 +33,6 @@ abstract class AbsQuestion extends AbsMessage implements Question
      * @var mixed
      */
     protected $default;
-
-    /**
-     * @var bool
-     */
-    protected $nullable;
 
     /**
      * @var Answer|null
@@ -64,15 +59,31 @@ abstract class AbsQuestion extends AbsMessage implements Question
         $this->query = $query;
         $this->suggestions = $suggestions;
         $this->default = $default;
-        $this->nullable = isset($this->default);
         parent::__construct();
+    }
+
+    public function __sleep(): array
+    {
+        return array_merge(parent::__sleep(), [
+            'query',
+            'suggestions',
+            'default',
+            'slots',
+        ]);
+    }
+
+    public function toMessageData(): array
+    {
+        return [
+                'id' => $this->getReplyId(),
+                'defaultChoice' => $this->getDefaultChoice(),
+            ] + parent::toMessageData();
     }
 
     public function getQuery(): string
     {
         return $this->query;
     }
-
 
     abstract public function parseAnswer(Session $session, Message $message = null): ? Answer;
 
@@ -99,29 +110,10 @@ abstract class AbsQuestion extends AbsMessage implements Question
 
     public function isNullable(): bool
     {
-        return $this->nullable;
+        return isset($this->default);
     }
 
 
-    public function toMessageData(): array
-    {
-        return [
-            'id' => $this->getReplyId(),
-            'question' => $this->query,
-            'suggestions' => $this->suggestions,
-            'default' => $this->getDefaultValue(),
-            'defaultChoice' => $this->getDefaultChoice(),
-            'nullable' => $this->nullable,
-        ];
-    }
-
-    public function namesAsDependency(): array
-    {
-        return array_merge(
-            parent::namesAsDependency(),
-            [Question::class, AbsQuestion::class]
-        );
-    }
 
     public function getReplyId(): string
     {
@@ -173,20 +165,6 @@ abstract class AbsQuestion extends AbsMessage implements Question
 
         return rtrim($str, ';');
 
-    }
-
-    /**
-     * 只应该保留对 parse answer 有用的信息, 而不需要保留其它信息.
-     * @return array
-     */
-    public function __sleep()
-    {
-        return [
-            'query',
-            'suggestions',
-            'default',
-            'nullable',
-        ];
     }
 
 }

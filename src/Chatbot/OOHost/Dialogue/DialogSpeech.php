@@ -5,6 +5,7 @@ namespace Commune\Chatbot\OOHost\Dialogue;
 
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
+use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 
@@ -31,6 +32,12 @@ interface DialogSpeech extends Speech
      */
     public function withContext(Context $from = null, array $keys = []);
 
+
+    /**
+     * @param ReplyMsg $reply
+     * @return static
+     */
+    public function withReply(ReplyMsg $reply);
 
     /*------ 段落 ------*/
 

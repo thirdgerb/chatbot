@@ -23,6 +23,10 @@ class Audio extends AbsSSML
         parent::__construct('', ['src' => $source,]);
     }
 
+    public function __sleep(): array
+    {
+        return array_merge(parent::__sleep(), ['source']);
+    }
 
     /**
      * @return string
@@ -30,6 +34,16 @@ class Audio extends AbsSSML
     public function getSource(): string
     {
         return $this->source;
+    }
+
+    public function getTag(): string
+    {
+        return 'audio';
+    }
+
+    public static function mock()
+    {
+        return new static('mock audio');
     }
 
 

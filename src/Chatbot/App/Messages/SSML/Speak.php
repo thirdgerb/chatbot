@@ -15,7 +15,14 @@ class Speak extends AbsSSML
 
     public function getTag(): string
     {
-        return '';
+        return 'speak';
     }
 
+    public static function mock()
+    {
+        return new static('test {{background}} {{sub}}', [
+            'background' => Background::mock(),
+            'sub' => Sub::mock(),
+        ]);
+    }
 }

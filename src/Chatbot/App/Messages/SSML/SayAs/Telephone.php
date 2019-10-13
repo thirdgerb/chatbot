@@ -19,5 +19,10 @@ class Telephone extends AbsSSML
         return 'say-as';
     }
 
+    public static function mock()
+    {
+        return new static(12312342234);
+    }
+
 
 }

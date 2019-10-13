@@ -3,6 +3,7 @@
 
 namespace Commune\Chatbot\App\Messages\QA;
 
+use Commune\Chatbot\App\Messages\Text;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Messages\QA\AbsAnswer;
@@ -33,6 +34,11 @@ class VbAnswer extends AbsAnswer implements VerboseMsg
         parent::__construct($origin, $choice);
     }
 
+    public function __sleep(): array
+    {
+        return array_merge(parent::__sleep(), ['answer']);
+    }
+
     /**
      * @return string
      */
@@ -41,11 +47,8 @@ class VbAnswer extends AbsAnswer implements VerboseMsg
         return $this->answer;
     }
 
-    public function namesAsDependency(): array
+    public static function mock()
     {
-        return array_merge(parent::namesAsDependency(), [VbAnswer::class, VerboseMsg::class]);
+        return new VbAnswer(new Text('a'), 'abc', 1);
     }
-
-
-
 }

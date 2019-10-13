@@ -6,13 +6,11 @@ namespace Commune\Chatbot\App\Messages\SSML;
 
 use Commune\Chatbot\Framework\Messages\AbsSSML;
 
+/**
+ * SUB 标签
+ */
 class Sub extends AbsSSML
 {
-    /**
-     * @var string
-     */
-    protected $alias;
-
     /**
      * Sub constructor.
      * @param string $content
@@ -29,4 +27,8 @@ class Sub extends AbsSSML
     }
 
 
+    public static function mock()
+    {
+        return new static('test', 'alias');
+    }
 }

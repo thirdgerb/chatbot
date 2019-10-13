@@ -4,11 +4,12 @@
 namespace Commune\Chatbot\App\Messages\QA;
 
 
+use Commune\Chatbot\App\Messages\Text;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
-use Commune\Chatbot\Framework\Messages\Verbose;
 use Commune\Chatbot\OOHost\Session\Session;
+use Commune\Chatbot\App\Messages\ReplyIds;
 
 /**
  * 多选.
@@ -17,7 +18,7 @@ use Commune\Chatbot\OOHost\Session\Session;
  */
 class Selects extends Choose implements Question
 {
-    const REPLY_ID = QuestionReplyIds::SELECTS;
+    const REPLY_ID = ReplyIds::SELECTS;
 
     protected $onlySuggestion = true;
 
@@ -56,6 +57,16 @@ class Selects extends Choose implements Question
         $this->default = implode($separator, $defaultAnswers);
     }
 
+    public function __sleep() : array
+    {
+        $props = parent::__sleep();
+        $props = array_merge($props, [
+            'separator',
+            'defaultAllChoices',
+            'defaultAnswers',
+        ]);
+        return $props;
+    }
 
     public function getDefaultValue()
     {
@@ -71,7 +82,7 @@ class Selects extends Choose implements Question
         // 将隔开的结果
         $choices = explode($this->separator, $text);
         $answers = array_map(function(string $str){
-            return new Verbose($str);
+            return new Text($str);
         }, $choices);
 
 
@@ -103,15 +114,8 @@ class Selects extends Choose implements Question
         return $this->answer;
     }
 
-    public function __sleep()
+    public static function mock()
     {
-        $props = parent::__sleep();
-        $props = array_merge($props, [
-            'separator',
-            'defaultAllChoices',
-            'defaultAnswers',
-        ]);
-        return $props;
+        return new Selects('test', ['a', 'b', 'c'], [1], ',');
     }
-
 }

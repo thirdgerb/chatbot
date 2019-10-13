@@ -33,7 +33,15 @@ trait ContextualTrait
      */
     protected $intent;
 
-    protected function init(
+
+    public function __sleep() : array
+    {
+        $props = parent::__sleep();
+        return array_merge($props, ['intentDataId', 'intentName', 'entityName']);
+    }
+
+
+    protected function initContextual(
         IntentMessage $intent,
         string $entityName = null
     )
@@ -108,12 +116,6 @@ trait ContextualTrait
     public function getIntentName(): string
     {
         return $this->intentName;
-    }
-
-    public function __sleep()
-    {
-        $props = parent::__sleep();
-        return array_merge($props, ['intentDataId', 'intentName', 'entityName']);
     }
 
 

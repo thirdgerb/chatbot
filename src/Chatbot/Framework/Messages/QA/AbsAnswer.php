@@ -4,11 +4,11 @@
 namespace Commune\Chatbot\Framework\Messages\QA;
 
 
-use Commune\Chatbot\Framework\Messages\AbsMessage;
+use Commune\Chatbot\Framework\Messages\AbsConvoMsg;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\Message;
 
-abstract class AbsAnswer extends AbsMessage implements Answer
+abstract class AbsAnswer extends AbsConvoMsg implements Answer
 {
 
     /**
@@ -34,6 +34,15 @@ abstract class AbsAnswer extends AbsMessage implements Answer
         $this->origin = $origin;
         $this->choice = $choice;
         parent::__construct();
+    }
+
+
+    public function __sleep(): array
+    {
+        return array_merge(parent::__sleep(), [
+            'choice',
+            'origin',
+        ]);
     }
 
     /**
@@ -72,18 +81,6 @@ abstract class AbsAnswer extends AbsMessage implements Answer
         return $this->getOriginMessage()->getText();
     }
 
-    public function toMessageData(): array
-    {
-        return [
-            'choice' => $this->choice,
-            'result' => $this->toResult(),
-        ];
-    }
-
-    public function namesAsDependency(): array
-    {
-        return array_merge(parent::namesAsDependency(), [Answer::class, AbsAnswer::class]);
-    }
 
     public function getChoice()
     {

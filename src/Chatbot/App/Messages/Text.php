@@ -4,17 +4,13 @@
 namespace Commune\Chatbot\App\Messages;
 
 
-use Commune\Chatbot\Framework\Messages\Verbose;
+use Commune\Chatbot\Framework\Messages\AbsVerbose;
 
 /**
  * 默认的文本消息.
- * @method Text withSlots(array $slots)
- * @method Text raw()
- * @method Text withLevel(string $level)
  */
-class Text extends Verbose
+class Text extends AbsVerbose
 {
-
     /**
      * Text constructor.
      * @param string $input
@@ -23,4 +19,11 @@ class Text extends Verbose
     {
         parent::__construct($input);
     }
+
+    public static function mock()
+    {
+        return new static('test');
+    }
+
+
 }

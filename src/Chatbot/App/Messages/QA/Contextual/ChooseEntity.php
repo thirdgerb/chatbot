@@ -5,16 +5,17 @@ namespace Commune\Chatbot\App\Messages\QA\Contextual;
 
 
 use Commune\Chatbot\App\Messages\QA\Choose;
-use Commune\Chatbot\App\Messages\QA\QuestionReplyIds;
+use Commune\Chatbot\App\Messages\ReplyIds;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
+use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntent;
 use Commune\Chatbot\OOHost\Session\Session;
 
 class ChooseEntity extends Choose  implements ContextualQ
 {
     use ContextualTrait;
 
-    const REPLY_ID = QuestionReplyIds::CHOOSE_ENTItY;
+    const REPLY_ID = ReplyIds::CHOOSE_ENTItY;
 
     public function __construct(
         string $question,
@@ -31,7 +32,7 @@ class ChooseEntity extends Choose  implements ContextualQ
         }
 
         parent::__construct($question, $options, $defaultChoice);
-        $this->init($intent, $entityName);
+        $this->initContextual($intent, $entityName);
     }
 
     protected function matchIntentToAnswer(Session $session, IntentMessage $intent): ? Answer
@@ -70,5 +71,17 @@ class ChooseEntity extends Choose  implements ContextualQ
         }
     }
 
+    public static function mock()
+    {
+        return new ChooseEntity(
+            'ask',
+            new PlaceHolderIntent(
+                'test',
+                ['a' =>1 , 'b'=>2]
+            ),
+            'c',
+            [1, 2, 3]
+        );
+    }
 
 }

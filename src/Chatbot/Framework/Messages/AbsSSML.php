@@ -5,16 +5,26 @@ namespace Commune\Chatbot\Framework\Messages;
 
 use Commune\Chatbot\Blueprint\Message\SSML;
 
-abstract class AbsSSML extends Reply implements SSML
+/**
+ * ssml 的一个封装尝试.
+ * 用此类搭建一个树状的 ssml 结构.
+ */
+abstract class AbsSSML extends AbsReply implements SSML
 {
     /**
+     * 当前 xml 对象的模板.
      * @var string
      */
     protected $content;
 
-    protected $attributes = [];
+    /**
+     * 当前 xml 对象的属性.
+     * @var array
+     */
+    protected $attrs = [];
 
     /**
+     * 当前 xml 对象的子元素. 子元素渲染后会用 {key} 模板渲染进去.
      * @var SSML[]
      */
     protected $subSsmls = [];
@@ -32,9 +42,18 @@ abstract class AbsSSML extends Reply implements SSML
     )
     {
         $this->content = $content;
-        $this->attributes = $attributes;
+        $this->attrs = $attributes;
         $this->subSsmls = $subSsmls;
         parent::__construct(static::class);
+    }
+
+    public function __sleep() : array
+    {
+        return array_merge(parent::__sleep(), [
+            'content',
+            'attrs',
+            'subSsmls',
+        ]);
     }
 
 
@@ -75,7 +94,7 @@ abstract class AbsSSML extends Reply implements SSML
         }
 
         $attr = '';
-        foreach ($this->attributes as $name => $value) {
+        foreach ($this->attrs as $name => $value) {
             $attr.= " $name=\"$value\" ";
         }
         return "<$tag$attr>$content</$tag>";
@@ -100,30 +119,22 @@ abstract class AbsSSML extends Reply implements SSML
 
     public function getAttrs(): array
     {
-        return $this->attributes;
+        return $this->attrs;
     }
 
     public function getAttr(string $name)
     {
-        return $this->attributes[$name] ?? null;
+        return $this->attrs[$name] ?? null;
     }
 
     public function setAttr(string $name, $value)
     {
-        $this->attributes[$name] = $value;
+        $this->attrs[$name] = $value;
     }
 
     public function getSubSSMLs(): array
     {
         return $this->subSsmls;
-    }
-
-
-    public function namesAsDependency(): array
-    {
-        $names = parent::namesAsDependency();
-        $names[] = SSML::class;
-        return $names;
     }
 
 

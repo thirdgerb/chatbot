@@ -1,11 +1,18 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Messages\QA;
+namespace Commune\Chatbot\App\Messages;
 
 
-class QuestionReplyIds
+/**
+ * reply id 的常量.
+ */
+class ReplyIds
 {
+    const LINK = 'reply.link';
+
+    const PARAGRAPH = 'reply.paragraph';
+
     const CHOOSE = 'question.choose';
 
     const CONFIRM = 'question.confirm';

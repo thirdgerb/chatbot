@@ -2,7 +2,6 @@
 
 namespace Commune\Support\Arr;
 
-
 /**
  * 对象转数组, 转json的简单封装.
  *
@@ -55,31 +54,4 @@ trait ArrayAbleToJson
         return $this->toString();
     }
 
-    protected function recursiveToArray(array $data) : array
-    {
-        $results = [];
-
-        foreach ($data as $key => $value) {
-            if (is_scalar($value)) {
-                $results[$key] = $value;
-
-            } elseif ($value instanceof ArrayAndJsonAble) {
-                $results[$key] = $value->toArray();
-
-            } elseif (is_array($value)) {
-                $results[$key] = $this->recursiveToArray($value);
-
-            } elseif (
-                is_object($value)
-                && method_exists($value, 'toArray')
-            ) {
-                $results[$key] = $value->toArray();
-
-            } else {
-                $results[$key] = $value;
-            }
-        }
-
-        return $results;
-    }
 }

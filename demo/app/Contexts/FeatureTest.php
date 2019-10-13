@@ -7,6 +7,7 @@ namespace Commune\Demo\App\Contexts;
 use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Contexts\TaskDef;
+use Commune\Chatbot\App\Messages\Replies\Link;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
@@ -21,7 +22,7 @@ use Commune\Demo\App\Memories\Sandbox;
 
 class FeatureTest extends TaskDef
 {
-    const DESCRIPTION = 'features test (功能点测试)';
+    const DESCRIPTION = 'demo.contexts.featureTest';
 
     public static function __depend(Depending $depending): void
     {
@@ -40,10 +41,11 @@ class FeatureTest extends TaskDef
             new Menu(
                 '请选择功能测试用例 (输入 #q 退出测试, #r 回到选项)',
                 [
-                    'matching (匹配逻辑)' => 'testMatch',
-                    'memory (上下文记忆)' => 'testMemory',
-                    'confirmation (答复是否. 测试 emotion 等.)' => 'testConfirmation',
-                    'subDialog (语境嵌套测试)' => 'testSubDialog',
+                    '常用匹配逻辑' => 'testMatch',
+                    '段落测试' => 'testParagraph',
+                    '上下文记忆' => 'testMemory',
+                    'confirmation && emotion' => 'testConfirmation',
+                    '语境嵌套' => 'testSubDialog',
                 ]
             )
         );
@@ -240,15 +242,18 @@ EOF
                 [
                     'sandbox : 测试在config里定义的 memory',
                     'sandbox class: 测试用类定义的 memory',
+                    'b' => '返回',
                 ]
             )
             ->hearing()
+
+            ->is('b', Redirector::goRestart())
 
             ->todo(function(Dialog $dialog, Session $session) {
                 $test = $session->memory['sandbox']['test'] ?? 0;
                 $dialog->say()
                     ->info("test is :")
-                    ->info($test);
+                    ->info(intval($test));
 
                 $session->memory['sandbox']['test'] = $test + 1;
 
@@ -340,6 +345,22 @@ EOF
                 ->is('quit')
 
             ->end();
+    }
+
+
+    public function __onTestParagraph(Stage $stage) : Navigator
+    {
+        return $stage->buildTalk()
+
+            ->beginParagraph()
+                ->info('beginParagraph.')
+                ->withReply($link = new Link('https://communechatbot.com'))
+                ->error('endParagraph.')
+            ->endParagraph()
+
+            ->withReply($link)
+
+            ->action(Redirector::goRestart());
     }
 
 

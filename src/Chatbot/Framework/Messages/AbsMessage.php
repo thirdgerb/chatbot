@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\Tags\Transformed;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
+use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Chatbot\Blueprint\Message\Message as Contract;
@@ -26,10 +27,6 @@ abstract class AbsMessage implements Contract
 {
     use ArrayAbleToJson;
 
-    const USER_COMMAND_MARK = '#';
-
-    const MESSAGE_TYPE = '';
-
     /**
      * @var Carbon
      */
@@ -40,9 +37,23 @@ abstract class AbsMessage implements Contract
      */
     protected $_deliverAt;
 
+    /**
+     * text 转义成 命令的形式. 如果不是命令, 则返回null
+     * @var string|null|false
+     */
     protected $_cmdText;
 
+    /**
+     * @var string|null
+     */
     protected $_trimmed;
+
+
+    /**
+     * 可以做依赖注入的对象名
+     * @var string[][]
+     */
+    private static $dependencyNames = [];
 
     /**
      * AbsMessage constructor.
@@ -53,11 +64,60 @@ abstract class AbsMessage implements Contract
         $this->_createdAt = $createdAt ?? new Carbon();
     }
 
-    public function getMessageType(): string
+    public function __sleep() : array
     {
-        $type = static::MESSAGE_TYPE;
-        return empty($type) ? static::class : $type;
+        return [
+            '_deliverAt',
+            '_createdAt',
+        ];
     }
+
+    public function toMessageData(): array
+    {
+        $fields = $this->__sleep();
+        $result = [];
+        foreach ($fields as $name) {
+            $result[$name] = $this->{$name};
+        }
+        return ArrayUtils::recursiveToArray($result);
+    }
+
+    final public function namesAsDependency(): array
+    {
+        $class = static::class;
+        if (isset(self::$dependencyNames[$class])) {
+            return self::$dependencyNames[$class];
+        }
+
+        $r = new \ReflectionClass($class);
+
+        // 当前类名
+        $names[] = $r->getName();
+        // 根 message 类名
+        $names[] = Message::class;
+        // 所有 interface 里继承 message 的.
+        foreach ( $r->getInterfaces() as $interfaceReflect ) {
+            if ($interfaceReflect->isSubclassOf(Message::class)) {
+                $names[] = $interfaceReflect->getName();
+            }
+        }
+
+        // 抽象父类.
+        do  {
+            if ($r->isAbstract()) {
+                $names[] = $r->getName();
+            }
+
+
+        } while ($r = $r->getParentClass());
+
+        sort($names);
+        return self::$dependencyNames[$class] = $names;
+    }
+
+
+    /*------- methods -------*/
+
 
     /**
      * 默认的数据结构.
@@ -67,13 +127,13 @@ abstract class AbsMessage implements Contract
     public function toArray() : array
     {
         $data =  [
-            'type' => $this->getMessageType(),
+            'type' => get_class($this),
             'data' => $this->toMessageData(),
             'createdAt' => $this->getCreatedAt()
         ];
 
         if ($this instanceof Transformed) {
-            $data['origin'] = $this->getOriginMessage()->toMessageData();
+            $data['origin'] = $this->getOriginMessage()->toArray();
         }
         return $data;
     }
@@ -101,23 +161,23 @@ abstract class AbsMessage implements Contract
     }
 
 
-    public function namesAsDependency(): array
-    {
-        return [
-            'message',
-            Message::class,
-            static::class,
-        ];
-    }
-
     public function getCmdText(): ? string
     {
-        return $this->_cmdText
-            ?? $this->_cmdText = CommandUtils::getCommandStr(
-                $this->getTrimmedText(),
-                // 确保 commandUtils 会使用 user command mark
-                null
-            );
+        if ($this->_cmdText === false) {
+            return null;
+        }
+
+        if (isset($this->_cmdText)) {
+            return $this->_cmdText;
+        }
+
+       $this->_cmdText = CommandUtils::getCommandStr(
+           $this->getTrimmedText(),
+           // 确保 commandUtils 会使用 user command mark
+           null
+       ) ?? false;
+
+        return $this->getCmdText();
     }
 
     public function setCmdText(string $text = null): void
@@ -140,6 +200,4 @@ abstract class AbsMessage implements Contract
         $this->_deliverAt = $carbon;
         return $this;
     }
-
-
 }

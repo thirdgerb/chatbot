@@ -4,6 +4,9 @@
 namespace Commune\Chatbot\App\Messages\QA;
 
 
+use Commune\Chatbot\App\Messages\ReplyIds;
+use Commune\Chatbot\Blueprint\Message\Tags\SelfTranslating;
+use Commune\Chatbot\Contracts\Translator;
 use Commune\Components\Predefined\Intents\Dialogue\OrdinalInt;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
@@ -13,15 +16,16 @@ use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
 use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\NLU\Corpus\IntExample;
 use Commune\Chatbot\OOHost\Session\Session;
+use Illuminate\Support\Str;
 
 /**
  * Verbose Question
  */
-class VbQuestion extends AbsQuestion
+class VbQuestion extends AbsQuestion implements SelfTranslating
 {
     use Verbosely;
 
-    const REPLY_ID = QuestionReplyIds::ASK;
+    const REPLY_ID = ReplyIds::ASK;
 
     /**
      * 判断回答是否只允许用建议值.
@@ -63,17 +67,22 @@ class VbQuestion extends AbsQuestion
         $default = $default
             ?? ($defaultIsSuggestion ? $suggestions[$defaultChoice] : null);
 
-        // 问题中的标注处理. 如果用户回答了标注的关键字, 会转义为标注的对象
-        $example = new IntExample($question);
-        $query = $example->text;
+        parent::__construct($question, $suggestions, $default);
+    }
 
-        // 匹配的位置都是要做 normalize
-        foreach ($example->entities as $entity) {
-            $key = StringUtils::normalizeString($entity->value);
-            $this->aliases[$key] = $entity->name;
-        }
 
-        parent::__construct($query, $suggestions, $default);
+    public function __sleep() : array
+    {
+        $properties = parent::__sleep();
+        return array_merge($properties, [
+            'defaultChoice',
+            '_level',
+        ]);
+    }
+
+    public function getQuery(): string
+    {
+        return (new IntExample($this->query))->text;
     }
 
     public function getDefaultValue()
@@ -208,9 +217,25 @@ class VbQuestion extends AbsQuestion
 
     protected function normalizeInput(Message $message) : string
     {
+        // 问题中的标注处理. 如果用户回答了标注的关键字, 会转义为标注的对象
+        $example = new IntExample($this->query);
+
         $text = $message->getTrimmedText();
         $text = strtolower($text);
-        return $this->aliases[$text] ?? $text;
+
+        // 匹配的位置都是要做 normalize
+        foreach ($example->getExampleEntities() as $entity) {
+            $key = StringUtils::normalizeString($entity->value);
+            // 现阶段只能用start with, 未来应该有更好的办法.
+            // 最好结合语义分析, [? positive] + [! negative} + part
+            // 或者做词法分析.
+            // 这都意味着 NLU 本身应该掌握 问题. 现阶段基本都不掌握问题.
+            // NLU 技术还有很大发展空间.
+            if (Str::startsWith($key, $text)) {
+                return $entity->name;
+            }
+        }
+        return $text;
     }
 
     /**
@@ -229,10 +254,26 @@ class VbQuestion extends AbsQuestion
         return $this->answer;
     }
 
-    public function __sleep()
+
+    public function translateBy(Translator $translator): void
     {
-        $properties = parent::__sleep();
-        $properties[] = 'defaultChoice';
-        return $properties;
+        $result = [];
+
+        // suggestions 进行转义.
+        foreach ($this->suggestions as $index => $text) {
+            $result[$index] = $translator->trans((string)$text, $this->getSlots()->all());
+        }
+
+        // query 进行转义.
+        $this->query = $translator->trans((string)$this->query, $this->getSlots()->all());
+        $this->suggestions = $result;
+
     }
+
+
+    public static function mock()
+    {
+        return new VbQuestion('ask hello', ['a', 'b', 'c'], 2, 'b');
+    }
+
 }

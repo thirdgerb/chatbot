@@ -19,5 +19,9 @@ class Silence extends AbsSSML
         return 'silence';
     }
 
+    public static function mock()
+    {
+        return new static(9527);
+    }
 
 }

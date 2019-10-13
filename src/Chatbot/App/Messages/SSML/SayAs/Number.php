@@ -16,8 +16,6 @@ class Number extends AbsSSML
 
     const FRACTION = ' fraction';
 
-    protected $originNum;
-
     public function __construct($num, string $type = '')
     {
         $realType = empty($type) ? 'number' : "number:$type";
@@ -29,5 +27,9 @@ class Number extends AbsSSML
         return 'say-as';
     }
 
+    public static function mock()
+    {
+        return new static(12345, self::ORDINAL);
+    }
 
 }

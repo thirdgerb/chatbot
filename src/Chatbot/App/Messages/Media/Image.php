@@ -8,11 +8,8 @@ use Commune\Chatbot\Blueprint\Message\Media\ImageMsg;
 
 class Image extends AbsMedia implements ImageMsg
 {
-    public function namesAsDependency(): array
+    public static function mock()
     {
-        $names = parent::namesAsDependency();
-        $names[] = ImageMsg::class;
-        return $names;
+        return new static('image url');
     }
-
 }

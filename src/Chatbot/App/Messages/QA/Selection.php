@@ -3,6 +3,7 @@
 
 namespace Commune\Chatbot\App\Messages\QA;
 
+use Commune\Chatbot\App\Messages\Text;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 
@@ -33,6 +34,11 @@ class Selection extends VbAnswer implements Answer
         $this->choices = $choices;
 
         parent::__construct($origin, implode(',', $answers));
+    }
+
+    public function __sleep(): array
+    {
+        return array_merge(parent::__sleep(), ['choices', 'results']);
     }
 
     /**
@@ -78,5 +84,10 @@ class Selection extends VbAnswer implements Answer
     public function toResult()
     {
         return implode(',', $this->results);
+    }
+
+    public static function mock()
+    {
+        return new Selection(new Text('abc'), ['a', 'b', 'c'], [0, 1, 2]);
     }
 }

@@ -6,8 +6,8 @@
  */
 
 namespace Commune\Chatbot\Blueprint\Conversation;
+
 use Commune\Chatbot\Framework\Providers\ConversationalServiceProvider;
-use Commune\Chatbot\OOHost\HostConversationalServiceProvider;
 use Psr\Log\LogLevel;
 
 
@@ -38,7 +38,7 @@ interface Speech
      * @param array $slots
      * @return static
      */
-    public function debug(string $message, array $slots = []) ;
+    public function debug($message, array $slots = []) ;
 
 
     /**
@@ -46,7 +46,7 @@ interface Speech
      * @param array $slots
      * @return static
      */
-    public function info(string $message, array $slots = []) ;
+    public function info($message, array $slots = []) ;
 
 
     /**
@@ -54,7 +54,7 @@ interface Speech
      * @param array $slots
      * @return static
      */
-    public function warning(string $message, array $slots = []) ;
+    public function warning($message, array $slots = []) ;
 
 
     /**
@@ -62,15 +62,14 @@ interface Speech
      * @param array $slots
      * @return static
      */
-    public function notice(string $message, array $slots = []) ;
-
+    public function notice($message, array $slots = []) ;
 
     /**
      * @param string $message
      * @param array $slots
      * @return static
      */
-    public function error(string $message, array $slots = []) ;
+    public function error($message, array $slots = []) ;
 
     public function trans(string $id, array $slots = []) : string;
 }

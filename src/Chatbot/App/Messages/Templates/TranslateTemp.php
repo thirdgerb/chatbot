@@ -31,16 +31,14 @@ class TranslateTemp implements ReplyTemplate
 
     public function render(ReplyMsg $reply, Conversation $conversation): array
     {
-        // 自己翻译自己. 高优先级
-        if ($reply instanceof SelfTranslating) {
-            return $reply->translateBy($this->translator);
-
-        // 低优先级. 不翻译
-        } elseif ($reply instanceof NoTranslate) {
-            return [ $reply ];
-
-        // 空消息不翻译.
-        } elseif ($reply->isEmpty()) {
+        if (
+            // 已经翻译了
+            $reply instanceof SelfTranslating
+            // 不用翻译
+            || $reply instanceof NoTranslate
+            // 空消息不翻译.
+            || $reply->isEmpty()
+        ) {
             return [$reply];
         }
 
@@ -53,7 +51,6 @@ class TranslateTemp implements ReplyTemplate
 
         } else {
             $text = $reply->getText();
-
         }
 
         $message = (new Text($text))->withLevel($reply->getLevel());

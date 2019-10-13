@@ -6,10 +6,11 @@ namespace Commune\Chatbot\App\Messages\QA;
 
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
+use Commune\Chatbot\App\Messages\ReplyIds;
 
 class Confirm extends VbQuestion
 {
-    const REPLY_ID = QuestionReplyIds::CONFIRM;
+    const REPLY_ID = ReplyIds::CONFIRM;
 
     const YES_DEFAULT = 'y';
     const NO_DEFAULT = 'n';
@@ -62,5 +63,10 @@ class Confirm extends VbQuestion
     {
         $choice = $choice ?? $this->defaultChoice;
         return new Confirmation($origin, strval($value), $choice);
+    }
+
+    public static function mock()
+    {
+        return new Confirm('if is true', true, 'y', 'n');
     }
 }

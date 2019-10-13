@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context\Stages;
 
 use Commune\Chatbot\Blueprint\Message\QA\Question;
+use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Dialogue\DialogSpeechImpl;
@@ -45,27 +46,27 @@ trait StageSpeechTrait
 
 
 
-    public function info(string $message, array $slots = [])
+    public function info($message, array $slots = [])
     {
         return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
-    public function debug(string $message, array $slots = [])
+    public function debug($message, array $slots = [])
     {
         return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
-    public function warning(string $message, array $slots = [])
+    public function warning($message, array $slots = [])
     {
         return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
-    public function notice(string $message, array $slots = [])
+    public function notice($message, array $slots = [])
     {
         return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
-    public function error(string $message, array $slots = [])
+    public function error($message, array $slots = [])
     {
         return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
@@ -73,6 +74,11 @@ trait StageSpeechTrait
     public function trans(string $message, array $slots = []): string
     {
         return $this->dialogSpeech->trans($message, $slots);
+    }
+
+    public function withReply(ReplyMsg $reply)
+    {
+        return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
     public function ask(Question $question)

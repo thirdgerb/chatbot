@@ -10,7 +10,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\Framework\Messages\ArrayMessage;
+use Commune\Chatbot\App\Messages\ArrayMessage;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
@@ -413,22 +413,6 @@ class HearingHandler implements Hearing
         // 最脏的办法, 自己去循环匹配.
         $text = $incoming->getMessage()->getTrimmedText();
         if (IntentMatcher::matchWords($text, $keywords, false)) {
-            $this->isMatched = true;
-            return $this->callInterceptor($interceptor);
-        }
-
-        return $this;
-    }
-
-
-    public function isTypeOf(
-        string $messageType,
-        callable $interceptor = null
-    ): Matcher
-    {
-        if (isset($this->navigator)) return $this;
-
-        if ($this->message->getMessageType() === $messageType) {
             $this->isMatched = true;
             return $this->callInterceptor($interceptor);
         }

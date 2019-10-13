@@ -7,10 +7,11 @@ namespace Commune\Chatbot\App\Messages\QA;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\App\Messages\ReplyIds;
 
 class Choose extends VbQuestion implements Question
 {
-    const REPLY_ID = QuestionReplyIds::CHOOSE;
+    const REPLY_ID = ReplyIds::CHOOSE;
 
     protected $onlySuggestion = true;
 
@@ -48,5 +49,10 @@ class Choose extends VbQuestion implements Question
     {
         $choice = $choice ?? $this->defaultChoice;
         return new Choice($origin, strval($value), $choice);
+    }
+
+    public static function mock()
+    {
+        return new Choose('ask choose', ['a', 'b', 'c'], 1);
     }
 }

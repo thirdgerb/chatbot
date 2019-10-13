@@ -67,14 +67,6 @@ abstract class AbsIntent
         return $this;
     }
 
-    public function namesAsDependency(): array
-    {
-        $de = parent::namesAsDependency();
-        $de[] = IntentMessage::class;
-        $de[] = AbsIntent::class;
-        return $de;
-    }
-
     public function __getIsConfirmed() : ? bool
     {
         return $this->_isConfirmed;

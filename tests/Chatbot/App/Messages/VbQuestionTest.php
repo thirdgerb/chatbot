@@ -27,6 +27,9 @@ class VbQuestionTest extends TestCase
         $q = new VbQuestion('要不要[开始](y)', ['y', 'n']);
         $a = $q->parseAnswer($this->createSessionMocker('开始'));
         $this->assertEquals('y', $a->toResult());
+
+        $a = $q->parseAnswer($this->createSessionMocker('开'));
+        $this->assertEquals('y', $a->toResult());
     }
 
     public function testConfirm()

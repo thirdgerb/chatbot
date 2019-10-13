@@ -1,15 +1,15 @@
 <?php
 
 
-namespace Commune\Chatbot\Framework\Messages;
+namespace Commune\Chatbot\App\Messages;
 
 
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\Tags\Transformed;
+use Commune\Chatbot\Framework\Messages\AbsConvoMsg;
 
-class ArrayMessage extends AbsMessage implements \ArrayAccess, Transformed
+class ArrayMessage extends AbsConvoMsg implements \ArrayAccess, Transformed
 {
-    const MESSAGE_TYPE = self::class;
 
     /**
      * @var Message
@@ -33,6 +33,11 @@ class ArrayMessage extends AbsMessage implements \ArrayAccess, Transformed
         parent::__construct();
     }
 
+    public function __sleep(): array
+    {
+        return array_merge(parent::__sleep(), ['origin', 'data']);
+    }
+
 
     public function isEmpty(): bool
     {
@@ -42,11 +47,6 @@ class ArrayMessage extends AbsMessage implements \ArrayAccess, Transformed
     public function getText(): string
     {
         return $this->getOriginMessage()->getText();
-    }
-
-    public function toMessageData(): array
-    {
-        return $this->data;
     }
 
     public function offsetExists($offset)
@@ -74,5 +74,9 @@ class ArrayMessage extends AbsMessage implements \ArrayAccess, Transformed
         return $this->origin;
     }
 
+    public static function mock()
+    {
+        return new static(Text::mock(), ['a' => 1, 'b' => 2]);
+    }
 
 }

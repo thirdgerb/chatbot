@@ -6,9 +6,8 @@ namespace Commune\Chatbot\Framework\Messages;
 
 use Commune\Chatbot\Blueprint\Message\Event\EventMsg;
 
-class AbsEventMsg extends AbsMessage implements EventMsg
+class AbsEvent extends AbsConvoMsg implements EventMsg
 {
-    const MESSAGE_TYPE = EventMsg::class;
 
     public function getEventName(): string
     {
@@ -29,8 +28,12 @@ class AbsEventMsg extends AbsMessage implements EventMsg
     {
         return [
             'event' => $this->getEventName()
-        ];
+        ] + parent::toMessageData();
     }
 
 
+    public static function mock()
+    {
+        return new static();
+    }
 }

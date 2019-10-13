@@ -8,8 +8,8 @@
 namespace Commune\Chatbot\App\Messages\Events;
 
 use Commune\Chatbot\Blueprint\Message\Event\EndSession;
-use Commune\Chatbot\Framework\Messages\AbsEventMsg;
+use Commune\Chatbot\Framework\Messages\AbsEvent;
 
-class QuitEvt extends AbsEventMsg implements EndSession
+class QuitEvt extends AbsEvent implements EndSession
 {
 }

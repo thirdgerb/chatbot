@@ -11,6 +11,11 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * Interface Message
  * @package Commune\Chatbot\Blueprint\Message
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * 又分为两大类:
+ * - ConvoMessage 在 Conversation 中传递的 message
+ * - Context, 作为上下文, 在 Session 中使用, 不可在Conversation里传递.
+ *
  */
 interface Message extends ArrayAndJsonAble
 {
@@ -25,15 +30,6 @@ interface Message extends ArrayAndJsonAble
      * @return bool
      */
     public function isEmpty() : bool ;
-
-    /**
-     * 消息的类型.
-     * 每个消息都有一个独立的类型
-     * 通常就是class name
-     *
-     * @return string
-     */
-    public function getMessageType() : string;
 
     /**
      * 消息的创建时间.
@@ -100,6 +96,8 @@ interface Message extends ArrayAndJsonAble
      * 不包括 type 等公共信息.
      * 那部分数据在 toArray 里
      *
+     * !!! 定义所有的 messages 时, 都需要考虑这个.
+     *
      * @return array
      */
     public function toMessageData() : array;
@@ -107,6 +105,12 @@ interface Message extends ArrayAndJsonAble
 
     /**
      * 作为依赖注入对象时, 可以使用的依赖名
+     * 依赖名的构成:
+     *
+     * 1. 当前类的类名
+     * 2. Message
+     * 3. 所有父类里的抽象类.
+     * 4. 所有实现的 interface 里 Message 的子类.
      *
      * @return string[]
      */

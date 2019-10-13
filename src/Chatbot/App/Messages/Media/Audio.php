@@ -9,10 +9,8 @@ use Commune\Chatbot\Framework\Messages\AbsMedia;
 
 class Audio extends AbsMedia implements AudioMsg
 {
-    public function namesAsDependency(): array
+    public static function mock()
     {
-        $names = parent::namesAsDependency();
-        $names[] = AudioMsg::class;
-        return $names;
+        return new static('audio source');
     }
 }

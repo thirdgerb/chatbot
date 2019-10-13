@@ -4,11 +4,13 @@ return [
     'demo' => [
 
         'contexts' => [
-            'welcomeUser' => 'welcome user (欢迎用户的正式入口)',
+            'welcomeUser' => '欢迎用户',
 
-            'testGames' => 'test games (测试用的小游戏)',
+            'featureTest' => '功能点测试',
 
-            'devTools' => 'dev tools (开发工具)',
+            'testGames' => '测试小游戏',
+
+            'devTools' => '开发工具',
 
         ],
 

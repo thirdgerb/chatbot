@@ -13,15 +13,10 @@ use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
 
 /**
  * 标准的文本消息
- *
- * Class Verbose
- * @package Commune\Chatbot\Framework\Message\Verbose
  */
-class Verbose extends AbsMessage implements VerboseMsg
+abstract class AbsVerbose extends AbsConvoMsg implements VerboseMsg
 {
     use Verbosely;
-
-    const MESSAGE_TYPE = VerboseMsg::class;
 
     /**
      * @var string
@@ -38,17 +33,26 @@ class Verbose extends AbsMessage implements VerboseMsg
         parent::__construct();
     }
 
+    public function __sleep() : array
+    {
+        return array_merge(parent::__sleep(), [
+            '_text',
+            '_level'
+        ]);
+    }
+
     public function getText(): string
     {
         return $this->_text;
     }
 
+    /**
+     * 消息的数组化, 尽量用通用做法, 降低管理的困难.
+     * @return array
+     */
     public function toMessageData(): array
     {
-        return [
-            'text' => $this->_text,
-            'level' => $this->getLevel()
-        ];
+        return get_object_vars($this);
     }
 
     /**
@@ -61,11 +65,6 @@ class Verbose extends AbsMessage implements VerboseMsg
     {
         $trimmed = $this->getTrimmedText();
         return strlen($trimmed) === 0;
-    }
-
-    public function namesAsDependency(): array
-    {
-        return array_merge(parent::namesAsDependency(), [VerboseMsg::class]);
     }
 
 }

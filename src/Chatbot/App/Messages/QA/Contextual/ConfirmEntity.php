@@ -5,18 +5,22 @@ namespace Commune\Chatbot\App\Messages\QA\Contextual;
 
 
 use Commune\Chatbot\App\Messages\QA\Confirm;
-use Commune\Chatbot\App\Messages\QA\QuestionReplyIds;
+use Commune\Chatbot\App\Messages\ReplyIds;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
+use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntent;
 use Commune\Chatbot\OOHost\Session\Session;
 
 class ConfirmEntity extends Confirm  implements ContextualQ
 {
-    use ContextualTrait;
+    use ContextualTrait {
+        ContextualTrait::__sleep as protected contextualSleep;
+    }
 
-    const REPLY_ID = QuestionReplyIds::CONFIRM_ENTITY;
+    const REPLY_ID = ReplyIds::CONFIRM_ENTITY;
 
    /**
+    * 需要被 confirm 的值.
     * @var mixed
     */
    protected $confirmValue;
@@ -28,12 +32,17 @@ class ConfirmEntity extends Confirm  implements ContextualQ
        string $entityName
    )
    {
-       $this->init($intent, $entityName);
+       $this->initContextual($intent, $entityName);
        $this->confirmValue = $intent->__get($entityName);
        parent::__construct($question);
    }
 
-   protected function matchIntentToAnswer(Session $session, IntentMessage $intent): ? Answer
+   public function __sleep() : array
+   {
+       return array_merge($this->contextualSleep(), ['confirmValue']);
+   }
+
+    protected function matchIntentToAnswer(Session $session, IntentMessage $intent): ? Answer
    {
        $confirmed = $intent->confirmedEntities[$this->intentName] ?? null;
 
@@ -81,5 +90,18 @@ class ConfirmEntity extends Confirm  implements ContextualQ
     public function getConfirmValue()
     {
         return $this->confirmValue;
+    }
+
+
+    public static function mock()
+    {
+        return new ConfirmEntity(
+            'ask',
+            new PlaceHolderIntent(
+                'test',
+                ['a' =>1 , 'b'=>2]
+            ),
+            'b'
+        );
     }
 }

@@ -4,6 +4,8 @@
 namespace Commune\Chatbot\App\Messages\SSML;
 
 
+use Commune\Chatbot\App\Messages\SSML\SayAs\Number;
+use Commune\Chatbot\App\Messages\SSML\SayAs\Telephone;
 use Commune\Chatbot\Framework\Messages\AbsSSML;
 
 class Background extends AbsSSML
@@ -19,5 +21,9 @@ class Background extends AbsSSML
         return 'background';
     }
 
+    public static function mock()
+    {
+        return new static('test {{number}} and {{telephone}} ', 'as background music', true, ['number' => Number::mock(), 'telephone' => Telephone::mock()]);
+    }
 
 }

@@ -65,9 +65,7 @@ class QuestionTemp implements ReplyTemplate
 
     protected function parseSuggestions(Question $question) : array
     {
-        return array_map(function($suggestion) use ($question){
-            return $this->translator->trans((string) $suggestion, $question->getSlots()->all());
-        }, $question->getSuggestions());
+        return $question->getSuggestions();
     }
 
     protected function composeText(string $query, string $suggestion, string $default) : string
@@ -97,8 +95,7 @@ class QuestionTemp implements ReplyTemplate
 
     protected function renderQuery(Question $question) : string
     {
-        $slots = $question->getSlots();
-        return $this->translator->trans($question->getQuery(), $slots->all());
+        return $question->getQuery();
     }
 
     protected function renderSuggestionStr(Question $question, array $suggestions) : string

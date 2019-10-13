@@ -244,38 +244,7 @@ class NatureLanguageUnit implements NLU
 
     public function toArray(): array
     {
-        $names = self::getProperties();
-        $result = [];
-        foreach ($names as $name) {
-            $property = $this->{$name};
-            $result[$name] = $property instanceof Collection
-                ? $property->toArray()
-                : $property;
-        }
-        return $result;
+        return get_object_vars($this);
     }
-
-    private static $properties;
-
-    /**
-     * @return string[]
-     */
-    public static function getProperties() : array
-    {
-        if (isset(self::$properties)) {
-            return self::$properties;
-        }
-
-        $r = new \ReflectionClass(self::class);
-
-        static::$properties = [];
-        foreach ($r->getProperties() as $property) {
-            if (!$property->isStatic()) {
-                self::$properties[] = $property->getName();
-            }
-        }
-        return self::$properties;
-    }
-
 
 }

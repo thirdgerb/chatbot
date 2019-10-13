@@ -21,10 +21,13 @@ use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
 use Commune\Chatbot\Blueprint\Conversation\User;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
+use Commune\Chatbot\Blueprint\Message\Replies\Paragraph;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
+use Commune\Chatbot\Blueprint\Message\Tags\SelfTranslating;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Contracts\EventDispatcher;
+use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Container\ContainerContract;
 use Commune\Container\RecursiveContainer;
@@ -266,12 +269,33 @@ class ConversationImpl implements Blueprint
             return [$message];
         }
 
+        // only way to merge default slots
+        $message->getSlots()->merge($this->defaultSlots());
+
+        // selfTranslate test
+        if ($message instanceof SelfTranslating) {
+            $message->translateBy($this->make(Translator::class));
+        }
+
+        // paragraph
+        if ($message instanceof Paragraph) {
+            $rendered = [];
+            foreach ($message->getReplies() as $reply) {
+                $rendered = array_merge($rendered, $this->render($reply));
+            }
+            $texts = array_map(
+                function(Message $message){ return $message->getText(); },
+                $rendered
+            );
+            $message->withText(...$texts);
+            return [$message];
+        }
+
+
         /**
          * @var Renderer $renderer
          */
         $renderer = $this->get(Renderer::class);
-        // only way to merge default slots
-        $message->getSlots()->merge($this->defaultSlots());
         $id = $message->getReplyId();
 
         // use template to render message

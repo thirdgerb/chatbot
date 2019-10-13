@@ -81,15 +81,6 @@ abstract class AbsMemory extends AbsContext implements Memory
     {
     }
 
-    public function namesAsDependency(): array
-    {
-        return [
-            Memory::class,
-            AbsMemory::class,
-            static::class
-        ];
-    }
-
     public function lock(int $expire = 1): bool
     {
         $this->hasInstanced();

@@ -123,15 +123,16 @@ class Menu implements StageComponent
             $suggestions = [];
             $repo = $dialog->session->contextRepo;
 
+            $i = 0;
             foreach ($this->menu as $key => $value) {
-
+                $i ++;
                 // 第一种情况, 键名是 suggestion
                 if (is_string($key)) {
-                    $suggestions[] = $key;
+                    $suggestions[$i] = $key;
 
                 // 第二种情况, 键名是整数, 则值是 contextName
                 } elseif ($repo->hasDef($value)) {
-                    $suggestions[] = $repo->getDef($value)->getDesc();
+                    $suggestions[$i] = $repo->getDef($value)->getDesc();
                 }
             }
 
@@ -154,29 +155,13 @@ class Menu implements StageComponent
 
             $i = 0;
             foreach ($this->menu as $key => $value) {
+                $i ++;
 
-                // 第一种情况, 就是stage
-                if (
-                    is_string($value)
-                    && method_exists(
-                        $self,
-                        $method = Context::STAGE_METHOD_PREFIX
-                            . ucfirst($value)
-                    )
-                ) {
-                    $hearing->isChoice(
+                // 第一种情况, 值是一个context
+                if (is_string($value) && $repo->hasDef($value)) {
+                    $hearing = $hearing->isChoice(
                         $i,
-                        function(Dialog $dialog) use ($value) {
-                            return $dialog->goStage($value);
-                        }
-                    );
-
-                // 第二种情况, 是一个context
-                } elseif (is_string($value) && $repo->hasDef($value)) {
-
-                    $hearing->isChoice(
-                        $i,
-                        function(Dialog $dialog) use ($value){
+                        function (Dialog $dialog) use ($value) {
                             return $this->redirect(
                                 $value,
                                 $dialog
@@ -184,9 +169,25 @@ class Menu implements StageComponent
                         }
                     );
 
+                // 第二种情况, 值是stage
+                } elseif (
+                    is_string($value)
+                    && method_exists(
+                        $self,
+                        $method = Context::STAGE_METHOD_PREFIX
+                            . ucfirst($value)
+                    )
+                ) {
+                    $hearing = $hearing->isChoice(
+                        $i,
+                        function(Dialog $dialog) use ($value) {
+                            return $dialog->goStage($value);
+                        }
+                    );
+
                 // 第三种情况, 是callable
                 } elseif (is_callable($value)) {
-                    $hearing->isChoice($i, $value);
+                    $hearing = $hearing->isChoice($i, $value);
 
                 } else {
 
@@ -203,7 +204,6 @@ class Menu implements StageComponent
                     );
                 }
 
-                $i ++;
             }
 
             // 仍然允许按自己的意愿定义.
@@ -228,14 +228,15 @@ class Menu implements StageComponent
         $repo = $dialog->session->intentRepo;
 
         // 意图用特殊的方式来处理.
+        $navigator = null;
         if ($repo->hasDef($context)) {
             $intent = $repo->getDef($context)->newContext();
-            return $intent->navigate($dialog);
+            $navigator =  $intent->navigate($dialog);
         }
 
         // 默认的重定向是 sleepTo
         // 这会导致无法 cancel 掉整个流程.
-        return $dialog->redirect->sleepTo($context);
+        return $navigator ?? $dialog->redirect->sleepTo($context);
     }
 
 }

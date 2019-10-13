@@ -4,10 +4,11 @@
 namespace Commune\Chatbot\App\Messages\QA\Contextual;
 
 
-use Commune\Chatbot\App\Messages\QA\QuestionReplyIds;
+use Commune\Chatbot\App\Messages\ReplyIds;
 use Commune\Chatbot\App\Messages\QA\VbQuestion;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
+use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntent;
 use Commune\Chatbot\OOHost\Session\Session;
 
 /**
@@ -17,7 +18,7 @@ class AskEntity extends VbQuestion implements ContextualQ
 {
     use ContextualTrait;
 
-    const REPLY_ID = QuestionReplyIds::ASK_ENTITY;
+    const REPLY_ID = ReplyIds::ASK_ENTITY;
 
     public function __construct(
         string $question,
@@ -26,7 +27,7 @@ class AskEntity extends VbQuestion implements ContextualQ
         $default
     )
     {
-        $this->init($intent, $entityName);
+        $this->initContextual($intent, $entityName);
         $default = $intent->__get($this->intentName) ?? $default;
         parent::__construct($question, [], null, $default);
     }
@@ -62,5 +63,17 @@ class AskEntity extends VbQuestion implements ContextualQ
         }
     }
 
+    public static function mock()
+    {
+        return new AskEntity(
+            'ask',
+            new PlaceHolderIntent(
+                'test',
+                ['a' =>1 , 'b'=>2]
+            ),
+            'c',
+            1
+        );
+    }
 
 }

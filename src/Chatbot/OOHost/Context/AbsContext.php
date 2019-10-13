@@ -6,6 +6,7 @@ namespace Commune\Chatbot\OOHost\Context;
 
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Chatbot\Framework\Messages\AbsMessage;
+use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Context\Helpers\ScalarParser;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -86,6 +87,38 @@ abstract class AbsContext extends AbsMessage implements Context
         parent::__construct();
     }
 
+    /**
+     * 一般的 context 序列化只保存这两个数据.
+     * memory 需要额外保存 name
+     *
+     * @return array
+     */
+    public function __sleep(): array
+    {
+        $this->getId();
+        return array_merge(parent::__sleep(), [
+            '_contextId',
+            '_attributes'
+        ]);
+    }
+
+    public function toMessageData(): array
+    {
+        return [
+            'contextId' => $this->getId(),
+            'contextName' => $this->getName(),
+            'attributes' => $this->toAttributes(),
+        ];
+    }
+
+    public function toAttributes() : array
+    {
+        return ArrayUtils::recursiveToArray($this->_attributes);
+    }
+
+
+    /*------- construct -------*/
+
     public function fillProperties(array $props)
     {
         if (!$this->isInstanced()) {
@@ -97,19 +130,18 @@ abstract class AbsContext extends AbsMessage implements Context
         }
     }
 
-
-    public function nameEquals(string $name): bool
-    {
-        $name = StringUtils::namespaceSlashToDot($name);
-        return $name == $this->getName();
-    }
-
-    /*------- changed -------*/
+    /*------- methods -------*/
 
 
     public function isInstanced(): bool
     {
         return isset($this->_session);
+    }
+
+    public function nameEquals(string $name): bool
+    {
+        $name = StringUtils::namespaceSlashToDot($name);
+        return $name == $this->getName();
     }
 
 
@@ -401,25 +433,6 @@ abstract class AbsContext extends AbsMessage implements Context
         return $this->toJson();
     }
 
-    public function toMessageData(): array
-    {
-        return [
-            'contextId' => $this->getId(),
-            'contextName' => $this->getName(),
-            'attributes' => $this->toAttributes(),
-        ];
-    }
-
-    public function toAttributes() : array
-    {
-        return $this->recursiveToArray($this->_attributes);
-    }
-
-    public function namesAsDependency(): array
-    {
-        return [Context::class, AbsContext::class, static::class];
-    }
-
     protected function assign()
     {
         if (!empty($this->_props)) {
@@ -429,20 +442,6 @@ abstract class AbsContext extends AbsMessage implements Context
         }
     }
 
-    /**
-     * 一般的 context 序列化只保存这两个数据.
-     * memory 需要额外保存 name
-     *
-     * @return array
-     */
-    public function __sleep(): array
-    {
-        $this->getId();
-        return [
-            '_contextId',
-            '_attributes'
-        ];
-    }
 
     /**
      * 反序列化的context 不用急于保存.

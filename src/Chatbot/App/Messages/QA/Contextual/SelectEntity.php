@@ -4,18 +4,19 @@
 namespace Commune\Chatbot\App\Messages\QA\Contextual;
 
 
-use Commune\Chatbot\App\Messages\QA\QuestionReplyIds;
+use Commune\Chatbot\App\Messages\ReplyIds;
 use Commune\Chatbot\App\Messages\QA\Selection;
 use Commune\Chatbot\App\Messages\QA\Selects;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
+use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntent;
 use Commune\Chatbot\OOHost\Session\Session;
 
 class SelectEntity extends Selects implements ContextualQ
 {
     use ContextualTrait;
 
-    const REPLY_ID = QuestionReplyIds::SELECT_ENTITY;
+    const REPLY_ID = ReplyIds::SELECT_ENTITY;
 
 
     public function __construct(
@@ -35,7 +36,7 @@ class SelectEntity extends Selects implements ContextualQ
                 }
             }
         }
-        $this->init($intent, $entityName);
+        $this->initContextual($intent, $entityName);
         parent::__construct($question, $suggestions, $defaultChoices);
     }
 
@@ -86,5 +87,17 @@ class SelectEntity extends Selects implements ContextualQ
         }
     }
 
+    public static function mock()
+    {
+        return new SelectEntity(
+            'ask',
+            new PlaceHolderIntent(
+                'test',
+                ['a' => 1]
+            ),
+            'b',
+            [1, 2, 3, 4]
+        );
+    }
 
 }

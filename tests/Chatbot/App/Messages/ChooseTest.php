@@ -90,5 +90,21 @@ class ChooseTest extends TestCase
 
     }
 
+
+    public function testChooseCase()
+    {
+        $choose = new Choose('test', [
+            '功能点测试',
+            '欢迎用户',
+            '测试小游戏',
+            '开发工具',
+        ]);
+
+        $session  =$this->createSessionMocker('测试小游戏');
+
+        $a = $choose->parseAnswer($session);
+
+        $this->assertTrue($a instanceof Choice);
+    }
 }
 

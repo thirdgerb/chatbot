@@ -5,23 +5,24 @@ namespace Commune\Chatbot\App\Messages\QA\Contextual;
 
 
 use Commune\Chatbot\App\Messages\QA\Confirm;
-use Commune\Chatbot\App\Messages\QA\QuestionReplyIds;
+use Commune\Chatbot\App\Messages\ReplyIds;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
+use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntent;
 use Commune\Chatbot\OOHost\Session\Session;
 
 class ConfirmIntent extends Confirm  implements ContextualQ
 {
    use ContextualTrait;
 
-   const REPLY_ID = QuestionReplyIds::CONFIRM_INTENT;
+   const REPLY_ID = ReplyIds::CONFIRM_INTENT;
 
    public function __construct(
        string $question,
        IntentMessage $intent
    )
    {
-       $this->init($intent);
+       $this->initContextual($intent);
        parent::__construct($question);
    }
 
@@ -59,6 +60,18 @@ class ConfirmIntent extends Confirm  implements ContextualQ
            $session->setPossibleIntent($originIntent);
        }
    }
+
+
+    public static function mock()
+    {
+        return new ConfirmIntent(
+            'ask',
+            new PlaceHolderIntent(
+                'test',
+                ['a' =>1 , 'b'=>2]
+            )
+        );
+    }
 
 
 }

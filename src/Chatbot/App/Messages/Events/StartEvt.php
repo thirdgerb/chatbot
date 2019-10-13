@@ -9,8 +9,8 @@ namespace Commune\Chatbot\App\Messages\Events;
 
 
 use Commune\Chatbot\Blueprint\Message\Event\StartSession;
-use Commune\Chatbot\Framework\Messages\AbsEventMsg;
+use Commune\Chatbot\Framework\Messages\AbsEvent;
 
-class StartEvt extends AbsEventMsg implements StartSession
+class StartEvt extends AbsEvent implements StartSession
 {
 }

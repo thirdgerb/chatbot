@@ -2,7 +2,6 @@
 
 namespace Commune\Chatbot\OOHost\Dialogue;
 
-use Commune\Chatbot\App\Messages\ParagraphText;
 use Commune\Chatbot\App\Messages\QA\Choose;
 use Commune\Chatbot\App\Messages\QA\Confirm;
 use Commune\Chatbot\App\Messages\QA\Contextual\AskEntity;
@@ -14,10 +13,12 @@ use Commune\Chatbot\App\Messages\QA\Contextual\SelectEntity;
 use Commune\Chatbot\App\Messages\QA\Selects;
 use Commune\Chatbot\App\Messages\QA\VbQuestion;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
+use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\Framework\Conversation\SpeechImpl;
-use Commune\Chatbot\Framework\Messages\Reply;
+use Commune\Chatbot\App\Messages\Replies\Reply;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
+use Commune\Chatbot\App\Messages\Replies\ParagraphText;
 use Illuminate\Support\Collection;
 
 class DialogSpeechImpl extends SpeechImpl implements DialogSpeech
@@ -93,19 +94,23 @@ class DialogSpeechImpl extends SpeechImpl implements DialogSpeech
         return $this;
     }
 
-    public function log(string $level, string $message, array $slots = array()) : void
+    public function withReply(ReplyMsg $reply)
     {
         if (isset($this->paragraph)) {
-            $reply = new Reply(
-                $message,
-                new Collection($this->mergeSlots($slots)),
-                $level
-            );
             $this->paragraph->add($reply);
         } else {
-            parent::log($level, $message, $this->mergeSlots($slots));
+            $this->conversation->reply($reply);
         }
+    }
 
+
+    public function log(string $level, $message, array $slots = array()) : void
+    {
+        $this->withReply(new Reply(
+            strval($message),
+            new Collection($this->mergeSlots($slots)),
+            $level
+        ));
     }
 
     public function ask(Question $question)

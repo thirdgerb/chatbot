@@ -95,19 +95,6 @@ interface Matcher
         callable $action = null
     ): Matcher;
 
-
-    /**
-     * 判断message 的 $message->getMessageType 是否符合.
-     *
-     * @param string $messageType
-     * @param Action|callable $action
-     * @return static
-     */
-    public function isTypeOf(
-        string $messageType,
-        callable $action = null
-    ) : Matcher;
-
     /**
      * 判断传入的 message 是否是某个 MessageSubClass 的实例.
      *

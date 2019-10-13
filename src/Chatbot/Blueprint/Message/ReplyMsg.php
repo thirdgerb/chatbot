@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
  * information container holds template id and slots
  * when conversation receive view message, will generate real messages with it by render
  */
-interface ReplyMsg extends Message
+interface ReplyMsg extends VerboseMsg
 {
     /**
      * 返回 reply 消息的 ID, 用于选择模板.
@@ -19,12 +19,6 @@ interface ReplyMsg extends Message
      * @return string
      */
     public function getReplyId() : string;
-
-    /**
-     * Speech Level
-     * @return string
-     */
-    public function getLevel() : string;
 
     /**
      * variables of the message
