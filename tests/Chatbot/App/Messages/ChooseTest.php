@@ -106,5 +106,20 @@ class ChooseTest extends TestCase
 
         $this->assertTrue($a instanceof Choice);
     }
+
+    public function testCharIndex()
+    {
+        $choose = new Choose('test', [
+            'a' => '功能点测试',
+            'b' => '欢迎用户',
+            'c' => '测试小游戏',
+            'd' => '开发工具',
+        ]);
+
+        $session  =$this->createSessionMocker('a');
+        $a = $choose->parseAnswer($session);
+        $this->assertTrue($a instanceof Choice);
+    }
 }
+
 

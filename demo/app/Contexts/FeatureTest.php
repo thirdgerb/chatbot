@@ -240,32 +240,31 @@ EOF
             ->askChoose(
                 '测试记忆功能',
                 [
-                    'sandbox : 测试在config里定义的 memory',
-                    'sandbox class: 测试用类定义的 memory',
-                    'b' => '返回',
+                    'a' => 'sandbox : 测试在config里定义的 memory',
+                    'b' => 'sandbox class: 测试用类定义的 memory',
+                    '返回',
                 ]
             )
             ->hearing()
 
-            ->is('b', Redirector::goRestart())
+            ->is(0, Redirector::goRestart())
 
             ->todo(function(Dialog $dialog, Session $session) {
                 $test = $session->memory['sandbox']['test'] ?? 0;
                 $dialog->say()
-                    ->info("test is :")
-                    ->info(intval($test));
+                    ->info("test is : %test%", ['test' => $test]);
 
                 $session->memory['sandbox']['test'] = $test + 1;
 
                 return $dialog->repeat();
 
             })
-                ->isChoice(0)
+                ->isChoice('a')
                 ->is('sandbox')
 
                 ->otherwise()
 
-            ->isChoice(1, function(Dialog $dialog){
+            ->isChoice('b', function(Dialog $dialog){
 
                     $s = Sandbox::from($this);
                     $test = $s->test ?? 0;
