@@ -7,7 +7,7 @@ namespace Commune\Components\Predefined\Intents\Loop;
 use Commune\Chatbot\App\Intents\MessageIntent;
 
 /**
- * 打破循环.
+ * 打破循环. 取消.
  */
 class BreakInt extends MessageIntent
 {

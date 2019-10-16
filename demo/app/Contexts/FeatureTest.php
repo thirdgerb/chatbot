@@ -5,6 +5,8 @@ namespace Commune\Demo\App\Contexts;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
+use Commune\Chatbot\App\Callables\Actions\Talker;
+use Commune\Chatbot\App\Callables\StageComponents\AskContinue;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\App\Messages\Replies\Link;
@@ -46,6 +48,7 @@ class FeatureTest extends TaskDef
                     '上下文记忆' => 'testMemory',
                     'confirmation && emotion' => 'testConfirmation',
                     '语境嵌套' => 'testSubDialog',
+                    'askContinue 机制' => 'testAskContinue',
                 ]
             )
         );
@@ -362,6 +365,35 @@ EOF
             ->action(Redirector::goRestart());
     }
 
+
+    public function __onTestAskContinue(Stage $stage) : Navigator
+    {
+        $scripts = [];
+        for( $i = 0; $i < 10 ; $i++) {
+            $scripts[] = Talker::say()->info("step is $i");
+        }
+        return $stage->component(
+            (new AskContinue($scripts))
+                ->onBackward(function(Dialog $dialog) : Navigator {
+                    $dialog->say()->info('backward to previous stage');
+                    return $dialog->restart();
+                })
+                ->onFinal(function(Dialog $dialog) : Navigator{
+                    $dialog->say()->info('end loop successful');
+                    return $dialog->restart();
+                })
+                ->onHearing(function(Hearing $hearing) : void {
+                    $hearing->is(
+                        'test',
+                        Talker::say()->info('hit hearing component')
+                    );
+                })
+                ->onHearingFallback(
+                    Talker::say()->warning('not heard')
+                )
+                ->onHelp()
+        );
+    }
 
 
 

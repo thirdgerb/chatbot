@@ -6,11 +6,14 @@ namespace Commune\Components\Predefined\Intents\Loop;
 
 use Commune\Chatbot\App\Intents\MessageIntent;
 
-class ContinueInt extends MessageIntent
+/**
+ * 返回循环的头部
+ */
+class RewindInt extends MessageIntent
 {
-    const SIGNATURE = 'continue';
+    const SIGNATURE = 'rewind';
 
-    const DESCRIPTION = '继续';
+    const DESCRIPTION = '从头开始';
 
     public static function getContextName(): string
     {

@@ -88,7 +88,7 @@ class ScriptMenu extends AbsScriptTask
             ->todo($this->todoDescription())
                 ->is($commands->help)
                 ->soundLike($commands->help)
-                ->isIntent(HelpInt::class)
+                ->onHelp()
 
             ->otherwise();
 

@@ -48,13 +48,13 @@ abstract class AbsStageRoute implements Stage
      * @param string $name
      * @param Context $self
      * @param Dialog $dialog
-     * @param mixed $value
+     * @param Message|Context|null $value
      */
     public function __construct(
         string $name,
         Context $self,
         Dialog $dialog,
-        $value
+        ? Message $value
     )
     {
         $this->name = $name;
@@ -71,7 +71,7 @@ abstract class AbsStageRoute implements Stage
 
     protected function setNavigator(Navigator $navigator = null)
     {
-        $this->navigator = $navigator;
+        $this->navigator = $navigator ?? $this->navigator;
     }
 
     protected function callInterceptor(? callable $interceptor) : void
@@ -97,7 +97,6 @@ abstract class AbsStageRoute implements Stage
             'stage' => $this
         ]);
     }
-
 
     public function onStart(callable $interceptor): Stage
     {
@@ -148,12 +147,28 @@ abstract class AbsStageRoute implements Stage
             $message,
             $keepAlive
         );
+    }
 
+    public function hearing()
+    {
+        if (isset($this->navigator) || $this->isStart()) {
+            return new FakeHearing(
+                $this->dialog,
+                $this->navigator ?? $this->dialog->wait()
+            );
+        }
+
+        return $this->dialog->hear($this->value);
     }
 
 
     public function __get($name)
     {
         return $this->{$name};
+    }
+
+    public function __isset($name)
+    {
+        return isset($this->{$name});
     }
 }

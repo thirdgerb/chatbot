@@ -1,6 +1,5 @@
 <?php
 
-
 return [
     'hello' => [
         'world'  => '您好,世界, 你输入的是{input}',

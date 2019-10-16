@@ -145,10 +145,12 @@ class OnStartStageBuilder implements OnStartStage
 
     public function hearing()
     {
-        if ($this->isStart) {
-            return new FakeHearing($this->stage->dialog, $this->stage->dialog->wait());
+        if ($this->isStart || isset($this->stage->navigator)) {
+            return new FakeHearing(
+                $this->stage->dialog,
+                $this->stage->navigator ?? $this->stage->dialog->wait()
+            );
         }
-
         return $this->stage->dialog->hear($this->stage->value);
     }
 

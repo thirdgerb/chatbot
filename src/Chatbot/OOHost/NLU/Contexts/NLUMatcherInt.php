@@ -11,6 +11,10 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
+/**
+ * NLU 管理工具之一.
+ * 查看 NLU 命中的意图.
+ */
 class NLUMatcherInt extends AbsCmdIntent
 {
     const DESCRIPTION = '查看NLU命中的意图';
@@ -23,7 +27,6 @@ class NLUMatcherInt extends AbsCmdIntent
     public static function __depend(Depending $depending): void
     {
     }
-
 
     public static function getContextName(): string
     {

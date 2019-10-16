@@ -32,12 +32,6 @@ class StartStageRoute extends AbsStageRoute
         return $this->navigator ?? $this->dialog->wait();
     }
 
-    public function hearing()
-    {
-        return new FakeHearing($this->dialog, $this->dialog->wait());
-    }
-
-
     public function wait(
         callable $hearMessage
     ): Navigator

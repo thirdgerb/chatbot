@@ -7,6 +7,7 @@ use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Context\Callables\Action;
 use Commune\Chatbot\OOHost\Context\Callables\Prediction;
 use Commune\Chatbot\OOHost\Emotion\Feeling;
+use Commune\Components\Predefined\Intents\Dialogue\HelpInt;
 use Commune\Support\SoundLike\SoundLikeInterface;
 
 interface Matcher
@@ -28,6 +29,22 @@ interface Matcher
      * @return static
      */
     public function isEventIn(array $eventName, callable $action = null) : Matcher;
+
+
+    /**
+     * 遇到了用户寻求帮助, 则会执行 helping 的内容.
+     *
+     * help 默认的两种匹配方式
+     * - is('mark')
+     * - is(HelpInt)
+     *
+     * @see HelpInt
+     *
+     * @param callable|null $helping
+     * @param string $mark  默认表示 help 的标记, 方便快速匹配. 默认是 ?
+     * @return static
+     */
+    public function onHelp(callable $helping = null, string $mark = '?') : Matcher;
 
 
     /*------- expect -------*/

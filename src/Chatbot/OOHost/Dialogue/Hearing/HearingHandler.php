@@ -27,6 +27,7 @@ use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 use Commune\Chatbot\Blueprint\Message\QA\Confirmation;
+use Commune\Components\Predefined\Intents\Dialogue\HelpInt;
 use Commune\Support\SoundLike\SoundLikeInterface;
 
 class HearingHandler implements Hearing
@@ -889,6 +890,13 @@ class HearingHandler implements Hearing
         }
 
         return $this;
+    }
+
+    public function onHelp(callable $helping = null, string $mark = '?'): Matcher
+    {
+        return $this
+            ->is($mark, $helping)
+            ->isIntent(HelpInt::class, $helping);
     }
 
 
