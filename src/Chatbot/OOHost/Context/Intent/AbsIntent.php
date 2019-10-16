@@ -18,9 +18,6 @@ abstract class AbsIntent
 {
     use IdGeneratorHelper;
 
-    // 例句
-    const NLU_EXAMPLES = [];
-
     /**
      * @var bool|null
      */

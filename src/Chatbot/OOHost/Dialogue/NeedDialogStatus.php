@@ -15,8 +15,4 @@ interface NeedDialogStatus
      */
     public function logDialogStatus(Dialog $dialog) : void;
 
-    /**
-     * @return mixed
-     */
-    public function getDialogStatus() ;
 }

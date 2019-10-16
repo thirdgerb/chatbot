@@ -121,11 +121,18 @@ interface Session extends RunningSpy
     /*----- 保存必要的数据. -----*/
 
     /**
-     * 不保存任何数据.
+     * 要求 session 不保存任何数据.
+     * 等于用根 context 响应一次无状态的请求.
      *
      * keep session status same as last turn, do not record any change
      */
     public function beSneak() : void;
+
+    /**
+     * session 是否是 sneak 状态.
+     * @return bool
+     */
+    public function isSneaky() : bool;
 
     /**
      * 需要退出 session

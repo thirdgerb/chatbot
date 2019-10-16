@@ -29,7 +29,6 @@ use Commune\Chatbot\Config\Children\OOHostConfig;
 use Commune\Chatbot\OOHost\History\Tracker;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
-use Psr\Log\LoggerInterface;
 
 /**
  * @mixin Session
@@ -129,7 +128,7 @@ class SessionImpl implements Session, HasIdGenerator
     /**
      * @var bool
      */
-    protected $sneak = false;
+    protected $sneaky = false;
 
     /**
      * @var string
@@ -428,14 +427,20 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function beSneak(): void
     {
-        $this->sneak = true;
+        $this->sneaky = true;
         $this->handled = true;
     }
+
+    public function isSneaky(): bool
+    {
+        return $this->sneaky;
+    }
+
 
     public function finish(): void
     {
         // 如果是sneak, 什么也不做. 也不会存储.
-        if (!$this->sneak) {
+        if (!$this->sneaky) {
             try {
                 $this->repo->flush($this);
                 $this->logTracking();

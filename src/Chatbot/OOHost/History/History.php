@@ -84,7 +84,12 @@ class History implements RunningSpy
         $this->sessionId = $sessionId = $session->sessionId;
         $this->logger = $session->logger;
 
-        $this->snapshot = $this->session->repo->getSnapshot($sessionId, $belongsTo);
+        // sneaky 状态下, 不从缓存里读取 snapshot. 不需要 IO 开销
+        $this->snapshot = $this->session->isSneaky()
+            ? new Snapshot($this->sessionId, $belongsTo)
+            : $this->session->repo->getSnapshot($sessionId, $belongsTo);
+
+
         $this->prevBreakpoint = $this->snapshot->breakpoint;
         $this->setBreakpoint($this->makeBreakpoint($this->prevBreakpoint));
 

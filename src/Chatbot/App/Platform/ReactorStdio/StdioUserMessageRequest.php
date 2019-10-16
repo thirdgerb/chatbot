@@ -149,7 +149,7 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
         $this->stdio->write(PHP_EOL);
     }
 
-    protected function onBindConversation()
+    protected function onBindConversation() : void
     {
     }
 

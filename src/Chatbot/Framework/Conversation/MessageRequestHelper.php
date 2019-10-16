@@ -42,7 +42,10 @@ trait MessageRequestHelper
     }
 
 
-    abstract protected function onBindConversation();
+    /**
+     * @return void
+     */
+    abstract protected function onBindConversation() : void;
 
 
     public function finish() : void
