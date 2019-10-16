@@ -25,11 +25,6 @@ class CorpusRepository implements Corpus
     protected $optionRepo;
 
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @var IntentCorpusOption[]
      */
     protected $loadedIntents = [];
@@ -43,13 +38,11 @@ class CorpusRepository implements Corpus
      * CorpusRepository constructor.
      * @param IntentRegistrar $registrar
      * @param OptionRepository $optionRepo
-     * @param ContainerInterface $container
      */
-    public function __construct(IntentRegistrar $registrar, OptionRepository $optionRepo, ContainerInterface $container)
+    public function __construct(IntentRegistrar $registrar, OptionRepository $optionRepo)
     {
         $this->registrar = $registrar;
         $this->optionRepo = $optionRepo;
-        $this->container = $container;
     }
 
 
@@ -60,12 +53,12 @@ class CorpusRepository implements Corpus
             $id = $option->getId();
 
             // 如果没有存储. 主动存储
-            if (!$this->optionRepo->has($this->container, IntentCorpusOption::class, $id)) {
+            if (!$this->optionRepo->has( IntentCorpusOption::class, $id)) {
                 $toSave[] = $option;
 
             // 如果有存储, 也要比较一下 hash
             } else {
-                $saved = $this->optionRepo->find($this->container, IntentCorpusOption::class, $id);
+                $saved = $this->optionRepo->find( IntentCorpusOption::class, $id);
 
                 if ($saved->getHash() != $option->getHash()) {
                     $toSave[] = $option;
@@ -75,7 +68,7 @@ class CorpusRepository implements Corpus
         }
 
         if (!empty($toSave)) {
-            $this->optionRepo->saveBatch($this->container, IntentCorpusOption::class, true, ...$toSave);
+            $this->optionRepo->saveBatch( IntentCorpusOption::class, true, ...$toSave);
         }
 
     }
@@ -86,7 +79,7 @@ class CorpusRepository implements Corpus
             return false;
         }
 
-        return isset($this->loadedIntents[$intentName]) || $this->optionRepo->has($this->container, IntentCorpusOption::class, $intentName);
+        return isset($this->loadedIntents[$intentName]) || $this->optionRepo->has( IntentCorpusOption::class, $intentName);
     }
 
     public function getIntentCorpus(string $intentName): IntentCorpusOption
@@ -97,7 +90,7 @@ class CorpusRepository implements Corpus
 
         $has = $this->optionRepo
             ->has(
-                $this->container,
+
                 IntentCorpusOption::class,
                 $intentName
             );
@@ -105,7 +98,7 @@ class CorpusRepository implements Corpus
         if ($has) {
             $option = $this->optionRepo
                 ->find(
-                    $this->container,
+
                     IntentCorpusOption::class,
                     $intentName
                 );
@@ -129,7 +122,7 @@ class CorpusRepository implements Corpus
     public function removeIntentCorpus(string $intentName): void
     {
         unset($this->loadedIntents[$intentName]);
-        $this->optionRepo->delete($this->container, IntentCorpusOption::class, $intentName);
+        $this->optionRepo->delete( IntentCorpusOption::class, $intentName);
     }
 
 
@@ -155,7 +148,7 @@ class CorpusRepository implements Corpus
 
     public function hasEntityDict(string $EntityName): bool
     {
-        return isset($this->loadedEntities[$EntityName]) || $this->optionRepo->has($this->container, EntityDictOption::class, $EntityName);
+        return isset($this->loadedEntities[$EntityName]) || $this->optionRepo->has( EntityDictOption::class, $EntityName);
     }
 
 
@@ -167,7 +160,7 @@ class CorpusRepository implements Corpus
 
         $has = $this->optionRepo
             ->has(
-                $this->container,
+
                 EntityDictOption::class,
                 $EntityName
             );
@@ -175,7 +168,7 @@ class CorpusRepository implements Corpus
         if ($has) {
             $option = $this->optionRepo
                 ->find(
-                    $this->container,
+
                     EntityDictOption::class,
                     $EntityName
                 );
@@ -193,7 +186,7 @@ class CorpusRepository implements Corpus
     public function removeEntityDict(string $EntityName): void
     {
         unset($this->loadedEntities[$EntityName]);
-        $this->optionRepo->delete($this->container, EntityDictOption::class, $EntityName);
+        $this->optionRepo->delete( EntityDictOption::class, $EntityName);
     }
 
 

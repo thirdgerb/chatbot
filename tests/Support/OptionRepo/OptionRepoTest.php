@@ -21,6 +21,7 @@ use Commune\Support\OptionRepo\Storage\Memory\MemoryStorage;
 use Commune\Support\OptionRepo\Storage\Memory\MemoryStorageMeta;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 class OptionRepoTest extends TestCase
@@ -33,10 +34,11 @@ class OptionRepoTest extends TestCase
     protected function prepareContainer(array $metas) : Container
     {
         $container = new Container();
+        $container->instance(ContainerInterface::class, $container);
+        $container->instance(LoggerInterface::class, new Logger('test'));
 
         $container->singleton(OptionRepository::class, OptionRepositoryImpl::class);
 
-        $container->instance(LoggerInterface::class, new Logger('test'));
         $container->singleton(JsonRootStorage::class);
         $container->singleton(PHPRootStorage::class);
         $container->singleton(YamlRootStorage::class);
@@ -120,22 +122,22 @@ class OptionRepoTest extends TestCase
          */
         $repo = $c->get(OptionRepository::class);
 
-        $repo->save($c ,'test', $expect = TestOption::createById('test'));
+        $repo->save('test', $expect = TestOption::createById('test'));
 
-        $t = $repo->find($c, 'test', 'test' );
+        $t = $repo->find('test', 'test' );
 
         $this->assertTrue(isset($t));
         $this->assertEquals($t->toArray(), $expect->toArray());
 
-        $each = $repo->findAllVersions($c, 'test', 'test');
+        $each = $repo->findAllVersions('test', 'test');
         $this->assertNotEmpty($each);
 
         foreach ($each as $option) {
             $this->assertEquals($expect->getHash(), $option->getHash());
         }
 
-        $repo->delete($c, 'test', 'test');
-        $this->assertFalse($repo->has($c, 'test', 'test'));
+        $repo->delete( 'test', 'test');
+        $this->assertFalse($repo->has( 'test', 'test'));
 
         $this->assertFalse(file_exists(Demo::YAML . '/test.yaml' ));
         $this->assertFalse(file_exists(Demo::JSON . '/test.yaml' ));
@@ -143,7 +145,7 @@ class OptionRepoTest extends TestCase
         $e = null;
         try {
 
-            $repo->find($c, 'test', 'test');
+            $repo->find('test', 'test');
         } catch (OptionNotFoundException $e) {
         }
 
@@ -161,21 +163,21 @@ class OptionRepoTest extends TestCase
          * @var OptionRepository $repo
          */
         $repo = $c->get(OptionRepository::class);
-        $this->assertTrue($repo->has($c, 'json', 'notRootJson'));
-        $a = $repo->find($c, 'json', 'notRootJson');
+        $this->assertTrue($repo->has('json', 'notRootJson'));
+        $a = $repo->find('json', 'notRootJson');
         $this->assertTrue($a instanceof TestOption);
 
 
         $data = $origin = $a->toArray();
         $originA = $data['a'];
         $data['a'] = 'F';
-        $repo->save($c, 'json', new TestOption($data));
+        $repo->save( 'json', new TestOption($data));
 
-        $this->assertEquals('F', $repo->find($c, 'json', 'notRootJson')->a);
+        $this->assertEquals('F', $repo->find('json', 'notRootJson')->a);
 
         $data['a'] = $originA;
-        $repo->save($c, 'json', new TestOption($data));
+        $repo->save( 'json', new TestOption($data));
 
-        $this->assertEquals($origin, $repo->find($c, 'json', 'notRootJson')->toArray());
+        $this->assertEquals($origin, $repo->find('json', 'notRootJson')->toArray());
     }
 }

@@ -19,6 +19,11 @@ use Psr\Log\LoggerInterface;
 class OptionRepositoryImpl implements OptionRepository
 {
     /**
+     * @var ContainerInterface
+     */
+    protected $container;
+    
+    /**
      * @var CategoryMeta[]
      */
     protected $metas = [];
@@ -34,11 +39,13 @@ class OptionRepositoryImpl implements OptionRepository
     protected $constantOptions = [];
 
     /**
-     * OptionRepoImpl constructor.
+     * OptionRepositoryImpl constructor.
+     * @param ContainerInterface $container
      * @param LoggerInterface $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(ContainerInterface $container, LoggerInterface $logger)
     {
+        $this->container = $container;
         $this->logger = $logger;
     }
 
@@ -72,7 +79,6 @@ class OptionRepositoryImpl implements OptionRepository
 
 
     public function has(
-        ContainerInterface $container,
         string $category,
         string $optionId
     ): bool
@@ -86,12 +92,11 @@ class OptionRepositoryImpl implements OptionRepository
         /**
          * @var RootOptionStage $root
          */
-        $root = $this->getStorage($container, $rootMeta);
+        $root = $this->getStorage( $rootMeta);
         return $root->has($meta, $rootMeta, $optionId);
     }
 
     public function find(
-        ContainerInterface $container,
         string $category,
         string $optionId
     ): Option
@@ -111,7 +116,7 @@ class OptionRepositoryImpl implements OptionRepository
          */
         foreach ($meta->getStoragePipeline() as $storageMeta) {
 
-            $driver = $this->getStorage($container, $storageMeta);
+            $driver = $this->getStorage( $storageMeta);
             $result = $driver->get($meta, $storageMeta, $optionId);
 
             // 数据已经找到, 跳出循环.
@@ -125,7 +130,7 @@ class OptionRepositoryImpl implements OptionRepository
         // 所有管道都没有找到.
         if (!isset($result)) {
             $storageMeta = $meta->getRootStorage();
-            $rootDriver = $this->getStorage($container, $storageMeta);
+            $rootDriver = $this->getStorage( $storageMeta);
             $result = $rootDriver->get($meta, $storageMeta, $optionId);
             if (!isset($result)) {
                 throw new OptionNotFoundException($category, $optionId);
@@ -151,7 +156,6 @@ class OptionRepositoryImpl implements OptionRepository
     }
 
     public function findAllVersions(
-        ContainerInterface $container,
         string $category,
         string $optionId
     ): array
@@ -171,12 +175,12 @@ class OptionRepositoryImpl implements OptionRepository
          */
         foreach ($meta->getStoragePipeline() as $storageMeta) {
 
-            $driver = $this->getStorage($container, $storageMeta);
+            $driver = $this->getStorage( $storageMeta);
             $result[$storageMeta->name] = $driver->get($meta,  $storageMeta, $optionId);
         }
 
         $rootMeta = $meta->getRootStorage();
-        $rootDriver = $this->getStorage($container, $rootMeta);
+        $rootDriver = $this->getStorage( $rootMeta);
         $result['rootStorage'] = $rootDriver->get($meta, $rootMeta, $optionId);
 
         return $result;
@@ -195,7 +199,6 @@ class OptionRepositoryImpl implements OptionRepository
     }
 
     public function save(
-        ContainerInterface $container,
         string $category,
         Option $option,
         bool $draft = false
@@ -213,7 +216,7 @@ class OptionRepositoryImpl implements OptionRepository
 
         $meta = $this->getCategoryMeta($category);
         $rootMeta = $meta->getRootStorage();
-        $rootDriver = $this->getStorage($container, $rootMeta);
+        $rootDriver = $this->getStorage( $rootMeta);
 
 
         /**
@@ -230,20 +233,18 @@ class OptionRepositoryImpl implements OptionRepository
 
         // 如果不是打草稿, 就直接同步.
         if (!$draft) {
-            $this->sync( $container, $category, $id);
+            $this->sync($category, $id);
         }
     }
 
     protected function getStorage(
-        ContainerInterface $container,
         StorageMeta $meta
     ) : OptionStorage
     {
-        return $container->get($meta->getDriver());
+        return $this->container->get($meta->getDriver());
     }
 
     public function saveBatch(
-        ContainerInterface $container,
         string $category,
         bool $draft,
         Option ...$options
@@ -257,19 +258,18 @@ class OptionRepositoryImpl implements OptionRepository
 
         $meta = $this->getCategoryMeta($category);
         $rootMeta = $meta->getRootStorage();
-        $rootDriver = $this->getStorage($container, $rootMeta);
+        $rootDriver = $this->getStorage( $rootMeta);
         $rootDriver->save($meta, $rootMeta, ...$options);
 
         if ($draft) {
             $ids = array_map(function(Option $option){
                 return $option->getId();
             }, $options);
-            $this->deleteFromPipeline($container, $meta, ...$ids);
+            $this->deleteFromPipeline($meta, ...$ids);
         }
     }
 
     public function syncCategory(
-        ContainerInterface $container,
         string $category
     ): void
     {
@@ -277,7 +277,7 @@ class OptionRepositoryImpl implements OptionRepository
         $pipes = array_reverse(iterator_to_array($meta->getStoragePipeline()));
 
         foreach ($pipes as $pipe) {
-            $driver = $this->getStorage($container, $pipe);
+            $driver = $this->getStorage($pipe);
             $driver->flush($meta, $pipe);
         }
     }
@@ -293,7 +293,6 @@ class OptionRepositoryImpl implements OptionRepository
     }
 
     public function delete(
-        ContainerInterface $container,
         string $category,
         string ...$ids
     ): void
@@ -314,14 +313,13 @@ class OptionRepositoryImpl implements OptionRepository
 
         // 必须先删除根节点.
         $root = $meta->getRootStorage();
-        $driver = $this->getStorage($container, $root);
+        $driver = $this->getStorage($root);
         $driver->delete($meta, $root, ...$ids);
-        $this->deleteFromPipeline($container, $meta, ...$ids);
+        $this->deleteFromPipeline($meta, ...$ids);
 
     }
 
     protected function deleteFromPipeline(
-        ContainerInterface $container,
         CategoryMeta $meta,
         string ...$ids
     ) : void
@@ -332,13 +330,12 @@ class OptionRepositoryImpl implements OptionRepository
             /**
              * @var OptionStorage $driver
              */
-            $driver = $this->getStorage($container, $storageMeta);
+            $driver = $this->getStorage( $storageMeta);
             $driver->delete($meta, $storageMeta, ...$ids);
         }
     }
 
     public function sync(
-        ContainerInterface $container,
         string $category,
         string $id
     ): void
@@ -352,7 +349,7 @@ class OptionRepositoryImpl implements OptionRepository
         }
 
         $meta = $this->getCategoryMeta($category);
-        $this->deleteFromPipeline($container, $meta, $id);
+        $this->deleteFromPipeline($meta, $id);
 
     }
 
@@ -365,7 +362,6 @@ class OptionRepositoryImpl implements OptionRepository
     /*-------- multi option manager --------*/
 
     public function count(
-        ContainerInterface $container,
         string $category
     ): int
     {
@@ -374,12 +370,11 @@ class OptionRepositoryImpl implements OptionRepository
         /**
          * @var RootOptionStage $driver
          */
-        $driver = $this->getStorage($container, $root);
+        $driver = $this->getStorage( $root);
         return $driver->count($meta, $root);
     }
 
     public function paginateIdToBrief(
-        ContainerInterface $container,
         string $category,
         int $page = 1,
         int $lines = 20
@@ -390,12 +385,11 @@ class OptionRepositoryImpl implements OptionRepository
         /**
          * @var RootOptionStage $driver
          */
-        $driver = $this->getStorage($container, $root);
+        $driver = $this->getStorage( $root);
         return $driver->paginateIdToBrief($meta, $root, $page, $lines);
     }
 
     public function getAllOptionIds(
-        ContainerInterface $container,
         string $category
     ): array
     {
@@ -404,12 +398,11 @@ class OptionRepositoryImpl implements OptionRepository
         /**
          * @var RootOptionStage $driver
          */
-        $driver = $this->getStorage($container, $root);
+        $driver = $this->getStorage( $root);
         return $driver->getAllOptionIds($meta, $root);
     }
 
     public function findOptionsByIds(
-        ContainerInterface $container,
         string $category,
         array $ids
     ): array
@@ -419,12 +412,11 @@ class OptionRepositoryImpl implements OptionRepository
         /**
          * @var RootOptionStage $driver
          */
-        $driver = $this->getStorage($container, $root);
+        $driver = $this->getStorage( $root);
         return $driver->findOptionsByIds($meta, $root, $ids);
     }
 
     public function searchInBriefs(
-        ContainerInterface $container,
         string $category,
         string $query
     ): array
@@ -434,12 +426,11 @@ class OptionRepositoryImpl implements OptionRepository
         /**
          * @var RootOptionStage $driver
          */
-        $driver = $this->getStorage($container, $root);
+        $driver = $this->getStorage( $root);
         return $driver->searchOptionsByQuery($meta, $root, $query);
     }
 
     public function eachOption(
-        ContainerInterface $container,
         string $category
     ): \Generator
     {
@@ -448,7 +439,7 @@ class OptionRepositoryImpl implements OptionRepository
         /**
          * @var RootOptionStage $driver
          */
-        $driver = $this->getStorage($container, $root);
+        $driver = $this->getStorage( $root);
         foreach ($driver->eachOption($meta, $root) as $option) {
             yield $option;
         }

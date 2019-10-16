@@ -6,7 +6,6 @@ namespace Commune\Chatbot\Framework\Component\Providers;
 
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
 use Symfony\Component\Yaml\Yaml;
@@ -66,13 +65,13 @@ class LoadNLUExamplesFromYaml extends ServiceProvider
         $toSave = [];
         foreach ($options as $example) {
             $intentOption = new IntentCorpusOption($example);
-            if (!$repo->has($app, IntentCorpusOption::class, $intentOption->getId())) {
+            if (!$repo->has( IntentCorpusOption::class, $intentOption->getId())) {
                 $toSave[] = $intentOption;
             }
         }
 
         if (!empty($toSave)) {
-            $repo->saveBatch($app, IntentCorpusOption::class, true,  ...$toSave);
+            $repo->saveBatch( IntentCorpusOption::class, true,  ...$toSave);
         }
 
     }

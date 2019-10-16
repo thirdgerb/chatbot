@@ -1,7 +1,7 @@
 <?php
 
-
 namespace Commune\Chatbot\OOHost\NLU\Providers;
+
 use Commune\Chatbot\Framework\Providers\BaseServiceProvider;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
@@ -57,8 +57,7 @@ class NLUServiceProvider extends BaseServiceProvider
             $this->app->singleton(Corpus::class, function($app){
                 return new CorpusRepository(
                     $app[IntentRegistrar::class],
-                    $app[OptionRepository::class],
-                    $app
+                    $app[OptionRepository::class]
                 );
             });
         }

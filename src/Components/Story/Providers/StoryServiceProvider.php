@@ -44,7 +44,7 @@ class StoryServiceProvider extends BaseServiceProvider
         $registrar = $app[StoryRegistrar::class];
         $repo = $app[OptionRepository::class];
 
-        foreach ($repo->eachOption($app, ScriptOption::class) as $script) {
+        foreach ($repo->eachOption(ScriptOption::class) as $script) {
             $registrar->registerScriptOption($script);
         }
     }

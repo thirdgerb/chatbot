@@ -7,6 +7,7 @@ namespace Commune\Chatbot\Framework\Providers;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
 use Commune\Support\OptionRepo\Impl\OptionRepositoryImpl;
 use Commune\Support\OptionRepo\Storage;
+use Psr\Log\LoggerInterface;
 
 class OptionRepoServiceProvider extends BaseServiceProvider
 {
@@ -25,7 +26,13 @@ class OptionRepoServiceProvider extends BaseServiceProvider
     protected function registerOptionRepository()
     {
         if (!$this->app->bound(OptionRepository::class)) {
-            $this->app->singleton(OptionRepository::class, OptionRepositoryImpl::class);
+            $this->app->singleton(OptionRepository::class, function($app){
+                return new OptionRepositoryImpl(
+                    $app,
+                    $app[LoggerInterface::class]
+                );
+
+            });
         }
     }
 

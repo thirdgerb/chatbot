@@ -1,5 +1,6 @@
-## 2019-10-15
+## 2019-10-16
 
--   Host 允许从 request 获取 chatId 和 sessionId, 从而避免数据读写, 方便实现高性能的 api 端.
--   session 增加 isSneaky 方法.
--   session 如果是 sneaky 状态, 不再从数据中读取 snapshot, 这样又少一层IO. 副作用是 command 就无法读到当前 session 的状态了.
+-   OptionRepository 去掉了 调用时传入的 container
+    -   改为持有 process container.
+    -   OptionRepo 的 storage 不再允许从 conversation 里获取实例.
+    -   这样做降低了设计的复杂度, 而且配置理应在启动时就完成加载.
