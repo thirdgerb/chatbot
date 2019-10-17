@@ -4,12 +4,10 @@
 namespace Commune\Components\SimpleChat\Providers;
 
 
-use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
-use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Components\SimpleChat\Options\ChatOption;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;

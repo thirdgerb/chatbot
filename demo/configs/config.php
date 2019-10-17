@@ -14,7 +14,7 @@ return [
         ],
     ],
     'components' => [
-        \Commune\Demo\App\DemoComponent::class,
+        \Commune\Components\Demo\DemoComponent::class,
         \Commune\Components\SimpleChat\SimpleChatComponent::class,
         \Commune\Components\Story\StoryComponent::class,
 
@@ -22,19 +22,8 @@ return [
 //        \Commune\Chatbot\App\Components\RasaComponent::class => [
 //            'output' => __DIR__ .'/nlu.md',
 //        ],
-//        \Commune\Components\Predefined\IntentsIntComponent::class,
-//        \Commune\Components\SimpleChatComponent::class => [
-//            'default' => 'demo',
-//            'resources' => [
-//                [
-//                    'id' => 'demo',
-//                    'resource' => __DIR__ .'/chats/example.yml'
-//                ]
-//            ]
-//        ],
     ],
     'processProviders' => [
-        \Commune\Demo\App\Providers\EventServiceProvider::class,
     ],
     'conversationProviders' => [
         \Commune\Chatbot\App\Drivers\Demo\CacheServiceProvider::class,
@@ -93,7 +82,7 @@ return [
     ],
         
     'host' => [
-        'rootContextName' => \Commune\Demo\App\Contexts\DemoHome::class,
+        'rootContextName' => \Commune\Components\Demo\Contexts\DemoHome::class,
         'sessionPipes' => [
             \Commune\Chatbot\App\SessionPipe\EventMsgPipe::class,
             \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,

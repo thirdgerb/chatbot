@@ -17,7 +17,6 @@
     ],
     "autoload" : {
         "psr-4" : {
-            "Commune\\Demo\\App\\" : "demo/app/",
             "Commune\\" : "src/"
         }
     },

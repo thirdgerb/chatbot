@@ -4,8 +4,8 @@
 namespace Commune\Test\Demo\Cases\Maze;
 
 
-use Commune\Demo\App\Cases\Maze\Logic\Manager;
-use Commune\Demo\App\Cases\Maze\Logic\Map;
+use Commune\Components\Demo\Cases\Maze\Logic\Manager;
+use Commune\Components\Demo\Cases\Maze\Logic\Map;
 use PHPUnit\Framework\TestCase;
 
 class MazeMapTest extends TestCase

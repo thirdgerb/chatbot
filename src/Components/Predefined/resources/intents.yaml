@@ -1,7 +1,24 @@
 - intentName : attitudes.affirm
   examples : 
-    - 
+    - yes
+    - 是的
+    - 没错
+    - 的确如此
+    - 是
+    - 就是这样
+    - 对的
+    - 对
+    - 嗯
 - intentName : attitudes.agree
+  examples :
+    - 好的
+    - ok
+    - 可以
+    - 行
+    - 就这样
+    - 好啊
+    - 同意
+    - 允许
 - intentName : attitudes.deny
   examples :
     - no
@@ -45,6 +62,11 @@
 - intentName : loop.break
 - intentName : loop.continue
 - intentName : loop.next
+  examples :
+    - 下一步
+    - 下一个
+    - 之后呢
+    - 继续
 - intentName : loop.previous
 - intentName : navigation.backward
   examples :
@@ -57,25 +79,27 @@
 - intentName : navigation.cancel
 - intentName : navigation.home
 - intentName : navigation.quit
+  examples:
+    - 再见
+    - 我走了
+    - 拜拜
+    - 我想退出
 - intentName : navigation.repeat
   examples:
     - 再说一遍
     - 刚才说什么
     - 现在说的是啥
     - 你问什么
-    - 你要干什么来着
-    - 你刚才要我干嘛
-    - 我现在要做什么
-    - 现在要干嘛
-    - 我们在干什么
+    - 刚才说啥
 - intentName : navigation.restart
   examples :
-    - restart
+    - 重来一次
     - 重来一遍吧
-    - 从头开始吧
+    - 从头开始
     - 重新来一次
     - 从第一步再来
     - 能不能重新开始
     - 我想要重来一遍
+
 
 

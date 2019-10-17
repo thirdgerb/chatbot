@@ -21,13 +21,6 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  */
 class PropertyEtt implements Entity
 {
-    // 默认的问题方法前缀, 方法传入Dialog, 返回值是 void.
-    // 参考下面的 askDefaultQuestion
-    const QUESTION_METHOD_PREFIX = '__ask';
-    // 默认的参数校验方法前缀. 方法传入Dialog和Message, 返回 ? Navigator
-    // 参考下面的 validate 方法.
-    const ANSWER_VALIDATE_METHOD_PREFIX = '__validate';
-
     /**
      * @var string
      */
@@ -91,17 +84,17 @@ class PropertyEtt implements Entity
 
     public function asStage(Stage $stageRoute) : Navigator
     {
+        // 如果数据存在, 则走下一步.
+        $value = $stageRoute->self->{$this->name};
+        if (isset($value)) {
+            return $stageRoute->dialog->next();
+        }
+
         // context 定义的 stage 最高优.
         // stage method 存在的时候, stage 使用该方法.
         $stageMethod = Context::STAGE_METHOD_PREFIX . $this->name;
         if (method_exists($stageRoute->self, $stageMethod)) {
             return $stageRoute->self->{$stageMethod}($stageRoute);
-        }
-
-        // 如果数据存在, 则走下一步.
-        $value = $stageRoute->self->{$this->name};
-        if (isset($value)) {
-            return $stageRoute->dialog->next();
         }
 
         // 如果是记忆的话, 用记忆的stage 取代当前的stage
@@ -146,11 +139,6 @@ class PropertyEtt implements Entity
 
     protected function validate(Context $self, Dialog $dialog, Message $message) : ? Navigator
     {
-        $method = static::ANSWER_VALIDATE_METHOD_PREFIX . ucfirst($this->name);
-        if (method_exists($self, $method)) {
-            return $self->{$method}($dialog, $message);
-        }
-
         // 用interceptor 作为一种校验方式.
         if (isset($this->validator)) {
             return $dialog->app
@@ -177,13 +165,6 @@ class PropertyEtt implements Entity
      */
     protected function askDefaultQuestion(Context $self, Dialog $dialog) : void
     {
-        // 方法存在, 优先用方法来提问.
-        $method = static::QUESTION_METHOD_PREFIX . ucfirst($this->name);
-        if (method_exists($self, $method)) {
-            $self->{$method}($dialog);
-            return;
-        }
-
         // 如果是 intent, 直接请求 entity, 拿到结果会自动赋值, 从而跳过这一步.
         if ($self instanceof IntentMessage) {
             $dialog->say($this->getSlots())->askIntentEntity(
