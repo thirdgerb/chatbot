@@ -12,6 +12,7 @@ use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Demo\App\Cases\Maze\MazeInt;
+use Commune\Demo\App\Cases\Questionnaire\ReadPersonality;
 use Commune\Studio\Components\Demo\Guest\GuessNum;
 
 class TestGames extends TaskDef
@@ -34,6 +35,7 @@ class TestGames extends TaskDef
                     MazeInt::class,
                     'story.examples.sanguo.changbanpo',
                     GuessNum::class,
+                    ReadPersonality::class,
                 ]
             ))->onFallback(Redirector::goFulfill())
         );

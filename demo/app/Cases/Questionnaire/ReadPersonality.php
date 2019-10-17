@@ -244,7 +244,7 @@ class ReadPersonality extends Questionnaire
 
         $this->showResult($dialog);
 
-        $dialog->say()->info("退出后, 再次进入可记得结果, 并可重新测试(多轮对话功能点)");
+        $dialog->say()->info("退出后, 再次进入可记得结果, 并可重新测试");
         return null;
     }
 

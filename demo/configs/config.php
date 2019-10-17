@@ -16,6 +16,7 @@ return [
     'components' => [
         \Commune\Demo\App\DemoComponent::class,
         \Commune\Components\SimpleChat\SimpleChatComponent::class,
+        \Commune\Components\Story\StoryComponent::class,
 
 //        \Commune\Chatbot\App\Components\SimpleFileChatComponent::class,
 //        \Commune\Chatbot\App\Components\RasaComponent::class => [

@@ -6,6 +6,8 @@ namespace Commune\Demo\App;
 
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Component\ComponentOption;
+use Commune\Components\SimpleChat\SimpleChatComponent;
+use Commune\Components\Story\StoryComponent;
 
 /**
  * @property-read string $langPath
@@ -21,6 +23,9 @@ class DemoComponent extends ComponentOption
         );
 
         $this->loadTranslationResource($this->langPath, $this->langLoader);
+
+        $this->dependComponent(StoryComponent::class);
+        $this->dependComponent(SimpleChatComponent::class);
     }
 
 
