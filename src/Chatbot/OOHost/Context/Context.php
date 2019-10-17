@@ -42,7 +42,10 @@ interface Context extends
     // 定义多轮对话每个阶段的方法名前缀.
     // 例如 start 阶段, 命名为 __onStart
     const STAGE_METHOD_PREFIX = '__on';
-    // 允许用 annotation 来标注 stage. 这两种方法未来更倾向于前者, 因为容错更好.
+
+    // 允许用 annotation 来标注 stage.
+    // 在方法的注解上标记  @stage
+    // 这两种方法未来更倾向于前者, 因为容错更好.
     const STAGE_ANNOTATION = 'stage';
 
     // 多轮对话的启动阶段.

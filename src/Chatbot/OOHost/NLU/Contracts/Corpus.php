@@ -29,7 +29,17 @@ interface Corpus
      */
     public function getIntentCorpus(string $intentName) : IntentCorpusOption;
 
+    /**
+     * 计算所有的 intent 数量.
+     * @return int
+     */
+    public function countIntentCorpus() : int;
 
+    /**
+     * 是否存在
+     * @param string $intentName
+     * @return bool
+     */
     public function hasIntentCorpus(string $intentName) : bool;
 
     /**
@@ -50,6 +60,11 @@ interface Corpus
      */
     public function getIntentCorpusMap(array $intentNames) : array;
 
+    /**
+     * 保存改动, 或者创建新的 intentCorpus
+     * @param IntentCorpusOption $option
+     */
+    public function saveIntentCorpus(IntentCorpusOption $option) : void;
 
     /*-------- entity option --------*/
 
@@ -81,4 +96,6 @@ interface Corpus
      */
     public function getEntityDictMap(array $entityNames) : array;
 
+
+    public function saveEntityDict(EntityDictOption $option) : void;
 }

@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Components\NLUExamples;
+namespace Commune\Chatbot\OOHost\NLU\Contexts;
 
 
-use Commune\Chatbot\App\Callables\Actions\ToNext;
+use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Callables\Intercepers\MustBeSupervisor;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Callables\StageComponents\Paginator;
@@ -19,29 +19,26 @@ use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
 use Commune\Chatbot\OOHost\Context\OOContext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\NLU\Corpus\IntExample as NLUExample;
+use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Illuminate\Support\Collection;
 
 /**
+ * 管理意图的语料样本.
+ *
  * @property string $domain
  * @property string $editingName
  * @property int $page
- *
  */
-class NLUExamplesTask extends OOContext
+class IntCorpusEditor extends OOContext
 {
     use AskContinueTrait;
 
-    const DESCRIPTION = '管理意图的 NLU 样本';
+    const DESCRIPTION = '管理意图的语料样本';
 
-    const CONTEXT_TAGS = [
-        Definition::TAG_MANAGER
-    ];
 
     protected $limit = 15;
 
@@ -58,7 +55,11 @@ class NLUExamplesTask extends OOContext
         return 'nlu.examples.manager';
     }
 
-    public function staging(Stage $stage)
+    /**
+     * 必须登录, 管理员才能登录.
+     * @param Stage $stage
+     */
+    public function __staging(Stage $stage)
     {
         $stage->onStart(new MustBeSupervisor());
     }
@@ -67,23 +68,31 @@ class NLUExamplesTask extends OOContext
     {
     }
 
-    public function __onStart(Stage $stage): Navigator
-    {
-        $repo = $this->getSession()->intentRepo;
-        $intentCount = $repo->countIntentsHasNLUExamples();
-        $expCount = $repo->countNLUExamples();
-        return $stage->buildTalk()
-            ->info("对意图(intent) 的例句进行管理.(随时输入.exit退出)
-可为意图查看, 添加例句.
-共有$intentCount 个intent配置了共$expCount 条例句.")
-            ->goStage('manager');
-    }
 
     public function __hearing(Hearing $hearing) : void
     {
         $hearing->is('.exit', function(Dialog $dialog){
-             return $dialog->fulfill();
+            return $dialog->fulfill();
         });
+    }
+
+
+    public function __onStart(Stage $stage): Navigator
+    {
+        $corpus = $this->getCorpus();
+
+        $intentCount = 0;
+        $exampleCount = 0;
+        foreach ($corpus->eachIntentCorpus() as $intentCorpus) {
+            $intentCount ++;
+            $exampleCount += count($intentCorpus->examples);
+        }
+
+        return $stage->buildTalk()
+            ->info("对意图(intent) 的例句进行管理.(随时输入.exit退出)
+可为意图查看, 添加例句.
+共有$intentCount 个intent配置了共$exampleCount 条例句.")
+            ->goStage('manager');
     }
 
     public function __onManager(Stage $stage) : Navigator
@@ -91,14 +100,11 @@ class NLUExamplesTask extends OOContext
         return $stage->component(new Menu(
             '请选择操作',
             [
-                '查看有例句的意图列表' => 'list',
                 '查看意图列表' => 'listIntents',
                 '编辑单个意图的例句' => 'show',
-                '退出' => function(Dialog $dialog) {
-                    return $dialog->fulfill();
-                },
-                '强制保存' => function(Dialog $dialog, NLUExamplesManager $manager) {
-                    $manager->generate();
+                '退出' => Redirector::goFulfill(),
+                '强制同步' => function(Dialog $dialog, Corpus $corpus) {
+                    $corpus->sync();
                     $dialog->say()->info('保存成功');
                     return $dialog->repeat();
                 }
@@ -106,36 +112,6 @@ class NLUExamplesTask extends OOContext
         ));
     }
 
-
-    public function __onList(Stage $stage) : Navigator
-    {
-        $repo = $this->getRepo();
-        $all = $repo->getNLUExampleMapByIntentDomain($this->domain);
-        $totalPage = (int) ceil(count($all) / $this->limit);
-
-        return $this->doPaginate(
-            $stage,
-            $totalPage,
-            function(Context $self, Dialog $dialog, int $offset, int $limit) use ($all){
-                return (new Collection($all))->splice($offset, $limit);
-            },
-            function(Context $self, Dialog $dialog, Collection $items){
-
-                $list = [];
-                $repo = $this->getRepo();
-
-                foreach ($items as $name => $collection) {
-                    $count = count($collection);
-                    $desc = $repo->getDef($name)->getDesc();
-
-                    $list[] = "$name ($count) : $desc";
-                }
-
-                $dialog->say()->info(implode("\n", $list));
-
-            }
-        );
-    }
 
 
     /**
@@ -160,16 +136,17 @@ class NLUExamplesTask extends OOContext
             function(Context $self, Dialog $dialog, Collection $items){
 
                 $list = [];
+                $corpus = $this->getCorpus();
                 $repo = $this->getRepo();
 
                 foreach ($items as $name) {
-                    $count = $repo->countNLUExamples($name);
+                    $intentCorpus = $corpus->getIntentCorpus($name);;
+                    $count = count($intentCorpus->examples);
                     $desc = $repo->getDef($name)->getDesc();
                     $list[] = "$name ($count) : $desc";
                 }
 
                 $dialog->say()->info(implode("\n", $list));
-
             }
         );
 
@@ -237,7 +214,8 @@ class NLUExamplesTask extends OOContext
 
                 $this->editingName = $name;
                 $repo = $this->getRepo();
-                if ($repo->hasDef($name) || $repo->countNLUExamples($name) > 0) {
+
+                if ($repo->hasDef($name)) {
                     return $dialog->goStage('editIntent');
                 }
 
@@ -258,15 +236,17 @@ class NLUExamplesTask extends OOContext
 
         return $stage->buildTalk()
             ->withSlots(['editing' => $this->editingName])
-            ->askConfirm('是否创建 %editing% 的占位符?')
+            ->askConfirm('是否创建 %editing% 意图语料 ?')
             ->wait()
             ->hearing()
-            ->isPositive(function(Dialog $dialog){
-                $this->getRepo()->registerDef(new PlaceHolderIntentDef($this->editingName), false);
+            ->isPositive(function(Dialog $dialog, Corpus $corpus){
+                $option = $corpus->getIntentCorpus($this->editingName);
+                $corpus->saveIntentCorpus($option);
+
                 return $dialog->goStage('editIntent');
 
             })
-            ->end(new ToNext('manager'));
+            ->end(Redirector::goStage('manager'));
     }
 
     /**
@@ -277,8 +257,8 @@ class NLUExamplesTask extends OOContext
     public function __onEditIntent(Stage $stage) : Navigator
     {
         return $stage->dependOn(
-            new EditIntentTask($this->editingName),
-            new ToNext('manager')
+            new IntExampleEditor($this->editingName),
+            Redirector::goStage('manager')
         );
     }
 
@@ -295,17 +275,23 @@ class NLUExamplesTask extends OOContext
             ->askVerbose('请输入要添加的例句:')
             ->wait()
             ->hearing()
-            ->isAnswer(function (Dialog $dialog, VbAnswer $answer, NLUExamplesManager $manager) {
+            ->isAnswer(function (Dialog $dialog, VbAnswer $answer, Corpus $corpus) {
                 $text = $answer->toResult();
-                $manager->register($this->editingName, new NLUExample($text));
+                $intentCorpus = $corpus->getIntentCorpus($this->editingName);
+                $intentCorpus->addExample($text);
+                $corpus->saveIntentCorpus($intentCorpus);
 
                 $dialog->say()->info('添加完毕');
                 return $dialog->goStage('editIntent');
             })
             ->end();
-
     }
 
+
+    protected function getCorpus() : Corpus
+    {
+        return $this->getSession()->conversation->make(Corpus::class);
+    }
 
 
     public function __exiting(Exiting $listener): void

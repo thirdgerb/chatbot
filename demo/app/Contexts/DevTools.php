@@ -11,7 +11,8 @@ use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\NLU\Contexts\NLUMatcherInt;
+use Commune\Chatbot\OOHost\NLU\Contexts\CorpusManagerTask;
+use Commune\Chatbot\OOHost\NLU\Contexts\NLUMatcherTask;
 
 class DevTools extends TaskDef
 {
@@ -32,7 +33,7 @@ class DevTools extends TaskDef
                 (new Menu(
                     'demo.dialog.chooseDevTools',
                     [
-                        NLUMatcherInt::class
+                        CorpusManagerTask::class
                     ]
                 ))->onFallback(Redirector::goFulfill())
             );

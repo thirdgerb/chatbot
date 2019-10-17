@@ -215,6 +215,11 @@ class Paginator implements StageComponent
                 call_user_func($this->hearing, $hearing);
             }
 
+            // 注册 hearing 的回调.
+            if (isset($this->fallback)) {
+                $hearing->fallback($this->fallback);
+            }
+
             // 判断输入是不是页码
             $hearing->isInstanceOf(VerboseMsg::class, function(Context $self, Dialog $dialog, VerboseMsg $msg){
 
@@ -230,7 +235,7 @@ class Paginator implements StageComponent
                 return $dialog->repeat();
             });
 
-            return $hearing->end($this->fallback);
+            return $hearing->end();
         });
     }
 

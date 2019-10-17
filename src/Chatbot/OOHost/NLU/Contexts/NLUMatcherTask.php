@@ -3,10 +3,9 @@
 namespace Commune\Chatbot\OOHost\NLU\Contexts;
 
 use Commune\Chatbot\App\Callables\Intercepers\MustBeSupervisor;
-use Commune\Chatbot\OOHost\Context\Definition;
+use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
-use Commune\Chatbot\OOHost\Context\Intent\AbsCmdIntent;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -15,13 +14,9 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  * NLU 管理工具之一.
  * 查看 NLU 命中的意图.
  */
-class NLUMatcherInt extends AbsCmdIntent
+class NLUMatcherTask extends TaskDef
 {
     const DESCRIPTION = '查看NLU命中的意图';
-
-    const CONTEXT_TAGS = [
-        Definition::TAG_MANAGER
-    ];
 
 
     public static function __depend(Depending $depending): void

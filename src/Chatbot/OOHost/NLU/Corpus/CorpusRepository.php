@@ -54,23 +54,20 @@ class CorpusRepository implements Corpus
             // 如果没有存储. 主动存储
             if (!$this->optionRepo->has( IntentCorpusOption::class, $id)) {
                 $toSave[] = $option;
-
-            // 如果有存储, 也要比较一下 hash
-            } else {
-                $saved = $this->optionRepo->find( IntentCorpusOption::class, $id);
-
-                if ($saved->getHash() != $option->getHash()) {
-                    $toSave[] = $option;
-                }
             }
-
         }
 
         if (!empty($toSave)) {
             $this->optionRepo->saveBatch( IntentCorpusOption::class, true, ...$toSave);
         }
-
     }
+
+    public function saveIntentCorpus(IntentCorpusOption $option): void
+    {
+        $this->loadedIntents[$option->getId()] = $option;
+        $this->optionRepo->save(IntentCorpusOption::class, $option);
+    }
+
 
     public function hasIntentCorpus(string $intentName): bool
     {
@@ -133,6 +130,11 @@ class CorpusRepository implements Corpus
         foreach ($this->registrar->getDefNamesByDomain('') as $name) {
             yield $this->getIntentCorpus($name);
         }
+    }
+
+    public function countIntentCorpus() : int
+    {
+        return $this->registrar->countDef();
     }
 
     public function getIntentCorpusMap(array $intentNames): array
@@ -206,6 +208,12 @@ class CorpusRepository implements Corpus
             $options[$name] = $this->getEntityDict($name);
         }
         return $options;
+    }
+
+    public function saveEntityDict(EntityDictOption $option): void
+    {
+        $this->loadedEntities[$option->getId()] = $option;
+        $this->optionRepo->save(EntityDictOption::class, $option);
     }
 
 

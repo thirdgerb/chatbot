@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Components\NLUExamples;
+namespace Commune\Chatbot\OOHost\NLU\Contexts;
 
 
 use Commune\Chatbot\Blueprint\Message\Message;
@@ -13,12 +13,12 @@ use Commune\Chatbot\OOHost\Context\OOContext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\NLU\Corpus\IntExample as NLUExample;
+use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 
 /**
  * @property-read string $editingName
  */
-class EditIntentTask extends OOContext
+class IntExampleEditor extends OOContext
 {
     const DESCRIPTION = '编辑意图的例句';
 
@@ -32,23 +32,20 @@ class EditIntentTask extends OOContext
     {
     }
 
-    protected function getRepo() : IntentRegistrar
+    public function __exiting(Exiting $listener): void
     {
-        return $this->getSession()->intentRepo;
     }
 
     public function __onStart(Stage $stage): Navigator
     {
         return $stage->talk(function(Dialog $dialog) {
             $repo = $this->getRepo();
+            $corpus = $this->getCorpus();
 
             $name = $this->editingName;
-            $examples = $repo->getNLUExamplesByIntentName($name);
+            $intentCorpus = $corpus->getIntentCorpus($name);
+            $examples = $intentCorpus->examples;
             $desc = $repo->getDef($name)->getDesc();
-
-            $exp = array_map(function(NLUExample $example){
-                return  $example->originText;
-            }, $examples);
 
             $dialog->say()
                 ->askChoose(
@@ -62,7 +59,7 @@ class EditIntentTask extends OOContext
 请操作:",
                     [
                         'b' => '返回',
-                    ] + $exp
+                    ] + $examples
                 );
 
             return $dialog->wait();
@@ -110,10 +107,14 @@ class EditIntentTask extends OOContext
     {
         $name = $this->editingName;
         $repo = $this->getRepo();
+        $corpus = $this->getCorpus();
+        $intentCorpus = $corpus->getIntentCorpus($name);
 
-        $examples = $repo->getNLUExamplesByIntentName($name);
+        $examples = $intentCorpus->examples;
+
         if (!isset($examples[$index])) {
-            $dialog->say()
+            $dialog
+                ->say()
                 ->error("序号 $index 的例句不存在!");
             return $dialog->repeat();
         }
@@ -123,14 +124,12 @@ class EditIntentTask extends OOContext
             unset($examples[$index]);
             $line = '已删除';
         } else {
-            $examples[$index] = new NLUExample(trim($modify));
+            $examples[$index] = $modify;
             $line = '修改完毕';
         }
 
-        $repo->setIntentNLUExamples($name, $examples);
-
-        $manager = $dialog->app->make(NLUExamplesManager::class);
-        $manager->generate();
+        $intentCorpus->resetExamples($examples);
+        $corpus->saveIntentCorpus($intentCorpus);
 
         $dialog->say()->info($line);
         return $dialog->restart();
@@ -145,19 +144,25 @@ class EditIntentTask extends OOContext
             return $dialog->repeat();
         }
 
-        $repo = $this->getRepo();
-        $repo->registerNLUExample($this->editingName, new NLUExample($text));
-        $manager = $dialog->app->make(NLUExamplesManager::class);
-        $manager->generate();
+        $corpus = $this->getCorpus();
+        $intentCorpus = $corpus->getIntentCorpus($this->editingName);
+
+        $intentCorpus->addExample($text);
+        $corpus->saveIntentCorpus($intentCorpus);
 
         $dialog->say()->info('添加完毕');
         return $dialog->restart();
     }
 
 
-    public function __exiting(Exiting $listener): void
+
+    protected function getRepo() : IntentRegistrar
     {
+        return $this->getSession()->intentRepo;
     }
 
-
+    protected function getCorpus() : Corpus
+    {
+        return $this->getSession()->conversation->make(Corpus::class);
+    }
 }
