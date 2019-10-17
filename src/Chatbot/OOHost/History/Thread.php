@@ -105,6 +105,16 @@ class Thread implements ArrayAndJsonAble
         return null;
     }
 
+    public function getContextIds() : array
+    {
+        $ids = [];
+        $ids[] = $this->node->getContextId();
+        foreach ($this->stacks as $node) {
+            $ids[] = $node->getContextId();
+        }
+        return $ids;
+    }
+
 
 
     public function toArray(): array

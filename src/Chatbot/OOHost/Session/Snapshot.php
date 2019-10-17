@@ -4,9 +4,14 @@
 namespace Commune\Chatbot\OOHost\Session;
 
 use Commune\Chatbot\OOHost\History\Breakpoint;
+use Commune\Support\Arr\ArrayAbleToJson;
+use Commune\Support\Arr\ArrayAndJsonAble;
+use Commune\Support\Utils\ArrayUtils;
 
-class Snapshot implements \Serializable
+class Snapshot implements ArrayAndJsonAble
 {
+    use ArrayAbleToJson;
+
     /**
      * @var string
      */
@@ -21,6 +26,16 @@ class Snapshot implements \Serializable
      * @var Breakpoint|null
      */
     public $breakpoint;
+
+    /**
+     * @var Breakpoint|null
+     */
+    public $prevBreakpoint;
+
+    /**
+     * @var Breakpoint[]
+     */
+    public $backtrace =[];
 
     /**
      * 如果没有saved, 则可能出错了.
@@ -39,32 +54,39 @@ class Snapshot implements \Serializable
         $this->sessionId = $sessionId;
     }
 
-    public function serialize()
+    public function getContextIds() : array
     {
-        $data = [
-            'sessionId' => $this->sessionId,
-            'belongsTo' => $this->belongsTo,
-            'saved' => $this->saved,
-            'breakpoint' => serialize($this->breakpoint),
-        ];
-        return json_encode($data);
+        $ids = $this->breakpoint->process()->getContextIds();
+        if (isset($this->prevBreakpoint)) {
+            $ids = array_merge($ids, $this->prevBreakpoint->process()->getContextIds());
+        }
+
+        foreach ($this->backtrace as $breakpoint) {
+            $ids = array_merge($ids, $breakpoint->process()->getContextIds());
+        }
+
+        return array_unique($ids);
     }
 
-    public function unserialize($serialized)
+    public function getBreakpointIds() : array
     {
-        $data = json_decode($serialized);
-        $this->sessionId = $data->sessionId;
-        $this->belongsTo = $data->belongsTo;
-        $this->saved = $data->saved;
-        $this->breakpoint = unserialize($data->breakpoint);
+        $ids = [];
+        $ids['current'] = $this->breakpoint->conversationId;
+        if (isset($this->prevBreakpoint)) {
+            $ids['prev'] = $this->prevBreakpoint->conversationId;
+        }
+
+        $ids['backtrace'] = [];
+        foreach ($this->backtrace as $breakpoint) {
+            $ids['backtrace'][] = $breakpoint->conversationId;
+        }
+
+        return $ids;
     }
 
-
-    public function __sleep()
+    public function toArray(): array
     {
-        //$this->savedSessionData = $this->cachedSessionData;
-        // 不缓存cached. 这样每次反序列化时, cached 为空. 只有上一次被用过的, 才会被快照.
-        return ['sessionId', 'belongsTo', 'breakpoint', 'saved'];
+        return ArrayUtils::recursiveToArray((array) $this);
     }
 
 

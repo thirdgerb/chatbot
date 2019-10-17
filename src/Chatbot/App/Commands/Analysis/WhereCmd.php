@@ -8,6 +8,7 @@ use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
 use Commune\Chatbot\OOHost\Command\SessionCommand;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
 use Commune\Chatbot\OOHost\Session\Session;
+use Commune\Chatbot\OOHost\Session\Snapshot;
 
 class WhereCmd extends SessionCommand
 {
@@ -32,7 +33,9 @@ class WhereCmd extends SessionCommand
             $talk->info('snapshot is :')
                 ->info(
                     json_encode(
-                        $session->repo->getSnapshots(),
+                        array_map(function(Snapshot $snapshot){
+                            return $snapshot->toArray();
+                        }, $session->repo->getSnapshots()),
                         JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
                     )
                 );

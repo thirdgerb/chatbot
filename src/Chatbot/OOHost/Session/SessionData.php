@@ -5,13 +5,10 @@ namespace Commune\Chatbot\OOHost\Session;
 
 
 use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\History\Breakpoint;
 use Commune\Chatbot\OOHost\History\Yielding;
 
 interface SessionData
 {
-
-    const BREAK_POINT = Breakpoint::class;
     const CONTEXT_TYPE = Context::class;
     const YIELDING_TYPE = Yielding::class;
 

@@ -20,11 +20,6 @@ class Process implements ArrayAndJsonAble
     protected $thread;
 
     /**
-     * @var Thread
-     */
-    protected $root;
-
-    /**
      * @var Thread[]
      */
     protected $sleeping = [];
@@ -109,21 +104,14 @@ class Process implements ArrayAndJsonAble
     public function toArray(): array
     {
         $sleeping = [];
-        $yielding = [];
-
         foreach ($this->sleeping as $key => $value) {
             $sleeping[$key] = $value->toArray();
-        }
-
-        foreach ($yielding as $key => $value) {
-            $yielding[$key] = $value->toArray();
         }
 
         return [
             'sessionId' => $this->sessionId,
             'thread' => $this->thread->toArray(),
             'sleeping' => $sleeping,
-            'yielding' => $yielding
         ];
     }
 
@@ -134,6 +122,17 @@ class Process implements ArrayAndJsonAble
         foreach ($this->sleeping as $index => $sleeping) {
             $this->sleeping[$index] = clone $sleeping;
         }
+    }
 
+    /**
+     * @return array
+     */
+    public function getContextIds()
+    {
+        $ids = $this->thread->getContextIds();
+        foreach ($this->sleeping as $thread) {
+            $ids = array_merge($ids, $thread->getContextIds());
+        }
+        return array_unique($ids);
     }
 }

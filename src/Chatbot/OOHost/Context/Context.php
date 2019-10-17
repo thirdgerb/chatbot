@@ -140,4 +140,25 @@ interface Context extends
      * @return Entity[]
      */
     public function depends() : array;
+
+
+    /*--------- gc ---------*/
+
+    /**
+     * 计数器增加
+     */
+    public function _gc_increment_count() : void;
+
+    /**
+     * 计数器减少.
+     */
+    public function _gc_decrement_count() : void;
+
+    /**
+     * 计数器的值
+     * @return int
+     */
+    public function _gc_count() : int;
+
+
 }

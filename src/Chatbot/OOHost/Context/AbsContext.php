@@ -35,6 +35,7 @@ abstract class AbsContext extends AbsMessage implements Context
     const CAST_TYPE_BOOL = 'bool';
     const CAST_TYPE_BOOL_LIST = 'bool[]';
 
+    const GC_COUNT_FIELD = '__gc_count';
     /**
      * 需要进行类型转换的属性.
      */
@@ -77,6 +78,7 @@ abstract class AbsContext extends AbsMessage implements Context
      */
     protected $_changed = true;
 
+
     /**
      * AbsContext constructor.
      * @param array $props
@@ -98,7 +100,7 @@ abstract class AbsContext extends AbsMessage implements Context
         $this->getId();
         return array_merge(parent::__sleep(), [
             '_contextId',
-            '_attributes'
+            '_attributes',
         ]);
     }
 
@@ -151,25 +153,6 @@ abstract class AbsContext extends AbsMessage implements Context
     }
 
 
-    public function getAttribute(string $name)
-    {
-        $this->isInstanced();
-        $value = $this->_attributes[$name] ?? null;
-
-        if (is_null($value)) {
-            return null;
-        }
-
-        if ($value instanceof SessionDataIdentity) {
-            $value = $this->_session->repo->fetchSessionData($this->_session, $value);
-        }
-
-        if ($value instanceof SessionInstance) {
-            $value = $value->toInstance($this->_session);
-        }
-
-        return $this->cast($name, $value);
-    }
 
     public function getCasts() : array
     {
@@ -229,14 +212,23 @@ abstract class AbsContext extends AbsMessage implements Context
     public function setAttribute(string $name, $value) : void
     {
         $this->hasInstanced();
+
+        // 目标数据初始化.
         if ($value instanceof SessionInstance) {
             $value = $value->toInstance($this->_session);
         }
 
-        if ($value instanceof SessionData) {
-            $this->_session->repo->cacheSessionData($value);
+        // 执行 gc_check
+        if ($value instanceof Context) {
+            $this->_gc_check($name, $value);
         }
 
+        // 缓存到 session
+        if ($value instanceof SessionData) {
+            $this->_session->repo->cacheSessionData($value);
+            // 持有 identity
+            $value = $value->toSessionIdentity();
+        }
 
         // 检查赋值的类型是否正确.
         if (array_key_exists($name, static::CASTS)) {
@@ -244,7 +236,46 @@ abstract class AbsContext extends AbsMessage implements Context
         }
 
         $this->_changed = true;
+
         $this->_attributes[$name] = $value;
+    }
+
+    public function getAttribute(string $name)
+    {
+        $this->isInstanced();
+        $value = $this->_attributes[$name] ?? null;
+
+        if (is_null($value)) {
+            return null;
+        }
+
+        if ($value instanceof SessionDataIdentity) {
+            $value = $this->_session->repo->fetchSessionData($this->_session, $value);
+        }
+
+        if ($value instanceof SessionInstance) {
+            $value = $value->toInstance($this->_session);
+        }
+
+        return $this->cast($name, $value);
+    }
+
+    /**
+     * 赋值时做 context 计数器的检查.
+     *
+     * @param string $name
+     * @param Context|null $value
+     */
+    protected function _gc_check(string $name, Context $value = null)
+    {
+        $before = $this->__get($name);
+        if (isset($before) && $before instanceof Context) {
+            $before->_gc_decrement_count();
+        }
+
+        if (isset($value)) {
+            $value->_gc_increment_count();
+        }
     }
 
     protected function scalarCheck(string $name, $value) : void
@@ -302,16 +333,18 @@ abstract class AbsContext extends AbsMessage implements Context
             return $this->_props[$name] ?? null;
         }
 
+        // 检查 getter 方法是否存在
         $method = static::GETTER_PREFIX . ucfirst($name);
-
         if (method_exists($this, $method)) {
             return $this->{$method}();
         }
 
+        // 检查是不是走 entity 的逻辑.
         if ($this->getDef()->hasEntity($name)) {
             return $this->getDef()->getEntity($name)->get($this);
         }
 
+        // 获取数据.
         return $this->getAttribute($name);
     }
 
@@ -465,7 +498,7 @@ abstract class AbsContext extends AbsMessage implements Context
     {
         return new SessionDataIdentity(
             $this->getId(),
-            SessionData::CONTEXT_TYPE
+            $this->getSessionDataType()
         );
     }
 
@@ -483,4 +516,23 @@ abstract class AbsContext extends AbsMessage implements Context
     {
         return $this->getId();
     }
+
+    /*----------- 极简的 gc 实现, 用于清除绝大部分一次性的 context 缓存 -----------*/
+
+    final public function _gc_increment_count(): void
+    {
+        $this->getSession()->repo->incrGcCount($this);
+    }
+
+    final public function _gc_decrement_count(): void
+    {
+        $this->getSession()->repo->decrGcCount($this);
+    }
+
+    final public function _gc_count(): int
+    {
+        return $this->getSession()->repo->getGcCount($this);
+    }
+
+
 }

@@ -28,14 +28,24 @@ abstract class AbsMessage implements Contract
     use ArrayAbleToJson;
 
     /**
-     * @var Carbon
+     * @var int
      */
     protected $_createdAt;
 
     /**
-     * @var Carbon|null
+     * @var Carbon
+     */
+    protected $_createdAt_carbon;
+
+    /**
+     * @var int|null
      */
     protected $_deliverAt;
+
+    /**
+     * @var Carbon
+     */
+    protected $_deliverAt_carbon;
 
     /**
      * text 转义成 命令的形式. 如果不是命令, 则返回null
@@ -61,7 +71,8 @@ abstract class AbsMessage implements Contract
      */
     public function __construct(Carbon $createdAt = null)
     {
-        $this->_createdAt = $createdAt ?? new Carbon();
+        $this->_createdAt_carbon = $createdAt ?? new Carbon();
+        $this->_createdAt = $this->_createdAt_carbon->timestamp;
     }
 
     public function __sleep() : array
@@ -129,7 +140,6 @@ abstract class AbsMessage implements Contract
         $data =  [
             'type' => get_class($this),
             'data' => $this->toMessageData(),
-            'createdAt' => $this->getCreatedAt()
         ];
 
         if ($this instanceof Transformed) {
@@ -153,11 +163,6 @@ abstract class AbsMessage implements Contract
         // 这里不能无关大小写, 否则会特别麻烦.
         $text = StringUtils::sbc2dbc($text);
         return $this->_trimmed = trim($text, static::TRIMMING_MARKS);
-    }
-
-    public function getCreatedAt(): Carbon
-    {
-        return $this->_createdAt ?? $this->_createdAt = new Carbon();
     }
 
 
@@ -192,12 +197,32 @@ abstract class AbsMessage implements Contract
 
     public function getDeliverAt(): ? Carbon
     {
-        return $this->_deliverAt;
+        if (isset($this->_deliverAt_carbon)) {
+            return $this->_deliverAt_carbon;
+        }
+
+        if (!isset($this->_deliverAt)) {
+            return null;
+        }
+
+        return $this->_deliverAt_carbon = Carbon::createFromTimestamp($this->_deliverAt);
     }
 
     public function deliverAt(Carbon $carbon): Message
     {
-        $this->_deliverAt = $carbon;
+        $this->_deliverAt_carbon = $carbon;
+        $this->_deliverAt = $carbon->timestamp;
         return $this;
     }
+
+
+    public function getCreatedAt(): Carbon
+    {
+        if (isset($this->_createdAt_carbon)) {
+            return $this->_createdAt_carbon;
+        }
+
+        return $this->_createdAt_carbon = Carbon::createFromTimestamp($this->_createdAt ?? time());
+    }
+
 }

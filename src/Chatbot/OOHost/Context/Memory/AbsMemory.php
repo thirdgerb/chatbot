@@ -29,8 +29,6 @@ abstract class AbsMemory extends AbsContext implements Memory
             ->makeScopingId($this->getName(), $this->getScopingTypes());
     }
 
-
-
     /**
      * @param Session $session
      * @return static

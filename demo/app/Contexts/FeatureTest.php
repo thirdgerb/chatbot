@@ -20,6 +20,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Components\Predefined\Intents\Dialogue\OrdinalInt;
 use Commune\Demo\App\Contexts\Features\SubDialogCase;
+use Commune\Demo\App\Contexts\Testing\GcTask;
 use Commune\Demo\App\Memories\Sandbox;
 
 class FeatureTest extends TaskDef
@@ -49,6 +50,7 @@ class FeatureTest extends TaskDef
                     'confirmation && emotion' => 'testConfirmation',
                     '语境嵌套' => 'testSubDialog',
                     'askContinue 机制' => 'testAskContinue',
+                    'gc 机制' => 'testGc',
                 ]
             )
         );
@@ -393,6 +395,11 @@ EOF
                 )
                 ->onHelp()
         );
+    }
+
+    public function __onTestGc(Stage $stage) : Navigator
+    {
+        return $stage->dependOn(new GcTask($this), Redirector::goRestart());
     }
 
 

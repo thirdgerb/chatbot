@@ -35,17 +35,6 @@ class History implements RunningSpy
      */
     protected $snapshot;
 
-
-    /**
-     * @var Breakpoint
-     */
-    protected $breakpoint;
-
-    /**
-     * @var Breakpoint|null
-     */
-    protected $prevBreakpoint;
-
     /**
      * @var Session
      */
@@ -85,14 +74,11 @@ class History implements RunningSpy
         $this->logger = $session->logger;
 
         // sneaky 状态下, 不从缓存里读取 snapshot. 不需要 IO 开销
-        $this->snapshot = $this->session->isSneaky()
+        $snapshot = $this->session->isSneaky()
             ? new Snapshot($this->sessionId, $belongsTo)
             : $this->session->repo->getSnapshot($sessionId, $belongsTo);
 
-
-        $this->prevBreakpoint = $this->snapshot->breakpoint;
-        $this->setBreakpoint($this->makeBreakpoint($this->prevBreakpoint));
-
+        $this->snapshot = $this->pushBreakpoint($snapshot);
 
         //重新赋值
         $this->tracker = new Tracker($session->sessionId);
@@ -100,83 +86,83 @@ class History implements RunningSpy
         static::addRunningTrace($this->belongsTo, $this->belongsTo);
     }
 
-    public function refresh() : void
-    {
-        $this->session->repo->clearSnapshot($this->sessionId, $this->belongsTo);
-        $this->snapshot = $this->session->repo->getSnapshot($this->sessionId, $this->belongsTo, true);
-        $this->prevBreakpoint = null;
-        $this->setBreakpoint($this->makeBreakpoint());
-    }
-
-    protected function makeBreakpoint(Breakpoint $prev = null)
+    protected function pushBreakpoint(Snapshot $snapshot) : Snapshot
     {
         $max = $this->session->chatbotConfig->host->maxBreakpointHistory;
 
+        $prev = $snapshot->breakpoint;
+
         if (isset($prev)) {
-            $backtrace = $prev->backtrace;
-            $backtrace[] = $prev->prevId;
-            if (count($backtrace) > $max) {
-                array_shift($backtrace);
-            }
-            $prevId = $prev->id;
             $process = clone $prev->process();
+
+            $backtrace = $snapshot->backtrace;
+            $last = $snapshot->prevBreakpoint;
+            if (isset($last)) {
+                array_unshift($backtrace, $last);
+                if (count($backtrace) > $max) {
+                    array_pop($backtrace);
+                }
+            }
 
         } else {
             $backtrace = [];
-            $prevId = null;
             $process = $this->homeProcess();
         }
 
-        return new Breakpoint(
+        $snapshot->prevBreakpoint = $prev;
+        $snapshot->backtrace = $backtrace;
+        $snapshot->breakpoint = new Breakpoint(
             $this->session->conversation->getConversationId(),
             $this->sessionId,
-            $process,
-            $prevId,
-            $backtrace
+            $process
         );
+
+        return $snapshot;
     }
 
     /**
-     * @return Breakpoint|null
+     * 刷新掉当前 history 的 snapshot
      */
-    public function prev()
+    public function refresh() : void
     {
-        if (isset($this->prevBreakpoint)) {
-            return $this->prevBreakpoint;
-        }
+        $this->session
+            ->repo
+            ->clearSnapshot($this->sessionId, $this->belongsTo);
 
-        $prevId = $this->breakpoint->prevId;
-        if (!isset($prevId)) {
-            return null;
-        }
-        $breakpoint = $this->session->repo->fetchSessionData(
-            $this->session,
-            $identity = new SessionDataIdentity(
-                $this->breakpoint->prevId,
-                SessionData::BREAK_POINT
-            )
-        );
-        if (!$breakpoint instanceof Breakpoint) {
-            throw new DataNotFoundException($identity);
-        }
+        $snapshot = $this->session
+            ->repo
+            ->getSnapshot($this->sessionId, $this->belongsTo, true);
 
-        return $this->prevBreakpoint = $breakpoint;
+        $this->snapshot = $this->pushBreakpoint($snapshot);
     }
 
 
+    /**
+     * 重置当前 snapshot
+     */
+    public function rewind() : void
+    {
+        $prev = $this->snapshot->prevBreakpoint;
+        if (!isset($prev)) {
+            return;
+        }
+        $this->snapshot->breakpoint = $prev;
+        $this->snapshot->prevBreakpoint = array_shift($this->snapshot->backtrace);
+    }
+
     public function currentTask() : Node
     {
-        return $this->breakpoint->process()->currentTask();
+        return $this->snapshot->breakpoint->process()->currentTask();
     }
 
     public function currentQuestion() : ? Question
     {
-        return $this->breakpoint->process()->currentQuestion();
+        return $this->snapshot->breakpoint->process()->currentQuestion();
     }
 
     public function setQuestion(Question $question = null) : void
     {
-        $this->breakpoint->process()->setQuestion($question);
+        $this->snapshot->breakpoint->process()->setQuestion($question);
     }
 
     /**
@@ -207,20 +193,20 @@ class History implements RunningSpy
 
     public function getBreakPoint() : Breakpoint
     {
-        return $this->breakpoint;
+        return $this->snapshot->breakpoint;
     }
 
     /*------ stage ------*/
 
     public function goStage(string $stageName, bool $reset) : History
     {
-        $this->breakpoint->process()->goStage($stageName, $reset);
+        $this->snapshot->breakpoint->process()->goStage($stageName, $reset);
         return $this;
     }
 
     public function addStage(string $stage)  : History
     {
-        $this->breakpoint->process()->addStage($stage);
+        $this->snapshot->breakpoint->process()->addStage($stage);
         return $this;
     }
 
@@ -234,33 +220,14 @@ class History implements RunningSpy
      */
     public function backward() : ? History
     {
-        $lastId = $this->breakpoint->backward();
-        if (!isset($lastId)) {
+        $last = array_shift($this->snapshot->backtrace);
+        if (!isset($last)) {
             return null;
         }
+        $this->snapshot->breakpoint = $last;
+        $this->snapshot->prevBreakpoint = null;
 
-        $breakpoint = $this->session->repo->fetchSessionData(
-            $this->session,
-            $identity = new SessionDataIdentity(
-                $lastId,
-                SessionData::BREAK_POINT
-            )
-        );
-
-
-        if (!$breakpoint instanceof Breakpoint) {
-            throw new DataNotFoundException($identity);
-        }
-
-        $this->prevBreakpoint = null;
-        $this->setBreakpoint($breakpoint);
         return $this;
-    }
-
-    public function setBreakpoint(Breakpoint $breakpoint) : void
-    {
-        $this->breakpoint = $breakpoint;
-        $this->snapshot->breakpoint = $breakpoint;
     }
 
     /*------ 前进 ------*/
@@ -275,7 +242,7 @@ class History implements RunningSpy
     {
         $context = $this->wrapContext($context);
         $newThread = new Thread(new Node($context));
-        $this->breakpoint->process()->replaceThread($newThread);
+        $this->snapshot->breakpoint->process()->replaceThread($newThread);
         return $this;
     }
 
@@ -288,7 +255,7 @@ class History implements RunningSpy
     public function replaceNodeTo(Context $context) : History
     {
         $context = $this->wrapContext($context);
-        $this->breakpoint->process()->replaceNode(new Node($context));
+        $this->snapshot->breakpoint->process()->replaceNode(new Node($context));
         return $this;
     }
 
@@ -297,7 +264,7 @@ class History implements RunningSpy
         $context = $this->wrapContext($context);
         $process = $this->homeProcess();
         $process->sleepTo(new Thread(new Node($context)));
-        $this->breakpoint->replaceProcess($process);
+        $this->snapshot->breakpoint->replaceProcess($process);
         return $this;
     }
 
@@ -333,7 +300,7 @@ class History implements RunningSpy
     {
         $context = $this->wrapContext($context);
         $task = new Node($context);
-        $this->breakpoint->process()->dependOn($task);
+        $this->snapshot->breakpoint->process()->dependOn($task);
         return $this;
     }
 
@@ -351,13 +318,13 @@ class History implements RunningSpy
         if (isset($context)) {
             $context = $this->wrapContext($context);
             $newThread = new Thread(new Node($context));
-            $this->breakpoint->process()->sleepTo($newThread);
+            $this->snapshot->breakpoint->process()->sleepTo($newThread);
             return $this;
         }
 
-        $target = $this->breakpoint->process()->wake();
+        $target = $this->snapshot->breakpoint->process()->wake();
         if (!empty($target)) {
-            $this->breakpoint->process()->sleepTo($target);
+            $this->snapshot->breakpoint->process()->sleepTo($target);
             return $this;
         }
 
@@ -384,14 +351,14 @@ class History implements RunningSpy
             $context = $this->wrapContext($context);
         }
         // 保存起来.
-        $yielding = new Yielding($this->breakpoint->process()->currentThread());
+        $yielding = new Yielding($this->snapshot->breakpoint->process()->currentThread());
         $session = $this->session;
         $session->repo->getDriver()->saveYielding($session, $yielding);
 
 
         if (isset($context)) {
             $task = new Node($context);
-            $this->breakpoint->process()->replaceThread(new Thread($task));
+            $this->snapshot->breakpoint->process()->replaceThread(new Thread($task));
             return $this;
         }
 
@@ -402,7 +369,7 @@ class History implements RunningSpy
 
     public function nextStage() : ? History
     {
-        $next = $this->breakpoint->process()->nextStage();
+        $next = $this->snapshot->breakpoint->process()->nextStage();
         return isset($next) ? $this : null;
     }
 
@@ -413,7 +380,7 @@ class History implements RunningSpy
      */
     public function intended() : ? History
     {
-        $task = $this->breakpoint->process()->intended();
+        $task = $this->snapshot->breakpoint->process()->intended();
         return isset($task) ? $this : null;
     }
 
@@ -425,7 +392,7 @@ class History implements RunningSpy
      */
     public function fallback() : ? History
     {
-        $process = $this->breakpoint->process();
+        $process = $this->snapshot->breakpoint->process();
         $thread = $process->wake();
         if (isset($thread)) {
             $process->replaceThread($thread);
@@ -443,46 +410,15 @@ class History implements RunningSpy
     public function home() : History
     {
         $home = $this->homeProcess();
-        $this->breakpoint->replaceProcess($home);
+        $this->snapshot->breakpoint->replaceProcess($home);
         return $this;
     }
-
-//    /**
-//     * 如果是同一个节点, 则用上一次对话的内容.
-//     * 否则不动.
-//     */
-//    public function repeat() : void
-//    {
-//        $prevBreakpoint = $this->prev();
-//        if (!isset($prevBreakpoint)) {
-//            return;
-//        }
-//
-//        $prev = $this->prevBreakpoint->process()->currentTask();
-//        $current = $this->breakpoint->process()->currentTask();
-//        if ($prev->getContextId() == $current->getContextId() && $prev->getStage() == $current->getStage()) {
-//            $this->rewind();
-//        }
-//    }
-
-    /**
-     * 完全当这一轮对话没有发生过.
-     */
-    public function rewind() : void
-    {
-        $prev = $this->prev();
-        if (isset($prev)) {
-            $this->setBreakpoint($prev);
-        }
-    }
-
-
 
     public function __get($name)
     {
         switch($name) {
             case 'breakpointArr' :
-                return $this->breakpoint->toArray();
+                return $this->snapshot->breakpoint->toArray();
             case 'belongsTo' :
                 return $this->belongsTo;
             case 'snapshot' :

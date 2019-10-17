@@ -7,6 +7,7 @@ namespace Commune\Chatbot\OOHost\Directing\Backward;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Directing\AbsNavigator;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Chatbot\OOHost\Directing\Reset\Rewind;
 
 class Backward extends AbsNavigator
 {
@@ -14,7 +15,7 @@ class Backward extends AbsNavigator
     {
         $history = $this->history->backward();
         if (!isset($history)) {
-            $this->history->home();
+            return new Rewind($this->dialog);
         }
 
         // 只在回调的对象会执行backward

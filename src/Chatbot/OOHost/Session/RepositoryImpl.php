@@ -9,6 +9,8 @@ namespace Commune\Chatbot\OOHost\Session;
 
 use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
+use Commune\Chatbot\OOHost\Context\Context;
+use Commune\Chatbot\OOHost\Context\Memory\Memory;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 
@@ -20,6 +22,11 @@ class RepositoryImpl implements Repository, RunningSpy, HasIdGenerator
      * @var string
      */
     protected $traceId;
+
+    /**
+     * @var string
+     */
+    protected $sessionId;
 
     /**
      * @var Driver
@@ -40,18 +47,28 @@ class RepositoryImpl implements Repository, RunningSpy, HasIdGenerator
     protected $snapshots = [];
 
     /**
+     * @var int[]
+     */
+    protected $gcCounts = [];
+
+    /**
      * RepositoryImpl constructor.
      * @param string $traceId
+     * @param string $sessionId
      * @param Driver $driver
      */
     public function __construct(
         string $traceId,
+        string $sessionId,
         Driver $driver
     )
     {
         $this->driver = $driver;
+        $this->sessionId = $sessionId;
         $this->traceId = $traceId;
         static::addRunningTrace($this->traceId, $this->traceId);
+
+        $this->gcCounts = $this->driver->getGcCounts($sessionId);
     }
 
 
@@ -60,6 +77,15 @@ class RepositoryImpl implements Repository, RunningSpy, HasIdGenerator
         $type = $data->getSessionDataType();
         $id = $data->getSessionDataId();
         $this->cachedSessionData[$type][$id] = $data;
+
+        if (
+            $data instanceof Context
+            // memory 不列入 gc
+            && !($data instanceof Memory)
+            && !isset($this->gcCounts[$id])
+        ) {
+            $this->gcCounts[$id] = 0;
+        }
     }
 
     public function fetchSessionData(
@@ -76,9 +102,6 @@ class RepositoryImpl implements Repository, RunningSpy, HasIdGenerator
         switch($id->type) {
             case SessionData::CONTEXT_TYPE :
                 $data = $this->driver->findContext($session, $id->id);
-                break;
-            case SessionData::BREAK_POINT :
-                $data = $this->driver->findBreakpoint($session, $id->id);
                 break;
             case SessionData::YIELDING_TYPE :
                 $data = $this->driver->findYielding($id->id);
@@ -150,8 +173,12 @@ class RepositoryImpl implements Repository, RunningSpy, HasIdGenerator
         return $this->driver;
     }
 
-    public function flush(Session $session): void
+    public function save(Session $session): void
     {
+        // 当前上下文持有的 context id
+        $holdingIds = [];
+
+        // 遍历所有 snapshot, 并单独保存 breakpoint
         while ($snapshot = array_pop($this->snapshots)) {
             $snapshot->saved = true;
             $this->driver
@@ -160,23 +187,81 @@ class RepositoryImpl implements Repository, RunningSpy, HasIdGenerator
                     $session->hostConfig->sessionExpireSeconds
                 );
 
-            $breakpoint = $snapshot->breakpoint;
-            if (isset($breakpoint)) {
-                $this->driver->saveBreakpoint($session, $breakpoint);
+            $holdingIds = array_merge($holdingIds, $snapshot->getContextIds());
+        }
+
+        // 这是被当前上下文所持有的 context.
+        // todo yield 情况还需要专门考虑. 现在yield 是不完备的.
+        $existsIds = [];
+        foreach ($holdingIds as $id) {
+            $existsIds[$id] = 1;
+        }
+
+        // gc 环节.
+        $gcIds = [];
+        foreach ($this->gcCounts as $id => $count) {
+            if ($count === 0 && !array_key_exists($id, $existsIds)) {
+                $gcIds[] = $id;
+                // 剔除掉要 gc 的context
+                unset($this->cachedSessionData[SessionData::CONTEXT_TYPE][$id]);
+                // 完成了gc, 去掉计数器. 不然就内存泄露了.
+                unset($this->gcCounts[$id]);
             }
         }
 
+        // 执行 gc 的操作.
+        if (!empty($gcIds)) {
+            $this->driver->gcContexts($session, ...$gcIds);
+            CHATBOT_DEBUG and $session->logger->debug(__METHOD__ . ' gc contexts of '. implode(',', $gcIds));
+        }
+        // 保存 gc 的计数.
+        $this->driver->saveGcCounts($this->sessionId, $this->gcCounts);
+
+        // 执行 context 数据保存.
         $cachedContexts = $this->cachedSessionData[SessionData::CONTEXT_TYPE] ?? [];
         if (empty($cachedContexts)) {
             return ;
         }
 
         foreach ($cachedContexts as $id => $data) {
+            // 数据有改动的话, 则需要保存.
             if ($data->shouldSave()) {
                 $this->driver->saveContext($session, $data);
             }
         }
         $this->cachedSessionData[SessionData::CONTEXT_TYPE] = [];
+
+    }
+
+    public function getGcCount(Context $context) : int
+    {
+        if ($context instanceof Memory) {
+            return 0;
+        }
+        $contextId = $context->getId();
+        return $this->gcCounts[$contextId] ?? $this->gcCounts[$contextId] = 0;
+    }
+
+    public function incrGcCount(Context $context): void
+    {
+        if ($context instanceof Memory) {
+            return;
+        }
+        $contextId = $context->getId();
+        $origin = intval($this->gcCounts[$contextId] ?? 0);
+        $this->gcCounts[$contextId] = $origin + 1;
+    }
+
+    public function decrGcCount(Context $context): void
+    {
+        if ($context instanceof Memory) {
+            return;
+        }
+        $contextId = $context->getId();
+        $origin = intval($this->gcCounts[$contextId] ?? 0);
+        if ($origin > 0) {
+            $this->gcCounts[$contextId] = $origin - 1;
+        }
     }
 
 

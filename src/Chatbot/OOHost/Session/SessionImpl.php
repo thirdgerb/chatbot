@@ -155,20 +155,25 @@ class SessionImpl implements Session, HasIdGenerator
      */
     protected $memoryRepo;
 
+    /**
+     * @var int[]
+     */
+    protected $gcCounts = [];
+
     public function __construct(
         string $sessionId,
         OOHostConfig $hostConfig,
         Conversation $conversation,
-        Repository $repository
+        Driver $driver
     )
     {
         $this->hostConfig = $hostConfig;
         $this->conversation = $conversation;
-        $this->repo = $repository;
         $this->sessionId = $sessionId;
 
-
         $this->traceId = $conversation->getTraceId();
+        $this->repo = new RepositoryImpl($this->traceId, $sessionId, $driver);
+
         $this->chatbotConfig = $conversation->getChatbotConfig();
         $this->tracker = new Tracker($this->sessionId);
         static::addRunningTrace($this->traceId, $this->sessionId);
@@ -442,7 +447,7 @@ class SessionImpl implements Session, HasIdGenerator
         // 如果是sneak, 什么也不做. 也不会存储.
         if (!$this->sneaky) {
             try {
-                $this->repo->flush($this);
+                $this->repo->save($this);
                 $this->logTracking();
 
             // 存储失败.

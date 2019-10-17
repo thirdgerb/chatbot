@@ -35,24 +35,17 @@ abstract class AbsVerbose extends AbsConvoMsg implements VerboseMsg
 
     public function __sleep() : array
     {
-        return array_merge(parent::__sleep(), [
+        $fields = array_merge(parent::__sleep(), [
             '_text',
             '_level'
         ]);
+
+        return $fields;
     }
 
     public function getText(): string
     {
         return $this->_text;
-    }
-
-    /**
-     * 消息的数组化, 尽量用通用做法, 降低管理的困难.
-     * @return array
-     */
-    public function toMessageData(): array
-    {
-        return get_object_vars($this);
     }
 
     /**

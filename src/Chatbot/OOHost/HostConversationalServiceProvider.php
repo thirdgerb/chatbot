@@ -6,18 +6,12 @@ namespace Commune\Chatbot\OOHost;
 
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Framework\Providers\BaseServiceProvider;
-use Commune\Chatbot\OOHost\Session\Repository;
-use Commune\Chatbot\OOHost\Session\RepositoryImpl;
 use Commune\Container\ContainerContract;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Dialogue\Hearing\HearingHandler;
 use Commune\Chatbot\OOHost\Session\Driver;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionImpl;
-use Illuminate\Support\Arr;
-use Commune\Chatbot\Blueprint\Conversation\Conversation;
-use Commune\Chatbot\Blueprint\Conversation\Speech;
-use Commune\Chatbot\Blueprint\Conversation\User;
 
 class HostConversationalServiceProvider extends BaseServiceProvider
 {
@@ -33,7 +27,6 @@ class HostConversationalServiceProvider extends BaseServiceProvider
     public function register()
     {
         $this->registerHearing();
-        $this->registerRepository();
         $this->registerSession();
     }
 
@@ -45,25 +38,8 @@ class HostConversationalServiceProvider extends BaseServiceProvider
                 $parameters[Session::SESSION_ID_VAR],
                 $conversation[ChatbotConfig::class]->host,
                 $conversation,
-                $conversation[Repository::class]
+                $conversation[Driver::class]
             );
-        });
-    }
-
-    protected function registerRepository() : void
-    {
-        $this->app->singleton(Repository::class, function($app)
-        {
-            /**
-             * @var Conversation $conversation
-             */
-            $conversation = $app[Conversation::class];
-
-            return new RepositoryImpl(
-                $conversation->getTraceId(),
-                $app[Driver::class]
-            );
-
         });
     }
 
