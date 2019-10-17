@@ -64,7 +64,7 @@ class Link extends AbsVerbose implements LinkMsg, NoTranslate
         return $this->_url ?? $this->getText();
     }
 
-    public function withSlots(array $slots): void
+    public function mergeSlots(array $slots): void
     {
         $this->_slots = $this->getSlots()->merge($slots);
     }

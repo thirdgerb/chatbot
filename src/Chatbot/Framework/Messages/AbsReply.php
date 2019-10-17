@@ -53,7 +53,7 @@ abstract class AbsReply extends AbsVerbose implements ReplyMsg
             ?? $this->_slots = new Collection();
     }
 
-    public function withSlots(array $slots): void
+    public function mergeSlots(array $slots): void
     {
         $this->_slots = $this->getSlots()->merge($slots);
     }

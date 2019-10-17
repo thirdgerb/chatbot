@@ -67,12 +67,12 @@ class OOHostConfig extends Option
             'sessionPipes' => [
                 // 事件类消息的转义
                 SessionPipe\EventMsgPipe::class,
+                // 将特殊标记转化为意图的中间件. 用于测试.
+                SessionPipe\MarkedIntentPipe::class,
                 // 用户命令
                 Commands\UserCommandsPipe::class,
                 // 管理员命令
                 Commands\AnalyserPipe::class,
-                // 将特殊标记转化为意图的中间件. 用于测试.
-                SessionPipe\MarkedIntentPipe::class,
                 // 导航类意图的中间件. 拥有最高优先级
                 SessionPipe\NavigationPipe::class,
                 // nlu 服务.

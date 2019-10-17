@@ -1,4 +1,4 @@
-## 2019-10-16
+## 2019-10-16 (3)
 
 -   OptionRepository 去掉了 调用时传入的 container
     -   改为持有 process container.
@@ -7,3 +7,6 @@
 -   开发了 AskContinue  stage 组件. 实现了完整的 循环功能.
 -   修复了 stage::hearing 一直存在的 bug
 -   hearing 增加了 onHelp 方法, 显式地提供"帮助"逻辑, 作为通用规范之一
+
+-   重构完成了 simple chat component
+

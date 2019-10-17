@@ -9,7 +9,6 @@ use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
-use Psr\Container\ContainerInterface;
 
 class CorpusRepository implements Corpus
 {

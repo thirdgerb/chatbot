@@ -31,6 +31,6 @@ interface ReplyMsg extends VerboseMsg
      * merge slots to origin slots
      * @param array $slots
      */
-    public function withSlots(array $slots) : void;
+    public function mergeSlots(array $slots) : void;
 
 }

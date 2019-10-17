@@ -270,7 +270,7 @@ class ConversationImpl implements Blueprint
         }
 
         // only way to merge default slots
-        $message->getSlots()->merge($this->defaultSlots());
+        $message->mergeSlots($this->defaultSlots());
 
         // selfTranslate test
         if ($message instanceof SelfTranslating) {

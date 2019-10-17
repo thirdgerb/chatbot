@@ -40,7 +40,6 @@ class NLUComponent extends ComponentOption
         'intentStoragePipeline[]' => MetaHolder::class,
         'entityRootStorage' => MetaHolder::class,
         'entityStoragePipeline[]' => MetaHolder::class,
-
     ];
 
     public static function stub(): array

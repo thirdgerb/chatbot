@@ -4,6 +4,7 @@
 namespace Commune\Demo\App\Contexts;
 
 
+use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Callables\Actions\Talker;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Contexts\TaskDef;
@@ -11,12 +12,13 @@ use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
+use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Components\SimpleChat\Callables\SimpleChatAction;
 
 class DemoHome extends TaskDef
 {
     const DESCRIPTION = "demo的入口";
-
 
     public function __onStart(Stage $stage): Navigator
     {
@@ -37,6 +39,18 @@ class DemoHome extends TaskDef
 
     public static function __depend(Depending $depending): void
     {
+    }
+
+    /**
+     * 注册全局的闲聊.
+     * @param Hearing $hearing
+     */
+    public function __hearing(Hearing $hearing) : void
+    {
+        $hearing->defaultFallback(
+            (new SimpleChatAction())
+                ->then(Redirector::goRewind())
+        );
     }
 
 

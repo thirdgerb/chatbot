@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Chatbot\App\Components\SimpleChat\Tasks;
+namespace Commune\Components\SimpleChat\Tasks;
 
 
 use Commune\Chatbot\App\Abilities\Supervise;
@@ -9,7 +9,7 @@ use Commune\Chatbot\App\Callables\Actions\ToNext;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Components\NLUExamples\EditIntentTask;
 use Commune\Chatbot\App\Components\NLUExamples\NLUExamplesManager;
-use Commune\Chatbot\App\Components\SimpleChat\Manager;
+use Commune\Components\SimpleChat\Manager;
 use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;

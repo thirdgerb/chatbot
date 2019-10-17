@@ -12,7 +12,12 @@ class MarkedIntentPipe implements SessionPipe
 {
     public function handle(Session $session, \Closure $next): Session
     {
-        $intent = $session->getMatchedIntent();
+        // debug 模式才允许用.
+        if (!CHATBOT_DEBUG) {
+            return $next($session);
+        }
+
+        $intent = $session->nlu->getMatchedIntent();
         if (isset($intent)) {
             return $next($session);
         }

@@ -70,6 +70,7 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
     public static function registerSelfDefinition(ContainerContract $processContainer): void
     {
         $repo = $processContainer->get(IntentRegistrar::class);
+        // 强制覆盖.
         $repo->registerDef(static::buildDefinition(), true);
     }
 

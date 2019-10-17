@@ -15,16 +15,14 @@ return [
     ],
     'components' => [
         \Commune\Demo\App\DemoComponent::class,
-//        \Commune\Chatbot\App\Components\ConfigurableComponent::class,
-//        \Commune\Chatbot\App\Components\NLUExamplesComponent::class => [
-//            'repository' => __DIR__ .'/repository.json'
-//        ],
+        \Commune\Components\SimpleChat\SimpleChatComponent::class,
+
 //        \Commune\Chatbot\App\Components\SimpleFileChatComponent::class,
 //        \Commune\Chatbot\App\Components\RasaComponent::class => [
 //            'output' => __DIR__ .'/nlu.md',
 //        ],
 //        \Commune\Components\Predefined\IntentsIntComponent::class,
-//        \Commune\Chatbot\App\Components\SimpleChatComponent::class => [
+//        \Commune\Components\SimpleChatComponent::class => [
 //            'default' => 'demo',
 //            'resources' => [
 //                [
@@ -76,17 +74,34 @@ return [
     'eventRegister' =>[
         
     ],
+
+    'defaultSlots' => [
+        // 系统默认的slots, 所有的reply message 都会使用
+        // 多维数组会被抹平为 self.name 这样的形式
+        // default reply slots
+        // multi-dimension array will be flatten to dot pattern
+        // such as 'self.name'
+        'self' => [
+            'name' => 'CommuneChatbot',
+            'project' => 'commune/chatbot',
+            'fullname' => 'commune/chatbot demo',
+            'author' => 'thirdgerb',
+            'email' => 'thirdgerb@gmail.com',
+            'desc' => '多轮对话机器人开发框架',
+        ]
+    ],
         
     'host' => [
         'rootContextName' => \Commune\Demo\App\Contexts\DemoHome::class,
         'sessionPipes' => [
             \Commune\Chatbot\App\SessionPipe\EventMsgPipe::class,
+            \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,
             \Commune\Chatbot\App\Commands\UserCommandsPipe::class,
             \Commune\Chatbot\App\Commands\AnalyserPipe::class,
-            \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,
             \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
             \Commune\Chatbot\OOHost\NLU\Pipe\NLUServicePipe::class,
         ],
+
         'hearingFallback' => null,
     ] ,
 

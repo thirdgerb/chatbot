@@ -180,7 +180,6 @@ class ConversationalServiceProvider extends BaseServiceProvider
                 $slots[Speech::SLOT_USER_NAME] = $user->getName();
                 $slots[Speech::SLOT_CHATBOT_NAME] = $config->chatbotName;
 
-
                 return $slots;
             }
         );

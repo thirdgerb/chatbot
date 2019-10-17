@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\App\Messages\Replies;
 
 
+use Commune\Chatbot\App\Messages\ReplyIds;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\Framework\Messages\AbsVerbose;
@@ -81,7 +82,7 @@ class ParagraphText extends AbsVerbose implements Paragraph
         return new Collection();
     }
 
-    public function withSlots(array $slots): void
+    public function mergeSlots(array $slots): void
     {
         return;
     }
