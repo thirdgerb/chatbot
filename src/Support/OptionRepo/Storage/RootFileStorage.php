@@ -78,15 +78,23 @@ abstract class RootFileStorage implements RootOptionStage
         }
 
         if ($storage->isDir) {
-            $this->saveToDir($category, $storage, $option);
+            foreach ($options as $option) {
+                $this->saveToDir($category, $storage, $option);
+            }
         } else {
             $this->saveToFile($category, $storage);
         }
     }
 
+    /**
+     * 将整个目录存到一个文件.
+     * @param CategoryMeta $category
+     * @param FileStorageMeta $meta
+     */
     protected function saveToFile(CategoryMeta $category, FileStorageMeta $meta) : void
     {
         $data = $this->getCategoryData($category);
+        $data = array_values($data);
         $content = $this->parseArrayToString($data, $meta);
         file_put_contents($meta->path, $content);
     }
@@ -104,6 +112,12 @@ abstract class RootFileStorage implements RootOptionStage
         return $data;
     }
 
+    /**
+     * 将option 对应文件, 存到一个目录下.
+     * @param CategoryMeta $category
+     * @param FileStorageMeta $meta
+     * @param Option $option
+     */
     protected function saveToDir(CategoryMeta $category, FileStorageMeta $meta, Option $option) : void
     {
         $cateId = $category->getId();

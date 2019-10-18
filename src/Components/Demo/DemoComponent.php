@@ -6,6 +6,9 @@ namespace Commune\Components\Demo;
 
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Component\ComponentOption;
+use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
+use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
+use Commune\Chatbot\OOHost\NLU\Options\SynonymOption;
 use Commune\Components\SimpleChat\SimpleChatComponent;
 use Commune\Components\Story\StoryComponent;
 
@@ -13,6 +16,7 @@ use Commune\Components\Story\StoryComponent;
  * @property-read string $langPath 翻译文件所在目录. 为空表示不加载
  * @property-read string $intentsPath 意图语料库所在目录. 为空表示不加载
  * @property-read string $entitiesPath  实体词典所在目录, 为空表示不加载.
+ * @property-read string $synonymsPath  同义词词典所在目录, 为空表示不加载.
  */
 class DemoComponent extends ComponentOption
 {
@@ -23,6 +27,7 @@ class DemoComponent extends ComponentOption
             'langPath' => realpath(__DIR__ .'/resources/langs'),
             'intentsPath' => realpath(__DIR__ .'/resources/nlu/intents.yml'),
             'entitiesPath' => realpath(__DIR__ .'/resources/nlu/entities.yml'),
+            'synonymsPath' => realpath(__DIR__ .'/resources/nlu/synonyms.yml'),
         ];
     }
 
@@ -40,12 +45,29 @@ class DemoComponent extends ComponentOption
 
         $path = $this->intentsPath;
         if (!empty($path)) {
-            $this->loadIntentCorpusFromYaml($path);
+            $this->registerOptionFromYaml(
+                $path,
+                IntentCorpusOption::class,
+                IntentCorpusOption::class
+            );
         }
 
         $path = $this->entitiesPath;
         if (!empty($path)) {
-            $this->loadEntityDictionFromYaml($path);
+            $this->registerOptionFromYaml(
+                $path,
+                EntityDictOption::class,
+                EntityDictOption::class
+            );
+        }
+
+        $path = $this->synonymsPath;
+        if (!empty($path)) {
+            $this->registerOptionFromYaml(
+                $path,
+                SynonymOption::class,
+                SynonymOption::class
+            );
         }
 
         $this->dependComponent(StoryComponent::class);

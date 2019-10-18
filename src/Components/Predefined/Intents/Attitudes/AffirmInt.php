@@ -12,4 +12,7 @@ class AffirmInt extends AttitudeInt implements Positive
 
     const DESCRIPTION = '确认';
 
+    const REGEX = [
+        ['/^(是|好|对|y|1)$/']
+    ];
 }

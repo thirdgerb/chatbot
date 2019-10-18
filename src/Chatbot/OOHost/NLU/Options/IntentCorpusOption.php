@@ -4,18 +4,19 @@
 namespace Commune\Chatbot\OOHost\NLU\Options;
 
 
+use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\NLU\Corpus\IntExample;
 use Commune\Support\Option;
 
 /**
- * @property-read string $intentName 意图名称
+ * @property-read string $name 意图名称
  * @property-read string $desc 介绍
  * @property-read string[] $examples 意图的例句
  * @property-read string[] $entityNames 意图定义的entities
  */
 class IntentCorpusOption extends Option
 {
-    const IDENTITY = 'intentName';
+    const IDENTITY = 'name';
 
     protected $intExamples;
 
@@ -24,12 +25,35 @@ class IntentCorpusOption extends Option
     public static function stub(): array
     {
         return [
-            'intentName' => '',
+            'name' => '',
             'desc' => '',
             'examples' => [],
             'entityNames' => [],
         ];
     }
+
+
+    /**
+     * @param Corpus $corpus
+     * @return EntityDictOption[]
+     */
+    public function getEntityDictOptions(Corpus $corpus) :array
+    {
+        $names = $this->entityNames;
+        if (empty($names)) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($names as $name) {
+            if ($corpus->entityDictManager()->has($name)) {
+                $result[$name] = $corpus->entityDictManager()->get($name);
+            }
+        }
+        return $result;
+    }
+
+
 
     public function mergeEntityNames(array $entityNames) : void
     {

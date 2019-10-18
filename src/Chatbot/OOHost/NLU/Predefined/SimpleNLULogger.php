@@ -23,7 +23,7 @@ class SimpleNLULogger implements NLULogger
         $nluResult = $session->nlu->toArray();
 
         $logger->info(NLULogger::class, [
-            'message' => $message->toArray(),
+            'query' => $message->getTrimmedText(),
             'nlu' => $nluResult,
             'scope' => $scope
         ]);

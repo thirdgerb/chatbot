@@ -14,6 +14,7 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
+use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 
 /**
  * @property-read string $editingName
@@ -41,9 +42,12 @@ class IntExampleEditor extends OOContext
         return $stage->talk(function(Dialog $dialog) {
             $repo = $this->getRepo();
             $corpus = $this->getCorpus();
-
             $name = $this->editingName;
-            $intentCorpus = $corpus->getIntentCorpus($name);
+
+            /**
+             * @var IntentCorpusOption $intentCorpus
+             */
+            $intentCorpus = $corpus->intentCorpusManager()->get($name);
             $examples = $intentCorpus->examples;
             $desc = $repo->getDef($name)->getDesc();
 
@@ -106,9 +110,11 @@ class IntExampleEditor extends OOContext
     protected function modifyExample(Dialog $dialog, int $index, string $modify) : Navigator
     {
         $name = $this->editingName;
-        $repo = $this->getRepo();
         $corpus = $this->getCorpus();
-        $intentCorpus = $corpus->getIntentCorpus($name);
+        /**
+         * @var IntentCorpusOption $intentCorpus
+         */
+        $intentCorpus = $corpus->intentCorpusManager()->get($name);
 
         $examples = $intentCorpus->examples;
 
@@ -129,7 +135,7 @@ class IntExampleEditor extends OOContext
         }
 
         $intentCorpus->resetExamples($examples);
-        $corpus->saveIntentCorpus($intentCorpus);
+        $corpus->intentCorpusManager()->save($intentCorpus);
 
         $dialog->say()->info($line);
         return $dialog->restart();
@@ -144,11 +150,14 @@ class IntExampleEditor extends OOContext
             return $dialog->repeat();
         }
 
+        /**
+         * @var IntentCorpusOption $intentCorpus
+         */
         $corpus = $this->getCorpus();
-        $intentCorpus = $corpus->getIntentCorpus($this->editingName);
+        $intentCorpus = $corpus->intentCorpusManager()->get($this->editingName);
 
         $intentCorpus->addExample($text);
-        $corpus->saveIntentCorpus($intentCorpus);
+        $corpus->intentCorpusManager()->save($intentCorpus);
 
         $dialog->say()->info('添加完毕');
         return $dialog->restart();

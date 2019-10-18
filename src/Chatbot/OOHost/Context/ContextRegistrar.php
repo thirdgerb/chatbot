@@ -89,7 +89,7 @@ interface ContextRegistrar
     public static function validateDefName(string $contextName) : bool;
 
     /**
-     * @return \Generator of Definition
+     * @return Definition[]
      */
     public function eachDef() : \Generator;
 

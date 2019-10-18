@@ -6,10 +6,9 @@ namespace Commune\Chatbot\OOHost\NLU;
 
 use Commune\Chatbot\Framework\Component\ComponentOption;
 use Commune\Chatbot\OOHost\NLU\Contracts\NLULogger;
-use Commune\Chatbot\OOHost\NLU\Contracts\NLUService;
 use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
-use Commune\Chatbot\OOHost\NLU\Predefined\FakeNLUService;
+use Commune\Chatbot\OOHost\NLU\Options\SynonymOption;
 use Commune\Chatbot\OOHost\NLU\Predefined\SimpleNLULogger;
 use Commune\Chatbot\OOHost\NLU\Providers\NLUServiceProvider;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
@@ -32,6 +31,8 @@ use Commune\Support\OptionRepo\Storage\Yaml\YamlStorageMeta;
  * @property-read MetaHolder[] $intentStoragePipeline 意图语料库的缓存层.
  * @property-read MetaHolder $entityRootStorage 实体词典的数据源
  * @property-read MetaHolder[] $entityStoragePipeline 实体词典的缓存层.
+ * @property-read MetaHolder $synonymRootStorage 同义词词典的数据源
+ * @property-read MetaHolder[] $synonymStoragePipeline 同义词词典的缓存层.
  */
 class NLUComponent extends ComponentOption
 {
@@ -40,6 +41,8 @@ class NLUComponent extends ComponentOption
         'intentStoragePipeline[]' => MetaHolder::class,
         'entityRootStorage' => MetaHolder::class,
         'entityStoragePipeline[]' => MetaHolder::class,
+        'synonymRootStorage' => MetaHolder::class,
+        'synonymStoragePipeline[]' => MetaHolder::class,
     ];
 
     public static function stub(): array
@@ -62,6 +65,7 @@ class NLUComponent extends ComponentOption
                     'meta' => MemoryStorageMeta::class,
                 ]
             ],
+
             'entityRootStorage' => [
                 'meta' => YamlStorageMeta::class,
                 'config' => [
@@ -70,6 +74,20 @@ class NLUComponent extends ComponentOption
                 ],
             ],
             'entityStoragePipeline' => [
+                'mem' => [
+                    'meta' => MemoryStorageMeta::class,
+                ]
+            ],
+
+
+            'synonymRootStorage' => [
+                'meta' => YamlStorageMeta::class,
+                'config' => [
+                    'path' => __DIR__ . '/resources/nlu/synonyms.yml',
+                    'isDir' => false,
+                ],
+            ],
+            'synonymStoragePipeline' => [
                 'mem' => [
                     'meta' => MemoryStorageMeta::class,
                 ]
@@ -97,6 +115,13 @@ class NLUComponent extends ComponentOption
             'storagePipeline' => $data['entityStoragePipeline'],
         ]));
 
+        $this->loadOptionRepoCategoryMeta(new CategoryMeta([
+            'name' => SynonymOption::class,
+            'optionClazz' => SynonymOption::class,
+            'rootStorage' => $data['synonymRootStorage'],
+            'storagePipeline' => $data['synonymStoragePipeline'],
+        ]));
+
         // 注册请求级服务
         $this->app->registerConversationService(
             new NLUServiceProvider(
@@ -116,10 +141,6 @@ class NLUComponent extends ComponentOption
 
     public static function validate(array $data): ? string
     {
-        if (!is_a($data['nluService'] ?? '', NLUService::class, TRUE)) {
-            return 'nlu service is invalid, should implements '.NLUService::class;
-        }
-
         if (!is_a($data['nluLogger'] ?? '', NLULogger::class, TRUE)) {
             return 'nlu logger is invalid, should implements '.NLULogger::class;
         }

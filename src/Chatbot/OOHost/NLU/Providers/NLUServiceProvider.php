@@ -45,7 +45,6 @@ class NLUServiceProvider extends BaseServiceProvider
     public function register()
     {
         $this->registerCorpus();
-        $this->registerNLUService();
         $this->registerNLULogger();
 
     }
@@ -62,14 +61,6 @@ class NLUServiceProvider extends BaseServiceProvider
             });
         }
     }
-
-    protected function registerNLUService() : void
-    {
-        if (!$this->app->bound(NLUService::class)) {
-            $this->app->singleton(NLUService::class, $this->component->nluService);
-        }
-    }
-
     protected function registerNLULogger() : void
     {
         if (!$this->app->bound(NLULogger::class)) {

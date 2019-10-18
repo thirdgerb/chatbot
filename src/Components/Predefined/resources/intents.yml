@@ -1,4 +1,4 @@
-- intentName : attitudes.affirm
+- name : attitudes.affirm
   examples : 
     - yes
     - 是的
@@ -9,7 +9,7 @@
     - 对的
     - 对
     - 嗯
-- intentName : attitudes.agree
+- name : attitudes.agree
   examples :
     - 好的
     - ok
@@ -19,7 +19,7 @@
     - 好啊
     - 同意
     - 允许
-- intentName : attitudes.deny
+- name : attitudes.deny
   examples :
     - no
     - nope
@@ -32,7 +32,7 @@
     - 不对
     - 错了
     - 并非如此
-- intentName : attitudes.dont
+- name : attitudes.dont
   examples :
     - 不要
     - 不好
@@ -44,7 +44,7 @@
     - 别这么做
     - 算逑
     - 我不用
-- intentName : dialogue.help
+- name : dialogue.help
   examples :
     - 帮帮我
     - 我该干什么
@@ -53,22 +53,22 @@
     - 教我怎么做
     - 教教我
     - 接下来该怎么办
-- intentName : dialogue.ordinal
+- name : dialogue.ordinal
   examples :
     - 第[一](ordinal)个
     - 第[二](ordinal)个
     - 第[三](ordinal)个
     - "[最后](ordinal)一个"
-- intentName : loop.break
-- intentName : loop.continue
-- intentName : loop.next
+- name : loop.break
+- name : loop.continue
+- name : loop.next
   examples :
     - 下一步
     - 下一个
     - 之后呢
     - 继续
-- intentName : loop.previous
-- intentName : navigation.backward
+- name : loop.previous
+- name : navigation.backward
   examples :
     - 回到上一步
     - 返回上一步
@@ -76,22 +76,22 @@
     - 回到刚才那个问题
     - 返回前面的问题
     - 再说一次上一个问题
-- intentName : navigation.cancel
-- intentName : navigation.home
-- intentName : navigation.quit
+- name : navigation.cancel
+- name : navigation.home
+- name : navigation.quit
   examples:
     - 再见
     - 我走了
     - 拜拜
     - 我想退出
-- intentName : navigation.repeat
+- name : navigation.repeat
   examples:
     - 再说一遍
     - 刚才说什么
     - 现在说的是啥
     - 你问什么
     - 刚才说啥
-- intentName : navigation.restart
+- name : navigation.restart
   examples :
     - 重来一次
     - 重来一遍吧

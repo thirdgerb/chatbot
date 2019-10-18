@@ -167,33 +167,28 @@ abstract class ComponentOption extends Option implements Bootstrapper
 
 
     /**
-     * 从 yaml 中读取意图的语料
+     * 从yaml 文件中读取 option 配置,
+     * 并保存到 optionRepository 仓库中.
+     *
      * @param string $resourcePath
+     * @param string $category
+     * @param string $optionClazz
+     * @param bool $force  如果 false, 只有目标 option 不存在, 才加载.
      */
-    public function loadIntentCorpusFromYaml(
-        string $resourcePath
+    public function registerOptionFromYaml(
+        string $resourcePath,
+        string $category,
+        string $optionClazz,
+        bool $force = false
     ) : void
     {
         $this->app->registerProcessService(
-            new Providers\LoadNLUExamplesFromYaml(
+            new Providers\RegisterOptionFromYaml(
                 $this->app->getProcessContainer(),
-                $resourcePath
-            )
-        );
-    }
-
-    /**
-     * 从 yaml 中读取实体词典.
-     * @param string $resourcePath
-     */
-    public function loadEntityDictionFromYaml(
-        string $resourcePath
-    ) : void
-    {
-        $this->app->registerProcessService(
-            new Providers\LoadNLUEntityDictionFromYaml(
-                $this->app->getProcessContainer(),
-                $resourcePath
+                $resourcePath,
+                $category,
+                $optionClazz,
+                $force
             )
         );
     }

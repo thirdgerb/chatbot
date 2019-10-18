@@ -22,6 +22,7 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
+use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Illuminate\Support\Collection;
 
 /**
@@ -80,7 +81,7 @@ class IntCorpusEditor extends OOContext
 
         $intentCount = 0;
         $exampleCount = 0;
-        foreach ($corpus->eachIntentCorpus() as $intentCorpus) {
+        foreach ($corpus->intentCorpusManager()->each() as $intentCorpus) {
             $intentCount ++;
             $exampleCount += count($intentCorpus->examples);
         }
@@ -137,7 +138,10 @@ class IntCorpusEditor extends OOContext
                 $repo = $this->getRepo();
 
                 foreach ($items as $name) {
-                    $intentCorpus = $corpus->getIntentCorpus($name);;
+                    $intentCorpus = $corpus->intentCorpusManager()->get($name);
+                    /**
+                     * @var IntentCorpusOption $intentCorpus
+                     */
                     $count = count($intentCorpus->examples);
                     $desc = $repo->getDef($name)->getDesc();
                     $list[] = "$name ($count) : $desc";
@@ -237,8 +241,8 @@ class IntCorpusEditor extends OOContext
             ->wait()
             ->hearing()
             ->isPositive(function(Dialog $dialog, Corpus $corpus){
-                $option = $corpus->getIntentCorpus($this->editingName);
-                $corpus->saveIntentCorpus($option);
+                $option = $corpus->intentCorpusManager()->get($this->editingName);
+                $corpus->intentCorpusManager()->save($option);
 
                 return $dialog->goStage('editIntent');
 
@@ -274,9 +278,12 @@ class IntCorpusEditor extends OOContext
             ->hearing()
             ->isAnswer(function (Dialog $dialog, VbAnswer $answer, Corpus $corpus) {
                 $text = $answer->toResult();
-                $intentCorpus = $corpus->getIntentCorpus($this->editingName);
+                /**
+                 * @var IntentCorpusOption $intentCorpus
+                 */
+                $intentCorpus = $corpus->intentCorpusManager()->get($this->editingName);
                 $intentCorpus->addExample($text);
-                $corpus->saveIntentCorpus($intentCorpus);
+                $corpus->intentCorpusManager()->save($intentCorpus);
 
                 $dialog->say()->info('添加完毕');
                 return $dialog->goStage('editIntent');

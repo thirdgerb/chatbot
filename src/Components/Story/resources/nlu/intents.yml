@@ -1,4 +1,4 @@
-- intentName : storyComponent.menu
+- name : storyComponent.menu
   examples :
     - 打开菜单
     - 菜单

@@ -9,7 +9,7 @@ use Commune\Support\Option;
 /**
  * @property-read mixed $value 同义词的值
  * @property-read string $desc 介绍
- * @property-read string[] $synonyms 同义词的值
+ * @property-read string[] $aliases 同义词的值
  */
 class SynonymOption extends Option
 {
@@ -20,7 +20,7 @@ class SynonymOption extends Option
         return [
             'value' => '',
             'desc' => '',
-            'synonyms' => [],
+            'aliases' => [],
         ];
     }
 

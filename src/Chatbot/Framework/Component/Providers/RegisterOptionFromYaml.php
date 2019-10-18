@@ -6,14 +6,14 @@ namespace Commune\Chatbot\Framework\Component\Providers;
 
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
+use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * 加载 nlu 的意图语料. 作为 corpus 的补充.
+ * 加载 nlu 的实体词典. 作为 corpus 的补充.
  */
-class LoadNLUExamplesFromYaml extends ServiceProvider
+class RegisterOptionFromYaml extends ServiceProvider
 {
     const IS_PROCESS_SERVICE_PROVIDER = true;
 
@@ -22,9 +22,24 @@ class LoadNLUExamplesFromYaml extends ServiceProvider
      */
     protected $resource;
 
-    public function __construct($app, string $resource)
+    protected $category;
+
+    protected $optionClazz;
+
+    protected $force;
+
+    public function __construct(
+        $app,
+        string $resource,
+        string $category,
+        string $optionClazz,
+        bool $force
+    )
     {
+        $this->category = $category;
+        $this->optionClazz = $optionClazz;
         $this->resource = $resource;
+        $this->force = $force;
         parent::__construct($app);
     }
 
@@ -34,7 +49,7 @@ class LoadNLUExamplesFromYaml extends ServiceProvider
         if (!file_exists($resource)) {
             throw new ConfigureException(
                 __METHOD__
-                .' nlu examples resource '
+                . $this->category . '  resource '
                 . $resource
                 . ' not exists, json file expected'
             );
@@ -56,22 +71,28 @@ class LoadNLUExamplesFromYaml extends ServiceProvider
             );
         }
 
-
         /**
          * @var OptionRepository $repo
          */
         $repo = $app[OptionRepository::class];
 
+
         $toSave = [];
         foreach ($options as $example) {
-            $intentOption = new IntentCorpusOption($example);
-            if (!$repo->has( IntentCorpusOption::class, $intentOption->getId())) {
-                $toSave[] = $intentOption;
+            $clazz = $this->optionClazz;
+            $option = new $clazz($example);
+            $id = $option->getId();
+            if (empty($id)) {
+                continue;
+            }
+
+            if ($this->force || !$repo->has($this->category, $id)) {
+                $toSave[] = $option;
             }
         }
 
         if (!empty($toSave)) {
-            $repo->saveBatch( IntentCorpusOption::class, true,  ...$toSave);
+            $repo->saveBatch($this->category, true, ...$toSave);
         }
 
     }

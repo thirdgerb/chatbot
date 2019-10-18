@@ -46,7 +46,7 @@ class RegisterSimpleChat extends ServiceProvider
             $corpusOption = $repo->has(IntentCorpusOption::class, $name)
                 ? $repo->find(IntentCorpusOption::class, $name)
                 : new IntentCorpusOption([
-                    'intentName' => $name
+                    'name' => $name
                 ]);
 
 
