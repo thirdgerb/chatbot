@@ -17,11 +17,9 @@ return [
         \Commune\Components\Demo\DemoComponent::class,
         \Commune\Components\SimpleChat\SimpleChatComponent::class,
         \Commune\Components\Story\StoryComponent::class,
+        \Commune\Components\Rasa\RasaComponent::class,
 
 //        \Commune\Chatbot\App\Components\SimpleFileChatComponent::class,
-//        \Commune\Chatbot\App\Components\RasaComponent::class => [
-//            'output' => __DIR__ .'/nlu.md',
-//        ],
     ],
     'processProviders' => [
     ],
@@ -88,6 +86,9 @@ return [
             \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,
             \Commune\Chatbot\App\Commands\UserCommandsPipe::class,
             \Commune\Chatbot\App\Commands\AnalyserPipe::class,
+
+            \Commune\Components\Rasa\RasaSessionPipe::class,
+
             \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
         ],
 

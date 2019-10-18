@@ -6,11 +6,13 @@ namespace Commune\Chatbot\OOHost\NLU;
 
 use Commune\Chatbot\Framework\Component\ComponentOption;
 use Commune\Chatbot\OOHost\NLU\Contracts\NLULogger;
+use Commune\Chatbot\OOHost\NLU\Contracts\NLUService;
 use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Chatbot\OOHost\NLU\Options\SynonymOption;
 use Commune\Chatbot\OOHost\NLU\Predefined\SimpleNLULogger;
 use Commune\Chatbot\OOHost\NLU\Providers\NLUServiceProvider;
+use Commune\Components\Rasa\Services\RasaService;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\MetaHolder;
 use Commune\Support\OptionRepo\Storage\Memory\MemoryStorageMeta;
@@ -48,7 +50,9 @@ class NLUComponent extends ComponentOption
     public static function stub(): array
     {
         return [
-            'nluServices' => [],
+            'nluServices' => [
+                RasaService::class,
+            ],
 
             'nluLogger' => SimpleNLULogger::class,
 
@@ -141,6 +145,21 @@ class NLUComponent extends ComponentOption
 
     public static function validate(array $data): ? string
     {
+        $services = $data['nluServices'] ?? [];
+
+        if (!is_array($services)) {
+            return 'invalid nlu services';
+        }
+
+        if (!empty($services)) {
+            foreach ($services as $service) {
+                if (!is_a($service, NLUService::class, TRUE)) {
+                    return "invalid nlu service $service";
+                }
+            }
+        }
+
+
         if (!is_a($data['nluLogger'] ?? '', NLULogger::class, TRUE)) {
             return 'nlu logger is invalid, should implements '.NLULogger::class;
         }

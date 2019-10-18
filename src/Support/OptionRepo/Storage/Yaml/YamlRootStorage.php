@@ -25,7 +25,7 @@ class YamlRootStorage extends RootFileStorage
     protected function parseStringToArray(string $content): array
     {
         $data = Yaml::parse($content);
-        return $data;
+        return $data ?? [];
     }
 
 }

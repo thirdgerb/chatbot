@@ -36,23 +36,11 @@ interface NLUService
 
     /**
      * 尝试同步语料库, 通常包括意图语料, 以及实体词典.
-     * @param Corpus $corpus
-     * @return string  同步结果.
+     *
+     * @param Session $session
+     * @return string
      */
-    public function syncCorpus(Corpus $corpus) : string;
+    public function syncCorpus(Session $session) : string;
 
 
-    /**
-     * 同步单个意图的配置.
-     * @param IntentCorpusOption $option
-     * @return string 同步结果.
-     */
-    public function syncIntentOption(IntentCorpusOption $option) : string;
-
-    /**
-     * 同步单个实体词典.
-     * @param EntityDictOption $option
-     * @return string 同步结果.
-     */
-    public function syncEntityDict(EntityDictOption $option) : string;
 }

@@ -11,3 +11,7 @@
     -   将 ComponentOption 里注册 nlu 资源的方法合并成一个通用的.
     -   intentCorpusOption 的 intentName 改为 name
     -   同步所有改动到其它文件.
+
+-   rasa component
+    -   完成了 rasa component 的重构
+    -   增加了同步 corpus 到 nlu service 的功能. 理论上要做成纯异步的.

@@ -100,7 +100,7 @@ class CommonManager implements Manager
         try {
             $this->loaded[$option->getId()] = $option;
             $this->optionRepo->save($this->optionClass, $option);
-            return 'success';
+            return '';
         } catch (\Throwable $e) {
             return $e->getMessage();
         }
@@ -130,7 +130,7 @@ class CommonManager implements Manager
                 $this->optionRepo->saveBatch( $this->optionClass, true, ...$toSave);
             }
 
-            return 'success';
+            return '';
         } catch (\Throwable $e) {
             return $e->getMessage();
         }

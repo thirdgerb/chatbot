@@ -22,6 +22,8 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
+use Commune\Chatbot\OOHost\NLU\Contracts\NLUService;
+use Commune\Chatbot\OOHost\NLU\NLUComponent;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Illuminate\Support\Collection;
 
@@ -100,12 +102,12 @@ class IntCorpusEditor extends OOContext
             [
                 '查看意图列表' => 'listIntents',
                 '编辑单个意图的例句' => 'show',
-                '退出' => Redirector::goFulfill(),
-                '强制同步' => function(Dialog $dialog, Corpus $corpus) {
+                '保存到仓库' => function(Dialog $dialog, Corpus $corpus) {
                     $corpus->sync();
                     $dialog->say()->info('保存成功');
                     return $dialog->repeat();
-                }
+                },
+                '退出' => Redirector::goFulfill(),
             ]
         ));
     }
