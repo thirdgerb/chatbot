@@ -6,7 +6,6 @@ namespace Commune\Chatbot\Framework\Component\Providers;
 
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
 use Symfony\Component\Yaml\Yaml;
@@ -66,13 +65,13 @@ class LoadNLUEntityDictionFromYaml extends ServiceProvider
         $toSave = [];
         foreach ($options as $example) {
             $option = new EntityDictOption($example);
-            if (!$repo->has($app, EntityDictOption::class, $option->getId())) {
+            if (!$repo->has(EntityDictOption::class, $option->getId())) {
                 $toSave[] = $option;
             }
         }
 
         if (!empty($toSave)) {
-            $repo->saveBatch($app, EntityDictOption::class, ...$toSave);
+            $repo->saveBatch(EntityDictOption::class, true, ...$toSave);
         }
 
     }

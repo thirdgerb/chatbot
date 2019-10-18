@@ -10,8 +10,9 @@ use Commune\Components\SimpleChat\SimpleChatComponent;
 use Commune\Components\Story\StoryComponent;
 
 /**
- * @property-read string $langPath
- * @property-read string $langLoader
+ * @property-read string $langPath 翻译文件所在目录. 为空表示不加载
+ * @property-read string $intentsPath 意图语料库所在目录. 为空表示不加载
+ * @property-read string $entitiesPath  实体词典所在目录, 为空表示不加载.
  */
 class DemoComponent extends ComponentOption
 {
@@ -20,7 +21,8 @@ class DemoComponent extends ComponentOption
     {
         return [
             'langPath' => realpath(__DIR__ .'/resources/langs'),
-            'langLoader' => Translator::FORMAT_PHP,
+            'intentsPath' => realpath(__DIR__ .'/resources/nlu/intents.yml'),
+            'entitiesPath' => realpath(__DIR__ .'/resources/nlu/entities.yml'),
         ];
     }
 
@@ -31,7 +33,20 @@ class DemoComponent extends ComponentOption
             __DIR__
         );
 
-        $this->loadTranslationResource($this->langPath, $this->langLoader);
+        $path = $this->langPath;
+        if (!empty($path)) {
+            $this->loadTranslationResource($path, Translator::FORMAT_PHP);
+        }
+
+        $path = $this->intentsPath;
+        if (!empty($path)) {
+            $this->loadIntentCorpusFromYaml($path);
+        }
+
+        $path = $this->entitiesPath;
+        if (!empty($path)) {
+            $this->loadEntityDictionFromYaml($path);
+        }
 
         $this->dependComponent(StoryComponent::class);
         $this->dependComponent(SimpleChatComponent::class);

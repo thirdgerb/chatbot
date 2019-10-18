@@ -26,7 +26,7 @@ use Commune\Support\OptionRepo\Storage\Yaml\YamlStorageMeta;
  * 3. 将本地 corpus 的内容, 同步到 nlu service 上面.
  * 4. 提供一些管理员才有权限的多轮对话, 用于管理以上功能.
  *
- * @property-read string $nluService NLU 中间件的实现.
+ * @property-read string[] $nluServices 各种 NLU 服务, 方便同步数据时遍历.
  * @property-read string $nluLogger 记录 nlu 匹配结果的日志服务.
  * @property-read MetaHolder $intentRootStorage 意图语料库的数据源配置.
  * @property-read MetaHolder[] $intentStoragePipeline 意图语料库的缓存层.
@@ -45,15 +45,15 @@ class NLUComponent extends ComponentOption
     public static function stub(): array
     {
         return [
-            'nluService' => FakeNLUService::class,
+            'nluServices' => [],
 
             'nluLogger' => SimpleNLULogger::class,
 
             'intentRootStorage' => [
                 'meta' => YamlStorageMeta::class,
                 'config' => [
-                    'path' => __DIR__ . '/resources/nlu/intents.yaml',
-                    'isDir' => false,
+                    'path' => __DIR__ . '/resources/nlu/intents/',
+                    'isDir' => true,
                 ],
             ],
 
@@ -65,8 +65,8 @@ class NLUComponent extends ComponentOption
             'entityRootStorage' => [
                 'meta' => YamlStorageMeta::class,
                 'config' => [
-                    'path' => __DIR__ . '/resources/nlu/entities.yaml',
-                    'isDir' => false,
+                    'path' => __DIR__ . '/resources/nlu/entities/',
+                    'isDir' => true,
                 ],
             ],
             'entityStoragePipeline' => [

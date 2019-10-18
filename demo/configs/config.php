@@ -89,7 +89,6 @@ return [
             \Commune\Chatbot\App\Commands\UserCommandsPipe::class,
             \Commune\Chatbot\App\Commands\AnalyserPipe::class,
             \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
-            \Commune\Chatbot\OOHost\NLU\Pipe\NLUServicePipe::class,
         ],
 
         'hearingFallback' => null,

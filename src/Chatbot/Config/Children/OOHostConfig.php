@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\Config\Children;
 
 use Commune\Chatbot\Config\Options\MemoryOption;
-use Commune\Chatbot\OOHost\NLU\Pipe\NLUServicePipe;
+use Commune\Chatbot\OOHost\NLU\Pipe\AbsNLUServicePipe;
 use Commune\Support\Option;
 use Commune\Chatbot\App\SessionPipe;
 use Commune\Chatbot\App\Commands;
@@ -75,8 +75,6 @@ class OOHostConfig extends Option
                 Commands\AnalyserPipe::class,
                 // 导航类意图的中间件. 拥有最高优先级
                 SessionPipe\NavigationPipe::class,
-                // nlu 服务.
-                NLUServicePipe::class,
             ],
             'navigatorIntents' => [
                 //intentName

@@ -60,6 +60,22 @@ class CorpusRepository implements Corpus
         if (!empty($toSave)) {
             $this->optionRepo->saveBatch( IntentCorpusOption::class, true, ...$toSave);
         }
+
+        // entity dictionary
+        $toSave = [];
+        foreach ($this->eachEntityDict() as $option) {
+            $id = $option->getId();
+
+            // 如果没有存储. 主动存储
+            if (!$this->optionRepo->has( EntityDictOption::class, $id)) {
+                $toSave[] = $option;
+            }
+        }
+
+        if (!empty($toSave)) {
+            $this->optionRepo->saveBatch( EntityDictOption::class, true, ...$toSave);
+        }
+
     }
 
     public function saveIntentCorpus(IntentCorpusOption $option): void

@@ -1,0 +1,49 @@
+- name : ordinal
+  desc : 方向
+  values :
+    - 前
+    - 后
+    - 左
+    - 右
+  synonyms :
+    - value : 前
+      synonyms :
+        - 前面
+        - 前边
+        - 前头
+    - value : 后
+      synonyms :
+        - 后面
+        - 后边
+        - 后头
+    - value : 左
+      synonyms :
+        - 左面
+        - 左边
+        - 左头
+    - value : 右
+      synonyms :
+        - 右面
+        - 右边
+        - 右头
+- name : date
+  desc : 日期
+  values :
+    - today
+    - tomorrow
+    - yestoday
+    - "+2 day"
+  synonyms :
+    - value : today
+      synonyms :
+        - 今天
+    - value : tomorrow
+      synonyms :
+        - 明天
+    - value : yestoday
+      synonyms :
+        - 昨天
+    - value : "+2 day"
+      synonyms :
+        - 后天
+
