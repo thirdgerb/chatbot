@@ -9,7 +9,9 @@ use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Bootstrap\Bootstrapper;
 use Commune\Chatbot\Framework\Bootstrap\LoadComponents;
 use Commune\Chatbot\Framework\Component\Providers;
+use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\HostProcessServiceProvider;
+use Commune\Chatbot\OOHost\NLU\Contracts\CorpusOption;
 use Commune\Support\Option;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
 
@@ -182,7 +184,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
         bool $force = false
     ) : void
     {
-        $this->app->registerProcessService(
+        $this->app->registerConfigService(
             new Providers\RegisterOptionFromYaml(
                 $this->app->getProcessContainer(),
                 $resourcePath,
@@ -193,6 +195,39 @@ abstract class ComponentOption extends Option implements Bootstrapper
         );
     }
 
+    /**
+     * 将 yaml 文件读取的所有 option 与 corpus 语料库同步.
+     *
+     * @param string $resourcePath  : yaml 的路径
+     * @param string $corpusOptionClazz     : corpus option 的类名
+     * @param bool $force   : force 为 false 时, 只有语料库不存在该 option, 才同步.
+     * @param bool $sync    : 决定 corpus 会不会把 option 存储到 option repository 中.
+     */
+    public function registerCorpusOptionFromYaml(
+        string $resourcePath,
+        string $corpusOptionClazz,
+        bool $force = false,
+        bool $sync = false
+    ) : void
+    {
+        if ( ! is_a($corpusOptionClazz, CorpusOption::class, TRUE)) {
+            throw new ConfigureException(
+                __METHOD__
+                . ' only accept option class implements '
+                . CorpusOption::class
+            );
+        }
+
+        $this->app->registerProcessService(
+            new Providers\RegisterCorpusOptionFromYaml(
+                $this->app->getProcessContainer(),
+                $resourcePath,
+                $corpusOptionClazz,
+                $force,
+                $sync
+            )
+        );
+    }
 
     /**
      * 增加情感的映射

@@ -80,9 +80,8 @@ class StoryComponent extends ComponentOption
 
 
         // 注册意图语料
-        $this->registerOptionFromYaml(
+        $this->registerCorpusOptionFromYaml(
             $this->intentsPath,
-            IntentCorpusOption::class,
             IntentCorpusOption::class
         );
 

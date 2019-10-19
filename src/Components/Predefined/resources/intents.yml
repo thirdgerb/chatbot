@@ -60,7 +60,6 @@
     - 第[三](ordinal)个
     - "[最后](ordinal)一个"
 - name : loop.break
-- name : loop.continue
 - name : loop.next
   examples :
     - 下一步

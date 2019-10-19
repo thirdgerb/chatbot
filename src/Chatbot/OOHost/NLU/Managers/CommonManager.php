@@ -26,6 +26,12 @@ class CommonManager implements Manager
      */
     protected $loaded = [];
 
+
+    /**
+     * @var Option[]
+     */
+    protected $toSave = [];
+
     /**
      * AbsManager constructor.
      * @param OptionRepository $optionRepo
@@ -40,7 +46,7 @@ class CommonManager implements Manager
 
     public function count(): int
     {
-        return $this->optionRepo->count($this->optionClass);
+        return $this->optionRepo->count($this->optionClass) + count($this->toSave);
     }
 
     public function has(string $id): bool
@@ -95,6 +101,16 @@ class CommonManager implements Manager
         return $map;
     }
 
+    public function register(Option $option) : bool
+    {
+        if (!$this->has($option)) {
+            $this->loaded[$option->getId()] = $option;
+            $this->toSave[$option->getId()] = $option;
+            return true;
+        }
+        return false;
+    }
+
     public function save(Option $option): string
     {
         try {
@@ -111,13 +127,20 @@ class CommonManager implements Manager
         foreach ($this->optionRepo->eachOption($this->optionClass) as $option) {
             yield $option;
         }
+
+        foreach ($this->toSave as $option) {
+            yield $option;
+        }
+
     }
 
     public function sync(bool $force = false): string
     {
         try {
             $toSave = [];
-            foreach ($this->each() as $option) {
+
+            //
+            foreach ($this->toSave as $option) {
                 $id = $option->getId();
 
                 // 如果没有存储. 主动存储
@@ -134,6 +157,11 @@ class CommonManager implements Manager
         } catch (\Throwable $e) {
             return $e->getMessage();
         }
+    }
+
+    public function hasSynced(string $id): bool
+    {
+        return $this->optionRepo->has($this->optionClass, $id);
     }
 
 

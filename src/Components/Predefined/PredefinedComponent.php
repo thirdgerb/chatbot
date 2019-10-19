@@ -37,18 +37,16 @@ class PredefinedComponent extends ComponentOption
 
         $path = $this->intentCorpusFile;
         if (!empty($path)) {
-            $this->registerOptionFromYaml(
+            $this->registerCorpusOptionFromYaml(
                 $path,
-                IntentCorpusOption::class,
                 IntentCorpusOption::class
             );
         }
 
         $path = $this->entityDictFile;
         if (!empty($path)) {
-            $this->registerOptionFromYaml(
+            $this->registerCorpusOptionFromYaml(
                 $path,
-                EntityDictOption::class,
                 EntityDictOption::class
             );
         }

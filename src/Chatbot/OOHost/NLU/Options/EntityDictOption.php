@@ -5,6 +5,7 @@ namespace Commune\Chatbot\OOHost\NLU\Options;
 
 
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
+use Commune\Chatbot\OOHost\NLU\Contracts\CorpusOption;
 use Commune\Support\Option;
 
 /**
@@ -14,7 +15,7 @@ use Commune\Support\Option;
  * @property-read string[] $synonyms value 里的同义词词典.
  *
  */
-class EntityDictOption extends Option
+class EntityDictOption extends Option implements CorpusOption
 {
     const IDENTITY = 'name';
 

@@ -8,6 +8,7 @@ use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
+use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Components\SimpleChat\Options\ChatOption;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
@@ -23,10 +24,13 @@ class RegisterSimpleChat extends ServiceProvider
          * @var IntentRegistrar $intRepo
          * @var ChatOption $option
          * @var ConsoleLogger $logger
+         * @var Corpus $corpus
          */
         $repo = $app[OptionRepository::class];
         $intRepo = $app[IntentRegistrar::class];
         $logger = $app[ConsoleLogger::class];
+        $corpus = $app[Corpus::class];
+        $manager = $corpus->intentCorpusManager();
 
         foreach ($repo->eachOption(ChatOption::class) as $option) {
             $name = $option->intent;
@@ -43,25 +47,16 @@ class RegisterSimpleChat extends ServiceProvider
                 continue;
             }
 
-            $corpusOption = $repo->has(IntentCorpusOption::class, $name)
-                ? $repo->find(IntentCorpusOption::class, $name)
-                : new IntentCorpusOption([
-                    'name' => $name
-                ]);
-
-
+            /**
+             * @var IntentCorpusOption $corpusOption
+             */
+            $corpusOption = $manager->get($name);
             $examples = $corpusOption->examples;
-            $toSave = [];
             if (empty($examples)) {
-                $corpusOption->mergeExamples($option->examples);
+                $corpusOption->mergeExamples($chatExamples);
                 $logger->debug('simple chat register examples for ' . $name);
-                $toSave[] = $corpusOption;
             }
-
-            // 同步.
-            if (!empty($toSave)) {
-                $repo->saveBatch(IntentCorpusOption::class, false, ...$toSave);
-            }
+            // 不会主动同步到 repository
         }
 
 

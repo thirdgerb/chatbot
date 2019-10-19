@@ -11,7 +11,8 @@ use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Chatbot\OOHost\NLU\Options\SynonymOption;
 use Commune\Chatbot\OOHost\NLU\Predefined\SimpleNLULogger;
-use Commune\Chatbot\OOHost\NLU\Providers\NLUServiceProvider;
+use Commune\Chatbot\OOHost\NLU\Providers\CorpusServiceProvider;
+use Commune\Chatbot\OOHost\NLU\Providers\NLULoggerServiceProvider;
 use Commune\Components\Rasa\Services\RasaService;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\MetaHolder;
@@ -126,9 +127,12 @@ class NLUComponent extends ComponentOption
             'storagePipeline' => $data['synonymStoragePipeline'],
         ]));
 
+        // 注册 copus
+        $this->app->registerProcessService(CorpusServiceProvider::class);
+
         // 注册请求级服务
         $this->app->registerConversationService(
-            new NLUServiceProvider(
+            new NLULoggerServiceProvider(
                 $this->app->getConversationContainer(),
                 $this
             )

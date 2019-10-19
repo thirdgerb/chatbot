@@ -3,27 +3,26 @@
 
 namespace Commune\Chatbot\Framework\Component\Providers;
 
-
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Container\ContainerContract;
-use Commune\Support\OptionRepo\Contracts\OptionRepository;
 use Symfony\Component\Yaml\Yaml;
 
-class RegisterOptionFromYaml extends ServiceProvider
+
+/**
+ * 从 yaml 中读取 option, 并加载到语料库 corpus中, 作为语料库的补充.
+ */
+class RegisterCorpusOptionFromYaml extends ServiceProvider
 {
     const IS_PROCESS_SERVICE_PROVIDER = true;
+
 
     /**
      * @var string
      */
     protected $resource;
-
-    /**
-     * @var string
-     */
-    protected $category;
 
     /**
      * @var string
@@ -35,36 +34,46 @@ class RegisterOptionFromYaml extends ServiceProvider
      */
     protected $force;
 
+
     /**
-     * RegisterOptionFromYaml constructor.
+     * @var bool
+     */
+    protected $sync;
+
+    /**
+     * RegisterCorpusOptionFromYaml constructor.
      * @param ContainerContract $app
      * @param string $resource
-     * @param string $category
      * @param string $optionClazz
-     * @param bool $force
+     * @param bool $force  如果 force = false, 只有在同名option 不存在时才会加载.
+     * @param bool $sync 是否将结果保存到 option repository
      */
     public function __construct(
-        $app,
+        ContainerContract $app,
         string $resource,
-        string $category,
         string $optionClazz,
-        bool $force
+        bool $force = false,
+        bool $sync = false
     )
     {
-        $this->category = $category;
-        $this->optionClazz = $optionClazz;
         $this->resource = $resource;
+        $this->optionClazz = $optionClazz;
         $this->force = $force;
         parent::__construct($app);
     }
 
+
+    /**
+     * @param ContainerContract $app
+     */
     public function boot($app)
     {
         $resource = $this->resource;
         if (!file_exists($resource)) {
             throw new ConfigureException(
                 __METHOD__
-                . $this->category . '  resource '
+                . $this->optionClazz
+                . ' resource '
                 . $resource
                 . ' not exists, json file expected'
             );
@@ -87,14 +96,23 @@ class RegisterOptionFromYaml extends ServiceProvider
         }
 
         /**
-         * @var OptionRepository $repo
+         * @var Corpus $corpus
          */
-        $repo = $app[OptionRepository::class];
+        $corpus = $app[Corpus::class];
+        $manager = $corpus->getManager($this->optionClazz);
+        if (empty($manager)) {
+            throw new ConfigureException(
+                __METHOD__
+                . ' corpus manager for '
+                . $this->optionClazz
+                . ' not exists'
+            );
+        }
+
         $logger = $app[ConsoleLogger::class];
 
-
-        $toSave = [];
         $clazz = $this->optionClazz;
+        $registered = false;
         foreach ($options as $example) {
             $option = new $clazz($example);
             $id = $option->getId();
@@ -102,16 +120,20 @@ class RegisterOptionFromYaml extends ServiceProvider
                 continue;
             }
 
-            if ($this->force || !$repo->has($this->category, $id)) {
-                $toSave[] = $option;
+            if ($this->force || ! $manager->hasSynced($id)) {
+                $registered = $manager->register($option);
             }
         }
 
-        if (!empty($toSave)) {
-            $repo->saveBatch($this->category, false, ...$toSave);
-            $logger->info("register $clazz options from yaml {$this->resource} to option repository.");
+        if ($registered) {
+            $logger->info("register corpus option $clazz from $resource to corpus");
         }
 
+        // 通常不 sync
+        if ($registered && $this->sync) {
+            $logger->info("sync corpus option after register $clazz from $resource");
+            $corpus->sync(false);
+        }
     }
 
     public function register()

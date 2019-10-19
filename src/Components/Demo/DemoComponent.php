@@ -45,27 +45,24 @@ class DemoComponent extends ComponentOption
 
         $path = $this->intentsPath;
         if (!empty($path)) {
-            $this->registerOptionFromYaml(
+            $this->registerCorpusOptionFromYaml(
                 $path,
-                IntentCorpusOption::class,
                 IntentCorpusOption::class
             );
         }
 
         $path = $this->entitiesPath;
         if (!empty($path)) {
-            $this->registerOptionFromYaml(
+            $this->registerCorpusOptionFromYaml(
                 $path,
-                EntityDictOption::class,
                 EntityDictOption::class
             );
         }
 
         $path = $this->synonymsPath;
         if (!empty($path)) {
-            $this->registerOptionFromYaml(
+            $this->registerCorpusOptionFromYaml(
                 $path,
-                SynonymOption::class,
                 SynonymOption::class
             );
         }

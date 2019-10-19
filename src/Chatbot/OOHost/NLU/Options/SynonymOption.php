@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\NLU\Options;
 
 
+use Commune\Chatbot\OOHost\NLU\Contracts\CorpusOption;
 use Commune\Support\Option;
 
 /**
@@ -11,7 +12,7 @@ use Commune\Support\Option;
  * @property-read string $desc 介绍
  * @property-read string[] $aliases 同义词的值
  */
-class SynonymOption extends Option
+class SynonymOption extends Option implements CorpusOption
 {
     const IDENTITY = 'value';
 

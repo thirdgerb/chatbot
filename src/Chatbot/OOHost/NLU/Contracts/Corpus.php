@@ -19,6 +19,9 @@ interface Corpus
      */
     public function sync(bool $force = false) : string;
 
+
+    public function getManager(string $corpusOptionName) : ? Manager;
+
     public function intentCorpusManager()  : Manager;
 
     public function entityDictManager() : Manager;

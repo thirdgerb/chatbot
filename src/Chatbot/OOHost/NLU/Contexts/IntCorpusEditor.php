@@ -102,11 +102,6 @@ class IntCorpusEditor extends OOContext
             [
                 '查看意图列表' => 'listIntents',
                 '编辑单个意图的例句' => 'show',
-                '保存到仓库' => function(Dialog $dialog, Corpus $corpus) {
-                    $corpus->sync();
-                    $dialog->say()->info('保存成功');
-                    return $dialog->repeat();
-                },
                 '退出' => Redirector::goFulfill(),
             ]
         ));

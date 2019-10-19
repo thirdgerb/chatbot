@@ -5,6 +5,7 @@ namespace Commune\Chatbot\OOHost\NLU\Options;
 
 
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
+use Commune\Chatbot\OOHost\NLU\Contracts\CorpusOption;
 use Commune\Chatbot\OOHost\NLU\Corpus\IntExample;
 use Commune\Support\Option;
 
@@ -14,7 +15,7 @@ use Commune\Support\Option;
  * @property-read string[] $examples 意图的例句
  * @property-read string[] $entityNames 意图定义的entities
  */
-class IntentCorpusOption extends Option
+class IntentCorpusOption extends Option implements CorpusOption
 {
     const IDENTITY = 'name';
 
@@ -71,8 +72,12 @@ class IntentCorpusOption extends Option
         $this->data['desc'] = $desc;
     }
 
-    public function mergeExamples(array $examples) : void
+    public function mergeExamples(array $examples, bool $onlyEmpty = false) : void
     {
+        if ($onlyEmpty && !empty($this->examples)) {
+            return;
+        }
+
         $this->intEntityNames = null;
         $this->intExamples = null;
         $this->data['examples'] = array_unique(array_merge($this->data['examples'], $examples));
