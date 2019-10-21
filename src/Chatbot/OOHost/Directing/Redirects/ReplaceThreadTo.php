@@ -10,7 +10,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  * 直接替换掉当前的thread
  * 需要明白为什么要这么做.
  */
-class ReplaceThreadTo extends Redirector
+class ReplaceThreadTo extends AbsRedirector
 {
     public function doDisplay(): ? Navigator
     {

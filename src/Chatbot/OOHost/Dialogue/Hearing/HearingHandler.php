@@ -88,11 +88,16 @@ class HearingHandler implements Hearing
     protected $calledFallback = false;
 
     /**
+     * 已经执行过 onHelp 了
+     * @var bool
+     */
+    protected $calledHelp = false;
+
+    /**
      * 已经执行过default fallback
      * @var bool
      */
     protected $calledDefaultFallback = false;
-
 
     /**
      * @var Question|null
@@ -894,6 +899,11 @@ class HearingHandler implements Hearing
 
     public function onHelp(callable $helping = null, string $mark = '?'): Matcher
     {
+        if ($this->calledHelp) {
+            return $this;
+        }
+
+        $this->calledHelp = true;
         return $this
             ->is($mark, $helping)
             ->isIntent(HelpInt::class, $helping);
@@ -939,7 +949,7 @@ class HearingHandler implements Hearing
         }
 
         $this->calledFallback = true;
-        // 避免出现意想不到的情况. 用复制不是
+        // 避免出现意想不到的情况. 用复制不是直接调用.
         $fallbackStack = $this->fallback;
         foreach ($fallbackStack as $fallback) {
             $this->callInterceptor($fallback);
@@ -979,10 +989,29 @@ class HearingHandler implements Hearing
             return $this->navigator = $this->dialog->rewind();
         }
 
-        //
+        // 如果 help 方法存在, 则执行默认的 help
+        if (method_exists($this->self, Context::CONTEXT_HELP_METHOD)) {
+            $this->onHelp([$this->self, Context::CONTEXT_HELP_METHOD]);
+            if (isset($this->navigator)) return $this->navigator;
+        } else {
+            $this->onHelp(function(Dialog $dialog){
+
+                $notExists = $dialog
+                    ->session
+                    ->chatbotConfig
+                    ->defaultMessages
+                    ->noHelpInfoExists;
+
+                $dialog->say()->warning($notExists);
+                return $dialog->rewind();
+            });
+        }
+
+        // 如果有默认的回调, 先赋值.
         if (isset($defaultFallback)) {
             $this->defaultFallback($defaultFallback);
         }
+
         $this->runFallback();
         $this->runDefaultFallback();
 

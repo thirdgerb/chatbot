@@ -192,14 +192,42 @@ interface Definition
      * @param Context $self
      * @param Dialog $dialog
      * @param string $stage
-     * @param Message|null $callbackValue
+     * @param Message $userMessage
      * @return Navigator
      */
     public function callbackStage(
         Context $self,
         Dialog $dialog,
         string $stage,
-        Message $callbackValue = null
+        Message $userMessage
+    ) : Navigator;
+
+    /**
+     * depend 回调 stage
+     * @param Context $self
+     * @param Dialog $dialog
+     * @param string $stage
+     * @param Context $callbackContext
+     * @return mixed
+     */
+    public function intendToStage(
+        Context $self,
+        Dialog $dialog,
+        string $stage,
+        Context $callbackContext
+    ) : Navigator;
+
+    /**
+     * sleep 的 context 被重新唤醒.
+     * @param Context $self
+     * @param Dialog $dialog
+     * @param string $stage
+     * @return Navigator
+     */
+    public function fallbackStage(
+        Context $self,
+        Dialog $dialog,
+        string $stage
     ) : Navigator;
 
     /**

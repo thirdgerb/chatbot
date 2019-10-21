@@ -10,7 +10,7 @@ use Commune\Support\OptionRepo\Storage\RootFileStorage;
 
 class YamlRootStorage extends RootFileStorage
 {
-    protected $ext = 'yaml';
+    protected $ext = 'yml';
 
     /**
      * @param array $option

@@ -70,7 +70,7 @@ abstract class FallbackNavigator extends AbsNavigator
     {
         $history = $this->history->fallback();
         if (isset($history)) {
-            return $this->callbackCurrent();
+            return $this->fallbackCurrent();
         }
 
         // 如果不能fallback, 说明没有起点了, 就直接退出.

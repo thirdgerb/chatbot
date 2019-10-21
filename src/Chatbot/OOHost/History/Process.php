@@ -133,6 +133,6 @@ class Process implements ArrayAndJsonAble
         foreach ($this->sleeping as $thread) {
             $ids = array_merge($ids, $thread->getContextIds());
         }
-        return array_unique($ids);
+        return $ids;
     }
 }

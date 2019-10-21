@@ -185,7 +185,7 @@ class History implements RunningSpy
 
 
         if (!isset($context) || !$context instanceof Context) {
-            throw new DataNotFoundException($identity);
+            throw new DataNotFoundException($identity, $task);
         }
 
         return $context;

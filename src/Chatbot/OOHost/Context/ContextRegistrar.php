@@ -58,7 +58,7 @@ interface ContextRegistrar
     /**
      * 获取子容器
      * @param bool $recursive 是否递归地获取所有
-     * @return array
+     * @return ContextRegistrar[]
      */
     public function getSubRegistrars($recursive = true) : array;
 

@@ -25,18 +25,23 @@ class FakeHearing
      */
     protected $dialog;
 
+    protected $isStart;
+
     /**
      * FakeHearing constructor.
      * @param Dialog $dialog
-     * @param Navigator|null $navigator
+     * @param Navigator $navigator
+     * @param bool $isStart
      */
     public function __construct(
         Dialog $dialog,
-        Navigator $navigator
+        Navigator $navigator,
+        bool $isStart
     )
     {
         $this->navigator = $navigator;
         $this->dialog = $dialog;
+        $this->isStart = $isStart;
     }
 
     public function isIntent(
@@ -44,6 +49,11 @@ class FakeHearing
         callable $intentAction = null
     )
     {
+        if (!$this->isStart) {
+            return $this;
+        }
+
+        // start 状态下, 会记录试图匹配的 intent 到 NLU
         $session = $this->dialog->session;
         $repo = $session->intentRepo;
         if ($repo->hasDef($intentName)) {

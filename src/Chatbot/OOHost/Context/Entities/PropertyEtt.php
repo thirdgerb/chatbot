@@ -99,7 +99,11 @@ class PropertyEtt implements Entity
 
         // 如果是记忆的话, 用记忆的stage 取代当前的stage
         if (!empty($this->memoryName)) {
-            return $stageRoute->dependOn($this->memoryName, null, [$this->memoryKey]);
+            return $stageRoute->dependOn(
+                $this->memoryName,
+                null,
+                [$this->memoryKey]
+            );
         }
 
         // 默认用entity 自己的 stage 方法

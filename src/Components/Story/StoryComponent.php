@@ -41,7 +41,6 @@ class StoryComponent extends ComponentOption
             'rootStorage' => [
                 'meta' => YamlStorageMeta::class,
                 'config' => [
-                    'name' => 'yaml',
                     'path' => __DIR__ . '/resources/stories/',
                     'isDir' => true,
                 ],

@@ -29,13 +29,14 @@ class DevTools extends TaskDef
         return $stage->buildTalk()
             ->info('demo.dialog.introduceDevTools')
             ->toStage()
+            ->onFallback(Redirector::goFulfill())
             ->component(
                 (new Menu(
                     'demo.dialog.chooseDevTools',
                     [
                         CorpusManagerTask::class
                     ]
-                ))->onFallback(Redirector::goFulfill())
+                ))
             );
     }
 

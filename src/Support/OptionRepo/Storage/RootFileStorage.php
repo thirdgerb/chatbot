@@ -4,6 +4,7 @@
 namespace Commune\Support\OptionRepo\Storage;
 
 
+use Commune\Components\SimpleWiki\Options\WikiOption;
 use Commune\Support\Option;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\StorageMeta;
@@ -162,7 +163,7 @@ abstract class RootFileStorage implements RootOptionStage
         }
 
         foreach ($data as $optionArr) {
-            $option = $category->newOption($optionArr);
+            $option = $meta->newOption($category->optionClazz, $optionArr, $path);
             $optionId = $option->getId();
             $this->optionCaches[$cateId][$optionId] = $option;
             $this->optionFromFile[$cateId][$optionId] = $path;
@@ -189,7 +190,11 @@ abstract class RootFileStorage implements RootOptionStage
         $this->resources[$cateId] = $meta->getId();
 
         $finder = new Finder();
-        $finder = $finder->in($meta->path)->depth(0)->name('/\.' . $this->ext . '$/');
+        $finder = $finder
+            ->in($meta->path)
+            ->depth($meta->depth)
+            ->name('/\.' . $this->ext . '$/');
+
 
         foreach ($finder as $file) {
             /**
@@ -198,7 +203,7 @@ abstract class RootFileStorage implements RootOptionStage
             $filePath = $file->getRealPath();
             $optionArr = $this->readFileArr($filePath);
             if (isset($optionArr)) {
-                $option = $category->newOption($optionArr);
+                $option = $meta->newOption($category->optionClazz, $optionArr, $filePath);
                 $optionId = $option->getId();
                 $this->optionCaches[$cateId][$optionId] = $option;
                 $this->optionFromFile[$cateId][$optionId] = $filePath;

@@ -7,6 +7,7 @@ namespace Commune\Chatbot\OOHost\Dialogue;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Callables\Action;
 use Commune\Chatbot\OOHost\Context\Callables\HearingComponent;
+use Commune\Chatbot\OOHost\Dialogue\Hearing\HearingHandler;
 use Commune\Chatbot\OOHost\Dialogue\Hearing\Matcher;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Context\Context;
@@ -118,8 +119,16 @@ interface Hearing extends Matcher
      * 作为链式调用的结尾.
      *
      * 会忽视掉 event 类型信息.
-     * 上面的流程都处理完了还没有返回结果的时候, 会尝试调用 $fallback
-     * 否则返回 missMatch
+     * 上面的流程都处理完了还没有返回结果的时候, 会尝试调用系统默认的方法.
+     *
+     * 包括以下流程:
+     * 0. 如果是事件, 则什么也不发生.
+     * 1. 检查是否存在 __help 方法, 存在调用 Hearing::onHelp
+     * 2. 检查 $fallback[] 是否存在, 存在依次调用, 如果得到 navigator 就返回
+     * 3. 如果系统定义了 defaultFallback, 执行defaultFallback
+     * 4. 否则返回 missMatch
+     *
+     * @see HearingHandler
      *
      * end the hearing api and return navigator.
      * ignore event message.

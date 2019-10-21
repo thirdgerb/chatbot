@@ -4,6 +4,7 @@
 namespace Commune\Support\OptionRepo\Storage;
 
 
+use Commune\Support\Option;
 use Commune\Support\OptionRepo\Options\StorageMeta;
 
 
@@ -11,6 +12,7 @@ use Commune\Support\OptionRepo\Options\StorageMeta;
  * @property-read string $name storage 名
  * @property-read string $path 当前配置存储的文件. 一个文件里只应该有一种option
  * @property-read bool $isDir path是文件名, 还是路径名. 如果是路径名, 会用option id 做文件名.
+ * @property-read int|int[]|string|string[] $depth 目录搜索的深度. @see Finder::depth()
  */
 abstract class FileStorageMeta extends StorageMeta
 {
@@ -20,6 +22,7 @@ abstract class FileStorageMeta extends StorageMeta
             'name' => static::class,
             'path' => '',
             'isDir' => true,
+            'depth' => 0,
         ];
     }
 
@@ -51,5 +54,10 @@ abstract class FileStorageMeta extends StorageMeta
         return parent::validate($data);
     }
 
+
+    public function newOption(string $className, array $data, string $path) : Option
+    {
+        return new $className($data);
+    }
 
 }

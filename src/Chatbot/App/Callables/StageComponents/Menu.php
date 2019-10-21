@@ -27,6 +27,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  */
 class Menu implements StageComponent
 {
+
     /**
      * @var string
      */
@@ -36,11 +37,6 @@ class Menu implements StageComponent
      * @var callable[]  string $suggestion => callable $caller
      */
     protected $menu;
-
-    /**
-     * @var boolean
-     */
-    protected $hasDefault = false;
 
     /**
      * @var int|string|null
@@ -55,7 +51,7 @@ class Menu implements StageComponent
     /**
      * @var callable|null
      */
-    protected $fallback;
+    protected $redirector;
 
     /**
      * Menu constructor.
@@ -77,7 +73,6 @@ class Menu implements StageComponent
         $this->question = $question;
         $this->menu = $menu;
         $this->defaultChoice = $default;
-        $this->hasDefault = isset($default);
     }
 
     /**
@@ -91,152 +86,161 @@ class Menu implements StageComponent
         return $this;
     }
 
-    public function onFallback(callable $fallback) : Menu
+    /**
+     * 如果菜单的选项是 context name
+     * 这个方法可以注册独特的跳转逻辑 .
+     * function (Context $context, Dialog $dialog, string $contextName ) {}
+     *
+     * @param callable $redirector
+     * @return Menu
+     */
+    public function onRedirect(callable  $redirector) : Menu
     {
-        $this->fallback = $fallback;
+        $this->redirector = $redirector;
         return $this;
     }
 
     /**
-     * 给选项一个默认值.
+     * 给选项一个默认值. 否则是 0 .
+     *
      * @param int $choice
      * @return Menu
      */
     public function withDefault(int $choice) : Menu
     {
-        $this->hasDefault = true;
         $this->defaultChoice = $choice;
         return $this;
     }
 
+
+
+    /*-------- 内部方法 --------*/
+
     public function __invoke(Stage $stage) : Navigator
     {
-        // 默认跳转到别的 context, 再跳转回来, 执行 repeat
-        if (isset($this->fallback)) {
-            $stage->onFallback($this->fallback);
-        } else {
-            $stage->onFallback(Redirector::goRepeat());
-        }
-
-        return $stage->talk(function(Dialog $dialog){
-
-            $suggestions = [];
-            $repo = $dialog->session->contextRepo;
-
-            $i = 0;
-            foreach ($this->menu as $key => $value) {
-                $i ++;
-                // 第一种情况, 键名是 suggestion
-                if (is_string($key)) {
-                    $suggestions[$i] = $key;
-
-                // 第二种情况, 键名是整数, 则值是 contextName
-                } elseif ($repo->hasDef($value)) {
-                    $suggestions[$i] = $repo->getDef($value)->getDesc();
-                }
-            }
-
-            $dialog->say()
-                ->askChoose(
-                    $this->question,
-                    $suggestions,
-                    // 默认第一个值就是默认值.
-                    $this->hasDefault
-                        ? $this->defaultChoice
-                        : array_keys($suggestions)[0]
-                );
-
-            return $dialog->wait();
-
-        }, function(Context $self, Dialog $dialog, Message $message){
-
-            $hearing = $dialog->hear($message);
-            $repo = $dialog->session->contextRepo;
-
-            $i = 0;
-            foreach ($this->menu as $key => $value) {
-                $i ++;
-
-                // 第一种情况, 值是一个context
-                if (is_string($value) && $repo->hasDef($value)) {
-                    $hearing = $hearing->isChoice(
-                        $i,
-                        function (Dialog $dialog) use ($value) {
-                            return $this->redirect(
-                                $value,
-                                $dialog
-                            );
-                        }
-                    );
-
-                // 第二种情况, 值是stage
-                } elseif (
-                    is_string($value)
-                    && method_exists(
-                        $self,
-                        $method = Context::STAGE_METHOD_PREFIX
-                            . ucfirst($value)
-                    )
-                ) {
-                    $hearing = $hearing->isChoice(
-                        $i,
-                        function(Dialog $dialog) use ($value) {
-                            return $dialog->goStage($value);
-                        }
-                    );
-
-                // 第三种情况, 是callable
-                } elseif (is_callable($value)) {
-                    $hearing = $hearing->isChoice($i, $value);
-
-                } else {
-
-                    $error = is_scalar($value)
-                        ? gettype($value). ' '. $value
-                        : gettype($value);
-
-                    throw new ConfigureException(
-                        static::class
-                        . ' menu should only be string message(key) to callable value, '
-                        . ' or int key to context name,'
-                        . 'or string message(key) to stage name, '
-                        . $error . ' given'
-                    );
-                }
-
-            }
-
-            // 仍然允许按自己的意愿定义.
-            if (isset($this->hearingComponent)) {
-                $hearing->component($this->hearingComponent);
-            }
-
-            return $hearing->end();
-        });
+        return $stage->talk(
+            [$this, 'askToChoose'],
+            [$this, 'heardChoice']
+       );
     }
 
-    /**
-     * @param string $context
-     * @param Dialog $dialog
-     * @return Navigator
-     */
-    protected function redirect(
-        string $context,
-        Dialog $dialog
-    ) : Navigator
+    public function heardChoice(Context $self, Dialog $dialog, Message $message) : Navigator
     {
-        $repo = $dialog->session->intentRepo;
 
-        // 意图用特殊的方式来处理.
-        $navigator = null;
-        if ($repo->hasDef($context)) {
-            $intent = $repo->getDef($context)->newContext();
-            $navigator =  $intent->navigate($dialog);
+        $hearing = $dialog->hear($message);
+        $repo = $dialog->session->contextRepo;
+
+        $i = 0;
+        foreach ($this->menu as $key => $value) {
+            $i ++;
+
+            // 第一种情况, 值是一个context name
+            // 说明要 redirect 过去
+            if (is_string($value) && $repo->hasDef($value)) {
+                $hearing = $hearing->isChoice(
+                    $i,
+                    $this->redirect($value)
+                );
+
+            // 第二种情况, 值是当前 context 下另一个 stage
+            // 直接 go stage
+            } elseif (
+                is_string($value)
+                && method_exists(
+                    $self,
+                    $method = Context::STAGE_METHOD_PREFIX
+                        . ucfirst($value)
+                )
+            ) {
+                $hearing = $hearing->isChoice(
+                    $i,
+                    Redirector::goStage($value)
+                );
+
+            // 第三种情况, 是callable
+            } elseif (is_callable($value)) {
+                $hearing = $hearing->isChoice($i, $value);
+
+            // 第四种情况, 配置的不对.
+            } else {
+
+                $error = is_scalar($value)
+                    ? gettype($value). ' '. $value
+                    : gettype($value);
+
+                throw new ConfigureException(
+                    static::class
+                    . ' menu should only be string message(key) to callable value, '
+                    . ' or int key to context name,'
+                    . 'or string message(key) to stage name, '
+                    . $error . ' given'
+                );
+            }
+
         }
 
-        // 默认的重定向是 sleepTo
-        // 这会导致无法 cancel 掉整个流程.
-        return $navigator ?? $dialog->redirect->sleepTo($context);
+        // 仍然允许按自己的意愿定义.
+        if (isset($this->hearingComponent)) {
+            $hearing->component($this->hearingComponent);
+        }
+
+        $navigator = $hearing->end();
+        return $navigator;
+    }
+
+    public function askToChoose(Dialog $dialog) : Navigator
+    {
+        $suggestions = [];
+        $repo = $dialog->session->contextRepo;
+
+        $i = 0;
+        foreach ($this->menu as $key => $value) {
+            $i ++;
+            // 第一种情况, 键名是 suggestion
+            if (is_string($key)) {
+                $suggestions[$i] = $key;
+
+                // 第二种情况, 键名是整数, 则值是 contextName
+            } elseif ($repo->hasDef($value)) {
+                $suggestions[$i] = $repo->getDef($value)->getDesc();
+            }
+        }
+
+        $dialog->say()
+            ->askChoose(
+                $this->question,
+                $suggestions,
+                // 默认第一个值就是默认值.
+                 $this->defaultChoice
+                    ?? array_keys($suggestions)[0]
+            );
+
+        return $dialog->wait();
+    }
+
+    public function redirect(
+        string $contextName
+    ) : \Closure
+    {
+
+        return function(Context $context, Dialog $dialog) use ($contextName) : Navigator {
+
+            if (isset($this->redirector)) {
+                return call_user_func($this->redirector, $context, $dialog, $contextName);
+            }
+
+            $repo = $dialog->session->intentRepo;
+            // 意图用特殊的方式来处理.
+            $navigator = null;
+            if ($repo->hasDef($contextName)) {
+                $intent = $repo->getDef($contextName)->newContext();
+                $navigator =  $intent->navigate($dialog);
+            }
+
+            // 默认的重定向是 sleepTo
+            // 这会导致无法 cancel 掉整个流程.
+            return $navigator ?? $dialog->redirect->sleepTo($contextName);
+        };
     }
 
 }

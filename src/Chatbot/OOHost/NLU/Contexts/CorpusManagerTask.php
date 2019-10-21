@@ -32,17 +32,19 @@ class CorpusManagerTask extends TaskDef
 
     public function __onStart(Stage $stage): Navigator
     {
-        return $stage->component(
-            (new Menu(
-                '选择功能',
-                [
-                    NLUMatcherTask::class,
-                    '同步语料库到NLU' => [$this, 'syncToNLU'],
-                    '同步语料库到本地存储' => [$this, 'syncToLocal'],
-                    IntCorpusEditor::class,
-                ]
-            ))->onFallback(Redirector::goFulfill())
-        );
+        return $stage
+            ->onFallback(Redirector::goFulfill())
+            ->component(
+                (new Menu(
+                    '选择功能',
+                    [
+                        NLUMatcherTask::class,
+                        '同步语料库到NLU' => [$this, 'syncToNLU'],
+                        '同步语料库到本地存储' => [$this, 'syncToLocal'],
+                        IntCorpusEditor::class,
+                    ]
+                ))
+            );
     }
 
     public function __exiting(Exiting $listener): void
@@ -82,8 +84,6 @@ class CorpusManagerTask extends TaskDef
 
         $manager = $corpus->entityDictManager();
         $manager->save(new EntityDictOption(['name' => 'test']));
-        var_dump($manager->count());
-
 
         if (empty($output)) {
             $dialog->say()->info('sync success');

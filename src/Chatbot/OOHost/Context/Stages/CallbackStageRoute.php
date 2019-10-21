@@ -14,78 +14,25 @@ class CallbackStageRoute extends AbsStageRoute
 
     public function isCallback(): bool
     {
-        return isset($this->value);
+        return true;
     }
 
     public function isFallback(): bool
     {
-        return !isset($this->value);
+        return false;
     }
 
-    public function talk(
-        callable $talkToUser,
-        callable $hearFromUser = null
-    ): Navigator
+    public function isIntended(): bool
     {
-        return $this->wait($hearFromUser);
+        return false;
     }
 
-
-    public function wait(
-        callable $hearMessage
-    ): Navigator
+    public function defaultNavigator(): Navigator
     {
-        // 检查拦截
-        if (isset($this->navigator)) return $this->navigator;
-
-        // wait 在接受到空回调的时候, 默认是repeat
-        if ($this->isFallback()) {
-            return $this->dialog->repeat();
+        if (isset($this->navigator)) {
+            return $this->navigator;
         }
-        $this->callInterceptor($hearMessage);
-        return $this->navigator ?? $this->dialog->missMatch();
-    }
-
-    public function sleepTo($to, callable $wake = null): Navigator
-    {
-        // 检查拦截
-        if (isset($this->navigator)) return $this->navigator;
-
-        if ($this->isFallback()) {
-            $this->callInterceptor($wake);
-        }
-
-        return $this->navigator ?? $this->dialog->restart();
-    }
-
-    public function dependOn(
-        $dependency,
-        callable $callback = null,
-        array $stages = null
-    ): Navigator
-    {
-        if (isset($this->navigator)) return $this->navigator;
-
-        if ($this->isCallback()) {
-            $this->callInterceptor($callback);
-        }
-
-        return $this->navigator ?? $this->dialog->next();
-    }
-
-
-    public function yieldTo(
-        $to = null,
-        callable $wake
-    ): Navigator
-    {
-        if (isset($this->navigator)) return $this->navigator;
-
-        if ($this->isCallback()) {
-            $this->callInterceptor($wake);
-        }
-
-        return $this->navigator ?? $this->dialog->redirect->yieldTo();
+        return $this->dialog->missMatch();
     }
 
 

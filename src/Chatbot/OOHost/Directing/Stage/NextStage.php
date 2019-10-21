@@ -15,11 +15,10 @@ class NextStage extends AbsNavigator
 {
     public function doDisplay(): ? Navigator
     {
-        $nextStage = $this->history->nextStage();
-        if (isset($nextStage)) {
+        $history = $this->history->nextStage();
+        if (isset($history)) {
             return $this->startCurrent();
         }
-
         return new Fulfill($this->dialog);
     }
 

@@ -27,7 +27,7 @@ class CallbackStage extends AbsNavigator
 
     public function __construct(
         Dialog $dialog,
-        Message $callbackValue = null
+        Message $callbackValue
     )
     {
         $this->callbackValue = $callbackValue;
@@ -37,16 +37,7 @@ class CallbackStage extends AbsNavigator
 
     public function doDisplay(): ? Navigator
     {
-        $context = $this->history->getCurrentContext();
-        $stage = $this->history->currentTask()->getStage();
-
-        return $context->getDef()
-            ->callbackStage(
-                $context,
-                $this->dialog,
-                $stage,
-                $this->callbackValue
-            );
+        return $this->callbackCurrent($this->callbackValue);
     }
 
 

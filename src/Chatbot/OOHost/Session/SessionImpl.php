@@ -155,11 +155,6 @@ class SessionImpl implements Session, HasIdGenerator
      */
     protected $memoryRepo;
 
-    /**
-     * @var int[]
-     */
-    protected $gcCounts = [];
-
     public function __construct(
         string $sessionId,
         OOHostConfig $hostConfig,

@@ -21,7 +21,7 @@ class Fulfill extends FallbackNavigator
 
         $intended = $this->history->intended();
         if (isset($intended)) {
-            return $this->callbackCurrent($context);
+            return $this->intendToCurrent($context);
         }
 
         return $this->then();

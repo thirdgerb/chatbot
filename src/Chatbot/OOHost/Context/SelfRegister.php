@@ -6,7 +6,7 @@ use Commune\Container\ContainerContract;
 
 
 /**
- * 可以静态地注册自身的Definition
+ * Context 可以用静态方法注册自身的 Definition 到 Registrar
  */
 interface SelfRegister
 {

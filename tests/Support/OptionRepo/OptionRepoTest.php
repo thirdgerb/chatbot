@@ -139,8 +139,8 @@ class OptionRepoTest extends TestCase
         $repo->delete( 'test', 'test');
         $this->assertFalse($repo->has( 'test', 'test'));
 
-        $this->assertFalse(file_exists(Demo::YAML . '/test.yaml' ));
-        $this->assertFalse(file_exists(Demo::JSON . '/test.yaml' ));
+        $this->assertFalse(file_exists(Demo::YAML . '/test.yml' ));
+        $this->assertFalse(file_exists(Demo::JSON . '/test.yml' ));
 
         $e = null;
         try {

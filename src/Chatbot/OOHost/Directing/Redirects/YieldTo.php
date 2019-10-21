@@ -9,7 +9,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 /**
  * 将一个运行中的thread 挂起到 yielding. 只有服务回调才能唤醒.
  */
-class YieldTo extends Redirector
+class YieldTo extends AbsRedirector
 {
     public function doDisplay(): ? Navigator
     {

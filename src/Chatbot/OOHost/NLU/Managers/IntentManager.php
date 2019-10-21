@@ -5,6 +5,7 @@ namespace Commune\Chatbot\OOHost\NLU\Managers;
 
 
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\NLU\Contracts\IntentDefHasCorpus;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Support\Option;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
@@ -29,13 +30,18 @@ class IntentManager extends CommonManager
 
     /**
      * @param IntentCorpusOption $option
-     * @return IntentCorpusOption
+     * @param bool $isNew
+     * @return Option
      */
-    public function wrapNewOption(Option $option): Option
+    public function wrapNewOption(Option $option, bool $isNew): Option
     {
         $intentName = $option->name;
         if ($this->registrar->hasDef($intentName)) {
             $def = $this->registrar->getDef($intentName);
+            if ($isNew && $def instanceof IntentDefHasCorpus) {
+                return $def->getDefaultCorpus();
+            }
+
             $option->mergeEntityNames($def->getEntityNames());
             $option->setDesc($def->getDesc(), false);
         }

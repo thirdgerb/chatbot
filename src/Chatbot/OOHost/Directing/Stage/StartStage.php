@@ -8,21 +8,14 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 /**
  * 运行当前的stage
+ *
+ * @deprecated
  */
 class StartStage extends AbsNavigator
 {
     public function doDisplay(): ? Navigator
     {
-        $context = $this->history->getCurrentContext();
-        $stage = $this->history->currentTask()->getStage();
-
-        return $context
-            ->getDef()
-            ->startStage(
-                $context,
-                $this->dialog,
-                $stage
-            );
+        return $this->startCurrent();
     }
 
 

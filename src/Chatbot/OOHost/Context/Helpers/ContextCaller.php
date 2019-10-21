@@ -12,6 +12,8 @@ use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Exiting\ExitingCatcher;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\Stages\CallbackStageRoute;
+use Commune\Chatbot\OOHost\Context\Stages\FallbackStageRoute;
+use Commune\Chatbot\OOHost\Context\Stages\IntendedStageRoute;
 use Commune\Chatbot\OOHost\Context\Stages\StartStageRoute;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -36,11 +38,22 @@ trait ContextCaller
         return $exiting->navigator;
     }
 
+    protected function checkStageExists(string $stage) : void
+    {
+        if (!$this->hasStage($stage)) {
+            throw new ConfigureException(
+                'context ' . $this->getName()
+                . ' stage ' . $stage
+                . ' not found while call it'
+            );
+        }
+    }
+
     public function callbackStage(
         Context $self,
         Dialog $dialog,
         string $stage,
-        Message $callbackValue = null
+        Message $userMessage
     ): Navigator
     {
         $this->checkStageExists($stage);
@@ -49,7 +62,7 @@ trait ContextCaller
             $stage,
             $self,
             $dialog,
-            $callbackValue
+            $userMessage
         );
 
         return $this->callStage($stage, $stageRoute);
@@ -81,25 +94,66 @@ trait ContextCaller
         $stageRoute = new StartStageRoute(
             $stage,
             $self,
-            $dialog
+            $dialog,
+            null
         );
 
         return $this->callStage($stage, $stageRoute);
     }
 
 
-
-    protected function checkStageExists(string $stage) : void
+    /**
+     * depend 回调 stage
+     * @param Context $self
+     * @param Dialog $dialog
+     * @param string $stage
+     * @param Context $callbackContext
+     * @return mixed
+     */
+    public function intendToStage(
+        Context $self,
+        Dialog $dialog,
+        string $stage,
+        Context $callbackContext
+    ) : Navigator
     {
-        if (!$this->hasStage($stage)) {
-            throw new ConfigureException(
-                'context ' . $this->getName()
-                . ' stage ' . $stage
-                . ' not found while call it'
-            );
-        }
+        $this->checkStageExists($stage);
+
+        $stageRoute = new IntendedStageRoute(
+            $stage,
+            $self,
+            $dialog,
+            $callbackContext
+        );
+
+        return $this->callStage($stage, $stageRoute);
+
     }
 
+    /**
+     * sleep 的 context 被重新唤醒.
+     * @param Context $self
+     * @param Dialog $dialog
+     * @param string $stage
+     * @return Navigator
+     */
+    public function fallbackStage(
+        Context $self,
+        Dialog $dialog,
+        string $stage
+    ) : Navigator
+    {
+        $this->checkStageExists($stage);
+
+        $stageRoute = new FallbackStageRoute(
+            $stage,
+            $self,
+            $dialog
+        );
+
+        return $this->callStage($stage, $stageRoute);
+
+    }
 
     public function callStage(string $stage, Stage $stageRoute) : Navigator
     {
@@ -131,6 +185,7 @@ trait ContextCaller
 
         return $result;
     }
+
 
 
     abstract protected function getStageCaller(string $stage) : callable ;

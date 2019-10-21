@@ -208,9 +208,9 @@ EOF
                         $dialog->say()->info('hit before');
                         return null;
                     })
-                    ->is('stop', function(Dialog $dialog) {
-                        $dialog->say()->info('stop sub dialog');
-                        return $dialog->wait();
+                    ->is('menu', function(Dialog $dialog) {
+                        $dialog->say()->info('stop sub dialog and go start');
+                        return $dialog->restart();
                     })
                     ->heardOrMiss();
             })

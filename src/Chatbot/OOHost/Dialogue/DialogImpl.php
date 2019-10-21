@@ -165,14 +165,26 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
         // 为message 设计各种依赖.
         $message = $message ?? $this->message;
 
+        // context 的依赖
+        $parameters = array_fill_keys(
+            $self->namesAsDependency(),
+            $self
+        );
+
+        // message 的依赖, 优先级高于 context
         $parameters = array_fill_keys(
             $message->namesAsDependency(),
             $message
-        );
+        ) + $parameters;
+
+        // message 的标准依赖.
         $parameters['message'] = $message;
         $parameters[Message::class] = $message;
 
+        // context 的标准依赖.
         $parameters['self'] = $self;
+        $parameters[Context::class] = $self;
+
         return $this->call($caller, $parameters, $method);
     }
 
@@ -206,6 +218,8 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
     )
     {
         $parameters = $parameters + $this->defaultDependencies();
+
+        // 还可以用 $dependencies 获取所有可用依赖的名称.
         $parameters[Dialog::DEPENDENCIES] = $this->describeParameters($parameters);
 
         return $this->conversation->call($caller, $parameters);

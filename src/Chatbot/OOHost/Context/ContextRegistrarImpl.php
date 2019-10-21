@@ -116,6 +116,10 @@ class ContextRegistrarImpl implements ContextRegistrar
         $this->subRegistrars[$name] = $registrar;
     }
 
+    /**
+     * @param bool $recursive
+     * @return ContextRegistrar[]
+     */
     public function getSubRegistrars($recursive = true): array
     {
         $subs = $this->subRegistrars;
@@ -194,7 +198,96 @@ class ContextRegistrarImpl implements ContextRegistrar
         return StringUtils::normalizeContextName($name);
     }
 
-    /*--------- has ----------*/
+    /*--------- self methods ----------*/
+
+    public function selfHasDef(string $contextName) : bool
+    {
+        // 如果传入了一个类名, 可能要临时注册.
+        if (class_exists($contextName)) {
+            // 先检查是否注册过了.
+            if (isset($this->classToName[$contextName])) {
+                return true;
+            }
+
+            // 再检查是否能自动注册.
+            if (is_a($contextName, SelfRegister::class, TRUE)) {//
+                $method = [$contextName, SelfRegister::REGISTER_METHOD];
+                call_user_func($method, $this->chatApp->getProcessContainer());
+                return isset($this->classToName[$contextName]);
+            }
+        }
+
+        // 最后检查是不是一个合法的ID.
+        $id = $this->filterFetchId($contextName);
+        return $this->selfHasDefById($id);
+    }
+
+    public function selfGetDef(string $contextName) : ? Definition
+    {
+        $id = $this->filterFetchId($contextName);
+        return $this->definitionsByName[$id] ?? null;
+    }
+
+    public function selfCountDef() : int
+    {
+        return count($this->definitionsByName);
+    }
+
+    public function selfEachDef() : \Generator
+    {
+        foreach ($this->definitionsByName as $def) {
+            yield $def;
+        }
+    }
+
+    public function selfGetDefNamesByTag(string ...$tags): array
+    {
+        $names = [];
+        foreach ($tags as $tag) {
+            if (isset($this->tagToName[$tag])) {
+                $names = array_merge($names, $this->tagToName[$tag]);
+            }
+        }
+        return array_unique($names);
+    }
+
+    /**
+     * 可以重写.
+     * @param string $id
+     * @return bool
+     */
+    public function selfHasDefById(string $id) : bool
+    {
+        return isset($this->definitionsByName[$id]);
+    }
+
+    public function selfGetPlaceholderDefNames(): array
+    {
+        return array_keys($this->placeholders);
+    }
+
+
+    public function selfGetDefNamesByDomain(string $domain) : array
+    {
+        if (empty($domain)) {
+            return array_keys($this->definitionsByName);
+        }
+
+        $domain = $this->normalizeContextName($domain);
+        $domain = trim($domain, '.');
+
+        $results = [];
+        foreach ($this->definitionsByName as $id => $def) {
+
+            if (strpos($id, $domain) === 0) {
+                $results[] = $id;
+            }
+
+        }
+        return $results;
+    }
+
+    /*----------- 公共方法 ----------*/
 
     public function hasDef(string $contextName) : bool
     {
@@ -214,42 +307,10 @@ class ContextRegistrarImpl implements ContextRegistrar
         return false;
     }
 
-    protected function selfHasDef(string $contextName) : bool
-    {
-        // 如果传入了一个类名, 可能要临时注册.
-        if (class_exists($contextName)) {
-            // 先检查是否注册过了.
-            if (isset($this->classToName[$contextName])) {
-                return true;
-            }
-
-            // 再检查是否能自动注册.
-            if (is_a($contextName, SelfRegister::class, TRUE)) {//
-                $method = [$contextName, SelfRegister::REGISTER_METHOD];
-                call_user_func($method, $this->chatApp->getProcessContainer());
-                return isset($this->classToName[$contextName]);
-            }
-        }
-
-        // 最后检查是不是一个合法的ID.
-        $id = $this->filterFetchId($contextName);
-        return $this->hasDefById($id);
-    }
-
-    /**
-     * 可以重写.
-     * @param string $id
-     * @return bool
-     */
-    public function hasDefById(string $id) : bool
-    {
-        return isset($this->definitionsByName[$id]);
-    }
-
 
     public function getDef(string $contextName) : ? Definition
     {
-        $def = $this->getSelfDef($contextName);
+        $def = $this->selfGetDef($contextName);
         if (isset($def)) {
             return $def;
         }
@@ -262,12 +323,6 @@ class ContextRegistrarImpl implements ContextRegistrar
         }
 
         return null;
-    }
-
-    public function getSelfDef(string $contextName) : ? Definition
-    {
-        $id = $this->filterFetchId($contextName);
-        return $this->definitionsByName[$id] ?? null;
     }
 
     protected function filterFetchId(string $contextName) : string
@@ -289,7 +344,7 @@ class ContextRegistrarImpl implements ContextRegistrar
      */
     public function eachDef() : \Generator
     {
-        foreach ($this->definitionsByName as $def) {
+        foreach ($this->selfEachDef() as $def) {
             yield $def;
         }
 
@@ -300,9 +355,10 @@ class ContextRegistrarImpl implements ContextRegistrar
         }
     }
 
+
     public function getDefNamesByDomain(string $domain = '') : array
     {
-        $names = $this->getSelfDefNamesByDomain($domain);
+        $names = $this->selfGetDefNamesByDomain($domain);
         foreach ($this->subRegistrars as $registrar) {
             $result = $registrar->getDefNamesByDomain($domain);
             $names = array_merge($names, $result);
@@ -311,43 +367,20 @@ class ContextRegistrarImpl implements ContextRegistrar
         return array_unique($names);
     }
 
-    public function getSelfDefNamesByDomain(string $domain) : array
-    {
-        if (empty($domain)) {
-            return array_keys($this->definitionsByName);
-        }
-
-        $domain = $this->normalizeContextName($domain);
-        $domain = trim($domain, '.');
-
-        $results = [];
-        foreach ($this->definitionsByName as $id => $def) {
-
-            if (strpos($id, $domain) === 0) {
-                $results[] = $id;
-            }
-
-        }
-        return $results;
-    }
 
     public function countDef(): int
     {
-        $num = $this->countSelfDef();
+        $num = $this->selfCountDef();
         foreach ($this->subRegistrars as $registrar) {
             $num += $registrar->countDef();
         }
         return $num;
     }
 
-    public function countSelfDef() : int
-    {
-        return count($this->definitionsByName);
-    }
 
     public function getDefNamesByTag(string ...$tags): array
     {
-        $names = $this->getSelfDefNamesByTag(...$tags);
+        $names = $this->selfGetDefNamesByTag(...$tags);
         foreach ($this->subRegistrars as $registrar) {
             $names = array_merge($names, $registrar->getDefNamesByTag(...$tags));
         }
@@ -355,30 +388,13 @@ class ContextRegistrarImpl implements ContextRegistrar
     }
 
 
-    public function getSelfDefNamesByTag(string ...$tags): array
-    {
-        $names = [];
-        foreach ($tags as $tag) {
-            if (isset($this->tagToName[$tag])) {
-                $names = array_merge($names, $this->tagToName[$tag]);
-            }
-        }
-        return array_unique($names);
-    }
-
     public function getPlaceholderDefNames(): array
     {
-        $names = $this->getSelfPlaceholderDefNames();
+        $names = $this->selfGetPlaceholderDefNames();
         foreach ($this->subRegistrars as $registrar) {
             $names = array_merge($names, $registrar->getPlaceholderDefNames());
         }
         return $names;
-    }
-
-
-    public function getSelfPlaceholderDefNames(): array
-    {
-        return array_keys($this->placeholders);
     }
 
     final public static function validateDefName(string $contextName): bool

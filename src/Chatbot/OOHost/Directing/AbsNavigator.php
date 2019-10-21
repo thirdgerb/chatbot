@@ -4,9 +4,9 @@
 namespace Commune\Chatbot\OOHost\Directing;
 
 
+use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
-use Commune\Chatbot\OOHost\Directing\Stage\CallbackStage;
-use Commune\Chatbot\OOHost\Directing\Stage\StartStage;
 use Commune\Chatbot\OOHost\History\History;
 
 abstract class AbsNavigator implements Navigator
@@ -78,11 +78,55 @@ abstract class AbsNavigator implements Navigator
 
     public function startCurrent() : Navigator
     {
-        return new StartStage($this->dialog);
+        $context = $this->history->getCurrentContext();
+        $stage = $this->history->currentTask()->getStage();
+
+        return $context->getDef()
+            ->startStage(
+                $context,
+                $this->dialog,
+                $stage
+            );
     }
 
-    public function callbackCurrent($callbackValue = null) : Navigator
+    public function callbackCurrent(Message $message) : Navigator
     {
-        return new CallbackStage($this->dialog, $callbackValue);
+        $context = $this->history->getCurrentContext();
+        $stage = $this->history->currentTask()->getStage();
+
+        return $context->getDef()
+            ->callbackStage(
+                $context,
+                $this->dialog,
+                $stage,
+                $message
+            );
+    }
+
+    public function intendToCurrent(Context $callbackValue) : Navigator
+    {
+        $context = $this->history->getCurrentContext();
+        $stage = $this->history->currentTask()->getStage();
+
+        return $context->getDef()
+            ->intendToStage(
+                $context,
+                $this->dialog,
+                $stage,
+                $callbackValue
+            );
+    }
+
+    public function fallbackCurrent() : Navigator
+    {
+        $context = $this->history->getCurrentContext();
+        $stage = $this->history->currentTask()->getStage();
+
+        return $context->getDef()
+            ->fallbackStage(
+                $context,
+                $this->dialog,
+                $stage
+            );
     }
 }

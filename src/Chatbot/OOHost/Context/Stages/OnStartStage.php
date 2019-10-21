@@ -76,15 +76,9 @@ interface OnStartStage extends DialogSpeech
 
     /**
      * @param Context|string $to
-     * @return OnCallbackStage
+     * @return Navigator
      */
-    public function dependOn($to) : OnCallbackStage;
-
-    /**
-     * @param Context|string $to
-     * @return OnCallbackStage
-     */
-    public function yieldTo($to) : OnCallbackStage;
+    public function dependOn($to) : Navigator;
 
 
     /**

@@ -3,6 +3,7 @@
 namespace Commune\Chatbot\OOHost\Context;
 
 use Commune\Chatbot\Blueprint\Message\Message;
+use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\SessionData;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
@@ -36,20 +37,14 @@ interface Context extends
     Dictionary  // context 可以像对象, 或者数组一样操作它存储的数据.
 {
 
-    // 语境脱出时调用的事件方法名
-    const EXITING_LISTENER = '__exiting';
-
     // 定义多轮对话每个阶段的方法名前缀.
     // 例如 start 阶段, 命名为 __onStart
     const STAGE_METHOD_PREFIX = '__on';
 
-    // 允许用 annotation 来标注 stage.
-    // 在方法的注解上标记  @stage
-    // 这两种方法未来更倾向于前者, 因为容错更好.
-    const STAGE_ANNOTATION = 'stage';
+    // 系统默认的方法.
 
-    // 多轮对话的启动阶段.
-    const INITIAL_STAGE = 'start';
+    // 语境脱出时调用的事件方法名
+    const EXITING_LISTENER = '__exiting';
 
     // 定义多轮对话的依赖属性. 属性本身会通过多轮对话来完善, 全完善后才会进入start阶段.
     const DEPENDENCY_BUILDER = '__depend';
@@ -60,11 +55,17 @@ interface Context extends
     // 入参是 Hearing 类.
     // 可以给所有的hearing 定义一些公共的流程.
     const HEARING_MIDDLEWARE_METHOD = '__hearing';
+    // public function __hearing(Hearing $hearing) : void;
 
     // 如果此方法存在, 所有stage 方法构建时都会调用它.
     // 入参是 Stage, 返回值是 void
     // 可以给所有的stage 定义公共流程.
     const STAGE_MIDDLEWARE_METHOD = '__staging';
+    // public function __staging(Stage $stage) : void;
+
+    // 如果此方法存在, 调用 Dialog::hear(), 匹配不到别的意图时
+    // 会调用 Hearing::onHelp([$context, '__help']) 方法;
+    const CONTEXT_HELP_METHOD = '__help';
 
     /**
      * 用 tag 可以为context 在registrar 里归类.
@@ -72,6 +73,14 @@ interface Context extends
      * @see Definition
      */
     const CONTEXT_TAGS = [];
+
+    // 允许用 annotation 来标注 stage.
+    // 在方法的注解上标记  @stage
+    // 这两种方法未来更倾向于前者, 因为容错更好.
+    const STAGE_ANNOTATION = 'stage';
+
+    // 多轮对话的启动阶段.
+    const INITIAL_STAGE = 'start';
 
     /**
      * Context 的id, 用于存储和读取一个 context 对象.

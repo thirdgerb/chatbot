@@ -21,10 +21,12 @@ class DataNotFoundException extends LogicException
     /**
      * DataNotFoundException constructor.
      * @param SessionDataIdentity $id
+     * @param string|null $type
      */
-    public function __construct(SessionDataIdentity $id)
+    public function __construct(SessionDataIdentity $id, string $type = null)
     {
-        parent::__construct($id->type .' id ' . $id->id . ' not found');
+        $type = $type ?? $id->type;
+        parent::__construct($type .' id ' . $id->id . ' not found');
     }
 
     /**

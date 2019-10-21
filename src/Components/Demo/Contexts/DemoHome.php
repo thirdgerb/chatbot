@@ -33,6 +33,7 @@ class DemoHome extends TaskDef
                     WelcomeUser::class,
                     TestGames::class,
                     DevTools::class,
+                    'sw.demo.intro',
                 ]
             ));
     }

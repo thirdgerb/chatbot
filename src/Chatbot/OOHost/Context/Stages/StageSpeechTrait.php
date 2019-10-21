@@ -7,18 +7,19 @@ use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
-use Commune\Chatbot\OOHost\Dialogue\DialogSpeechImpl;
+use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
 
 /**
  * implements dialogSpeech
- * @property DialogSpeechImpl $dialogSpeech
  */
 trait StageSpeechTrait
 {
+    abstract protected function getDialogSpeech() : DialogSpeech ;
+
     public function callDialogSpeech(string $method, array $args)
     {
         if ($this->isAvailable()) {
-            call_user_func_array([$this->dialogSpeech, $method], $args);
+            call_user_func_array([$this->getDialogSpeech(), $method], $args);
         }
         return $this;
     }
@@ -73,7 +74,7 @@ trait StageSpeechTrait
 
     public function trans(string $message, array $slots = []): string
     {
-        return $this->dialogSpeech->trans($message, $slots);
+        return $this->getDialogSpeech()->trans($message, $slots);
     }
 
     public function withReply(ReplyMsg $reply)
@@ -136,7 +137,7 @@ trait StageSpeechTrait
     )
     {
         if ($this->isAvailable()) {
-            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+            call_user_func_array([$this->getDialogSpeech(), __FUNCTION__], func_get_args());
         }
         return $this;
     }
@@ -144,7 +145,7 @@ trait StageSpeechTrait
     public function askConfirmIntent(string $question, IntentMessage $intent)
     {
         if ($this->isAvailable()) {
-            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+            call_user_func_array([$this->getDialogSpeech(), __FUNCTION__], func_get_args());
         }
         return $this;
     }
@@ -152,7 +153,7 @@ trait StageSpeechTrait
     public function askConfirmEntity(string $question, IntentMessage $intent, string $entityName)
     {
         if ($this->isAvailable()) {
-            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+            call_user_func_array([$this->getDialogSpeech(), __FUNCTION__], func_get_args());
         }
         return $this;
     }
@@ -166,7 +167,7 @@ trait StageSpeechTrait
     )
     {
         if ($this->isAvailable()) {
-            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+            call_user_func_array([$this->getDialogSpeech(), __FUNCTION__], func_get_args());
         }
         return $this;
     }
@@ -181,7 +182,7 @@ trait StageSpeechTrait
     )
     {
         if ($this->isAvailable()) {
-            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+            call_user_func_array([$this->getDialogSpeech(), __FUNCTION__], func_get_args());
         }
         return $this;
     }
@@ -195,7 +196,7 @@ trait StageSpeechTrait
     )
     {
         if ($this->isAvailable()) {
-            call_user_func_array([$this->dialogSpeech, __FUNCTION__], func_get_args());
+            call_user_func_array([$this->getDialogSpeech(), __FUNCTION__], func_get_args());
         }
         return $this;
     }

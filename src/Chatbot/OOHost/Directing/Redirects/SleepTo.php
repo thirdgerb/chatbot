@@ -8,7 +8,6 @@ use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\AbsNavigator;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\History\History;
 
 /**
  * 当前thread 进入sleep 状态.
@@ -38,10 +37,6 @@ class SleepTo extends AbsNavigator
 
     public function doDisplay(): ? Navigator
     {
-
-        // 加入校验.
-
-
         // 是否能够sleep to
         $history = $this->history->sleepTo($this->to);
 

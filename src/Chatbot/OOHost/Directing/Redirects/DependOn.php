@@ -14,7 +14,7 @@ use Commune\Chatbot\OOHost\Directing\Stage\GoStagePipes;
  * 目标context fulfill 的话, 会作为参数回调
  * 如果目标context 发生异常 cancel, reject, fail 的话, 当前context 也会因此退出.
  */
-class DependOn extends Redirector
+class DependOn extends AbsRedirector
 {
     /**
      * @var array

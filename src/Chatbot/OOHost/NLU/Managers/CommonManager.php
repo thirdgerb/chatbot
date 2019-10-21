@@ -74,11 +74,11 @@ class CommonManager implements Manager
         } else {
             $option = call_user_func([$class, 'createById'], $id);
         }
-        $option = $this->wrapNewOption($option);
+        $option = $this->wrapNewOption($option, $has);
         return $this->loaded[$id] = $option;
     }
 
-    public function wrapNewOption(Option $option) : Option
+    public function wrapNewOption(Option $option, bool $isNew) : Option
     {
         return $option;
     }

@@ -5,7 +5,8 @@ namespace Commune\Chatbot\OOHost\Context\Stages;
 
 
 use Commune\Chatbot\OOHost\Context\Stage;
-use Commune\Chatbot\OOHost\Dialogue\Dialog;
+use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
+use Commune\Chatbot\OOHost\Dialogue\DialogSpeechImpl;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
@@ -14,7 +15,7 @@ class OnStartStageBuilder implements OnStartStage
     use StageSpeechTrait;
 
     /**
-     * @var Stage
+     * @var AbsStageRoute
      */
     protected $stage;
 
@@ -23,17 +24,28 @@ class OnStartStageBuilder implements OnStartStage
      */
     protected $isStart;
 
+    protected $slots;
 
-    public function __construct(Stage $stage, array $slots)
+    protected $dialogSpeech;
+
+    public function __construct(AbsStageRoute $stage, array $slots)
     {
         $this->stage = $stage;
         $this->isStart = $stage->isStart();
+        $this->slots = $slots;
         if ($this->isStart) {
-            $this->dialogSpeech = $stage->dialog
-                ->say($slots)
-                ->withContext($stage->self);
+            $this->dialogSpeech = $stage
+                ->dialog
+                ->say($slots);
         }
     }
+
+    protected function getDialogSpeech(): DialogSpeech
+    {
+        return $this->dialogSpeech
+            ?? $this->dialogSpeech = $this->stage->dialog->say($this->slots);
+    }
+
 
     protected function isAvailable() : bool
     {
@@ -46,44 +58,41 @@ class OnStartStageBuilder implements OnStartStage
 
     public function next(): Navigator
     {
-        $navigator = $this->stage->navigator;
-        if (isset($navigator)) return $navigator;
-
-        // always
-        return $this->stage->dialog->next();
+        if ($this->isAvailable()) {
+            return $this->stage->dialog->next();
+        }
+        return $this->stage->defaultNavigator();
     }
 
     public function fulfill(): Navigator
     {
-        $navigator = $this->stage->navigator;
-        if (isset($navigator)) return $navigator;
-
-        // always
-        return $this->stage->dialog->fulfill();
+        if ($this->isAvailable()) {
+            return $this->stage->dialog->fulfill();
+        }
+        return $this->stage->defaultNavigator();
     }
 
 
     public function replaceTo($to = null, string $level = Redirect::THREAD_LEVEL):Navigator
     {
-        $navigator = $this->stage->navigator;
-        if (isset($navigator)) return $navigator;
-
-        return $this->stage->dialog->redirect->replaceTo($to, $level);
+        if ($this->isAvailable()) {
+            return $this->stage->dialog->redirect->replaceTo($to, $level);
+        }
     }
 
     public function action(callable $action): Navigator
     {
-        $navigator = $this->stage->navigator;
-        if (isset($navigator)) return $navigator;
-
-        return $this
-            ->stage
-            ->dialog
-            ->app
-            ->callContextInterceptor(
-                $this->stage->self,
-                $action
-            );
+        if ($this->isAvailable()) {
+            return $this
+                ->stage
+                ->dialog
+                ->app
+                ->callContextInterceptor(
+                    $this->stage->self,
+                    $action
+                );
+        }
+        return $this->stage->defaultNavigator();
     }
 
     public function interceptor(callable $interceptor): OnStartStage
@@ -97,11 +106,10 @@ class OnStartStageBuilder implements OnStartStage
         bool $resetPipes = false
     ): Navigator
     {
-        $navigator = $this->stage->navigator;
-        if (isset($navigator)) return $navigator;
-
-        // 不管是start 还是 callback, 都会直接执行.
-        return  $this->stage->dialog->goStage($name, $resetPipes);
+        if ($this->isAvailable()) {
+            return $this->stage->dialog->goStage($name, $resetPipes);
+        }
+        return $this->stage->defaultNavigator();
     }
 
     public function goStagePipes(
@@ -109,34 +117,27 @@ class OnStartStageBuilder implements OnStartStage
         bool $resetPipes = false
     ): Navigator
     {
-        // 不管是start 还是 callback, 都会直接执行.
-        return $this->stage->navigator
-            ?? $this->stage->dialog->goStagePipes($pipes, $resetPipes);
+        if ($this->isAvailable()) {
+            return $this->stage->navigator
+                ?? $this->stage->dialog->goStagePipes($pipes, $resetPipes);
+        }
+        return $this->stage->defaultNavigator();
     }
 
     public function wait() : OnCallbackStage
     {
-        return new CallbackStageBuilder($this->stage);
+        return new OnCallbackStageBuilder($this->stage, $this->slots);
     }
 
 
-    public function dependOn($to): OnCallbackStage
+    public function dependOn($to): Navigator
     {
-        $this->stage->onStart(function(Dialog $dialog) use ($to) {
-            return $dialog->redirect->dependOn($to);
-        });
-        return $this->wait();
+        if ($this->isAvailable()) {
+            return $this->stage->dialog->redirect->dependOn($to);
+        }
+        return $this->stage->defaultNavigator();
     }
 
-
-    public function yieldTo($to): OnCallbackStage
-    {
-        $this->stage->onStart(function(Dialog $dialog) use ($to) {
-            return $dialog->redirect->yieldTo($to);
-        });
-
-        return $this->wait();
-    }
 
     public function toStage(): Stage
     {
@@ -145,13 +146,15 @@ class OnStartStageBuilder implements OnStartStage
 
     public function hearing()
     {
-        if ($this->isStart || isset($this->stage->navigator)) {
-            return new FakeHearing(
-                $this->stage->dialog,
-                $this->stage->navigator ?? $this->stage->dialog->wait()
-            );
+        if ($this->stage->isCallback() && !isset($this->stage->navigator)) {
+            return $this->stage->dialog->hear($this->stage->value);
         }
-        return $this->stage->dialog->hear($this->stage->value);
+
+        return new FakeHearing(
+            $this->stage->dialog,
+            $this->stage->defaultNavigator(),
+            $this->stage->isStart()
+        );
     }
 
 

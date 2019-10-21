@@ -18,8 +18,8 @@ return [
         \Commune\Components\SimpleChat\SimpleChatComponent::class,
         \Commune\Components\Story\StoryComponent::class,
         \Commune\Components\Rasa\RasaComponent::class,
+        \Commune\Components\SimpleWiki\SimpleWikiComponent::class,
 
-//        \Commune\Chatbot\App\Components\SimpleFileChatComponent::class,
     ],
     'processProviders' => [
     ],
@@ -87,7 +87,7 @@ return [
             \Commune\Chatbot\App\Commands\UserCommandsPipe::class,
             \Commune\Chatbot\App\Commands\AnalyserPipe::class,
 
-            \Commune\Components\Rasa\RasaSessionPipe::class,
+            //\Commune\Components\Rasa\RasaSessionPipe::class,
 
             \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
         ],

@@ -12,7 +12,8 @@ use Commune\Support\Option;
  * @property-read string $name entity name
  * @property-read string $desc 介绍
  * @property-read string[] $values entity 词典里的值
- * @property-read string[] $synonyms value 里的同义词词典.
+ * @property-read string[] $synonyms 有同义词词典的值.
+ * @property-read string[] $blacklist 黑名单, 命中了就肯定不是了.
  *
  */
 class EntityDictOption extends Option implements CorpusOption
@@ -25,6 +26,7 @@ class EntityDictOption extends Option implements CorpusOption
             'name' => '',
             'desc' => '',
             'values' => [],
+            'blacklist' => [],
             'synonyms' => [],
         ];
     }

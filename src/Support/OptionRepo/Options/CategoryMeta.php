@@ -55,11 +55,6 @@ class CategoryMeta extends Option
         ];
     }
 
-    public function newOption(array $data) : Option
-    {
-        $className = $this->optionClazz;
-        return new $className($data);
-    }
 
     public static function validate(array $data): ? string
     {

@@ -9,7 +9,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 /**
  * 直接替换掉整个process. 需要明白为什么要这么做.
  */
-class ReplaceProcessTo extends Redirector
+class ReplaceProcessTo extends AbsRedirector
 {
     public function doDisplay(): ? Navigator
     {

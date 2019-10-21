@@ -58,11 +58,17 @@ class Snapshot implements ArrayAndJsonAble
     {
         $ids = $this->breakpoint->process()->getContextIds();
         if (isset($this->prevBreakpoint)) {
-            $ids = array_merge($ids, $this->prevBreakpoint->process()->getContextIds());
+            $ids = array_merge(
+                $ids,
+                $this->prevBreakpoint->process()->getContextIds()
+            );
         }
 
         foreach ($this->backtrace as $breakpoint) {
-            $ids = array_merge($ids, $breakpoint->process()->getContextIds());
+            $ids = array_merge(
+                $ids,
+                $breakpoint->process()->getContextIds()
+            );
         }
 
         return array_unique($ids);
