@@ -12,13 +12,13 @@ use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
+use Commune\Chatbot\OOHost\Context\Contracts\RootContextRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Context\Context;
 
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootMemoryRegistrar;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\DialogImpl;
 
@@ -141,17 +141,17 @@ class SessionImpl implements Session, HasIdGenerator
     protected $memory;
 
     /**
-     * @var IntentRegistrar;
+     * @var RootIntentRegistrar;
      */
     protected $intentRepo;
 
     /**
-     * @var ContextRegistrar
+     * @var RootContextRegistrar
      */
     protected $contextRepo;
 
     /**
-     * @var MemoryRegistrar
+     * @var RootMemoryRegistrar
      */
     protected $memoryRepo;
 
@@ -284,22 +284,22 @@ class SessionImpl implements Session, HasIdGenerator
         return $this->memory ?? $this->memory = new SessionMemory($this);
     }
 
-    public function getIntentRegistrar() : IntentRegistrar
+    public function getIntentRegistrar() : RootIntentRegistrar
     {
         return $this->intentRepo
-            ?? $this->intentRepo = $this->conversation->get(IntentRegistrar::class);
+            ?? $this->intentRepo = $this->conversation->get(RootIntentRegistrar::class);
     }
 
-    public function getMemoryRegistrar() : MemoryRegistrar
+    public function getMemoryRegistrar() : RootMemoryRegistrar
     {
         return $this->memoryRepo
-            ?? $this->memoryRepo = $this->conversation->get(MemoryRegistrar::class);
+            ?? $this->memoryRepo = $this->conversation->get(RootMemoryRegistrar::class);
     }
 
-    public function getContextRegistrar() : ContextRegistrar
+    public function getContextRegistrar() : RootContextRegistrar
     {
         return $this->contextRepo
-            ?? $this->contextRepo = $this->conversation->get(ContextRegistrar::class);
+            ?? $this->contextRepo = $this->conversation->get(RootContextRegistrar::class);
     }
 
 

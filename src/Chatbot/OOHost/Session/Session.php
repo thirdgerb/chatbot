@@ -9,9 +9,9 @@ use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootContextRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootMemoryRegistrar;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
@@ -44,9 +44,9 @@ use Psr\Log\LoggerInterface;
  *
  * ************* contexts ************
  *
- * @property-read ContextRegistrar $contextRepo
- * @property-read IntentRegistrar $intentRepo
- * @property-read MemoryRegistrar $memoryRepo
+ * @property-read RootContextRegistrar $contextRepo
+ * @property-read RootIntentRegistrar $intentRepo
+ * @property-read RootMemoryRegistrar $memoryRepo
  *
  * ************* components ************
  *

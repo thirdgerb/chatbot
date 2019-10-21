@@ -8,7 +8,7 @@ use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Memory\AbsMemory;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryDefinition;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootMemoryRegistrar;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -82,7 +82,7 @@ abstract class MemorialTask extends AbsMemory implements SelfRegister
 
     public static function registerSelfDefinition(ContainerContract $processContainer): void
     {
-        $repo = $processContainer->get(MemoryRegistrar::class);
+        $repo = $processContainer->get(RootMemoryRegistrar::class);
         $def = static::buildDefinition();
         $repo->registerDef($def, true);
     }

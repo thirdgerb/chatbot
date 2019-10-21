@@ -8,15 +8,15 @@ use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\Framework\Component\Providers\LoadPsr4SelfRegister;
 use Commune\Chatbot\Framework\Providers\BaseServiceProvider;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
-use Commune\Chatbot\OOHost\Context\ContextRegistrarImpl;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarImpl;
+use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarDefault;
+use Commune\Chatbot\OOHost\Context\Intent\RootIntentRegistrarImpl;
+use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrarDefault;
+use Commune\Chatbot\OOHost\Context\Memory\RootMemoryRegistrarImpl;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryBagDefinition;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrarImpl;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar as ContextRegistrarInterface;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar as IntentRegistrarInterface;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar as MemoryRegistrarInterface;
+use Commune\Chatbot\OOHost\Context\Contracts\RootMemoryRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts;
+use Commune\Chatbot\OOHost\Context\Registrar\RootContextRegistrarDefault;
+use Commune\Chatbot\OOHost\Context\Registrar\RootContextRegistrarImpl;
 use Commune\Chatbot\OOHost\Emotion\Feeling;
 use Commune\Chatbot\OOHost\Emotion\Feels;
 
@@ -33,13 +33,20 @@ class HostProcessServiceProvider extends BaseServiceProvider
         $chatbotConfig = $app[ChatbotConfig::class];
         $host = $chatbotConfig->host;
 
+        // 注册 intent 和 memory 到父容器
+        /**
+         * @var Contracts\RootContextRegistrar $contextRepo
+         */
+        $contextRepo = $app[Contracts\RootContextRegistrar::class];
+        $contextRepo->registerSubRegistrar(Contracts\RootIntentRegistrar::class);
+        $contextRepo->registerSubRegistrar(Contracts\RootMemoryRegistrar::class);
 
         // 注册在host 配置中定义的 memories
         // register memories defined at host config
         /**
-         * @var MemoryRegistrar $repo
+         * @var RootMemoryRegistrar $repo
          */
-        $repo = $app->get(MemoryRegistrarInterface::class);
+        $repo = $app->get(RootMemoryRegistrar::class);
         foreach ($host->memories as $memoryOption) {
             $repo->registerDef(
                 new MemoryBagDefinition(
@@ -71,26 +78,43 @@ class HostProcessServiceProvider extends BaseServiceProvider
 
     protected function registerContextRegistrar()
     {
-        $this->app->singleton(ContextRegistrarInterface::class, function($app){
-            return new ContextRegistrarImpl($app[Application::class]);
+        $this->app->singleton(Contracts\RootContextRegistrar::class, function($app){
+
+            return new RootContextRegistrarImpl(
+                $app[Application::class],
+                RootContextRegistrarDefault::class
+            );
         });
+
+        $this->app->singleton(RootContextRegistrarDefault::class);
     }
 
     protected function registerIntentRegistrar()
     {
-        $this->app->singleton(IntentRegistrarInterface::class, function($app){
+        $this->app->singleton(Contracts\RootIntentRegistrar::class, function($app){
 
-            $registrar = new IntentRegistrarImpl($app[Application::class],$app[ContextRegistrar::class]);
+            $registrar = new RootIntentRegistrarImpl(
+                $app[Application::class],
+                IntentRegistrarDefault::class
+            );
             return $registrar;
         });
+
+        $this->app->singleton(IntentRegistrarDefault::class);
     }
 
     protected function registerMemoryRegistrar()
     {
-        $this->app->singleton(MemoryRegistrarInterface::class, function($app){
-            $registrar = new MemoryRegistrarImpl($app[Application::class], $app[ContextRegistrar::class]);
+        $this->app->singleton(RootMemoryRegistrar::class, function($app){
+            $registrar = new RootMemoryRegistrarImpl(
+                $app[Application::class],
+                MemoryRegistrarDefault::class
+            );
+
             return $registrar;
         });
+
+        $this->app->singleton(MemoryRegistrarDefault::class);
     }
 
     protected function registerFeeling()

@@ -16,14 +16,12 @@ use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\Context\OOContext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
-use Commune\Chatbot\OOHost\NLU\Contracts\NLUService;
-use Commune\Chatbot\OOHost\NLU\NLUComponent;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Illuminate\Support\Collection;
 
@@ -190,7 +188,7 @@ class IntCorpusEditor extends OOContext
         return $stage->component($paginator);
     }
 
-    protected function getRepo() : IntentRegistrar
+    protected function getRepo() : RootIntentRegistrar
     {
         return $this->getSession()->intentRepo;
     }

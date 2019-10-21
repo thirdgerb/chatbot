@@ -8,7 +8,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\Context\OOContext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
@@ -165,7 +165,7 @@ class IntExampleEditor extends OOContext
 
 
 
-    protected function getRepo() : IntentRegistrar
+    protected function getRepo() : RootIntentRegistrar
     {
         return $this->getSession()->intentRepo;
     }

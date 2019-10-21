@@ -206,4 +206,18 @@ class StringUtils
 
         return $matcher[$char] ?? null;
     }
+
+
+
+    public static function validateDefName(string $contextName): bool
+    {
+        $name = StringUtils::normalizeContextName($contextName);
+        $secs = explode('.', $name);
+        foreach ($secs as $sec) {
+            if (! preg_match('/^[a-z0-9]+$/', $sec)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

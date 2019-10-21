@@ -5,7 +5,7 @@ namespace Commune\Chatbot\OOHost\Session;
 
 
 use Commune\Chatbot\OOHost\Context\Memory\Memory;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootMemoryRegistrar;
 
 /**
  * 用 array 的方式来调用. 例如 $this->session->memory['sandbox']
@@ -32,7 +32,7 @@ class SessionMemory implements \ArrayAccess
     }
 
 
-    protected function getRepo() : MemoryRegistrar
+    protected function getRepo() : RootMemoryRegistrar
     {
         return $this->session->memoryRepo;
     }

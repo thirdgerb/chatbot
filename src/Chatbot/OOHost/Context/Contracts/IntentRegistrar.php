@@ -1,9 +1,11 @@
 <?php
 
 
-namespace Commune\Chatbot\OOHost\Context\Intent;
+namespace Commune\Chatbot\OOHost\Context\Contracts;
 
 use Commune\Chatbot\OOHost\Context\ContextRegistrar;
+use Commune\Chatbot\OOHost\Context\Intent\IntentDefinition;
+use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Session\Session;
 
 /**

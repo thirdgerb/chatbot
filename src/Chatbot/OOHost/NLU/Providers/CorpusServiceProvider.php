@@ -3,12 +3,9 @@
 namespace Commune\Chatbot\OOHost\NLU\Providers;
 
 use Commune\Chatbot\Framework\Providers\BaseServiceProvider;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
-use Commune\Chatbot\OOHost\NLU\Contracts\NLULogger;
 use Commune\Chatbot\OOHost\NLU\Corpus\CorpusRepository;
-use Commune\Chatbot\OOHost\NLU\NLUComponent;
-use Commune\Container\ContainerContract;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
 
 
@@ -29,7 +26,7 @@ class CorpusServiceProvider extends BaseServiceProvider
         if (!$this->app->bound(Corpus::class)) {
             $this->app->singleton(Corpus::class, function($app){
                 return new CorpusRepository(
-                    $app[IntentRegistrar::class],
+                    $app[RootIntentRegistrar::class],
                     $app[OptionRepository::class]
                 );
             });

@@ -1,10 +1,7 @@
 <?php
 
-
 namespace Commune\Chatbot\OOHost\NLU\Corpus;
 
-
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\NLU\Contracts\Manager;
 use Commune\Chatbot\OOHost\NLU\Managers\CommonManager;
@@ -13,12 +10,13 @@ use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Chatbot\OOHost\NLU\Options\SynonymOption;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
+use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 
 class CorpusRepository implements Corpus
 {
 
     /**
-     * @var IntentRegistrar
+     * @var RootIntentRegistrar
      */
     protected $registrar;
 
@@ -35,10 +33,10 @@ class CorpusRepository implements Corpus
 
     /**
      * CorpusRepository constructor.
-     * @param IntentRegistrar $registrar
+     * @param RootIntentRegistrar $registrar
      * @param OptionRepository $optionRepo
      */
-    public function __construct(IntentRegistrar $registrar, OptionRepository $optionRepo)
+    public function __construct(RootIntentRegistrar $registrar, OptionRepository $optionRepo)
     {
         $this->registrar = $registrar;
         $this->optionRepo = $optionRepo;

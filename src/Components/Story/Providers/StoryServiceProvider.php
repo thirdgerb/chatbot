@@ -9,10 +9,10 @@ use Commune\Chatbot\Blueprint\Application;
 use Commune\Components\Story\StoryComponent;
 use Commune\Components\Story\Basic\StoryRegistrar;
 use Commune\Components\Story\Options\ScriptOption;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
-use Commune\Components\Story\Basic\StoryRegistrarImpl;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
 use Commune\Chatbot\Framework\Providers\BaseServiceProvider;
+use Commune\Chatbot\OOHost\Context\Contracts\RootContextRegistrar;
+use Commune\Components\Story\Basic\StoryRegistrarImpl;
 
 class StoryServiceProvider extends BaseServiceProvider
 {
@@ -40,10 +40,13 @@ class StoryServiceProvider extends BaseServiceProvider
         /**
          * @var StoryRegistrar $registrar
          * @var OptionRepository $repo
+         * @var RootContextRegistrar $root
          */
+        $root = $app[RootContextRegistrar::class];
+        $root->registerSubRegistrar(StoryRegistrar::class);
+
         $registrar = $app[StoryRegistrar::class];
         $repo = $app[OptionRepository::class];
-
         foreach ($repo->eachOption(ScriptOption::class) as $script) {
             $registrar->registerScriptOption($script);
         }
@@ -53,9 +56,8 @@ class StoryServiceProvider extends BaseServiceProvider
     {
         // 注册 story 服务.
         $this->app->singleton(StoryRegistrar::class, function($app){
-            $parent = $app[ContextRegistrar::class];
             $chatApp = $app[Application::class];
-            return new StoryRegistrarImpl($chatApp, $parent);
+            return new StoryRegistrarImpl($chatApp);
         });
     }
 

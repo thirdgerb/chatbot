@@ -11,7 +11,7 @@ namespace Commune\Chatbot\Framework\Component\Providers;
 use Commune\Chatbot\Config\Options\MemoryOption;
 use Commune\Chatbot\Framework\Providers\BaseServiceProvider;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryBagDefinition;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootMemoryRegistrar;
 use Commune\Container\ContainerContract;
 
 class LoadMemoryBag extends BaseServiceProvider
@@ -38,9 +38,9 @@ class LoadMemoryBag extends BaseServiceProvider
     public function boot($app)
     {
         /**
-         * @var MemoryRegistrar $memoryRepo
+         * @var RootMemoryRegistrar $memoryRepo
          */
-        $memoryRepo = $app->get(MemoryRegistrar::class);
+        $memoryRepo = $app->get(RootMemoryRegistrar::class);
 
         foreach ($this->memoryOptions as $option) {
             $memoryOption = new MemoryOption($option);

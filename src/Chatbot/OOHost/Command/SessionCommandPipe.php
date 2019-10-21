@@ -7,7 +7,7 @@ namespace Commune\Chatbot\OOHost\Command;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 use Illuminate\Console\Parser;
@@ -50,7 +50,7 @@ class SessionCommandPipe implements SessionPipe
         }
     }
 
-    public static function registerCommandName(string $commandName, IntentRegistrar $repo) : void
+    public static function registerCommandName(string $commandName, RootIntentRegistrar $repo) : void
     {
         // 注册 command
         if (is_a($commandName, SessionCommand::class, TRUE)) {

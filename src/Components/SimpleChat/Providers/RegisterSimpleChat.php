@@ -6,7 +6,7 @@ namespace Commune\Components\SimpleChat\Providers;
 
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Contracts\ConsoleLogger;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntentDef;
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
@@ -21,13 +21,13 @@ class RegisterSimpleChat extends ServiceProvider
     {
         /**
          * @var OptionRepository $repo
-         * @var IntentRegistrar $intRepo
+         * @var RootIntentRegistrar $intRepo
          * @var ChatOption $option
          * @var ConsoleLogger $logger
          * @var Corpus $corpus
          */
         $repo = $app[OptionRepository::class];
-        $intRepo = $app[IntentRegistrar::class];
+        $intRepo = $app[RootIntentRegistrar::class];
         $logger = $app[ConsoleLogger::class];
         $corpus = $app[Corpus::class];
         $manager = $corpus->intentCorpusManager();

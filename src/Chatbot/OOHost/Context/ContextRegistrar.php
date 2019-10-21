@@ -2,7 +2,6 @@
 
 
 namespace Commune\Chatbot\OOHost\Context;
-use Commune\Chatbot\Blueprint\Application;
 
 /**
  * Context Definition 的仓库.
@@ -15,52 +14,12 @@ interface ContextRegistrar
 {
 
     /**
-     * 获取父容器
-     * @return ContextRegistrar|null
-     */
-    public function getParent() : ? ContextRegistrar;
-
-    /**
      * 容器的唯一ID. 在整个容器树中, 不应该有两个同名的容器,
      * 否则可能会隐藏各种难以理解的错误.
      *
      * @return string
      */
     public function getRegistrarId() : string;
-
-    /**
-     * 获取App
-     *
-     * @return Application
-     */
-    public function getChatApp() : Application;
-
-    /**
-     * 是否已经注册了其它的子容器.
-     * @param string $registrarName
-     * @return bool
-     */
-    public function hasSubRegistrar(string $registrarName) : bool;
-
-    /**
-     * 添加一个context 的子容器.
-     *
-     * 比如根容器是 contextRegistrar, 子容器有 intentRegistrar, memoryRegistrar, 从而构成容器树.
-     *
-     * 容器理论上可以在内存, 在数据表, 在缓存等各种地方存储 definition的数据.
-     *
-     * @param string $name
-     * @param ContextRegistrar $registrar
-     */
-    public function addSubRegistrar(string $name, ContextRegistrar $registrar) : void;
-
-
-    /**
-     * 获取子容器
-     * @param bool $recursive 是否递归地获取所有
-     * @return ContextRegistrar[]
-     */
-    public function getSubRegistrars($recursive = true) : array;
 
     /**
      * 注册一个 context definition 通常是启动时注册到内存.
@@ -72,8 +31,16 @@ interface ContextRegistrar
      */
     public function registerDef(Definition $def, bool $force = false)  : bool;
 
+    /**
+     * @param string $contextName
+     * @return bool
+     */
     public function hasDef(string $contextName) : bool;
 
+    /**
+     * @param string $contextName
+     * @return Definition|null
+     */
     public function getDef(string $contextName) : ? Definition;
 
     /**

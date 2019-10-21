@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context;
 
 
+use Commune\Chatbot\OOHost\Context\Contracts\RootContextRegistrar;
 use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
@@ -85,7 +86,7 @@ abstract class OOContext
     public static function registerSelfDefinition(ContainerContract $processContainer): void
     {
         $processContainer
-            ->get(ContextRegistrar::class)
+            ->get(RootContextRegistrar::class)
             ->registerDef(static::buildDefinition());
     }
 

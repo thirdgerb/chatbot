@@ -48,10 +48,12 @@ class DemoHome extends TaskDef
      */
     public function __hearing(Hearing $hearing) : void
     {
-        $hearing->defaultFallback(
-            (new SimpleChatAction())
-                ->then(Redirector::goRewind())
-        );
+        $hearing
+            ->runAnyIntent()
+            ->defaultFallback(
+                (new SimpleChatAction())
+                    ->then(Redirector::goRewind())
+            );
     }
 
 

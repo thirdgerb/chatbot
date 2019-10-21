@@ -5,15 +5,14 @@ namespace Commune\Components\Story\Basic;
 
 
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
-use Commune\Chatbot\OOHost\Context\ContextRegistrarImpl;
+use Commune\Chatbot\OOHost\Context\Registrar\AbsContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Components\Story\Options\EpisodeOption;
 use Commune\Components\Story\Options\ScriptOption;
 use Commune\Components\Story\Options\StageOption;
 use Illuminate\Support\Str;
 
-class StoryRegistrarImpl extends ContextRegistrarImpl implements StoryRegistrar
+class StoryRegistrarImpl extends AbsContextRegistrar implements StoryRegistrar
 {
     /**
      * @var ScriptOption[]
@@ -31,9 +30,9 @@ class StoryRegistrarImpl extends ContextRegistrarImpl implements StoryRegistrar
     protected $episodeToScript = [];
 
 
-    protected function registerSelfToParent(ContextRegistrar $parent): void
+    public function getRegistrarId(): string
     {
-        $parent->addSubRegistrar(StoryRegistrar::class, $this);
+        return StoryRegistrar::class;
     }
 
     public function registerScriptOption(ScriptOption $option): void

@@ -55,12 +55,6 @@ class SimpleChatComponent extends ComponentOption
 
     protected function doBootstrap(): void
     {
-        // 注册所有的管理工具.
-        $this->loadSelfRegisterByPsr4(
-            "Commune\\Components\\SimpleChat\\Tasks\\",
-            __DIR__ .'/Tasks'
-        );
-
         $data = $this->toArray();
 
         // 注册 category meta

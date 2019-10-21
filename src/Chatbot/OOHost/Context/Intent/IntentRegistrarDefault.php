@@ -4,21 +4,16 @@
 namespace Commune\Chatbot\OOHost\Context\Intent;
 
 
-use Commune\Chatbot\OOHost\Context\ContextRegistrarImpl;
+use Commune\Chatbot\OOHost\Context\Contracts\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Registrar\AbsContextRegistrar;
 use Commune\Chatbot\OOHost\Session\Session;
 
 /**
  * @method  IntentDefinition|null getDef(string $contextName) : ? Definition
  */
-class IntentRegistrarImpl extends ContextRegistrarImpl implements IntentRegistrar
+class IntentRegistrarDefault extends AbsContextRegistrar implements IntentRegistrar
 {
     const DEF_CLAZZ = IntentDefinition::class;
-
-
-    public function getRegistrarId(): string
-    {
-        return IntentRegistrar::class;
-    }
 
     /**
      * 匹配出最有可能存在的intent

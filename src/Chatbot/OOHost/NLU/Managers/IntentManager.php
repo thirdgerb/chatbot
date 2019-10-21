@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\NLU\Managers;
 
 
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\NLU\Contracts\IntentDefHasCorpus;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Support\Option;
@@ -13,11 +13,11 @@ use Commune\Support\OptionRepo\Contracts\OptionRepository;
 class IntentManager extends CommonManager
 {
     /**
-     * @var IntentRegistrar
+     * @var RootIntentRegistrar
      */
     protected $registrar;
 
-    public function __construct(IntentRegistrar $registrar, OptionRepository $optionRepo )
+    public function __construct(RootIntentRegistrar $registrar, OptionRepository $optionRepo )
     {
         $this->registrar = $registrar;
         parent::__construct($optionRepo, IntentCorpusOption::class);

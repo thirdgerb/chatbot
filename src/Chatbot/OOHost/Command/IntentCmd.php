@@ -6,7 +6,7 @@ namespace Commune\Chatbot\OOHost\Command;
 
 use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
-use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\Session\Session;
 
 /**
@@ -28,22 +28,22 @@ class IntentCmd extends SessionCommand
     protected $commandName;
 
     /**
-     * @var IntentRegistrar
+     * @var RootIntentRegistrar
      */
     protected $repo;
 
     /**
      * IntentCmd constructor.
      * @param string $intentName
-     * @param IntentRegistrar $repo
+     * @param RootIntentRegistrar $repo
      */
-    public function __construct(string $intentName, IntentRegistrar $repo)
+    public function __construct(string $intentName, RootIntentRegistrar $repo)
     {
         $this->intentName = $intentName;
         $this->repo = $repo;
     }
 
-    protected function getRepo() : IntentRegistrar
+    protected function getRepo() : RootIntentRegistrar
     {
         return $this->repo;
     }

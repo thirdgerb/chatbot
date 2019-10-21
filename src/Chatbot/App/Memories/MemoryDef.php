@@ -9,7 +9,7 @@ use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Memory\AbsMemory;
 use Commune\Chatbot\OOHost\Context\Memory\MemoryDefinition;
-use Commune\Chatbot\OOHost\Context\Memory\MemoryRegistrar;
+use Commune\Chatbot\OOHost\Context\Contracts\RootMemoryRegistrar;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
 use Commune\Chatbot\OOHost\Session\Scope;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
@@ -78,7 +78,7 @@ abstract class MemoryDef extends AbsMemory implements SelfRegister
 
     public static function registerSelfDefinition(ContainerContract $app): void
     {
-        $repo = $app->get(MemoryRegistrar::class);
+        $repo = $app->get(RootMemoryRegistrar::class);
         $def = static::buildDefinition();
         $repo->registerDef($def, true);
     }

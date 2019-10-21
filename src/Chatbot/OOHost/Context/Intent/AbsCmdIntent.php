@@ -4,6 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context\Intent;
 
 
+use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
@@ -69,7 +70,7 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
 
     public static function registerSelfDefinition(ContainerContract $processContainer): void
     {
-        $repo = $processContainer->get(IntentRegistrar::class);
+        $repo = $processContainer->get(RootIntentRegistrar::class);
         // 强制覆盖.
         $repo->registerDef(static::buildDefinition(), true);
     }
