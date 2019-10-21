@@ -5,12 +5,12 @@ namespace Commune\Components\SimpleWiki\Libraries;
 
 
 use Commune\Chatbot\Blueprint\Application;
-use Commune\Chatbot\OOHost\Context\ContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Intent\IntentRegistrarDefault;
 use Commune\Components\SimpleWiki\Options\WikiOption;
 use Commune\Components\SimpleWiki\SimpleWikiComponent;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
+use Commune\Support\Utils\StringUtils;
 use Illuminate\Support\Str;
 
 /**
@@ -60,11 +60,20 @@ class SimpleWikiRegistrar extends IntentRegistrarDefault
 
     public function hasDef(string $contextName) : bool
     {
+        $contextName = StringUtils::normalizeContextName($contextName);
+        if (isset($this->definitionsByName[$contextName])) {
+            return true;
+        }
         return $this->repo->has(WikiOption::class, $contextName);
     }
 
     public function getDef(string $contextName) : ? Definition
     {
+        $contextName = StringUtils::normalizeContextName($contextName);
+        if (isset($this->definitionsByName[$contextName])) {
+            return $this->definitionsByName[$contextName];
+        }
+
         if (!$this->repo->has(WikiOption::class, $contextName)) {
             return null;
         }
@@ -74,7 +83,7 @@ class SimpleWikiRegistrar extends IntentRegistrarDefault
          */
         $option = $this->repo->find(WikiOption::class, $contextName);
         $group = $this->config->getGroupByWikiOption($option);
-        return new SimpleWikiDefinition($group, $option);
+        return $this->definitionsByName[$contextName] = new SimpleWikiDefinition($group, $option);
     }
 
     public function countDef() : int

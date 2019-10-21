@@ -97,4 +97,35 @@ EOF;
 
         $this->assertEquals('第十2个', StringUtils::normalizeString('第十二个'));
     }
+
+
+    public function testDotPathParser()
+    {
+        $this->assertEquals(
+            'intro.chat.chatInterface',
+            StringUtils::dotPathParser('intro.chat', '.chat.chatInterface')
+        );
+
+        $this->assertEquals(
+            'intro.chat.*',
+            StringUtils::dotPathParser('intro.chat', '.chat.*')
+        );
+
+        $this->assertEquals(
+            'hello',
+            StringUtils::dotPathParser('chat', '.hello')
+        );
+
+        $this->assertEquals(
+            'chat.hello',
+            StringUtils::dotPathParser('chat.abc', '.hello')
+        );
+
+        $this->assertEquals(
+            'hello',
+            StringUtils::dotPathParser('chat.abc', 'hello')
+        );
+
+
+    }
 }

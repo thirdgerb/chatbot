@@ -30,8 +30,8 @@ class YamlPathStorageMeta extends YamlStorageMeta
         $intentNameSecs = explode('.', $intentName);
         array_pop($intentNameSecs);
         $intentName = implode('.', $intentNameSecs);
-
         $data['intentName'] = $intentName;
+
         return parent::newOption($className, $data, $path);
     }
 

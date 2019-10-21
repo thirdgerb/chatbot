@@ -5,6 +5,7 @@ namespace Commune\Components\SimpleWiki\Options;
 
 
 use Commune\Support\Option;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * 简单维基的配置.
@@ -85,6 +86,12 @@ class WikiOption extends Option
             'replies' => [
             ],
         ];
+    }
+
+    protected function init(array $data): array
+    {
+        $data['intentName'] = StringUtils::normalizeContextName($data['intentName']);
+        return parent::init($data);
     }
 
     public static function validate(array $data): ? string

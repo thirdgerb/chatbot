@@ -14,8 +14,6 @@ use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
-use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
-use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Context\Intent\AbsIntent;
 use Commune\Chatbot\OOHost\Context\Stage;
@@ -23,6 +21,8 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Components\SimpleWiki\Options\WikiOption;
+use Commune\Support\OptionRepo\Contracts\OptionRepository;
+use Commune\Support\Utils\StringUtils;
 use Illuminate\Support\Str;
 
 /**
@@ -163,6 +163,7 @@ class SimpleWikiInt extends AbsIntent
         $def = $this->getDef();
         $config = $def->getConfig();
         $group = $def->getGroupConfig();
+        $intentName = $config->intentName;
 
         $groupId = $group->id;
         $alias = $group->intentAlias;
@@ -203,11 +204,19 @@ class SimpleWikiInt extends AbsIntent
 
             // 用 . 开头.
             if ($suggestion[0] === '.') {
-                $suggestion = $this->forwardSuggestionName(
-                    $suggestion,
-                    $config,
-                    $groupId
+                $current = substr(
+                    $intentName,
+                    strlen(WikiOption::INTENT_NAME_PREFIX . '.' . $groupId . '.')
                 );
+                try {
+
+                    $suggestion = StringUtils::dotPathParser(
+                        $current,
+                        $suggestion
+                    );
+                } catch (\InvalidArgumentException $e) {
+                    continue;
+                }
             }
 
             if ($suggestion[0] === '/') {
@@ -243,7 +252,7 @@ class SimpleWikiInt extends AbsIntent
             }
 
             // 省略了 sfi.groupId  开头
-            if ($repo->hasDef($name = "sfi.$groupId.".$suggestion)) {
+            if ($repo->hasDef($name = WikiOption::INTENT_NAME_PREFIX. ".$groupId.".$suggestion)) {
                 $optionSuggestions[$index] = $name;
                 $loaded[$suggestion] = true;
                 continue;
@@ -252,43 +261,6 @@ class SimpleWikiInt extends AbsIntent
 
         return $optionSuggestions;
     }
-
-    protected function forwardSuggestionName(
-        string $suggestion,
-        WikiOption $config,
-        string $groupId
-    ) : string
-    {
-        // i = 1, 同级目录
-        // i = 2, 上级目录
-        // i = 3, 上级的上级, 依此类推.
-        for ($i = 0; $i < strlen($suggestion); $i ++) {
-            if ($suggestion[$i] !== '.') {
-                break;
-            }
-        }
-
-        $lastPart = substr($suggestion, $i);
-        $sections = $config->getPathSections();
-        $parts = count($sections);
-        if ($parts < ($i - 1)) {
-            throw new ConfigureException(
-                __METHOD__
-                . " context name $suggestion is invalid"
-            );
-        }
-
-        $sections = array_slice($sections, 0, $parts - $i - 1);
-
-        $suggestion = WikiOption::INTENT_NAME_PREFIX
-            . '.'
-            . $groupId
-            . '.'
-            . (empty($sections) ? '' : implode('.', $sections) . '.')
-            . $lastPart;
-        return $suggestion;
-    }
-
 
     /**
      * @return SimpleWikiDefinition

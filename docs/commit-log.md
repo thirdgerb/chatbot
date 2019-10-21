@@ -6,3 +6,6 @@
     -   这样所有的逻辑都变得简单明了, 但改动非常大.
     -   还好之前的工程做得好, 居然能改.
 
+-   SimpleWikiComponent 改动
+    -   解决了 wikiOption intentName 大小写问题
+    -   拆分了路径算法, 修复了bug, 补全单测

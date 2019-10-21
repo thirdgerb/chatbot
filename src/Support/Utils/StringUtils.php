@@ -220,4 +220,38 @@ class StringUtils
         }
         return true;
     }
+
+
+    public static function dotPathParser(string $current, string $target) : string
+    {
+        $start = $target[0] ?? '';
+        if ($start !== '.') {
+            return $target;
+        }
+
+        // i = 1, 同级目录
+        // i = 2, 上级目录
+        // i = 3, 上级的上级, 依此类推.
+        for ($i = 0; $i < strlen($target); $i ++) {
+            if ($target[$i] !== '.') {
+                break;
+            }
+        }
+
+        $secs = explode('.', $current);
+        array_pop($secs);
+
+        $lastPart = substr($target, $i);
+        $parts = count($secs);
+
+        if ($parts < ($i - 1)) {
+            throw new \InvalidArgumentException("invalid path $target for current $current");
+        }
+
+        $sections = array_slice($secs, 0, $parts - ($i - 1));
+        $middle = empty($secs) ? '' : implode('.', $sections);
+        $middle = $middle ? "$middle." : '';
+
+        return "$middle$lastPart";
+    }
 }

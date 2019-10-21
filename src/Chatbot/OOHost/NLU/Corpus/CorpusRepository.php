@@ -84,7 +84,6 @@ class CorpusRepository implements Corpus
 
     public function getManager(string $corpusOptionName): ? Manager
     {
-
         switch ($corpusOptionName) {
             case IntentCorpusOption::class :
                 return $this->intentCorpusManager();

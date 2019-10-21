@@ -8,6 +8,7 @@ use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\NLU\Contracts\CorpusOption;
 use Commune\Chatbot\OOHost\NLU\Corpus\IntExample;
 use Commune\Support\Option;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * @property-read string $name 意图名称
@@ -31,6 +32,11 @@ class IntentCorpusOption extends Option implements CorpusOption
             'examples' => [],
             'entityNames' => [],
         ];
+    }
+    protected function init(array $data): array
+    {
+        $data['name'] = StringUtils::normalizeContextName($data['name']);
+        return parent::init($data);
     }
 
 
