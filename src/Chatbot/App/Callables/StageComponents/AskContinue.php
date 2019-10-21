@@ -89,8 +89,11 @@ class AskContinue implements StageComponent
         $max = count($this->scripts) - 1;
 
         // 已经超过了最后一步.
-        if ($index > $max) {
-            return $stage->buildTalk()->action($this->goEnd());
+        if ($index === $max) {
+            return $stage
+                ->onStart($this->scripts[$max])
+                ->buildTalk()
+                ->action($this->goEnd());
         }
 
         // 创建 stage

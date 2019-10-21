@@ -1,0 +1,13 @@
+description: 对话交互的应用
+suggestions:
+  - .*
+examples:
+  - 对话交互有哪些应用领域
+  - 对话可以用在什么地方
+  - 对话机器人有什么用
+  - 可以拿对话机器人做什么
+replies:
+  - chatbot.app.info1
+  - chatbot.app.info2
+  - chatbot.app.demos
+

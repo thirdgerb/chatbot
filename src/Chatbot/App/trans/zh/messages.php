@@ -16,7 +16,7 @@ return [
     'dialog' => [
         'farewell' => '再见!',
         'missMatched' => '没有明白什么意思',
-        'noHelpInfoExists' => '不好意思, 当前内容没有帮助信息',
+        'noHelpInfoExists' => '不好意思, 当前内容没有帮助信息. 可以输入 #home 回到开头, 或输入 #repeat 重新开始对话. 输入 #help 查看更多指令.',
     ],
 
     'command' => [
@@ -33,9 +33,9 @@ return [
         'entity' => '请输入{entity_name}',
         'needs' => '您可能需要:',
         'needMore' => '您还有别的需要吗?',
-        'continue' => '输入 "y" 继续, 输入 "n" 跳过',
-        'yes' => 'y',
-        'no' => 'n',
+        'continue' => '输入 "." 继续',
+        'yes' => 'yes',
+        'no' => 'no',
     ],
 
     'question' => [

@@ -81,9 +81,9 @@ class SessionImpl implements Session, HasIdGenerator
     /*----- cached -----*/
 
     /**
-     * @var bool
+     * @var string
      */
-    protected $intentMatchingTried = false;
+    protected $readNLUResultFrom = '';
 
     /**
      * @var History
@@ -320,31 +320,31 @@ class SessionImpl implements Session, HasIdGenerator
             return $this->possibleIntents[$this->matchedIntent];
         }
 
+        $nlu = $this->getNLU();
+        $by = $nlu->isHandledBy();
         // 已经运行过, 说明没有匹配到过
-        if ($this->intentMatchingTried) {
+        if ($by === $this->readNLUResultFrom) {
             return null;
         }
-
-        // 只匹配一次
+        // 一个nlu只匹配一次
         // try matching once
-        $this->intentMatchingTried = true;
+        $this->readNLUResultFrom = $by ?? '';
+
 
         // 用默认的规范匹配.
-        $intent = $this->getIntentRegistrar()->matchIntent($this);
+        $intent = $this
+            ->getIntentRegistrar()
+            ->matchIntent(
+                $nlu,
+                $this->getIncomingMessage()->getMessage()
+            );
+
         if (isset($intent)) {
-            $this->setPossibleIntent($intent);
-            $this->matchedIntent = $intent->getName();
+            $this->setMatchedIntent($intent);
         }
         return $intent;
     }
 
-    public function setPossibleIntent(IntentMessage $intent): void
-    {
-        if (!$intent->isInstanced()) {
-            $intent = $intent->toInstance($this);
-        }
-        $this->possibleIntents[$intent->getName()] = $intent;
-    }
 
     public function getPossibleIntent(string $intentName): ? IntentMessage
     {
@@ -367,7 +367,11 @@ class SessionImpl implements Session, HasIdGenerator
         }
 
         // 执行主动匹配逻辑.
-        $intent = $repo->matchCertainIntent($intentName, $this);
+        $intent = $repo->matchCertainIntent(
+            $intentName,
+            $this->getNLU(),
+            $this->getIncomingMessage()->getMessage()
+        );
 
         // 缓存环节.
         if (isset($intent)) {
@@ -377,6 +381,15 @@ class SessionImpl implements Session, HasIdGenerator
         }
 
         return $intent;
+    }
+
+
+    public function setPossibleIntent(IntentMessage $intent): void
+    {
+        if (!$intent->isInstanced()) {
+            $intent = $intent->toInstance($this);
+        }
+        $this->possibleIntents[$intent->getName()] = $intent;
     }
 
 

@@ -1,8 +1,6 @@
 description: 什么是对话机器人
 suggestions:
-  - .chatbot.chatInterface
-  - .chatbot.chatClassification
-  - .chatbot.chatApplication
+  - .chatbot.*
   - .conversation
 examples:
   - 什么是对话机器人

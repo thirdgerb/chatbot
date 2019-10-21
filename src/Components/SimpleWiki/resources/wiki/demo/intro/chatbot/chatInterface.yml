@@ -1,4 +1,4 @@
-description: 对话交互形式的探究
+description: 什么是对话交互
 suggestions:
   - .*
 examples:
@@ -7,6 +7,6 @@ examples:
   - 啥是对话交互
   - 对话交互和其它交互有什么区别
 replies :
-  - chat.interface.info1
-  - chat.interface.info2
-  - chat.interface.info3
+  - chatbot.interface.info1
+  - chatbot.interface.info2
+  - chatbot.interface.info3

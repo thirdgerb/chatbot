@@ -4,9 +4,10 @@
 namespace Commune\Chatbot\OOHost\Context\Intent;
 
 
+use Commune\Chatbot\Blueprint\Conversation\NLU;
+use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Contracts\IntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Registrar\AbsContextRegistrar;
-use Commune\Chatbot\OOHost\Session\Session;
 
 /**
  * @method  IntentDefinition|null getDef(string $contextName) : ? Definition
@@ -19,18 +20,16 @@ class IntentRegistrarDefault extends AbsContextRegistrar implements IntentRegist
      * 匹配出最有可能存在的intent
      * 通常在 Session 内部使用.
      *
-     * @param Session $session
+     * @param NLU $nlu
+     * @param Message $message
      * @return IntentMessage|null
      */
-    public function matchIntent(Session $session) : ? IntentMessage
+    public function matchIntent(NLU $nlu, Message $message) : ? IntentMessage
     {
-        $message = $session->incomingMessage->message;
         // 检查 message 本身是否就是 intent
         if ($message instanceof IntentMessage) {
             return $message;
         }
-
-        $nlu = $session->nlu;
 
         // matched 是排他的
         $matched = $nlu->getMatchedIntent();
@@ -62,40 +61,46 @@ class IntentRegistrarDefault extends AbsContextRegistrar implements IntentRegist
      * 不考虑是否已经存在 matchedIntent
      *
      * @param string $intentName
-     * @param Session $session
+     * @param NLU $nlu
+     * @param Message $message
      * @return IntentMessage|null
      */
-    public function matchCertainIntent(string $intentName, Session $session) : ? IntentMessage
+    public function matchCertainIntent(
+        string $intentName,
+        NLU $nlu,
+        Message $message
+    ) : ? IntentMessage
     {
 
         if (! $this->hasDef($intentName)) {
-            return $this->shouldUsePlaceholder($intentName, $session);
+            return $this->shouldUsePlaceholder($intentName, $nlu);
         }
 
         // 使用 Definition 进行主动匹配. 如果定义了主动匹配的逻辑.
         $expectDef = $this->getDef($intentName);
 
-        if ($session->nlu->hasPossibleIntent($intentName)) {
-            $entities = $session->nlu->getIntentEntities($intentName)->all();
+        if ($nlu->hasPossibleIntent($intentName)) {
+            $entities = $nlu->getIntentEntities($intentName)->all();
             return $expectDef->newContext($entities);
         }
 
-        return $this->doMatch($session, $expectDef);
+        return $this->doMatch($message, $expectDef);
 
     }
 
     /**
      * 用 placeholder 处理没有预定义的意图.
+     *
      * @param string $intentName
-     * @param Session $session
+     * @param NLU $nlu
      * @return IntentMessage|null
      */
-    protected function shouldUsePlaceholder(string $intentName, Session $session) : ? IntentMessage
+    protected function shouldUsePlaceholder(string $intentName, NLU $nlu) : ? IntentMessage
     {
-        if (!$session->nlu->hasPossibleIntent($intentName)) {
+        if (!$nlu->hasPossibleIntent($intentName)) {
             return null;
         }
-        $entities = $session->nlu->getIntentEntities($intentName);
+        $entities = $nlu->getIntentEntities($intentName);
         return new PlaceHolderIntent($intentName, $entities->all());
     }
 
@@ -103,14 +108,13 @@ class IntentRegistrarDefault extends AbsContextRegistrar implements IntentRegist
     /**
      * 主动匹配逻辑.
      *
-     * @param Session $session
+     * @param Message $origin
      * @param IntentDefinition $expectDef
      * @return IntentMessage|null
      */
-    protected function doMatch(Session $session, IntentDefinition $expectDef): ? IntentMessage
+    protected function doMatch(Message $origin, IntentDefinition $expectDef): ? IntentMessage
     {
         // 使用matcher
-        $origin = $session->incomingMessage->message;
         $entities = $expectDef->getMatcher()->match($origin);
         if (isset($entities)) {
             $matched = $expectDef->newContext($entities);

@@ -25,7 +25,9 @@ use Commune\Support\Utils\StringUtils;
 use Illuminate\Support\Str;
 
 /**
- * 通过
+ * 通过读取 WikiOption 配置, 自动生成 "连续对话" + "猜你想问" 形式的知识库.
+ *
+ * 本功能在具体业务场景下未必完全有用, 主要作为可配置多轮对话的开发样板, 提供给开发者参考.
  */
 class SimpleWikiInt extends AbsIntent
 {
@@ -69,6 +71,10 @@ class SimpleWikiInt extends AbsIntent
     public function navigate(Dialog $dialog): ? Navigator
     {
         if ($dialog->currentContext() instanceof SimpleWikiInt) {
+            if ($dialog->currentContext()->nameEquals($this->getName())) {
+                return $dialog->restart();
+            }
+
             return $dialog
                 ->redirect
                 ->dependOn($this);
@@ -85,14 +91,19 @@ class SimpleWikiInt extends AbsIntent
     public function __staging(Stage $stage) : void
     {
         $stage->onIntended(function(Dialog $dialog, Message $message) {
-            return $dialog->restart();
+            return $dialog->repeat();
         });
 
     }
 
     public function __hearing(Hearing $hearing) : void
     {
-        $hearing->runAnyIntent();
+        $group = $this->getDef()->getGroupConfig()->getId();
+        $hearing
+            ->runIntentIn(
+                [WikiOption::INTENT_NAME_PREFIX . '.' . $group . '.']
+            )
+            ->runAnyIntent();
     }
 
     public function __onStart(Stage $stage) : Navigator
@@ -101,12 +112,20 @@ class SimpleWikiInt extends AbsIntent
         $replies = $def->getConfig()->replies;
         $msgPrefix = $def->getGroupConfig()->messagePrefix;
 
+        $replies = array_filter($replies, function($i){
+            return !empty($i);
+        });
 
         $scripts = array_map(function($info) use ($msgPrefix){
             $msgPrefix = trim($msgPrefix, '.');
+            $speech = Talker::say();
+
+            // 如果以 ~ 开头, 则认为就是普通的文本.
+            if ($info[0] === '~') {
+                return $speech->info(substr($info, 1));
+            }
 
             $infos = explode('|', $info);
-            $speech = Talker::say();
             foreach ($infos as $info) {
                 $info = trim($info, '.');
                 $speech = $speech->info("$msgPrefix.$info");
@@ -167,14 +186,16 @@ class SimpleWikiInt extends AbsIntent
         $groupId = $group->id;
         $alias = $group->intentAlias;
 
-        // 没有猜您想问, 直接退出.
-        $suggestions = $config->suggestions;
 
         // 参数准备.
         $repo = $this->getRepo();
 
         // 合并当前配置和默认配置.
+        $suggestions = $config->suggestions;
         $suggestions = $suggestions + $group->defaultSuggestions;
+        if (empty($suggestions)) {
+            return [];
+        }
 
         // 最终输出的 suggestions
         $optionSuggestions = [];
@@ -185,7 +206,9 @@ class SimpleWikiInt extends AbsIntent
 
             // callable 方法.
             if (is_callable($suggestion)) {
-                $optionSuggestions[$index] = $suggestion;
+                if (is_string($index)) {
+                    $optionSuggestions[$index] = $suggestion;
+                }
                 continue;
             }
 
@@ -232,12 +255,24 @@ class SimpleWikiInt extends AbsIntent
             }
 
             if (Str::endsWith($suggestion, '.*')) {
-                $ids = $repo->getDefNamesByDomain($config->getPrefix());
+                $prefix = $config->getPrefix() . '.';
+                $ids = $repo->getDefNamesByDomain($prefix);
                 foreach ($ids as $id) {
+                    // 不用自己
                     if ($id === $this->getName()) {
                         continue;
                     }
-                    $optionSuggestions[$index] = $id;
+
+                    // 只用同级目录
+                    if (
+                        strstr(
+                            str_replace($prefix, '', $id),
+                            '.'
+                        )
+                    ) {
+                        continue;
+                    }
+                    $optionSuggestions[] = $id;
                     $loaded[$id] = true;
                 }
                 continue;
@@ -245,14 +280,14 @@ class SimpleWikiInt extends AbsIntent
 
             // 给出参数直接就是 intent name
             if ($repo->hasDef($suggestion)) {
-                $optionSuggestions[$index] = $suggestion;
+                $optionSuggestions[] = $suggestion;
                 $loaded[$suggestion] = true;
                 continue;
             }
 
             // 省略了 sfi.groupId  开头
             if ($repo->hasDef($name = WikiOption::INTENT_NAME_PREFIX. ".$groupId.".$suggestion)) {
-                $optionSuggestions[$index] = $name;
+                $optionSuggestions[] = $name;
                 $loaded[$suggestion] = true;
                 continue;
             }

@@ -87,12 +87,12 @@ return [
             \Commune\Chatbot\App\Commands\UserCommandsPipe::class,
             \Commune\Chatbot\App\Commands\AnalyserPipe::class,
 
-            //\Commune\Components\Rasa\RasaSessionPipe::class,
+            \Commune\Components\Rasa\RasaSessionPipe::class,
 
             \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
         ],
 
-        'hearingFallback' => null,
+        'hearingFallback' => \Commune\Components\SimpleChat\Callables\SimpleChatAction::class,
     ] ,
 
 ];

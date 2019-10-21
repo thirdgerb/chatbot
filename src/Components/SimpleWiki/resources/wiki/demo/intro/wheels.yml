@@ -1,0 +1,13 @@
+description: 使用了哪些轮子
+suggestions: {}
+examples:
+    - 使用了哪些轮子
+    - 用了什么组件
+    - 用了哪些组件
+    - 用了swoole吗
+    - 用什么版本的php
+    - 用什么做NLU
+replies:
+    - wheels
+
+

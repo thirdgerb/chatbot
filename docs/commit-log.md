@@ -1,13 +1,7 @@
-## 2019-10-21 (2)
+## 2019-10-21 (3)
 
--   ContextRegistrar 体系进行了关键重构
-    -   将 parent registrar 独立成了容器
-    -   将 sub registrar 简单化, 不再承担容器的功能
-    -   这样所有的逻辑都变得简单明了, 但改动非常大.
-    -   还好之前的工程做得好, 居然能改.
-
--   SimpleWikiComponent 改动
-    -   解决了 wikiOption intentName 大小写问题
-    -   拆分了路径算法, 修复了bug, 补全单测
-
--   修复了意图语料库不能同步所有意图数据的问题.
+-   基本完成 simple wiki 模块和 demo 内容的开发.
+-   Menu 组件允许用 "::" 来隔离出 suggestion 的索引和值
+-   修复了 nlu::toArray 的实现问题
+-   简化了 intent registrar 的匹配参数, 不传入 session 避免写错逻辑出现死循环.
+-   闲聊组件, 默认还是用 rewind 方法

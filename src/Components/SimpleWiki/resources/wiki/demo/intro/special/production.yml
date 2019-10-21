@@ -1,0 +1,13 @@
+description: 面向工业级可用的工程设计
+suggestions:
+  - .*
+examples:
+  - 面向工业级可用的工程设计
+  - 什么是工业级可用
+replies:
+  - special.production.api
+  - special.production.server
+  - special.production.ioc
+  - special.production.component
+  - special.production.config
+  - special.production.ddd

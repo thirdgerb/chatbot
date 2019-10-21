@@ -5,10 +5,13 @@ namespace Commune\Components\Demo\Contexts;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
+use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Stage;
+use Commune\Chatbot\OOHost\Dialogue\Dialog;
+use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Components\Predefined\Memories\UserInfoMem;
 
@@ -16,6 +19,9 @@ use Commune\Components\Predefined\Memories\UserInfoMem;
  * 正式的欢迎用户入口.
  *
  * @property UserInfoMem $mem
+ *
+ * 依赖一个用户的上下文记忆, 自动开启多轮对话进行信息填充.
+ *
  */
 class WelcomeUser extends TaskDef
 {
@@ -24,6 +30,15 @@ class WelcomeUser extends TaskDef
     public static function __depend(Depending $depending): void
     {
         $depending->onMemory('mem', UserInfoMem::class);
+    }
+
+    public function __exiting(Exiting $listener): void
+    {
+    }
+
+    public function __hearing(Hearing $hearing) : void
+    {
+        $hearing->runAnyIntent();
     }
 
     /**
@@ -52,12 +67,27 @@ class WelcomeUser extends TaskDef
      */
     public function __onMenu(Stage $stage) : Navigator
     {
-        return $stage->buildTalk()->action(Redirector::goHome());
+        $menu = new Menu(
+            'ask.needs',
+            [
+                'sw.demo.intro',
+                GameTestCases::class,
+                NLTestCases::class,
+                '命令行工具' => [$this, 'showScript'],
+                '退出' => Redirector::goQuit(),
+            ]
+        );
+        return $stage->component($menu);
 
     }
 
-    public function __exiting(Exiting $listener): void
+
+    public function showScript(Dialog $dialog) : Navigator
     {
+        $dialog->say()
+            ->info('demo.dialog.commandTest')
+            ->info('demo.dialog.helpInfo');
+        return $dialog->repeat();
     }
 
 

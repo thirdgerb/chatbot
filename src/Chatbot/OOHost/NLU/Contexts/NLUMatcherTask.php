@@ -29,12 +29,12 @@ class NLUMatcherTask extends TaskDef
     }
 
     /**
-     * 要求管理员才能访问.
+     * 非管理员也允许访问
      * @param Stage $stage
      */
     public function __staging(Stage $stage) : void
     {
-        $stage->onStart(new MustBeSupervisor());
+        // $stage->onStart(new MustBeSupervisor());
     }
 
     public function navigate(Dialog $dialog): ? Navigator
@@ -48,7 +48,7 @@ class NLUMatcherTask extends TaskDef
             ->info(
                 "进入NLU意图管理. 
 请输入任意语句, 会给出命中的意图. 
-输入'b'退出语境"
+输入'b'退出工具"
             )
             ->wait()
             ->hearing()

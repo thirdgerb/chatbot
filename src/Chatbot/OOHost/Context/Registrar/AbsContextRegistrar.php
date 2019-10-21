@@ -68,15 +68,13 @@ abstract class AbsContextRegistrar implements ContextRegistrar
             );
         }
 
-        $name = $def->getName();
-        if (! static::validateDefName($name)) {
+        $id = $def->getName();
+        if (! static::validateDefName($id)) {
             throw new ConfigureException(
                 __METHOD__
-                . " context name  $name is invalid"
+                . " context name  $id is invalid"
             );
         }
-
-        $id = $this->normalizeContextName($name);
 
         // 占位符逻辑 占位符低优先, 不能覆盖.
         if (

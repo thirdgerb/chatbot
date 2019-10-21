@@ -98,7 +98,7 @@ class SimpleChatAction implements Action
             ->info(trim($reply));
 
         if (!isset($this->then)) {
-            return $dialog->wait();
+            return $dialog->rewind();
         }
         $then = $this->then;
         unset($this->then);

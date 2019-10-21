@@ -7,6 +7,7 @@ namespace Commune\Chatbot\Framework\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Support\Arr\ArrayAbleToJson;
+use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;
 use Illuminate\Support\Collection;
 
@@ -246,7 +247,8 @@ class NatureLanguageUnit implements NLU
 
     public function toArray(): array
     {
-        return get_object_vars($this);
+        $values = get_object_vars($this);
+        return ArrayUtils::recursiveToArray($values);
     }
 
 }

@@ -31,9 +31,7 @@ class DemoHome extends TaskDef
                 [
                     FeatureTest::class,
                     WelcomeUser::class,
-                    TestGames::class,
                     DevTools::class,
-                    'sw.demo.intro',
                 ]
             ));
     }

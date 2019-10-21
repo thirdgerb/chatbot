@@ -13,11 +13,9 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Components\Demo\Cases\Maze\MazeInt;
 use Commune\Components\Demo\Cases\Questionnaire\ReadPersonality;
-use Commune\Components\Story\Options\ScriptOption;
 use Commune\Studio\Components\Demo\Guest\GuessNum;
-use Commune\Support\OptionRepo\Contracts\OptionRepository;
 
-class TestGames extends TaskDef
+class GameTestCases extends TaskDef
 {
     const DESCRIPTION = 'demo.contexts.testGames';
 
@@ -39,7 +37,7 @@ class TestGames extends TaskDef
                     'story.examples.sanguo.changbanpo',
                     GuessNum::class,
                     ReadPersonality::class,
-                    '返回' => Redirector::goFulfill(),
+                    'b :: 返回' => Redirector::goFulfill(),
                 ]
             ))
         );

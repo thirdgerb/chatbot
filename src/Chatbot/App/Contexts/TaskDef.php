@@ -31,10 +31,9 @@ abstract class TaskDef extends OOContext
      */
     abstract public static function __depend(Depending $depending): void;
 
-    abstract public function __onStart(Stage $stage): Navigator;
-
     abstract public function __exiting(Exiting $listener): void;
 
+    abstract public function __onStart(Stage $stage): Navigator;
 
 
 }

@@ -51,6 +51,7 @@ use Commune\Support\Utils\StringUtils;
  * 等于第一轮回复  say()->info($msgPrefix . $intro1)->info($msgPrefix . $intro2)
  * 第二轮回复  say()->info($msgPrefix . $intro3)->info($msgPrefix . $intro4)
  *
+ * 如果只想回复纯文本, 不做任何转义, 则以 "~" 开头就可以.
  *
  */
 class WikiOption extends Option

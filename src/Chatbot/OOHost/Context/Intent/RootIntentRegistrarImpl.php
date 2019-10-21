@@ -4,6 +4,8 @@
 namespace Commune\Chatbot\OOHost\Context\Intent;
 
 
+use Commune\Chatbot\Blueprint\Conversation\NLU;
+use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Contracts\IntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Registrar\AbsParentContextRegistrar;
@@ -19,10 +21,10 @@ class RootIntentRegistrarImpl extends AbsParentContextRegistrar implements RootI
         return RootIntentRegistrar::class;
     }
 
-    public function matchIntent(Session $session): ? IntentMessage
+    public function matchIntent(NLU $nlu, Message $message): ? IntentMessage
     {
         foreach ($this->eachSubRegistrar(false) as $item) {
-            $matched = $item->matchIntent($session);
+            $matched = $item->matchIntent($nlu, $message);
             if (isset($matched)) {
                 return $matched;
             }
@@ -30,10 +32,14 @@ class RootIntentRegistrarImpl extends AbsParentContextRegistrar implements RootI
         return null;
     }
 
-    public function matchCertainIntent(string $intentName, Session $session): ? IntentMessage
+    public function matchCertainIntent(
+        string $intentName,
+        NLU $nlu,
+        Message $message
+    ) : ? IntentMessage
     {
         foreach ($this->eachSubRegistrar(false) as $item) {
-            $matched = $item->matchCertainIntent($intentName, $session);
+            $matched = $item->matchCertainIntent($intentName, $nlu, $message);
             if (isset($matched)) {
                 return $matched;
             }

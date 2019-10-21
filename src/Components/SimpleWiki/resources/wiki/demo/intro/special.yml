@@ -1,0 +1,13 @@
+description: 项目有什么特点
+suggestions:
+  - .special.production
+  - .conversation
+  - /intro
+examples:
+  - 这个项目有什么特点
+  - 这项目有什么好的
+  - 项目的特色是什么
+  - 有哪些特点
+replies:
+  - special.info1
+  - special.info2

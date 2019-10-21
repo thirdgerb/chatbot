@@ -1,0 +1,31 @@
+description: 什么是复杂多轮对话
+suggestions:
+  - .conversation.whyEngineering
+  - .*
+examples:
+  - 什么是多轮对话
+  - 多轮对话是什么
+  - 如何理解多轮对话
+  - 啥叫多轮对话
+  - 什么是复杂多轮对话
+replies:
+  - conversation.multiTurn
+  - conversation.common
+  - conversation.nLevels
+  - conversation.branches
+  - conversation.hangOn
+  - conversation.complexity
+
+
+
+
+
+
+
+
+
+
+
+
+
+

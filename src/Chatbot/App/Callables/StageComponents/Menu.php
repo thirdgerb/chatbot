@@ -130,9 +130,10 @@ class Menu implements StageComponent
         $hearing = $dialog->hear($message);
         $repo = $dialog->session->contextRepo;
 
-        $i = 0;
+        $suggestoins = $this->buildMenuSuggestions($dialog);
+        $keys = array_keys($suggestoins);
         foreach ($this->menu as $key => $value) {
-            $i ++;
+            $i = array_shift($keys);
 
             // 第一种情况, 值是一个context name
             // 说明要 redirect 过去
@@ -190,22 +191,7 @@ class Menu implements StageComponent
 
     public function askToChoose(Dialog $dialog) : Navigator
     {
-        $suggestions = [];
-        $repo = $dialog->session->contextRepo;
-
-        $i = 0;
-        foreach ($this->menu as $key => $value) {
-            $i ++;
-            // 第一种情况, 键名是 suggestion
-            if (is_string($key)) {
-                $suggestions[$i] = $key;
-
-                // 第二种情况, 键名是整数, 则值是 contextName
-            } elseif ($repo->hasDef($value)) {
-                $suggestions[$i] = $repo->getDef($value)->getDesc();
-            }
-        }
-
+        $suggestions = $this->buildMenuSuggestions($dialog);
         $dialog->say()
             ->askChoose(
                 $this->question,
@@ -216,6 +202,28 @@ class Menu implements StageComponent
             );
 
         return $dialog->wait();
+    }
+
+    protected function buildMenuSuggestions(Dialog $dialog) : array
+    {
+        $repo = $dialog->session->contextRepo;
+        $i = 0;
+        foreach ($this->menu as $key => $value) {
+            $i ++;
+            // 第一种情况, 键名是 suggestion
+            if (is_string($key)) {
+                $parts = explode('::', $key, 2);
+                $count = count($parts);
+                $index = $count > 1 ? trim($parts[0]) : $i;
+                $value = $count > 1 ? trim($parts[1]) : $key;
+                $suggestions[$index] = $value;
+
+                // 第二种情况, 键名是整数, 则值是 contextName
+            } elseif ($repo->hasDef($value)) {
+                $suggestions[$i] = $repo->getDef($value)->getDesc();
+            }
+        }
+        return $suggestions;
     }
 
     public function redirect(
