@@ -70,17 +70,17 @@ class CommonManager implements Manager
 
         if ($has) {
             $option = $this->optionRepo->find($class, $id);
-
         } else {
-            $option = call_user_func([$class, 'createById'], $id);
+            $option = $this->wrapNewOption($id);
+            $this->toSave[$option->getId()] = $option;
         }
-        $option = $this->wrapNewOption($option, $has);
+
         return $this->loaded[$id] = $option;
     }
 
-    public function wrapNewOption(Option $option, bool $isNew) : Option
+    protected function wrapNewOption(string $id) : Option
     {
-        return $option;
+        return call_user_func([$this->optionClass, 'createById'], $id);
     }
 
 
@@ -134,12 +134,31 @@ class CommonManager implements Manager
 
     }
 
+    public function flush(): void
+    {
+        $ids = $this->optionRepo->getAllOptionIds($this->optionClass);
+        $ids = array_values($ids);
+        if (!empty($ids)) {
+            $this->optionRepo->delete($this->optionClass, ...$ids);
+        }
+    }
+
+    public function getAllIds(): array
+    {
+        return $this->optionRepo->getAllOptionIds($this->optionClass);
+    }
+
+
     public function sync(bool $force = false): string
     {
         try {
-            $toSave = [];
 
-            //
+            // 遍历一遍, 目的是有可能有要通过 get 来获取的.
+            foreach ($this->each() as $option) {
+                continue;
+            }
+
+            $toSave = [];
             foreach ($this->toSave as $option) {
                 $id = $option->getId();
 

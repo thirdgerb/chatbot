@@ -28,24 +28,22 @@ class IntentManager extends CommonManager
         return $this->registrar->countDef();
     }
 
-    /**
-     * @param IntentCorpusOption $option
-     * @param bool $isNew
-     * @return Option
-     */
-    public function wrapNewOption(Option $option, bool $isNew): Option
+    protected function wrapNewOption(string $id): Option
     {
-        $intentName = $option->name;
-        if ($this->registrar->hasDef($intentName)) {
-            $def = $this->registrar->getDef($intentName);
-            if ($isNew && $def instanceof IntentDefHasCorpus) {
-                return $def->getDefaultCorpus();
-            }
-
-            $option->mergeEntityNames($def->getEntityNames());
-            $option->setDesc($def->getDesc(), false);
+        $def = $this->registrar->getDef($id);
+        if ($def instanceof IntentDefHasCorpus) {
+            return $def->getDefaultCorpus();
         }
+
+        $option = IntentCorpusOption::createById($id);
+        $option->mergeEntityNames($def->getEntityNames());
+        $option->setDesc($def->getDesc(), false);
         return $option;
+    }
+
+    public function has(string $id): bool
+    {
+        return isset($this->loaded[$id]) || $this->registrar->hasDef($id);
     }
 
     public function each(): \Generator
@@ -55,5 +53,15 @@ class IntentManager extends CommonManager
         }
     }
 
+    public function sync(bool $force = false): string
+    {
+        $this->flush();
+        return parent::sync($force);
+    }
+
+    public function getAllIds(): array
+    {
+        return $this->registrar->getDefNamesByDomain('');
+    }
 
 }

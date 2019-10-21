@@ -9,3 +9,5 @@
 -   SimpleWikiComponent 改动
     -   解决了 wikiOption intentName 大小写问题
     -   拆分了路径算法, 修复了bug, 补全单测
+
+-   修复了意图语料库不能同步所有意图数据的问题.

@@ -17,6 +17,11 @@ interface Manager
      */
     public function sync(bool $force = false) : string;
 
+    /**
+     * 清空已有的记录.
+     */
+    public function flush() : void;
+
     public function count() : int;
 
     /**
@@ -34,6 +39,8 @@ interface Manager
     public function hasSynced(string $id) : bool;
 
     public function get(string $id) : Option;
+
+    public function getAllIds() : array;
 
     public function each() : \Generator;
 
