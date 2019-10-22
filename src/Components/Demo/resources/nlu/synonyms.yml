@@ -27,3 +27,9 @@
 - value : yestoday
   aliases :
     - 昨天
+- value : "+2 day"
+  aliases :
+    - 后天
+- value : "+3 day"
+  aliases :
+    - 大后天

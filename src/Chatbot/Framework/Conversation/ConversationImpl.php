@@ -203,11 +203,7 @@ class ConversationImpl implements Blueprint
 
     public function getNLU(): NLU
     {
-        return $this->nlu
-            ?? $this->nlu = (
-                $this->getRequest()->fetchNLU()
-                ?? new NatureLanguageUnit()
-            );
+        return $this->make(NLU::class);
     }
 
 

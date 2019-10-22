@@ -24,6 +24,7 @@ use Commune\Chatbot\OOHost\Emotion\Feeling;
 use Commune\Chatbot\OOHost\Exceptions\NavigatorException;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMatcher;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
+use Commune\Chatbot\OOHost\NLU\Contracts\EntityExtractor;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 use Commune\Chatbot\Blueprint\Message\QA\Confirmation;
@@ -285,6 +286,53 @@ class HearingHandler implements Hearing
 
         return $this;
     }
+
+    public function matchEntity(
+        string $entityName,
+        callable $action = null
+    ): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        $session = $this->dialog->session;
+        $nlu = $session->nlu;
+        $exists = false;
+
+        // 如果 NLU 没有匹配到
+        if (!$nlu->getMatchedEntities()->has($entityName)) {
+
+            $message = $session->incomingMessage->message;
+
+            // 只有文本才匹配
+            if ($message instanceof VerboseMsg) {
+                /**
+                 * @var EntityExtractor $entityExtractor
+                 */
+                $entityExtractor = $this->dialog
+                    ->app
+                    ->make(EntityExtractor::class);
+
+                $matches = $entityExtractor->match($message->getText(), $entityName);
+                // 将匹配结果放到 global entities 里
+                if (!empty($matches)) {
+                    $nlu->mergeEntities([
+                        $entityName => $matches
+                    ]);
+                    $exists = true;
+                }
+            }
+        } else {
+            $exists = true;
+        }
+
+        if ($exists) {
+            $this->isMatched = true;
+            $this->callInterceptor($action);
+        }
+
+        return $this;
+    }
+
 
     public function soundLike(
         string $text,
@@ -592,6 +640,14 @@ class HearingHandler implements Hearing
         return $this;
     }
 
+    public function reHear(): Hearing
+    {
+        if (!isset($this->navigator)) {
+            $this->isMatched = false;
+        }
+        return $this;
+    }
+
     public function hasEntityValue(
         string $entityName,
         $expect,
@@ -615,18 +671,24 @@ class HearingHandler implements Hearing
         return $this;
     }
 
-    public function runAnyIntent(
-        callable $intentAction = null
-    ): Matcher
+    public function runAnyIntent(): Matcher
     {
-        return $this->isAnyIntent(function(IntentMessage $intent, Dialog $dialog){
+        $hearing = $this->isAnyIntent(function(IntentMessage $intent, Dialog $dialog){
             return $intent->navigate($dialog);
         });
+
+        // 如果 run 了一个 intent 但什么事情也没发生
+        // 说明这个 intent 只是一个 message 而已
+        // 允许继续往下进行匹配.
+        if ($hearing instanceof Hearing) {
+            return $hearing->reHear();
+        }
+
+        return $hearing;
     }
 
     public function runIntent(
-        string $intentName,
-        callable $intentAction = null
+        string $intentName
     ): Matcher
     {
         return $this->isIntent($intentName, function(IntentMessage $intent, Dialog $dialog){
@@ -635,8 +697,7 @@ class HearingHandler implements Hearing
     }
 
     public function runIntentIn(
-        array $intentNames,
-        callable $intentAction = null
+        array $intentNames
     ): Matcher
     {
         return $this->isIntentIn($intentNames, function(IntentMessage $intent, Dialog $dialog){
@@ -786,12 +847,6 @@ class HearingHandler implements Hearing
         // 有拦截的情况
         if (isset($intentAction)) {
             return $this->callInterceptor($intentAction, $matched);
-        }
-
-        // intent 自己有navigator 的情况
-        $navigator = $matched->navigate($this->dialog);
-        if (isset($navigator)) {
-            return $this->setNavigator($navigator);
         }
 
         // 当什么也没发生, 例如placeHolderIntent

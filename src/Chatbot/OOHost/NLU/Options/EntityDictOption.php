@@ -36,21 +36,24 @@ class EntityDictOption extends Option implements CorpusOption
         return $this->desc;
     }
 
+    /**
+     * @param Corpus $corpus
+     * @return SynonymOption[]
+     */
     public function getSynonymOptions(Corpus $corpus) : array
     {
         $synonyms = $this->synonyms;
         $synonyms = empty($synonyms) ? $this->values : $synonyms;
-
         $result = [];
-
+        if (empty($synonyms)) {
+            return [];
+        }
         $manager = $corpus->synonymsManager();
         foreach ($synonyms as $name) {
-            if ($manager->has($name)) {
+            if ($manager->has(strval($name))) {
                 $result[$name] = $manager->get($name);
             }
         }
-
         return $result;
     }
-
 }

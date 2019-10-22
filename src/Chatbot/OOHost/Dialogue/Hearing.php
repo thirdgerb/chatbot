@@ -104,6 +104,15 @@ interface Hearing extends Matcher
     public function runDefaultFallback() : Hearing;
 
     /**
+     * 如果已经命中了某个 match 条件, 而且执行了逻辑, 但没有生成navigator
+     * 默认是不会继续进行匹配
+     * 调用这个方法, 又可以重新匹配了. 可以把某些条件作为中间环节执行.
+     *
+     * @return Hearing
+     */
+    public function reHear() : Hearing;
+
+    /**
      * 无论是否已经生成了Navigator 都会执行.
      * 但有可能引起歧义.
      *
@@ -187,48 +196,32 @@ interface Hearing extends Matcher
     /*---------- 直接运行意图. ----------*/
 
     /**
-     * 由 NLU 传递来的任何intent 如果存在
-     * 则执行不为null 的intentAction
-     * 否则 执行 intent 自带的 action
-     *
-     * @param callable|null $intentAction    $message is IntentMessage
+     * 由 NLU 传递来的任何intent 如果存在, 则直接执行 intent::navigate
      * @return static
      */
-    public function runAnyIntent(
-        callable $intentAction = null
-    ) : Matcher;
+    public function runAnyIntent() : Matcher;
 
 
     /**
      * 主动匹配一个 intent.
      * 即便 NLU 没有传递, 也会去尝试匹配.
+     * 匹配到了就直接执行默认方法
      *
      * @param string $intentName
-     * @param callable|null $intentAction   $message is IntentMessage
      * @return static
      */
-    public function runIntent(
-        string $intentName,
-        callable $intentAction = null
-    ) : Matcher;
+    public function runIntent(string $intentName) : Matcher;
 
 
     /**
      * 尝试从一批intents 中匹配一个intent.
      * 无论 NLU 是否有传递, 会主动进行匹配.
-     *
      * intentName 可以传递前缀.
-     *
-     * 命中后, 优先执行不为null 的intentAction
-     * 否则执行 intent 自己的action
+     * 执行 intent 自己的action
      *
      * @param array $intentNames
-     * @param callable|null $intentAction  $message is IntentMessage
      * @return static
      */
-    public function runIntentIn(
-        array $intentNames,
-        callable $intentAction = null
-    ) : Matcher;
+    public function runIntentIn(array $intentNames) : Matcher;
 
 }

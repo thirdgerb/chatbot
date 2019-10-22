@@ -5,6 +5,7 @@ namespace Commune\Chatbot\OOHost\Emotion;
 
 
 use Commune\Chatbot\App\Messages\QA\Confirmation;
+use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Emotion\Emotions\Negative;
@@ -27,19 +28,29 @@ class Feels implements Feeling
      */
     protected $experiences = [];
 
+    public function __construct()
+    {
+        $this->defaultExperience();
+    }
 
     protected function defaultExperience() : void
     {
         // 系统默认的两种情绪.
-        $this->experience(Negative::class, function(Session $session) : bool {
+        // positive
+        $this->experience(Positive::class, function(Session $session) : bool {
+
             $message = $session->incomingMessage->getMessage();
-            return $message instanceof Confirmation && $message->hasChoice(0);
+            return $message instanceof VerboseMsg
+                && $message->getTrimmedText() === 'y';
         });
 
-        $this->experience(Positive::class, function(Session $session) : bool {
+        // negative
+        $this->experience(Negative::class, function(Session $session) : bool {
             $message = $session->incomingMessage->getMessage();
-            return $message instanceof Confirmation && $message->hasChoice(1);
+            return $message instanceof VerboseMsg
+                && $message->getTrimmedText() === 'n';
         });
+
     }
 
     /**

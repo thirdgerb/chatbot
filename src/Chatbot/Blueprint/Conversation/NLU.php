@@ -99,6 +99,12 @@ interface NLU extends ArrayAndJsonAble
     public function setEntities(array $entities) : void;
 
     /**
+     * 添加 entities 信息, 到 global entity
+     * @param array $entities
+     */
+    public function mergeEntities(array $entities) : void;
+
+    /**
      * @param string $intentName
      * @param array $entities
      */

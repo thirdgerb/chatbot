@@ -249,5 +249,14 @@ class TodoImpl implements ToDoWhileHearing
         return $this;
     }
 
+    public function matchEntity(
+        string $entityName,
+        callable $action = null
+    ): Matcher
+    {
+        call_user_func_array([$this->hearing, __FUNCTION__], func_get_args());
+        return $this;
+    }
+
 
 }

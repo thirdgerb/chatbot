@@ -162,6 +162,12 @@ class NatureLanguageUnit implements NLU
         $this->entities = new Collection($entities);
     }
 
+    public function mergeEntities(array $entities): void
+    {
+        $this->entities = $this->getGlobalEntities()->merge($entities);
+    }
+
+
     public function setIntentEntities(string $intentName, array $entities): void
     {
         $intentName = StringUtils::normalizeContextName($intentName);

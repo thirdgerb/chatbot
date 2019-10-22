@@ -5,7 +5,9 @@ namespace Commune\Chatbot\OOHost\NLU\Providers;
 use Commune\Chatbot\Framework\Providers\BaseServiceProvider;
 use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
+use Commune\Chatbot\OOHost\NLU\Contracts\EntityExtractor;
 use Commune\Chatbot\OOHost\NLU\Corpus\CorpusRepository;
+use Commune\Chatbot\OOHost\NLU\Libraries\PHPEntityExtractor;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
 
 
@@ -30,6 +32,11 @@ class CorpusServiceProvider extends BaseServiceProvider
                     $app[OptionRepository::class]
                 );
             });
+        }
+
+        // 注册 entity extractor
+        if (!$this->app->bound(EntityExtractor::class)) {
+            $this->app->singleton(EntityExtractor::class, PHPEntityExtractor::class);
         }
     }
 

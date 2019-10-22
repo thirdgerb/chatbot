@@ -224,6 +224,19 @@ interface Matcher
     ) : Matcher;
 
 
+    /**
+     * 用系统自带的 entity extractor 去匹配.
+     * 通常就是关键词匹配算法.
+     *
+     * @param string $entityName
+     * @param callable|null $action
+     * @return static
+     */
+    public function matchEntity(
+        string $entityName,
+        callable $action = null
+    ) : Matcher;
+
 
 
 

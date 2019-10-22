@@ -14,7 +14,7 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Components\Demo\Cases\Maze\MazeInt;
-use Commune\Components\Demo\Cases\Wheather\TellWeatherInt;
+use Commune\Components\Demo\Cases\Weather\TellWeatherInt;
 use Commune\Components\Story\StoryComponent;
 
 /**
@@ -54,7 +54,10 @@ class NLTestCases extends TaskDef
         );
 
         $menu->onHearing(function(Hearing $hearing) {
-            $hearing->runAnyIntent();
+            $hearing
+                ->runIntent(MazeInt::class)
+                ->runIntent(TellWeatherInt::class)
+                ->runAnyIntent();
         });
 
         return $stage
@@ -67,7 +70,7 @@ class NLTestCases extends TaskDef
 
     public function weather(Dialog $dialog) : Navigator
     {
-        $dialog->say()->info('本 Demo 实现了一个简单的天气查询用例. 试着说 "北京今天的天气如何"类似的话, 可以触发. ');
+        $dialog->say()->info('本 Demo 实现了一个简单的天气查询用例. 试着说 "北京今天的天气如何"类似的话, 也可以用命令行 "#tellWeather# 的方式触发.');
 
         return $dialog->repeat();
     }

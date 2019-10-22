@@ -12,6 +12,8 @@ use Commune\Chatbot\Blueprint\Conversation\Chat;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
+use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
+use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Conversation\User;
 use Commune\Chatbot\Contracts\CacheAdapter;
@@ -19,6 +21,7 @@ use Commune\Chatbot\Contracts\ClientFactory;
 use Commune\Chatbot\Framework\Conversation\ChatImpl;
 use Commune\Chatbot\Framework\Conversation\ConversationLoggerImpl;
 use Commune\Chatbot\Framework\Conversation\IncomingMessageImpl;
+use Commune\Chatbot\Framework\Conversation\NatureLanguageUnit;
 use Commune\Chatbot\Framework\Conversation\SpeechImpl;
 use Commune\Chatbot\Framework\Conversation\UserImpl;
 use Commune\Chatbot\Framework\Predefined\GuzzleClientFactory;
@@ -41,6 +44,7 @@ class ConversationalServiceProvider extends BaseServiceProvider
         $this->registerLogger();
         $this->registerClientFactory();
         $this->registerDefaultSlots();
+        $this->registerNLU();
     }
 
 
@@ -185,4 +189,19 @@ class ConversationalServiceProvider extends BaseServiceProvider
         );
     }
 
+    protected function registerNLU() : void
+    {
+        if ($this->app->bound(NLU::class)) {
+            return;
+        }
+
+        $this->app->singleton(NLU::class, function($app){
+            /**
+             * @var MessageRequest $request
+             */
+            $request = $app[MessageRequest::class];
+            return $request->fetchNLU() ?? new NatureLanguageUnit();
+        });
+
+    }
 }
