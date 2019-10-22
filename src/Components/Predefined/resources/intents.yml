@@ -44,6 +44,17 @@
     - 别这么做
     - 算逑
     - 我不用
+- name : dialogue.random
+  examples :
+    - "随便吧"
+    - "都可以啊"
+    - "都可以"
+    - "随便你"
+    - "你说的算"
+    - "你来选吧"
+    - "随你的便"
+    - "随便"
+    - "你帮我选吧"
 - name : dialogue.help
   examples :
     - 帮帮我
@@ -76,6 +87,14 @@
     - 返回前面的问题
     - 再说一次上一个问题
 - name : navigation.cancel
+  examples :
+    - 退出
+    - 我要退出
+    - cancel
+    - 不玩了
+    - 取消
+    - 取消任务
+    - 我要取消
 - name : navigation.home
 - name : navigation.quit
   examples:

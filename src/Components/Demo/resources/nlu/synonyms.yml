@@ -1,3 +1,23 @@
+- value : juice_cup
+  desc : 果汁杯装
+  aliases :
+    - 杯
+- value : juice_bowl
+  desc : 果汁碗装
+  aliases :
+    - 碗
+- value : juice_ice
+  desc : 果汁加冰
+  aliases :
+    - 加冰
+    - 要加
+    - 加
+- value : juice_no_ice
+  desc : 果汁不加冰
+  aliases :
+    - 不加
+    - 别加
+    - 常温
 - value : 前
   aliases :
     - 前面

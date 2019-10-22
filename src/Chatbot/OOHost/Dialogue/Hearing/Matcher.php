@@ -225,7 +225,7 @@ interface Matcher
 
 
     /**
-     * 用系统自带的 entity extractor 去匹配.
+     * 如果nlu没匹配上, 就用系统自带的 entity extractor 去匹配.
      * 通常就是关键词匹配算法.
      *
      * @param string $entityName

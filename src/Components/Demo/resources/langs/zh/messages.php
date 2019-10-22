@@ -8,7 +8,7 @@ return [
 
             'featureTest' => '功能点测试',
 
-            'testGames' => '对话交互游戏',
+            'testGames' => '对话交互小游戏',
 
             'devTools' => '开发工具',
 

@@ -55,6 +55,7 @@ class HearingHandler implements Hearing
 
     /**
      * 是否已经命中了匹配的条件.
+     * 只在 to do 的时候用
      * @var bool
      */
     public $isMatched = false;
@@ -83,12 +84,6 @@ class HearingHandler implements Hearing
     protected $defaultFallback;
 
     /**
-     * 已经执行过fallback了
-     * @var bool
-     */
-    protected $calledFallback = false;
-
-    /**
      * 已经执行过 onHelp 了
      * @var bool
      */
@@ -104,6 +99,13 @@ class HearingHandler implements Hearing
      * @var Question|null
      */
     protected $question;
+
+    /**
+     * components 都在 end 之前执行.
+     *
+     * @var callable[]
+     */
+    protected $components = [];
 
     public function __construct(
         Context $self,
@@ -162,17 +164,7 @@ class HearingHandler implements Hearing
 
     public function component(callable $hearingComponent): Hearing
     {
-        if (isset($this->navigator)) return $this;
-
-        $parameters = $this->getParameters();
-        $parameters[Hearing::class] = $this;
-        $parameters[static::class] = $this;
-
-        $this->dialog->app->call(
-            $hearingComponent,
-            $parameters,
-            __METHOD__
-        );
+        $this->components[] = $hearingComponent;
         return $this;
     }
 
@@ -268,7 +260,6 @@ class HearingHandler implements Hearing
         callable $interceptor = null
     ): Matcher
     {
-
         if (isset($this->navigator)) return $this;
 
         $cmdText = $this->message->getCmdText();
@@ -332,7 +323,6 @@ class HearingHandler implements Hearing
 
         return $this;
     }
-
 
     public function soundLike(
         string $text,
@@ -640,14 +630,6 @@ class HearingHandler implements Hearing
         return $this;
     }
 
-    public function reHear(): Hearing
-    {
-        if (!isset($this->navigator)) {
-            $this->isMatched = false;
-        }
-        return $this;
-    }
-
     public function hasEntityValue(
         string $entityName,
         $expect,
@@ -676,14 +658,6 @@ class HearingHandler implements Hearing
         $hearing = $this->isAnyIntent(function(IntentMessage $intent, Dialog $dialog){
             return $intent->navigate($dialog);
         });
-
-        // 如果 run 了一个 intent 但什么事情也没发生
-        // 说明这个 intent 只是一个 message 而已
-        // 允许继续往下进行匹配.
-        if ($hearing instanceof Hearing) {
-            return $hearing->reHear();
-        }
-
         return $hearing;
     }
 
@@ -692,6 +666,7 @@ class HearingHandler implements Hearing
     ): Matcher
     {
         return $this->isIntent($intentName, function(IntentMessage $intent, Dialog $dialog){
+            $intent->toInstance($dialog->session);
             return $intent->navigate($dialog);
         });
     }
@@ -701,6 +676,7 @@ class HearingHandler implements Hearing
     ): Matcher
     {
         return $this->isIntentIn($intentNames, function(IntentMessage $intent, Dialog $dialog){
+            $intent->toInstance($dialog->session);
             return $intent->navigate($dialog);
         });
     }
@@ -997,19 +973,20 @@ class HearingHandler implements Hearing
         return $this;
     }
 
+    public function runComponent(): Hearing
+    {
+        while ($component = array_shift($this->components)) {
+            call_user_func($component, $this);
+        }
+        return $this;
+    }
+
+
     public function runFallback(): Hearing
     {
-        if ($this->calledFallback) {
-            return $this;
-        }
-
-        $this->calledFallback = true;
-        // 避免出现意想不到的情况. 用复制不是直接调用.
-        $fallbackStack = $this->fallback;
-        foreach ($fallbackStack as $fallback) {
+        while ($fallback = array_shift($this->fallback)) {
             $this->callInterceptor($fallback);
         }
-
         return $this;
     }
 
@@ -1036,6 +1013,9 @@ class HearingHandler implements Hearing
 
     public function end(callable $defaultFallback = null): Navigator
     {
+        // 运行中间件.
+        $this->runComponent();
+
         // 补加载 component
         if (isset($this->navigator)) return $this->navigator;
 

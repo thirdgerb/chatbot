@@ -9,6 +9,7 @@ use Commune\Chatbot\OOHost\Command\SessionCommand;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\Snapshot;
+use Commune\Support\Arr\ArrayAndJsonAble;
 
 class WhereCmd extends SessionCommand
 {
@@ -16,6 +17,7 @@ class WhereCmd extends SessionCommand
             {--s|scope : 查看当前 scope}
             {--n|snapshot : 查看当前 snapshot}
             {--c|context : 查看当前 context}
+            {--p|process : 查看当前 breakpoint::process}
             ';
 
     const DESCRIPTION = '查看维持多轮对话的关键数据.';
@@ -34,11 +36,21 @@ class WhereCmd extends SessionCommand
                 ->info(
                     json_encode(
                         array_map(function(Snapshot $snapshot){
-                            return $snapshot->toArray();
+                            return serialize($snapshot);
                         }, $session->repo->getSnapshots()),
-                        JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+                        ArrayAndJsonAble::PRETTY_JSON
                     )
                 );
+        }
+
+        if ($message['--process']) {
+            $snapshots = $session->repo->getSnapshots();
+            /**
+             * @var Snapshot $snapshot
+             */
+            $snapshot = current($snapshots);
+            $talk->info('process is : ')
+                ->info($snapshot->breakpoint->process()->toPrettyJson());
         }
 
         if ($message['--context']) {

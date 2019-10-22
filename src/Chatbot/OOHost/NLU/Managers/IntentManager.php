@@ -30,6 +30,7 @@ class IntentManager extends CommonManager
 
     protected function wrapNewOption(string $id): Option
     {
+
         $def = $this->registrar->getDef($id);
         if ($def instanceof IntentDefHasCorpus) {
             return $def->getDefaultCorpus();
@@ -38,6 +39,11 @@ class IntentManager extends CommonManager
         $option = IntentCorpusOption::createById($id);
         $option->mergeEntityNames($def->getEntityNames());
         $option->setDesc($def->getDesc(), false);
+        $keywords = $def->getMatcherOption()->keywords;
+        if (!empty($keywords)) {
+            $option->setKeywords($keywords);
+        }
+
         return $option;
     }
 

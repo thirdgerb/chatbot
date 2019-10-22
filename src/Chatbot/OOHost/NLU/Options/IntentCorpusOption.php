@@ -15,6 +15,7 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string $desc 介绍
  * @property-read string[] $examples 意图的例句
  * @property-read string[] $entityNames 意图定义的entities
+ * @property-read string[] $keywords 意图的关键字, 如果定义的话.
  */
 class IntentCorpusOption extends Option implements CorpusOption
 {
@@ -31,6 +32,7 @@ class IntentCorpusOption extends Option implements CorpusOption
             'desc' => '',
             'examples' => [],
             'entityNames' => [],
+            'keywords' => [],
         ];
     }
     protected function init(array $data): array
@@ -66,6 +68,11 @@ class IntentCorpusOption extends Option implements CorpusOption
     {
         $this->data['entityNames'] = array_unique(array_merge($this->data['entityNames'], $entityNames));
 
+    }
+
+    public function setKeywords(array $keywords) : void
+    {
+        $this->data['keywords'] = $keywords;
     }
 
     public function setDesc(string $desc, bool $force = false) : void

@@ -82,6 +82,12 @@ interface Hearing extends Matcher
     public function interceptor(callable $action) : Hearing;
 
     /**
+     * 提前执行组件. 通常是最后执行.
+     * @return Hearing
+     */
+    public function runComponent() : Hearing;
+
+    /**
      * 提前运行已经注册的fallback
      * 只会运行一次.
      *
@@ -102,15 +108,6 @@ interface Hearing extends Matcher
      * @return Hearing
      */
     public function runDefaultFallback() : Hearing;
-
-    /**
-     * 如果已经命中了某个 match 条件, 而且执行了逻辑, 但没有生成navigator
-     * 默认是不会继续进行匹配
-     * 调用这个方法, 又可以重新匹配了. 可以把某些条件作为中间环节执行.
-     *
-     * @return Hearing
-     */
-    public function reHear() : Hearing;
 
     /**
      * 无论是否已经生成了Navigator 都会执行.

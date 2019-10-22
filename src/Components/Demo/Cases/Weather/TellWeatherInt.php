@@ -8,6 +8,7 @@ use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Callables\Actions\Talker;
 use Commune\Chatbot\App\Intents\ActionIntent;
 use Commune\Chatbot\Blueprint\Conversation\NLU;
+use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
@@ -43,6 +44,12 @@ class TellWeatherInt extends ActionIntent
     {
         return StringUtils::normalizeContextName('demo.cases.tellweather');
     }
+
+    public static function __depend(Depending $depending): void
+    {
+        $depending->onAnnotations();
+    }
+
 
     public function __staging(Stage $stage) : void
     {

@@ -13,9 +13,9 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Components\Demo\Cases\Drink\OrderJuiceInt;
 use Commune\Components\Demo\Cases\Maze\MazeInt;
 use Commune\Components\Demo\Cases\Weather\TellWeatherInt;
-use Commune\Components\Story\StoryComponent;
 
 /**
  * 自然语言用例.
@@ -45,8 +45,9 @@ class NLTestCases extends TaskDef
         $menu = new Menu(
             'ask.needs',
             [
-                MazeInt::class,
                 'story.examples.sanguo.changbanpo',
+                MazeInt::class,
+                OrderJuiceInt::class,
                 '查询天气用例' => [$this, 'weather'],
                 '闲聊测试' => [$this, 'simpleChat'],
                 'b :: 返回' => Redirector::goFulfill(),

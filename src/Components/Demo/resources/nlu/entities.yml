@@ -1,3 +1,33 @@
+- name : juice_pack
+  desc : 果汁的包装
+  values :
+    - juice_cup
+    - juice_bowl
+- name : juice_fruit
+  desc : 果汁的水果类型
+  values : 
+    - "苹果"
+    - "香蕉"
+    - "哈密瓜"
+    - "梨"
+    - "橘子"
+    - "桔子"
+    - "柠檬"
+    - "火龙果"
+    - "西瓜"
+    - "蜜桃"
+    - "芒果"
+    - "菠萝"
+- name : juice_ice
+  desc : 果汁是否加冰
+  values :
+    - juice_ice
+    - juice_no_ice
+- name : juice_pack
+  desc : 果汁碗装还是杯装
+  values :
+    - juice_bowl
+    - juice_cup
 - name : ordinal
   desc : 方向
   values :

@@ -37,20 +37,6 @@ abstract class ActionIntent extends AbsCmdIntent
         return $this->action($stage);
     }
 
-
-    /**
-     * 关键, 会补完参数后执行后续逻辑. 这是重点.
-     * @param Depending $depending
-     */
-    public static function __depend(Depending $depending): void
-    {
-        $option = static::getMatcherOption();
-        if (!empty($option->signature)) {
-            $depending->onSignature($option->signature);
-        }
-    }
-
-
     abstract public function action(Stage $stageRoute): Navigator;
 
     abstract public function __exiting(Exiting $listener): void;
