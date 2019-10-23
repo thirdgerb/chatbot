@@ -31,6 +31,8 @@ abstract class NavigateIntent extends AbsCmdIntent
     const KEYWORDS = [];
     // 给NLU用的例句.
     const EXAMPLES = [];
+
+
     public function __onStart(Stage $stageRoute): Navigator
     {
         return $stageRoute->dialog->fulfill();

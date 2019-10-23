@@ -22,18 +22,20 @@ class DemoHome extends TaskDef
 
     public function __onStart(Stage $stage): Navigator
     {
+        $menu = new Menu(
+            '请您选择: ',
+            [
+                FeatureTest::class,
+                WelcomeUser::class,
+                DevTools::class,
+            ]
+        );
+
         return $stage->buildTalk()
             ->info('欢迎来到 CommuneChatbot Demo 测试入口.')
             ->toStage()
             ->onFallback(Talker::say()->info('完成测试'))
-            ->component(new Menu(
-                '请您选择: ',
-                [
-                    FeatureTest::class,
-                    WelcomeUser::class,
-                    DevTools::class,
-                ]
-            ));
+            ->component($menu);
     }
 
     public static function __depend(Depending $depending): void
@@ -46,12 +48,7 @@ class DemoHome extends TaskDef
      */
     public function __hearing(Hearing $hearing) : void
     {
-        $hearing
-            ->runAnyIntent()
-            ->defaultFallback(
-                (new SimpleChatAction())
-                    ->then(Redirector::goRewind())
-            );
+        $hearing->runAnyIntent();
     }
 
 

@@ -5,6 +5,7 @@ namespace Commune\Components\Story\Intents;
 
 
 use Commune\Chatbot\App\Intents\MessageIntent;
+use Commune\Support\Utils\StringUtils;
 
 class ReturnGameInt extends MessageIntent
 {
@@ -12,7 +13,7 @@ class ReturnGameInt extends MessageIntent
 
     public static function getContextName(): string
     {
-        return 'storyComponent.returnGame';
+        return StringUtils::normalizeContextName('story-component.return-game');
     }
 
 }

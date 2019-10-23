@@ -5,6 +5,7 @@ namespace Commune\Components\Story\Intents;
 
 
 use Commune\Chatbot\App\Intents\MessageIntent;
+use Commune\Support\Utils\StringUtils;
 
 class ChooseEpisodeInt extends MessageIntent
 {
@@ -12,7 +13,7 @@ class ChooseEpisodeInt extends MessageIntent
 
     public static function getContextName(): string
     {
-        return 'storyComponent.chooseEpisode';
+        return StringUtils::normalizeContextName('story-component.choose-episode');
     }
 
 }

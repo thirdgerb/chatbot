@@ -7,6 +7,7 @@ namespace Commune\Components\Predefined\Intents\Navigation;
 use Commune\Chatbot\App\Intents\NavigateIntent;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Support\Utils\StringUtils;
 
 class RepeatInt extends NavigateIntent
 {
@@ -18,7 +19,7 @@ class RepeatInt extends NavigateIntent
 
     public static function getContextName(): string
     {
-        return 'navigation.'.static::SIGNATURE;
+        return StringUtils::normalizeContextName('navigation.'.static::SIGNATURE);
     }
 
     public function navigate(Dialog $dialog): ? Navigator

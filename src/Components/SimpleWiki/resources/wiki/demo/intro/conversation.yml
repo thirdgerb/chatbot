@@ -1,6 +1,6 @@
 description: 什么是复杂多轮对话
 suggestions:
-  - .conversation.whyEngineering
+  - .conversation.why-engineering
   - .*
 examples:
   - 什么是多轮对话

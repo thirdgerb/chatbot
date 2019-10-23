@@ -161,8 +161,10 @@ class PlayMaze extends TaskDef
                 return $dialog->repeat();
 
             })
+                ->onHelp()
                 ->is('坐标')
                 ->isIntent(LocationInt::class)
+
             ->otherwise()
 
             // 注册默认 end 方法.

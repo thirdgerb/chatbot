@@ -5,6 +5,7 @@ namespace Commune\Components\Story\Intents;
 
 
 use Commune\Chatbot\App\Intents\MessageIntent;
+use Commune\Support\Utils\StringUtils;
 
 class MenuInt extends MessageIntent
 {
@@ -12,7 +13,7 @@ class MenuInt extends MessageIntent
 
     public static function getContextName(): string
     {
-        return 'storyComponent.menu';
+        return StringUtils::normalizeContextName('story-component.menu');
     }
 
 }

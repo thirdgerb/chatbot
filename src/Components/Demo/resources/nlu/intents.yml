@@ -16,6 +16,9 @@
     - "[明天](date)[北京](city)什么气温"
     - "[深圳](city)天气"
     - "[上海 ](city)天气"
+  entities :
+    - date
+    - city
 - name : demo.cases.orderjuice
   exampes :
     -  "我要点饮料"
@@ -53,3 +56,43 @@
     - juice_fruit
     - juice_ice
     - juice_pack
+- name : commune.demo.maze.location
+  desc : 查询座标
+  examples :
+    - 座标
+    - 坐标
+    - 给我看座标
+    - 我现在在什么地方
+    - 这是什么位置
+    - 我在哪里
+- name : commune.demo.maze.back
+  desc : 向后走
+  examples :
+    - 向后走
+    - 往后走
+    - 走后边
+    - 走后头
+- name : commune.demo.maze.front
+  desc : 向前走
+  examples :
+    - 走正面
+    - 直走
+    - 向前走
+    - 往前走
+    - 走前边
+    - 走前头
+- name : commune.demo.maze.left
+  desc : 向左走
+  examples :
+    - 向左走
+    - 往左走
+    - 走左边
+    - 左手边走
+- name : commune.demo.maze.right
+  desc : 向右走
+  examples :
+    - 向右走
+    - 往右走
+    - 走右边
+    - 右手边走
+

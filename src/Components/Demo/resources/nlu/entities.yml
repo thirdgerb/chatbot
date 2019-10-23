@@ -28,7 +28,7 @@
   values :
     - juice_bowl
     - juice_cup
-- name : ordinal
+- name : towards
   desc : 方向
   values :
     - 前

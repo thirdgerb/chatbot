@@ -10,7 +10,6 @@ use Commune\Components\Story\Options\ScriptOption;
 use Commune\Components\Story\Providers\StoryServiceProvider;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\MetaHolder;
-use Commune\Support\OptionRepo\Storage\Memory\MemoryStorageMeta;
 use Commune\Support\OptionRepo\Storage\Yaml\YamlStorageMeta;
 
 /**

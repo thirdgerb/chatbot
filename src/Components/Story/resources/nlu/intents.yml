@@ -1,6 +1,36 @@
-- name : storyComponent.menu
+- name : story-component.menu
+  desc : 打开菜单
   examples :
     - 打开菜单
     - 菜单
     - 看看菜单
     - 操作菜单
+    - 可以操作的功能
+- name : story-component.choose-episode
+  desc : 选择章节
+  examples :
+    - 选择章节
+    - 有哪些章节
+    - 还有哪几章
+    - 我想选别的章
+    - 怎么选别的章
+    - 怎么回到上一章
+    - 怎么打开下一章
+- name : story-component.quit-game
+  desc : 退出游戏
+  examples :
+    - 退出游戏
+    - 不想玩了
+    - 我不玩了
+    - 怎么退出游戏
+    - 怎么离开游戏
+    - 我想退出游戏
+- name : story-component.return-game
+  desc : 继续游戏
+  examples :
+    - 继续游戏
+    - 继续上次的进度
+    - 回到上一次的游戏
+    - 怎么继续游戏
+    - 回到刚才的游戏内容
+    - 返回之前的游戏进度

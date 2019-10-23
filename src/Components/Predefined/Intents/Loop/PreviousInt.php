@@ -9,6 +9,7 @@ namespace Commune\Components\Predefined\Intents\Loop;
 
 
 use Commune\Chatbot\App\Intents\MessageIntent;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * 返回循环的上一步
@@ -21,7 +22,7 @@ class PreviousInt extends MessageIntent
 
     public static function getContextName(): string
     {
-        return 'loop.'.static::SIGNATURE;
+        return StringUtils::normalizeContextName('loop.'.static::SIGNATURE);
     }
 
 }

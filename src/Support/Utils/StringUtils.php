@@ -213,7 +213,7 @@ class StringUtils
     {
         $secs = explode('.', $contextName);
         foreach ($secs as $sec) {
-            if (! preg_match('/^[a-z0-9]+$/', $sec)) {
+            if (! preg_match('/^[a-z0-9-]+$/', $sec)) {
                 return false;
             }
         }

@@ -4,7 +4,7 @@ suggestions:
   - .intro.conversation
   - .intro.special
   - .intro.wheels
-  - .intro.howToUse
+  - .intro.how-to-use
   - .intro.whyDevelop
 examples:
   - 这是一个什么项目

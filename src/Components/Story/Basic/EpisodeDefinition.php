@@ -5,6 +5,7 @@ namespace Commune\Components\Story\Basic;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
+use Commune\Components\Predefined\Intents\Loop\BreakInt;
 use Commune\Components\Predefined\Intents\Navigation\BackwardInt;
 use Commune\Components\Predefined\Intents\Navigation\RepeatInt;
 use Commune\Components\Predefined\Intents\Navigation\RestartInt;
@@ -16,7 +17,6 @@ use Commune\Chatbot\OOHost\Context\Helpers\ContextCaller;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Components\Story\Intents\SkipInt;
 use Commune\Components\Story\Options\ChoiceOption;
 use Commune\Components\Story\Options\EpisodeOption;
 use Commune\Components\Story\Options\ScriptOption;
@@ -226,7 +226,7 @@ class EpisodeDefinition implements Definition
                 ->runIntent(RestartInt::class)
                     ->todo(Redirector::goRewind())
                     ->is($commands->skip)
-                    ->isIntent(SkipInt::class)
+                    ->isIntent(BreakInt::class)
                 ->otherwise();
 
             return $hearing->navigator;

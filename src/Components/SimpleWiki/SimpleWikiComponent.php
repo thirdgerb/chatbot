@@ -12,7 +12,6 @@ use Commune\Components\SimpleWiki\Options\YamlPathStorageMeta;
 use Commune\Components\SimpleWiki\Providers\SimpleWikiServiceProvider;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\MetaHolder;
-use Commune\Support\OptionRepo\Storage\Memory\MemoryStorageMeta;
 
 /**
  * 用简单的 yaml 文件来生成意图.

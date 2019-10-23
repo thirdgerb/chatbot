@@ -102,8 +102,8 @@ EOF;
     public function testDotPathParser()
     {
         $this->assertEquals(
-            'intro.chat.chatInterface',
-            StringUtils::dotPathParser('intro.chat', '.chat.chatInterface')
+            'intro.chat.chat-interface',
+            StringUtils::dotPathParser('intro.chat', '.chat.chat-interface')
         );
 
         $this->assertEquals(
@@ -125,7 +125,21 @@ EOF;
             'hello',
             StringUtils::dotPathParser('chat.abc', 'hello')
         );
+    }
 
+
+    public function testContextNameValidate()
+    {
+        $this->assertTrue(StringUtils::validateDefName('a.b0'));
+
+        // 允许中间线
+        $this->assertTrue(StringUtils::validateDefName('a-b0'));
+
+        // 不支持大写
+        $this->assertFalse(StringUtils::validateDefName('A.b0'));
+
+        // 下划线也不允许
+        $this->assertFalse(StringUtils::validateDefName('a_b0'));
 
     }
 }
