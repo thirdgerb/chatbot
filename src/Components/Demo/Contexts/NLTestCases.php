@@ -50,7 +50,7 @@ class NLTestCases extends TaskDef
                 OrderJuiceInt::class,
                 '查询天气用例' => [$this, 'weather'],
                 '闲聊测试' => [$this, 'simpleChat'],
-                'b :: 返回' => Redirector::goFulfill(),
+                '返回' => Redirector::goFulfill(),
             ]
         );
 

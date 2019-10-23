@@ -29,8 +29,13 @@ use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 use Commune\Chatbot\Blueprint\Message\QA\Confirmation;
 use Commune\Components\Predefined\Intents\Dialogue\HelpInt;
+use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\SoundLike\SoundLikeInterface;
 
+/**
+ *
+ * @property bool $isMatched
+ */
 class HearingHandler implements Hearing
 {
     /**
@@ -58,7 +63,7 @@ class HearingHandler implements Hearing
      * 只在 to do 的时候用
      * @var bool
      */
-    public $isMatched = false;
+    public $matched = false;
 
     /**
      * 消息已经经过了问题的检查.
@@ -653,7 +658,7 @@ class HearingHandler implements Hearing
         return $this;
     }
 
-    public function runAnyIntent(): Matcher
+    public function runAnyIntent(): Hearing
     {
         $hearing = $this->isAnyIntent(function(IntentMessage $intent, Dialog $dialog){
             return $intent->navigate($dialog);
@@ -663,7 +668,7 @@ class HearingHandler implements Hearing
 
     public function runIntent(
         string $intentName
-    ): Matcher
+    ): Hearing
     {
         return $this->isIntent($intentName, function(IntentMessage $intent, Dialog $dialog){
             $intent->toInstance($dialog->session);
@@ -673,7 +678,7 @@ class HearingHandler implements Hearing
 
     public function runIntentIn(
         array $intentNames
-    ): Matcher
+    ): Hearing
     {
         return $this->isIntentIn($intentNames, function(IntentMessage $intent, Dialog $dialog){
             $intent->toInstance($dialog->session);
@@ -1059,5 +1064,42 @@ class HearingHandler implements Hearing
         return new TodoImpl($this, $todo);
     }
 
+    /*------- debug 模式 --------*/
+
+    protected $debugMatch = false;
+
+    public function debugMatch(): Hearing
+    {
+        $this->debugMatch = true;
+        return $this;
+    }
+
+
+    public function __set($name, $value)
+    {
+        if ($name === 'isMatched') {
+            $this->matched = $value;
+            // debug match
+            if ($value === true && $this->debugMatch) {
+                $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+
+                $this->dialog->say()
+                    ->info(
+                        json_encode(
+                            $trace[1],
+                            ArrayAndJsonAble::PRETTY_JSON
+                        )
+                    );
+            }
+        }
+    }
+
+    public function __get($name)
+    {
+        if ($name === 'isMatched') {
+            return $this->matched;
+        }
+        return null;
+    }
 
 }

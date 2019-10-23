@@ -116,7 +116,7 @@ class DialogSpeechImpl extends SpeechImpl implements DialogSpeech
     public function ask(Question $question)
     {
         $question->mergeSlots($this->slots);
-        $this->dialog->reply($question);
+        $this->withReply($question);
         return $this;
     }
 

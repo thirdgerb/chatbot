@@ -175,6 +175,10 @@ class ConversationalServiceProvider extends BaseServiceProvider
                 $env = $config->defaultSlots;
                 $slots = Arr::dot($env);
 
+                foreach ($slots as $key => $value) {
+                    $slots[str_replace('.', '_', $key)] = $value;
+                }
+
                 /**
                  * @var User $user
                  */

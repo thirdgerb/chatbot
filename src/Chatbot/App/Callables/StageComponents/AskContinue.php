@@ -103,7 +103,6 @@ class AskContinue implements StageComponent
             ->askConfirm($this->query, true)
             ->hearing();
 
-
         // help
         if (isset($this->helping)) {
             $hearing = $hearing->onHelp($this->helping);

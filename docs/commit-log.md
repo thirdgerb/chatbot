@@ -1,14 +1,8 @@
-## 2019-10-22 (2)
+## 2019-10-23
 
--   完成了购买果汁用例的重构, 现在的方法更加简洁直观.
--   ActionIntent 增加了欢迎语方法, 只是为做示范.
--   IntentCorpusOption 增加了 keywords, 暂时还没使用.
--   Hearing
-    -   增加了runComponent 方法,  可以提前运行 component
--   commands
-    -   where 命令做了一些优化.
--   predefined
-    -   添加了 complement, diss, greet, thanks, random 五种默认的意图.
--   callables
-    -   添加了 IsNumeric, 做示范.
-    -   添加了 ContextSetter
+-   关键改动: default slots 不再用 . 做分隔符, 而是用 _ 这是因为翻译组件的问题.
+-   删除了默认用 memory 做缓存层, 没有必要
+-   对demo做了一些小改动.
+-   hearing 增加了 debugMatch 方法
+-   修复 组件 依赖 组件 不成功的 bug
+-   修复了 storyRegistrar 获取的逻辑, 现在统一用依赖注入最方便

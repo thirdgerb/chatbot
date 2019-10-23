@@ -9,7 +9,9 @@ use Commune\Chatbot\Framework\Component\ComponentOption;
 use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Chatbot\OOHost\NLU\Options\SynonymOption;
+use Commune\Components\Predefined\PredefinedComponent;
 use Commune\Components\SimpleChat\SimpleChatComponent;
+use Commune\Components\SimpleWiki\SimpleWikiComponent;
 use Commune\Components\Story\StoryComponent;
 
 /**
@@ -67,8 +69,12 @@ class DemoComponent extends ComponentOption
             );
         }
 
+
+        // demo 依赖的组件。
         $this->dependComponent(StoryComponent::class);
+        $this->dependComponent(PredefinedComponent::class);
         $this->dependComponent(SimpleChatComponent::class);
+        $this->dependComponent(SimpleWikiComponent::class);
     }
 
 

@@ -52,8 +52,9 @@ class SimpleWikiComponent extends ComponentOption
                     ],
                     'defaultSuggestions' => [
                         // default suggestions
-                        'b:: 返回上一层' => Redirector::goFulfill(),
-                        'q:: 退出' => Redirector::goCancel(),
+                        '重复内容' => Redirector::goRestart(),
+                        '返回上一层' => Redirector::goFulfill(),
+                        '退出' => Redirector::goCancel(),
                     ],
                     'question' => 'ask.needs',
                     'askContinue' => 'ask.continue',
@@ -74,9 +75,6 @@ class SimpleWikiComponent extends ComponentOption
 
             ],
             'storagePipeline' => [
-                'mem' => [
-                    'meta' => MemoryStorageMeta::class,
-                ]
             ],
 
         ];

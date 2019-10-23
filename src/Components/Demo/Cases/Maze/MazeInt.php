@@ -114,7 +114,7 @@ class MazeInt extends ActionIntent
         // 用户第一次玩.
         return $stage->buildTalk()
             ->info($this->welcome)
-            ->askConfirm($this->wantIntro, true, '是的', '好的')
+            ->askConfirm($this->wantIntro, true)
             ->hearing()
             // negative
             ->todo(Redirector::goStage('born'))

@@ -46,9 +46,6 @@ class StoryComponent extends ComponentOption
                 ],
             ],
             'storagePipeline' => [
-                'mem' => [
-                    'meta' => MemoryStorageMeta::class,
-                ],
             ],
         ];
     }
@@ -69,8 +66,8 @@ class StoryComponent extends ComponentOption
             new CategoryMeta([
                 'name' => ScriptOption::class,
                 'optionClazz' => ScriptOption::class,
-                'rootStorage' => $data['rootStorage'],
-                'storagePipeline' => $data['storagePipeline'],
+                'rootStorage' => $data['rootStorage'] ?? [],
+                'storagePipeline' => $data['storagePipeline'] ?? [],
             ])
         );
 

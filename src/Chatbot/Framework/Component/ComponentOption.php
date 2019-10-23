@@ -147,6 +147,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
      *
      * trans 文件夹的结构是 {$resourcePath}/语言名/{domain}.{format}
      * 例如  __DIR__/trans/zh/messages.php
+     * $resourcePath 就应该指向 __DIR__/trans/
      *
      * load translation resource.
      *

@@ -46,9 +46,6 @@ class SimpleChatComponent extends ComponentOption
                 ],
             ],
             'storagePipeline' => [
-                'mem' => [
-                    'meta' => MemoryStorageMeta::class,
-                ]
             ]
         ];
     }

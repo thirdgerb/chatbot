@@ -37,7 +37,7 @@ class GameTestCases extends TaskDef
                     'story.examples.sanguo.changbanpo',
                     GuessNum::class,
                     ReadPersonality::class,
-                    'b :: 返回' => Redirector::goFulfill(),
+                    '返回' => Redirector::goFulfill(),
                 ]
             ))
         );

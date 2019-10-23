@@ -130,10 +130,9 @@ abstract class AbsScriptTask extends AbsContext implements HasIdGenerator
     {
         $this->hasInstanced();
 
-        $subs = $this->getSession()
-            ->contextRepo
-            ->getSubRegistrars();
-        $registrar = $subs[StoryRegistrar::class] ?? null;
+        $registrar = $this->getSession()
+            ->conversation
+            ->make(StoryRegistrar::class);
 
         if (empty($registrar)) {
             throw new ConfigureException(

@@ -65,12 +65,6 @@ class NLUComponent extends ComponentOption
                 ],
             ],
 
-            'intentStoragePipeline' => [
-                'mem' => [
-                    'meta' => MemoryStorageMeta::class,
-                ]
-            ],
-
             'entityRootStorage' => [
                 'meta' => YamlStorageMeta::class,
                 'config' => [
@@ -78,12 +72,6 @@ class NLUComponent extends ComponentOption
                     'isDir' => true,
                 ],
             ],
-            'entityStoragePipeline' => [
-                'mem' => [
-                    'meta' => MemoryStorageMeta::class,
-                ]
-            ],
-
 
             'synonymRootStorage' => [
                 'meta' => YamlStorageMeta::class,
@@ -92,10 +80,15 @@ class NLUComponent extends ComponentOption
                     'isDir' => false,
                 ],
             ],
+
+             'intentStoragePipeline' => [
+            ],
+
+
+            'entityStoragePipeline' => [
+            ],
+
             'synonymStoragePipeline' => [
-                'mem' => [
-                    'meta' => MemoryStorageMeta::class,
-                ]
             ],
 
         ];
@@ -110,21 +103,21 @@ class NLUComponent extends ComponentOption
             'name' => IntentCorpusOption::class,
             'optionClazz' => IntentCorpusOption::class,
             'rootStorage' => $data['intentRootStorage'],
-            'storagePipeline' => $data['intentStoragePipeline'],
+            'storagePipeline' => $data['intentStoragePipeline'] ?? [],
         ]));
 
         $this->loadOptionRepoCategoryMeta(new CategoryMeta([
             'name' => EntityDictOption::class,
             'optionClazz' => EntityDictOption::class,
             'rootStorage' => $data['entityRootStorage'],
-            'storagePipeline' => $data['entityStoragePipeline'],
+            'storagePipeline' => $data['entityStoragePipeline'] ?? [],
         ]));
 
         $this->loadOptionRepoCategoryMeta(new CategoryMeta([
             'name' => SynonymOption::class,
             'optionClazz' => SynonymOption::class,
             'rootStorage' => $data['synonymRootStorage'],
-            'storagePipeline' => $data['synonymStoragePipeline'],
+            'storagePipeline' => $data['synonymStoragePipeline'] ?? [],
         ]));
 
         // 注册 copus

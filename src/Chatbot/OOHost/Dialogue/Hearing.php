@@ -196,7 +196,7 @@ interface Hearing extends Matcher
      * 由 NLU 传递来的任何intent 如果存在, 则直接执行 intent::navigate
      * @return static
      */
-    public function runAnyIntent() : Matcher;
+    public function runAnyIntent() : Hearing;
 
 
     /**
@@ -207,7 +207,7 @@ interface Hearing extends Matcher
      * @param string $intentName
      * @return static
      */
-    public function runIntent(string $intentName) : Matcher;
+    public function runIntent(string $intentName) : Hearing;
 
 
     /**
@@ -219,6 +219,10 @@ interface Hearing extends Matcher
      * @param array $intentNames
      * @return static
      */
-    public function runIntentIn(array $intentNames) : Matcher;
+    public function runIntentIn(array $intentNames) : Hearing;
 
+
+    /*---------- debug 模式 ----------*/
+
+    public function debugMatch() : Hearing;
 }

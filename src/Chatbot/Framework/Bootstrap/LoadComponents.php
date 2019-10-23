@@ -60,11 +60,12 @@ class LoadComponents implements Bootstrapper
 
             if ($processIoc->has($name)) {
                 $logger->debug("component $name depended by $dependency has been register");
-                return;
+                continue;
             }
             $this->registerComponent($app, $logger, $name, $data);
         }
     }
+
 
     /**
      * 标记依赖一个component, 如果在chatbotConfig 里没有注册这个Component, 会最后加载.
