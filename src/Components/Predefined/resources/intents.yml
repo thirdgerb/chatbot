@@ -9,6 +9,7 @@
     - 对的
     - 对
     - 嗯
+    - 嗯呢
 - name : attitudes.agree
   examples :
     - 好的
@@ -44,6 +45,44 @@
     - 别这么做
     - 算逑
     - 我不用
+- name : attitudes.complement
+  examples :
+    - 挺好的
+    - 真棒
+    - 你好牛啊
+    - 帅气
+    - 做的不错
+    - 点个赞
+    - 真不错
+    - 好厉害
+    - 厉害呀
+    - 真是好
+    - very good
+- name : attitudes.diss
+  examples :
+    - 太蠢了
+    - 你真是傻
+    - 笨蛋啊
+    - 傻逼吗
+    - 太垃圾了
+    - 你怎么这么傻
+    - 好蠢啊
+    - 你是智障吗
+    - 没见过这么蠢的
+    - 简直是个智障
+    - 好弱智啊
+- name : attitudes.greet
+  examples :
+    - 你好
+    - 您好呀
+    - hello
+    - 哈喽
+- name : attitudes.thanks
+  examples :
+    - 谢谢啦
+    - 非常感谢
+    - 谢谢你
+    - thanks
 - name : dialogue.random
   examples :
     - "随便吧"
@@ -71,6 +110,10 @@
     - 第[三](ordinal)个
     - "[最后](ordinal)一个"
 - name : loop.break
+  examples :
+    - 跳过
+    - 不要听了
+    - 快点结束
 - name : loop.next
   examples :
     - 下一步
@@ -78,11 +121,14 @@
     - 之后呢
     - 继续
 - name : loop.previous
+  examples :
+    - 上一个
+    - 前一个
+    - 前面那个
 - name : navigation.backward
   examples :
     - 回到上一步
     - 返回上一步
-    - 回到上个问题
     - 回到刚才那个问题
     - 返回前面的问题
     - 再说一次上一个问题
