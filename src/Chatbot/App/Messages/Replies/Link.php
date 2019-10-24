@@ -61,7 +61,7 @@ class Link extends AbsVerbose implements LinkMsg, NoTranslate
 
     public function getUrl(): string
     {
-        return $this->_url ?? $this->getText();
+        return $this->_url;
     }
 
     public function mergeSlots(array $slots): void
@@ -71,8 +71,7 @@ class Link extends AbsVerbose implements LinkMsg, NoTranslate
 
     public function getText(): string
     {
-        return $this->_text
-            ?? $this->_text = $this->_title . ' : ' . $this->_url;
+        return $this->_title;
     }
 
     public static function mock()
