@@ -9,6 +9,7 @@ use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Chatbot\OOHost\NLU\Options\SynonymOption;
 use Commune\Components\Rasa\RasaComponent;
+use Symfony\Component\Yaml\Yaml;
 
 class CorpusSynchrony
 {
@@ -36,14 +37,35 @@ class CorpusSynchrony
 
     public function outputCorpus(): void
     {
+
+        $this->renderNLUData();
+        $this->renderDomain();
+    }
+
+    protected function renderNLUData()
+    {
         $output = '';
         $output = $this->addIntentCorpus($output);
         $output = $this->addRegexToOutput($output);
         $output = $this->addSynonymToOutput($output);
         $output = $this->addLookUpToOutput($output);
-
         file_put_contents($this->config->output, $output);
     }
+
+    protected function renderDomain()
+    {
+        $output = [ 'intents' => [] ];
+
+        foreach ($this->corpus->intentCorpusManager()->each() as $option) {
+            /**
+             * @var IntentCorpusOption $option
+             */
+            $output['intents'][] = $option->name;
+        }
+        $str = Yaml::dump($output, 3);
+        file_put_contents($this->config->domainOutput, $str);
+    }
+
 
     protected function addIntentCorpus(string $output) : string
     {
