@@ -28,6 +28,7 @@ use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Contracts\EventDispatcher;
 use Commune\Chatbot\Contracts\Translator;
+use Commune\Chatbot\Framework\Events\RequestIsFinish;
 use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Container\ContainerContract;
 use Commune\Container\RecursiveContainer;
@@ -415,6 +416,7 @@ class ConversationImpl implements Blueprint
 
     public function onFinish(callable $caller, bool $atEndOfTheQueue = true): void
     {
+
         if ($atEndOfTheQueue) {
             $this->finishCallers[] = $caller;
         } else {
@@ -425,6 +427,8 @@ class ConversationImpl implements Blueprint
     public function finishRequest(): void
     {
         try {
+            // 结束事件. 可以用来做一些细节.
+            $this->fire(new RequestIsFinish($this));
 
             // 发送消息.
             $request = $this->getRequest();
