@@ -341,6 +341,7 @@ class SessionImpl implements Session, HasIdGenerator
 
         if (isset($intent)) {
             $this->setMatchedIntent($intent);
+            $intent->toInstance($this);
         }
         return $intent;
     }
@@ -376,6 +377,7 @@ class SessionImpl implements Session, HasIdGenerator
         // 缓存环节.
         if (isset($intent)) {
             $this->setPossibleIntent($intent);
+            $intent->toInstance($this);
         } else {
             $this->possibleIntents[$intentName] = null;
         }

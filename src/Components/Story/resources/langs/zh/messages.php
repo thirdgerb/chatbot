@@ -1,7 +1,7 @@
 <?php
 
 $changbanpo = [
-    'welcomeToScript' => '欢迎来到情景游戏 {title}.',
+    'welcomeToScript' => '欢迎来到情景游戏 {title}. 游戏中随时说 "打开菜单" 可以查看菜单内容. ',
 
     'continuePlay' => '接下来将继续您之前的游戏进度. ',
 

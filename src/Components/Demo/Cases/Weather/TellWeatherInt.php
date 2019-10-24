@@ -10,9 +10,11 @@ use Commune\Chatbot\App\Intents\ActionIntent;
 use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
+use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
+use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\NLU\Contracts\EntityExtractor;
 use Commune\Support\Utils\StringUtils;
@@ -75,7 +77,9 @@ class TellWeatherInt extends ActionIntent
                     return $dialog->restart();
                 }
             )
-            ->runAnyIntent()
+            ->isAnyIntent(function(IntentMessage $message, Dialog $dialog){
+                return $dialog->redirect->replaceTo($message, Redirect::NODE_LEVEL);
+            })
             ->matchEntity(
                 'city',
                 function(NLU $nlu, Dialog $dialog){

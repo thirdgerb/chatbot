@@ -67,10 +67,9 @@ class RasaService implements NLUService
             $parsed = $this->request($text);
 
             $entities = $this->wrapEntities($parsed['entities'] ?? []);
-            $matchedIntent = $parsed['intent'] ?? null;
-            $ranking = $parse['intent_ranking'] ?? [];
+            $ranking = $parsed['intent_ranking'] ?? [];
 
-            if (empty($entities) && empty($matchedIntent) && empty($ranking)) {
+            if (empty($entities) && empty($ranking)) {
                 return $session;
             }
 
@@ -78,6 +77,7 @@ class RasaService implements NLUService
                 $nlu->setEntities($entities);
             }
 
+            $matchedIntent = $parsed['intent'] ?? null;
             if (!empty($matchedIntent)) {
                 $possible = $this->addIntentToNLU($nlu, $matchedIntent);
 

@@ -4,6 +4,7 @@
 namespace Commune\Test\Chatbot\App\Messages;
 
 
+use Carbon\Carbon;
 use Commune\Chatbot\App\Messages\Media\Image;
 use Commune\Chatbot\App\Messages\Text;
 use Commune\Chatbot\Blueprint\Message\Media\ImageMsg;
@@ -57,5 +58,17 @@ class MessageTest extends TestCase
         ];
         sort($arr);
         $this->assertEquals($arr, $message->namesAsDependency());
+    }
+
+    public function testDeliverAt()
+    {
+        $text = new Text('test');
+        $text->deliverAt(Carbon::createFromTimestamp(1000)->addSeconds(60));
+
+        /**
+         * @var Text $text
+         */
+        $text = unserialize(serialize($text));
+        $this->assertEquals(1060, $text->getDeliverAt()->timestamp);
     }
 }

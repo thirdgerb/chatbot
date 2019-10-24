@@ -208,6 +208,10 @@ abstract class AbsMessage implements Contract
         return $this->_deliverAt_carbon = Carbon::createFromTimestamp($this->_deliverAt);
     }
 
+    /**
+     * @param Carbon $carbon
+     * @return static
+     */
     public function deliverAt(Carbon $carbon): Message
     {
         $this->_deliverAt_carbon = $carbon;

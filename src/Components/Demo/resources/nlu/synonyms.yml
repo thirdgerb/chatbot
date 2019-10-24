@@ -15,8 +15,8 @@
 - value : juice_no_ice
   desc : 果汁不加冰
   aliases :
-    - 不加
-    - 别加
+    - 不加冰
+    - 别加冰
     - 常温
 - value : 前
   aliases :

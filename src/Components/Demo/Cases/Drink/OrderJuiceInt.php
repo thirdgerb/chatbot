@@ -102,7 +102,6 @@ class OrderJuiceInt extends ActionIntent
 
     public function navigate(Dialog $dialog): ? Navigator
     {
-        $this->toInstance($dialog->session);
         $this->welcome($dialog);
         return parent::navigate($dialog);
     }
@@ -123,23 +122,11 @@ class OrderJuiceInt extends ActionIntent
         $order = OrderMem::fromSession($dialog->session);
         // 欢迎语
         $order->times = $times = $order->times + 1;
-
         if ($times === 1) {
             $dialog->say()->info("顾客您好! 欢迎您第一次来到本店!");
         } else {
             $dialog->say()->info("顾客您好! 这是您第{$times}次来到本店, 感谢惠顾!");
         }
-
-        // 订单确认.
-        $fruit = $order->lastFruit;
-        if (empty($fruit)) {
-            return;
-        }
-
-        $this->juice_fruit = $order->lastFruit;
-        $this->juice_ice = $order->lastIce;
-        $this->juice_pack = $order->lastPack;
-        $this->isSetByMemory = true;
     }
 
     public function __hearing(Hearing $hearing): void
@@ -163,9 +150,43 @@ class OrderJuiceInt extends ActionIntent
         return $dialog->repeat();
     }
 
+    public function __onReOrder(Stage $stage) : Navigator
+    {
+        $order = OrderMem::from($this);
+        $orderStr = static::parseOrderStr($order->lastFruit, $order->lastIce, $order->lastPack);
+
+        return $stage->buildTalk()
+            ->askConfirm(
+                "您上次的订单是 $orderStr, 这次还和上次一样吗? ",
+                true
+            )
+            ->hearing()
+            ->isPositive(function(Dialog $dialog) use ($order){
+                $this->juice_fruit = $order->lastFruit;
+                $this->juice_ice = $order->lastIce;
+                $this->juice_pack = $order->lastPack;
+                return $dialog->restart();
+            })
+            ->isNegative(function(Dialog $dialog) use ($order) {
+                $order->lastFruit = null;
+                $order->lastIce = null;
+                $order->lastPack = null;
+                return $dialog->restart();
+            })
+            ->end();
+
+    }
+
 
     public function __onJuice_fruit(Stage $stage) : Navigator
     {
+        $order = OrderMem::from($this);
+        // 订单确认.
+        $fruit = $order->lastFruit;
+        if (!empty($fruit)) {
+            return $stage->dialog->goStage('reOrder');
+        }
+
 
         /**
          * @var Corpus $corpus
@@ -230,7 +251,7 @@ class OrderJuiceInt extends ActionIntent
                 '请问是杯装还是碗装',
                 [
                     '杯装',
-                    '盒装',
+                    '碗装',
                 ],
                 0
             )
@@ -245,10 +266,14 @@ class OrderJuiceInt extends ActionIntent
                 $dialog->say()->info("好的, 给您用碗装");
                 return $dialog->next();
             })
-            ->end(function(Dialog $dialog) {
-                $dialog->say()->warning("不好意思, 我们只有杯和碗两种包装");
-                return $dialog->repeat();
-            });
+            ->hasKeywords(
+                [["盒", "桶", "瓶", "瓢"]],
+                function(Dialog $dialog) {
+                    $dialog->say()->warning("不好意思, 我们只有杯和碗两种包装");
+                    return $dialog->repeat();
+                }
+            )
+            ->end();
 
     }
 
@@ -262,21 +287,8 @@ class OrderJuiceInt extends ActionIntent
     public function action(Stage $stageRoute): Navigator
     {
         $order = $this->toOrderStr();
-
         if ($this->isSetByMemory === true) {
 
-            return $stageRoute->buildTalk()
-                ->askConfirm(
-                    "您上次的订单是 $order, 这次还和上次一样吗? ",
-                    true
-                )
-                ->hearing()
-                ->isPositive([$this, 'goPay'])
-                ->isNegative(function(Dialog $dialog) {
-                    $this->clearOrder();
-                    return $dialog->restart();
-                })
-                ->end();
         }
 
         return $stageRoute
@@ -412,14 +424,15 @@ class OrderJuiceInt extends ActionIntent
 
             $order = $this->toOrderStr();
             $deliverAt = new Carbon();
-            $deliverAt->addSeconds(60);
+            $deliverAt->addSeconds(15);
 
-            $deliver = (new Text("来自果汁店: 您好, 这是您点的 $order , 再次感谢惠顾"))->deliverAt($deliverAt);
+            $deliver = (new Text("来自果汁店: 您好, 这是您刚才点的 $order , 给您送上, 再次感谢惠顾"))->withLevel(VerboseMsg::WARN)->deliverAt($deliverAt);
 
             $dialog
                 ->say()
-                ->info("谢谢, 您的订单正在制作中, 完成后立刻给您送去 (试图发送消息) ")
-                ->info($deliver);
+                ->info("谢谢, 您的订单正在制作中, 完成后立刻给您送去 (模拟延迟发送消息) ");
+
+            $dialog->reply($deliver);
 
             return null;
         })
@@ -453,7 +466,6 @@ class OrderJuiceInt extends ActionIntent
     public function afterHearing(Hearing $hearing): void
     {
         $hearing
-            ->runIntentIn(['navigation.'])
             // 打招呼
             ->isIntent(Attitudes\GreetInt::class, [$this, 'greetBack'])
             // 被表扬了, 免单!
@@ -470,7 +482,9 @@ class OrderJuiceInt extends ActionIntent
                 ->matchEntity(self::FRUIT)
                 ->matchEntity(self::ICE)
                 ->matchEntity(self::PACK)
-            ->otherwise();
+            ->otherwise()
+            ->runAnyIntent();
+
     }
 
     protected function clearOrder()
@@ -509,7 +523,7 @@ class OrderJuiceInt extends ActionIntent
             $this->juice_ice = $intent->juice_ice;
         }
 
-        if (isset($this->juice_pack)) {
+        if (isset($intent->juice_pack)) {
             $this->juice_pack = $intent->juice_pack;
         }
 
@@ -518,7 +532,8 @@ class OrderJuiceInt extends ActionIntent
 
     public function thanksBack(Dialog $dialog) : ? Navigator
     {
-        $dialog->say()->info("不用谢! 感谢您的惠顾才对!");
+        $dialog->say()->info("不用谢! 感谢您的惠顾才对! 这单就免啦!");
+        $this->forFree = true;
         return $dialog->rewind();
     }
 
@@ -593,14 +608,20 @@ class OrderJuiceInt extends ActionIntent
 
     public function toOrderStr() : string
     {
-        $fruit = $this->juice_fruit;
-        $ice = $this->juice_ice === self::ICE ? '加冰' : '不加冰';
-        $pack = $this->juice_pack === 'juice_cup' ? '杯装' : '碗装';
+        return static::parseOrderStr($this->juice_fruit, $this->juice_ice, $this->juice_pack);
+    }
+
+    public static function parseOrderStr($juiceFruit, $juiceIce, $juicePack) : string
+    {
+        $fruit = $juiceFruit;
+        $ice = $juiceIce === self::ICE ? '加冰' : '不加冰';
+        $pack = $juicePack === 'juice_cup' ? '杯装' : '碗装';
 
         if (empty($fruit)) {
             return '';
         }
 
         return "{$fruit}口味的果汁, $ice, $pack";
+
     }
 }

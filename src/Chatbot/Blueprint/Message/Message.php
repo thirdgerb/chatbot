@@ -49,7 +49,7 @@ interface Message extends ArrayAndJsonAble
     /**
      * 设置投递时间.
      * @param Carbon $carbon
-     * @return Message
+     * @return static
      */
     public function deliverAt(Carbon $carbon) : Message;
 

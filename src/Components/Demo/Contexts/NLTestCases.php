@@ -71,7 +71,7 @@ class NLTestCases extends TaskDef
 
     public function weather(Dialog $dialog) : Navigator
     {
-        $dialog->say()->info('本 Demo 实现了一个简单的天气查询用例. 试着说 "北京今天的天气如何"类似的话, 也可以用命令行 "#tellWeather# 的方式触发.');
+        $dialog->say()->info('本 Demo 实现了一个简单的天气查询用例. 试着说 "北京今天的天气如何"类似的话, 也可以用命令行 "#tellWeather" 的方式触发.');
 
         return $dialog->repeat();
     }
