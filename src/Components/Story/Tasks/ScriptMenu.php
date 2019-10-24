@@ -102,6 +102,7 @@ class ScriptMenu extends AbsScriptTask
     public function __onStart(Stage $stage): Navigator
     {
         $playing = $this->mem->playingEpisode;
+        $episodes = $this->mem->unlockEpisodes;
         $option = $this->getScriptOption();
 
         $stage =  $stage->buildTalk()
@@ -112,7 +113,7 @@ class ScriptMenu extends AbsScriptTask
                 ]
             );
 
-        if (isset($playing)) {
+        if (isset($playing) || count($episodes) === 1 ) {
             return $stage->info($option->parseReplyId('continuePlay'))
                 ->goStage('playEpisode');
         }
@@ -218,11 +219,6 @@ class ScriptMenu extends AbsScriptTask
     {
         $scriptOption = $this->getScriptOption();
         $episodes = $this->unlockEpisodes;
-
-        if (count($episodes) === 1) {
-            $this->mem->playingEpisode = current($episodes);
-            return $stage->buildTalk()->goStage('playEpisode');
-        }
 
         // 与用户问答.
         return $stage->talk(
