@@ -101,6 +101,8 @@ class DialogSpeechImpl extends SpeechImpl implements DialogSpeech
         } else {
             $this->dialog->reply($reply);
         }
+
+        return $this;
     }
 
 
