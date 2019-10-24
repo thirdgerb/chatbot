@@ -59,7 +59,9 @@ class NLTestCases extends TaskDef
                 ->runIntent(MazeInt::class)
                 ->runIntent(TellWeatherInt::class)
                 ->runAnyIntent()
-                ->defaultFallback(function(Dialog $dialog){
+                // 先执行自然语言环节.
+                ->runDefaultFallback()
+                ->fallback(function(Dialog $dialog){
                     $dialog->say()->info('不好意思, 没有明白您的意思');
                     return $dialog->rewind();
                 });
