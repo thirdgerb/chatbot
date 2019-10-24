@@ -11,6 +11,8 @@ examples:
   - 什么是 CommuneChatbot
   - 介绍一下这个项目
   - 说说看这个项目
+  - 这是什么项目
+  - 说说这个项目
 replies:
   - intro1
   - intro2|intro3|intro4

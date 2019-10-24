@@ -73,6 +73,7 @@
     - 你是啥玩意
     - 这是什么东西
     - 我在哪里
+    - 介绍一下你
   replies:
     - 这里是 %self.name% 全名是%self.fullname%. 是由%self.author% 开发的 %self.desc%
 - intent : introduce.contact

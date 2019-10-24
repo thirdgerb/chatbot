@@ -19,12 +19,6 @@ class PlaceHolderIntentDef extends IntentDefinitionImpl implements PlaceholderDe
         );
     }
 
-
-    protected function initialize(): void
-    {
-        return;
-    }
-
     /**
      * create a context
      * @param array $args
