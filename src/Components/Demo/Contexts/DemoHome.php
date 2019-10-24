@@ -4,7 +4,6 @@
 namespace Commune\Components\Demo\Contexts;
 
 
-use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Callables\Actions\Talker;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Contexts\TaskDef;
@@ -14,7 +13,6 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Components\SimpleChat\Callables\SimpleChatAction;
 
 class DemoHome extends TaskDef
 {

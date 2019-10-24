@@ -58,7 +58,11 @@ class NLTestCases extends TaskDef
             $hearing
                 ->runIntent(MazeInt::class)
                 ->runIntent(TellWeatherInt::class)
-                ->runAnyIntent();
+                ->runAnyIntent()
+                ->defaultFallback(function(Dialog $dialog){
+                    $dialog->say()->info('不好意思, 没有明白您的意思');
+                    return $dialog->rewind();
+                });
         });
 
         return $stage
