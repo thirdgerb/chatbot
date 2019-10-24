@@ -5,6 +5,7 @@ namespace Commune\Chatbot\OOHost\Directing\Reset;
 
 
 use Commune\Chatbot\OOHost\Directing\AbsNavigator;
+use Commune\Chatbot\OOHost\Directing\End\Wait;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 /**
@@ -21,7 +22,9 @@ class Rewind extends AbsNavigator
         if (isset($question)) {
             $this->dialog->say()->ask($question);
         }
-        return null;
+
+        // 只有 end 类 navigator 有资格返回 null
+        return new Wait($this->dialog);
     }
 
 
