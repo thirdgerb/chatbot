@@ -71,7 +71,8 @@ class Link extends AbsVerbose implements LinkMsg, NoTranslate
 
     public function getText(): string
     {
-        return $this->getText() . ' : ' . $this->getUrl();
+        return $this->_text
+            ?? $this->_text = $this->_title . ' : ' . $this->_url;
     }
 
     public static function mock()

@@ -99,7 +99,7 @@ class DialogSpeechImpl extends SpeechImpl implements DialogSpeech
         if (isset($this->paragraph)) {
             $this->paragraph->add($reply);
         } else {
-            $this->conversation->reply($reply);
+            $this->dialog->reply($reply);
         }
     }
 
