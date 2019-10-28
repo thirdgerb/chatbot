@@ -30,7 +30,7 @@ trait StageSpeechTrait
     }
 
 
-    public function beginParagraph()
+    public function beginParagraph(string $joint = '')
     {
         return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }

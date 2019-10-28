@@ -66,6 +66,28 @@ class OptionTest extends TestCase
 
     }
 
+    public function testForEach()
+    {
+        $test = new Option3([
+            'option2' => [
+                Option2::createById(1)->toArray(),
+                Option2::createById(2)->toArray(),
+                Option2::createById(3)->toArray(),
+            ]
+        ]);
+
+        $this->assertEquals(3, count($test->option2));
+
+        $i = 0;
+        foreach ($test->option2 as $option2) {
+            $i ++;
+            $this->assertEquals($i, $option2->getId());
+        }
+
+        $this->assertEquals(3, $i);
+    }
+
+
 }
 
 

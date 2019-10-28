@@ -6,9 +6,7 @@ namespace Commune\Chatbot\App\Messages\Templates;
 
 use Commune\Chatbot\App\Messages\Text;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
-use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
 use Commune\Chatbot\Blueprint\Conversation\ReplyTemplate;
-use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\ChatServer;

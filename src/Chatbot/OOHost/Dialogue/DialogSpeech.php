@@ -43,9 +43,10 @@ interface DialogSpeech extends Speech
 
 
     /**
+     * @param string $joint
      * @return static
      */
-    public function beginParagraph();
+    public function beginParagraph(string $joint = '');
 
     /**
      * @return static

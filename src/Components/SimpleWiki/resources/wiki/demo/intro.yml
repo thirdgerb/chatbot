@@ -15,7 +15,9 @@ examples:
   - 说说这个项目
 replies:
   - intro1
-  - intro2|intro3|intro4
+  - intro2
+  - intro3
+  - intro4
   - intro5
 
 

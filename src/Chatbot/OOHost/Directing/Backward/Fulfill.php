@@ -12,12 +12,16 @@ class Fulfill extends FallbackNavigator
     public function doDisplay(): ? Navigator
     {
         $context = $this->history->getCurrentContext();
-        $caller = $context->getDef();
-        $caller->callExiting(
-            Definition::FULFILL,
-            $context,
-            $this->dialog
-        );
+        if (!$this->skipSelfEvent) {
+            $caller = $context->getDef();
+            $navigator = $caller->callExiting(
+                Definition::FULFILL,
+                $context,
+                $this->dialog
+            );
+
+            if (isset($navigator)) return $navigator;
+        }
 
         $intended = $this->history->intended();
         if (isset($intended)) {

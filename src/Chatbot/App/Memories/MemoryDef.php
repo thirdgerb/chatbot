@@ -49,17 +49,17 @@ abstract class MemoryDef extends AbsMemory implements SelfRegister
         return [];
     }
 
-    final public function getName(): string
+    public function getName(): string
     {
         return static::getContextName();
     }
 
-    final public static function getContextName() : string
+    public static function getContextName() : string
     {
         return StringUtils::normalizeContextName(static::class);
     }
 
-    final public function getScopingTypes(): array
+    public function getScopingTypes(): array
     {
         return static::SCOPE_TYPES;
     }

@@ -352,9 +352,9 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
     }
 
 
-    public function fulfill(): Navigator
+    public function fulfill(bool $skipSelfExitingEvent = false): Navigator
     {
-        return new Directing\Backward\Fulfill($this);
+        return new Directing\Backward\Fulfill($this, $skipSelfExitingEvent);
     }
 
 

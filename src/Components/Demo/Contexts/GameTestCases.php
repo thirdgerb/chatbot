@@ -33,6 +33,7 @@ class GameTestCases extends TaskDef
             (new Menu(
                 'demo.dialog.chooseGames',
                 [
+                    'unheard-like.episodes.who-is-lizhongwen',
                     MazeInt::class,
                     'story.examples.sanguo.changbanpo',
                     GuessNum::class,

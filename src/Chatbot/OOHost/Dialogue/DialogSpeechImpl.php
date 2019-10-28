@@ -81,9 +81,9 @@ class DialogSpeechImpl extends SpeechImpl implements DialogSpeech
     }
 
 
-    public function beginParagraph()
+    public function beginParagraph(string $joint = '')
     {
-        $this->paragraph = new ParagraphText([]);
+        $this->paragraph = new ParagraphText($joint, []);
         return $this;
     }
 

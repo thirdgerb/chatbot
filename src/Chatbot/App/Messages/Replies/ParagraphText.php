@@ -17,18 +17,22 @@ use Commune\Chatbot\Blueprint\Message\Replies\Paragraph;
 class ParagraphText extends AbsVerbose implements Paragraph
 {
 
+    protected $joint;
+
     /**
      * @var ReplyMsg[]
      */
     protected $sentences = [];
 
     /**
-     * Paragraph constructor.
+     * ParagraphText constructor.
+     * @param string $joint
      * @param ReplyMsg[] $sentences
      */
-    public function __construct(array $sentences)
+    public function __construct(string $joint, array $sentences)
     {
         $this->sentences = $sentences;
+        $this->joint = $joint;
         parent::__construct('');
     }
 
@@ -51,7 +55,7 @@ class ParagraphText extends AbsVerbose implements Paragraph
 
     public function withText(string ...$texts): Paragraph
     {
-        $this->_text .= implode('', $texts);
+        $this->_text .= implode($this->joint, $texts);
         return $this;
     }
 
@@ -89,7 +93,7 @@ class ParagraphText extends AbsVerbose implements Paragraph
 
     public static function mock()
     {
-        return (new static([ Reply::mock(), Link::mock()]))
+        return (new static('', [ Reply::mock(), Link::mock()]))
             ->add(Reply::mock())
             ->add(Link::mock())
             ->add(Reply::mock());

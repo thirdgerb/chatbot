@@ -5,9 +5,10 @@ namespace Commune\Support\Schematic;
 use Closure;
 use InvalidArgumentException;
 use Iterator;
+use Traversable;
 
 
-class Entries implements Iterator, IEntries, \ArrayAccess
+class Entries implements \IteratorAggregate, IEntries, \ArrayAccess
 {
 
 	/**
@@ -34,8 +35,6 @@ class Entries implements Iterator, IEntries, \ArrayAccess
 	{
 		$this->items = $items;
 		$this->entryClass = $entryClass;
-
-		$this->rewind();
 	}
 
     /**
@@ -43,50 +42,21 @@ class Entries implements Iterator, IEntries, \ArrayAccess
      */
 	public function toArray()
     {
-        return iterator_to_array($this);
+        $keys = array_keys($this->items);
+        $result = [];
+        foreach ($keys as $key) {
+            $result[$key] = $this->get($key);
+        }
+        return $result;
+    }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->toArray());
     }
 
 
-	/**
-	 * @return Entry
-	 */
-	public function current()
-	{
-		return $this->get($this->key());
-	}
-
-
-	public function next()
-	{
-		next($this->items);
-	}
-
-
-	/**
-	 * @return mixed
-	 */
-	public function key()
-	{
-		return key($this->items);
-	}
-
-
-	/**
-	 * @return bool
-	 */
-	public function valid()
-	{
-		return array_key_exists(key($this->items), $this->items);
-	}
-
-
-	public function rewind()
-	{
-		reset($this->items);
-	}
-
-
-	/**
+    /**
 	 * @return int
 	 */
 	public function count()

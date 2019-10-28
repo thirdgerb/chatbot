@@ -19,6 +19,7 @@ return [
         \Commune\Components\Story\StoryComponent::class,
         \Commune\Components\Rasa\RasaComponent::class,
         \Commune\Components\SimpleWiki\SimpleWikiComponent::class,
+        \Commune\Components\UnheardLike\UnheardLikeComponent::class,
 
     ],
     'processProviders' => [

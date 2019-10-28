@@ -101,6 +101,9 @@ class SimpleWikiRegistrar extends IntentRegistrarDefault
 
     public function getDefNamesByTag(string ...$tags): array
     {
+        if (in_array(Definition::TAG_CONFIGURE, $tags)) {
+            return $this->getDefNamesByDomain('');
+        }
         return [];
     }
 

@@ -13,6 +13,7 @@ use Commune\Components\Predefined\PredefinedComponent;
 use Commune\Components\SimpleChat\SimpleChatComponent;
 use Commune\Components\SimpleWiki\SimpleWikiComponent;
 use Commune\Components\Story\StoryComponent;
+use Commune\Components\UnheardLike\UnheardLikeComponent;
 
 /**
  * @property-read string $langPath 翻译文件所在目录. 为空表示不加载
@@ -75,6 +76,7 @@ class DemoComponent extends ComponentOption
         $this->dependComponent(PredefinedComponent::class);
         $this->dependComponent(SimpleChatComponent::class);
         $this->dependComponent(SimpleWikiComponent::class);
+        $this->dependComponent(UnheardLikeComponent::class);
     }
 
 

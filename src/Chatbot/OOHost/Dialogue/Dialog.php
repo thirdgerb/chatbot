@@ -201,9 +201,10 @@ interface Dialog
 
     /**
      * 完成当前的任务, 向前回调.
+     * @param bool $skipSelfExitingEvent
      * @return Navigator
      */
-    public function fulfill() : Navigator;
+    public function fulfill(bool $skipSelfExitingEvent = false) : Navigator;
 
 
     /**
