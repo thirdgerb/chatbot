@@ -134,6 +134,14 @@ interface Stage
      */
     public function onIntended(callable $interceptor) : Stage;
 
+
+    /**
+     * 任何状态都执行的逻辑.
+     * @param callable $interceptor
+     * @return Stage
+     */
+    public function always(callable $interceptor) : Stage;
+
     /*------ 状态组合 API ------*/
 
 

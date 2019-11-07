@@ -76,11 +76,16 @@ class SymfonyTranslatorAdapter implements Contract
         $domain = $domain ?? Translator::MESSAGE_DOMAIN;
         $loader = $loader ?? $this->config->loader;
 
+        // 默认使用 intl, 建议加载.
+        if (extension_loaded('intl')) {
+            $domain = $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX;
+        }
+
         $this->translator->addResource(
             $loader,
             $resource,
             $locale,
-            $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX
+            $domain
         );
     }
 

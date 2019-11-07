@@ -17,7 +17,8 @@
     ],
     "autoload" : {
         "psr-4" : {
-            "Commune\\" : "src/"
+            "Commune\\" : "src/",
+            "Commune\\Demo\\" : "demo/src/"
         }
     },
     "autoload-dev" : {

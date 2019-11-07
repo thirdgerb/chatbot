@@ -3,6 +3,7 @@
 
 namespace Commune\Chatbot\OOHost\Dialogue\Hearing;
 
+use Commune\Chatbot\App\Messages\ArrayMessage;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\OOHost\Context\Callables\Action;
 use Commune\Chatbot\OOHost\Context\Callables\Prediction;
@@ -68,7 +69,7 @@ interface Matcher
     /*------- php matcher -------*/
 
     /**
-     * message 是一个字符串.
+     * 检查 message 是否等于目标字符串. 精确匹配.
      *
      * if message->getText() exactly match the $text
      *
@@ -95,15 +96,19 @@ interface Matcher
     /**
      * 通过正则匹配获取数据.
      * keys 命中的参数会作为变量传递给 interceptor
-     * 最好不要用这一步.
+     * 最好不要用这种方法. 而是依赖 NLU 去匹配.
+     *
+     * 此外, 也可以用 matchEntity() 方法调用 php 实现的EntityExtractor, 原理类似敏感词匹配.
      *
      * use regex to define condition.
      * the variable extract by regex pattern,
      * will assign to arrayMessage variables, named by $keys
      *
-     * @param string $pattern
-     * @param string[] $keys
-     * @param Action|callable $action   message is ArrayMessage
+     * @param string $pattern  查询的正则
+     * @param string[] $keys  正则中用 () 匹配到的参数, 会依次传给这里定义的变量.
+     * @param Action|callable $action   命中正则后, 传入的是一个 ArrayMessage
+     * @see ArrayMessage
+     *
      * @return static
      */
     public function pregMatch(

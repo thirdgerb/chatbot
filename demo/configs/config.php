@@ -82,6 +82,17 @@ return [
         
     'host' => [
         'rootContextName' => \Commune\Components\Demo\Contexts\DemoHome::class,
+
+        // 新手教程: 添加机器人, 作为一个启动场景.
+        'sceneContextNames' => [
+
+            // test 是场景名, 用类名来标记 Context
+            'test' => \Commune\Demo\HelloWorld::class,
+
+            // 一阶多轮对话 测试用例.
+            'firstOrder' => \Commune\Demo\FirstOrderConvo::class,
+        ],
+
         'sessionPipes' => [
             \Commune\Chatbot\App\SessionPipe\EventMsgPipe::class,
             \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,

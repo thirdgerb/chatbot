@@ -134,6 +134,13 @@ abstract class AbsStageRoute implements Stage
         return $this;
     }
 
+    public function always(callable $interceptor): Stage
+    {
+        $this->callInterceptor($interceptor);
+        return $this;
+    }
+
+
     public function talk(
         callable $talkToUser,
         callable $hearFromUser = null

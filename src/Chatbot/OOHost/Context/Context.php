@@ -8,6 +8,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\SessionData;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
 use Commune\Support\Arr\Dictionary;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * Context 是 chatbot 最核心的概念.
@@ -41,8 +42,13 @@ interface Context extends
     // 例如 start 阶段, 命名为 __onStart
     const STAGE_METHOD_PREFIX = '__on';
 
-    // 系统默认的方法.
+    // 允许用 annotation 来标注 stage.
+    // 在方法的注解上标记  @stage
+    // 这两种方法未来更倾向于前者, 因为容错更好.
+    const STAGE_ANNOTATION = 'stage';
 
+
+    // 系统默认的方法.
     // 语境脱出时调用的事件方法名
     const EXITING_LISTENER = '__exiting';
 
@@ -55,13 +61,11 @@ interface Context extends
     // 入参是 Hearing 类.
     // 可以给所有的hearing 定义一些公共的流程.
     const HEARING_MIDDLEWARE_METHOD = '__hearing';
-    // public function __hearing(Hearing $hearing) : void;
 
     // 如果此方法存在, 所有stage 方法构建时都会调用它.
     // 入参是 Stage, 返回值是 void
     // 可以给所有的stage 定义公共流程.
     const STAGE_MIDDLEWARE_METHOD = '__staging';
-    // public function __staging(Stage $stage) : void;
 
     // 如果此方法存在, 调用 Dialog::hear(), 匹配不到别的意图时
     // 会调用 Hearing::onHelp([$context, '__help']) 方法;
@@ -73,11 +77,6 @@ interface Context extends
      * @see Definition
      */
     const CONTEXT_TAGS = [];
-
-    // 允许用 annotation 来标注 stage.
-    // 在方法的注解上标记  @stage
-    // 这两种方法未来更倾向于前者, 因为容错更好.
-    const STAGE_ANNOTATION = 'stage';
 
     // 多轮对话的启动阶段.
     const INITIAL_STAGE = 'start';
@@ -91,6 +90,9 @@ interface Context extends
     /**
      * 语境的ID. 格式是 '单词.单词.单词'
      * 用类名来表示的话, 反斜杠 '\' 会替换为 '.'.
+     *
+     * 合法的字符只有 小写字母, 数字, . 和 _
+     * @see StringUtils  StringUtils::validateDefName()
      * @return string
      */
     public function getName() : string;
@@ -102,15 +104,36 @@ interface Context extends
      */
     public function nameEquals(string $name) : bool;
 
+    /**
+     * 定义 Context 依赖的 Entity, 可以是参数, 也可以是另一个 Context
+     * @param Depending $depending
+     */
     public static function __depend(Depending $depending) : void;
 
-    public function __onStart(Stage $stage): Navigator;
-
+    /**
+     * 可以在这里捕获 Context 的逃离事件, 例如 onCancel , onQuit
+     * @param Exiting $listener
+     */
     public function __exiting(Exiting $listener) : void;
 
-    //public function __hearing(Hearing $hearing) : void;
+    /**
+     * Context 的初始 stage
+     * @param Stage $stage
+     * @return Navigator
+     */
+    public function __onStart(Stage $stage): Navigator;
 
-    //public function __staging(Stage $stage) : void;
+//    /**
+//     * 这个方法可以定义一个 Context 内部所有 hearing 的共用方法.
+//     * @param Hearing $hearing
+//     */
+//    public function __hearing(Hearing $hearing) : void;
+
+//    /**
+//     * 这个方法可以定义一个 Context 内部所有 Stage 的共用方法.
+//     * @param Stage $stage
+//     */
+//    public function __staging(Stage $stage) : void;
 
     /*--------- value ---------*/
 
@@ -131,8 +154,9 @@ interface Context extends
     public function getDef() : Definition;
 
     /**
-     * 当前context 所有的entity是否都有值了.
-     * 当 context is prepared, 则可以正式运行 __onStart
+     * 当前context 所有的 entity 是否都有值了.
+     * 当 context is prepared, 才会正式运行 __onStart
+     * 否则会运行 entity 自己的赋值 stage
      *
      * @return bool
      */
@@ -151,7 +175,7 @@ interface Context extends
     public function depends() : array;
 
 
-    /*--------- gc ---------*/
+    /*--------- gc环节 ---------*/
 
     /**
      * 计数器增加

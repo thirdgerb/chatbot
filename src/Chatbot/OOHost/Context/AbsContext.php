@@ -319,7 +319,7 @@ abstract class AbsContext extends AbsMessage implements Context
     protected function hasInstanced()  : void
     {
         if (!isset($this->_session)) {
-            //todo
+            //todo 是否一定抛出 runtime exception?
             throw new RuntimeException(
                 __METHOD__
                 . ' can not be called before ->toInstance(session)'

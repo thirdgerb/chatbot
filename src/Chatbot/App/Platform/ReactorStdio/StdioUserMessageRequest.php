@@ -160,7 +160,7 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
 
     public function getScene(): ? string
     {
-        return null;
+        return $_GET['scene'] ?? '';
     }
 
     public function sendRejectResponse(): void
