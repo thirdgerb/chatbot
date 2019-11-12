@@ -64,9 +64,10 @@ class ContextEtt implements Entity
 
     protected function isValidValue($value) : bool
     {
-        return $value instanceof Context
-            && is_a($value, get_class($this->to), TRUE)
+        $valid =  $value instanceof Context
+            && $value->nameEquals($this->to)
             && $value->isPrepared();
+        return $valid;
     }
 
     public function asStage(Stage $stageRoute): Navigator

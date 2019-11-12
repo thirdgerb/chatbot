@@ -81,6 +81,12 @@ return [
     ],
         
     'host' => [
+
+        // 在这里用 PSR-4 规范定义出系统启动时要注册Context的路径
+        'autoloadPsr4' => [
+            "Commune\\Demo\\" => __DIR__ .'/../src/'
+        ],
+
         'rootContextName' => \Commune\Components\Demo\Contexts\DemoHome::class,
 
         // 新手教程: 添加机器人, 作为一个启动场景.
@@ -89,8 +95,14 @@ return [
             // test 是场景名, 用类名来标记 Context
             'test' => \Commune\Demo\HelloWorld::class,
 
-            // 一阶多轮对话 测试用例.
+            // 一阶多轮对话 教程.
             'firstOrder' => \Commune\Demo\FirstOrderConvo::class,
+
+            // 用 depend 定义的一阶对话
+            'userInfo' => 'demo.lesions.user-info',
+
+            // n 阶多轮对话的测试用例.
+            'nOrder' => \Commune\Demo\WelcomeUser::class,
         ],
 
         'sessionPipes' => [

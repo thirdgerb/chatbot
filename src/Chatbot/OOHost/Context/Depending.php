@@ -1,9 +1,8 @@
 <?php
 
-
 namespace Commune\Chatbot\OOHost\Context;
-use Commune\Chatbot\OOHost\Command\CommandDefinition;
 
+use Commune\Chatbot\OOHost\Command\CommandDefinition;
 
 /**
  * 定义 context 的默认属性. 这些属性通过多轮对话补完之后, context 才会进入 __onStart

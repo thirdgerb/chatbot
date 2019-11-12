@@ -54,6 +54,11 @@ class Menu implements StageComponent
     protected $redirector;
 
     /**
+     * @var array
+     */
+    protected $slots = [];
+
+    /**
      * Menu constructor.
      * @param string $question
      * @param callable[] $menu   预定义的菜单. 结构是:
@@ -112,6 +117,17 @@ class Menu implements StageComponent
         return $this;
     }
 
+    /**
+     * 给菜单的对白加参数.
+     *
+     * @param array $slots
+     * @return Menu
+     */
+    public function withSlots(array $slots) : Menu
+    {
+        $this->slots = $slots;
+        return $this;
+    }
 
 
     /*-------- 内部方法 --------*/
@@ -130,8 +146,8 @@ class Menu implements StageComponent
         $hearing = $dialog->hear($message);
         $repo = $dialog->session->contextRepo;
 
-        $suggestoins = $this->buildMenuSuggestions($dialog);
-        $keys = array_keys($suggestoins);
+        $suggestions = $this->buildMenuSuggestions($dialog);
+        $keys = array_keys($suggestions);
         foreach ($this->menu as $key => $value) {
             $i = array_shift($keys);
 
@@ -192,7 +208,8 @@ class Menu implements StageComponent
     public function askToChoose(Dialog $dialog) : Navigator
     {
         $suggestions = $this->buildMenuSuggestions($dialog);
-        $dialog->say()
+
+        $dialog->say($this->slots)
             ->askChoose(
                 $this->question,
                 $suggestions,
@@ -208,6 +225,7 @@ class Menu implements StageComponent
     {
         $repo = $dialog->session->contextRepo;
         $i = 0;
+        $suggestions = [];
         foreach ($this->menu as $key => $value) {
             $i ++;
             // 第一种情况, 键名是 suggestion
