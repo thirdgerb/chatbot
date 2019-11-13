@@ -9,6 +9,7 @@ namespace Commune\Chatbot\Framework;
 
 
 // interface
+use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\ConversationContainer;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Contracts\ChatServer;
@@ -42,6 +43,10 @@ use Illuminate\Container\Container;
  */
 class ChatApp implements Blueprint
 {
+    /**
+     * @var ChatApp
+     */
+    protected static $instance;
 
     /*-------- 配置 --------*/
 
@@ -132,6 +137,8 @@ class ChatApp implements Blueprint
         ConsoleLogger $consoleLogger = null
     )
     {
+        // 绑定自己作为单例.
+        static::$instance = $this;
 
         // 默认配置
         $this->config = new ChatbotConfig($config);
@@ -156,6 +163,11 @@ class ChatApp implements Blueprint
         // 创建会话容器.
         $this->conversationContainer = new ConversationImpl($this->processContainer);
         $this->baseBinding();
+    }
+
+    public static function getInstance() : Application
+    {
+        return static::$instance;
     }
 
     public function getConsoleLogger(): ConsoleLogger

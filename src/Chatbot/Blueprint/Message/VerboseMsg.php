@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: BrightRed
- * Date: 2019/4/14
- * Time: 6:27 PM
- */
 
 namespace Commune\Chatbot\Blueprint\Message;
 
@@ -16,10 +10,6 @@ use Commune\Chatbot\Blueprint\Conversation\Speech;
  * 每一组消息有一个 level.
  * 不同level 的消息, 允许用不同的方式发送
  *
- *
- *
- *
- * @package Commune\Chatbot\Blueprint\Message
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface VerboseMsg extends Message

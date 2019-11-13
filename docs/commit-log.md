@@ -1,5 +1,5 @@
-## 2019-11-12
+## 2019-11-13
 
-- 修复了 ContextEtt 的 bug, 用类名方式来判断 Context 相等.
-- Menu 增加了 withSlots 方法
-- 添加了部分教程用例.
+-   ChatApp 增加了 ChatApp::getInstance 方法
+-   增加了启动时检查的系统服务
+-   调整部分注释

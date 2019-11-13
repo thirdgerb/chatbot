@@ -19,6 +19,7 @@ use Commune\Chatbot\OOHost\Context\Registrar\RootContextRegistrarDefault;
 use Commune\Chatbot\OOHost\Context\Registrar\RootContextRegistrarImpl;
 use Commune\Chatbot\OOHost\Emotion\Feeling;
 use Commune\Chatbot\OOHost\Emotion\Feels;
+use Commune\Container\ContainerContract;
 
 
 class HostProcessServiceProvider extends BaseServiceProvider
@@ -44,6 +45,7 @@ class HostProcessServiceProvider extends BaseServiceProvider
         // 注册在host 配置中定义的 memories
         // register memories defined at host config
         /**
+         * @var ContainerContract $app
          * @var RootMemoryRegistrar $repo
          */
         $repo = $app->get(RootMemoryRegistrar::class);

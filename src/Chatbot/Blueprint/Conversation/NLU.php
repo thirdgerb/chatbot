@@ -8,7 +8,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 use Illuminate\Support\Collection;
 
 /**
- * Conversation 的自然语言识别单元
+ * 封装了请求消息的自然语言解析数据
  *
  * NLU protocol
  * to set or get nlu information of incoming message

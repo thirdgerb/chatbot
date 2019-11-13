@@ -11,6 +11,7 @@ use Commune\Chatbot\Blueprint\Conversation\Ability;
 use Commune\Chatbot\Blueprint\Conversation\Chat;
 use Commune\Chatbot\Blueprint\Conversation\Conversation as Blueprint;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
+use Commune\Chatbot\Blueprint\Conversation\ConversationContainer;
 use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
 use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;

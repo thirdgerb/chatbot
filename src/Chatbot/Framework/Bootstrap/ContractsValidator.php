@@ -1,19 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: BrightRed
- * Date: 2019/4/14
- * Time: 5:05 PM
- */
 
 namespace Commune\Chatbot\Framework\Bootstrap;
 
-
-
 use Commune\Chatbot\Blueprint\Conversation\Chat;
+use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
+use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Conversation\Renderer;
 use Commune\Chatbot\Blueprint\Conversation\User;
+use Commune\Chatbot\Contracts\ClientFactory;
 use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Emotion\Feeling;
@@ -76,14 +71,17 @@ class ContractsValidator implements Bootstrapper
      * @var array
      */
     protected $conversationContracts = [
-        // 依赖会话级容器的.
-        Speech::class,
+        // 日志
+        ConversationLogger::class,
         // 有IO 开销, 考虑IO非阻塞实现的
         CacheAdapter::class,
+        ClientFactory::class,
         // conversation
-        User::class,
-        Chat::class,
         IncomingMessage::class,
+        User::class,
+        Speech::class,
+        Chat::class,
+        NLU::class,
         // host
         SessionDriver::class,
         Session::class,

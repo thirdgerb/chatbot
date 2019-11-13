@@ -7,8 +7,6 @@
 
 namespace Commune\Chatbot\Framework\Providers;
 
-
-use Commune\Container\ContainerContract;
 use Commune\Support\SoundLike\PinyinParser;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Commune\Support\SoundLike\SoundLikeManager;

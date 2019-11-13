@@ -9,7 +9,7 @@ use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 
 /**
- * 系统预定义的组件. 提供demo样例, navigator等.
+ * 系统预定义的组件. 提供系统默认的意图, 并将相关语料加载到本地语料库.
  *
  * @property-read string $intentCorpusFile
  * @property-read string $entityDictFile

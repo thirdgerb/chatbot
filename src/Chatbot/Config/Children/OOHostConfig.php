@@ -4,7 +4,6 @@
 namespace Commune\Chatbot\Config\Children;
 
 use Commune\Chatbot\Config\Options\MemoryOption;
-use Commune\Chatbot\OOHost\NLU\Pipe\AbsNLUServicePipe;
 use Commune\Support\Option;
 use Commune\Chatbot\App\SessionPipe;
 use Commune\Chatbot\App\Commands;

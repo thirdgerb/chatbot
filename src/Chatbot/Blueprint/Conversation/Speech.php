@@ -1,13 +1,7 @@
 <?php
 
-/**
- * Class Monolog
- * @package Commune\Chatbot\Blueprint\Conversation
- */
-
 namespace Commune\Chatbot\Blueprint\Conversation;
 
-use Commune\Chatbot\Framework\Providers\ConversationalServiceProvider;
 use Psr\Log\LogLevel;
 
 
@@ -26,7 +20,7 @@ interface Speech
 
     /**
      * 注册到默认的 slots 给 conversation.
-     * @see ConversationalServiceProvider
+     * @see \Commune\Chatbot\Framework\Providers\ConversationalServiceProvider
      */
     const DEFAULT_SLOTS = 'slots.default';  // bind id, 绑定到容器的 id
 

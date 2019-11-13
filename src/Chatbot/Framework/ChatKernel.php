@@ -15,7 +15,6 @@ use Commune\Chatbot\Blueprint\Kernel;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Contracts\ExceptionHandler;
-use Commune\Chatbot\Framework\Exceptions\FatalErrorException;
 use Commune\Chatbot\Framework\Utils\OnionPipeline;
 use Commune\Container\ContainerContract;
 

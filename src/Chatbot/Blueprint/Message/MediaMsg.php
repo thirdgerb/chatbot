@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: BrightRed
- * Date: 2019/4/14
- * Time: 6:27 PM
- */
 
 namespace Commune\Chatbot\Blueprint\Message;
 
