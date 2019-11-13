@@ -3,6 +3,11 @@
 开发中...
 
 
+项目网站在 [https://communechatbot.com]()
+
+项目文档在项目[chatbot-book](https://github.com/thirdgerb/chatbot-book), 正在撰写中.
+
+
 ## 简介
 
 commune/chatbot 项目, 多轮对话交互引擎. 还在开发中, 所以简单说下怎么测试:

@@ -13,7 +13,6 @@ use Commune\Support\OptionRepo\Options\MetaHolder;
 use Commune\Support\OptionRepo\Storage\Yaml\YamlStorageMeta;
 
 /**
- *
  * StoryComponent 是一个情景互动游戏的示范.
  * 可参考本模块开发类似的互动游戏.
  * 也可以封装出基于配置的引擎.

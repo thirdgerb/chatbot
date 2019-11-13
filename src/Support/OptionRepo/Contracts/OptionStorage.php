@@ -73,7 +73,7 @@ interface OptionStorage
     /**
      * @param CategoryMeta $category
      * @param StorageMeta $storage
-     * @param string ...$ids
+     * @param string[] $ids
      */
     public function delete(
         CategoryMeta $category,

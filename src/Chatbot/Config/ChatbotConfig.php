@@ -17,11 +17,13 @@ use Commune\Chatbot\Config\Children\OOHostConfig;
 use Commune\Support\Option;
 
 /**
- * Interface ChatbotConfig
- * @package Commune\Chatbot\Config
  *
+ * 机器人的核心配置
  *
- * @property-read string $chatbotName  机器人的名字|name of current chatbot
+ * @property-read string $chatbotName
+ * 机器人的名字. 会影响到各种存储相关的模块, 例如缓存.
+ * 同名的机器人, 既是配置不同, 数据的读写也可能相通.
+ * name of current chatbot
  *
  * @property-read bool $debug 是否开启debug
  *

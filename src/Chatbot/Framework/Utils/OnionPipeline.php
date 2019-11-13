@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Class ClosurePipeline
- * @package Commune\Chatbot\Framework\Pipelines
- */
-
 namespace Commune\Chatbot\Framework\Utils;
 
 use Psr\Container\ContainerInterface;

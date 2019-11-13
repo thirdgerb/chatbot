@@ -11,6 +11,7 @@ use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\VerboseMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\App\Messages\ArrayMessage;
+use Commune\Chatbot\Framework\Utils\OnionPipeline;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
@@ -135,34 +136,38 @@ class HearingHandler implements Hearing
         return $parameters;
     }
 
-    public function middleware(string $sessionPipeName): Hearing
+    public function middleware(string ...$middleware): Hearing
     {
-        if (isset($this->navigator)) return $this;
 
-        if (!is_a($sessionPipeName, SessionPipe::class, TRUE)) {
-            throw new ConfigureException(
-                __METHOD__
-                . ' pipe '.$sessionPipeName
-                . ' is not subclass of ' . SessionPipe::class
-            );
+        foreach ($middleware as $sessionPipeName) {
+            if (!is_a($sessionPipeName, SessionPipe::class, TRUE)) {
+                throw new ConfigureException(
+                    __METHOD__
+                    . ' pipe '.$sessionPipeName
+                    . ' is not subclass of ' . SessionPipe::class
+                );
+            }
         }
 
-        /**
-         * @var SessionPipe $pipe
-         */
-        $pipe = $this->dialog->app->make($sessionPipeName);
+        $pipeline = new OnionPipeline(
+            $this->dialog->session->conversation,
+            $middleware
+        );
 
-        $missed = false;
-        $pipe->handle($this->dialog->session, function(Session $session) use (&$missed) {
-            $missed = true;
-            return $session;
-        });
+        $touched = false;
+        $pipeline->via('handle')->send(
+            $this->dialog->session,
+            function(Session $session) use (&$touched): Session {
+                $touched = true;
+                return $session;
+            }
+        );
 
-        if ($missed) {
-            return $this;
+        // 如果 session 中途就被返回了, 则 hearing 不再往下执行.
+        if (!$touched) {
+            $this->setNavigator($this->dialog->wait());
         }
 
-        $this->setNavigator($this->dialog->wait());
         return $this;
     }
 

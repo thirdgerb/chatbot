@@ -52,13 +52,12 @@ interface Hearing extends Matcher
 
     /**
      * 调用一个session pipe 作为中间件. 立刻执行.
-     *
      * run session pipe as middleware
      *
-     * @param string $sessionPipeName
+     * @param string[] $middleware
      * @return Hearing
      */
-    public function middleware(string $sessionPipeName) : Hearing;
+    public function middleware(string ...$middleware): Hearing;
 
     /**
      * 将 hearing 传递给 component, 从而实现组件化的定义

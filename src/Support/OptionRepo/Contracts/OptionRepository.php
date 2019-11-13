@@ -25,19 +25,22 @@ use Commune\Support\OptionRepo\Exceptions\SynchroniseFailException;
  *
  * 有一个抽象层, 把 etcd, yaml 等都当做存储介质, 通过一个管道读写, 则可以解决这种问题.
  *
+ * 注意: 如果配置数量极多, 还是用别的方式比较合适. OptionRepository 只适合管理数量级比较小的配置.
+ *
  */
 interface OptionRepository
 {
     /*---- meta ----*/
 
     /**
-     * 注册一个 option 仓库的元数据.
+     * 注册一个 option 分类的元数据.
      * @param CategoryMeta $meta
      */
     public function registerCategory(CategoryMeta $meta) : void;
 
     /**
-     * 获取一个 option 仓库的元数据. 不存在会抛出异常.
+     * 获取一个 option 分类的元数据. 不存在会抛出异常.
+     *
      * @param string $category
      * @return CategoryMeta
      * @throws RepositoryMetaNotExistsException
@@ -45,7 +48,8 @@ interface OptionRepository
     public function getCategoryMeta(string $category) :  CategoryMeta;
 
     /**
-     * 仓库是否存在.
+     * 检查分类是否存在.
+     *
      * @param string $category
      * @return bool
      */
@@ -55,9 +59,10 @@ interface OptionRepository
 
     /**
      * 检查 option 是否存在.
-     * @param string $category
-     * @param string $optionId
-     * @throws RepositoryMetaNotExistsException
+     *
+     * @param string $category  分类名
+     * @param string $optionId  option id
+     * @throws RepositoryMetaNotExistsException  如果分类不存在抛出异常
      * @return bool
      */
     public function has(
@@ -67,12 +72,13 @@ interface OptionRepository
 
     /**
      * 获取一个 option
-     * @param string $category
-     * @param string $optionId
-     * @return Option|null
      *
-     * @throws RepositoryMetaNotExistsException
-     * @throws OptionNotFoundException
+     * @param string $category  分类名
+     * @param string $optionId  option id
+     * @return Option
+     *
+     * @throws RepositoryMetaNotExistsException 分类不存在抛出异常
+     * @throws OptionNotFoundException option不存在也抛出异常
      */
     public function find(
         string $category,
@@ -81,6 +87,7 @@ interface OptionRepository
 
     /**
      * 获取一个 option 在所有 storage 中的版本.
+     * 可以用于检查存储介质是否发生了不一致.
      *
      * @param string $category
      * @param string $optionId
@@ -92,7 +99,9 @@ interface OptionRepository
     ) : array;
 
     /**
-     * 更新, 或者创建一个 option. meta 必须存在.
+     * 更新, 或者创建一个 option.
+     * 会先存储到 root storage, 然后从上往下一层层存储.
+     * meta 必须存在.
      *
      * @param string $category
      * @param Option $option
@@ -110,7 +119,7 @@ interface OptionRepository
 
 
     /**
-     * 更新, 或者创建一个 option. meta 必须存在.
+     * 更新, 或者创建一批 option. meta 必须存在.
      *
      * @param string $category
      * @param bool $draft 是否立刻同步.
@@ -127,7 +136,9 @@ interface OptionRepository
     ) : void;
 
     /**
-     * 同步整个 category
+     * 同步整个 category 所有的 option
+     * 遍历 root storage 的存储, 同步给所有 storage
+     *
      * @param string $category
      */
     public function syncCategory(
@@ -136,6 +147,7 @@ interface OptionRepository
 
     /**
      * 删除掉一个 option
+     *
      * @param string $category
      * @param string[] $ids
      * @throws RepositoryMetaNotExistsException
@@ -147,6 +159,7 @@ interface OptionRepository
 
     /**
      * 强制同步一个 option
+     *
      * @param string $category
      * @param string $id
      *
@@ -164,6 +177,7 @@ interface OptionRepository
     /*---- 多个 option 管理 ----*/
     /**
      * 获取一种 option 存储的总数.
+     *
      * @param string $category
      * @return int
      */
@@ -173,6 +187,8 @@ interface OptionRepository
 
     /**
      * 分页列举一种 option 的 id => brief
+     *
+     * brief 来自 Option::getBrief 方法
      *
      * @param string $category
      * @param int $page
@@ -198,6 +214,8 @@ interface OptionRepository
 
 
     /**
+     * 使用 id 数组, 取出相关 option 的 map
+     *
      * @param string $category
      * @param array $ids
      * @return Option[]
@@ -223,7 +241,7 @@ interface OptionRepository
 
 
     /**
-     * 迭代一个category 下所有的option实例.
+     * 遍历一个 category 下所有的 option 实例.
      *
      * @param string $category
      * @return \Generator
