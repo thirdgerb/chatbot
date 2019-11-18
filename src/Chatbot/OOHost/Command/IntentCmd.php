@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\Command;
 
 
-use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
+use Commune\Chatbot\Blueprint\Message\Transformed\CommandMsg;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -74,7 +74,7 @@ class IntentCmd extends SessionCommand
     }
 
 
-    public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe): void
+    public function handle(CommandMsg $message, Session $session, SessionCommandPipe $pipe): void
     {
         /**
          * @var IntentMessage $intent

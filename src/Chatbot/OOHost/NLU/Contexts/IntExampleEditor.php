@@ -5,7 +5,7 @@ namespace Commune\Chatbot\OOHost\NLU\Contexts;
 
 
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
@@ -75,8 +75,8 @@ class IntExampleEditor extends OOContext
                     return $dialog->fulfill();
                 })
                 ->isInstanceOf(
-                    VerboseMsg::class,
-                    function(Dialog $dialog, VerboseMsg $msg){
+                    VerbalMsg::class,
+                    function(Dialog $dialog, VerbalMsg $msg){
 
                         $text = $msg->getTrimmedText();
 

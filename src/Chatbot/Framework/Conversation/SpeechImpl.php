@@ -9,7 +9,7 @@ namespace Commune\Chatbot\Framework\Conversation;
 
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\App\Messages\Replies\Reply;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg as Verbose;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg as Verbose;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Illuminate\Support\Collection;

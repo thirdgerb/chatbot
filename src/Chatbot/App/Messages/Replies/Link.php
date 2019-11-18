@@ -7,14 +7,14 @@ namespace Commune\Chatbot\App\Messages\Replies;
 use Commune\Chatbot\App\Messages\ReplyIds;
 use Commune\Chatbot\Blueprint\Message\Replies\LinkMsg;
 use Commune\Chatbot\Blueprint\Message\Tags\NoTranslate;
-use Commune\Chatbot\Framework\Messages\AbsVerbose;
+use Commune\Chatbot\Framework\Messages\AbsVerbal;
 use Illuminate\Support\Collection;
 
 /**
  * 可以用参数, 渲染出一个超级链接.
  * 通过 translator 来做模板.
  */
-class Link extends AbsVerbose implements LinkMsg, NoTranslate
+class Link extends AbsVerbal implements LinkMsg, NoTranslate
 {
     /**
      * @var Collection

@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\Commands\Analysis;
 
 
-use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
+use Commune\Chatbot\Blueprint\Message\Transformed\CommandMsg;
 use Commune\Chatbot\OOHost\Command\SessionCommand;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -26,7 +26,7 @@ class ContextRepoCmd extends SessionCommand
 
     protected $maxLimit = 20;
 
-    public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe): void
+    public function handle(CommandMsg $message, Session $session, SessionCommandPipe $pipe): void
     {
         $domain = $message['domain'] ?? '';
 

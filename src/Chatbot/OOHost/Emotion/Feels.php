@@ -5,7 +5,7 @@ namespace Commune\Chatbot\OOHost\Emotion;
 
 
 use Commune\Chatbot\App\Messages\QA\Confirmation;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Emotion\Emotions\Negative;
@@ -40,14 +40,14 @@ class Feels implements Feeling
         $this->experience(Positive::class, function(Session $session) : bool {
 
             $message = $session->incomingMessage->getMessage();
-            return $message instanceof VerboseMsg
+            return $message instanceof VerbalMsg
                 && $message->getTrimmedText() === 'y';
         });
 
         // negative
         $this->experience(Negative::class, function(Session $session) : bool {
             $message = $session->incomingMessage->getMessage();
-            return $message instanceof VerboseMsg
+            return $message instanceof VerbalMsg
                 && $message->getTrimmedText() === 'n';
         });
 

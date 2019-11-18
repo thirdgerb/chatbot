@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\Commands\Navigation;
 
 
-use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
+use Commune\Chatbot\Blueprint\Message\Transformed\CommandMsg;
 use Commune\Chatbot\OOHost\Command\SessionCommand;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
@@ -19,7 +19,7 @@ abstract class AbsNavigatorCmd extends SessionCommand
 
     protected $sneak = false;
 
-    public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe): void
+    public function handle(CommandMsg $message, Session $session, SessionCommandPipe $pipe): void
     {
         $session->handle(
             $session->incomingMessage->message,

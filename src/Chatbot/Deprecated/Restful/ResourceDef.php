@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\Contexts\Restful;
 
 
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
@@ -324,7 +324,7 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
                 null,
                 function(Hearing $hearing) {
 
-                    $hearing->isInstanceOf(VerboseMsg::class, function(Dialog $dialog, VerboseMsg $msg){
+                    $hearing->isInstanceOf(VerbalMsg::class, function(Dialog $dialog, VerbalMsg $msg){
                         $text= $msg->getTrimmedText();
                         $items = $this->paginate($dialog, $this->paths, $this->offset, $this->limit);
                         if (array_key_exists($text, $items)) {

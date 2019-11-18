@@ -6,7 +6,7 @@ namespace Commune\Components\Rasa\Services;
 
 use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\Contracts\ClientFactory;
 use Commune\Chatbot\OOHost\NLU\Contracts\NLUService;
 use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
@@ -42,7 +42,7 @@ class RasaService implements NLUService
 
     public function messageCouldHandle(Message $message): bool
     {
-        if (!$message instanceof VerboseMsg) {
+        if (!$message instanceof VerbalMsg) {
             return false;
         }
 

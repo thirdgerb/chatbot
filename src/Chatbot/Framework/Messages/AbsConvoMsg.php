@@ -3,6 +3,8 @@
 
 namespace Commune\Chatbot\Framework\Messages;
 
+use Commune\Chatbot\Blueprint\Message\ConvoMsg;
+
 
 /**
  * 本意在 conversation 中传递的 message.
@@ -11,7 +13,7 @@ namespace Commune\Chatbot\Framework\Messages;
  *
  * 也可以理解成所有非 Context 的 message
  */
-abstract class AbsConvoMsg extends AbsMessage
+abstract class AbsConvoMsg extends AbsMessage implements ConvoMsg
 {
 
     /**

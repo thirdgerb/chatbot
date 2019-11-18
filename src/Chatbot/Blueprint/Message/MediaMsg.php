@@ -9,7 +9,7 @@ namespace Commune\Chatbot\Blueprint\Message;
  * @package Commune\Chatbot\Blueprint\Message
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface MediaMsg extends Message
+interface MediaMsg extends ConvoMsg
 {
 
     /**

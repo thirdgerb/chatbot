@@ -5,17 +5,17 @@ namespace Commune\Chatbot\App\Messages\QA;
 
 use Commune\Chatbot\App\Messages\Text;
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\Framework\Messages\QA\AbsAnswer;
-use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
+use Commune\Chatbot\Framework\Messages\Traits\VerbalTrait;
 
 /**
  * Verbose Answer
  * 用户回答的文字结果. 默认类型是字符串. 需要自己做类型转换.
  */
-class VbAnswer extends AbsAnswer implements VerboseMsg
+class VbAnswer extends AbsAnswer implements VerbalMsg
 {
-    use Verbosely;
+    use VerbalTrait;
 
     protected $answer;
 

@@ -4,12 +4,12 @@
 namespace Commune\Chatbot\App\Messages;
 
 
-use Commune\Chatbot\Framework\Messages\AbsVerbose;
+use Commune\Chatbot\Framework\Messages\AbsVerbal;
 
 /**
  * 默认的文本消息.
  */
-class Text extends AbsVerbose
+class Text extends AbsVerbal
 {
     /**
      * Text constructor.

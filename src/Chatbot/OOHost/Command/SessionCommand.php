@@ -7,7 +7,7 @@ namespace Commune\Chatbot\OOHost\Command;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
 use Commune\Chatbot\OOHost\Session\Session;
-use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
+use Commune\Chatbot\Blueprint\Message\Transformed\CommandMsg;
 use Symfony\Component\Console\Input\InputOption;
 
 
@@ -40,7 +40,7 @@ abstract class SessionCommand
      */
     protected $sneak = true;
 
-    abstract public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe) : void;
+    abstract public function handle(CommandMsg $message, Session $session, SessionCommandPipe $pipe) : void;
 
     /**
      * 调用 dialog 的对话模块.

@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\Framework\Messages;
 
 
-use Commune\Chatbot\Blueprint\Message\Event\EventMsg;
+use Commune\Chatbot\Blueprint\Message\EventMsg;
 
 class AbsEvent extends AbsConvoMsg implements EventMsg
 {

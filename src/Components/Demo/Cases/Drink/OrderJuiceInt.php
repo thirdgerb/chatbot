@@ -9,7 +9,7 @@ use Commune\Chatbot\App\Callables\Predictions\IsNumeric;
 use Commune\Chatbot\App\Intents\ActionIntent;
 use Commune\Chatbot\App\Messages\Text;
 use Commune\Chatbot\Blueprint\Conversation\NLU;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\Stage;
@@ -90,12 +90,12 @@ class OrderJuiceInt extends ActionIntent
     {
         $listener
             ->onCancel(function(Dialog $dialog) {
-                $this->falwell($dialog);
+                $this->farewell($dialog);
                 return $dialog->cancel(true);
             })
 
             ->onQuit(function(Dialog $dialog) {
-                $this->falwell($dialog);
+                $this->farewell($dialog);
                 return $dialog->quit(true);
             });
     }
@@ -106,7 +106,7 @@ class OrderJuiceInt extends ActionIntent
         return parent::navigate($dialog);
     }
 
-    public function falwell(Dialog $dialog): void
+    public function farewell(Dialog $dialog): void
     {
         $paid = $this->isPaid ?? 0;
 
@@ -336,7 +336,7 @@ class OrderJuiceInt extends ActionIntent
             ->hearing()
             ->expect(
                 new IsNumeric(),
-                function (Dialog $dialog, VerboseMsg $message) {
+                function (Dialog $dialog, VerbalMsg $message) {
                     $paid = floatval($message->getTrimmedText());
                     $paid = round($paid, 2);
 
@@ -426,7 +426,7 @@ class OrderJuiceInt extends ActionIntent
             $deliverAt = new Carbon();
             $deliverAt->addSeconds(15);
 
-            $deliver = (new Text("来自果汁店: 您好, 这是您刚才点的 $order , 给您送上, 再次感谢惠顾"))->withLevel(VerboseMsg::WARN)->deliverAt($deliverAt);
+            $deliver = (new Text("来自果汁店: 您好, 这是您刚才点的 $order , 给您送上, 再次感谢惠顾"))->withLevel(VerbalMsg::WARN)->deliverAt($deliverAt);
 
             $dialog
                 ->say()
@@ -444,12 +444,12 @@ class OrderJuiceInt extends ActionIntent
             return $dialog->restart();
         })
         ->isNegative(function(Dialog $dialog){
-            $this->falwell($dialog);
+            $this->farewell($dialog);
             return $dialog->fulfill();
         })
         // 太麻烦... 直接结束吧
         ->end(function(Dialog $dialog){
-            $this->falwell($dialog);
+            $this->farewell($dialog);
             return $dialog->fulfill();
         });
     }

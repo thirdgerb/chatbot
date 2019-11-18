@@ -3,9 +3,9 @@
 namespace Commune\Chatbot\Blueprint\Message\QA;
 
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\Tags\Transformed;
+use Commune\Chatbot\Blueprint\Message\TransformedMsg;
 
-interface Answer extends Message, Transformed
+interface Answer extends Message, TransformedMsg
 {
     /**
      * @return int|string

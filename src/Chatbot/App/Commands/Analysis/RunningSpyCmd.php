@@ -4,7 +4,7 @@ namespace Commune\Chatbot\App\Commands\Analysis;
 
 
 use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
-use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
+use Commune\Chatbot\Blueprint\Message\Transformed\CommandMsg;
 use Commune\Chatbot\Framework\Conversation\RunningSpies;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Command\SessionCommand;
@@ -19,7 +19,7 @@ class RunningSpyCmd extends SessionCommand
 
     const DESCRIPTION = '查看一些关键类的实例数量. 用于排查部分内存泄露问题.';
 
-    public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe): void
+    public function handle(CommandMsg $message, Session $session, SessionCommandPipe $pipe): void
     {
         $detail = $message['--detail'] ?? false;
 

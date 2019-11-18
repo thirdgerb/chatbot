@@ -5,7 +5,7 @@ namespace Commune\Chatbot\App\Callables\StageComponents;
 
 
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\OOHost\Context\Callables\StageComponent;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Stage;
@@ -221,7 +221,7 @@ class Paginator implements StageComponent
             }
 
             // 判断输入是不是页码
-            $hearing->isInstanceOf(VerboseMsg::class, function(Context $self, Dialog $dialog, VerboseMsg $msg){
+            $hearing->isInstanceOf(VerbalMsg::class, function(Context $self, Dialog $dialog, VerbalMsg $msg){
 
                 $text = $msg->getTrimmedText();
                 if (!is_numeric($text)) {

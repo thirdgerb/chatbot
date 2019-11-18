@@ -3,17 +3,17 @@
 
 namespace Commune\Chatbot\Framework\Messages\Traits;
 
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 
 /**
  * implements VerboseMsg
  */
-trait Verbosely
+trait VerbalTrait
 {
     /**
      * @var int
      */
-    protected $_level = VerboseMsg::INFO;
+    protected $_level = VerbalMsg::INFO;
 
     /**
      * @param string $level

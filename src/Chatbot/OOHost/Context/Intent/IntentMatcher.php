@@ -5,7 +5,7 @@ namespace Commune\Chatbot\OOHost\Context\Intent;
 
 
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
@@ -133,7 +133,7 @@ class IntentMatcher
         }
 
         // 其它的逻辑都要求是对话, 才去匹配.
-        if (!$message instanceof VerboseMsg) {
+        if (!$message instanceof VerbalMsg) {
             return null;
         }
 

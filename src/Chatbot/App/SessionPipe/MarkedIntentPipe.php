@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\SessionPipe;
 
 
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 
@@ -24,7 +24,7 @@ class MarkedIntentPipe implements SessionPipe
 
         $message = $session->incomingMessage->message;
         // only verbose
-        if (!$message instanceof VerboseMsg) {
+        if (!$message instanceof VerbalMsg) {
             return $next($session);
         }
 

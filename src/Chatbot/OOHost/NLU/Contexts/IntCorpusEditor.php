@@ -11,7 +11,7 @@ use Commune\Chatbot\App\Callables\StageComponents\Paginator;
 use Commune\Chatbot\App\Messages\QA\VbAnswer;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
@@ -168,7 +168,7 @@ class IntCorpusEditor extends OOContext
                 }
             ],
             function(Dialog $dialog, Message $message) {
-                if ($message instanceof VerboseMsg) {
+                if ($message instanceof VerbalMsg) {
                     $domain =  $message->getTrimmedText();
                     $this->domain = $domain;
                     return $dialog->repeat();

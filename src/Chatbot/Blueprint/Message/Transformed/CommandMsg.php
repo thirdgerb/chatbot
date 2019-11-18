@@ -1,12 +1,15 @@
 <?php
 
 
-namespace Commune\Chatbot\Blueprint\Message\Command;
+namespace Commune\Chatbot\Blueprint\Message\Transformed;
 
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\Tags\Transformed;
+use Commune\Chatbot\Blueprint\Message\TransformedMsg;
 
-interface CmdMessage extends Message, Transformed, \ArrayAccess
+/**
+ * 命令类消息
+ */
+interface CommandMsg extends Message, TransformedMsg, \ArrayAccess
 {
     public function getCommandName() : string;
 

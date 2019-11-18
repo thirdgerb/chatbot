@@ -12,7 +12,7 @@ use Commune\Chatbot\Blueprint\Conversation\Speech;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface VerboseMsg extends Message
+interface VerbalMsg extends ConvoMsg
 {
     //默认的消息级别
     const DEBUG = Speech::DEBUG;

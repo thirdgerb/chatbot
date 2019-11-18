@@ -7,14 +7,14 @@
 
 namespace Commune\Chatbot\OOHost\Command;
 
-use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
+use Commune\Chatbot\Blueprint\Message\Transformed\CommandMsg;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Messages\AbsMessage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
 use InvalidArgumentException;
 
-class CommandMessage extends AbsMessage implements CmdMessage
+class CommandMessage extends AbsMessage implements CommandMsg
 {
 
     const REGEX_STRING = '([^\s]+?)(?:\s|(?<!\\\\)"|(?<!\\\\)\'|$)';

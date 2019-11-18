@@ -5,10 +5,10 @@ namespace Commune\Chatbot\App\Messages;
 
 
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\Tags\Transformed;
+use Commune\Chatbot\Blueprint\Message\TransformedMsg;
 use Commune\Chatbot\Framework\Messages\AbsConvoMsg;
 
-class ArrayMessage extends AbsConvoMsg implements \ArrayAccess, Transformed
+class ArrayMessage extends AbsConvoMsg implements \ArrayAccess, TransformedMsg
 {
 
     /**

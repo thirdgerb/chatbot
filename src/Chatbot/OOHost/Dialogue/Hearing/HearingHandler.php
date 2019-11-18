@@ -4,11 +4,11 @@
 namespace Commune\Chatbot\OOHost\Dialogue\Hearing;
 
 
-use Commune\Chatbot\Blueprint\Message\Event\EventMsg;
+use Commune\Chatbot\Blueprint\Message\EventMsg;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\App\Messages\ArrayMessage;
 use Commune\Chatbot\Framework\Utils\OnionPipeline;
@@ -305,7 +305,7 @@ class HearingHandler implements Hearing
             $message = $session->incomingMessage->message;
 
             // 只有文本才匹配
-            if ($message instanceof VerboseMsg) {
+            if ($message instanceof VerbalMsg) {
                 /**
                  * @var EntityExtractor $entityExtractor
                  */
@@ -435,7 +435,7 @@ class HearingHandler implements Hearing
         if (isset($this->navigator)) return $this;
 
         // 关键字匹配只检查文本类型.
-        if (!$this->message instanceof VerboseMsg) {
+        if (!$this->message instanceof VerbalMsg) {
             return $this;
         }
 

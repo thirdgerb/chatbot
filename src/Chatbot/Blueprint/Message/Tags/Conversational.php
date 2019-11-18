@@ -5,7 +5,7 @@ namespace Commune\Chatbot\Blueprint\Message\Tags;
 
 
 /**
- * 可对话的.
+ * 拥有 suggestions 的消息, 因此构成有选项的对话.
  */
 interface Conversational
 {

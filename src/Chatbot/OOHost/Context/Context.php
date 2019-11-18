@@ -3,7 +3,6 @@
 namespace Commune\Chatbot\OOHost\Context;
 
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\SessionData;
 use Commune\Chatbot\OOHost\Session\SessionInstance;

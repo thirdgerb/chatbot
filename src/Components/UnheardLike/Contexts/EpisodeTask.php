@@ -9,7 +9,7 @@ use Commune\Chatbot\App\Callables\Actions\Talker;
 use Commune\Chatbot\App\Callables\StageComponents\AskContinue;
 use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\App\Messages\QA\Choice;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
@@ -537,7 +537,7 @@ class EpisodeTask extends TaskDef
             ->todo(Redirector::goStage('play'))
                 ->is($back)
                 ->isChoice(1)
-            ->todo(function(Dialog $dialog, VerboseMsg $message) {
+            ->todo(function(Dialog $dialog, VerbalMsg $message) {
                 $text = $message->getTrimmedText();
 
                 // 设置时间
@@ -550,7 +550,7 @@ class EpisodeTask extends TaskDef
                 $dialog->say()->warning('unheardLike.calling.wrongType');
                 return $dialog->repeat();
             })
-                ->isInstanceOf(VerboseMsg::class)
+                ->isInstanceOf(VerbalMsg::class)
             ->end();
 
     }

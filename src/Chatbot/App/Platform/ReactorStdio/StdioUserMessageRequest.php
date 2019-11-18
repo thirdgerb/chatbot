@@ -13,7 +13,7 @@ use Commune\Chatbot\App\Platform\ConsoleConfig;
 use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
 use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\Framework\Conversation\MessageRequestHelper;
 use Commune\Chatbot\Framework\Predefined\SimpleConsoleLogger;
 use Commune\Support\Uuid\HasIdGenerator;
@@ -118,16 +118,16 @@ class StdioUserMessageRequest implements MessageRequest, HasIdGenerator
 
         }
         // 显示一下颜色.
-        if ($msg instanceof VerboseMsg) {
+        if ($msg instanceof VerbalMsg) {
 
                 switch ($msg->getLevel()) {
-                    case VerboseMsg::DEBUG:
+                    case VerbalMsg::DEBUG:
                         $style = 'debug';
                         break;
-                    case VerboseMsg::INFO:
+                    case VerbalMsg::INFO:
                         $style = 'info';
                         break;
-                    case VerboseMsg::WARN:
+                    case VerbalMsg::WARN:
                         $style = 'warning';
                         break;
                     default:

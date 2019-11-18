@@ -224,16 +224,19 @@ class ConversationImpl implements Blueprint
 
     public function reply(Message $message, bool $immediately = false): void
     {
+        // 如果是问题, 记录已经向用户提过问, 有些语音系统需要这个提示来监听声音
         if ($message instanceof Question) {
             $this->asked = true;
         }
 
+        // 一个 reply 可能渲染成多个 ConvoMsg
         $messages = $this->render($message);
 
-        foreach ($messages as $msg) {
-            $request = $this->getRequest();
-            $incomingMessage = $this->getIncomingMessage();
+        $incomingMessage = $this->getIncomingMessage();
+        $request = $this->getRequest();
 
+        // 将消息封装成 ConversationMessage, 然后准备发送
+        foreach ($messages as $msg) {
             $replyMessage =  new OutgoingMessageImpl(
                 $incomingMessage,
                 $request->generateMessageId(),

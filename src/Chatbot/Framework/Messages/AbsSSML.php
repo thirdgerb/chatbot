@@ -3,7 +3,7 @@
 
 namespace Commune\Chatbot\Framework\Messages;
 
-use Commune\Chatbot\Blueprint\Message\SSML;
+use Commune\Chatbot\Blueprint\Message\Replies\SSML;
 
 /**
  * ssml 的一个封装尝试.

@@ -7,7 +7,7 @@ use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Illuminate\Support\Collection;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 
-abstract class AbsReply extends AbsVerbose implements ReplyMsg
+abstract class AbsReply extends AbsVerbal implements ReplyMsg
 {
     /**
      * @var string

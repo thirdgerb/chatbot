@@ -7,14 +7,14 @@ namespace Commune\Chatbot\App\Messages\Replies;
 use Commune\Chatbot\App\Messages\ReplyIds;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
-use Commune\Chatbot\Framework\Messages\AbsVerbose;
+use Commune\Chatbot\Framework\Messages\AbsVerbal;
 use Illuminate\Support\Collection;
 use Commune\Chatbot\Blueprint\Message\Replies\Paragraph;
 
 /**
  * 段落类型的text
  */
-class ParagraphText extends AbsVerbose implements Paragraph
+class ParagraphText extends AbsVerbal implements Paragraph
 {
 
     protected $joint;

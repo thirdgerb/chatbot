@@ -19,7 +19,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Components\Demo\Cases\Maze\Intents\LocationInt;
 use Commune\Components\Demo\Cases\Maze\Logic\Manager;
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Components\Demo\Cases\Maze\Intents\MazeBackInt;
 use Commune\Components\Demo\Cases\Maze\Intents\MazeFrontInt;
 use Commune\Components\Demo\Cases\Maze\Intents\MazeLeftInt;
@@ -252,7 +252,7 @@ class PlayMaze extends TaskDef
 
             ->otherwise()
 
-            ->isInstanceOf(VerboseMsg::class, function(Message $message, Dialog $dialog){
+            ->isInstanceOf(VerbalMsg::class, function(Message $message, Dialog $dialog){
                 return $this->parseTowardAndGo($dialog, $message->getText());
             })
 

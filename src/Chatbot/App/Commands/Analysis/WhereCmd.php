@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\Commands\Analysis;
 
 
-use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
+use Commune\Chatbot\Blueprint\Message\Transformed\CommandMsg;
 use Commune\Chatbot\OOHost\Command\SessionCommand;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -22,7 +22,7 @@ class WhereCmd extends SessionCommand
 
     const DESCRIPTION = '查看维持多轮对话的关键数据.';
 
-    public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe): void
+    public function handle(CommandMsg $message, Session $session, SessionCommandPipe $pipe): void
     {
 
         $talk = $session->dialog->say();

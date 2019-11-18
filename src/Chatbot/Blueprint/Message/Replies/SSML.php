@@ -1,11 +1,15 @@
 <?php
 
 
-namespace Commune\Chatbot\Blueprint\Message;
+namespace Commune\Chatbot\Blueprint\Message\Replies;
 
 
+use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\Blueprint\Message\Tags\NoTranslate;
 
+/**
+ * SSML 类型的消息
+ */
 interface SSML extends ReplyMsg, NoTranslate
 {
     const TAG_L = '{{';

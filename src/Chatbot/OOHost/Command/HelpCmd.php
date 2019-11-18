@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\Command;
 
 
-use Commune\Chatbot\Blueprint\Message\Command\CmdMessage;
+use Commune\Chatbot\Blueprint\Message\Transformed\CommandMsg;
 use Commune\Chatbot\OOHost\Session\Session;
 
 /**
@@ -18,7 +18,7 @@ class HelpCmd extends SessionCommand
 
     const DESCRIPTION = '查看可用指令. 也可以输入 "命令名 -h", 例如"help -h"';
 
-    public function handle(CmdMessage $message, Session $session, SessionCommandPipe $pipe): void
+    public function handle(CommandMsg $message, Session $session, SessionCommandPipe $pipe): void
     {
         if (empty($message['commandName'])) {
             $this->helpPipe($pipe);

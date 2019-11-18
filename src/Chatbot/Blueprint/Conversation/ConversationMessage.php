@@ -32,7 +32,8 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 interface ConversationMessage extends ArrayAndJsonAble
 {
     /**
-     * 消息ID
+     * 消息ID, 全局唯一
+     *
      * @return string
      */
     public function getId() : string;
@@ -40,6 +41,8 @@ interface ConversationMessage extends ArrayAndJsonAble
     /*------- 关键ID -------*/
 
     /**
+     * 用于追踪调用链条的ID
+     * 
      * uuid for request
      * request life circle share same trace id
      *
@@ -48,13 +51,15 @@ interface ConversationMessage extends ArrayAndJsonAble
     public function getTraceId() : string;
 
     /**
-     * messages with same chat id consider in same chat
+     * 用于标记对话的唯一ID.
      *
+     * messages with same chat id consider in same chat
      * @return string
      */
     public function getChatId() : string ;
 
     /**
+     * 一次完整的对话的 sessionId. 一个 Chat 可能有若干轮 Session
      * @return null|string
      */
     public function getSessionId() : ? string;

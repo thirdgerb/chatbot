@@ -10,7 +10,7 @@ namespace Commune\Chatbot\Framework\Messages;
 
 use Carbon\Carbon;
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\Tags\Transformed;
+use Commune\Chatbot\Blueprint\Message\TransformedMsg;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
 use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;

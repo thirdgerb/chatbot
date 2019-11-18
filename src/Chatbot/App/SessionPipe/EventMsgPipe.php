@@ -6,7 +6,7 @@ namespace Commune\Chatbot\App\SessionPipe;
 
 use Commune\Chatbot\Blueprint\Message\Event\Connect;
 use Commune\Chatbot\Blueprint\Message\Event\EndSession;
-use Commune\Chatbot\Blueprint\Message\Event\EventMsg;
+use Commune\Chatbot\Blueprint\Message\EventMsg;
 use Commune\Chatbot\Blueprint\Message\Event\StartSession;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;

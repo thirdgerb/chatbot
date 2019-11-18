@@ -7,14 +7,15 @@ namespace Commune\Test\Chatbot\App\Messages;
 use Carbon\Carbon;
 use Commune\Chatbot\App\Messages\Media\Image;
 use Commune\Chatbot\App\Messages\Text;
+use Commune\Chatbot\Blueprint\Message\ConvoMsg;
 use Commune\Chatbot\Blueprint\Message\Media\ImageMsg;
 use Commune\Chatbot\Blueprint\Message\MediaMsg;
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\Framework\Messages\AbsConvoMsg;
 use Commune\Chatbot\Framework\Messages\AbsMedia;
 use Commune\Chatbot\Framework\Messages\AbsMessage;
-use Commune\Chatbot\Framework\Messages\AbsVerbose;
+use Commune\Chatbot\Framework\Messages\AbsVerbal;
 use PHPUnit\Framework\TestCase;
 
 class MessageTest extends TestCase
@@ -39,8 +40,9 @@ class MessageTest extends TestCase
             Message::class,
             AbsMessage::class,
             AbsConvoMsg::class,
-            VerboseMsg::class,
-            AbsVerbose::class,
+            ConvoMsg::class,
+            VerbalMsg::class,
+            AbsVerbal::class,
         ];
         sort($arr);
         $this->assertEquals($arr, $message->namesAsDependency());
@@ -53,6 +55,7 @@ class MessageTest extends TestCase
             ImageMsg::class,
             MediaMsg::class,
             AbsConvoMsg::class,
+            ConvoMsg::class,
             AbsMessage::class,
             Message::class
         ];

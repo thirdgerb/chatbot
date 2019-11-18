@@ -10,9 +10,9 @@ use Commune\Chatbot\Contracts\Translator;
 use Commune\Components\Predefined\Intents\Dialogue\OrdinalInt;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\Framework\Messages\QA\AbsQuestion;
-use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
+use Commune\Chatbot\Framework\Messages\Traits\VerbalTrait;
 use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\NLU\Corpus\IntExample;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
  */
 class VbQuestion extends AbsQuestion implements SelfTranslating
 {
-    use Verbosely;
+    use VerbalTrait;
 
     const REPLY_ID = ReplyIds::ASK;
 
@@ -111,7 +111,7 @@ class VbQuestion extends AbsQuestion implements SelfTranslating
         }
 
         // 目前只有 verbose 作为回答来处理.
-        if (!$message instanceof VerboseMsg) {
+        if (!$message instanceof VerbalMsg) {
             return null;
         }
 

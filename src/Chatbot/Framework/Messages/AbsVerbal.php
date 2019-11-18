@@ -8,15 +8,15 @@
 namespace Commune\Chatbot\Framework\Messages;
 
 
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
-use Commune\Chatbot\Framework\Messages\Traits\Verbosely;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
+use Commune\Chatbot\Framework\Messages\Traits\VerbalTrait;
 
 /**
  * 标准的文本消息
  */
-abstract class AbsVerbose extends AbsConvoMsg implements VerboseMsg
+abstract class AbsVerbal extends AbsConvoMsg implements VerbalMsg
 {
-    use Verbosely;
+    use VerbalTrait;
 
     /**
      * @var string

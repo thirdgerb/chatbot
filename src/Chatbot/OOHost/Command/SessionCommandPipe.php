@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\Command;
 
 
-use Commune\Chatbot\Blueprint\Message\VerboseMsg;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\Framework\Exceptions\ConfigureException;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
 use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
@@ -95,7 +95,7 @@ class SessionCommandPipe implements SessionPipe
 
         $message = $session->incomingMessage->message;
 
-        if (!$message instanceof VerboseMsg) {
+        if (!$message instanceof VerbalMsg) {
             return $next($session);
         }
 

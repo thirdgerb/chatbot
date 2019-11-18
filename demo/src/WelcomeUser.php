@@ -85,7 +85,7 @@ class WelcomeUser extends OOContext
 ////                ) {
 ////                    $dialog->say()->info('(userInfo::name 参数存在, 直接进入下一步"final")');
 ////                    $this->user = $context;
-////                    // 重定向到 falwell
+////                    // 重定向到 farewell
 ////                    return $dialog->goStage('final');
 ////                }
 ////
@@ -179,7 +179,7 @@ class WelcomeUser extends OOContext
 //                ) {
 //                    $dialog->say()->info('(userInfo::name 参数存在, 直接进入下一步"final")');
 //                    $this->user = $context;
-//                    // 重定向到 falwell
+//                    // 重定向到 farewell
 //                    return $dialog->goStage('final');
 //                }
 //

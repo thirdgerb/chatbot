@@ -47,7 +47,7 @@ class MazeInt extends ActionIntent
 
     protected $oneMore = 'demo.maze.dialog.oneMore';
 
-    protected $falwellMessage = 'demo.maze.info.falwell';
+    protected $farewellMessage = 'demo.maze.info.farewell';
 
     protected $wantIntro = 'demo.maze.dialog.wantIntro';
 
@@ -197,7 +197,7 @@ class MazeInt extends ActionIntent
             ->hearing()
                 ->isPositive(Redirector::goStage('born'))
                 ->isNegative(function(Dialog $dialog) {
-                    $dialog->say()->info($this->falwellMessage);
+                    $dialog->say()->info($this->farewellMessage);
                     return $dialog->fulfill();
                 })
                 ->end(Redirector::goFulfill());
