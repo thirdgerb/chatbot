@@ -5,6 +5,7 @@ namespace Commune\Chatbot\OOHost\Dialogue\Hearing;
 
 use Commune\Chatbot\App\Messages\ArrayMessage;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
+use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\OOHost\Context\Callables\Action;
 use Commune\Chatbot\OOHost\Context\Callables\Prediction;
 use Commune\Chatbot\OOHost\Emotion\Feeling;
@@ -116,6 +117,20 @@ interface Matcher
         array $keys = [],
         callable $action = null
     ): Matcher;
+
+    /**
+     * 判断输入信息是否是口头或文字的.
+     *
+     * 相当于 instanceOf(Verbal::class)
+     *
+     * @see VerbalMsg
+     *
+     * @param callable|null $action
+     * @return Matcher
+     */
+    public function isVerbal(
+        callable $action = null
+    ) : Matcher;
 
     /**
      * 判断传入的 message 是否是某个 MessageSubClass 的实例.

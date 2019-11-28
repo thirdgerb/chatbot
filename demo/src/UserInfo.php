@@ -132,7 +132,7 @@ class UserInfo extends OOContext
     {
         return $stage->buildTalk()
             // 没有suggestions, 允许任何输入
-            ->askVerbose('请问您的邮箱是?')
+            ->askVerbal('请问您的邮箱是?')
             ->hearing()
 
             ->todo(function(Dialog $dialog, Message $message){

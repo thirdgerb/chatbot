@@ -12,12 +12,14 @@ use Psr\Log\LoggerInterface;
 
 
 /**
+ * 对话管理的根对象
+ *
  * @property-read string $belongsTo
- * @property-read App $app
+ * @property-read App $app 上下文中的 IoC 容器
  * @property-read Session $session
- * @property-read Redirect $redirect
+ * @property-read Redirect $redirect 上下文重定向的 Api
  * @property-read LoggerInterface $logger
- * @property-read History $history
+ * @property-read History $history 上下文的管理者.
  *
  */
 interface Dialog
@@ -124,6 +126,7 @@ interface Dialog
 
     /**
      * 触发下一个 stage, 没有的话调用fulfill
+     *
      * @return Navigator
      */
     public function next() : Navigator;
@@ -157,6 +160,8 @@ interface Dialog
 
 
     /**
+     * 像管道一样经过若干个指定的 stage
+     *
      * @param array $stages
      * @param bool $resetPipe   是否重置掉当前stage 回调的stage路径.
      * @return Navigator

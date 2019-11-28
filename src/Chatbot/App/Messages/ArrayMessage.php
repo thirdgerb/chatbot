@@ -7,7 +7,14 @@ namespace Commune\Chatbot\App\Messages;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\TransformedMsg;
 use Commune\Chatbot\Framework\Messages\AbsConvoMsg;
+use Commune\Chatbot\OOHost\Dialogue\Hearing\HearingHandler;
 
+/**
+ * 数组形式的消息.
+ * 将原消息抽取了关键信息后, 转化成了一个数组
+ *
+ * @see HearingHandler  Hearing::pregMatch
+ */
 class ArrayMessage extends AbsConvoMsg implements \ArrayAccess, TransformedMsg
 {
 

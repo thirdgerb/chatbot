@@ -202,7 +202,7 @@ class IntCorpusEditor extends OOContext
     public function __onShow(Stage $stage) : Navigator
     {
         return $stage->buildTalk()
-            ->askVerbose('请输入意图的名称:')
+            ->askVerbal('请输入意图的名称:')
             ->wait()
             ->hearing()
             ->isAnswer(function(Dialog $dialog, Answer $answer){
@@ -268,7 +268,7 @@ class IntCorpusEditor extends OOContext
     public function __onAddExample(Stage $stage) : Navigator
     {
         return $stage->buildTalk()
-            ->askVerbose('请输入要添加的例句:')
+            ->askVerbal('请输入要添加的例句:')
             ->wait()
             ->hearing()
             ->isAnswer(function (Dialog $dialog, VbAnswer $answer, Corpus $corpus) {

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Class Translator
- * @package Commune\Chatbot\Contracts
- */
-
 namespace Commune\Chatbot\Contracts;
 
 /**

@@ -28,6 +28,9 @@ use Commune\Chatbot\Framework\Predefined\GuzzleClientFactory;
 use Illuminate\Support\Arr;
 use Psr\Log\LoggerInterface;
 
+/**
+ * 请求级服务和单例的注册类.
+ */
 class ConversationalServiceProvider extends BaseServiceProvider
 {
     public function boot($app): void
@@ -47,7 +50,9 @@ class ConversationalServiceProvider extends BaseServiceProvider
         $this->registerNLU();
     }
 
-
+    /**
+     * 注册 user 模块.
+     */
     protected function registerUser() : void
     {
         if ($this->app->bound(User::class)) {
@@ -70,6 +75,9 @@ class ConversationalServiceProvider extends BaseServiceProvider
 
     }
 
+    /**
+     * 注册 Chat 模块
+     */
     protected function registerChat() : void
     {
         if ($this->app->bound(Chat::class)) {
@@ -95,6 +103,9 @@ class ConversationalServiceProvider extends BaseServiceProvider
 
     }
 
+    /**
+     * 注册 Speech 模块
+     */
     protected function registerSpeech() : void
     {
         if ($this->app->bound(Speech::class)) {
@@ -106,6 +117,9 @@ class ConversationalServiceProvider extends BaseServiceProvider
         );
     }
 
+    /**
+     * 注册 IncomingMessage 模块.
+     */
     protected function registerIncomingMessage()
     {
         if ($this->app->bound(IncomingMessage::class)) {
@@ -133,6 +147,9 @@ class ConversationalServiceProvider extends BaseServiceProvider
         );
     }
 
+    /**
+     * 注册日志模块.
+     */
     protected function registerLogger() : void
     {
         // 如果已经绑定, 就跳过

@@ -329,7 +329,7 @@ class OrderJuiceInt extends ActionIntent
 
         return $stage
             ->buildTalk()
-            ->askVerbose(
+            ->askVerbal(
                 "请您支付 $casts 元, 谢谢! (请用纯数字模拟支付)",
                 [ 15, 0, -15, 20, 10.5]
             )

@@ -87,7 +87,7 @@ trait StageSpeechTrait
         return $this->callDialogSpeech(__FUNCTION__, func_get_args());
     }
 
-    public function askVerbose(
+    public function askVerbal(
         string $question,
         array $suggestions = []
     )

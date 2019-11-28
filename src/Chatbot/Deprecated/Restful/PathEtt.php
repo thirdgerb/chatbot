@@ -78,7 +78,7 @@ class PathEtt implements Entity
     {
         return $stageRoute->buildTalk()
             ->withSlots(['name' => $this->realName])
-            ->askVerbose($this->question)
+            ->askVerbal($this->question)
             ->wait()
             ->hearing()
             ->isAnswer(function(ResourceDef $self, Dialog $dialog, Answer $answer){

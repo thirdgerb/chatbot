@@ -342,6 +342,10 @@ class HearingHandler implements Hearing
     {
         if (isset($this->navigator)) return $this;
 
+        if (!$this->message instanceof VerbalMsg) {
+            return $this;
+        }
+
         /**
          * @var SoundLikeInterface $soundLike
          */
@@ -473,6 +477,14 @@ class HearingHandler implements Hearing
 
         return $this;
     }
+
+    public function isVerbal(
+        callable $action = null
+    ): Matcher
+    {
+        return $this->isInstanceOf(VerbalMsg::class, $action);
+    }
+
 
     public function isInstanceOf(
         string $messageClazz,

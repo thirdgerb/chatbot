@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Class Conversation
- * @package Commune\Chatbot\Blueprint\Conversation
- */
-
 namespace Commune\Chatbot\Blueprint\Conversation;
 
 use Commune\Chatbot\Blueprint\Message\Message;
@@ -19,6 +14,9 @@ interface Conversation extends ConversationContainer, RunningSpy
     /*------------ create ------------*/
 
     /**
+     * Conversation 容器有一个进程级单例, 用于注册服务.
+     * 每一个请求会重新实例化一次. 判断当前容器是不是在请求中实例化的, 可以用这个方法.
+     *
      * ether conversation container is instanced by request (true)
      * or initialized by chat app to register bindings (false)
      *
@@ -44,7 +42,9 @@ interface Conversation extends ConversationContainer, RunningSpy
     /*------------ conversational ------------*/
 
     /**
-     * conversation 的 trace id, 用于记录各种数据.
+     * conversation 的 trace id, 来自于 MessageRequest
+     * 用于记录调用链, 方便排查问题.
+     *
      * @return string
      */
     public function getTraceId() : string;
@@ -55,14 +55,22 @@ interface Conversation extends ConversationContainer, RunningSpy
      */
     public function getConversationId() : string;
 
+    /**
+     * 获取输入消息的封装对象.
+     * @return IncomingMessage
+     */
     public function getIncomingMessage() : IncomingMessage;
 
     /**
-     * 获取用户
+     * 获取用户信息
      * @return User
      */
     public function getUser() : User;
 
+    /**
+     * 获取 Chat (会话) 信息.
+     * @return Chat
+     */
     public function getChat() : Chat;
 
     /*------------ components ------------*/
@@ -92,6 +100,7 @@ interface Conversation extends ConversationContainer, RunningSpy
 
     /**
      * 回复消息给当前用户
+     *
      * @param Message $message
      * @param bool $immediately
      */
@@ -99,6 +108,11 @@ interface Conversation extends ConversationContainer, RunningSpy
 
 
     /**
+     * 渲染消息, 如果是 reply message, 会使用 renderer 进行渲染.
+     *
+     * @see \Commune\Chatbot\Blueprint\Message\ReplyMsg
+     * @see Renderer
+     *
      * render reply placeholder to real reply messages
      *
      * @param Message $reply
@@ -127,6 +141,7 @@ interface Conversation extends ConversationContainer, RunningSpy
 
     /**
      * 保存要发送的消息.
+     *
      * @param MessageRequest $request
      * @param ConversationMessage $message
      * @param bool $immediatelyBuffer  是否立刻交给 request 去 buffer, 如果这么做就反悔不了了.
@@ -139,11 +154,13 @@ interface Conversation extends ConversationContainer, RunningSpy
 
 
     /**
+     * 获取已有的回复消息.
      * @return ConversationMessage[]
      */
     public function getReplies() : array;
 
     /**
+     * 计算回复消息的数量.
      * @return int
      */
     public function countReplies() : int;

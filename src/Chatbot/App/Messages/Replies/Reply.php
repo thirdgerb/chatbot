@@ -8,6 +8,9 @@ use Commune\Chatbot\Framework\Messages\AbsReply;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Illuminate\Support\Collection;
 
+/**
+ * 最基础的回复消息类型.
+ */
 class Reply extends AbsReply implements ReplyMsg
 {
 

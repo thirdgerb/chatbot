@@ -26,7 +26,9 @@ interface App extends ContainerInterface, \ArrayAccess
     public function make(string $abstract, array $parameters = []) ;
 
     /**
-     * laravel 风格调用一个callable
+     * 调用一个 callable, 并对它进行依赖注入
+     * 可以注入 Dialog 相关的一些上下文对象.
+     *
      * @param callable $caller
      * @param array $parameters
      * @param string $method

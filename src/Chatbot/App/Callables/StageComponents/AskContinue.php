@@ -100,7 +100,7 @@ class AskContinue implements StageComponent
         $hearing = $stage
             ->onStart($this->scripts[$index])
             ->buildTalk()
-            ->askVerbose($this->query, [$this->default])
+            ->askVerbal($this->query, [$this->default])
             ->hearing();
 
         // help

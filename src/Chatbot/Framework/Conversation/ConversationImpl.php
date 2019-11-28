@@ -11,7 +11,6 @@ use Commune\Chatbot\Blueprint\Conversation\Ability;
 use Commune\Chatbot\Blueprint\Conversation\Chat;
 use Commune\Chatbot\Blueprint\Conversation\Conversation as Blueprint;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
-use Commune\Chatbot\Blueprint\Conversation\ConversationContainer;
 use Commune\Chatbot\Blueprint\Conversation\ConversationLogger;
 use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
 use Commune\Chatbot\Blueprint\Conversation\IncomingMessage;
@@ -148,6 +147,7 @@ class ConversationImpl implements Blueprint
 
     public function isAbleTo(string $abilityInterfaceName): bool
     {
+        // 权限名需要是 Ability 的子类
         if (!is_a($abilityInterfaceName, Ability::class, TRUE)) {
             $this->getLogger()->warning(
                 __METHOD__
@@ -157,6 +157,7 @@ class ConversationImpl implements Blueprint
             return false;
         }
 
+        // 权限 interface 是否已经在 IoC容器里注册了服务.
         if (!$this->has($abilityInterfaceName)) {
             return false;
         }

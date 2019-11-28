@@ -9,22 +9,24 @@ use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 
+/**
+ * 在 Dialog 对象中发布回复的 api
+ */
 interface DialogSpeech extends Speech
 {
 
     /**
+     * 增加全局的 slots
+     *
      * @param array $slots
      * @return static
      */
     public function withSlots(array $slots);
 
     /**
-     * 使用 slots, 在接下来的发言中会共享这些slots
-     *
-     * slots 可以用 key => value 的形式
-     * 也可以只用 key, 此时会默认从数据源 $from 里获取.
-     *
-     * $from 为 null 的时候, 认为是当前的 context自身.
+     * 使用 Context 对象来填充 slots
+     * 如果没有定义 $keys, 调用 $context->toAttributes() 获得具体参数
+     * 如果定义了 keys, 则传入的 slots 只是 Context 对象这些 key 的值.
      *
      * @param Context|null $from
      * @param array $keys
@@ -34,6 +36,7 @@ interface DialogSpeech extends Speech
 
 
     /**
+     * 直接传入一个 ReplyMsg 对象
      * @param ReplyMsg $reply
      * @return static
      */
@@ -43,12 +46,14 @@ interface DialogSpeech extends Speech
 
 
     /**
+     * 开启段落, 多个消息会被合并成一段
      * @param string $joint
      * @return static
      */
     public function beginParagraph(string $joint = '');
 
     /**
+     * 结束一个段落
      * @return static
      */
     public function endParagraph();
@@ -57,22 +62,32 @@ interface DialogSpeech extends Speech
     /*------ 默认的问题. ------*/
 
     /**
+     * 用自己封装的 Question 对象提问
      * @param Question $question
      * @return static
      */
     public function ask(Question $question);
 
     /**
-     * @param string $question
-     * @param array $suggestions
+     * 要求一个口头的, 或者文字类型的回答.
+     *
+     * 通常搭配 Hearing::isInstanceOf(Verbal::class) 使用
+     *
+     * @param string $question 默认的问题.
+     * @param array $suggestions 给出的建议.
      * @return static
      */
-    public function askVerbose(
+    public function askVerbal(
         string $question,
         array $suggestions = []
     );
 
     /**
+     * 要求用户在给出的建议中选择一个值.
+     * 选择的方式, 可以是对索引的唯一匹配, 或者对值的唯一匹配.
+     *
+     * 通常搭配 Hearing::isChoice 使用
+     *
      * @param string $question
      * @param array $suggestions
      * @param int|string|null $default
@@ -84,19 +99,11 @@ interface DialogSpeech extends Speech
         $default = null
     );
 
-    /**
-     * @param string $question
-     * @param array $suggestions
-     * @param string|null $default
-     * @return static
-     */
-    public function askSelects(
-        string $question,
-        array $suggestions,
-        string $default = null
-    );
 
     /**
+     * 要求用户对一个问题表达确认或否认.
+     *
+     *
      * @param string $question
      * @param bool $default
      * @param string|null $yes
@@ -109,6 +116,23 @@ interface DialogSpeech extends Speech
         string $yes = null,
         string $no = null
     );
+
+    /**
+     * 要求用户在给出的建议中选择若干个值.
+     *
+     * 此功能还在评估中, 未来可能用标准的多轮对话组件取代.
+     *
+     * @param string $question
+     * @param array $suggestions
+     * @param string|null $default
+     * @return static
+     */
+    public function askSelects(
+        string $question,
+        array $suggestions,
+        string $default = null
+    );
+
 
 
     /*------ 基于 NLU + Intent 实现的对话. 吸收了 DuerOS 的做法. 但不完全兼容. ------*/

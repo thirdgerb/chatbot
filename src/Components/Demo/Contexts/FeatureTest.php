@@ -301,7 +301,7 @@ EOF
         return $stage->onStart(function(Dialog $dialog) {
             $dialog->say()
                 ->info('test stage start')
-                ->askVerbose('输入一个值 (会展示这个值然后跳到下一步)');
+                ->askVerbal('输入一个值 (会展示这个值然后跳到下一步)');
             return $dialog->wait();
 
         })->wait(function(Dialog $dialog, Message $message) {

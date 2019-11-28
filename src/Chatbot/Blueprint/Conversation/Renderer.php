@@ -4,6 +4,9 @@
 namespace Commune\Chatbot\Blueprint\Conversation;
 
 /**
+ * 将回复消息通过模板 ReplyTemplate 进行渲染, 得到真正要回复的消息.
+ *
+ * 
  * render reply message to real outgoing messages
  * usually registered in process container
  */

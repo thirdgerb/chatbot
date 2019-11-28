@@ -309,7 +309,7 @@ class EpisodeTask extends TaskDef
 
         $commands = $this->episode->commands;
 
-        return $builder->askVerbose(
+        return $builder->askVerbal(
                 'unheardLike.dialog.askContinue',
                 [
                     $commands->toContinue,
@@ -526,7 +526,7 @@ class EpisodeTask extends TaskDef
     {
         $back = $this->episode->commands->back;
         return $stage->buildTalk()
-            ->askVerbose(
+            ->askVerbal(
                 'unheardLike.calling.askSetTime',
                 [
                     '00:05',

@@ -71,8 +71,7 @@ class DialogSpeechImpl extends SpeechImpl implements DialogSpeech
             $value = $from->__get($key);
             $slots[$key] = $value;
         }
-        $this->slots = $this->slots + $slots;
-        return $this;
+        return $this->withSlots($slots);
     }
 
     protected function mergeSlots(array $slots = []) : array
@@ -123,7 +122,7 @@ class DialogSpeechImpl extends SpeechImpl implements DialogSpeech
     }
 
 
-    public function askVerbose(
+    public function askVerbal(
         string $question,
         array $suggestions = []
     )

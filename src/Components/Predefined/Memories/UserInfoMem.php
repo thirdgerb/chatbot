@@ -35,7 +35,7 @@ class UserInfoMem extends MemoryDef
     public function __onName(Stage $stage) : Navigator
     {
         return $stage->buildTalk()
-            ->askVerbose('我应该如何称呼您')
+            ->askVerbal('我应该如何称呼您')
             ->hearing()
             ->isAnswer(function(Dialog $dialog, Answer $answer){
                 $result = $answer->toResult();

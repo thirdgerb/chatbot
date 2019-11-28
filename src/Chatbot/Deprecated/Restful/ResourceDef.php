@@ -354,7 +354,7 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
     public function __onPage(Stage $stage) : Navigator
     {
         return $stage->buildTalk()
-            ->askVerbose($this->askForPage)
+            ->askVerbal($this->askForPage)
             ->wait()
             ->hearing()
                 ->isAnswer(function(Dialog $dialog, Answer $answer){
@@ -380,7 +380,7 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
     public function __onEditResource(Stage $stage) : Navigator
     {
         return $stage->buildTalk()
-            ->askVerbose($this->askForId)
+            ->askVerbal($this->askForId)
             ->wait()
             ->hearing()
             ->isAnswer(function(Dialog $dialog, Answer $answer){
@@ -427,7 +427,7 @@ abstract class ResourceDef extends OOContext implements ResourceHelper
     public function __onDelResource(Stage $stage) : Navigator
     {
         return $stage->buildTalk()
-            ->askVerbose($this->askForId)
+            ->askVerbal($this->askForId)
             ->wait()
             ->hearing()
             ->isAnswer(function (Dialog $dialog, Answer $answer) {
