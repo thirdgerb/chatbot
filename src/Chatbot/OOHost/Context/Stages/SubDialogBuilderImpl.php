@@ -177,6 +177,7 @@ class SubDialogBuilderImpl implements SubDialogBuilder, RunningSpy
             return new CallbackStage($subDialog, $subDialog->currentMessage());
         }
 
+        // 其它状态都不会执行.
         return $this->stage->defaultNavigator();
     }
 

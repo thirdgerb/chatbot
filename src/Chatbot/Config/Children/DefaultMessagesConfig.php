@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Class DefaultMessage
- * @package Commune\Chatbot\Config\Children
- */
-
 namespace Commune\Chatbot\Config\Children;
 
 
@@ -27,6 +22,9 @@ class DefaultMessagesConfig extends Option
     public static function stub(): array
     {
         return [
+            // 这些消息通常会经过 TranslateTemp 来渲染
+            // 会调用 Translator 模块.
+            // 真正回复给用户的文本通常在指定的翻译文件中.
             'platformNotAvailable' => 'system.platformNotAvailable',
             'chatIsTooBusy' => 'system.chatIsTooBusy',
             'unsupported' => 'system.unsupported',

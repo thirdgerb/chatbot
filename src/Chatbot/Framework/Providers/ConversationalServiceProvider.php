@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Class ConversationalServiceProvider
- * @package Commune\Chatbot\Framework\Providers
- */
-
 namespace Commune\Chatbot\Framework\Providers;
 
 

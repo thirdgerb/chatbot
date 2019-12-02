@@ -17,7 +17,7 @@ use Commune\Chatbot\OOHost\Session\SessionInstance;
  * @property-read string $name
  * @property-read Context $self
  * @property-read Dialog $dialog
- * @property-read null|Message|Context $value
+ * @property-read null|Message|Context $message
  * @property Navigator|null $navigator
  */
 abstract class AbsStageRoute implements Stage
@@ -33,9 +33,9 @@ abstract class AbsStageRoute implements Stage
     protected $self;
 
     /**
-     * @var mixed
+     * @var null|Message|Context
      */
-    protected $value;
+    protected $message;
 
     /**
      * @var Dialog
@@ -70,7 +70,7 @@ abstract class AbsStageRoute implements Stage
             $value = $value->toInstance($this->dialog->session);
         }
 
-        $this->value = $value;
+        $this->message = $value;
     }
 
     protected function setNavigator(Navigator $navigator = null)
@@ -87,7 +87,7 @@ abstract class AbsStageRoute implements Stage
         $this->setNavigator($this->dialog->app->callContextInterceptor(
             $this->self,
             $interceptor,
-            $this->value
+            $this->message
         ));
     }
 
@@ -133,6 +133,18 @@ abstract class AbsStageRoute implements Stage
         }
         return $this;
     }
+
+    public function isExiting(): bool
+    {
+        return false;
+    }
+
+
+    public function onExiting(callable $interceptor): Stage
+    {
+        return $this;
+    }
+
 
     public function always(callable $interceptor): Stage
     {
@@ -249,7 +261,7 @@ abstract class AbsStageRoute implements Stage
             );
         }
 
-        return $this->dialog->hear($this->value);
+        return $this->dialog->hear($this->message);
     }
 
 

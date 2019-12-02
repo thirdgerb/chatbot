@@ -43,7 +43,8 @@ use Commune\Chatbot\App\Commands;
  * 预定义的memory
  *
  * @property-read callable|string|null $hearingFallback
- * Hearing环节默认的fallback单元.
+ * Hearing环节默认的fallback单元, 用于实现拒答逻辑
+ * 可以是类名, 如果是类名, 将会尝试依赖注入构造函数. 可以看这个例子 @see \Commune\Components\SimpleChat\Callables\SimpleChatAction
  *
  */
 

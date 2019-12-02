@@ -216,9 +216,10 @@ class TodoImpl implements ToDoWhileHearing
         return $this;
     }
 
-    public function isFulfillIntent(
+    public function isPreparedIntent(
         string $intentName,
-        callable $intentAction = null
+        callable $whenPrepared = null,
+        callable $whenNotPrepared = null
     ): Matcher
     {
         call_user_func_array([$this->hearing, __FUNCTION__], func_get_args());

@@ -43,7 +43,4 @@ abstract class MessageIntent extends AbsCmdIntent
         $depending->onAnnotations();
     }
 
-    public function __exiting(Exiting $listener): void
-    {
-    }
 }

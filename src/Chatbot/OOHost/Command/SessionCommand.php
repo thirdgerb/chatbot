@@ -19,9 +19,28 @@ use Symfony\Component\Console\Input\InputOption;
  */
 abstract class SessionCommand
 {
+    /**
+     * 命令的规则定义. 使用了 Laravel 的命令 parser
+     *
+     * 具体的定义方法 @see https://laravel.com/docs/6.x/artisan#defining-input-expectations
+     */
     const SIGNATURE = 'test';
 
+    /**
+     * 命令的简介, 用于介绍命令的功能.
+     */
     const DESCRIPTION = '';
+
+    /**
+     * 是否让 Session 保存状态变更.
+     * true 的话, Session 不对本轮对话进行任何记录.
+     *
+     * @var bool
+     */
+    protected $sneak = true;
+
+
+    /*------ 缓存类属性 ------*/
 
     protected static $definitions = [];
 
@@ -34,11 +53,6 @@ abstract class SessionCommand
      * @var Dialog
      */
     protected $dialog;
-
-    /**
-     * @var bool
-     */
-    protected $sneak = true;
 
     abstract public function handle(CommandMsg $message, Session $session, SessionCommandPipe $pipe) : void;
 

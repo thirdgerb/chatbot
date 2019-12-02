@@ -15,7 +15,7 @@ use Commune\Support\SoundLike\SoundLikeInterface;
 interface Matcher
 {
 
-    /*------- event matcher -------*/
+    /*------- 匹配事件 -------*/
 
     /**
      * 如果不主动拦截, 则event 消息都会被忽视.
@@ -33,23 +33,7 @@ interface Matcher
     public function isEventIn(array $eventName, callable $action = null) : Matcher;
 
 
-    /**
-     * 遇到了用户寻求帮助, 则会执行 helping 的内容.
-     *
-     * help 默认的两种匹配方式
-     * - is('mark')
-     * - is(HelpInt)
-     *
-     * @see HelpInt
-     *
-     * @param callable|null $helping
-     * @param string $mark  默认表示 help 的标记, 方便快速匹配. 默认是 ?
-     * @return static
-     */
-    public function onHelp(callable $helping = null, string $mark = '?') : Matcher;
-
-
-    /*------- expect -------*/
+    /*------- php matcher -------*/
 
     /**
      * 自定义的监听.
@@ -67,12 +51,9 @@ interface Matcher
         callable $action = null
     ) : Matcher;
 
-    /*------- php matcher -------*/
 
     /**
-     * 检查 message 是否等于目标字符串. 精确匹配.
-     *
-     * if message->getText() exactly match the $text
+     * 检查 message 的 trimmedText 是否等于目标字符串. 不区分大小写, 精确匹配
      *
      * @param string $text
      * @param callable|null $action
@@ -96,10 +77,11 @@ interface Matcher
 
     /**
      * 通过正则匹配获取数据.
-     * keys 命中的参数会作为变量传递给 interceptor
-     * 最好不要用这种方法. 而是依赖 NLU 去匹配.
-     *
+     * 正则按顺序获取的参数, 会分配到一个数组中, 键名依次用 $keys 的值
+     * 匹配后的结果作为 ArrayMessage 传递给 $action
      * 此外, 也可以用 matchEntity() 方法调用 php 实现的EntityExtractor, 原理类似敏感词匹配.
+     *
+     * 最好不要用这种方法. 而是依赖 NLU 去匹配.
      *
      * use regex to define condition.
      * the variable extract by regex pattern,
@@ -174,6 +156,20 @@ interface Matcher
     ) : Matcher ;
 
 
+    /**
+     * 如果nlu没匹配上, 就用系统自带的 entity extractor 去匹配.
+     * 通常就是关键词匹配算法.
+     *
+     * @param string $entityName
+     * @param callable|null $action
+     * @return static
+     */
+    public function matchEntity(
+        string $entityName,
+        callable $action = null
+    ) : Matcher;
+
+
     /*------- question matcher -------*/
 
     /**
@@ -244,24 +240,6 @@ interface Matcher
     ) : Matcher;
 
 
-    /**
-     * 如果nlu没匹配上, 就用系统自带的 entity extractor 去匹配.
-     * 通常就是关键词匹配算法.
-     *
-     * @param string $entityName
-     * @param callable|null $action
-     * @return static
-     */
-    public function matchEntity(
-        string $entityName,
-        callable $action = null
-    ) : Matcher;
-
-
-
-
-    /*------- nlu matcher -------*/
-
     /*------- feelings -------*/
 
     /**
@@ -294,8 +272,8 @@ interface Matcher
     /*------- intents -------*/
 
     /**
-     * 由 NLU 传递来的任何intent.
-     * 不会直接执行. 需要定义 then()
+     * 只要存在任何命中意图, $session->getMatchedIntent()
+     * 就会执行.
      *
      * @param callable|null $intentAction    $message is IntentMessage
      * @return static
@@ -307,10 +285,11 @@ interface Matcher
 
 
     /**
+     * 匹配单个意图. $session->getPossibleIntent($intentName) 如果存在
      * 如果没有 intentAction, 不会立刻执行.
      *
-     * @param string $intentName
-     * @param callable|null $intentAction
+     * @param string $intentName  可以是意图的 ContextName, 也可以是意图的类名
+     * @param callable|null $intentAction 匹配到的 IntentMessage 也将作为可依赖注入的参数, 可以直接用类名来依赖注入
      * @return static
      */
     public function isIntent(
@@ -320,15 +299,19 @@ interface Matcher
 
 
     /**
-     * 如果是intent, 并且没有fulfill, 会先完成entity的输入.
+     * 如果匹配到了 $intentName
+     * 但获取的 IntentMessage 实例可能没有获取所有必填的 Entities
+     * 可以用这个方法来处理两种情形.
      *
      * @param string $intentName
-     * @param callable|null $intentAction
+     * @param callable|null $whenPrepared  获得的 IntentMessage::isPrepared() === true
+     * @param callable|null $whenNotPrepared  获得的 IntentMessage::isPrepared() ===false
      * @return static
      */
-    public function isFulfillIntent(
+    public function isPreparedIntent(
         string $intentName,
-        callable $intentAction = null
+        callable $whenPrepared = null,
+        callable $whenNotPrepared = null
     ) : Matcher;
 
 
@@ -371,6 +354,23 @@ interface Matcher
         $expect,
         callable $interceptor = null
     ) : Matcher;
+
+    /*------- help -------*/
+
+    /**
+     * 遇到了用户寻求帮助, 则会执行 helping 的内容.
+     *
+     * help 默认的两种匹配方式
+     * - is('mark')
+     * - is(HelpInt)
+     *
+     * @see HelpInt
+     *
+     * @param callable|null $helping
+     * @param string $mark  默认表示 help 的标记, 方便快速匹配. 默认是 ?
+     * @return static
+     */
+    public function onHelp(callable $helping = null, string $mark = '?') : Matcher;
 
 
 }

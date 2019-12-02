@@ -12,6 +12,7 @@ use Commune\Support\Utils\StringUtils;
 class QuitInt extends NavigateIntent
 {
 
+    // 定义了意图的命令名称.
     const SIGNATURE = 'quit';
 
     const DESCRIPTION = '退出当前会话';
@@ -25,6 +26,5 @@ class QuitInt extends NavigateIntent
     {
         return $dialog->quit();
     }
-
 
 }

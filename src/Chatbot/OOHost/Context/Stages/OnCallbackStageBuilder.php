@@ -66,7 +66,7 @@ class OnCallbackStageBuilder implements OnCallbackStage
     {
         // 正常的callback
         if ($this->isAvailable()) {
-            return $this->stage->dialog->hear($this->stage->value);
+            return $this->stage->dialog->hear($this->stage->message);
         }
 
         return new FakeHearing(

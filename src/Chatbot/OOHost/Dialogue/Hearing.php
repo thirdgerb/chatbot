@@ -220,8 +220,4 @@ interface Hearing extends Matcher
      */
     public function runIntentIn(array $intentNames) : Hearing;
 
-
-    /*---------- debug 模式 ----------*/
-
-    public function debugMatch() : Hearing;
 }

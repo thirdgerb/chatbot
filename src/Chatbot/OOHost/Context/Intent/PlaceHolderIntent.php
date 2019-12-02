@@ -38,17 +38,9 @@ class PlaceHolderIntent extends AbsIntent
         return $this->_name;
     }
 
-    public static function __depend(Depending $depending): void
-    {
-    }
-
     public function __onStart(Stage $stage): Navigator
     {
         return $stage->dialog->fulfill();
-    }
-
-    public function __exiting(Exiting $listener): void
-    {
     }
 
     public function getDef(): Definition

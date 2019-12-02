@@ -18,6 +18,7 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Session\Session;
+use Commune\Components\Demo\Cases\Maze\MazeInt;
 use Commune\Components\Predefined\Intents\Dialogue\OrdinalInt;
 use Commune\Components\Demo\Contexts\Features\SubDialogCase;
 use Commune\Components\Demo\Contexts\Testing\GcTask;
@@ -30,6 +31,14 @@ class FeatureTest extends TaskDef
     public static function __depend(Depending $depending): void
     {
     }
+
+    public function __exiting(Exiting $listener): void
+    {
+        $listener
+            ->onCancel(Talker::say()->info('cancel from '. __METHOD__))
+            ->onQuit(Talker::say()->info('quit from '. __METHOD__));
+    }
+
 
     public function __hearing(Hearing $hearing) : void
     {
@@ -51,6 +60,7 @@ class FeatureTest extends TaskDef
                     '语境嵌套' => 'testSubDialog',
                     'askContinue 机制' => 'testAskContinue',
                     'gc 机制' => 'testGc',
+                    'stage exiting 事件' => 'testExiting',
                 ]
             )
         );
@@ -403,10 +413,15 @@ EOF
     }
 
 
-
-    public function __exiting(Exiting $listener): void
+    public function __onTestExiting(Stage $stage) : Navigator
     {
+        return $stage
+            ->onExiting(function(Exiting $exiting){
+                $exiting
+                    ->onCancel(Talker::say()->info('cancel from testExiting Stage'))
+                    ->onQuit(Talker::say()->info('quit from testExiting Stage'));
+            })
+            ->dependOn(MazeInt::class, Redirector::goRestart());
     }
-
 
 }

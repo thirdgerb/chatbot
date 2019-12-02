@@ -146,7 +146,7 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
             return null;
 
         } else {
-            $this->getLogger()->warning(
+            $this->getLogger()->error(
                 'context ' . $self->getName()
                 . ' call interceptor but result is not instance of '
                 . Navigator::class
@@ -343,7 +343,7 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
 
 
         // 运行 __hearing 的component
-        $method = Context::HEARING_MIDDLEWARE_METHOD;
+        $method = Context::HEARING_COMMON_BUILDER;
         if (method_exists($context, $method)) {
             call_user_func([$context, $method], $hearing);
         }

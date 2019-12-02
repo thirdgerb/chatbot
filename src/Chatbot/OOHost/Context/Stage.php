@@ -91,6 +91,12 @@ interface Stage
      */
     public function isIntended() : bool;
 
+
+    /**
+     * @return bool
+     */
+    public function isExiting() : bool;
+
     /*------ 组件化 ------*/
 
     /**
@@ -133,6 +139,9 @@ interface Stage
      * @return Stage
      */
     public function onIntended(callable $interceptor) : Stage;
+
+
+    public function onExiting(callable $interceptor) : Stage;
 
 
     /**

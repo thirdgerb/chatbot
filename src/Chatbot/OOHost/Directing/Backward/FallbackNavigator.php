@@ -35,6 +35,8 @@ abstract class FallbackNavigator extends AbsNavigator
 
         // 防止无限重定向
         if (!$this->skipSelfEvent) {
+
+            // 自身尝试拦截事件. 但有可能造成死循环, 开发者要想清楚.
             $navigator = $context->getDef()->callExiting(
                 static::EVENT,
                 $context,

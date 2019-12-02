@@ -7,7 +7,6 @@ namespace Commune\Chatbot\OOHost\Context\Memory;
 use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\AbsContext;
-use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\OOHost\Exceptions\DataNotFoundException;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -73,10 +72,6 @@ abstract class AbsMemory extends AbsContext implements Memory
     {
         // use memory as data not context
         return $stage->dialog->fulfill();
-    }
-
-    public function __exiting(Exiting $listener): void
-    {
     }
 
     public function lock(int $expire = 1): bool

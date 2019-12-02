@@ -310,9 +310,11 @@ class ContextDefinition implements Definition
 
     protected function registerDepend() : void
     {
-        $builder = new DependingBuilder($this);
         $method = [$this->contextClazz, Context::DEPENDENCY_BUILDER];
-        call_user_func($method, $builder);
+        if (is_callable($method)) {
+            $builder = new DependingBuilder($this);
+            call_user_func($method, $builder);
+        }
     }
 
     /**

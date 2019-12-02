@@ -8,7 +8,6 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\ContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Intent\IntentDefinition;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
-use Commune\Chatbot\OOHost\Session\Session;
 
 /**
  * @method IntentDefinition getDef(string $contextName) : ? Definition

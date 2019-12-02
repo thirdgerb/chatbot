@@ -49,9 +49,11 @@ interface Context extends
 
     // 系统默认的方法.
     // 语境脱出时调用的事件方法名
+    // 必须是  public function __exiting
     const EXITING_LISTENER = '__exiting';
 
     // 定义多轮对话的依赖属性. 属性本身会通过多轮对话来完善, 全完善后才会进入start阶段.
+    // 必须是  public static function __depend
     const DEPENDENCY_BUILDER = '__depend';
 
     // 中间件方法.
@@ -59,12 +61,12 @@ interface Context extends
     // 如果此方法存在, 所有 $dialog->hear(Message $message) 时都会调用此方法,
     // 入参是 Hearing 类.
     // 可以给所有的hearing 定义一些公共的流程.
-    const HEARING_MIDDLEWARE_METHOD = '__hearing';
+    const HEARING_COMMON_BUILDER = '__hearing';
 
     // 如果此方法存在, 所有stage 方法构建时都会调用它.
     // 入参是 Stage, 返回值是 void
     // 可以给所有的stage 定义公共流程.
-    const STAGE_MIDDLEWARE_METHOD = '__staging';
+    const STAGE_COMMON_BUILDER = '__staging';
 
     // 如果此方法存在, 调用 Dialog::hear(), 匹配不到别的意图时
     // 会调用 Hearing::onHelp([$context, '__help']) 方法;
@@ -107,13 +109,13 @@ interface Context extends
      * 定义 Context 依赖的 Entity, 可以是参数, 也可以是另一个 Context
      * @param Depending $depending
      */
-    public static function __depend(Depending $depending) : void;
+    // public static function __depend(Depending $depending) : void;
 
     /**
      * 可以在这里捕获 Context 的逃离事件, 例如 onCancel , onQuit
      * @param Exiting $listener
      */
-    public function __exiting(Exiting $listener) : void;
+    // public function __exiting(Exiting $listener) : void;
 
     /**
      * Context 的初始 stage

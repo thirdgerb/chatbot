@@ -38,16 +38,6 @@ abstract class NavigateIntent extends AbsCmdIntent
         return $stageRoute->dialog->fulfill();
     }
 
-    public static function __depend(Depending $depending): void
-    {
-    }
-
     abstract public function navigate(Dialog $dialog): ? Navigator;
-
-    public function __exiting(Exiting $listener): void
-    {
-    }
-
-
 
 }

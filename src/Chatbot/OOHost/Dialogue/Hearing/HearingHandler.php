@@ -30,7 +30,6 @@ use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 use Commune\Chatbot\Blueprint\Message\QA\Confirmation;
 use Commune\Components\Predefined\Intents\Dialogue\HelpInt;
-use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\SoundLike\SoundLikeInterface;
 
 /**
@@ -729,9 +728,10 @@ class HearingHandler implements Hearing
         return $this->heardIntent($intent, $intentAction);
     }
 
-    public function isFulfillIntent(
+    public function isPreparedIntent(
         string $intentName,
-        callable $intentAction = null
+        callable $whenPrepared = null,
+        callable $whenNotPrepared = null
     ): Matcher
     {
         if (isset($this->navigator)) return $this;
@@ -744,12 +744,16 @@ class HearingHandler implements Hearing
             return $this;
         }
 
+        // 命中了, 并且实现了所有的 Entity
         if ($intent->isPrepared()) {
-            // 命中了.
-            return $this->heardIntent($intent, $intentAction);
+            return $this->heardIntent($intent, $whenPrepared);
         }
 
-        $this->setNavigator($this->dialog->redirect->dependOn($intent));
+        // 命中了, 但有 Entity 没有获取到, 或许还需要一个多轮对话去获取.
+        if (isset($whenNotPrepared)) {
+            return $this->heardIntent($intent, $whenNotPrepared);
+        }
+
         return $this;
     }
 
@@ -812,10 +816,6 @@ class HearingHandler implements Hearing
     {
         if (isset($this->navigator)) return $this;
 
-        if ($this->message instanceof IntentMessage) {
-            return $this->heardIntent($this->message, $intentAction);
-        }
-
         $session = $this->dialog->session;
         $matched = $session->getMatchedIntent();
         if (!isset($matched)) {
@@ -839,7 +839,6 @@ class HearingHandler implements Hearing
         callable $intentAction = null
     ) : Hearing
     {
-
         $this->isMatched = true;
 
         // 有拦截的情况
@@ -1043,7 +1042,8 @@ class HearingHandler implements Hearing
 
         // 如果是 event 消息的话. 当没听到.
         if ($this->message instanceof EventMsg) {
-            return $this->navigator = $this->dialog->rewind();
+            $this->dialog->session->beSneak();
+            return $this->dialog->wait();
         }
 
         // 如果 help 方法存在, 则执行默认的 help
@@ -1072,7 +1072,7 @@ class HearingHandler implements Hearing
         $this->runFallback();
         $this->runDefaultFallback();
 
-        return $this->navigator ?? $this->dialog->missMatch();
+        return $this->heardOrMiss();
     }
 
     public function todo(callable $todo): ToDoWhileHearing
@@ -1080,43 +1080,4 @@ class HearingHandler implements Hearing
         $this->isMatched = false;
         return new TodoImpl($this, $todo);
     }
-
-    /*------- debug 模式 --------*/
-
-    protected $debugMatch = false;
-
-    public function debugMatch(): Hearing
-    {
-        $this->debugMatch = true;
-        return $this;
-    }
-
-
-    public function __set($name, $value)
-    {
-        if ($name === 'isMatched') {
-            $this->matched = $value;
-            // debug match
-            if ($value === true && $this->debugMatch) {
-                $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-
-                $this->dialog->say()
-                    ->info(
-                        json_encode(
-                            $trace[1],
-                            ArrayAndJsonAble::PRETTY_JSON
-                        )
-                    );
-            }
-        }
-    }
-
-    public function __get($name)
-    {
-        if ($name === 'isMatched') {
-            return $this->matched;
-        }
-        return null;
-    }
-
 }

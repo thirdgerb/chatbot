@@ -39,8 +39,4 @@ abstract class ActionIntent extends AbsCmdIntent
 
     abstract public function action(Stage $stageRoute): Navigator;
 
-    abstract public function __exiting(Exiting $listener): void;
-
-
-
 }

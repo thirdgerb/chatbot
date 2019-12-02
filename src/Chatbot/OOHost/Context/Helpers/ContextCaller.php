@@ -12,6 +12,7 @@ use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Exiting\ExitingCatcher;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\Stages\CallbackStageRoute;
+use Commune\Chatbot\OOHost\Context\Stages\ExitingStageRoute;
 use Commune\Chatbot\OOHost\Context\Stages\FallbackStageRoute;
 use Commune\Chatbot\OOHost\Context\Stages\IntendedStageRoute;
 use Commune\Chatbot\OOHost\Context\Stages\StartStageRoute;
@@ -33,9 +34,36 @@ trait ContextCaller
     ): ? Navigator
     {
         $exiting = new ExitingCatcher($exiting, $self, $dialog, $callback);
-        $method = Context::EXITING_LISTENER;
-        call_user_func([$self, $method], $exiting);
-        return $exiting->navigator;
+
+        $stage = $dialog->history->currentTask()->getStage();
+        $this->checkStageExists($stage);
+
+        $stageRoute = new ExitingStageRoute($stage, $exiting);
+        $caller = $this->getStageCaller($stage);
+
+        try {
+
+            // 先检查 Stage 是否存在退出逻辑.
+            call_user_func($caller, $stageRoute);
+            $navigator = $exiting->navigator;
+            if (isset($navigator)) {
+                return $navigator;
+            }
+
+            // 如果 Stage 自带退出逻辑没有生效, 则检查 Context 是否定义了通用的退出逻辑.
+            $method = Context::EXITING_LISTENER;
+            if (method_exists($self, $method)) {
+                call_user_func([$self, $method], $exiting);
+            }
+
+            // 无论如何, 都只返回 Exiting 自己的 Navigator, 允许为 null.
+            return $exiting->navigator;
+
+        } catch (NavigatorException $e) {
+
+            return $e->getNavigator();
+        }
+
     }
 
     protected function checkStageExists(string $stage) : void
@@ -94,8 +122,7 @@ trait ContextCaller
         $stageRoute = new StartStageRoute(
             $stage,
             $self,
-            $dialog,
-            null
+            $dialog
         );
 
         return $this->callStage($stage, $stageRoute);
@@ -162,7 +189,7 @@ trait ContextCaller
         try {
 
             $context = $stageRoute->self;
-            $method = Context::STAGE_MIDDLEWARE_METHOD;
+            $method = Context::STAGE_COMMON_BUILDER;
             if (method_exists($context, $method)) {
                 $context->{$method}($stageRoute);
             }
