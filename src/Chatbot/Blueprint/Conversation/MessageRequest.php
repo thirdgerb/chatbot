@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Class Request
- * @package Commune\Chatbot\Blueprint\Conversation
- */
-
 namespace Commune\Chatbot\Blueprint\Conversation;
 
 
@@ -16,6 +11,7 @@ use Commune\Chatbot\Blueprint\Exceptions\RequestExceptionInterface;
  */
 interface MessageRequest
 {
+    /*------- 系统方法 --------*/
 
     /**
      * request 和 conversation 合体时调用.
@@ -101,7 +97,8 @@ interface MessageRequest
     public function fetchMessage() : Message;
 
     /**
-     * 从 input 中获取消息ID, 或者生成一个ID, 不变.
+     * 从 input 中获取消息ID, 或者生成一个ID.
+     * 需要生成 ID 时, 应当调用 generateMessageId() 方法
      *
      * fetch message id from request input, or generate one
      *
@@ -197,7 +194,9 @@ interface MessageRequest
     /*-------- finish --------*/
 
     /**
-     * 完成请求. 清理掉可能造成内存泄露的属性.
+     * 完成请求. 
+     * 所有消息应该在这一步完成最终处理.
+     * 清理掉可能造成内存泄露的属性.
      *
      * complete request and do some cleanup
      */

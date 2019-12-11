@@ -9,15 +9,18 @@ use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionPipe;
 use Commune\Components\Predefined\Intents;
 
+/**
+ * 导航管道. 定义在这里的意图会最优先进行匹配, 匹配陈宫给后会调用 IntentMessage::navigate 方法.
+ */
 class NavigationPipe implements SessionPipe
 {
     protected $navigationIntents = [
-        Predefined\Navigation\HomeInt::class,
-        Predefined\Navigation\BackwardInt::class,
-        Predefined\Navigation\QuitInt::class,
-        Predefined\Navigation\CancelInt::class,
-        Predefined\Navigation\RepeatInt::class,
-        Predefined\Navigation\RestartInt::class,
+        Intents\Navigation\HomeInt::class,
+        Intents\Navigation\BackwardInt::class,
+        Intents\Navigation\QuitInt::class,
+        Intents\Navigation\CancelInt::class,
+        Intents\Navigation\RepeatInt::class,
+        Intents\Navigation\RestartInt::class,
     ];
 
 

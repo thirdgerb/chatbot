@@ -21,6 +21,14 @@ class RunningSpyCmd extends SessionCommand
 
     public function handle(CommandMsg $message, Session $session, SessionCommandPipe $pipe): void
     {
+        $isRunning = RunningSpies::isRunning();
+
+        if (! $isRunning) {
+            $this->say()->error('runningSpy is not running');
+            return;
+        }
+
+
         $detail = $message['--detail'] ?? false;
 
         $classes = RunningSpies::getSpies();

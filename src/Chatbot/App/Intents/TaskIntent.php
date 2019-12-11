@@ -9,9 +9,9 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 /**
- * 可以当做context 来使用的intent
+ * 可以当做 Task 来使用的intent
  */
-abstract class ContextIntent extends AbsCmdIntent
+abstract class TaskIntent extends AbsCmdIntent
 {
 
     const DESCRIPTION = 'should define description';

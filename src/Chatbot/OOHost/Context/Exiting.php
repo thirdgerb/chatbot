@@ -1,7 +1,7 @@
 <?php
 
-
 namespace Commune\Chatbot\OOHost\Context;
+
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 

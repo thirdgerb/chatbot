@@ -5,9 +5,7 @@ namespace Commune\Components\Demo\Cases\Maze;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
-
-use Commune\Chatbot\App\Intents\ActionIntent;
-
+use Commune\Chatbot\App\Intents\TaskIntent;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Dialogue\Hearing;
@@ -22,7 +20,7 @@ use Commune\Components\Demo\Cases\Maze\Tasks\PlayMaze;
  * @property-read UserPlayHistory $played
 
  */
-class MazeInt extends ActionIntent
+class MazeInt extends TaskIntent
 {
 
     const SIGNATURE = 'maze';
@@ -103,7 +101,7 @@ class MazeInt extends ActionIntent
      * @param Stage $stage
      * @return Navigator
      */
-    public function action(Stage $stage): Navigator
+    public function __onStart(Stage $stage): Navigator
     {
 
         // 用户不是第一次玩.

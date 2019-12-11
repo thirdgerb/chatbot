@@ -1042,7 +1042,7 @@ class HearingHandler implements Hearing
 
         // 如果是 event 消息的话. 当没听到.
         if ($this->message instanceof EventMsg) {
-            $this->dialog->session->beSneak();
+            $this->dialog->history->rewind();
             return $this->dialog->wait();
         }
 

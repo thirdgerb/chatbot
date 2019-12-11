@@ -10,12 +10,22 @@ trait RunningSpyTrait
 
     public function addRunningTrace(string $traceId, string $id): void
     {
+        // 如果功能没启用, 则不存储
+        if (!RunningSpies::isRunning()) {
+            return;
+        }
+
         self::$runningSpyTraces[$traceId] = $id;
         RunningSpies::addSpy(static::class);
     }
 
     public function removeRunningTrace(string $traceId = null): void
     {
+        // 如果功能没启用, 则不存储
+        if (!RunningSpies::isRunning()) {
+            return;
+        }
+
         if (isset($traceId)) {
             unset(self::$runningSpyTraces[$traceId]);
         }

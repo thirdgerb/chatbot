@@ -11,6 +11,8 @@ use Commune\Chatbot\Framework\Events\ChatbotPipeEvent;
 use Commune\Chatbot\Framework\Events\ChatbotPipeStart;
 
 /**
+ * 信号机制. 暂时不用了, 思路有变化.
+ *
  * @deprecated
  */
 abstract class AbsSignal implements Signal

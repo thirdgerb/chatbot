@@ -8,7 +8,7 @@ use Commune\Support\Option;
 use Psr\Log\LogLevel;
 
 /**
- * @property-read string $path
+ * @property-read string $path 日志文件存储的目录
  * @property-read int $days  为0 表示不轮换, 否则会按日换文件.
  * @property-read string $level 日志级别.
  * @property-read bool $bubble 是否冒泡到别的handler

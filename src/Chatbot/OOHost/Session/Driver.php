@@ -26,27 +26,60 @@ interface Driver extends RunningSpy
 
     /**
      * 保存 snapshot
+     *
      * @param Snapshot $snapshot
      * @param int $expireSeconds
      */
     public function saveSnapshot(Snapshot $snapshot, int $expireSeconds = 0) : void;
 
+    /**
+     * 通过 belongsTo 获取一个 Snapshot
+     * @param string $sessionId
+     * @param string $belongsTo
+     * @return Snapshot|null
+     */
     public function findSnapshot(string $sessionId, string $belongsTo) : ? Snapshot;
 
+    /**
+     * 清除掉一个 Snapshot
+     * @param string $sessionId
+     * @param string $belongsTo
+     */
     public function clearSnapshot(string $sessionId, string $belongsTo) : void;
 
     /*------- yielding -------*/
 
+    /**
+     * @param Session $session
+     * @param Yielding $yielding
+     */
     public function saveYielding(Session $session, Yielding $yielding) : void;
 
+    /**
+     * @param string $contextId
+     * @return Yielding|null
+     */
     public function findYielding(string $contextId) : ? Yielding;
 
 
 
     /*------- context -------*/
 
+    /**
+     * 保存一个 Context 数据. Memory 必须持久话, 其它数据可以考虑存储在缓存中.
+     *
+     * @param Session $session
+     * @param Context $context
+     */
     public function saveContext(Session $session, Context $context) : void;
 
+    /**
+     * 根据 id 获取一个 Context 对象.
+     *
+     * @param Session $session
+     * @param string $contextId
+     * @return Context|null
+     */
     public function findContext(Session $session, string $contextId) : ? Context;
 
 
@@ -63,6 +96,10 @@ interface Driver extends RunningSpy
      */
     public function getGcCounts(string $sessionId) : array;
 
+    /**
+     * @param string $sessionId
+     * @param array $counts
+     */
     public function saveGcCounts(string $sessionId, array $counts) : void;
 
 

@@ -20,7 +20,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  * 一个 Context 的多轮对话生命周期中, 势必要经过多个 stage.
  *
  * 最基本的单轮对话是: bot说话(可选) -> 用户说话 -> bot 回复.
- * 在分形几何式的多轮对话中, 一个 stage 期待的可能不只是用户的消息, 而是另一个多轮对话的结果.
+ * 在分形式的多轮对话中, 一个 stage 期待的可能不只是用户的消息, 而是另一个多轮对话的结果.
  * 此外 A Context 进入到 c stage 时, 可能因为种种原因而暂时中断, 直到重新被重新唤醒.
  *
  *

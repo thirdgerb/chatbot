@@ -105,6 +105,8 @@ interface Context extends
      */
     public function nameEquals(string $name) : bool;
 
+    /*--------- magic method ---------*/
+
     /**
      * 定义 Context 依赖的 Entity, 可以是参数, 也可以是另一个 Context
      * @param Depending $depending
@@ -117,6 +119,21 @@ interface Context extends
      */
     // public function __exiting(Exiting $listener) : void;
 
+
+    /**
+     * 这个方法可以定义一个 Context 内部所有 hearing 的共用方法.
+     * @param \Commune\Chatbot\OOHost\Dialogue\Hearing $hearing
+     */
+    //public function __hearing(Hearing $hearing) : void;
+
+    /**
+     * 这个方法可以定义一个 Context 内部所有 Stage 的共用方法.
+     * @param Stage $stage
+     */
+    //public function __staging(Stage $stage) : void;
+
+    /*--------- stage ---------*/
+
     /**
      * Context 的初始 stage
      * @param Stage $stage
@@ -124,26 +141,33 @@ interface Context extends
      */
     public function __onStart(Stage $stage): Navigator;
 
-//    /**
-//     * 这个方法可以定义一个 Context 内部所有 hearing 的共用方法.
-//     * @param Hearing $hearing
-//     */
-//    public function __hearing(Hearing $hearing) : void;
+    /*--------- attributes 当前上下文信息 ---------*/
 
-//    /**
-//     * 这个方法可以定义一个 Context 内部所有 Stage 的共用方法.
-//     * @param Stage $stage
-//     */
-//    public function __staging(Stage $stage) : void;
+    /**
+     * 检查是否存在一个上下文记忆信息
+     * @param string $name
+     * @return bool
+     */
+    public function hasAttribute(string $name) : bool;
 
-    /*--------- value ---------*/
-
-    public function hasAttribute(string $name);
-
+    /**
+     * 获取一个上下文记忆信息
+     * @param string $name
+     * @return mixed
+     */
     public function getAttribute(string $name);
 
+    /**
+     * 设置一个上下文记忆信息
+     * @param string $name
+     * @param $value
+     */
     public function setAttribute(string $name, $value) : void;
 
+    /**
+     * 获取所有的上下文记忆信息.
+     * @return array
+     */
     public function toAttributes() : array;
 
     /*--------- contextual ---------*/

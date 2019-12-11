@@ -54,7 +54,7 @@ class ChatImpl implements Chat
         $this->platformId = $platformId;
         $this->userId = $userId;
         $this->chatbotUserName = $chatbotUserName;
-        $this->chatId = $chatId ?? md5("p:$platformId:u:$userId:c:$chatbotUserName");
+        $this->chatId = $chatId ?? sha1("p:$platformId:u:$userId:c:$chatbotUserName");
 
 
     }

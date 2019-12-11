@@ -7,6 +7,9 @@ namespace Commune\Chatbot\OOHost\Session;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\History\Yielding;
 
+/**
+ * 可以在 Session 中存储的数据,
+ */
 interface SessionData
 {
     const CONTEXT_TYPE = Context::class;

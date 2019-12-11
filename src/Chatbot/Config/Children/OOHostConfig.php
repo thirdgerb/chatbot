@@ -59,7 +59,7 @@ class OOHostConfig extends Option
         return [
             'rootContextName' => 'rootContextName',
             'sceneContextNames' => [],
-            'maxBreakpointHistory' => 3,
+            'maxBreakpointHistory' => 2,
             'maxRedirectTimes' => 20,
             'logRedirectTracking' => true,
             'sessionExpireSeconds' => 3600,

@@ -40,6 +40,9 @@ interface Depending
      * 将一个命令的字符串定义转化为 CommandDefinition
      * 然后基于命令来注册 entity
      *
+     * 命令格式可以参考 laravel 的 command 机制.
+     * @see \Illuminate\Console\Parser
+     *
      * @param string $signature
      * @return Depending
      */

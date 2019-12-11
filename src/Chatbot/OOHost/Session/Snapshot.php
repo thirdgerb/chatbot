@@ -8,6 +8,9 @@ use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\Utils\ArrayUtils;
 
+/**
+ * Session 上下文信息的快照.
+ */
 class Snapshot implements ArrayAndJsonAble
 {
     use ArrayAbleToJson;

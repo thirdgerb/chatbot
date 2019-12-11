@@ -12,6 +12,17 @@ use Commune\Chatbot\OOHost\Dialogue\Redirect;
 use Commune\Chatbot\OOHost\Dialogue\DialogSpeech;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
+/**
+ * Stage::buildTalk 生成的链式调用 API
+ *
+ * 先定义 onStart 状态逻辑, 再定义 onCallback 状态逻辑.
+ * 链式调用的尾部一定返回一个  Navigator
+ *
+ * 部分方法直接返回 Navigator, 可中断构造.
+ *
+ * 当前是 onStart 状态. 可以直接使用所有说话的逻辑.
+ * @see DialogSpeech
+ */
 interface OnStartStage extends DialogSpeech
 {
     /**

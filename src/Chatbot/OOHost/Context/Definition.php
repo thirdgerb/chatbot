@@ -13,9 +13,10 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  *
  * 这相当于用面向对象语言PHP, 简单模拟了一个面向对象语言, 用它来定义多轮对话.
  * 与编程语言最大区别在于, 多轮对话的数据不是存在内存中, 而是分布式服务器中.
+ * 
+ * 由于分布式系统中, 上下文逻辑, 上下文轨迹, 上下文记忆有不同的生命周期, 因此被拆分为不同对象.
  *
- * 每一个 Context 类都可以用来定义一种上下文.
- * Definition 对象本质上类似 ReflectionClass, 是对多轮对话对象的抽象.
+ * Definition 对象存储了上下文逻辑的相关方法和数据.
  *
  */
 interface Definition
@@ -125,7 +126,7 @@ interface Definition
 
     ########### stage ###########
     #
-    #   多轮对话上下文存在分形几何式的嵌套关系.
+    #   多轮对话上下文存在分形式的嵌套关系.
     #   可将之拆分成若干层级的单元
     #
     #   在 CommuneChatbot 中定义了四种级别的单元, 分别是:

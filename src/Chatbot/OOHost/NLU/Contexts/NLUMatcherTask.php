@@ -2,7 +2,6 @@
 
 namespace Commune\Chatbot\OOHost\NLU\Contexts;
 
-use Commune\Chatbot\App\Callables\Intercepers\MustBeSupervisor;
 use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;

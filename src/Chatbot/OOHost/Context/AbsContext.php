@@ -209,6 +209,13 @@ abstract class AbsContext extends AbsMessage implements Context
         return $value;
     }
 
+    protected function checkCast(string $name, $value) : void
+    {
+        if (array_key_exists($name, static::CASTS)) {
+            $this->scalarCheck($name, $value);
+        }
+    }
+
     public function setAttribute(string $name, $value) : void
     {
         $this->hasInstanced();
@@ -231,9 +238,7 @@ abstract class AbsContext extends AbsMessage implements Context
         }
 
         // 检查赋值的类型是否正确.
-        if (array_key_exists($name, static::CASTS)) {
-            $this->scalarCheck($name, $value);
-        }
+        $this->checkCast($name, $value);
 
         $this->_changed = true;
 
@@ -307,7 +312,7 @@ abstract class AbsContext extends AbsMessage implements Context
         );
     }
 
-    public function hasAttribute(string $name)
+    public function hasAttribute(string $name) : bool
     {
         return isset($this->_attributes[$name]);
     }
