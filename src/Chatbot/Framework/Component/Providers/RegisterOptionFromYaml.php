@@ -6,7 +6,7 @@ namespace Commune\Chatbot\Framework\Component\Providers;
 
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Contracts\ConsoleLogger;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Container\ContainerContract;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
 use Symfony\Component\Yaml\Yaml;
@@ -62,7 +62,7 @@ class RegisterOptionFromYaml extends ServiceProvider
     {
         $resource = $this->resource;
         if (!file_exists($resource)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 __METHOD__
                 . $this->category . '  resource '
                 . $resource
@@ -78,7 +78,7 @@ class RegisterOptionFromYaml extends ServiceProvider
         }
 
         if (!is_array($options)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 __METHOD__
                 .' nlu examples resource '
                 . $resource

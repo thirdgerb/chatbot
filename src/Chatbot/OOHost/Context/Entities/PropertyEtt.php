@@ -6,7 +6,7 @@ namespace Commune\Chatbot\OOHost\Context\Entities;
 use Commune\Chatbot\App\Messages\QA\VbQuestion;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Answer;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Context\Stage;
@@ -250,7 +250,7 @@ class PropertyEtt implements Entity
         $memoryDef = $this->getMemoryDef($self);
 
         if (!isset($memoryDef)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 'context '
                 . $self->getName()
                 . ' define entity '

@@ -8,7 +8,6 @@
 namespace Commune\Chatbot\Contracts;
 
 use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
-use Commune\Chatbot\Blueprint\Exceptions\RuntimeExceptionInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -29,7 +28,6 @@ interface CacheAdapter extends RunningSpy
      * @param string $value
      * @param int|null $ttl 单位是秒
      * @return bool
-     * @throws RuntimeExceptionInterface
      */
     public function set(string $key, string $value, int $ttl = null) : bool;
 
@@ -42,7 +40,6 @@ interface CacheAdapter extends RunningSpy
     /**
      * @param string $key
      * @return string | null
-     * @throws RuntimeExceptionInterface
      */
     public function get(string $key) : ? string;
 
@@ -73,7 +70,6 @@ interface CacheAdapter extends RunningSpy
      * @param string $key
      * @param int|null $ttl
      * @return bool
-     * @throws RuntimeExceptionInterface
      */
     public function lock(string $key, int $ttl = null) : bool;
 

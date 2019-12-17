@@ -9,7 +9,7 @@ use Commune\Chatbot\App\Callables\Actions\Talker;
 use Commune\Chatbot\App\Callables\StageComponents\AskContinue;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
@@ -213,7 +213,7 @@ class SimpleWikiInt extends AbsIntent
             }
 
             if (!is_string($suggestion)) {
-                throw new ConfigureException(
+                throw new ChatbotLogicException(
                     __METHOD__
                     . ' suggestion should only be callable or string'
                 );

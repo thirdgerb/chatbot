@@ -1,11 +1,6 @@
 <?php
 
-/**
- * Class ConsoleLogImpl
- * @package Commune\Chatbot\Framework\Predefined
- */
-
-namespace Commune\Chatbot\Framework\Predefined;
+namespace Commune\Chatbot\Framework\Impl;
 
 
 use Commune\Chatbot\Contracts\ConsoleLogger;

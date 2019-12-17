@@ -3,7 +3,7 @@
 namespace Commune\Chatbot\OOHost\Context\Registrar;
 
 use Commune\Chatbot\Blueprint\Application;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\ContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\PlaceholderDefinition;
@@ -70,7 +70,7 @@ abstract class AbsContextRegistrar implements ContextRegistrar
 
         $id = $def->getName();
         if (! static::validateDefName($id)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 __METHOD__
                 . " context name  $id is invalid"
             );

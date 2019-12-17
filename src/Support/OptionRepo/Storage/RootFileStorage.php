@@ -4,7 +4,6 @@
 namespace Commune\Support\OptionRepo\Storage;
 
 
-use Commune\Components\SimpleWiki\Options\WikiOption;
 use Commune\Support\Option;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\StorageMeta;

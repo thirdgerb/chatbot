@@ -10,7 +10,7 @@ use Commune\Chatbot\Blueprint\Conversation\ReplyTemplate;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\Contracts\Translator;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 
 /**
  * default message template for verbose question
@@ -41,7 +41,7 @@ class QuestionTemp implements ReplyTemplate
             return $this->renderQuestion($reply, $conversation);
         }
 
-        throw new ConfigureException(
+        throw new ChatbotLogicException(
             static::class
             . ' only accept QuestionMsg'
         );

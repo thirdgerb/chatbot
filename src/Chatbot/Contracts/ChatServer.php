@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Class ChatbotServer
- * @package Commune\Chatbot\Contracts
- */
-
 namespace Commune\Chatbot\Contracts;
 
 
@@ -31,12 +26,24 @@ interface ChatServer
     public function sleep(int $millisecond) : void;
 
     /**
-     * 关闭整个 server
+     * 决定 Server 是否能响应. 所有的 Server 都受影响.
+     * @return bool
+     */
+    public function isAvailable() : bool;
+
+    /**
+     * 设定 Server 是否能响应. 所有的 Server 都受影响.
+     * @param bool $boolean
+     */
+    public function setAvailable(bool $boolean) : void;
+
+    /**
+     * 关闭当前 server.
      */
     public function fail() : void;
 
     /**
-     * 关闭一个 server 的客户端.
+     * 关闭一个 server 的客户端. 允许重新连接.
      *
      * @param Conversation $conversation
      */

@@ -3,11 +3,9 @@
 
 namespace Commune\Chatbot\OOHost\Exceptions;
 
-
-use Commune\Chatbot\Framework\Exceptions\LogicException;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
-class NavigatorException extends LogicException
+class NavigatorException extends \RuntimeException
 {
 
     /**

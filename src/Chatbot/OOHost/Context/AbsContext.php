@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context;
 
 
-use Commune\Chatbot\Framework\Exceptions\RuntimeException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\Framework\Messages\AbsMessage;
 use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;
@@ -324,8 +324,7 @@ abstract class AbsContext extends AbsMessage implements Context
     protected function hasInstanced()  : void
     {
         if (!isset($this->_session)) {
-            //todo 是否一定抛出 runtime exception?
-            throw new RuntimeException(
+            throw new ChatbotLogicException(
                 __METHOD__
                 . ' can not be called before ->toInstance(session)'
             );

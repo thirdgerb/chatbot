@@ -1,18 +1,13 @@
 <?php
 
-/**
- * Class Dispatcher
- * @package Commune\Chatbot\Framework\Eventing
- */
-
-namespace Commune\Chatbot\Framework\Predefined;
+namespace Commune\Chatbot\Framework\Impl;
 
 
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Contracts\EventDispatcher;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyDispatcherInterface;
@@ -78,7 +73,7 @@ class SymfonyEventDispatcher implements EventDispatcher, RunningSpy, HasIdGenera
             $this->listenCallable($eventName, $listener);
 
         } else {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 'register listener for event '
                 . $eventName
                 . ' only allow class or callable, '
@@ -124,12 +119,12 @@ class SymfonyEventDispatcher implements EventDispatcher, RunningSpy, HasIdGenera
         $method = $classAndMethod[1] ?? '';
 
         if (empty($clazz) || empty($method) || !class_exists($clazz)) {
-            throw new ConfigureException("register listener to event $eventName with bad definition that class is '$clazz' and method is '$method'");
+            throw new ChatbotLogicException("register listener to event $eventName with bad definition that class is '$clazz' and method is '$method'");
         }
 
         $reflection = new \ReflectionClass($clazz);
         if (!$reflection->hasMethod($method)) {
-            throw new ConfigureException("register listener to event $eventName with bad definition that class $clazz do not have method $method");
+            throw new ChatbotLogicException("register listener to event $eventName with bad definition that class $clazz do not have method $method");
         }
 
         // 静态方法认为不需要依赖注入.
@@ -166,7 +161,7 @@ class SymfonyEventDispatcher implements EventDispatcher, RunningSpy, HasIdGenera
             return $this->conversation->make($clazz);
         }
 
-        throw new ConfigureException("event $eventName listened by $clazz should only be fired with conversation for dependencies injection");
+        throw new ChatbotLogicException("event $eventName listened by $clazz should only be fired with conversation for dependencies injection");
     }
 
     /**

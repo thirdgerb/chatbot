@@ -58,14 +58,12 @@ class ChattingPipe extends ChatbotPipeImpl
          * @var Conversation $replyConversation
          */
         $replyConversation = $next($conversation);
-        $chat->unlock();
         return $replyConversation;
-
     }
 
     /*----------- finally -----------*/
 
-    public function onException(Conversation $conversation, \Throwable $e): void
+    public function onFinally(Conversation $conversation): void
     {
         // 出错后主动解锁.
         $conversation->getChat()->unlock();

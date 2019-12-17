@@ -1,15 +1,12 @@
 <?php
 
-/**
- * Class ChatbotPipe
- * @package Commune\Chatbot\Framework\Pipeline
- */
 
 namespace Commune\Chatbot\Framework\Pipeline;
 
 use Carbon\Carbon;
 use Commune\Chatbot\Blueprint\Pipeline\ChatbotPipe as Blueprint;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
+use Commune\Chatbot\Framework\Exceptions\ChatbotRuntimeException;
 use Commune\Chatbot\Framework\Exceptions\ConversationalException;
 
 /**
@@ -27,7 +24,11 @@ abstract class ChatbotPipeImpl implements Blueprint
 
     abstract public function handleUserMessage(Conversation $conversation, \Closure $next) : Conversation;
 
-    abstract public function onException(Conversation $conversation, \Throwable $e) : void;
+    /**
+     * 任何时候都会执行的逻辑.
+     * @param Conversation $conversation
+     */
+    abstract public function onFinally(Conversation $conversation) : void;
 
 
     /**
@@ -41,7 +42,6 @@ abstract class ChatbotPipeImpl implements Blueprint
         try {
 
             $start = CHATBOT_DEBUG ? new Carbon() : null;
-            $this->startPipe($conversation);
 
             // 真正运行逻辑
             $result = $this->handleUserMessage($conversation, $next);
@@ -54,14 +54,16 @@ abstract class ChatbotPipeImpl implements Blueprint
 
             return $result;
 
-        // 直接中断流程的异常, 携带conversation, 可以直接中断后续的逻辑.
-        // 但还是要执行 finally
-        } catch (ConversationalException $e) {
-            return $e->getConversation();
-
-        } catch (\Throwable $e) {
-            $this->onException($conversation, $e);
+        // 系统的异常, 透传. 和其它的 Runtime Exception 相区别
+        } catch (ChatbotRuntimeException $e) {
             throw $e;
+
+        // 偶发的异常, 不影响对话继续.
+        } catch (\RuntimeException $e) {
+            throw new ConversationalException($this->getPipeName() . ' catch runtime exception', $e);
+
+        } finally {
+            $this->onFinally($conversation);
         }
     }
 

@@ -5,7 +5,7 @@ namespace Commune\Components\Story\Basic;
 
 
 use Commune\Chatbot\App\Memories\MemoryDef;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\Memory\AbsMemory;
 use Commune\Chatbot\OOHost\Session\Scope;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
@@ -62,7 +62,7 @@ class ScriptMem extends MemoryDef
             $scriptName = $option->title . ':' . $option->version;
 
         } else {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 static::class
                 . ' only serve story context'
             );

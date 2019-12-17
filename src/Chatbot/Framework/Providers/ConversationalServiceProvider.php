@@ -19,7 +19,7 @@ use Commune\Chatbot\Framework\Conversation\IncomingMessageImpl;
 use Commune\Chatbot\Framework\Conversation\NatureLanguageUnit;
 use Commune\Chatbot\Framework\Conversation\SpeechImpl;
 use Commune\Chatbot\Framework\Conversation\UserImpl;
-use Commune\Chatbot\Framework\Predefined\GuzzleClientFactory;
+use Commune\Chatbot\Framework\Impl\GuzzleClientFactory;
 use Illuminate\Support\Arr;
 use Psr\Log\LoggerInterface;
 

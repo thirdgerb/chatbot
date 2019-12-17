@@ -14,11 +14,10 @@ use Commune\Chatbot\Blueprint\Conversation\ConversationContainer;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Contracts\ConsoleLogger;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\Framework\Predefined\SimpleConsoleLogger;
+use Commune\Chatbot\Framework\Impl\SimpleConsoleLogger;
 use Commune\Chatbot\Config\Children\OOHostConfig;
 use Commune\Container\ContainerContract;
-use Commune\Chatbot\Blueprint\Kernel;
+use Commune\Chatbot\Blueprint\ChatKernel;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Application as Blueprint;
 
@@ -48,9 +47,15 @@ class ChatApp implements Blueprint
      */
     protected static $instance;
 
-    /*-------- 配置 --------*/
+    /*-------- 配置属性 --------*/
 
     /**
+     * 启动时运行的加载逻辑
+     * 之所以定义在 ChatApp 内, 而不是 Kernel, 因为是进程级的.
+     * 必须在响应第一个请求前运行完毕.
+     *
+     * 可以通过继承 ChatApp 定义自己的启动流程.
+     *
      * @var string[]
      */
     protected $bootstrappers = [
@@ -66,13 +71,13 @@ class ChatApp implements Blueprint
         Bootstrap\ContractsValidator::class,
     ];
 
-    /*-------- 内存缓存 --------*/
-
     /**
-     * @var bool
+     * 默认的 Kernel. 可以重写替换.
+     * @var string
      */
-    protected $available = true;
+    protected $chatKernel = ChatKernelImpl::class;
 
+    /*-------- 内存缓存 --------*/
     /**
      * @var bool
      */
@@ -127,12 +132,12 @@ class ChatApp implements Blueprint
 
     /**
      * ChatbotApp constructor.
-     * @param array $config
+     * @param array|ChatbotConfig $config
      * @param ContainerContract|null $processContainer
      * @param ConsoleLogger|null $consoleLogger
      */
     public function __construct(
-        array $config,
+        $config,
         ContainerContract $processContainer = null,
         ConsoleLogger $consoleLogger = null
     )
@@ -141,7 +146,13 @@ class ChatApp implements Blueprint
         static::$instance = $this;
 
         // 默认配置
-        $this->config = new ChatbotConfig($config);
+        if (is_array($config)) {
+            $config = new ChatbotConfig($config);
+        }
+        if (!$config instanceof ChatbotConfig) {
+            throw new BootingException('config is invalid');
+        }
+        $this->config = $config;
 
         // 默认的常量, 只会定义一次. 理论上一个process 也只启动一个chatbot
         if (!defined('CHATBOT_DEBUG')) {
@@ -162,6 +173,7 @@ class ChatApp implements Blueprint
 
         // 创建会话容器.
         $this->conversationContainer = new ConversationImpl($this->processContainer);
+
         $this->baseBinding();
     }
 
@@ -281,7 +293,7 @@ class ChatApp implements Blueprint
             return $provider;
         }
 
-        throw new ConfigureException(
+        throw new BootingException(
             __METHOD__
             . ' only accept class name or instance of '
             . ServiceProvider::class
@@ -336,11 +348,8 @@ class ChatApp implements Blueprint
             return $this;
 
         } catch (\Throwable $e) {
-
-            $fatal =  new BootingException( $e);
-            $logger->critical($fatal);
-            //$this->server->close();
-
+            $fatal =  new BootingException('fail to boot app', $e);
+            $logger->emergency($fatal);
             throw $fatal;
         }
     }
@@ -366,9 +375,10 @@ class ChatApp implements Blueprint
         $this->conversationContainer->instance(ConsoleLogger::class, $this->consoleLogger);
 
         // kernel
-        $this->processContainer->singleton(Kernel::class, ChatKernel::class);
-        $this->conversationContainer->instance(Kernel::class, ChatKernel::class);
+        $this->processContainer->singleton(ChatKernel::class, $this->chatKernel);
 
+        // server
+        $this->processContainer->singleton(ChatServer::class, $this->config->server);
     }
 
     public function bootConversation(Conversation $conversation): void
@@ -396,10 +406,10 @@ class ChatApp implements Blueprint
         return $this->conversationContainer;
     }
 
-    public function getKernel(): Kernel
+    public function getKernel(): ChatKernel
     {
         $this->bootApp();
-        return $this->processContainer->make(Kernel::class);
+        return $this->processContainer->make(ChatKernel::class);
     }
 
     public function getServer(): ChatServer
@@ -407,25 +417,4 @@ class ChatApp implements Blueprint
         $this->bootApp();
         return $this->processContainer->make(ChatServer::class);
     }
-
-
-
-    /*--------- 状态 ---------*/
-
-    /**
-     * @return bool
-     */
-    public function isAvailable(): bool
-    {
-        return $this->available;
-    }
-
-    /**
-     * @param bool $available
-     */
-    public function setAvailable(bool $available): void
-    {
-        $this->available = $available;
-    }
-
 }

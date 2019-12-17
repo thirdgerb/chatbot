@@ -3,10 +3,8 @@
 
 namespace Commune\Chatbot\OOHost\Emotion;
 
-
-use Commune\Chatbot\App\Messages\QA\Confirmation;
 use Commune\Chatbot\Blueprint\Message\VerbalMsg;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
 use Commune\Chatbot\OOHost\Emotion\Emotions\Negative;
 use Commune\Chatbot\OOHost\Emotion\Emotions\Positive;
@@ -64,7 +62,7 @@ class Feels implements Feeling
     {
 
         if (!is_a($emotionName, Emotion::class, TRUE)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 "emotion name $emotionName is not subclass of "
                 . Emotion::class
             );

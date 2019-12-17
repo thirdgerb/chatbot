@@ -8,7 +8,7 @@
 namespace Commune\Chatbot\Framework\Providers;
 
 use Commune\Chatbot\Contracts\EventDispatcher;
-use Commune\Chatbot\Framework\Predefined\SymfonyEventDispatcher;
+use Commune\Chatbot\Framework\Impl\SymfonyEventDispatcher;
 
 class EventServiceProvider extends BaseServiceProvider
 {

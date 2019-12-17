@@ -9,7 +9,7 @@ use Commune\Chatbot\Blueprint\Message\QA\Answer;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\VerbalMsg;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\App\Messages\ArrayMessage;
 use Commune\Chatbot\Framework\Utils\OnionPipeline;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
@@ -140,7 +140,7 @@ class HearingHandler implements Hearing
 
         foreach ($middleware as $sessionPipeName) {
             if (!is_a($sessionPipeName, SessionPipe::class, TRUE)) {
-                throw new ConfigureException(
+                throw new ChatbotLogicException(
                     __METHOD__
                     . ' pipe '.$sessionPipeName
                     . ' is not subclass of ' . SessionPipe::class
@@ -885,7 +885,7 @@ class HearingHandler implements Hearing
         if (isset($this->navigator)) return $this;
 
         if (!is_a($emotionName, Emotion::class, TRUE)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 __METHOD__
                 . ' emotionName must be subclass of '. Emotion::class
                 . ", $emotionName given"

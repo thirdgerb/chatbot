@@ -7,9 +7,9 @@ namespace Commune\Chatbot\OOHost\History;
 use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
-use Commune\Chatbot\Framework\Exceptions\RuntimeException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\Context;
-use Commune\Chatbot\OOHost\Exceptions\DataNotFoundException;
+use Commune\Chatbot\OOHost\Exceptions\SessionDataNotFoundException;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionData;
 use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
@@ -185,7 +185,7 @@ class History implements RunningSpy
 
 
         if (!isset($context) || !$context instanceof Context) {
-            throw new DataNotFoundException($identity, $task);
+            throw new SessionDataNotFoundException($identity, $task);
         }
 
         return $context;
@@ -216,7 +216,7 @@ class History implements RunningSpy
     /**
      * 返回到用户所见上一个问题的状态.
      * @return History|null
-     * @throws DataNotFoundException
+     * @throws SessionDataNotFoundException
      */
     public function backward() : ? History
     {
@@ -273,10 +273,10 @@ class History implements RunningSpy
         /**
          * @var Context $context
          */
-        $context =call_user_func($this->rootContextMaker);
+        $context = call_user_func($this->rootContextMaker);
 
         if (!$context instanceof Context) {
-            throw new RuntimeException("history root context make do not return context object . sessionId: {$this->sessionId}; belongsTo: {$this->belongsTo}");
+            throw new ChatbotLogicException("history root context make do not return context object . sessionId: {$this->sessionId}; belongsTo: {$this->belongsTo}");
         }
 
         if (!$context->isInstanced()) {

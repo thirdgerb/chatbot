@@ -84,5 +84,17 @@ class StdioServer implements ChatServer
         $this->stdio->end("bye! \n");
     }
 
+    protected $available = true;
+
+    public function isAvailable(): bool
+    {
+        return $this->available;
+    }
+
+    public function setAvailable(bool $boolean): void
+    {
+        $this->available = $boolean;
+    }
+
 
 }

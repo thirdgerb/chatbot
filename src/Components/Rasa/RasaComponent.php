@@ -31,7 +31,7 @@ class RasaComponent extends ComponentOption
             'output' => __DIR__ .'/resources/rasa.md',
             'domainOutput' => __DIR__ . '/resources/domain.md',
             'clientConfig' => [
-                'timeout' => 0.5,
+                'timeout' => 0.3,
             ],
         ];
     }

@@ -109,8 +109,6 @@ class SwooleConsoleServer implements ChatServer
     public function run(): void
     {
         $this->bootstrap();
-
-
         $this->server->start();
     }
 
@@ -133,5 +131,17 @@ class SwooleConsoleServer implements ChatServer
         $this->server->close($request->getFd());
     }
 
+
+    protected $available = true;
+
+    public function isAvailable(): bool
+    {
+        return $this->available;
+    }
+
+    public function setAvailable(bool $boolean): void
+    {
+        $this->available = $boolean;
+    }
 
 }

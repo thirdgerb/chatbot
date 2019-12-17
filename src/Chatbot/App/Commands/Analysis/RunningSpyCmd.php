@@ -6,7 +6,7 @@ namespace Commune\Chatbot\App\Commands\Analysis;
 use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Message\Transformed\CommandMsg;
 use Commune\Chatbot\Framework\Conversation\RunningSpies;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Command\SessionCommand;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -36,7 +36,7 @@ class RunningSpyCmd extends SessionCommand
         $str = '';
         foreach ($classes as $running) {
             if (!is_a($running, RunningSpy::class, TRUE)) {
-                throw new ConfigureException("$running is not subclass of ". RunningSpy::class);
+                throw new ChatbotLogicException(__METHOD__ . " : $running is not subclass of ". RunningSpy::class);
             }
 
             $str .= $this->showRunningTrace(

@@ -18,7 +18,7 @@ use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
  *
  * chatbot 的 kernel. 用于执行各种允许的逻辑.
  */
-interface Kernel
+interface ChatKernel
 {
     /**
      * 接受一个用户的 message, 并完成机器人的回复.

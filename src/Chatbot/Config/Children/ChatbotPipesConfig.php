@@ -6,7 +6,7 @@ namespace Commune\Chatbot\Config\Children;
 
 use Commune\Chatbot\OOHost\OOHostPipe;
 use Commune\Chatbot\App\ChatPipe\ChattingPipe;
-use Commune\Chatbot\App\ChatPipe\MessengerPipe;
+use Commune\Chatbot\App\ChatPipe\UserMessengerPipe;
 use Commune\Support\Option;
 
 /**
@@ -19,7 +19,7 @@ class ChatbotPipesConfig extends Option
         return [
             'onUserMessage' => [
                 // 管理所有的异常, 发送消息
-                MessengerPipe::class,
+                UserMessengerPipe::class,
                 // 阻塞会话 chat, 避免同时接受多个消息产生歧义
                 ChattingPipe::class,
                 // 多轮对话管理

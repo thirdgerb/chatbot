@@ -17,7 +17,7 @@ use Symfony\Component\Translation\Loader\XliffFileLoader;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Translation\Translator as SymfonyTranslator;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Commune\Chatbot\Framework\Predefined\SymfonyTranslatorAdapter;
+use Commune\Chatbot\Framework\Impl\SymfonyTranslatorAdapter;
 
 /**
  * 翻译组件的服务注册.

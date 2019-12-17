@@ -5,6 +5,8 @@ namespace Commune\Chatbot\Framework\Providers;
 
 
 use Commune\Chatbot\Config\ChatbotConfig;
+use Commune\Chatbot\Contracts\ExceptionReporter;
+use Commune\Chatbot\Framework\Impl\MonologWriter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Psr\Log\LoggerInterface;
@@ -65,7 +67,11 @@ class LoggerServiceProvider extends BaseServiceProvider
             [$handler]
         );
 
-        return $logger;
+        /**
+         * @var ExceptionReporter $reporter
+         */
+        $reporter = $app[ExceptionReporter::class];
+        return new MonologWriter($logger, $reporter);
     }
 
 

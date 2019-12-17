@@ -11,19 +11,19 @@ namespace Commune\Chatbot\Framework;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\Conversation\MessageRequest;
-use Commune\Chatbot\Blueprint\Kernel;
+use Commune\Chatbot\Blueprint\ChatKernel;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\ChatServer;
-use Commune\Chatbot\Contracts\ExceptionHandler;
+use Commune\Chatbot\Contracts\ExceptionReporter;
 use Commune\Chatbot\Framework\Utils\OnionPipeline;
 use Commune\Container\ContainerContract;
+use Psr\Log\LogLevel;
 
 /**
- * Class ChatbotKernel
- * @package Commune\Chatbot\Framework
- * @author thirdgerb <thirdgerb@gmail.com>
+ * 响应对话请求的内核.
+ * 理论上所有的对话请求都由它来响应. 目前仅有 Message Request
  */
-class ChatKernel implements Kernel
+class ChatKernelImpl implements ChatKernel
 {
     /**
      * @var ChatApp
@@ -36,25 +36,27 @@ class ChatKernel implements Kernel
     protected $server;
 
     /**
-     * @var ExceptionHandler
+     * @var ExceptionReporter
      */
-    protected $expHandler;
+    protected $expReporter;
+
+    protected $booted = false;
 
     /**
      * ChatbotKernel constructor.
      * @param Application $app
      * @param ChatServer $server
-     * @param ExceptionHandler $handler
+     * @param ExceptionReporter $handler
      */
     public function __construct(
         Application $app,
         ChatServer $server,
-        ExceptionHandler $handler
+        ExceptionReporter $handler
     )
     {
         $this->app = $app;
         $this->server = $server;
-        $this->expHandler = $handler;
+        $this->expReporter = $handler;
     }
 
     public function onUserMessage(MessageRequest $request): void
@@ -73,19 +75,24 @@ class ChatKernel implements Kernel
             // 对对话容器进行boot
             $this->app->bootConversation($conversation);
 
+            // 在管道中运行.
             $conversation = $this->sendConversationThoughPipe($conversation, $chatbotConfig);
+
+
+            // 注意, 中间环节没有任何逻辑.
+            // 所有逻辑包括请求发送等, 都应该在 chatbot pipe 中执行.
 
             // 做 destruct 的准备.
             $request->finish();
             $conversation->finish();
 
-        // 理论上不应该在这里出现任何异常.
+        // 理论上不应该在这里出现任何异常. 应该都在 ChatbotPipe 中拦截了.
+        // 如果这个环节出现异常, 系统就不得不重启了.
         } catch (\Throwable $e) {
-
-            $this->app->getConsoleLogger()->critical(strval($e));
-            $this->app->setAvailable(false);
-
-            // 直接exit
+            $this->expReporter->report(
+                LogLevel::EMERGENCY,
+                $e
+            );
             $this->server->fail();
         }
     }

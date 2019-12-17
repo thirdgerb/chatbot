@@ -12,7 +12,7 @@ use Commune\Support\Option;
 use Psr\Log\LoggerInterface;
 use Commune\Container\ContainerContract;
 use Commune\Chatbot\Blueprint\Application;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 
 /**
  * 读取配置文件中所有预定义的配置.
@@ -69,7 +69,7 @@ class LoadConfiguration implements Bootstrapper
         // 判断chatbotName 是否合法.
         if (!is_string($name) || !is_a($name, Option::class, TRUE)) {
             //todo
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 static::class
                 . ' config name '
                 . $name
@@ -98,7 +98,7 @@ class LoadConfiguration implements Bootstrapper
             $container->singleton($name, $value);
 
         } else {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 static::class
                 . ' config value of '
                 . $name

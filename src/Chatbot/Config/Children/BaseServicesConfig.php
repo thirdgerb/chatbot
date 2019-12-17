@@ -29,7 +29,7 @@ class BaseServicesConfig extends Option
     public static function stub(): array
     {
         return [
-            'exp' => Providers\ExpHandlerServiceProvider::class,
+            'exp' => Providers\ExceptionReporterServiceProvider::class,
             'optionRepo' => Providers\OptionRepoServiceProvider::class,
             'translation' => Providers\TranslatorServiceProvider::class,
             'render' => Providers\ReplyRendererServiceProvider::class,

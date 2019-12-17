@@ -4,7 +4,7 @@ namespace Commune\Chatbot\Blueprint\Conversation;
 
 
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Blueprint\Exceptions\RequestExceptionInterface;
+use Commune\Chatbot\Framework\Exceptions\RequestException;
 
 /**
  * conversation request from user message input
@@ -49,6 +49,7 @@ interface MessageRequest
     /**
      * 获取需要记录到日志里的参数. 会传递到 conversation logger
      * 方便排查端上的问题. 理论上只记录有维度价值的参数, 太多的话也不利于记录日志.
+     * 注意这一步不应该抛出异常.
      *
      * @return array
      */
@@ -176,7 +177,7 @@ interface MessageRequest
      *
      * send all messages from buffer and clear buffer
      *
-     * @throws RequestExceptionInterface
+     * @throws RequestException
      */
     public function sendResponse() : void;
 

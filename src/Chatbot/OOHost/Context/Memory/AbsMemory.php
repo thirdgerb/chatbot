@@ -5,17 +5,16 @@ namespace Commune\Chatbot\OOHost\Context\Memory;
 
 
 use Commune\Chatbot\Contracts\CacheAdapter;
+use Commune\Chatbot\Framework\Constants\CacheKey;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Context\AbsContext;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Chatbot\OOHost\Exceptions\DataNotFoundException;
+use Commune\Chatbot\OOHost\Exceptions\SessionDataNotFoundException;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Chatbot\OOHost\Session\SessionInstance;
 
 abstract class AbsMemory extends AbsContext implements Memory
 {
-    const MEMORY_LOCKER_PREFIX = 'chatbot:memoryLock:';
-
     public function getId(): string
     {
         if (isset($this->_contextId)) {
@@ -62,7 +61,7 @@ abstract class AbsMemory extends AbsContext implements Memory
         );
 
         if (!isset($data) || !$data instanceof self) {
-            throw new DataNotFoundException($identity);
+            throw new SessionDataNotFoundException($identity);
         }
 
         return $data;
@@ -89,7 +88,7 @@ abstract class AbsMemory extends AbsContext implements Memory
 
     protected function getLockerName() : string
     {
-        return self::MEMORY_LOCKER_PREFIX . $this->getId();
+        return sprintf(CacheKey::MEMORY_LOCKER, $this->getId());
     }
 
     protected function getCacheAdapter() : CacheAdapter

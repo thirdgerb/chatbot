@@ -9,7 +9,7 @@ use Commune\Components\Predefined\Intents\Loop\BreakInt;
 use Commune\Components\Predefined\Intents\Navigation\BackwardInt;
 use Commune\Components\Predefined\Intents\Navigation\RepeatInt;
 use Commune\Components\Predefined\Intents\Navigation\RestartInt;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Entity;
@@ -84,7 +84,7 @@ class EpisodeDefinition implements Definition
     {
         $class = $this->getClazz();
         if (!is_a($class, EpisodeTask::class, TRUE)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 "episode class $class is invalid"
             );
         }
@@ -114,7 +114,7 @@ class EpisodeDefinition implements Definition
 
     public function addEntity(Entity $entity): void
     {
-        throw new ConfigureException('episode of story component should not define any entity');
+        throw new ChatbotLogicException('episode of story component should not define any entity');
     }
 
     public function hasEntity(string $entityName): bool
@@ -157,7 +157,7 @@ class EpisodeDefinition implements Definition
     public function setStage(string $stage, callable $builder): void
     {
         $name = $this->getName();
-        throw new ConfigureException(static::class . " of $name should not set any stage caller");
+        throw new ChatbotLogicException(static::class . " of $name should not set any stage caller");
     }
 
     public function getStageNames(): array
@@ -241,7 +241,7 @@ class EpisodeDefinition implements Definition
         if (!empty($middleware)) {
             foreach ($middleware as $name) {
                 if (!class_exists($name)) {
-                    throw new ConfigureException(
+                    throw new ChatbotLogicException(
                         __METHOD__
                         . " failed, episode "
                         . $this->getName()

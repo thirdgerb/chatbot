@@ -9,9 +9,8 @@ use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\Framework\Exceptions\LogicException;
-use Commune\Chatbot\Framework\Exceptions\RuntimeException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
+use Commune\Chatbot\Framework\Exceptions\ConversationalException;
 use Commune\Chatbot\OOHost\Context\Contracts\RootContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Support\Utils\StringUtils;
@@ -219,7 +218,7 @@ class SessionImpl implements Session, HasIdGenerator
             return $repo->getDef($name)->newContext()->toInstance($this);
         }
 
-        throw new ConfigureException(
+        throw new ChatbotLogicException(
             static::class
             . ' can not instance root context '
             . $name
@@ -463,7 +462,7 @@ class SessionImpl implements Session, HasIdGenerator
             // 存储失败.
             } catch (\Exception $e) {
                 $this->flushProperties();
-                throw new LogicException('finish session failure', $e);
+                throw new ConversationalException('finish session failure', $e);
             }
         }
 
@@ -506,7 +505,7 @@ class SessionImpl implements Session, HasIdGenerator
 
     public function __sleep()
     {
-        throw new RuntimeException('try to serialize session which is forbidden, this occur usually because the serializing object use session as property');
+        throw new ChatbotLogicException('try to serialize session which is forbidden, this occur usually because the serializing object use session as property');
     }
 
 

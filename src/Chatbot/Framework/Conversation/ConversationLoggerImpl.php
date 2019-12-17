@@ -37,7 +37,7 @@ class ConversationLoggerImpl implements ConversationLogger, RunningSpy
     /**
      * @var array
      */
-    protected $defaultContext;
+    protected $defaultContext = [];
 
     /**
      * ConversationLogger constructor.

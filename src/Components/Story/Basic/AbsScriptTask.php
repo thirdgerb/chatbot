@@ -4,8 +4,7 @@
 namespace Commune\Components\Story\Basic;
 
 use Closure;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\Framework\Exceptions\RuntimeException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\AbsContext;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
@@ -120,7 +119,7 @@ abstract class AbsScriptTask extends AbsContext implements HasIdGenerator
         $def = $this->getRegistrar()->getDef($name);
 
         if (empty($def)) {
-            throw new RuntimeException("script definition $name not exists");
+            throw new ChatbotLogicException("script definition $name not exists");
         }
 
         return $def;
@@ -135,7 +134,7 @@ abstract class AbsScriptTask extends AbsContext implements HasIdGenerator
             ->make(StoryRegistrar::class);
 
         if (empty($registrar)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 "registrar " .StoryRegistrar::class .' not register to ContextRegistrar'
             );
         }

@@ -4,7 +4,7 @@
 namespace Commune\Components\Story\Basic;
 
 
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\Registrar\AbsContextRegistrar;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Components\Story\Options\EpisodeOption;
@@ -169,7 +169,7 @@ class StoryRegistrarImpl extends AbsContextRegistrar implements StoryRegistrar
         }
 
         $str .= ' config failed, '. $message;
-        throw new ConfigureException(
+        throw new ChatbotLogicException(
             __METHOD__
             . ' '
             . $str
@@ -178,7 +178,7 @@ class StoryRegistrarImpl extends AbsContextRegistrar implements StoryRegistrar
 
     public function registerDef(Definition $def, bool $force = false): bool
     {
-        throw new ConfigureException(
+        throw new ChatbotLogicException(
             static::class
             . ' do not register any Context Definition instance'
         );
@@ -212,7 +212,7 @@ class StoryRegistrarImpl extends AbsContextRegistrar implements StoryRegistrar
             }
         }
 
-        throw new ConfigureException(
+        throw new ChatbotLogicException(
             __METHOD__
             . " episode name $episodeName exists but definition not found"
         );

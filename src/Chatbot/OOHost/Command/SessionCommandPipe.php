@@ -5,7 +5,7 @@ namespace Commune\Chatbot\OOHost\Command;
 
 
 use Commune\Chatbot\Blueprint\Message\VerbalMsg;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
 use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -75,7 +75,7 @@ class SessionCommandPipe implements SessionPipe
             return;
         }
 
-        throw new ConfigureException(
+        throw new ChatbotLogicException(
             static::class
             . ' can only register command intent, or clazz instance of '
             . SessionCommand::class
@@ -187,7 +187,7 @@ class SessionCommandPipe implements SessionPipe
             return new IntentCmd($commandID, $session->intentRepo);
         }
 
-        throw new ConfigureException(
+        throw new ChatbotLogicException(
                 static::class
                 . ' only make '.SessionCommand::class
                 . ', or command intent, '.$commandID .' given'

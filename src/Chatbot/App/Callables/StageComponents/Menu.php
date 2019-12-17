@@ -6,7 +6,7 @@ namespace Commune\Chatbot\App\Callables\StageComponents;
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\Callables\StageComponent;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Stage;
@@ -185,7 +185,7 @@ class Menu implements StageComponent
                     ? gettype($value). ' '. $value
                     : gettype($value);
 
-                throw new ConfigureException(
+                throw new ChatbotLogicException(
                     static::class
                     . ' menu should only be string message(key) to callable value, '
                     . ' or int key to context name,'

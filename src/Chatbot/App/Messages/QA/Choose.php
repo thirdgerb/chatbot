@@ -6,7 +6,7 @@ namespace Commune\Chatbot\App\Messages\QA;
 
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\App\Messages\ReplyIds;
 
 class Choose extends VbQuestion implements Question
@@ -28,14 +28,14 @@ class Choose extends VbQuestion implements Question
     )
     {
         if (empty($options)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 static::class
                 . ' choose must have options'
             );
         }
 
         if (isset($defaultChoice) && !array_key_exists($defaultChoice, $options)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 static::class
                 . "default option $defaultChoice is not defined"
             );

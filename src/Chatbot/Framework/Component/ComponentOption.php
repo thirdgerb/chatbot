@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Commune\Chatbot\Framework\Component;
 
 
@@ -9,7 +8,7 @@ use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Bootstrap\Bootstrapper;
 use Commune\Chatbot\Framework\Bootstrap\LoadComponents;
 use Commune\Chatbot\Framework\Component\Providers;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\HostProcessServiceProvider;
 use Commune\Chatbot\OOHost\NLU\Contracts\CorpusOption;
 use Commune\Support\Option;
@@ -212,7 +211,7 @@ abstract class ComponentOption extends Option implements Bootstrapper
     ) : void
     {
         if ( ! is_a($corpusOptionClazz, CorpusOption::class, TRUE)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 __METHOD__
                 . ' only accept option class implements '
                 . CorpusOption::class

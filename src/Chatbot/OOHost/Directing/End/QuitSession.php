@@ -11,6 +11,9 @@ namespace Commune\Chatbot\OOHost\Directing\End;
 use Commune\Chatbot\OOHost\Dialogue\SubDialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
+/**
+ * 不可捕获, 直接退出 Session
+ */
 class QuitSession extends EndNavigator
 {
     public function doDisplay(): ? Navigator

@@ -1,11 +1,6 @@
 <?php
 
-/**
- * Class GuzzleClientFactory
- * @package Commune\Chatbot\Framework\Utils
- */
-
-namespace Commune\Chatbot\Framework\Predefined;
+namespace Commune\Chatbot\Framework\Impl;
 
 
 use Commune\Chatbot\Contracts\ClientFactory;

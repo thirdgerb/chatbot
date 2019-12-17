@@ -14,7 +14,6 @@ use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Components\Rasa\RasaComponent;
 use GuzzleHttp\Client;
-use Illuminate\Support\Collection;
 
 class RasaService implements NLUService
 {
@@ -94,7 +93,7 @@ class RasaService implements NLUService
 
 
         } catch (\Throwable $e) {
-            $session->logger->error(strval($e));
+            $session->logger->error($e);
         }
 
         return $session;

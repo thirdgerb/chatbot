@@ -14,6 +14,7 @@ use Commune\Chatbot\Config\Children\ChatbotPipesConfig;
 use Commune\Chatbot\Config\Children\TranslationConfig;
 use Commune\Chatbot\Config\Children\OOHostConfig;
 
+use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Support\Option;
 
 /**
@@ -24,6 +25,10 @@ use Commune\Support\Option;
  * 机器人的名字. 会影响到各种存储相关的模块, 例如缓存.
  * 同名的机器人, 既是配置不同, 数据的读写也可能相通.
  * name of current chatbot
+ *
+ * @property-read string $server
+ * 机器人运行的服务端, 通常是 ChatServer 实现类的名字.
+ * @see ChatServer
  *
  * @property-read bool $debug 是否开启debug
  *
@@ -69,7 +74,9 @@ class ChatbotConfig extends Option
     public static function stub(): array
     {
         return [
-            'chatbotName' => 'chatbotName',
+            'chatbotName' => '',
+
+            'server' => '',
 
             'debug' => true,
 
@@ -78,8 +85,6 @@ class ChatbotConfig extends Option
             // 如果通道死锁的话, 则会在该时间之后自动解锁.
             'chatLockerExpire' => 3,
 
-            // 预定义的 slots
-            'slots' => [],
 
             'configBindings' => [],
 
@@ -108,8 +113,21 @@ class ChatbotConfig extends Option
 
             'host' => OOHostConfig::stub(),
 
+            // 预定义的 slots, 用于所有回复.
             'defaultSlots' => [],
         ];
     }
 
+    public static function validate(array $data): ? string
+    {
+        if (empty($data['chatbotName'])) {
+            return 'chatbot name is required';
+        }
+
+        if (empty($data['server'])) {
+            return 'chat server concrete is required';
+        }
+
+        return null;
+    }
 }

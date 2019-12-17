@@ -3,8 +3,11 @@
 
 namespace Commune\Chatbot\OOHost\Exceptions;
 
-use Commune\Chatbot\Framework\Exceptions\LogicException;
+use Commune\Chatbot\Framework\Exceptions\CloseSessionException;
 
-class TooManyRedirectException extends LogicException
+/**
+ * 会话重连太多次, 终止会话.
+ */
+class TooManyRedirectException extends CloseSessionException
 {
 }

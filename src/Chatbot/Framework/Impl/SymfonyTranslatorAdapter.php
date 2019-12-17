@@ -1,11 +1,6 @@
 <?php
 
-/**
- * Class SymfonyTranslator
- * @package Commune\Chatbot\Framework\Predefined
- */
-
-namespace Commune\Chatbot\Framework\Predefined;
+namespace Commune\Chatbot\Framework\Impl;
 
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Config\Children\TranslationConfig;

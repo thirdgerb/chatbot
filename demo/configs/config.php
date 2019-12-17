@@ -30,7 +30,7 @@ return [
     'chatbotPipes' =>
         [
             'onUserMessage' => [
-                \Commune\Chatbot\App\ChatPipe\MessengerPipe::class,
+                \Commune\Chatbot\App\ChatPipe\UserMessengerPipe::class,
                 \Commune\Chatbot\App\ChatPipe\ChattingPipe::class,
                 \Commune\Chatbot\OOHost\OOHostPipe::class,
             ],

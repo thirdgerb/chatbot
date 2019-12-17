@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context\Entities;
 
 
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
 use Commune\Chatbot\OOHost\Context\Definition;
@@ -90,7 +90,7 @@ class DependingBuilder implements Depending
     {
         $clazz = $this->definition->getClazz();
         if (is_a($clazz, Memory::class, TRUE)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 'memory context '. $this->definition->getName()
                 . ' should not register entity from another memory... '
             );

@@ -5,8 +5,7 @@ namespace Commune\Chatbot\OOHost\Context\Helpers;
 
 
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
-use Commune\Chatbot\Framework\Exceptions\LogicException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\Context;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Exiting\ExitingCatcher;
@@ -69,7 +68,7 @@ trait ContextCaller
     protected function checkStageExists(string $stage) : void
     {
         if (!$this->hasStage($stage)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 'context ' . $this->getName()
                 . ' stage ' . $stage
                 . ' not found while call it'
@@ -202,7 +201,7 @@ trait ContextCaller
         }
 
         if (!$result instanceof Navigator) {
-            throw new LogicException(
+            throw new ChatbotLogicException(
                 'context ' . $this->getName()
                 . ' stage ' . $stage
                 . ' should only return value instance of '. Navigator::class

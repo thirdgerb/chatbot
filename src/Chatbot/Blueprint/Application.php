@@ -61,6 +61,7 @@ interface Application
      * 并加载所有的 service provider 的 register 方法.
      *
      * boot app at worker process, before any request
+     *
      * @throws BootingException
      */
     public function bootApp() : Application;
@@ -92,35 +93,18 @@ interface Application
      */
     public function bootConversation(Conversation $conversation) : void;
 
-    /*----------- 运行 ------------*/
+    /*----------- 运行时必要的服务 ------------*/
 
     /**
      * 获取系统的 kernel
-     * @return Kernel
+     * @return ChatKernel
      */
-    public function getKernel() : Kernel;
+    public function getKernel() : ChatKernel;
 
     /**
      * 获取 commune chatbot 定义的 server
      * @return ChatServer
      */
     public function getServer() : ChatServer;
-
-    /*----------- 状态 ------------*/
-
-    /**
-     * 设置当前 chatbot 进程停止响应.
-     * todo 未来考虑优化, 使之决定是关闭整个 chatbot, 还是关闭一个进程而已.
-     *
-     * @param bool $status
-     */
-    public function setAvailable(bool $status) : void;
-
-    /**
-     * 当前 application 是否可以运行.
-     * @return bool
-     */
-    public function isAvailable() : bool ;
-
 
 }

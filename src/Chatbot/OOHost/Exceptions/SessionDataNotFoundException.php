@@ -3,10 +3,13 @@
 
 namespace Commune\Chatbot\OOHost\Exceptions;
 
-use Commune\Chatbot\Framework\Exceptions\LogicException;
+use Commune\Chatbot\Framework\Exceptions\CloseSessionException;
 use Commune\Chatbot\OOHost\Session\SessionDataIdentity;
 
-class DataNotFoundException extends LogicException
+/**
+ * 关键数据没有找到, 终止对话.
+ */
+class SessionDataNotFoundException extends CloseSessionException
 {
     /**
      * @var string

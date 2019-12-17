@@ -8,7 +8,7 @@ use Commune\Chatbot\OOHost\NLU\NLUComponent;
 use Commune\Components\Predefined\PredefinedComponent;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Framework\Component\ComponentOption;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Psr\Log\LoggerInterface;
 
 class LoadComponents implements Bootstrapper
@@ -99,7 +99,7 @@ class LoadComponents implements Bootstrapper
     ) : void
     {
         if (!is_a($clazz, ComponentOption::class, TRUE)) {
-            throw new ConfigureException("invalid component class $clazz");
+            throw new ChatbotLogicException("invalid component class $clazz");
         }
 
         $logger->debug("registering component $clazz");

@@ -10,7 +10,7 @@ use Commune\Chatbot\App\Callables\StageComponents\AskContinue;
 use Commune\Chatbot\App\Contexts\TaskDef;
 use Commune\Chatbot\App\Messages\QA\Choice;
 use Commune\Chatbot\Blueprint\Message\VerbalMsg;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
@@ -105,12 +105,12 @@ class EpisodeTask extends TaskDef
 
     protected static function buildDefinition(): Definition
     {
-        throw new ConfigureException(__METHOD__);
+        throw new ChatbotLogicException(__METHOD__);
     }
 
     public static function getContextName(): string
     {
-        throw new ConfigureException(__METHOD__);
+        throw new ChatbotLogicException(__METHOD__);
     }
 
     public function getName(): string

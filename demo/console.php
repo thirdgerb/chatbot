@@ -7,6 +7,9 @@ $scene = $argv[1] ?? '';
 $_GET['scene'] = $scene;
 
 $config = include  __DIR__ . '/configs/config.php';
+
+$config['server'] = \Commune\Chatbot\App\Platform\ReactorStdio\StdioServer::class;
+
 $config['processProviders'] = [
     \Commune\Chatbot\App\Platform\ReactorStdio\RSServerProvider::class,
 ];

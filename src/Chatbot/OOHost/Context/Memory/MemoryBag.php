@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\OOHost\Context\Memory;
 
 
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Context\Depending;
 
@@ -58,7 +58,7 @@ class MemoryBag extends AbsMemory
             return $registrar->getDef($name);
         }
 
-        throw new ConfigureException(
+        throw new ChatbotLogicException(
             static::class
             . ' memory placeholder ' . $name
             . ' is not predefined, only available after be register to repo'

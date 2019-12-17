@@ -6,7 +6,7 @@ namespace Commune\Chatbot\OOHost\Context\Intent;
 
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\VerbalMsg;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\Framework\Utils\CommandUtils;
 use Commune\Chatbot\OOHost\Command\CommandDefinition;
 use Commune\Chatbot\OOHost\Command\CommandMessage;
@@ -93,7 +93,7 @@ class IntentMatcher
         $def = CommandDefinition::makeBySignature($signature);
 
         if (empty($def) || empty($def->getCommandName())) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 'intent '
                 . $this->intentName
                 . ' has bad command signature '

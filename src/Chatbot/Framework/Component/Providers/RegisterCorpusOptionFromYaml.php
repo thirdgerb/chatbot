@@ -5,7 +5,7 @@ namespace Commune\Chatbot\Framework\Component\Providers;
 
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Chatbot\Contracts\ConsoleLogger;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Container\ContainerContract;
 use Symfony\Component\Yaml\Yaml;
@@ -70,7 +70,7 @@ class RegisterCorpusOptionFromYaml extends ServiceProvider
     {
         $resource = $this->resource;
         if (!file_exists($resource)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 __METHOD__
                 . $this->optionClazz
                 . ' resource '
@@ -87,7 +87,7 @@ class RegisterCorpusOptionFromYaml extends ServiceProvider
         }
 
         if (!is_array($options)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 __METHOD__
                 .' nlu examples resource '
                 . $resource
@@ -101,7 +101,7 @@ class RegisterCorpusOptionFromYaml extends ServiceProvider
         $corpus = $app[Corpus::class];
         $manager = $corpus->getManager($this->optionClazz);
         if (empty($manager)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 __METHOD__
                 . ' corpus manager for '
                 . $this->optionClazz

@@ -8,7 +8,6 @@ use Commune\Chatbot\Blueprint\Conversation\RunningSpy;
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Framework\Conversation\RunningSpyTrait;
-use Commune\Chatbot\Framework\Exceptions\RuntimeException;
 use Commune\Chatbot\OOHost\Context\Context;
 
 use Commune\Chatbot\OOHost\Directing;
@@ -236,21 +235,6 @@ class DialogImpl implements Dialog, Redirect, App, RunningSpy
             }
         }
         return $keys;
-    }
-
-
-    protected function callMethodError(
-        string $method,
-        array $parameters,
-        \Throwable $e
-    ) : RuntimeException
-    {
-        return new RuntimeException(
-            'dialog call method '
-            . $method . ' fail, available parameters are: '
-            . implode(', ', array_keys($parameters)),
-            $e
-        );
     }
 
     /*--------- context ---------*/

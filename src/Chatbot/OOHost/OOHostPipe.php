@@ -11,6 +11,7 @@ use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Config\Children\OOHostConfig;
 use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\CacheAdapter;
+use Commune\Chatbot\Framework\Constants\CacheKey;
 use Commune\Chatbot\Framework\Pipeline\ChatbotPipeImpl;
 use Commune\Chatbot\Framework\Utils\OnionPipeline;
 use Commune\Chatbot\OOHost\Session\Session;
@@ -23,8 +24,6 @@ use Commune\Support\Uuid\IdGeneratorHelper;
 class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 {
     use IdGeneratorHelper;
-
-    const SESSION_ID_KEY = 'chatbot:sessionId:%s';
 
     /**
      * @var OOHostConfig
@@ -48,8 +47,10 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         $this->hostConfig = $config->host;
     }
 
-
-    public function handleUserMessage(Conversation $conversation, Closure $next): Conversation
+    public function handleUserMessage(
+        Conversation $conversation,
+        Closure $next
+    ): Conversation
     {
         $belongsTo = $this->fetchBelongsTo($conversation);
         $sessionId = $this->fetchSessionId($conversation, $belongsTo);
@@ -106,7 +107,7 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
             return $sessionId;
         }
 
-        $key = sprintf(self::SESSION_ID_KEY, $belongsTo);
+        $key = sprintf(CacheKey::SESSION_ID_KEY, $belongsTo);
 
         $sessionId = $this->cache->get($key);
         if (empty($sessionId)) {
@@ -119,7 +120,7 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
 
     public function forgetSession(string $belongsTo) : void
     {
-        $key = sprintf(self::SESSION_ID_KEY, $belongsTo);
+        $key = sprintf(CacheKey::SESSION_ID_KEY, $belongsTo);
         $this->cache->forget($key);
     }
 
@@ -166,14 +167,13 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         return $conversation->make(
             Session::class,
             [
-
                 Session::SESSION_ID_VAR => $sessionId
             ]
         );
 
     }
 
-    public function onException(Conversation $conversation, \Throwable $e): void
+    public function onFinally(Conversation $conversation): void
     {
     }
 

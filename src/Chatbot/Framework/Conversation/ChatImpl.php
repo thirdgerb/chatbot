@@ -6,6 +6,7 @@ namespace Commune\Chatbot\Framework\Conversation;
 
 use Commune\Chatbot\Blueprint\Conversation\Chat;
 use Commune\Chatbot\Contracts\CacheAdapter;
+use Commune\Chatbot\Framework\Constants\CacheKey;
 
 class ChatImpl implements Chat
 {
@@ -54,9 +55,20 @@ class ChatImpl implements Chat
         $this->platformId = $platformId;
         $this->userId = $userId;
         $this->chatbotUserName = $chatbotUserName;
-        $this->chatId = $chatId ?? sha1("p:$platformId:u:$userId:c:$chatbotUserName");
+        $this->chatId = $chatId ?? $this->makeChatId(
+            $platformId,
+            $userId,
+            $chatbotUserName
+        );
+    }
 
-
+    protected function makeChatId(
+        string $platformId,
+        string $userId,
+        string $chatbotUserName
+    ) : string
+    {
+        return sha1("p:$platformId:u:$userId:c:$chatbotUserName");
     }
 
     public function getUserId(): string
@@ -91,7 +103,7 @@ class ChatImpl implements Chat
 
     public function getChatLockerKey(string $chatId) : string
     {
-        return "chatbot:chatLocker:" . $chatId;
+        return sprintf(CacheKey::CHAT_LOCKER, $chatId);
     }
 
 }

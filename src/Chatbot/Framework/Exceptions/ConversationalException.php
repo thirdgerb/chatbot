@@ -1,44 +1,16 @@
 <?php
 
 /**
- * Class MessageInterfaceException
+ * Class LogicExceptionInterface
  * @package Commune\Chatbot\Framework\Exceptions
  */
 
 namespace Commune\Chatbot\Framework\Exceptions;
 
-use Commune\Chatbot\Blueprint\Conversation\Conversation;
-
 /**
- * 中断, 直接返回conversation
- *
- * Interface MessageInterfaceException
- * @package Commune\Chatbot\Framework\Exceptions
+ * 对话级别的异常.
+ * 不影响下一轮对话.
  */
-class ConversationalException extends LogicException
+class ConversationalException extends ChatbotRuntimeException
 {
-
-    /**
-     * @var Conversation
-     */
-    protected $conversation;
-
-    /**
-     * ConversationalException constructor.
-     * @param Conversation $conversation
-     */
-    public function __construct(Conversation $conversation)
-    {
-        $this->conversation = $conversation;
-        parent::__construct('conversational exception', null);
-    }
-
-    /**
-     * @return Conversation
-     */
-    public function getConversation(): Conversation
-    {
-        return $this->conversation;
-    }
-
 }

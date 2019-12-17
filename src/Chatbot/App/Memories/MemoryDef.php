@@ -4,7 +4,7 @@
 namespace Commune\Chatbot\App\Memories;
 
 
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Session\Session;
 use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Context\Definition;
@@ -73,7 +73,7 @@ abstract class MemoryDef extends AbsMemory implements SelfRegister
     {
         $memory = new static();
         if (!$instance->isInstanced()) {
-            throw new ConfigureException(__METHOD__ .' SessionInstance should be instanced');
+            throw new ChatbotLogicException(__METHOD__ .': SessionInstance should be instanced');
         }
         return $memory->toInstance($instance->getSession());
     }

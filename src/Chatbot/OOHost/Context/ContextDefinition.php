@@ -7,7 +7,7 @@ use Closure;
 use Commune\Chatbot\OOHost\Context\Entities\DependingBuilder;
 use Commune\Chatbot\OOHost\Context\Helpers\ContextCaller;
 use ReflectionMethod;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Support\Utils\StringUtils;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Illuminate\Support\Str;
@@ -56,7 +56,7 @@ class ContextDefinition implements Definition
     )
     {
         if (!is_a($contextClazz, static::ACCEPT_CLAZZ, TRUE)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 static::class
                 . ' not accept class name as ' . $contextClazz
             );
@@ -99,7 +99,7 @@ class ContextDefinition implements Definition
 
         if (!is_a($data, Context::class, TRUE)) {
             // never throw
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 'context definition of '
                 . $this->contextName
                 . ' register class ' . $this->contextClazz
@@ -299,7 +299,7 @@ class ContextDefinition implements Definition
 
     protected function invalidClassStageMethod(string $methodName) :void
     {
-        throw new ConfigureException(
+        throw new ChatbotLogicException(
             'context stage method '
             . $methodName . ' is invalid, should only have 1 parameter,'
             .' type hint must be '. Stage::class .' or none,'

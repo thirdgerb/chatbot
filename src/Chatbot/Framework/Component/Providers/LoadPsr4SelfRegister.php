@@ -5,7 +5,7 @@ namespace Commune\Chatbot\Framework\Component\Providers;
 
 
 use Commune\Chatbot\Blueprint\ServiceProvider;
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\Context\SelfRegister;
 use Commune\Container\ContainerContract;
 use Psr\Log\LoggerInterface;
@@ -48,7 +48,7 @@ class LoadPsr4SelfRegister extends ServiceProvider
         $this->domain = $psr4ns;
         $this->path = $path;
         if (!realpath($this->path)) {
-            throw new ConfigureException(
+            throw new ChatbotLogicException(
                 "path $path not exists"
             );
         }

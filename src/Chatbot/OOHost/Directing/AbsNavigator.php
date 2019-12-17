@@ -52,6 +52,10 @@ abstract class AbsNavigator implements Navigator
 
     abstract public function doDisplay(): ? Navigator;
 
+    /**
+     * @return Navigator|null
+     * @throws \Commune\Chatbot\OOHost\Exceptions\NavigatorException
+     */
     public function display(): ? Navigator
     {
 

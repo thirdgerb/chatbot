@@ -20,12 +20,12 @@ use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Contracts\ChatServer;
 use Commune\Chatbot\Contracts\EventDispatcher;
-use Commune\Chatbot\Contracts\ExceptionHandler;
+use Commune\Chatbot\Contracts\ExceptionReporter;
 use Commune\Chatbot\Blueprint\Application;
-use Commune\Chatbot\Blueprint\Kernel;
+use Commune\Chatbot\Blueprint\ChatKernel;
 use Commune\Chatbot\Blueprint\Conversation\Speech;
 
-use Commune\Chatbot\Framework\Exceptions\ConfigureException;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Psr\Log\LoggerInterface;
@@ -54,8 +54,8 @@ class ContractsValidator implements Bootstrapper
         // 必须绑定的配置
         ChatbotConfig::class,
         // 内核绑定.
-        Kernel::class,
-        ExceptionHandler::class,
+        ChatKernel::class,
+        ExceptionReporter::class,
         OptionRepository::class,
         // 多请求复用的组件.
         EventDispatcher::class,
@@ -126,7 +126,7 @@ class ContractsValidator implements Bootstrapper
 
         // 如果base 里都没有绑定, 则中断进程.
         if (! $container->has($abstract)) {
-            throw new ConfigureException("chatbot contract abstract $abstract not bound at container " . get_class($container));
+            throw new ChatbotLogicException("chatbot contract abstract $abstract not bound at container " . get_class($container));
         }
     }
 

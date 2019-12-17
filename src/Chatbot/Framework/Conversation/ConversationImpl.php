@@ -28,8 +28,7 @@ use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Contracts\EventDispatcher;
 use Commune\Chatbot\Contracts\Translator;
-use Commune\Chatbot\Framework\Events\RequestIsFinish;
-use Commune\Chatbot\Framework\Exceptions\RuntimeException;
+use Commune\Chatbot\Framework\Exceptions\CloseClientException;
 use Commune\Container\ContainerContract;
 use Commune\Container\RecursiveContainer;
 
@@ -209,20 +208,6 @@ class ConversationImpl implements Blueprint
         return $this->make(NLU::class);
     }
 
-
-    /**
-     * @var string
-     */
-    protected $locale;
-
-    protected function locale() : string
-    {
-        return $this->locale
-            ?? $this->locale = $this->getChatbotConfig()
-                    ->translation
-                    ->defaultLocale;
-    }
-
     public function reply(Message $message, bool $immediately = false): void
     {
         // 如果是问题, 记录已经向用户提过问, 有些语音系统需要这个提示来监听声音
@@ -393,29 +378,6 @@ class ConversationImpl implements Blueprint
         return $this->make(ChatbotConfig::class);
     }
 
-    /*---------- signal -----------*/
-//
-//    /**
-//     * @deprecated
-//     * @param Signal $signal
-//     */
-//    public function sendSignal(Signal $signal): void
-//    {
-//        $signal->withConversation($this);
-//        $this->getEventDispatcher()->listenCallable(
-//            ChatbotPipeStart::class,
-//            [$signal, 'handle']
-//        );
-//
-//        $this->getEventDispatcher()->listenCallable(
-//            ChatbotPipeClose::class,
-//            [$signal, 'handle']
-//        );
-//    }
-
-
-
-
     /*---------- 收尾记录 -----------*/
 
 
@@ -432,9 +394,6 @@ class ConversationImpl implements Blueprint
     public function finishRequest(): void
     {
         try {
-            // 结束事件. 可以用来做一些细节.
-            $this->fire(new RequestIsFinish($this));
-
             // 发送消息.
             $request = $this->getRequest();
 
@@ -448,7 +407,7 @@ class ConversationImpl implements Blueprint
             $request->sendResponse();
 
         } catch (\Exception $e) {
-            throw new RuntimeException($e);
+            throw new CloseClientException('finish request fail',$e);
         }
     }
 
@@ -463,7 +422,7 @@ class ConversationImpl implements Blueprint
 
         } catch (\Exception $e) {
             $this->unsetSelf();
-            throw new RuntimeException($e);
+            throw new CloseClientException('finish conversation fail', $e);
         }
     }
 
