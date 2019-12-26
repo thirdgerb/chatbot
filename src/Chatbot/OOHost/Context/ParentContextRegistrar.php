@@ -5,6 +5,9 @@ namespace Commune\Chatbot\OOHost\Context;
 
 use Commune\Chatbot\Blueprint\Application;
 
+/**
+ * Context Registrar 的分支节点.
+ */
 interface ParentContextRegistrar extends ContextRegistrar
 {
     /**

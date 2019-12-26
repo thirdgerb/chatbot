@@ -12,7 +12,9 @@ namespace Commune\Chatbot\Blueprint\Conversation;
  */
 interface Renderer
 {
-    const DEFAULT_ID = 'default';
+    const DEFAULT_ID = 'renderer.default';
+    const MISSED_ID = 'renderer.miss';
+    const QUIT_ID = 'renderer.quit';
 
     /**
      * has template named $id

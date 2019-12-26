@@ -7,7 +7,7 @@ namespace Commune\Components\Predefined\Intents\Attitudes;
 /**
  * 夸奖
  */
-class ComplementInt extends AttitudeInt
+class ComplimentInt extends AttitudeInt
 {
     const SIGNATURE = 'complement';
 

@@ -6,7 +6,6 @@ namespace Commune\Chatbot\Framework\Providers;
 
 use Commune\Chatbot\App\Messages\QA;
 use Commune\Chatbot\App\Messages\Templates;
-use Commune\Chatbot\App\Messages\System;
 use Commune\Chatbot\Blueprint\Application;
 use Commune\Chatbot\Blueprint\Conversation\Renderer;
 use Commune\Chatbot\Framework\Conversation\RendererImpl;
@@ -32,6 +31,8 @@ class ReplyRendererServiceProvider extends BaseServiceProvider
 
         // default
         Renderer::DEFAULT_ID => Templates\TranslateTemp::class,
+        Renderer::QUIT_ID => Templates\QuitTemp::class,
+        Renderer::MISSED_ID => Templates\MissedTemp::class,
 
         // base question
         QA\VbQuestion::REPLY_ID => Templates\QuestionTemp::class,
@@ -46,11 +47,6 @@ class ReplyRendererServiceProvider extends BaseServiceProvider
         QA\Contextual\ChooseIntent::REPLY_ID => Templates\QuestionTemp::class,
         QA\Contextual\ChooseEntity::REPLY_ID => Templates\QuestionTemp::class,
         QA\Contextual\SelectEntity::REPLY_ID => Templates\QuestionTemp::class,
-
-
-        // event
-        System\QuitSessionReply::REPLY_ID => Templates\QuitTemp::class,
-        System\MissedReply::REPLY_ID => Templates\MissedTemp::class,
 
     ];
 

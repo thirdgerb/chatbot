@@ -9,7 +9,6 @@ use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Contracts\IntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Contracts\RootIntentRegistrar;
 use Commune\Chatbot\OOHost\Context\Registrar\AbsParentContextRegistrar;
-use Commune\Chatbot\OOHost\Session\Session;
 
 /**
  * @method IntentRegistrar[] eachSubRegistrar($recursive = true) : \Generator

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Commune\Chatbot\OOHost\NLU\Options;
-
 
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Chatbot\OOHost\NLU\Contracts\CorpusOption;

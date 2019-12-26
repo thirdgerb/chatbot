@@ -31,20 +31,25 @@ interface Question extends ReplyMsg, Conversational
     public function getSuggestions() : array;
 
     /**
+     * 作为字符串存在的问题
+     *
      * @return string
      */
     public function getQuery() : string;
 
 
     /**
-     * 默认值.
+     * 答案的默认值.
+     *
      * @return null|mixed
      */
     public function getDefaultValue();
 
 
     /**
-     * default choice of suggestions
+     * 各种建议中的默认选项
+     *
+     * default choice from suggestions
      * @return null|mixed
      */
     public function getDefaultChoice();

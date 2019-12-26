@@ -36,7 +36,7 @@ class NatureLanguageUnit implements NLU
     protected $intentEntities = [];
 
     /**
-     * @var Collection
+     * @var Message[]
      */
     protected $replies;
 
@@ -201,15 +201,14 @@ class NatureLanguageUnit implements NLU
     }
 
 
-    public function getDefaultReplies(): Collection
+    public function getDefaultReplies(): array
     {
-        return $this->replies
-            ?? $this->replies = new Collection();
+        return $this->replies;
     }
 
     public function addDefaultReply(Message $message): void
     {
-        $this->getDefaultReplies()->add($message);
+        $this->replies[] = $message;
     }
 
     public function getEmotions(): Collection

@@ -4,15 +4,15 @@
 namespace Commune\Chatbot\App\Messages\System;
 
 
+use Commune\Chatbot\Blueprint\Conversation\Renderer;
 use Commune\Chatbot\Framework\Messages\AbsReply;
 
 class QuitSessionReply extends AbsReply
 {
-    const REPLY_ID = 'system.quit';
 
     public function __construct()
     {
-        parent::__construct(self::REPLY_ID);
+        parent::__construct(Renderer::QUIT_ID);
     }
 
     public static function mock()

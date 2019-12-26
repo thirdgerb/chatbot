@@ -1,11 +1,4 @@
 description: CommuneChatbot 项目介绍
-suggestions:
-  - .intro.chatbot
-  - .intro.conversation
-  - .intro.special
-  - .intro.wheels
-  - .intro.how-to-use
-  - .intro.whyDevelop
 examples:
   - 这是一个什么项目
   - 什么是 CommuneChatbot
@@ -19,5 +12,11 @@ replies:
   - intro3
   - intro4
   - intro5
-
+suggestions:
+  - .intro.chatbot
+  - .intro.conversation
+  - .intro.special
+  - .intro.wheels
+  - .intro.how-to-use
+  - .intro.whyDevelop
 

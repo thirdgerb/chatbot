@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Commune\Components\Predefined\Intents\Navigation;
-
 
 use Commune\Chatbot\App\Intents\NavigateIntent;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;

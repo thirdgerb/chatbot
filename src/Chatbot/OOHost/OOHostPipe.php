@@ -76,6 +76,9 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         }
 
         $replies = $conversation->getReplies();
+
+        // 表示没有匹配到任何消息, 要执行拒答逻辑
+        // 而拒答逻辑通过 MissedReply 的 replyId 进行处理
         if (empty($replies)) {
             $conversation->reply(new MissedReply());
         }

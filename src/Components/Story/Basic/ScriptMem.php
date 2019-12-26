@@ -37,7 +37,7 @@ class ScriptMem extends MemoryDef
     public function getId(): string
     {
         $id = parent::getId();
-        return md5("$id:episode:{$this->scriptName}");
+        return sha1("$id:episode:{$this->scriptName}");
     }
 
     protected function init(): array

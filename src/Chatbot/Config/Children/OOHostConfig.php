@@ -76,9 +76,6 @@ class OOHostConfig extends Option
                 // 导航类意图的中间件. 拥有最高优先级
                 SessionPipe\NavigationPipe::class,
             ],
-            'navigatorIntents' => [
-                //intentName
-            ],
             'hearingFallback' => null,
             'memories' => [
                  MemoryOption::stub()

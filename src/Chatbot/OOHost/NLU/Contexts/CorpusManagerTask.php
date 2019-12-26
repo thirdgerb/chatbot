@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Commune\Chatbot\OOHost\NLU\Contexts;
-
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;

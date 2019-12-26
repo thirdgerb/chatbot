@@ -17,7 +17,7 @@ use Commune\Components\Rasa\Providers\RasaServiceProvider;
  * @property-read string $output  rasa nlu 的意图配置文件地址, 通常是一个 md 文件.
  * @property-read string $domainOutput rasa domain 的文件地址, 通常是 domain.yml
  *
- * @property-read array $clientConfig http 请求的配置
+ * @property-read array $clientConfig http 请求的配置, 见 guzzle 的配置
  */
 class RasaComponent extends ComponentOption
 {

@@ -10,9 +10,6 @@ use Commune\Container\ContainerContract;
 
 class RendererImpl implements Renderer
 {
-    // prevent conflict id in container
-    const ID_PREFIX = 'render.temp:';
-
     /**
      * Process Container
      * @var ContainerContract

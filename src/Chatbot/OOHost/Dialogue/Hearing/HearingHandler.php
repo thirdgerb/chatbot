@@ -633,6 +633,22 @@ class HearingHandler implements Hearing
 
     /*----------- nlu 条件 -----------*/
 
+    public function hasPossibleIntent(
+        string $intentName,
+        callable $intentAction = null
+    ): Matcher
+    {
+        if (isset($this->navigator)) return $this;
+
+        $nlu = $this->dialog->session->nlu;
+        if ($nlu->hasPossibleIntent($intentName)) {
+            $this->isMatched = true;
+            return $this->callInterceptor($intentAction);
+        }
+        return $this;
+    }
+
+
     public function hasEntity(
         string $entityName,
         callable $interceptor = null

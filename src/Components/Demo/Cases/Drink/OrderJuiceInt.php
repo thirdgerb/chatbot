@@ -469,7 +469,7 @@ class OrderJuiceInt extends ActionIntent
             // 打招呼
             ->isIntent(Attitudes\GreetInt::class, [$this, 'greetBack'])
             // 被表扬了, 免单!
-            ->isIntent(Attitudes\ComplementInt::class, [$this, 'thanksBack'])
+            ->isIntent(Attitudes\ComplimentInt::class, [$this, 'thanksBack'])
             // 被骂了, 何苦呢
             ->isIntent(Attitudes\DissInt::class, [$this, 'apology'])
             // 如果发起了另一个订单.

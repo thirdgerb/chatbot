@@ -72,7 +72,6 @@ class StoryComponent extends ComponentOption
         // 注册文本文件.
         $this->loadTranslationResource($this->translationPath);
 
-
         // 注册意图语料
         $this->registerCorpusOptionFromYaml(
             $this->intentsPath,

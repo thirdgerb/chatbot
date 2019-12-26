@@ -66,7 +66,24 @@ abstract class AbsIntent
 
     public function __getIsConfirmed() : ? bool
     {
-        return $this->_isConfirmed;
+        return $this->_isConfirmed ?? $this->isEachEntityConfirmed();
+    }
+
+    public function isEachEntityConfirmed() : bool
+    {
+        $def = $this->getDef();
+        $entityNames = $def->getEntityNames();
+
+        $confirmedEntities = $this->confirmedEntities;
+
+        foreach ($entityNames as $entity) {
+            $value = $confirmedEntities[$entity] ?? null;
+            if (empty($value)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function __setIsConfirmed($confirmed) : void

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Class Option
- * @package Commune\Support\Option
- */
-
 namespace Commune\Support;
 
 use Commune\Support\Utils\StringUtils;
@@ -87,7 +82,7 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
      */
     public function getHash() : string
     {
-        return md5(static::class . '::' . $this->toJson());
+        return sha1(static::class . '::' . $this->toJson());
     }
 
     /**

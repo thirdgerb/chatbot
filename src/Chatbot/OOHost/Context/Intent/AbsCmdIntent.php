@@ -24,9 +24,12 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
      */
     const DESCRIPTION = 'should define intent description by constant';
 
-
-    // 命令名. 可以用命令的方式来匹配
+    /**
+     * 命令名. 可以用命令的方式来匹配
+     * 写法 @see IntentMatcherOption
+     */
     const SIGNATURE = '';
+
     /**
      * 用正则来匹配
      * 写法 @see IntentMatcherOption
@@ -39,6 +42,12 @@ abstract class AbsCmdIntent extends AbsIntent implements SelfRegister
      */
     const KEYWORDS = [];
 
+    /**
+     * 定义 PHP 匹配规则的地方.
+     * 修改这个方法, 可以真正修改所有自定义匹配规则
+     *
+     * @return IntentMatcherOption
+     */
     public static function getMatcherOption(): IntentMatcherOption
     {
         return new IntentMatcherOption([

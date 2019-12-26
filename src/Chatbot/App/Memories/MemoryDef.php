@@ -30,7 +30,7 @@ abstract class MemoryDef extends AbsMemory implements SelfRegister
 {
     const DESCRIPTION = 'define description';
 
-    const SCOPE_TYPES = [Scope::SESSION_ID];
+    const SCOPE_TYPES = [Scope::SESSION_ID, Scope::CHATBOT_NAME];
 
     /**
      * 可以唯一new 出来.

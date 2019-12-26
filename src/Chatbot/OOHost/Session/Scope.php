@@ -35,7 +35,7 @@ class Scope implements ArrayAndJsonAble
     const SESSION_ID = 'sessionId';
     const USER_ID = 'userId';
     const PLATFORM_ID = 'platformId';
-    const CHATBOT_USER_ID = 'chatbotName';
+    const CHATBOT_NAME = 'chatbotName';
     const CHAT_ID = 'chatId';
     const CONVERSATION_ID = 'conversationId';
     const INCOMING_MESSAGE_ID = 'incomingMessageId';
@@ -186,6 +186,6 @@ class Scope implements ArrayAndJsonAble
             $hash.= ':' . $scope . ':' . $this->{$scope};
         }
 
-        return md5($hash);
+        return sha1($hash);
     }
 }

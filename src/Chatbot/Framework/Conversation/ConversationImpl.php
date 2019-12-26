@@ -28,6 +28,7 @@ use Commune\Chatbot\Config\ChatbotConfig;
 use Commune\Chatbot\Contracts\CacheAdapter;
 use Commune\Chatbot\Contracts\EventDispatcher;
 use Commune\Chatbot\Contracts\Translator;
+use Commune\Chatbot\Framework\Events\FinishingRequest;
 use Commune\Chatbot\Framework\Exceptions\CloseClientException;
 use Commune\Container\ContainerContract;
 use Commune\Container\RecursiveContainer;
@@ -394,6 +395,7 @@ class ConversationImpl implements Blueprint
     public function finishRequest(): void
     {
         try {
+            $this->fire(new FinishingRequest($this));
             // 发送消息.
             $request = $this->getRequest();
 

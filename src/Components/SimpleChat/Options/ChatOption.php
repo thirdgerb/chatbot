@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Commune\Components\SimpleChat\Options;
 
 use Commune\Support\Option;

@@ -12,7 +12,7 @@ use Commune\Support\Option;
  * 系统的基础服务. 可以修改, 但要注意 process service 和 conversation service 的区别.
  *
  * process level :
- * @property-read string $exp 特殊异常处理器, 处理无法正常用消息响应的异常.
+ * @property-read string $exp 异常上报服务.
  * @property-read string $translation 翻译模块的服务.
  * @property-read string $render 渲染模块的服务
  * @property-read string $logger 日志模块

@@ -8,7 +8,6 @@ use Commune\Components\SimpleChat\Options\ChatOption;
 use Commune\Components\SimpleChat\Providers\RegisterSimpleChat;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\MetaHolder;
-use Commune\Support\OptionRepo\Storage\Memory\MemoryStorageMeta;
 use Commune\Support\OptionRepo\Storage\Yaml\YamlStorageMeta;
 
 

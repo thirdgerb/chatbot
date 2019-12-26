@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Commune\Chatbot\OOHost\NLU\Contracts;
 
 /**
@@ -20,12 +19,29 @@ interface Corpus
     public function sync(bool $force = false) : string;
 
 
+    /**
+     * 使用 Option 类名获取指定的管理工具
+     * @param string $corpusOptionName
+     * @return Manager|null
+     */
     public function getManager(string $corpusOptionName) : ? Manager;
 
+    /**
+     * 意图语料库 的管理工具
+     * @return Manager
+     */
     public function intentCorpusManager()  : Manager;
 
+    /**
+     * 实体词典的管理工具
+     * @return Manager
+     */
     public function entityDictManager() : Manager;
 
+    /**
+     * 同义词词典的管理工具
+     * @return Manager
+     */
     public function synonymsManager() : Manager;
 
 }

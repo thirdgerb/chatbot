@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Class ChatbotConfig
- * @package Commune\Chatbot\Config
- */
-
 namespace Commune\Chatbot\Config;
 
 use Commune\Chatbot\Config\Children\BaseServicesConfig;

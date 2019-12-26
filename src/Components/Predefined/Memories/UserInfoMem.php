@@ -18,7 +18,7 @@ class UserInfoMem extends MemoryDef
 {
     const DESCRIPTION = '用户基本信息';
 
-    const SCOPE_TYPES = [Scope::USER_ID];
+    const SCOPE_TYPES = [Scope::USER_ID, Scope::CHATBOT_NAME];
 
     protected function init(): array
     {

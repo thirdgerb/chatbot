@@ -1,16 +1,12 @@
 <?php
 
-
 namespace Commune\Chatbot\OOHost\NLU;
 
-
 use Commune\Chatbot\Framework\Component\ComponentOption;
-use Commune\Chatbot\OOHost\NLU\Contracts\NLULogger;
 use Commune\Chatbot\OOHost\NLU\Contracts\NLUService;
 use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
 use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Chatbot\OOHost\NLU\Options\SynonymOption;
-use Commune\Chatbot\OOHost\NLU\Predefined\SimpleNLULogger;
 use Commune\Chatbot\OOHost\NLU\Providers\CorpusServiceProvider;
 use Commune\Chatbot\OOHost\NLU\Providers\NLULoggerServiceProvider;
 use Commune\Components\Rasa\Services\RasaService;
@@ -28,6 +24,7 @@ use Commune\Support\OptionRepo\Storage\Yaml\YamlStorageMeta;
  * 4. 提供一些管理员才有权限的多轮对话, 用于管理以上功能.
  *
  * @property-read string[] $nluServices 各种 NLU 服务, 方便同步数据时遍历.
+ * @property-read string $corpusService Corpus 的 Service Provider
  * @property-read string $nluLogger 记录 nlu 匹配结果的日志服务.
  * @property-read MetaHolder $intentRootStorage 意图语料库的数据源配置.
  * @property-read MetaHolder[] $intentStoragePipeline 意图语料库的缓存层.
@@ -50,20 +47,32 @@ class NLUComponent extends ComponentOption
     public static function stub(): array
     {
         return [
+
+            // 系统可用的 NLUService 封装
             'nluServices' => [
                 RasaService::class,
             ],
 
-            'nluLogger' => SimpleNLULogger::class,
+            // corpus service provider
+            'corpusService' => CorpusServiceProvider::class,
 
+            // NLULogger 的实现
+            'nluLogger' => NLULoggerServiceProvider::class,
+
+            // 意图语料库存储介质, 根介质
             'intentRootStorage' => [
+                // 表示使用 yaml 文件来存储
                 'meta' => YamlStorageMeta::class,
+                // 配置细节
                 'config' => [
+                    // 文件所在路径
                     'path' => __DIR__ . '/resources/nlu/intents/',
+                    // 表示是文件夹, 每一个 yaml 文件是一个 intent
                     'isDir' => true,
                 ],
             ],
 
+            // 实体词典的根存储介质
             'entityRootStorage' => [
                 'meta' => YamlStorageMeta::class,
                 'config' => [
@@ -72,17 +81,19 @@ class NLUComponent extends ComponentOption
                 ],
             ],
 
+            // 同义词的根存储介质
             'synonymRootStorage' => [
                 'meta' => YamlStorageMeta::class,
                 'config' => [
                     'path' => __DIR__ . '/resources/nlu/synonyms.yml',
+                    // 表示是单个文件, 包含了所有的同义词词典.
                     'isDir' => false,
                 ],
             ],
 
-             'intentStoragePipeline' => [
+            // 意图语料的存储管道
+            'intentStoragePipeline' => [
             ],
-
 
             'entityStoragePipeline' => [
             ],
@@ -120,15 +131,10 @@ class NLUComponent extends ComponentOption
         ]));
 
         // 注册 copus
-        $this->app->registerProcessService(CorpusServiceProvider::class);
+        $this->app->registerProcessService($this->corpusService);
 
         // 注册请求级服务
-        $this->app->registerConversationService(
-            new NLULoggerServiceProvider(
-                $this->app->getConversationContainer(),
-                $this
-            )
-        );
+        $this->app->registerConversationService($this->nluLogger);
 
         // 注册管理工具.
         $this->loadSelfRegisterByPsr4(
@@ -153,11 +159,6 @@ class NLUComponent extends ComponentOption
                     return "invalid nlu service $service";
                 }
             }
-        }
-
-
-        if (!is_a($data['nluLogger'] ?? '', NLULogger::class, TRUE)) {
-            return 'nlu logger is invalid, should implements '.NLULogger::class;
         }
 
         return parent::validate($data);

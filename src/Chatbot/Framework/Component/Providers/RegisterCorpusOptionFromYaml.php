@@ -8,6 +8,7 @@ use Commune\Chatbot\Contracts\ConsoleLogger;
 use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Commune\Chatbot\OOHost\NLU\Contracts\Corpus;
 use Commune\Container\ContainerContract;
+use Commune\Support\Option;
 use Symfony\Component\Yaml\Yaml;
 
 
@@ -109,11 +110,17 @@ class RegisterCorpusOptionFromYaml extends ServiceProvider
             );
         }
 
+        /**
+         * @var ConsoleLogger $logger
+         */
         $logger = $app[ConsoleLogger::class];
 
         $clazz = $this->optionClazz;
         $registered = false;
         foreach ($options as $example) {
+            /**
+             * @var Option $option
+             */
             $option = new $clazz($example);
             $id = $option->getId();
             if (empty($id)) {

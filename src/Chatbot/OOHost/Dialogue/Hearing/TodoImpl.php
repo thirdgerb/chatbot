@@ -268,5 +268,14 @@ class TodoImpl implements ToDoWhileHearing
         return $this;
     }
 
+    public function hasPossibleIntent(
+        string $intentName,
+        callable $intentAction = null
+    ): Matcher
+    {
+        call_user_func_array([$this->hearing, __FUNCTION__], func_get_args());
+        return $this;
+    }
+
 
 }

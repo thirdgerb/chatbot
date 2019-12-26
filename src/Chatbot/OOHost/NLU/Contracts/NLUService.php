@@ -1,12 +1,8 @@
 <?php
 
-
 namespace Commune\Chatbot\OOHost\NLU\Contracts;
 
-
 use Commune\Chatbot\Blueprint\Message\Message;
-use Commune\Chatbot\OOHost\NLU\Options\EntityDictOption;
-use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Chatbot\OOHost\Session\Session;
 
 /**

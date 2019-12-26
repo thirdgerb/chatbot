@@ -30,6 +30,10 @@ class MissedTemp implements ReplyTemplate
 
     public function render(ReplyMsg $reply, Conversation $conversation): array
     {
+        $nluReplies = $conversation->getNLU()->getDefaultReplies();
+        if (!empty($nluReplies)) {
+            return $nluReplies->toArray();
+        }
         $text = $this->chatbotConfig->defaultMessages->messageMissMatched;
         return [new Text($conversation->getSpeech()->trans($text))];
     }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Commune\Components\SimpleWiki;
-
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Components\SimpleWiki\Options\GroupOption;

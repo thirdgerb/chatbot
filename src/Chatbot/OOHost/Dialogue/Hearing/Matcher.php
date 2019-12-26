@@ -329,6 +329,19 @@ interface Matcher
 
 
     /**
+     * 仅仅从 Conversation::getNlu() 对象中判断意图是否存在
+     * 不需要定义 IntentMessage 对象.
+     *
+     * @param string $intentName
+     * @param callable|null $intentAction
+     * @return Matcher
+     */
+    public function hasPossibleIntent(
+        string $intentName,
+        callable $intentAction = null
+    ) : Matcher;
+
+    /**
      * 是否匹配到了entity 类型
      *
      * @param string $entityName
