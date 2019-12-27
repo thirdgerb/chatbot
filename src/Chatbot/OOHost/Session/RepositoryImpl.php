@@ -79,9 +79,6 @@ class RepositoryImpl implements Repository, RunningSpy, HasIdGenerator
         $this->sessionId = $sessionId;
         $this->traceId = $traceId;
         static::addRunningTrace($this->traceId, $this->traceId);
-
-        $this->loadGcCounts($sessionId);
-
     }
 
 
@@ -186,6 +183,7 @@ class RepositoryImpl implements Repository, RunningSpy, HasIdGenerator
 
     public function save(Session $session): void
     {
+        $this->loadGcCounts($session->sessionId);
         $this->syncSnapshots($session);
         $gcIds = $this->fetchGCIds();
         $this->runGcContextIds($session, $gcIds);

@@ -61,29 +61,22 @@ class OOHostPipe extends ChatbotPipeImpl implements HasIdGenerator
         // 运行管道.
         $session = $this->callSession($session);
 
-        $session->finish();
-
         // should close client by event
         if ($session->isQuiting()) {
             $conversation->reply(new QuitSessionReply());
+
             $this->forgetSession($belongsTo);
-            return $conversation;
+            $session->finish();
+            return $next($conversation);
         }
 
         // 当前 session 没有搞定, 就继续往下走.
         if (!$session->isHandled()) {
-            $conversation = $next($conversation);
-        }
-
-        $replies = $conversation->getReplies();
-
-        // 表示没有匹配到任何消息, 要执行拒答逻辑
-        // 而拒答逻辑通过 MissedReply 的 replyId 进行处理
-        if (empty($replies)) {
             $conversation->reply(new MissedReply());
         }
 
-        return $conversation;
+        $session->finish();
+        return $next($conversation);
 
     }
 

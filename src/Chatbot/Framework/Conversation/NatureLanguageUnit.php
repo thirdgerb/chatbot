@@ -38,7 +38,7 @@ class NatureLanguageUnit implements NLU
     /**
      * @var Message[]
      */
-    protected $replies;
+    protected $replies = [];
 
     /**
      * @var Collection;

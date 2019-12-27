@@ -16,7 +16,7 @@ use Commune\Components\Demo\Cases\Maze\MazeInt;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 
 
-/*------------ 第六课 不相依赖的 N 阶多轮对话 ------------*/
+/*------------ 第六节 不相依赖的 N 阶多轮对话 ------------*/
 
 /**
  * 用户的菜单
@@ -36,14 +36,6 @@ class UserMenu extends OOContext
         parent::__construct(get_defined_vars());
     }
 
-    public static function __depend(Depending $depending): void
-    {
-    }
-
-    public function __exiting(Exiting $listener): void
-    {
-    }
-
     public function __onStart(Stage $stage): Navigator
     {
         return $stage->buildTalk([
@@ -60,6 +52,7 @@ class UserMenu extends OOContext
 
             // 进入迷宫游戏
             ->todo(Redirector::goStage('maze'))
+                // 如果用户答案命中了 1选项
                 ->isChoice(1)
 
             // 返回

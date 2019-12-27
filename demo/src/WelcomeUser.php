@@ -15,7 +15,7 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 
-/*----------- 第五课, n阶多轮对话 -----------*/
+/*----------- 第五节, n阶多轮对话 -----------*/
 
 /*----------- 第一节, 用 depend entity 来定义多轮对话 -----------*/
 
@@ -32,10 +32,6 @@ class WelcomeUser extends OOContext
         $depending->onContext('user', 'demo.lesions.user-info');
     }
 
-    public function __exiting(Exiting $listener): void
-    {
-    }
-
     public function __onStart(Stage $stage): Navigator
     {
         return $stage->buildTalk()
@@ -50,9 +46,7 @@ class WelcomeUser extends OOContext
             // 打完招呼直接结束.
             ->fulfill();
     }
-
 }
-
 
 /*----------- 用 stage::dependOn 来定义依赖关系 -----------*/
 
@@ -62,11 +56,63 @@ class WelcomeUser extends OOContext
 // */
 //class WelcomeUser extends OOContext
 //{
-//    public static function __depend(Depending $depending): void
+//
+//    public function __onStart(Stage $stage): Navigator
 //    {
+//        return $stage->buildTalk()
+//            ->info('这里是欢迎用户测试用例')
+//            // 然后进入询问用户信息的环节
+//            ->goStage('askUserInfo');
 //    }
 //
-////    /**
+//    /**
+//     * 询问用户信息
+//     * @param Stage $stage
+//     * @return Navigator
+//     */
+//    public function __onAskUserInfo(Stage $stage) : Navigator
+//    {
+//        return $stage
+//
+//            // dependOn 的回调事件是 onIntended, 这里也测试一下
+//            ->onIntended(Talker::say()->info('(拿到了dependOn的回调)'))
+//
+////            // 定义拦截方法
+////            ->onExiting(function(Exiting $exiting) : void {
+////                $exiting
+////                    // 遇到 cancel 事件时
+////                    ->onCancel(Talker::say()->info('askUserInfo::cancel'))
+////                    // 遇到 quit 事件时
+////                    ->onQuit(Talker::say()->info('askUserInfo::quit'));
+////            })
+//
+//            // 定义 dependOn
+//            ->dependOn(
+//                'demo.lesions.user-info',
+//
+//                // 等价于 onIntended 回调事件.
+//                function(Dialog $dialog, UserInfo $userInfo) : Navigator {
+//
+//                    // 将拿到的结果进行赋值.
+//                    $this->user = $userInfo;
+//
+//                    // 重定向到 final
+//                    return $dialog->goStage('final');
+//                }
+//        );
+//    }
+//
+//    public function __onFinal(Stage $stage) : Navigator
+//    {
+//        return $stage->buildTalk()
+//            ->info(
+//                '您好! %name%',
+//                [ 'name' => $this->user->name ]
+//            )
+//            ->fulfill();
+//    }
+//
+//    //    /**
 ////     * 退出事件拦截
 ////     * @param Exiting $listener
 ////     */
@@ -98,56 +144,10 @@ class WelcomeUser extends OOContext
 ////                return $dialog->quit(true);
 ////            });
 ////    }
-//
-//    public function __onStart(Stage $stage): Navigator
-//    {
-//        return $stage->buildTalk()
-//            ->info('这里是欢迎用户测试用例')
-//            // 然后进入询问用户信息的环节
-//            ->goStage('askUserInfo');
-//    }
-//
-//    /**
-//     * 询问用户信息
-//     * @param Stage $stage
-//     * @return Navigator
-//     */
-//    public function __onAskUserInfo(Stage $stage) : Navigator
-//    {
-//        return $stage
-//
-//            // dependOn 的回调事件是 onIntended, 这里也测试一下
-//            ->onIntended(Talker::say()->info('(拿到了dependOn的回调)'))
-//
-//            // 定义 dependOn
-//            ->dependOn(
-//            'demo.lesions.user-info',
-//
-//            // 等价于 onIntended 回调事件.
-//            function(Dialog $dialog, UserInfo $userInfo) : Navigator {
-//
-//                // 将拿到的结果进行赋值.
-//                $this->user = $userInfo;
-//
-//                // 重定向到 final
-//                return $dialog->goStage('final');
-//            }
-//        );
-//    }
-//
-//    public function __onFinal(Stage $stage) : Navigator
-//    {
-//        return $stage->buildTalk()
-//            ->info(
-//                '您好! %name%',
-//                [ 'name' => $this->user->name ]
-//            )
-//            ->fulfill();
-//    }
 //}
 
 
-/*------------- 第六课 : 不相依赖的多轮对话 ---------------*/
+/*------------- 第六节 : 不相依赖的多轮对话 ---------------*/
 
 
 ///**
@@ -156,10 +156,6 @@ class WelcomeUser extends OOContext
 // */
 //class WelcomeUser extends OOContext
 //{
-//    public static function __depend(Depending $depending): void
-//    {
-//    }
-//
 //    /**
 //     * 退出事件拦截
 //     * @param Exiting $listener
@@ -213,6 +209,15 @@ class WelcomeUser extends OOContext
 //            // dependOn 的回调事件是 onIntended, 这里也测试一下
 //            ->onIntended(Talker::say()->info('(拿到了dependOn的回调)'))
 //
+//            // 定义拦截方法
+//            ->onExiting(function(Exiting $exiting) : void {
+//                $exiting
+//                    // 遇到 cancel 事件时
+//                    ->onCancel(Talker::say()->info('askUserInfo::cancel'))
+//                    // 遇到 quit 事件时
+//                    ->onQuit(Talker::say()->info('askUserInfo::quit'));
+//            })
+//
 //            // 定义 dependOn
 //            ->dependOn(
 //                'demo.lesions.user-info',
@@ -260,8 +265,8 @@ class WelcomeUser extends OOContext
 //            ->onFallback(Talker::say()->info('(触发了 fallback 事件)'))
 //
 //            ->sleepTo(
-//            // 和 dependOn 一样, 直接用类名, 或者 contextName, 就可以指定目标语境
-//            // 不过我们这次为了示范 Context::__construct 的用法, 允许传入一个语境实例
+//                // 和 dependOn 一样, 直接用类名, 或者 contextName, 就可以指定目标语境
+//                // 不过我们这次为了示范 Context::__construct 的用法, 允许传入一个语境实例
 //                new UserMenu($this->user),
 //
 //                // 回调的时候, 返回 final stage

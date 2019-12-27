@@ -3,7 +3,6 @@
 
 namespace Commune\Demo;
 
-use Commune\Chatbot\Config\Children\DefaultMessagesConfig;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
 use Commune\Chatbot\OOHost\Context\OOContext;
@@ -13,7 +12,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Chatbot\Blueprint\Message\Message;
 
 
-/*---------------- 新手教程第一课, hello world --------------*/
+/*---------------- 新手教程第一节, hello world --------------*/
 
 // 如果您使用了 IDE, 可以用快捷键打开注释.
 // 在 mac 版的 phpstorm 中快捷键是 cmd + /
@@ -24,7 +23,7 @@ use Commune\Chatbot\Blueprint\Message\Message;
 class HelloWorld extends OOContext
 {
     /**
-     * 定义依赖
+     * 定义依赖, 可选
      * @param Depending $depending
      */
     public static function __depend(Depending $depending): void
@@ -32,7 +31,7 @@ class HelloWorld extends OOContext
     }
 
     /**
-     * 定义退出事件捕获
+     * 定义退出事件捕获, 可选
      * @param Exiting $listener
      */
     public function __exiting(Exiting $listener): void
@@ -54,11 +53,10 @@ class HelloWorld extends OOContext
         // 等待用户下一次输入
         return $stage->dialog->wait();
     }
-
 }
 
 
-/*---------------- 新手教程第二课, 定义单轮对话 --------------*/
+/*---------------- 新手教程第二节, 定义单轮对话 --------------*/
 
 ///**
 // * 创建 hello world 文件
@@ -82,8 +80,8 @@ class HelloWorld extends OOContext
 //    }
 //
 //    /*--------- 用 talk 来定义一个单轮对话 ----------*/
-
-//  第一节: 用 talk 定义单轮对话
+//
+//    // 第一节: 用 talk 定义单轮对话
 //
 //    /**
 //     * 用 talk 定义 一个单轮对话
@@ -122,7 +120,6 @@ class HelloWorld extends OOContext
 //            }
 //        );
 //    }
-//
 //}
 
 
@@ -243,7 +240,7 @@ class HelloWorld extends OOContext
 ////            /**
 ////             * 拒答的逻辑, 当上述流程没有任何返回时, 会执行 miss match 事件.
 ////             * 用户会收到一个默认回复. 这个回复在 $config->defaultMessages 里有定义
-////             * @see DefaultMessagesConfig
+////             * @see \Commune\Chatbot\Config\Children\DefaultMessagesConfig\DefaultMessagesConfig
 ////             */
 ////            ->end();
 ////    }

@@ -1,12 +1,6 @@
 <?php
 
-/**
- * Class QuitSession
- * @package Commune\Chatbot\OOHost\Directing\End
- */
-
 namespace Commune\Chatbot\OOHost\Directing\End;
-
 
 use Commune\Chatbot\OOHost\Dialogue\SubDialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;

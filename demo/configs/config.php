@@ -102,6 +102,12 @@ return [
 
             // n 阶多轮对话的测试用例.
             'nOrder' => \Commune\Demo\WelcomeUser::class,
+
+            // 测试意图相关
+            'intent' => \Commune\Demo\TestIntents::class,
+
+            // 测试上下文记忆
+            'memory' => \Commune\Demo\TestMemory::class,
         ],
 
         'sessionPipes' => [

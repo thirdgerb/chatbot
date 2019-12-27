@@ -80,7 +80,7 @@ class Director implements RunningSpy
     /**
      * @param Navigator|null $navigator
      * @return bool
-     * @throws \Throwable
+     * @throws
      */
     public function handle(Navigator $navigator = null) : bool
     {

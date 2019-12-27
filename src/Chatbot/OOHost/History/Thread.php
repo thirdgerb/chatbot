@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Commune\Chatbot\OOHost\History;
-
 
 use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Support\Arr\ArrayAbleToJson;

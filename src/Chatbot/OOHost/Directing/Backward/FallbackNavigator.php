@@ -7,6 +7,7 @@ namespace Commune\Chatbot\OOHost\Directing\Backward;
 use Commune\Chatbot\OOHost\Context\Definition;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\AbsNavigator;
+use Commune\Chatbot\OOHost\Directing\End\QuitSession;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
 abstract class FallbackNavigator extends AbsNavigator
@@ -77,7 +78,7 @@ abstract class FallbackNavigator extends AbsNavigator
 
         // 如果不能fallback, 说明没有起点了, 就直接退出.
         // 测试一段时间.
-        return new Quit($this->dialog);
+        return new QuitSession($this->dialog);
     }
 
 }

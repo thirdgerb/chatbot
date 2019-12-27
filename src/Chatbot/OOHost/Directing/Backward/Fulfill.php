@@ -19,7 +19,6 @@ class Fulfill extends FallbackNavigator
                 $context,
                 $this->dialog
             );
-
             if (isset($navigator)) return $navigator;
         }
 

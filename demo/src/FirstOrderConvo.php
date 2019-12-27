@@ -13,7 +13,7 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 
-/*----------- 第三课, 定义一阶多轮对话 ------------*/
+/*----------- 第三节, 定义一阶多轮对话 ------------*/
 
 /**
  * 一阶多轮对话的示例.
@@ -61,12 +61,15 @@ class FirstOrderConvo extends OOContext
     public function __onFinal(Stage $stage) : Navigator
     {
         $name = $stage->name;
-        $stage->dialog->say()->info("到达了 $name 环节, 流程退出.");
 
-        // 结束流程.
+        // 如果是进入当前 Stage, 则执行发送消息.
+        $stage->onStart(function(Dialog $dialog) use ($name) {
+            $dialog->say()->info("到达了 $name 环节, 流程退出.");
+        });
+
+        // 结束流程
         return $stage->dialog->fulfill();
     }
-
 }
 
 /*----------- 第二节, 定义多个 stage ------------*/
@@ -140,7 +143,7 @@ class FirstOrderConvo extends OOContext
 //    public function __onFinal(Stage $stage) : Navigator
 //    {
 //        $name = $stage->name;
-//        $stage->dialog->say()->info("到达了 $name 环节, 流程退出.");
+//        $stage->onStart(Talker::say()->info("到达了 $name 环节, 流程退出."));
 //
 //        // 结束流程.
 //        return $stage->dialog->fulfill();
@@ -268,7 +271,7 @@ class FirstOrderConvo extends OOContext
 //    public function __onFinal(Stage $stage) : Navigator
 //    {
 //        $name = $stage->name;
-//        $stage->dialog->say()->info("到达了 $name 环节, 流程退出.");
+//        $stage->onStart(Talker::say()->info("到达了 $name 环节, 流程退出."));
 //
 //        // 结束流程.
 //        return $stage->dialog->fulfill();
