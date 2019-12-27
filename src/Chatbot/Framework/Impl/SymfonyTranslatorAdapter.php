@@ -5,6 +5,7 @@ namespace Commune\Chatbot\Framework\Impl;
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Config\Children\TranslationConfig;
 use Commune\Chatbot\Contracts\Translator as Contract;
+use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\Translator as SymfonyTranslator;
 
@@ -72,9 +73,11 @@ class SymfonyTranslatorAdapter implements Contract
         $loader = $loader ?? $this->config->loader;
 
         // 默认使用 intl, 建议加载.
-        if (extension_loaded('intl')) {
-            $domain = $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX;
+        if (!extension_loaded('intl')) {
+            throw new ChatbotLogicException('php extension intl is required');
         }
+
+        $domain = $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX;
 
         $this->translator->addResource(
             $loader,
