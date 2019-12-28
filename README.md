@@ -74,6 +74,7 @@ class HelloWorldContext extends OOContext
 {
     const DESCRIPTION = 'hello world!';
 
+    // stage "start"
     public function __onStart(Stage $stage) : Navigator
     {
         return $stage->buildTalk()
@@ -85,6 +86,7 @@ class HelloWorldContext extends OOContext
             ->goStage('askName')
     }
 
+    // stage "askName"
     public function __onAskName(Stage $stage) : Navigator
     {
         return $stage->buildTalk()
@@ -108,6 +110,7 @@ class HelloWorldContext extends OOContext
             ->end();
     }
 
+    // stage "menu"
     public function __onMenu(Stage $stage) : Navigator
     {
         // build menu component
