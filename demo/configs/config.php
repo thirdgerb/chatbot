@@ -14,10 +14,13 @@ return [
         ],
     ],
     'components' => [
+        // demo 组件
         \Commune\Components\Demo\DemoComponent::class,
+        // 闲聊组件
         \Commune\Components\SimpleChat\SimpleChatComponent::class,
+        // 对话游戏组件
         \Commune\Components\Story\StoryComponent::class,
-        \Commune\Components\Rasa\RasaComponent::class,
+        // 简单问答组件
         \Commune\Components\SimpleWiki\SimpleWikiComponent::class,
         \Commune\Components\UnheardLike\UnheardLikeComponent::class,
     ],
