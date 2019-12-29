@@ -54,5 +54,10 @@
         "symfony/var-dumper": "^4.2",
         "swoole/ide-helper": "~4.3.0",
         "mockery/mockery": "^1.2"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
     }
 }
