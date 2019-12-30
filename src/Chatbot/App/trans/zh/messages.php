@@ -33,7 +33,7 @@ return [
         'entity' => '请输入{entity_name}',
         'needs' => '您可能需要:',
         'needMore' => '您还有别的需要吗?',
-        'continue' => '输入 "." 继续',
+        'continue' => '输入任意信息继续',
         'yes' => 'yes',
         'no' => 'no',
     ],

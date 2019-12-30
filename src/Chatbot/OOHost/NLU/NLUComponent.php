@@ -9,7 +9,6 @@ use Commune\Chatbot\OOHost\NLU\Options\IntentCorpusOption;
 use Commune\Chatbot\OOHost\NLU\Options\SynonymOption;
 use Commune\Chatbot\OOHost\NLU\Providers\CorpusServiceProvider;
 use Commune\Chatbot\OOHost\NLU\Providers\NLULoggerServiceProvider;
-use Commune\Components\Rasa\Services\RasaService;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
 use Commune\Support\OptionRepo\Options\MetaHolder;
 use Commune\Support\OptionRepo\Storage\Yaml\YamlStorageMeta;
@@ -50,7 +49,6 @@ class NLUComponent extends ComponentOption
 
             // 系统可用的 NLUService 封装
             'nluServices' => [
-                RasaService::class,
             ],
 
             // corpus service provider

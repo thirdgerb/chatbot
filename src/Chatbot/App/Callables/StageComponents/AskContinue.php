@@ -72,9 +72,9 @@ class AskContinue implements StageComponent
      * AskContinue constructor.
      * @param callable[] $scripts 需要循环执行的脚本.
      * @param string $query  提示用户继续循环的问题.
-     * @param string $default 表示"继续"的其它字符.
+     * @param string|null $default 表示"继续"的特殊字符(为空也继续). 为null 则任意字符继续.
      */
-    public function __construct(array $scripts, string $query = 'ask.continue', string $default = '.' )
+    public function __construct(array $scripts, string $query = 'ask.continue', string $default = null )
     {
         $this->query = $query;
         $this->default = $default;
@@ -97,10 +97,14 @@ class AskContinue implements StageComponent
         }
 
         // 创建 stage
-        $hearing = $stage
+        $talk = $stage
             ->onStart($this->scripts[$index])
-            ->buildTalk()
-            ->askVerbal($this->query, [$this->default])
+            ->buildTalk();
+
+        // 如果有默认值, 会给出建议
+        $default = $this->default ?? '.';
+        $hearing = $talk
+            ->askVerbal($this->query, [$default])
             ->hearing();
 
         // help
@@ -119,22 +123,24 @@ class AskContinue implements StageComponent
             $hearing->fallback($this->fallback);
         }
 
-        return $hearing
+        $hearing =  $hearing
             // 直接到最后一步.
             ->todo($this->goEnd())
                 ->isIntent(BreakInt::class)
                 ->isChoice(0)
-                ->isNegative()
+                ->isNegative();
 
+        if (!empty($this->default)) {
             // 下一步.
-            ->todo($this->goNext($index))
+            $hearing = $hearing->todo($this->goNext($index))
                 ->is($this->default)
                 ->isPositive()
                 ->isChoice(1)
-                ->isEmpty()
+                ->isEmpty();
+        }
 
-            // 回到上一步.
-            ->todo($this->goPrevious( $index))
+        // 回到上一步.
+        $hearing = $hearing->todo($this->goPrevious( $index))
                 ->isChoice(2)
                 ->isIntent(PreviousInt::class)
 
@@ -146,8 +152,16 @@ class AskContinue implements StageComponent
                 ->isNegative()
 
             // 没有听明白...
-            ->otherwise()
-            ->end();
+            ->otherwise();
+
+        // 如果没有默认继续的值, 则输入任何未捕获信息都进入下一步
+        if (empty($this->default)) {
+            return $hearing->end($this->goNext($index));
+
+        // 否则提示用户没有听懂.
+        } else {
+            return $hearing->end();
+        }
     }
 
 
