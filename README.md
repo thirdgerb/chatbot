@@ -4,12 +4,12 @@
 
 "Commune" 是 __亲切交谈__ 的意思. CommuneChatbot 这个项目是想通过 "对话" 的形式提供一种人与机器的交互方式. 在这个项目的思路中, "对话" 并非目的, 而是 "操作机器" 的手段.
 
-简单来说, CommuneChatbot 是一个 :
+简单来说, CommuneChatbot 是 :
 
 - 使用 PHP7 开发的开源项目
-- 基于 swoole + hyperf 提供协程化的服务端
+- 基于 swoole + Hyperf 提供协程化的高性能服务端
 - 可对接语音, 即时通讯等平台搭建对话机器人
-- 最大特点是 __多轮对话管理引擎__, 用于解决 [复杂多轮对话问题](/zh-cn/core-concepts/complex-conversation.md)
+- 最大特点是 __多轮对话管理引擎__, 用于解决复杂多轮对话问题
 - 提供工程化 (模块化/可配置/组件化) 的开发框架
 - 目标是以对话的交互形式, 开发出像网站, 触屏App一样复杂的应用
 
@@ -19,9 +19,8 @@
 
 目前的 Demo 有:
 
-* 官方网站 : https://communechatbot.com/
-* 开发文档 : https://communechatbot.com/docs/zh-cn/
-* [项目网站](https://communechatbot.com)
+* 官方网站 : <https://communechatbot.com/>
+* 开发文档 : <https://communechatbot.com/docs/>
 * 微信公众号 Demo: 搜索 "CommuneChatbot"
 * 百度智能音箱: 对音箱说 "打开三国群英传", "打开方向迷宫"
 
@@ -35,7 +34,7 @@
 而 [Chatbot](https://github.com/thirdgerb/chatbot) 也可以嵌入到其它应用级框架中,
 提供对话机器人服务.
 
-更多细节请查看[开发手册](https://communechatbot.com/docs/zh-cn/), 或查看[开发手册的源码](https://github.com/thirdgerb/chatbot-book).
+更多细节请查看[开发手册](https://communechatbot.com/docs/), 或查看 [开发手册的源码](https://github.com/thirdgerb/chatbot-book).
 
 ## 快速启动
 

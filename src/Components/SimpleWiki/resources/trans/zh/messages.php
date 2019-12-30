@@ -155,12 +155,13 @@ EOF
     ,
 
     'howtouse' => <<<EOF
-本项目目前还在开发 beta 版中, 文档还没有完善. 官方网站是 https://communechatbot.com/
+官方网站是 https://communechatbot.com/
 
 github :
 
 - chatbot : 核心开发框架, 地址 https://github.com/thirdgerb/chatbot
 - studio-hyperf :  基于 hyperf 开发的工作站, 地址 https://github.com/thirdgerb/studio-hyperf
+- chatbot-book : 开发手册, 地址 https://github.com/thirdgerb/chatbot-book
 EOF
     ,
 
