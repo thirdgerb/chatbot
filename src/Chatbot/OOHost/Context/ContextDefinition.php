@@ -285,12 +285,18 @@ class ContextDefinition implements Definition
 
         // 检查type hint
         $stageParam = $parameters[0];
-        if ($stageParam->hasType() && $stageParam->getType() != Stage::class) {
+        if (
+            $stageParam->hasType()
+            && ($stageParam->getType()->getName() != Stage::class)
+        ){
             $this->invalidClassStageMethod($methodName);
         }
 
         // 返回参数校验.
-        if ($method->hasReturnType() && $method->getReturnType() != Navigator::class) {
+        if (
+            $method->hasReturnType()
+            && ($method->getReturnType()->getName() != Navigator::class)
+        ) {
             $this->invalidClassStageMethod($methodName);
         }
 
