@@ -16,7 +16,7 @@ class StringUtilsTest extends TestCase
 {
 
     /**
-     * @description  123 测试一下. 试测, 试吃。二十世纪东方隆
+     * @description  123 测试一下. 试测, 试吃.二十世纪东方隆
 jksdflkjsldkjflsdjkf
 lksjdflskjdlfjskdfjlsdjkfslkjdflskjdflkjsfsd*
      *
@@ -28,7 +28,7 @@ lksjdflskjdlfjskdfjlsdjkfslkjdflskjdflkjsfsd*
 
         $desc = StringUtils::fetchDescAnnotation($doc);
 
-        $this->assertEquals('123 测试一下. 试测, 试吃。二十世纪东方隆
+        $this->assertEquals('123 测试一下. 试测, 试吃.二十世纪东方隆
 jksdflkjsldkjflsdjkf
 lksjdflskjdlfjskdfjlsdjkfslkjdflskjdflkjsfsd', $desc);
     }
@@ -91,9 +91,9 @@ EOF;
 
     public function testNormalize()
     {
-        $this->assertEquals('0', StringUtils::normalizeString('零。'));
+        $this->assertEquals('0', StringUtils::normalizeString('零.'));
 
-        $this->assertEquals('00', StringUtils::normalizeString('零零。'));
+        $this->assertEquals('00', StringUtils::normalizeString('零零.'));
 
         $this->assertEquals('第十2个', StringUtils::normalizeString('第十二个'));
     }
