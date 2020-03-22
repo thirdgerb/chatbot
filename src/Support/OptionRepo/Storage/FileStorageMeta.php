@@ -4,7 +4,7 @@
 namespace Commune\Support\OptionRepo\Storage;
 
 
-use Commune\Support\Option;
+use Commune\Support\Struct;
 use Commune\Support\OptionRepo\Options\StorageMeta;
 
 

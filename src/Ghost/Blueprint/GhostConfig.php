@@ -11,10 +11,16 @@
 
 namespace Commune\Ghost\Blueprint;
 
-use Commune\Support\Option;
+use Commune\Support\Struct;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ *
+ *
+ * @property-read bool $tracking        是否追踪对话逻辑的运算轨迹.
+ * @property-read int $stepDepth
+ *
  */
 class GhostConfig extends Option
 {

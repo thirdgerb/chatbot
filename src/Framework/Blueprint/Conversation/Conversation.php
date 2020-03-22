@@ -11,13 +11,38 @@
 
 namespace Commune\Framework\Blueprint\Conversation;
 
-use Commune\Framework\Blueprint\Chat\Chat;
+use Commune\Framework\Blueprint\Chat;
 use Commune\Framework\Blueprint\Chat\IncomingMessage;
 use Commune\Framework\Blueprint\Container;
-use Commune\Platform\Request;
+use Commune\Shell\Blueprint\Shell;
+use Commune\Shell\Platform\Request;
+use Commune\Shell\Platform\Response;
+use Commune\Shell\Platform\Server;
 
 /**
+ * 单轮会话的容器. 可以理解成多轮对话的一个状态机.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * 属性:
+ *
+ * @property-read string $traceId
+ * @property-read string $messageId
+ *
+ *
+ * 以下所有组件都可以在调用方法时依赖注入
+ *
+ * @property-read Request $request 当前请求
+ * @property-read Response $response 当前响应
+ * @property-read IncomingMessage $incomingMessage 输入消息
+ * @property-read Server $server  服务端实例
+ * @property-read Shell $shell  Shell 实例
+ * @property-read Comprehension $comprehension 理解单元.
+ * @property-read Logger $logger 对话级的日志
+ * @property-read Chat $chat 机器人所识别的对话通道. 每个 Chat 对应机器人的一个分身.
+ * @property-read Scope $scope 对话的维度.
+ * @property-read Messenger $messenger 消息发送组件.
+ *
  */
 interface Conversation extends Container
 {
@@ -40,105 +65,13 @@ interface Conversation extends Container
     /**
      * 检查当前conversation 是否拥有某种权限.
      * 需要传入一个class name
+
+     * @param string $policyName
+     * @see Policy
      *
-     * 条件1: 参数是 class, 而且是 Ability 的子类.
-     * 条件2: Ability 可以被容器实例化.
-     * 条件3: 运行 isAllowing($conversation) 通过.
-     *
-     * @param string $abilityInterfaceName
      * @return bool
      */
-    public function isAbleTo(string $abilityInterfaceName) : bool;
-
-    /*------------ scope ------------*/
-
-    /**
-     * conversation 的 trace id, 来自于 MessageRequest
-     * 用于记录调用链, 方便排查问题.
-     *
-     * @return string
-     */
-    public function getTraceId() : string;
-
-    /**
-     * 所有的conversation 都要有独立的id
-     * @return string
-     */
-    public function getConversationId() : string;
-
-    /**
-     * 获取用户信息
-     * @return User
-     */
-    public function getUser() : User;
-
-    /**
-     * 获取 Chat (会话) 信息.
-     * @return Chat
-     */
-    public function getChat() : Chat;
-
-    /*------------ incomingMessage ------------*/
-
-
-    /**
-     * 获取输入消息的封装对象.
-     *
-     * @param IncomingMessage $message
-     */
-    public function setIncomingMessage(IncomingMessage $message) : void ;
-
-
-    /**
-     * 获取输入消息的封装对象.
-     * @return IncomingMessage
-     */
-    public function getIncomingMessage() : IncomingMessage;
-
-
-    /*------------ components ------------*/
-
-    /**
-     * 获取日志模块
-     * @return ConversationLogger
-     */
-    public function getLogger() : ConversationLogger;
-
-    /**
-     * 当前请求的处理器
-     * @return Request
-     */
-    public function getRequest() : Request;
-
-    /**
-     *
-     * @return NLU
-     */
-    public function getNLU() : NLU;
-
-    /*------------ event ------------*/
-
-    /**
-     * 触发事件.
-     * @param \object $event
-     */
-    public function fire(object $event) : void;
-
-    /*------------ input & output ------------*/
-
-    /**
-     * 结束一个 conversation
-     * 为 destruct 做准备.
-     */
-    public function finish() : void;
-
-    /**
-     * 在结束的时候触发的逻辑.
-     * @param callable $caller
-     * @param bool $atEndOfTheQueue
-     */
-    public function onFinish(callable $caller, bool $atEndOfTheQueue = true) : void;
-
+    public function allow(string $policyName) : bool;
 
 
 }

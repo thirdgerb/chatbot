@@ -6,7 +6,7 @@ namespace Commune\Support\OptionRepo\Impl;
 
 use Commune\Support\OptionRepo\Exceptions\InvalidArgException;
 use Commune\Support\OptionRepo\Options\CategoryMeta;
-use Commune\Support\Option;
+use Commune\Support\Struct;
 use Commune\Support\OptionRepo\Contracts\OptionRepository;
 use Commune\Support\OptionRepo\Contracts\OptionStorage;
 use Commune\Support\OptionRepo\Contracts\RootOptionStage;

@@ -11,20 +11,35 @@
 
 namespace Commune\Ghost\Blueprint;
 
-use Commune\Ghost\Blueprint\Mind\StageDef;
-
 
 /**
- * Stage 状态机. 用来决定 Stage 的行为.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Stage
 {
+    // 作为意图, 被命中时
+    const ON_INTEND = 'onIntend';
 
-    // stage 当前的状态
-    public function state() : string;
+    // 正常启动
+    const ON_START = 'onStart';
 
+    // 收到用户消息
+    const ON_HEAR = 'onHear';
 
-    public function stageDef() : StageDef;
+    // 从 block 状态回来, 抢占了主题
+    const ON_RETAIN = 'onRetain';
+
+    // 回调类事件
+    const ON_WAKE = 'onWake';
+    const ON_CANCEL = 'onCancel';
+    const ON_FULFILL = 'onFulfill';
+    const ON_QUIT = 'onQuit';
+
+    /**
+     * 当前 Stage 所处的状态
+     * @return string
+     */
+    public function getState() : string;
+
+    public function isState(string $stage) : bool;
 }

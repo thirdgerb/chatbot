@@ -8,7 +8,7 @@
 namespace Commune\Test\Support;
 
 
-use Commune\Support\Option;
+use Commune\Support\Struct;
 use PHPUnit\Framework\TestCase;
 
 class OptionTest extends TestCase

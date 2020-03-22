@@ -4,7 +4,7 @@
 namespace Commune\Support\OptionRepo\Options;
 
 
-use Commune\Support\Option;
+use Commune\Support\Struct;
 use Commune\Support\OptionRepo\Storage\FileStorageMeta;
 use Commune\Support\OptionRepo\Storage\Json\YamlStorageMeta;
 

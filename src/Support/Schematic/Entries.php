@@ -4,8 +4,6 @@ namespace Commune\Support\Schematic;
 
 use Closure;
 use InvalidArgumentException;
-use Iterator;
-use Traversable;
 
 
 class Entries implements \IteratorAggregate, IEntries, \ArrayAccess

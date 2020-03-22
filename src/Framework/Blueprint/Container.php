@@ -19,11 +19,4 @@ use Commune\Container\ContainerContract;
 interface Container extends ContainerContract
 {
 
-    /**
-     * 使用 ServiceProvider 注册服务
-     * @param string|ServiceProvider $provider
-     * @param bool $atTopNotBottom  在头部,还是尾部
-     */
-    public function register($provider, bool $atTopNotBottom = false) : void;
-
 }

@@ -17,6 +17,14 @@ namespace Commune\Support\Meta;
  */
 interface Wrapper
 {
-    public function __construct(Meta $meta);
+    const WRAP_METHOD = 'wrap';
+
+    /**
+     * @param Meta $meta
+     * @return static
+     */
+    public static function wrap(Meta $meta) : Wrapper;
+
+    public function getMeta() : Meta;
 
 }

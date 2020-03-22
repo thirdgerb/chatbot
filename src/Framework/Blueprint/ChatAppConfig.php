@@ -13,7 +13,7 @@ namespace Commune\Framework\Blueprint;
 
 use Commune\Ghost\Blueprint\GhostConfig;
 use Commune\Shell\Blueprint\ShellConfig;
-use Commune\Support\Option;
+use Commune\Support\Structure;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -39,13 +39,14 @@ use Commune\Support\Option;
  * @property-read string[] $bootstrappers
  * @property-read string[] $baseServices
  */
-class ChatAppConfig extends Option
+class ChatAppConfig extends Structure
 {
+    const IDENTITY = 'chatbotName';
+
     protected static $associations = [
         'ghost' => GhostConfig::class,
         'shells[]' => ShellConfig::class,
     ];
-
 
     public static function stub(): array
     {

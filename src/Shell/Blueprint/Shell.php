@@ -15,8 +15,8 @@ use Commune\Framework\Blueprint\ChatApp;
 use Commune\Framework\Blueprint\ChatAppConfig;
 use Commune\Framework\Blueprint\Container;
 use Commune\Framework\Blueprint\Conversation\Conversation;
-use Commune\Platform\Request;
-use Commune\Platform\Server;
+use Commune\Shell\Platform\Request;
+use Commune\Shell\Platform\Server;
 use Commune\Shell\Blueprint\Kernel\ApiKernel;
 use Commune\Shell\Blueprint\Kernel\CallbackKernel;
 use Commune\Shell\Blueprint\Kernel\UserKernel;
@@ -27,26 +27,18 @@ use Psr\Container\ContainerInterface;
  * 是全平台通用的.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ *
+ * @property-read string $name
+ *
+ *
+ * @property-read ChatApp $chatApp
+ * @property-read ShellConfig $config
+ * @property-read Container $processContainer
+ * @property-read Container $convoContainer
  */
 interface Shell extends ContainerInterface
 {
-    /**
-     * Shell 的名称
-     * @return string
-     */
-    public function name() : string;
-
-    /**
-     * 进程级容器
-     * @return Container
-     */
-    public function getProcessContainer() : Container;
-
-    /**
-     * 会话级容器
-     * @return Container
-     */
-    public function getConversationContainer() : Container;
 
     /**
      * 获得一个会话级的 Conversation 容器
@@ -62,17 +54,6 @@ interface Shell extends ContainerInterface
      * @param $singleton
      */
     public function bindInstance(string $abstract, $singleton) : void;
-
-    /**
-     * @return ChatAppConfig
-     */
-    public function getAppConfig() : ChatAppConfig;
-
-    /**
-     * 获取配置
-     * @return ShellConfig
-     */
-    public function getShellConfig() : ShellConfig;
 
     /*------- 启动 --------*/
 

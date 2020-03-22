@@ -11,49 +11,37 @@
 
 namespace Commune\Framework\Blueprint;
 
+use Commune\Framework\Contracts\Cache;
+use Commune\Framework\Blueprint\Chat;
 use Commune\Shell\Blueprint\Shell;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $chatbotName                   机器人的名称
+ * @property-read ChatAppConfig $config                 机器人的配置
+ * @property-read LogInfo $logInfo                      日志信息的方法类
+ * @property-read Container $processContainer           进程级的容器
+ * @property-read Container $conversationContainer      对话级的容器
+ *
  */
 interface ChatApp
 {
-    public function __construct(
-        ChatAppConfig $config,
-        Container $processContainer = null
-    );
-
-    /**
-     * 获取配置
-     * @return ChatAppConfig
-     */
-    public function getConfig() : ChatAppConfig;
 
     /**
      * 启动 Shell 实例
      * @param string $shellName
      * @return Shell
      */
-    public function getShell(string $shellName) : Shell;
+    public function createShell(string $shellName) : Shell;
 
     /**
      * @return string[]
      */
     public function getShellNames() : array;
 
+    public function getCache() : Cache;
 
-    /*------- 容器 --------*/
-
-    /**
-     * 获取进程级容器
-     * @return Container
-     */
-    public function getProcessContainer() : Container;
-
-    /**
-     * 获取对话级容器
-     * @return Container
-     */
-    public function getConversationContainer() : Container;
+    public function getChat() : Chat;
 
 }

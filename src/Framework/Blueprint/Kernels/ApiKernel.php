@@ -11,8 +11,8 @@
 
 namespace Commune\Shell\Blueprint\Kernel;
 
-use Commune\Platform\Request;
-use Commune\Platform\Response;
+use Commune\Shell\Platform\Request;
+use Commune\Shell\Platform\Response;
 
 
 /**

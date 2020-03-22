@@ -3,7 +3,7 @@
 
 namespace Commune\Support\OptionRepo\Demo;
 
-use Commune\Support\Option;
+use Commune\Support\Struct;
 
 /**
  * @property-read int $id

@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Blueprint;
 
-use Commune\Support\Option;
+use Commune\Support\Structure;
 
 
 /**
@@ -22,8 +22,10 @@ use Commune\Support\Option;
  *
  * @property-read string $name
  */
-class ShellConfig extends Option
+class ShellConfig extends Structure
 {
+    const IDENTITY = 'name';
+
     public static function stub(): array
     {
         return [
@@ -40,6 +42,10 @@ class ShellConfig extends Option
 
             // shell 的内核
             'kernel' => '',
+
+            'server' => [
+
+            ],
 
             'session' => [
                 'tracking' => true,
