@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\Blueprint\Chat;
+namespace Commune\Framework\Blueprint\Conversation;
 
 use Commune\Message\Blueprint\ConvoMsg;
 
@@ -18,13 +18,8 @@ use Commune\Message\Blueprint\ConvoMsg;
  *
  *
  * @property-read ConvoMsg $message
- * @property-read MessageScope $scope
  * @property-read string $userId
  */
 interface IncomingMessage
 {
-    public function getMessage() : ConvoMsg;
-
-    public function getChatScope() : ChatScope;
-
 }

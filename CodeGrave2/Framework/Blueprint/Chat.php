@@ -11,9 +11,18 @@
 
 namespace Commune\Framework\Blueprint;
 
+use Commune\Framework\Blueprint\Conversation\IncomingMessage;
+use Commune\Framework\Blueprint\Conversation\ReactionMessage;
+
 /**
- * @author thirdgerb <thirdgerb@gmail.com>
+ * 会话的消息管理机制.
  *
+ * 包含三类功能:
+ * 1. 输入消息的 buffer 与获取
+ * 2. 输出消息的 buffer 与获取
+ * 3.
+ *
+ * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Chat
 {
@@ -69,7 +78,17 @@ interface Chat
     ) : ? ReactionMessage;
 
 
+    /**
+     * 锁定一个会话, 返回成功或失败
+     * @param string $chatId
+     * @return bool
+     */
     public function lock(string $chatId) : bool;
 
+    /**
+     * 解锁一个会话.
+     * @param string $chatId
+     * @return bool
+     */
     public function unlock(string $chatId) : bool ;
 }

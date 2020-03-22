@@ -9,17 +9,21 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\Blueprint\Chat;
+namespace Commune\Ghost\Blueprint;
+
+use Commune\Framework\Blueprint\Chat\Chat;
+use Commune\Framework\Blueprint\Conversation\IncomingMessage;
+use Commune\Framework\Blueprint\Conversation\Conversation;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $messageId
- * @property-read string $chatId
- * @property-read string $chatbotName
- * @property-read string $shellName
+ * @property-read Conversation $conversation
+ * @property-read IncomingMessage $incomingMessage
+ * @property-read Chat $chat
  */
-interface MessageScope
+interface Session
 {
+
 }

@@ -78,13 +78,6 @@ interface Server
      */
     public function sendOffline(string $chatId, Message $message) : bool;
 
-    /**
-     * 根据 ChatId 创建一个 Response
-     * @param string $chatId
-     * @return Response
-     */
-    public function makeResponse(string $chatId) : Response;
-
     /*---------- 双工通讯 ------------*/
 
     /**

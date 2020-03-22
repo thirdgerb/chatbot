@@ -28,8 +28,7 @@ interface Messenger
     public function reply(Reaction $reaction) : void;
 
     /**
-     * 广播消息.
-     *
+     * 广播消息, 到各个 shell 的消息通道.
      * @param string $chatId
      * @param Reaction $reaction
      * @param array $shellNames

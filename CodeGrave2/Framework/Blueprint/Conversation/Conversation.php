@@ -12,7 +12,7 @@
 namespace Commune\Framework\Blueprint\Conversation;
 
 use Commune\Framework\Blueprint\Chat;
-use Commune\Framework\Blueprint\Chat\IncomingMessage;
+use Commune\Framework\Blueprint\Conversation\IncomingMessage;
 use Commune\Framework\Blueprint\Container;
 use Commune\Shell\Blueprint\Shell;
 use Commune\Shell\Platform\Request;

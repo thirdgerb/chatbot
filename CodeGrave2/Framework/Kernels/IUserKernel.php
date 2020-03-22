@@ -83,16 +83,19 @@ class IUserKernel implements UserKernel
 
     public function duplexPush() :void
     {
+        // 遍历所有的 chat 通道.
         foreach ($this->server->getEstablishedChats() as $chatId) {
-
+            // 向单个 chat 通道推送任务. 这里可能要用协程, 也可能要用 sleep 等待.
             $this->server->addChatSendingTask(function() use ($chatId) {
                 $this->deliverChatMessage($chatId);
             });
-
-
         }
     }
 
+    /**
+     * 尝试双工地发送某一个 chat 的消息.
+     * @param string $chatId
+     */
     protected function deliverChatMessage(string $chatId) : void
     {
 
@@ -106,8 +109,8 @@ class IUserKernel implements UserKernel
 
         $delivery = $this->deliverCheck($chat, $messages);
 
+        // 需要发送的消息
         $buffer = $this->renderDelivery($delivery);
-        $response = $this->server->makeResponse($chatId);
 
         // 通道如果不存在了.
         if (!$this->server->isEstablished($chatId)) {
@@ -115,8 +118,10 @@ class IUserKernel implements UserKernel
             return;
         }
 
-        $response->buffer($buffer);
-        $response->sendResponse();
+        // 遍历地发送消息给客户端.
+        foreach ($buffer as $message) {
+            $this->server->send($chatId, $message);
+        }
     }
 
     /**
