@@ -11,6 +11,7 @@
 
 namespace Commune\Shell\Kernels;
 
+use Commune\Chatbot\Exceptions\MessengerReqException;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Exceptions\DoneRequestException;
 use Commune\Message\Convo\ConvoMsg;
@@ -29,6 +30,8 @@ use Commune\Support\Pipeline\OnionPipeline;
 
 
 /**
+ * Shell 的请求处理内核.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class IRequestKernel implements RequestKernel
@@ -185,15 +188,23 @@ class IRequestKernel implements RequestKernel
     protected function callGhost(ShlSession $session) : ShlSession
     {
         $messenger = $this->shell->messenger;
-        $replies = $messenger->syncSendIncoming($session->getIncomingMsg());
-        $session->buffer($replies);
+        try {
+
+            $replies = $messenger->syncSendIncoming($session->getIncomingMsg());
+            $session->reply($replies);
+
+        // 请求失败的话, 应该给出结果.
+        } catch (MessengerReqException $e) {
+            $session->reply([ $e->getOutgoingMsg() ]);
+        }
+
         return $session;
     }
 
     protected function handleReplies(ShlSession $session, ShlResponse $response) : void
     {
         $renderer = $this->shell->renderer;
-        $buffer = $session->getBuffer();
+        $buffer = $session->getReplies();
 
         foreach ($buffer as $outgoingMsg) {
             // 如果发现了不同类的消息.

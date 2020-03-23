@@ -15,6 +15,7 @@ use Commune\Message\Internal\OutgoingMsg;
 
 /**
  * Messenger 发送同步消息, 可能会抛出的异常.
+ * 该异常携带一个消息作为返回.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
@@ -36,5 +37,11 @@ class MessengerReqException extends \RuntimeException
         parent::__construct($message);
     }
 
-
+    /**
+     * @return OutgoingMsg
+     */
+    public function getOutgoingMsg(): OutgoingMsg
+    {
+        return $this->outgoingMsg;
+    }
 }

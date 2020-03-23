@@ -9,14 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Shell\Contracts;
-
-use Commune\Message\Convo\ConvoMsg;
+namespace Commune\Framework\Contracts;
 
 /**
+ * 服务端实例.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlServer
+interface Server
 {
     /**
      * 启动服务端实例.

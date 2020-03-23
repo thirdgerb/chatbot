@@ -9,17 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Shell\Blueprint\Session;
+namespace Commune\Ghost\Blueprint\Session;
 
 use Psr\Log\LoggerInterface;
 
 
 /**
- * Shell 的请求级日志, 应当记录下 Request 的 logContext
+ * Ghost 的日志. 应当记录 IncomingMsg 的 Scope
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlSessionLogger extends LoggerInterface
+interface GhtSessionLogger extends LoggerInterface
 {
-
 }

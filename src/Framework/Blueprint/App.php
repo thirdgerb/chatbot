@@ -11,9 +11,11 @@
 
 namespace Commune\Framework\Blueprint;
 
+use Commune\Chatbot\Contracts\Cache;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\ExceptionReporter;
+use Commune\Framework\Contracts\Server;
 use Commune\Framework\Contracts\ServiceProvider;
 use Psr\Log\LoggerInterface;
 
@@ -24,6 +26,17 @@ use Psr\Log\LoggerInterface;
  */
 interface App
 {
+
+    /**
+     * 获取服务端实例.
+     * @return Server
+     */
+    public function getServer() : Server;
+
+    /**
+     * @return Cache
+     */
+    public function getCache() : Cache;
 
     /*----------- 容器 -----------*/
 

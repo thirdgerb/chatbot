@@ -9,17 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Shell\Blueprint\Session;
-
-use Psr\Log\LoggerInterface;
+namespace Commune\Ghost\Blueprint\Context;
 
 
 /**
- * Shell 的请求级日志, 应当记录下 Request 的 logContext
+ * 当前请求的场景信息.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $sceneName
+ * @property-read string $contextName
+ * @property-read array $defaultEnv
+ * @property-read array $env
  */
-interface ShlSessionLogger extends LoggerInterface
+interface Scene
 {
-
 }

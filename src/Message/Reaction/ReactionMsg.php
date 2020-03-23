@@ -21,6 +21,13 @@ use Commune\Message\Message;
  */
 interface ReactionMsg extends Message
 {
+    // 有一些预设的消息ID
+    const QUIT = 'reaction.quit';
+    const BLOCKED = 'reaction.block';
+    # 默认的
+    const CONFUSE = 'reaction.confuse';
+    # 默认的拒绝消息
+    const REJECT = 'reaction.reject';
 
     /**
      * ReactionId

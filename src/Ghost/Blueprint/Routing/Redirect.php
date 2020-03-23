@@ -9,17 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Shell\Blueprint\Session;
+namespace Commune\Ghost\Blueprint\Routing;
 
-use Psr\Log\LoggerInterface;
+use Commune\Ghost\Blueprint\Operator\Operator;
 
 
 /**
- * Shell 的请求级日志, 应当记录下 Request 的 logContext
+ * 重定向到其它的 Context
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlSessionLogger extends LoggerInterface
+interface Redirect
 {
+    public function sleepTo() : Operator;
 
+    public function dependOn() : Operator;
 }

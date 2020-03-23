@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Contracts;
+namespace Commune\Ghost\Blueprint\Mind;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhtServer
+interface CommandDef
 {
 
 }

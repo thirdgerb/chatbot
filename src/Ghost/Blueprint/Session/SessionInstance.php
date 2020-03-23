@@ -9,17 +9,21 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Shell\Blueprint\Session;
-
-use Psr\Log\LoggerInterface;
+namespace Commune\Ghost\Blueprint\Session;
 
 
 /**
- * Shell 的请求级日志, 应当记录下 Request 的 logContext
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlSessionLogger extends LoggerInterface
+interface SessionInstance
 {
+
+    public function isInstanced() : bool;
+
+    /**
+     * @param GhtSession $session
+     * @return static
+     */
+    public function toInstance(GhtSession $session) : SessionInstance;
 
 }

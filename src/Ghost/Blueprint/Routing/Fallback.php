@@ -9,17 +9,21 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Shell\Blueprint\Session;
+namespace Commune\Ghost\Blueprint\Routing;
 
-use Psr\Log\LoggerInterface;
+use Commune\Ghost\Blueprint\Operator\Operator;
 
 
 /**
- * Shell 的请求级日志, 应当记录下 Request 的 logContext
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlSessionLogger extends LoggerInterface
+interface Fallback
 {
+    public function reject() : Operator;
 
+    public function cancel() : Operator;
+
+    public function fulfill() : Operator;
+
+    public function quit() : Operator;
 }
