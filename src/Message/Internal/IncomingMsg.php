@@ -11,7 +11,7 @@
 
 namespace Commune\Message\Internal;
 
-use Commune\Message\Abstracted\Comprehension;
+use Commune\Message\Abstracted\Comprehended;
 use Commune\Message\Convo\ConvoMsg;
 
 /**
@@ -19,7 +19,7 @@ use Commune\Message\Convo\ConvoMsg;
  *
  * @property-read Scope $scope                      消息的作用域
  * @property-read ConvoMsg $message                 Shell平台来的通讯消息
- * @property-read Comprehension $comprehension      对消息的高级抽象
+ * @property-read Comprehended $comprehension      对消息的高级抽象
  * @property-read array $env                        环境变量
  */
 interface IncomingMsg

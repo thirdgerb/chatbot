@@ -9,16 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Abstracted;
+namespace Commune\Ghost\Blueprint\Dialog;
 
-use Commune\Message\Internal\IncomingMsg;
+use Commune\Ghost\Blueprint\Dialog;
+use Commune\Ghost\Blueprint\Operator\Operator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Comprehension
+interface Async extends Dialog
 {
+    public function await() : Operator;
 
-    public function comprehend(IncomingMsg $message) : Comprehended;
+    public function retain() : Operator;
+
+    public function drop() : Operator;
 
 }

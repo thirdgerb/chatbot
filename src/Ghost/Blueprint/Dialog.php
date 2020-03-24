@@ -19,7 +19,7 @@ use Commune\Ghost\Blueprint\Meta\MetaRegistrar;
 use Commune\Ghost\Blueprint\Mind\Mindset;
 use Commune\Ghost\Blueprint\Runtime\Runtime;
 use Commune\Ghost\Blueprint\Speak\Speaker;
-use Commune\Message\Abstracted\Comprehension;
+use Commune\Message\Abstracted\Comprehended;
 use Commune\Message\Convo\ConvoMsg;
 use Commune\Message\Directive\DirectiveMsg;
 use Commune\Message\Internal\IncomingMsg;
@@ -45,7 +45,7 @@ use Commune\Shell\Blueprint\Session\ShlSession;
  * # 消息相关
  * @property-read ConvoMsg $message                     请求消息
  * @property-read IncomingMsg $incoming                 请求消息的封装, 包含了 Scope
- * @property-read Comprehension $comprehension          请求的高级抽象
+ * @property-read Comprehended $comprehension          请求的高级抽象
  * @property-read Scene $scene                          场景信息的封装.
  *
  * # 语境相关
@@ -60,5 +60,24 @@ use Commune\Shell\Blueprint\Session\ShlSession;
  */
 interface Dialog
 {
+    /**
+     * Resolve the given type from the container.
+     *
+     * @param  string  $abstract
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function make(string $abstract, array $parameters = []);
+
+    /**
+     * 用依赖注入的方式调用一个 callable.
+     * 与laravel 的区别在于, $parameters 允许用 interface => $instance 的方式注入临时依赖.
+     *
+     * @param callable $caller
+     * @param array $parameters
+     * @return mixed
+     */
+    public function call(callable $caller, array $parameters = []);
+
 
 }

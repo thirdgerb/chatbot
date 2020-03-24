@@ -34,6 +34,7 @@ interface App
     public function getServer() : Server;
 
     /**
+     * 不一定是单例.
      * @return Cache
      */
     public function getCache() : Cache;

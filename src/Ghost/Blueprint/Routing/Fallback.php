@@ -19,6 +19,8 @@ use Commune\Ghost\Blueprint\Operator\Operator;
  */
 interface Fallback
 {
+    public function home() : Operator;
+
     public function reject() : Operator;
 
     public function cancel() : Operator;

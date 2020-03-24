@@ -9,16 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Abstracted;
+namespace Commune\Ghost\Blueprint\NLU;
 
-use Commune\Message\Internal\IncomingMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Comprehension
+interface Entity
 {
-
-    public function comprehend(IncomingMsg $message) : Comprehended;
 
 }

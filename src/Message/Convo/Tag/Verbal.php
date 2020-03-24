@@ -11,6 +11,7 @@
 
 namespace Commune\Message\Blueprint\Tag;
 
+use Psr\Log\LogLevel;
 
 /**
  * 文字类消息
@@ -18,5 +19,12 @@ namespace Commune\Message\Blueprint\Tag;
  */
 interface Verbal
 {
+
     public function getTrimmedText() : string;
+
+    /**
+     * @see LogLevel
+     * @return string
+     */
+    public function getLevel() : string;
 }

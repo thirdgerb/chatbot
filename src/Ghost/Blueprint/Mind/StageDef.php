@@ -10,8 +10,10 @@
  */
 
 namespace Commune\Ghost\Blueprint\Mind;
-use Commune\Ghost\Blueprint\Dialog\Intend;
+
+use Commune\Ghost\Blueprint\Dialog;
 use Commune\Ghost\Blueprint\Operator\Operator;
+use Commune\Ghost\Blueprint\Routing\Callback;
 
 /**
  * Stage 的封装对象
@@ -64,23 +66,32 @@ interface StageDef
      */
     public function routingStages() : array;
 
+    /**
+     * 使用什么组件来进行理解.
+     * @return null|string
+     */
+    public function comprehension() : ? string;
+
     /*------- stage 启动 -------*/
 
     /**
      * 作为意图被命中时, 还未进入当前 Stage
      *
-     * @param Intend $dialog
+     * @param Dialog\Intend $dialog
      * @return Operator
      */
     public function onIntend(
-        Intend $dialog
+        Dialog\Intend $dialog
     ) : Operator;
 
     /**
      * 正式进入 Stage 后
+     *
+     * @param Dialog\Start $dialog
      * @return Operator
      */
     public function onStart(
+        Dialog\Start $dialog
     ) : Operator;
 
 
@@ -88,50 +99,81 @@ interface StageDef
 
     /**
      * 没有命中任何分支, 由当前 Stage 自行响应.
+     *
+     * @param Dialog\Hear $dialog
+     * @return Operator
      */
     public function onHear(
+        Dialog\Hear $dialog
     ) : Operator;
 
     /*------- sleep 相关 -------*/
 
     /**
      * 当前 Thread 从 sleep 状态被唤醒时.
+     *
+     * @param Dialog\Wake $dialog
+     * @return Operator
      */
-    public function onWoke(
+    public function onWake(
+        Dialog\Wake $dialog
     ) : Operator ;
+
+    /*------- yield 相关 -------*/
+
+
+    public function onRetain(
+        Dialog\Retain $retain
+    ) : Operator;
+
+    public function onAsync(
+        Dialog\Async $dialog
+    ) : Operator;
+
+
 
 
     /*------- depend 相关 -------*/
 
     /**
      * 依赖语境被拒绝时. 通常是因为权限不足.
+     *
+     * @param Dialog\Retrace $dialog
      * @return Operator
      */
-    public function onRejected(
+    public function onReject(
+        Dialog\Retrace $dialog
     ) : Operator;
 
     /**
      * 当前 Thread 被用户要求 cancel 时
+     *
+     * @param Dialog\Retrace $dialog
      * @return Operator
      */
-    public function onCanceled(
+    public function onCancel(
+        Dialog\Retrace $dialog
     ) : Operator;
 
     /**
      * 依赖语境完成, 回调时.
+     *
+     * @param Dialog\Retrace $dialog
      * @return Operator
      */
-    public function onFulfilled(
+    public function onFulfill(
+        Dialog\Retrace $dialog
     ) : Operator;
 
-    /*------- 退出拦截 -------*/
 
     /**
      * Process 结束时, 会检查所有的 Thread 的态度.
      *
+     * @param Dialog\Retrace $dialog
      * @return Operator
      */
     public function onQuit(
+        Dialog\Retrace $dialog
     ) : Operator ;
 
 }

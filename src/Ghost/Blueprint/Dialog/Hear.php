@@ -12,28 +12,27 @@
 namespace Commune\Ghost\Blueprint\Dialog;
 
 use Commune\Ghost\Blueprint\Dialog;
+use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Backward;
 use Commune\Ghost\Blueprint\Routing\Fallback;
-use Commune\Ghost\Blueprint\Routing\Redirect;
-
+use Commune\Ghost\Blueprint\Routing\Hearing;
+use Commune\Ghost\Blueprint\Routing\Staging;
 
 /**
- * 在 A Context Stage 通过意图命中了 B Context Stage
- *
- * 会用 B Context Stage 的 onIntend 方法调用 A Context 对应的 Dialog
- *
- * 本质上还是在操作 A Context
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * 更多属性
  * @see Dialog
  */
-interface Intend extends Dialog
+interface Hear extends Dialog
 {
-    public function redirect() : Redirect;
+
+    public function hearing() : Hearing;
+
+    public function staging() : Staging;
 
     public function fallback() : Fallback;
 
     public function backward() : Backward;
+
 }

@@ -29,4 +29,10 @@ interface Conversational
      */
     public function getDefaultIndex();
 
+    /**
+     * 是否单选.
+     * @return bool
+     */
+    public function isExclusive() : bool;
+
 }

@@ -11,11 +11,16 @@
 
 namespace Commune\Ghost\Blueprint\Routing;
 
+use Commune\Ghost\Blueprint\Operator\Operator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Hearing
 {
+
+    public function confuse() : Operator;
+
+    public function end() : Operator;
 
 }

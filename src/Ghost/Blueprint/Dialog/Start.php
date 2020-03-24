@@ -14,15 +14,18 @@ namespace Commune\Ghost\Blueprint\Dialog;
 use Commune\Ghost\Blueprint\Dialog;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Fallback;
+use Commune\Ghost\Blueprint\Routing\Listen;
 use Commune\Ghost\Blueprint\Routing\Redirect;
 use Commune\Ghost\Blueprint\Routing\Staging;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * 更多属性
+ * @see Dialog
  */
 interface Start extends Dialog
 {
-    public function listen() : Operator;
 
     public function staging() : Staging;
 

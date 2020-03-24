@@ -11,14 +11,10 @@
 
 namespace Commune\Message\Abstracted;
 
-use Commune\Message\Internal\IncomingMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Comprehension
+interface Negative extends Emotion
 {
-
-    public function comprehend(IncomingMsg $message) : Comprehended;
-
 }

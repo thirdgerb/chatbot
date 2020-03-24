@@ -11,6 +11,8 @@
 
 namespace Commune\Shell\Blueprint\Session;
 
+use Commune\Chatbot\Contracts\Cache;
+use Commune\Chatbot\Contracts\Messenger;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Message\Internal\IncomingMsg;
 use Commune\Message\Internal\OutgoingMsg;
@@ -30,6 +32,11 @@ use Commune\Shell\Contracts\ShlResponse;
  * @property-read Shell $shell                  获取 Shell 本身.
  * @property-read ReqContainer $container       容器
  * @property-read ShlSessionLogger $logger      会话自己的日志, 会记录 Req 相关信息.
+ *
+ * 请求级单例
+ *
+ * @property-read Cache $cache                  缓存
+ * @property-read Messenger $messenger
  */
 interface ShlSession
 {

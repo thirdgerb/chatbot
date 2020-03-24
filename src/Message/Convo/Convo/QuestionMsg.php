@@ -9,16 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Abstracted;
+namespace Commune\Message\Convo\Convo;
 
-use Commune\Message\Internal\IncomingMsg;
+use Commune\Message\Blueprint\Tag\Conversational;
+use Commune\Message\Blueprint\Tag\Verbal;
+use Commune\Message\Convo\ConvoMsg;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Comprehension
+interface QuestionMsg extends ConvoMsg, Conversational, Verbal
 {
-
-    public function comprehend(IncomingMsg $message) : Comprehended;
-
 }

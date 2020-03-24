@@ -15,7 +15,6 @@ use Commune\Chatbot\Contracts\Messenger;
 use Commune\Framework\Blueprint\App;
 use Commune\Shell\Blueprint\Kernels\RequestKernel;
 use Commune\Shell\Blueprint\Render\Renderer;
-use Commune\Framework\Contracts\Server;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

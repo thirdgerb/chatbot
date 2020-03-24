@@ -11,10 +11,22 @@
 
 namespace Commune\Ghost\Blueprint\Routing;
 
+use Commune\Ghost\Blueprint\Operator\Operator;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Staging
 {
+
+    public function restartContext() : Operator;
+
+    public function resetContext() : Operator;
+
+    public function go(string $stageName) : Operator;
+
+    public function goPipes(array $stagePipes) : Operator;
+
+    public function goNext() : Operator;
 }

@@ -11,6 +11,8 @@
 
 namespace Commune\Ghost\Blueprint\Session;
 
+use Commune\Chatbot\Contracts\Cache;
+use Commune\Chatbot\Contracts\Messenger;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Ghost\Blueprint\Ghost;
 use Commune\Ghost\Blueprint\Memory\Memory;
@@ -39,9 +41,16 @@ use SebastianBergmann\CodeCoverage\Driver\Driver;
  * @property-read GhtSessionLogger $logger          请求级日志
  * @property-read Driver $driver                    Session 的驱动, 读写各种数据.
  *
+ * 请求级单例
+ *
+ * @property-read Cache $cache                  缓存
+ * @property-read Messenger $messenger
+ *
  * 多轮对话相关模块
+ *
  * @property-read Memory $memory                    机器人的记忆
  * @property-read Runtime $runtime                  上下文状态
+ *
  */
 interface GhtSession
 {

@@ -9,16 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Abstracted;
+namespace Commune\Ghost\Blueprint\Dialog;
 
-use Commune\Message\Internal\IncomingMsg;
+use Commune\Ghost\Blueprint\Dialog;
+use Commune\Ghost\Blueprint\Routing\Fallback;
+use Commune\Ghost\Blueprint\Routing\Staging;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Comprehension
+interface Retrace extends Dialog
 {
+    public function staging() : Staging;
 
-    public function comprehend(IncomingMsg $message) : Comprehended;
+    public function fallback() : Fallback;
 
 }
