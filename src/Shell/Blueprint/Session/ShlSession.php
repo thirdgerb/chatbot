@@ -11,11 +11,11 @@
 
 namespace Commune\Shell\Blueprint\Session;
 
-use Commune\Chatbot\Contracts\Cache;
-use Commune\Chatbot\Contracts\Messenger;
+use Commune\Framework\Contracts\Cache;
+use Commune\Framework\Contracts\Messenger;
 use Commune\Framework\Blueprint\ReqContainer;
-use Commune\Message\Internal\IncomingMsg;
-use Commune\Message\Internal\OutgoingMsg;
+use Commune\Message\Internal\InputMsg;
+use Commune\Message\Internal\OutputMsg;
 use Commune\Message\Internal\Scope;
 use Commune\Shell\Blueprint\Shell;
 use Commune\Shell\Contracts\ShlRequest;
@@ -41,7 +41,7 @@ use Commune\Shell\Contracts\ShlResponse;
 interface ShlSession
 {
 
-    public function getIncomingMsg() : IncomingMsg;
+    public function getIncomingMsg() : InputMsg;
 
     /**
      * 查看 SessionId 是否对应一个已知的 Scope
@@ -59,12 +59,12 @@ interface ShlSession
 
 
     /**
-     * @param OutgoingMsg[] $replies
+     * @param OutputMsg[] $replies
      */
     public function reply(array $replies) : void;
 
     /**
-     * @return OutgoingMsg[]
+     * @return OutputMsg[]
      */
     public function getReplies() : array;
 

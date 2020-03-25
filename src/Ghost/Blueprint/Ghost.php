@@ -11,13 +11,12 @@
 
 namespace Commune\Ghost\Blueprint;
 
-use Commune\Chatbot\Contracts\Messenger;
 use Commune\Framework\Blueprint\App;
 use Commune\Ghost\Blueprint\Kernels\ApiKernel;
-use Commune\Ghost\Blueprint\Kernels\CallbackKernel;
+use Commune\Ghost\Blueprint\Kernels\AsyncKernel;
 use Commune\Ghost\Blueprint\Kernels\MessageKernel;
 use Commune\Ghost\Blueprint\Meta\MetaRegistrar;
-use Commune\Ghost\Blueprint\Mind\Mindset;
+use Commune\Ghost\Blueprint\Definition\Mindset;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -28,16 +27,15 @@ use Commune\Ghost\Blueprint\Mind\Mindset;
  * 以下属性可以依赖注入
  *
  * @property-read GhostConfig $config               Ghost 配置
- * @property-read Messenger $messenger              Ghost 和 Shell 的通讯工具
- * @property-read Mindset $mindset                  对话机器人的思维. 公共的
- * @property-read MetaRegistrar $metaReg                元数据的注册表
+ * @property-read Mindset $mind                     对话机器人的思维. 公共的
+ * @property-read MetaRegistrar $metaReg            元数据的注册表
  */
 interface Ghost extends App
 {
 
     public function getApiKernel() : ApiKernel;
 
-    public function getCallbackKernel() : CallbackKernel;
+    public function getCallbackKernel() : AsyncKernel;
 
     public function getMessageKernel() : MessageKernel;
 }

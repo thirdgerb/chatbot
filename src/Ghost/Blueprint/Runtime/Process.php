@@ -24,6 +24,8 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read string[] $sleepingIds sleep Thread 的 id
  * @property-read string[] $blockingIds block Thread 的 id
  *
+ * @property-read string|null $parentId
+ * @property-read string|null $childId
  */
 interface Process extends ArrayAndJsonAble
 {
@@ -40,6 +42,12 @@ interface Process extends ArrayAndJsonAble
      * @return Thread
      */
     public function aliveThread() : Thread;
+
+    public function aliveContext() : string;
+
+    public function aliveThreadId() : string;
+
+    public function aliveStage() : string;
 
     /*-------- sleeping --------*/
 

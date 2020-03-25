@@ -11,8 +11,7 @@
 
 namespace Commune\Ghost\Contracts;
 
-use Commune\Message\Convo\ConvoMsg;
-use Commune\Message\Internal\IncomingMsg;
+use Commune\Message\Internal\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -28,9 +27,9 @@ interface GhtRequest
 
     /**
      * 从请求中获取 IncomingMsg
-     * @return IncomingMsg
+     * @return InputMsg
      */
-    public function fetchIncoming() : IncomingMsg;
+    public function fetchIncoming() : InputMsg;
 
 
 }

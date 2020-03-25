@@ -11,7 +11,7 @@
 
 namespace Commune\Chatbot\Exceptions;
 
-use Commune\Message\Internal\OutgoingMsg;
+use Commune\Message\Internal\OutputMsg;
 
 /**
  * Messenger 发送同步消息, 可能会抛出的异常.
@@ -22,25 +22,25 @@ use Commune\Message\Internal\OutgoingMsg;
 class MessengerReqException extends \RuntimeException
 {
     /**
-     * @var OutgoingMsg
+     * @var OutputMsg
      */
     protected $outgoingMsg;
 
     /**
      * MessengerReqException constructor.
      * @param string $message
-     * @param OutgoingMsg $outgoingMsg
+     * @param OutputMsg $outgoingMsg
      */
-    public function __construct(string $message, OutgoingMsg $outgoingMsg)
+    public function __construct(string $message, OutputMsg $outgoingMsg)
     {
         $this->outgoingMsg = $outgoingMsg;
         parent::__construct($message);
     }
 
     /**
-     * @return OutgoingMsg
+     * @return OutputMsg
      */
-    public function getOutgoingMsg(): OutgoingMsg
+    public function getOutgoingMsg(): OutputMsg
     {
         return $this->outgoingMsg;
     }

@@ -23,19 +23,15 @@ use Commune\Message\Reaction\ReactionMsg;
 interface Speaker
 {
 
-
-
     /**
      * 发送一个响应给相关 shell
      *
-     * @param string $replyId
-     * @param array $slots
+     * @param ReactionMsg $message
      * @param array $shellNames
-     * @return static
+     * @return Speaker
      */
     public function react(
-        string $replyId,
-        array $slots = [],
+        ReactionMsg $message,
         array $shellNames = ['*']
     ) : Speaker;
 
@@ -46,14 +42,6 @@ interface Speaker
      * @return static
      */
     public function reply(Message $message) : Speaker;
-
-    /**
-     * 广播消息, 给所有的 shell
-     *
-     * @param Message $message
-     * @return static
-     */
-    public function broadcast(Message $message) : Speaker;
 
     /**
      * 投递消息到指定的 Chat 和指定的 shell

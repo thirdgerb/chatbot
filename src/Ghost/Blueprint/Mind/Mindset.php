@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Blueprint\Mind;
+namespace Commune\Ghost\Blueprint\Definition;
 
 
 /**
@@ -22,6 +22,9 @@ interface Mindset
 
     /*--------- context ---------*/
 
+    public function hasContextDef(string $contextName) : ContextDef;
+
+    public function getContextDef(string $contextName) : ContextDef;
 
     /*--------- intent ---------*/
 
@@ -31,8 +34,8 @@ interface Mindset
 
     public function countIntentsByPrefix(string $intentNamePrefix) : int;
 
-    public function getIntentDef(string $intentName) : IntentDef;
+    public function getIntentDef(string $intentName) : RoutingDef;
 
-    public function registerIntentDef(IntentDef $def) : void;
+    public function registerIntentDef(RoutingDef $def) : void;
 
 }

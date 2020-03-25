@@ -11,12 +11,14 @@
 
 namespace Commune\Framework\Blueprint;
 
-use Commune\Chatbot\Contracts\Cache;
+use Commune\Framework\Contracts\Cache;
 use Commune\Container\ContainerContract;
-use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\ExceptionReporter;
+use Commune\Framework\Contracts\LogInfo;
+use Commune\Framework\Contracts\Messenger;
 use Commune\Framework\Contracts\Server;
 use Commune\Framework\Contracts\ServiceProvider;
+use Commune\Support\Babel\Babel;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -26,6 +28,7 @@ use Psr\Log\LoggerInterface;
  */
 interface App
 {
+    /*----------- 必要组件 -----------*/
 
     /**
      * 获取服务端实例.
@@ -38,6 +41,23 @@ interface App
      * @return Cache
      */
     public function getCache() : Cache;
+
+    /**
+     * @return Babel
+     */
+    public function getBabel() : Babel;
+
+    /**
+     * @return Messenger
+     */
+    public function getMessenger() : Messenger;
+
+    /**
+     * 异常通报机制.
+     * @return ExceptionReporter
+     */
+    public function getExceptionReporter() : ExceptionReporter;
+
 
     /*----------- 容器 -----------*/
 
@@ -91,15 +111,8 @@ interface App
     public function getLogInfo() : LogInfo;
 
     /**
-     * 异常通报机制.
-     * @return ExceptionReporter
-     */
-    public function getExceptionReporter() : ExceptionReporter;
-
-    /**
      * 控制台输出.
-     * @return ConsoleLogger
      */
-    public function getConsoleLogger() : ConsoleLogger;
+    public function getConsoleLogger() : LoggerInterface;
 
 }

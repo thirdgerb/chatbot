@@ -11,8 +11,6 @@
 
 namespace Commune\Message\Convo;
 
-use Commune\Message\Convo\ConvoMsg;
-
 /**
  * 多媒体消息
  *

@@ -11,7 +11,8 @@
 
 namespace Commune\Ghost\Blueprint\Kernels;
 
-use Commune\Message\Internal\IncomingMsg;
+use Commune\Ghost\Contracts\GhtRequest;
+use Commune\Ghost\Contracts\GhtResponse;
 
 /**
  * 消息调用的运行内核.
@@ -21,5 +22,9 @@ use Commune\Message\Internal\IncomingMsg;
 interface MessageKernel
 {
 
+    public function onRequest(
+        GhtRequest $request,
+        GhtResponse $response
+    ) : void;
 
 }

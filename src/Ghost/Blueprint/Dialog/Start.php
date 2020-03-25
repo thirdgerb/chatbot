@@ -14,7 +14,6 @@ namespace Commune\Ghost\Blueprint\Dialog;
 use Commune\Ghost\Blueprint\Dialog;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Fallback;
-use Commune\Ghost\Blueprint\Routing\Listen;
 use Commune\Ghost\Blueprint\Routing\Redirect;
 use Commune\Ghost\Blueprint\Routing\Staging;
 
@@ -26,6 +25,18 @@ use Commune\Ghost\Blueprint\Routing\Staging;
  */
 interface Start extends Dialog
 {
+
+    /**
+     * 等待用户消息
+     * @return Operator
+     */
+    public function listen() : Operator;
+
+    /**
+     * @return Operator
+     */
+    public function subProcess() : Operator;
+
 
     public function staging() : Staging;
 

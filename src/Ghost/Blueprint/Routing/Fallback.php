@@ -21,8 +21,6 @@ interface Fallback
 {
     public function home() : Operator;
 
-    public function reject() : Operator;
-
     public function cancel() : Operator;
 
     public function fulfill() : Operator;

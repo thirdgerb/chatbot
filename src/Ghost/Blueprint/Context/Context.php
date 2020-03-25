@@ -13,17 +13,19 @@ namespace Commune\Ghost\Blueprint\Context;
 
 use ArrayAccess;
 use Commune\Ghost\Blueprint\Memory\Recollection;
-use Commune\Ghost\Blueprint\Mind\ContextDef;
+use Commune\Ghost\Blueprint\Definition\ContextDef;
 use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Ghost\Blueprint\Session\SessionInstance;
+use Commune\Support\DI\Injectable;
 
 /**
  * 当前语境. 用来读写当前语境的变量.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Context extends ArrayAccess, ArrayAndJsonAble, SessionInstance
+interface Context extends ArrayAccess, ArrayAndJsonAble, SessionInstance, Injectable
 {
+    public function isPrepared() : bool;
 
     public function getId() : string;
 

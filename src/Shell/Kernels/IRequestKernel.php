@@ -13,10 +13,9 @@ namespace Commune\Shell\Kernels;
 
 use Commune\Chatbot\Exceptions\MessengerReqException;
 use Commune\Framework\Blueprint\ReqContainer;
-use Commune\Framework\Exceptions\DoneRequestException;
 use Commune\Message\Convo\ConvoMsg;
 use Commune\Message\Directive\DirectiveMsg;
-use Commune\Message\Internal\OutgoingMsg;
+use Commune\Message\Internal\OutputMsg;
 use Commune\Message\Reaction\ReactionMsg;
 use Commune\Shell\Blueprint\Pipeline\ShellPipe;
 use Commune\Shell\Blueprint\Render\Renderer;
@@ -80,8 +79,8 @@ class IRequestKernel implements RequestKernel
 
         // 终止流程, 并且不响应的异常.
         // 响应应该提前发送掉.
-        } catch (DoneRequestException $e) {
-            return;
+        // todo
+
 
         // 未预料到的错误.
         } catch (\Throwable $e) {
@@ -272,10 +271,10 @@ class IRequestKernel implements RequestKernel
     /**
      * 校验消息是否合法.
      * @param ShlSession $session
-     * @param OutgoingMsg $message
+     * @param OutputMsg $message
      * @return bool
      */
-    protected function validateOutgoing(ShlSession $session, OutgoingMsg $message) : bool
+    protected function validateOutgoing(ShlSession $session, OutputMsg $message) : bool
     {
         $inScope = $session->getIncomingMsg()->scope;
         $outScope = $message->scope;

@@ -11,11 +11,16 @@
 
 namespace Commune\Message\Abstracted;
 
+use Commune\Support\Arr\ArrayAndJsonAble;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Emotion
+interface Emotion extends ArrayAndJsonAble
 {
-    public function getEmotions() : array;
+    public function addEmotion(string $emotionName) : void;
+
+    public function getEmotion() : array;
+
 }

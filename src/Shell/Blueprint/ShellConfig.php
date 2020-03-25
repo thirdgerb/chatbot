@@ -20,8 +20,11 @@ use Commune\Support\Structure;
  *
  *
  * @property-read string $shellName Shell的名称
+ *
  * @property-read string[] $pipeline Shell运行的管道
- * @property-read string[] $directives Shell 预加载的命令.
+ * @property-read string[] $directives Shell 预加载的命令. id => DirectiveClass
+ *
+ * @property-read string[] $babel  type => serializable
  */
 class ShellConfig extends Structure
 {

@@ -11,11 +11,14 @@
 
 namespace Commune\Ghost\Blueprint\Memory;
 
+use ArrayAccess;
+use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Recollection
+interface Recollection extends ArrayAccess, ArrayAndJsonAble
 {
+    public function getId() : string;
 
 }

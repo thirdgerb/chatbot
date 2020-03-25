@@ -27,6 +27,8 @@ use Commune\Ghost\Blueprint\Routing\Staging;
 interface Hear extends Dialog
 {
 
+    public function confuse() : Operator;
+
     public function hearing() : Hearing;
 
     public function staging() : Staging;

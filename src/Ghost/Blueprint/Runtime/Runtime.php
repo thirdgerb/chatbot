@@ -18,4 +18,8 @@ namespace Commune\Ghost\Blueprint\Runtime;
 interface Runtime
 {
 
+    public function getProcess() : Process;
+
+    public function save() : void;
+
 }

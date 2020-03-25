@@ -12,11 +12,12 @@
 namespace Commune\Framework\Contracts;
 
 use Commune\Container\ContainerContract;
+use Commune\Support\Structure;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class ServiceProvider
+abstract class ServiceProvider extends Structure
 {
     const IS_PROCESS_SERVICE_PROVIDER = false;
 
@@ -26,28 +27,24 @@ abstract class ServiceProvider
     protected $app;
 
     /**
-     * ServiceProvider constructor.
-     * @param ContainerContract $app
+     * 是否是进程级的服务. 否则是请求级的服务.
+     * @return bool
      */
-    public function __construct($app)
-    {
-        $this->app = $app;
-    }
-
     public function isProcessServiceProvider() : bool
     {
         return static::IS_PROCESS_SERVICE_PROVIDER;
     }
 
     /**
-     * boot 时传递进来的实例, 很可能和register 的时候不是同一个实例.
+     * 初始化服务.
      * @param ContainerContract $app
      */
-    abstract public function boot($app);
+    abstract public function boot(ContainerContract $app) : void;
 
     /**
-     * @return mixed
+     * 注册服务到容器
+     * @param ContainerContract $app
      */
-    abstract public function register();
+    abstract public function register(ContainerContract $app) : void;
 
 }

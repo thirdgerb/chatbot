@@ -12,7 +12,7 @@
 namespace Commune\Message\Convo;
 
 use Commune\Message\Convo\ConvoMsg;
-use Commune\Message\Blueprint\Tag\Verbal;
+use Commune\Message\Tag\Verbal;
 
 /**
  * 文本消息.

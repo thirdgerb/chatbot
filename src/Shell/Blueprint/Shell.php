@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Blueprint;
 
-use Commune\Chatbot\Contracts\Messenger;
+use Commune\Framework\Contracts\Messenger;
 use Commune\Framework\Blueprint\App;
 use Commune\Shell\Blueprint\Kernels\RequestKernel;
 use Commune\Shell\Blueprint\Render\Renderer;

@@ -11,12 +11,15 @@
 
 namespace Commune\Ghost\Blueprint\Dialog;
 
+use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Dialog;
 use Commune\Ghost\Blueprint\Routing\Fallback;
 use Commune\Ghost\Blueprint\Routing\Staging;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read Context $prevContext
  */
 interface Retrace extends Dialog
 {

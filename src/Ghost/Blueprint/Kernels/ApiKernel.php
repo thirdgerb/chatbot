@@ -11,6 +11,8 @@
 
 namespace Commune\Ghost\Blueprint\Kernels;
 
+use Commune\Ghost\Contracts\GhtRequest;
+use Commune\Ghost\Contracts\GhtResponse;
 
 /**
  * API 调用的运行内核.
@@ -19,5 +21,11 @@ namespace Commune\Ghost\Blueprint\Kernels;
  */
 interface ApiKernel
 {
+
+    public function onRequest(
+        GhtRequest $request,
+        GhtResponse $response
+    ) : void;
+
 
 }

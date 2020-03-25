@@ -13,20 +13,21 @@ namespace Commune\Message;
 
 use Carbon\Carbon;
 use Commune\Support\Arr\ArrayAndJsonAble;
+use Commune\Support\Babel\BabelSerializable;
+use Commune\Support\DI\Injectable;
 
 /**
  * 所有消息的公共抽象.
+ * 并要求可以作为字符串来传输.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Message extends ArrayAndJsonAble
+interface Message extends ArrayAndJsonAble, BabelSerializable, Injectable
 {
-
     /**
      * 消息创建时间.
      * @return Carbon
      */
     public function getCreatedAt() : Carbon;
 
-    public function interfaces() : array;
 }

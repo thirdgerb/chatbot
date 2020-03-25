@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Routing;
 
+use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Operator\Operator;
 
 
@@ -24,4 +25,18 @@ interface Redirect
     public function sleepTo() : Operator;
 
     public function dependOn() : Operator;
+
+    /**
+     * 将当前 Thread 撤出, 等待服务回调.
+     *
+     * @param string $serviceName
+     * @param array $payload
+     * @param null|string|Context $toContext
+     * @return Operator
+     */
+    public function yieldTo(
+        string $serviceName,
+        array $payload,
+        $toContext = null
+    ) : Operator;
 }

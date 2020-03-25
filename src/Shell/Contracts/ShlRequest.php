@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Contracts;
 
-use Commune\Message\Abstracted\Comprehended;
+use Commune\Message\Abstracted\Comprehension;
 use Commune\Message\Convo\ConvoMsg;
 
 /**
@@ -87,9 +87,9 @@ interface ShlRequest
     /**
      * 请求内已经包含的高级抽象理解.
      *
-     * @return null|Comprehended
+     * @return null|Comprehension
      */
-    public function fetchComprehension() : ? Comprehended;
+    public function fetchComprehension() : ? Comprehension;
 
     /**
      * 请求给出的 sessionId, 是 Shell 内部的 SessionId

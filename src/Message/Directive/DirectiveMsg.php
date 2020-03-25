@@ -23,15 +23,11 @@ interface DirectiveMsg extends Message
 {
     //常用系统命令
 
-    // 退出会话
+    # 退出会话
     const QUIT_SESSION = 'directive.quitSession';
-
-    // 停止 Shell
-    const HALT_SHELL = 'directive.haltShell';
-
 
     public function getId() : string;
 
-    public function getArgs() : array;
+    public function getPayload() : array;
 
 }

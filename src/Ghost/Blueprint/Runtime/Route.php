@@ -30,6 +30,10 @@ interface Route
 
     public function fetchContext(GhtSession $session) : Context;
 
+    /*------ 前进 ------*/
+
+    public function forward(Route $route) : Route;
+
     /*------ 重定向 ------*/
 
     public function prev() : ? Route;
@@ -40,4 +44,7 @@ interface Route
 
     public function prevStageRoute() : ? Route;
 
+    /*------ to string ------*/
+
+    public function __toString() : string;
 }
