@@ -17,7 +17,6 @@ namespace Commune\Framework\Exceptions;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class LogicException
+class AppLogicException extends \LogicException
 {
-
 }

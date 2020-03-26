@@ -263,7 +263,7 @@ class IRequestKernel implements RequestKernel
             $invoker($session, $message);
 
         } else {
-            $warning = $this->shell->getLogInfo()->directiveNotExists($directiveId);
+            $warning = $this->shell->getLogInfo()->shellDirectiveNotExists($directiveId);
             $this->shell->getLogger()->warning($warning);
         }
     }

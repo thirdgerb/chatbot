@@ -1,11 +1,11 @@
 <?php
 
-namespace Commune\Support;
+namespace Commune\Support\Struct;
 
-use Commune\Support\Struct\Struct;
 use Commune\Support\Utils\StringUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Schematic\Entry;
+use InvalidArgumentException;
 
 /**
  * 基于Entry 实现的配置.
@@ -25,6 +25,11 @@ abstract class Structure extends Entry implements Struct
      */
     const IDENTITY = '';
 
+    /**
+     * Structure constructor.
+     * @param array $data
+     * @throws InvalidArgumentException
+     */
     public function __construct(array $data = [])
     {
         // 注意不要让错误的stub 污染配置.
@@ -34,7 +39,7 @@ abstract class Structure extends Entry implements Struct
         // you can validate input array
         $error = $this->validate($data);
         if (!empty($error)){
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 static::class
                 . ' error, ' . $error
                 . ', ' . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
@@ -190,14 +195,14 @@ abstract class Structure extends Entry implements Struct
 
             if (static::isListAssociation($key)) {
                 foreach ($value as $index => $item) {
-                    if ($item instanceof Option) {
+                    if ($item instanceof Struct) {
                         $data[$key][$index] = $item->toArray();
                     } else {
                         $data[$key][$index] = $item;
                     }
                 }
 
-            } elseif ($value instanceof Option) {
+            } elseif ($value instanceof Struct) {
                 $data[$key] = $value->toArray();
             } else {
                 $data[$key] = $value;

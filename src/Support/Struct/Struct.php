@@ -24,6 +24,11 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  */
 interface Struct extends ArrayAndJsonAble, IteratorAggregate
 {
+    /**
+     * Struct constructor.
+     * @param array $data
+     * @throws \InvalidArgumentException
+     */
     public function __construct(array $data = []);
 
     /**
@@ -61,8 +66,6 @@ interface Struct extends ArrayAndJsonAble, IteratorAggregate
      * @return null|string   error message
      */
     public static function validate(array $data) : ? string;
-
-
 
     /*------- 实例属性 -------*/
 

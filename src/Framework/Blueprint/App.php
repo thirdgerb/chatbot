@@ -28,6 +28,12 @@ use Psr\Log\LoggerInterface;
  */
 interface App
 {
+    /**
+     * 是否调试状态.
+     * @return bool
+     */
+    public function isDebugging() : bool;
+
     /*----------- 必要组件 -----------*/
 
     /**
@@ -43,17 +49,21 @@ interface App
     public function getCache() : Cache;
 
     /**
+     * 不一定是单例
      * @return Babel
      */
     public function getBabel() : Babel;
 
     /**
+     * 与 Ghost 的通讯模块
+     * 不一定是单例
      * @return Messenger
      */
     public function getMessenger() : Messenger;
 
     /**
      * 异常通报机制.
+     * 不一定是单例
      * @return ExceptionReporter
      */
     public function getExceptionReporter() : ExceptionReporter;
@@ -76,11 +86,24 @@ interface App
     /*----------- 服务 -----------*/
 
     /**
-     * 注册服务
-     * @param string|ServiceProvider $serviceProvider
+     * @param string $serviceProvider
+     * @param array $data
      * @param bool $top
      */
-    public function register($serviceProvider, bool $top = false) : void;
+    public function registerProvider(
+        string $serviceProvider,
+        array $data = [],
+        bool $top = false
+    ) : void;
+
+    /**
+     * @param ServiceProvider $provider
+     * @param bool $top
+     */
+    public function registerProviderIns(
+        ServiceProvider $provider,
+        bool $top
+    ) : void;
 
     /**
      * 初始化进程级服务

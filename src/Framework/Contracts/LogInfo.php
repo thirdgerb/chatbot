@@ -20,9 +20,14 @@ namespace Commune\Framework\Contracts;
  */
 interface LogInfo
 {
+
+    /*------ boot ------*/
+
+    public function bootRegisterInvalidProvider(string $providerClass, string $validation = '');
+
     /*------ shell info ------*/
 
     public function shellReceiveInvalidRequest(string $message) : string;
 
-    public function directiveNotExists(string $directiveId) : string;
+    public function shellDirectiveNotExists(string $directiveId) : string;
 }

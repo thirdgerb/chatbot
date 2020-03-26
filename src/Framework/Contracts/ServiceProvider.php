@@ -12,28 +12,28 @@
 namespace Commune\Framework\Contracts;
 
 use Commune\Container\ContainerContract;
-use Commune\Support\Structure;
+use Commune\Support\Struct\Structure;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 abstract class ServiceProvider extends Structure
 {
-    const IS_PROCESS_SERVICE_PROVIDER = false;
-
     /**
-     * @var ContainerContract
+     * Provider 的唯一 ID, 可以根据实际情况重写.
+     * @return string
      */
-    protected $app;
+    public function getId(): string
+    {
+        return static::class;
+    }
 
     /**
      * 是否是进程级的服务. 否则是请求级的服务.
      * @return bool
      */
-    public function isProcessServiceProvider() : bool
-    {
-        return static::IS_PROCESS_SERVICE_PROVIDER;
-    }
+    abstract public function isProcessServiceProvider() : bool;
+
 
     /**
      * 初始化服务.

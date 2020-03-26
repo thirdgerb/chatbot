@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Blueprint;
 
-use Commune\Support\Structure;
+use Commune\Support\Struct\Structure;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

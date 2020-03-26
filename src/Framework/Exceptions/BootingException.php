@@ -9,25 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Blueprint;
-
-use Commune\Support\Struct\Structure;
+namespace Commune\Framework\Exceptions;
 
 
 /**
- * 机器人灵魂的配置.
+ * 启动过程发生的致命错误.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- * @property-read string $defaultComprehension
  */
-class GhostConfig extends Structure
+class BootingException extends AppLogicException
 {
-    public static function stub(): array
-    {
-        return [];
-    }
-
 
 }

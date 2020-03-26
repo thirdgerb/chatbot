@@ -7,7 +7,8 @@
 
 namespace Commune\Test\Support;
 
-use Commune\Support\Struct\Structure;
+
+use Commune\Support\Struct;
 use PHPUnit\Framework\TestCase;
 
 class OptionTest extends TestCase
@@ -97,7 +98,7 @@ class OptionTest extends TestCase
  * @property-read  int $a
  * @property-read Option2 $b
  */
-class Option1 extends Structure
+class Option1 extends Option
 {
     protected static $associations =[
         'b' => Option2::class,
@@ -120,7 +121,7 @@ class Option1 extends Structure
  * @property-read int $a
  * @property-read int $b
  */
-class Option2 extends Structure
+class Option2 extends Option
 {
     const IDENTITY = 'a';
 
@@ -138,7 +139,7 @@ class Option2 extends Structure
  * @property-read Option1 $option1
  * @property-read Option2[] $option2
  */
-class Option3 extends Structure
+class Option3 extends Option
 {
     protected static $associations =[
         'option1' => Option1::class,

@@ -11,12 +11,30 @@
 
 namespace Commune\Chatbot\Blueprint;
 
-use Commune\Support\Structure;
+use Commune\Ghost\Blueprint\GhostConfig;
+use Commune\Shell\Blueprint\ShellConfig;
+use Commune\Support\Struct\Structure;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $chatbotName
+ * @property-read array $providers
+ * @property-read GhostConfig $ghost
+ * @property-read ShellConfig[] $shells
  */
 class ChatbotConfig extends Structure
 {
+    const IDENTITY = 'chatbotName';
+
+
+    public static function stub(): array
+    {
+        return [
+            'chatbotName' => '',
+
+        ];
+    }
+
 
 }

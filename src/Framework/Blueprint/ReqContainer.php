@@ -21,27 +21,30 @@ use Commune\Container\ContainerContract;
 interface ReqContainer extends ContainerContract
 {
     /**
+     * 请求容器的 ID
+     * @return string
+     */
+    public function getId() : string;
+
+    /**
      * 是否实例化了.
      * @return bool
      */
     public function isInstanced() : bool;
 
     /**
-     * 请求级容器应该要拿到应用实例.
-     * @return App
-     */
-    public function getApp() : App;
-
-    /**
      * 获取实例, 并且进行初始化.
      *
+     * ReqContainer 会用一个公共的实例来绑定各种工厂, 但每个请求需要再生成一个实例.
+     *
+     * @param string $id;
      * @param ContainerContract $procContainer
      * @return static
      */
-    public function newInstance(ContainerContract $procContainer) : ReqContainer;
+    public function newInstance(string $id, ContainerContract $procContainer) : ReqContainer;
 
     /**
-     * 请求级容器进行回收.
+     * 请求级容器进行回收, 避免相互持有导致内存溢出.
      */
     public function finish() : void;
 }
