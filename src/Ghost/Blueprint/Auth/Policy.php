@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Auth;
 
-use Commune\Message\Message;
+use Commune\Message\Blueprint\Message;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

@@ -12,8 +12,8 @@
 namespace Commune\Framework\Contracts;
 
 use Commune\Chatbot\Exceptions\MessengerReqException;
-use Commune\Message\Internal\InputMsg;
-use Commune\Message\Internal\OutputMsg;
+use Commune\Message\Blueprint\Internal\InputMsg;
+use Commune\Message\Blueprint\Internal\OutputMsg;
 
 /**
  * Shell 和 Ghost 进行通讯的桥梁.

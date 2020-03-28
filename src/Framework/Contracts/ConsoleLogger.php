@@ -9,27 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Contracts;
+namespace Commune\Framework\Contracts;
 
-use Commune\Message\Blueprint\Internal\InputMsg;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhtRequest
+interface ConsoleLogger extends LoggerInterface
 {
-
-    /**
-     * 检查请求是否合法
-     * @return bool
-     */
-    public function validate() : bool;
-
-    /**
-     * 从请求中获取 IncomingMsg
-     * @return InputMsg
-     */
-    public function fetchIncoming() : InputMsg;
-
-
 }

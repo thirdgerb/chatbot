@@ -13,16 +13,19 @@ namespace Commune\Framework\Blueprint;
 
 use Commune\Framework\Contracts\Cache;
 use Commune\Container\ContainerContract;
+use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\ExceptionReporter;
 use Commune\Framework\Contracts\LogInfo;
 use Commune\Framework\Contracts\Messenger;
 use Commune\Framework\Contracts\Server;
 use Commune\Framework\Contracts\ServiceProvider;
-use Commune\Support\Babel\Babel;
+use Commune\Framework\Exceptions\BootingException;
+use Commune\Support\Babel\BabelResolver;
 use Psr\Log\LoggerInterface;
 
 /**
- * 应用. 可以是 Shell, 或者 Ghost
+ * 应用实例. 可以是 Shell, 或者 Ghost
+ * 通常是进程级单例.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
@@ -37,33 +40,27 @@ interface App
     /*----------- 必要组件 -----------*/
 
     /**
-     * 获取服务端实例.
+     * 获取服务端实例. 通常是单例.
      * @return Server
      */
     public function getServer() : Server;
 
     /**
-     * 不一定是单例.
+     * 获取缓存实例. 通常不是单例, 每次重新生成.
      * @return Cache
      */
     public function getCache() : Cache;
 
     /**
-     * 不一定是单例
-     * @return Babel
-     */
-    public function getBabel() : Babel;
-
-    /**
      * 与 Ghost 的通讯模块
-     * 不一定是单例
+     * 通常不是单例.
      * @return Messenger
      */
     public function getMessenger() : Messenger;
 
     /**
      * 异常通报机制.
-     * 不一定是单例
+     * 通常不是单例.
      * @return ExceptionReporter
      */
     public function getExceptionReporter() : ExceptionReporter;
@@ -78,6 +75,13 @@ interface App
     public function getReqContainer() : ReqContainer;
 
     /**
+     * 创建一个请求级容器, 并添加默认的绑定
+     * @param string $id
+     * @return ReqContainer
+     */
+    public function newReqContainerInstance(string $id) : ReqContainer;
+
+    /**
      * 进程级容器.
      * @return ContainerContract
      */
@@ -89,6 +93,7 @@ interface App
      * @param string $serviceProvider
      * @param array $data
      * @param bool $top
+     * @throws BootingException
      */
     public function registerProvider(
         string $serviceProvider,
@@ -104,6 +109,24 @@ interface App
         ServiceProvider $provider,
         bool $top
     ) : void;
+
+    /**
+     * @return ServiceProvider[] string => ServiceProvider
+     */
+    public function getProcProviders() : array;
+
+    /**
+     * @return ServiceProvider[] string => ServiceProvider
+     */
+    public function getReqProviders() : array;
+
+    /*----------- 初始化流程 -----------*/
+
+    /**
+     * 初始化.
+     * @throws BootingException
+     */
+    public function bootstrap() : void;
 
     /**
      * 初始化进程级服务
@@ -136,6 +159,6 @@ interface App
     /**
      * 控制台输出.
      */
-    public function getConsoleLogger() : LoggerInterface;
+    public function getConsoleLogger() : ConsoleLogger;
 
 }

@@ -16,6 +16,7 @@ use Commune\Framework\Contracts\Messenger;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Ghost\Blueprint\Auth\Authority;
 use Commune\Ghost\Blueprint\Context\Context;
+use Commune\Ghost\Blueprint\Definition\Mindset;
 use Commune\Ghost\Blueprint\Ghost;
 use Commune\Ghost\Blueprint\Memory\Memory;
 use Commune\Ghost\Blueprint\Meta\MetaRegistrar;
@@ -23,11 +24,11 @@ use Commune\Ghost\Blueprint\Runtime\Runtime;
 use Commune\Ghost\Blueprint\Speak\Speaker;
 use Commune\Ghost\Contracts\GhtRequest;
 use Commune\Ghost\Contracts\GhtResponse;
-use Commune\Message\Internal\InputMsg;
-use Commune\Message\Internal\OutputMsg;
-use Commune\Message\Internal\Scope;
-use Commune\Message\Message;
-use Commune\Support\Babel\Babel;
+use Commune\Message\Blueprint\Internal\InputMsg;
+use Commune\Message\Blueprint\Internal\OutputMsg;
+use Commune\Message\Blueprint\Internal\Scope;
+use Commune\Message\Blueprint\Message;
+use Commune\Support\Babel\BabelResolver;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
 
 
@@ -41,18 +42,20 @@ use SebastianBergmann\CodeCoverage\Driver\Driver;
  *
  * @property-read GhtRequest $request               本轮对话的同步请求
  * @property-read GhtResponse $response             本轮对话的同步响应
- * @property-read InputMsg $incoming             输入的消息
+ * @property-read InputMsg $incoming                输入的消息
  * @property-read Scene $scene                      场景信息
  * @property-read Scope $scope                      本轮对话的作用域
+ * @property-read ReqContainer $container           请求级容器
  *
  * 组件
  *
  * @property-read Ghost $ghost                      对话机器人的灵魂
- * @property-read ReqContainer $container           请求级容器
+ * @property-read Mindset $mind                     对话机器人的思维. 公共的
+ * @property-read MetaRegistrar $metaReg            元数据的注册表
  * @property-read GhtSessionLogger $logger          请求级日志
  * @property-read Driver $driver                    Session 的驱动, 读写各种数据.
  * @property-read Cache $cache                      缓存
- * @property-read Babel $babel
+ * @property-read BabelResolver $babel
  * @property-read Messenger $messenger
  * @property-read Authority $authority
  * @property-read Memory $memory                    机器人的记忆

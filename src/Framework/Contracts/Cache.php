@@ -14,7 +14,7 @@ namespace Commune\Framework\Contracts;
 use Psr\SimpleCache\CacheInterface;
 
 /**
- * 机器人系统公用的 Cache. Shell 与 Ghost 共用的.
+ * 机器人系统公用的 Cache. 理论上 Shell 与 Ghost 共用的.
  * 所有的 key 都会加入 ChatbotName 相关的前缀. 以保证机器人之间不冲突.
  *
  * @author thirdgerb <thirdgerb@gmail.com>

@@ -6,3 +6,5 @@ exclude/
 tmp.log
 test.php
 commit-log.md
+codeGrave/
+codeGrave2/

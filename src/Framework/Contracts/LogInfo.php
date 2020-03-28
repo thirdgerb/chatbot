@@ -23,7 +23,20 @@ interface LogInfo
 
     /*------ boot ------*/
 
-    public function bootRegisterInvalidProvider(string $providerClass, string $validation = '');
+
+    public function bootStartKeyStep(string $methodName) : string;
+
+    public function bootEndKeyStep(string $methodName) : string;
+
+    public function bootRegisterExistsProvider(string $id) : string;
+
+    public function bootRegisterInvalidProvider(string $providerClass, string $validation = '') : string;
+
+    public function bootRegisterProvider(string $id) : string;
+
+    public function bootInvalidProviderConfiguration($index, $value) : string;
+
+    public function bootMissBinding(string $abstract) : string;
 
     /*------ shell info ------*/
 

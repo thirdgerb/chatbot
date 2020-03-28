@@ -15,7 +15,7 @@ use Commune\Ghost\Blueprint\GhostConfig;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Operators\AbsOperator;
-use Commune\Message\Abstracted\Comprehension;
+use Commune\Message\Blueprint\Abstracted\Comprehension;
 
 
 /**

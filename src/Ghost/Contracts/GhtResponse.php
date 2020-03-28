@@ -11,8 +11,8 @@
 
 namespace Commune\Ghost\Contracts;
 
-use Commune\Message\Internal\Scope;
-use Commune\Message\Message;
+use Commune\Message\Blueprint\Internal\Scope;
+use Commune\Message\Blueprint\Message;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

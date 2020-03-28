@@ -12,7 +12,7 @@
 namespace Commune\Framework\Contracts;
 
 use Commune\Framework\Blueprint\App;
-use Commune\Message\Directive\DirectiveMsg;
+use Commune\Message\Blueprint\Directive\DirectiveMsg;
 
 
 /**

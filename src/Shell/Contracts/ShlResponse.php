@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Contracts;
 
-use Commune\Message\Convo\ConvoMsg;
+use Commune\Message\Blueprint\ConvoMsg;
 
 /**
  * 负责向 Shell 的客户端发送响应的模块

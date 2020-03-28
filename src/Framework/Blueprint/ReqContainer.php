@@ -27,6 +27,11 @@ interface ReqContainer extends ContainerContract
     public function getId() : string;
 
     /**
+     * @return ContainerContract
+     */
+    public function getProcessContainer() : ContainerContract;
+
+    /**
      * 是否实例化了.
      * @return bool
      */

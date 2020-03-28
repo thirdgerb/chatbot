@@ -14,7 +14,7 @@ namespace Commune\Ghost\Operators\OnMessage;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Operators\AbsOperator;
-use Commune\Message\Internal\InputMsg;
+use Commune\Message\Blueprint\Internal\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

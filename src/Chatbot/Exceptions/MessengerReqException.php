@@ -11,7 +11,7 @@
 
 namespace Commune\Chatbot\Exceptions;
 
-use Commune\Message\Internal\OutputMsg;
+use Commune\Message\Blueprint\Internal\OutputMsg;
 
 /**
  * Messenger 发送同步消息, 可能会抛出的异常.

@@ -11,8 +11,8 @@
 
 namespace Commune\Shell\Blueprint\Render;
 
-use Commune\Message\Convo\ConvoMsg;
-use Commune\Message\Reaction\ReactionMsg;
+use Commune\Message\Blueprint\ConvoMsg;
+use Commune\Message\Blueprint\Reaction\ReactionMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

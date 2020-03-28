@@ -9,27 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Contracts;
+namespace Commune\Ghost\Prototype\Kernels;
 
-use Commune\Message\Blueprint\Internal\InputMsg;
+use Commune\Ghost\Blueprint\Kernels\MessageKernel;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhtRequest
+class IMessageKernel implements MessageKernel
 {
-
-    /**
-     * 检查请求是否合法
-     * @return bool
-     */
-    public function validate() : bool;
-
-    /**
-     * 从请求中获取 IncomingMsg
-     * @return InputMsg
-     */
-    public function fetchIncoming() : InputMsg;
-
 
 }

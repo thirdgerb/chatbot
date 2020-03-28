@@ -22,27 +22,19 @@ use Commune\Shell\Blueprint\Shell;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
- * 相关属性
- *
- * @property-read string $chatbotName
- * @property-read ChatbotConfig $config
  */
 interface Chatbot
 {
 
-    /**
-     * 预启动.
-     */
-    public function boot() : void;
+    public function bootstrap() : void;
 
+    public function getChatbotName() : string;
 
     /**
      * 进程级容器.
      * @return ContainerContract
      */
     public function getProcContainer() : ContainerContract;
-
 
     /**
      * 获取 Ghost 实例

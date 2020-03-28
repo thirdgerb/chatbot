@@ -11,10 +11,10 @@
 
 namespace Commune\Ghost\Blueprint\Speak;
 
-use Commune\Message\Convo\ConvoMsg;
-use Commune\Message\Directive\DirectiveMsg;
-use Commune\Message\Message;
-use Commune\Message\Reaction\ReactionMsg;
+use Commune\Message\Blueprint\ConvoMsg;
+use Commune\Message\Blueprint\Directive\DirectiveMsg;
+use Commune\Message\Blueprint\Message;
+use Commune\Message\Blueprint\Reaction\ReactionMsg;
 
 
 /**

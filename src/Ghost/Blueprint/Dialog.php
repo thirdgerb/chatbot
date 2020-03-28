@@ -20,12 +20,12 @@ use Commune\Ghost\Blueprint\Definition\Mindset;
 use Commune\Ghost\Blueprint\Runtime\Route;
 use Commune\Ghost\Blueprint\Runtime\Runtime;
 use Commune\Ghost\Blueprint\Speak\Speaker;
-use Commune\Message\Abstracted\Comprehension;
-use Commune\Message\Convo\ConvoMsg;
-use Commune\Message\Directive\DirectiveMsg;
-use Commune\Message\Internal\InputMsg;
-use Commune\Message\Message;
-use Commune\Message\Reaction\ReactionMsg;
+use Commune\Message\Blueprint\Abstracted\Comprehension;
+use Commune\Message\Blueprint\ConvoMsg;
+use Commune\Message\Blueprint\Directive\DirectiveMsg;
+use Commune\Message\Blueprint\Internal\InputMsg;
+use Commune\Message\Blueprint\Message;
+use Commune\Message\Blueprint\Reaction\ReactionMsg;
 use Commune\Shell\Blueprint\Session\ShlSession;
 
 

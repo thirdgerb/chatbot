@@ -9,27 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Contracts;
+namespace Commune\Framework\Contracts;
 
-use Commune\Message\Blueprint\Internal\InputMsg;
 
 /**
+ * 应用的启动流程.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhtRequest
+interface Bootstrapper
 {
 
-    /**
-     * 检查请求是否合法
-     * @return bool
-     */
-    public function validate() : bool;
-
-    /**
-     * 从请求中获取 IncomingMsg
-     * @return InputMsg
-     */
-    public function fetchIncoming() : InputMsg;
-
-
+    public function bootstrap() : void;
 }

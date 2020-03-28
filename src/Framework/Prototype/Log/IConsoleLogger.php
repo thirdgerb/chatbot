@@ -11,7 +11,7 @@
 
 namespace Commune\Framework\Prototype\Log;
 
-use Psr\Log\LoggerInterface;
+use Commune\Framework\Contracts\ConsoleLogger;
 use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
 
@@ -19,7 +19,7 @@ use Psr\Log\LogLevel;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IConsoleLogger implements LoggerInterface
+class IConsoleLogger implements ConsoleLogger
 {
     use LoggerTrait;
 
@@ -46,7 +46,7 @@ class IConsoleLogger implements LoggerInterface
 
         $start = "[$level] ";
         // 打印日志message
-        print_r( $start . $this->wrapMessage($level, $message) . PHP_EOL);
+        $this->write( $start . $this->wrapMessage($level, $message) . PHP_EOL);
 
         // 打印日志context
         if(!empty($context)) {
@@ -56,8 +56,13 @@ class IConsoleLogger implements LoggerInterface
             );
 
             $str = $this->wrapMessage($level, $contextJson);
-            print_r($start . $str . PHP_EOL);
+            $this->write($start . $str . PHP_EOL);
         }
+    }
+
+    protected function write(string $string) : void
+    {
+        print_r($string);
     }
 
     public static function wrapMessage(string $level, string $str) : string

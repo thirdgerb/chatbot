@@ -11,8 +11,8 @@
 
 namespace Commune\Shell\Contracts;
 
-use Commune\Message\Abstracted\Comprehension;
-use Commune\Message\Convo\ConvoMsg;
+use Commune\Message\Blueprint\Abstracted\Comprehension;
+use Commune\Message\Blueprint\ConvoMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
