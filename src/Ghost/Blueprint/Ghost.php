@@ -11,9 +11,8 @@
 
 namespace Commune\Ghost\Blueprint;
 
-use Commune\Framework\Blueprint\App;
+use Commune\Framework\Blueprint\Application;
 use Commune\Ghost\Blueprint\Kernels\ApiKernel;
-use Commune\Ghost\Blueprint\Kernels\AsyncKernel;
 use Commune\Ghost\Blueprint\Kernels\MessageKernel;
 
 /**
@@ -23,13 +22,11 @@ use Commune\Ghost\Blueprint\Kernels\MessageKernel;
  * @property-read string $chatbotName               机器人的名称
  *
  */
-interface Ghost extends App
+interface Ghost extends Application
 {
     public function getChatbotName() : string;
 
     public function getApiKernel() : ApiKernel;
-
-    public function getAsyncKernel() : AsyncKernel;
 
     public function getMessageKernel() : MessageKernel;
 }

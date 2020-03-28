@@ -29,7 +29,7 @@ use Psr\Log\LoggerInterface;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface App
+interface Application
 {
     /**
      * 是否调试状态.

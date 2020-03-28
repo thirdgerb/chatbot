@@ -12,7 +12,6 @@
 namespace Commune\Ghost\Prototype\Bootstrap;
 
 use Commune\Framework\Contracts\Bootstrapper;
-use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\LogInfo;
 use Commune\Framework\Exceptions\BootingException;
 use Commune\Ghost\Blueprint\Ghost;
@@ -21,7 +20,7 @@ use Commune\Ghost\GhostConfig;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RegisterProviders implements Bootstrapper
+class RegisterGhostProviders implements Bootstrapper
 {
     /**
      * @var Ghost

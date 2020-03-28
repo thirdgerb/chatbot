@@ -11,7 +11,7 @@
 
 namespace Commune\Framework\Contracts;
 
-use Commune\Framework\Blueprint\App;
+use Commune\Framework\Blueprint\Application;
 
 /**
  * 服务端实例.
@@ -20,7 +20,7 @@ use Commune\Framework\Blueprint\App;
  */
 interface Server
 {
-    public function getApp() : App;
+    public function getApp() : Application;
 
     /*---------- 运行相关 ---------*/
 

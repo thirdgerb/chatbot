@@ -69,7 +69,7 @@ class IConsoleLogger implements ConsoleLogger
     {
         switch($level) {
             case 'debug' :
-                return $str;
+                return "\033[37m$str\033[0m";
             case 'info' :
                 return "\033[32m$str\033[0m";
             case 'warning' :

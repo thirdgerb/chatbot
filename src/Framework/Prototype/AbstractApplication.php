@@ -12,7 +12,7 @@
 namespace Commune\Framework\Prototype;
 
 use Commune\Container\ContainerContract;
-use Commune\Framework\Blueprint\App;
+use Commune\Framework\Blueprint\Application;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Contracts\Bootstrapper;
 use Commune\Framework\Contracts\Cache;
@@ -33,7 +33,7 @@ use Psr\Log\LoggerInterface;
  *`
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AApp implements App
+abstract class AbstractApplication implements Application
 {
 
     /*------ configure ------*/
@@ -126,8 +126,8 @@ abstract class AApp implements App
         $this->reqContainer->instance(ConsoleLogger::class, $this->consoleLogger);
 
         // 绑定自己
-        $this->procContainer->instance(App::class, $this->consoleLogger);
-        $this->reqContainer->instance(App::class, $this->consoleLogger);
+        $this->procContainer->instance(Application::class, $this);
+        $this->reqContainer->instance(Application::class, $this);
 
         // 绑定 ReqContainer 的基本单例.
         $container = $this->reqContainer;
@@ -135,54 +135,54 @@ abstract class AApp implements App
         // 绑定 Server
         $container->singleton(Server::class, function(ContainerContract $ioc) {
             /**
-             * @var App $app
+             * @var Application $app
              */
-            $app = $ioc->get(App::class);
+            $app = $ioc->get(Application::class);
             return $app->getServer();
         });
 
         // 日志是请求级单例. 是否是进程级单例, 取决于日志底层是否实现好了协程等非阻塞机制.
         $container->singleton(LoggerInterface::class, function(ContainerContract $ioc){
             /**
-             * @var App $app
+             * @var Application $app
              */
-            $app = $ioc->get(App::class);
+            $app = $ioc->get(Application::class);
             return $app->getLogger();
         });
 
         // 绑定 cache 为请求级单例
         $container->singleton(Cache::class, function(ContainerContract $ioc){
             /**
-             * @var App $app
+             * @var Application $app
              */
-            $app = $ioc->get(App::class);
+            $app = $ioc->get(Application::class);
             return $app->getCache();
         });
 
         // 绑定 Messenger 为请求级单例
         $container->singleton(Messenger::class, function(ContainerContract $ioc){
             /**
-             * @var App $app
+             * @var Application $app
              */
-            $app = $ioc->get(App::class);
+            $app = $ioc->get(Application::class);
             return $app->getMessenger();
         });
 
         // 绑定 Babel 为请求级单例
         $container->singleton(BabelResolver::class, function(ContainerContract $ioc){
             /**
-             * @var App $app
+             * @var Application $app
              */
-            $app = $ioc->get(App::class);
+            $app = $ioc->get(Application::class);
             return $app->getBabel();
         });
 
         // 绑定 ExceptionReporter 为请求级单例.
         $container->singleton(ExceptionReporter::class, function(ContainerContract $ioc){
             /**
-             * @var App $app
+             * @var Application $app
              */
-            $app = $ioc->get(App::class);
+            $app = $ioc->get(Application::class);
             return $app->getExceptionReporter();
         });
 
@@ -199,31 +199,37 @@ abstract class AApp implements App
             return;
         }
 
-        $this->consoleLogger->info(
-            $this->logInfo->bootStartKeyStep(__METHOD__)
-        );
-
-        foreach ($this->bootstrappers as $bootstrapperName) {
-
+        try {
             $this->consoleLogger->info(
-                $this->logInfo->bootStartKeyStep($bootstrapperName)
+                $this->logInfo->bootStartKeyStep(__METHOD__)
             );
 
-            /**
-             * @var Bootstrapper $bootstrapper
-             */
-            $bootstrapper = $this->getProcContainer()->get($bootstrapperName);
-            $bootstrapper->bootstrap();
+            foreach ($this->bootstrappers as $bootstrapperName) {
+
+                $this->consoleLogger->info(
+                    $this->logInfo->bootStartKeyStep($bootstrapperName)
+                );
+
+                /**
+                 * @var Bootstrapper $bootstrapper
+                 */
+                $bootstrapper = $this->getProcContainer()->get($bootstrapperName);
+                $bootstrapper->bootstrap();
+
+                $this->consoleLogger->info(
+                    $this->logInfo->bootEndKeyStep($bootstrapperName)
+                );
+            }
 
             $this->consoleLogger->info(
-                $this->logInfo->bootEndKeyStep($bootstrapperName)
+                $this->logInfo->bootEndKeyStep(__METHOD__)
             );
+            $this->booted = true;
+
+        } catch (\Throwable $e) {
+            $this->consoleLogger->critical(strval($e));
+            exit(255);
         }
-
-        $this->consoleLogger->info(
-            $this->logInfo->bootEndKeyStep(__METHOD__)
-        );
-        $this->booted = true;
     }
 
 

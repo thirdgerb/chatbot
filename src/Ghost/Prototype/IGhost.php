@@ -14,7 +14,7 @@ namespace Commune\Ghost\Prototype;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\LogInfo;
-use Commune\Framework\Prototype\AApp;
+use Commune\Framework\Prototype\AbstractApplication;
 use Commune\Ghost\Blueprint\Ghost;
 use Commune\Ghost\Blueprint\Kernels;
 use Commune\Chatbot\ChatbotConfig;
@@ -25,13 +25,13 @@ use Commune\Ghost\Prototype\Bootstrap;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  */
-class IGhost extends AApp implements Ghost
+class IGhost extends AbstractApplication implements Ghost
 {
     /*------- config -------*/
 
     protected $bootstrappers = [
         Bootstrap\BootGhost::class,
-        Bootstrap\RegisterProviders::class,
+        Bootstrap\RegisterGhostProviders::class,
         Bootstrap\ValidateGhostContracts::class,
     ];
 
@@ -48,17 +48,24 @@ class IGhost extends AApp implements Ghost
      */
     protected $chatbotName;
 
+    /**
+     * @var GhostConfig
+     */
+    protected $ghostConfig;
+
     public function __construct(
         ContainerContract $procContainer,
-        ChatbotConfig $config,
+        ChatbotConfig $chatbotConfig,
+        GhostConfig $ghostConfig,
         LogInfo $logInfo = null,
         ConsoleLogger $consoleLogger = null
     )
     {
         $reqContainer = new IGhostReqContainer($procContainer);
-        $debug = $config->debug;
-        $this->chatbotConfig = $config;
-        $this->chatbotName = $config->chatbotName;
+        $debug = $chatbotConfig->debug;
+        $this->chatbotConfig = $chatbotConfig;
+        $this->ghostConfig = $ghostConfig;
+        $this->chatbotName = $chatbotConfig->chatbotName;
         parent::__construct($procContainer, $reqContainer, $debug, $logInfo, $consoleLogger);
     }
 
@@ -70,33 +77,28 @@ class IGhost extends AApp implements Ghost
 
     protected function basicBinding() : void
     {
+        parent::basicBinding();
+
         // 绑定配置
         $this->procContainer->instance(ChatbotConfig::class, $this->chatbotConfig);
         $this->reqContainer->instance(ChatbotConfig::class, $this->chatbotConfig);
 
-        $config = $this->chatbotConfig->ghost;
-        $this->procContainer->instance(GhostConfig::class, $config);
-        $this->reqContainer->instance(GhostConfig::class, $config);
+        $this->procContainer->instance(GhostConfig::class, $this->ghostConfig);
+        $this->reqContainer->instance(GhostConfig::class, $this->ghostConfig);
 
-        // 绑定 Ghost
+        // 绑定 Ghost 与 App
         $this->procContainer->instance(Ghost::class, $this);
         $this->reqContainer->instance(Ghost::class, $this);
 
         // 绑定 Kernel
-        $this->procContainer->bind(Kernels\MessageKernel::class, $config->messageKernel);
-        $this->procContainer->bind(Kernels\ApiKernel::class, $config->apiKernel);
-        $this->procContainer->bind(Kernels\AsyncKernel::class, $config->asyncKernel);
+        $this->procContainer->bind(Kernels\MessageKernel::class, $this->ghostConfig->messageKernel);
+        $this->procContainer->bind(Kernels\ApiKernel::class, $this->ghostConfig->apiKernel);
     }
 
 
     public function getApiKernel(): Kernels\ApiKernel
     {
         return $this->getProcContainer()->get(Kernels\ApiKernel::class);
-    }
-
-    public function getAsyncKernel(): Kernels\AsyncKernel
-    {
-        return $this->getProcContainer()->get(Kernels\AsyncKernel::class);
     }
 
     public function getMessageKernel(): Kernels\MessageKernel

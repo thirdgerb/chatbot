@@ -11,7 +11,7 @@
 
 namespace Commune\Framework\Contracts;
 
-use Commune\Framework\Blueprint\App;
+use Commune\Framework\Blueprint\Application;
 use Commune\Message\Blueprint\Directive\DirectiveMsg;
 
 
@@ -26,6 +26,6 @@ interface Directive
 {
     public static function getId() : string;
 
-    public function __invoke(App $app, DirectiveMsg $msg);
+    public function __invoke(Application $app, DirectiveMsg $msg);
 
 }

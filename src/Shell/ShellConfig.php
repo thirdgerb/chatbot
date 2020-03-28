@@ -35,6 +35,4 @@ class ShellConfig extends Structure
     {
         return [];
     }
-
-
 }

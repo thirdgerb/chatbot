@@ -34,9 +34,13 @@ interface LogInfo
 
     public function bootRegisterProvider(string $id) : string;
 
+    public function bootDoBootProvider(string $id) : string;
+
     public function bootInvalidProviderConfiguration($index, $value) : string;
 
-    public function bootMissBinding(string $abstract) : string;
+    public function bootContractNotBound(string $abstract) : string;
+
+    public function bootShellNotDefined(string $shell) : string;
 
     /*------ shell info ------*/
 

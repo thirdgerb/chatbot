@@ -22,12 +22,22 @@ use Commune\Shell\Blueprint\Shell;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * 运行流程:
+ *
+ *  ghost: $chatbot->getGhost()->getServer()->start();
+ *  shell: $chatbot->getShell($shellName)->getServer()->start();
  */
 interface Chatbot
 {
-
+    /**
+     * 初始化机器人.
+     */
     public function bootstrap() : void;
 
+    /**
+     * 机器人的名字
+     * @return string
+     */
     public function getChatbotName() : string;
 
     /**

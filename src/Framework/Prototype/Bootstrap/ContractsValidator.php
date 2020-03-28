@@ -11,7 +11,7 @@
 
 namespace Commune\Framework\Prototype\Bootstrap;
 
-use Commune\Framework\Blueprint\App;
+use Commune\Framework\Blueprint\Application;
 use Commune\Framework\Contracts\Bootstrapper;
 use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\LogInfo;
@@ -24,7 +24,7 @@ abstract class ContractsValidator implements Bootstrapper
 {
 
     /**
-     * @var App
+     * @var Application
      */
     protected $app;
 
@@ -38,6 +38,20 @@ abstract class ContractsValidator implements Bootstrapper
      */
     protected $logInfo;
 
+    /**
+     * ContractsValidator constructor.
+     * @param Application $app
+     * @param ConsoleLogger $console
+     * @param LogInfo $logInfo
+     */
+    public function __construct(Application $app, ConsoleLogger $console, LogInfo $logInfo)
+    {
+        $this->app = $app;
+        $this->console = $console;
+        $this->logInfo = $logInfo;
+    }
+
+
     public function bootstrap(): void
     {
         $procBindings = $this->getProcBindings();
@@ -46,7 +60,7 @@ abstract class ContractsValidator implements Bootstrapper
         foreach ($procBindings as $abstract) {
             if (!$proc->bound($abstract)) {
                 throw new BootingException(
-                   $this->logInfo->bootMissBinding($abstract)
+                   $this->logInfo->bootContractNotBound($abstract)
                 );
             }
         }
@@ -56,7 +70,7 @@ abstract class ContractsValidator implements Bootstrapper
         foreach ($reqBindings as $abstract) {
             if (!$req->bound($abstract)) {
                 throw new BootingException(
-                    $this->logInfo->bootMissBinding($abstract)
+                    $this->logInfo->bootContractNotBound($abstract)
                 );
             }
         }

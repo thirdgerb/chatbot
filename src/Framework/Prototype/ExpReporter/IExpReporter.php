@@ -9,17 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Bootstrap;
+namespace Commune\Framework\Prototype\ExpReporter;
 
-use Commune\Framework\Contracts\Bootstrapper;
 use Commune\Framework\Contracts\ConsoleLogger;
-use Commune\Ghost\Blueprint\Ghost;
-
+use Commune\Framework\Contracts\ExceptionReporter;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class BootGhost implements Bootstrapper
+class IExpReporter implements ExceptionReporter
 {
     /**
      * @var ConsoleLogger
@@ -27,25 +25,17 @@ class BootGhost implements Bootstrapper
     protected $console;
 
     /**
-     * @var Ghost
-     */
-    protected $ghost;
-
-    /**
-     * BootGhost constructor.
+     * IExpReporter constructor.
      * @param ConsoleLogger $console
-     * @param Ghost $ghost
      */
-    public function __construct(ConsoleLogger $console, Ghost $ghost)
+    public function __construct(ConsoleLogger $console)
     {
         $this->console = $console;
-        $this->ghost = $ghost;
     }
 
 
-    public function bootstrap(): void
+    public function report(\Throwable $e): void
     {
-        $botName = $this->ghost->getChatbotName();
-        $this->console->info("### boot chatbot $botName ghost ###");
+        $this->console->critical(strval($e));
     }
 }

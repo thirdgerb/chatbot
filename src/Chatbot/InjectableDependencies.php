@@ -12,7 +12,7 @@
 namespace Commune\Chatbot;
 
 use Commune\Chatbot\Blueprint\Chatbot;
-use Commune\Framework\Blueprint\App;
+use Commune\Framework\Blueprint\Application;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Contracts\Cache;
 use Commune\Framework\Contracts\ConsoleLogger;
@@ -56,7 +56,7 @@ class InjectableDependencies
         Cache::class,
         BabelResolver::class,
         Server::class,
-        App::class,
+        Application::class,
 
         // 非单例
         Messenger::class,

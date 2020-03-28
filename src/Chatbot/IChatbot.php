@@ -12,14 +12,19 @@
 namespace Commune\Chatbot;
 
 use Commune\Chatbot\Blueprint\Chatbot;
+use Commune\Chatbot\Prototype\Bootstrap\ConfigBindings;
+use Commune\Chatbot\Prototype\Bootstrap\RegisterChatbotProviders;
+use Commune\Chatbot\Prototype\Bootstrap\WelcomeToCommune;
 use Commune\Container\ContainerContract;
 use Commune\Container\IlluminateAdapter;
 use Commune\Framework\Contracts\Bootstrapper;
 use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\LogInfo;
+use Commune\Framework\Exceptions\BootingException;
 use Commune\Framework\Prototype\Log\IConsoleLogger;
 use Commune\Framework\Prototype\Log\ILogInfo;
 use Commune\Ghost\Blueprint\Ghost;
+use Commune\Ghost\Prototype\Bootstrap\RegisterGhostProviders;
 use Commune\Ghost\Prototype\IGhost;
 use Commune\Shell\Blueprint\Shell;
 use Commune\Shell\Prototype\IShell;
@@ -35,7 +40,9 @@ class IChatbot implements Chatbot
     /*----- bootstrapper -----*/
 
     protected $bootstrappers = [
-
+        WelcomeToCommune::class,
+        ConfigBindings::class,
+        RegisterChatbotProviders::class
     ];
 
     /*----- cached -----*/
@@ -119,40 +126,35 @@ class IChatbot implements Chatbot
         if ($this->booted) {
             return;
         }
+        try {
+            foreach ($this->bootstrappers as $bootstrapperName) {
 
-        $this->consoleLogger->info(
-            $this->logInfo->bootStartKeyStep(__METHOD__)
-        );
+                /**
+                 * @var Bootstrapper $bootstrapper
+                 */
+                $bootstrapper = $this->getProcContainer()->get($bootstrapperName);
+                $bootstrapper->bootstrap();
 
-        foreach ($this->bootstrappers as $bootstrapperName) {
+                $this->consoleLogger->info(
+                    $this->logInfo->bootEndKeyStep($bootstrapperName)
+                );
+            }
+            $this->booted = true;
 
-            $this->consoleLogger->info(
-                $this->logInfo->bootStartKeyStep($bootstrapperName)
-            );
-
-            /**
-             * @var Bootstrapper $bootstrapper
-             */
-            $bootstrapper = $this->getProcContainer()->get($bootstrapperName);
-            $bootstrapper->bootstrap();
-
-            $this->consoleLogger->info(
-                $this->logInfo->bootEndKeyStep($bootstrapperName)
-            );
+        } catch (\Throwable $e) {
+            $this->consoleLogger->critical(strval($e));
+            exit(255);
         }
-
-        $this->consoleLogger->info(
-            $this->logInfo->bootEndKeyStep(__METHOD__)
-        );
-        $this->booted = true;
     }
 
     public function getGhost(): Ghost
     {
+
         $this->bootstrap();
         $ghost = new IGhost(
             $this->container,
             $this->chatbotConfig,
+            $this->chatbotConfig->ghost,
             $this->logInfo,
             $this->consoleLogger
         );
@@ -163,15 +165,21 @@ class IChatbot implements Chatbot
     public function getShell(string $shellName): Shell
     {
         $this->bootstrap();
-        foreach ($this->chatbotConfig->shells as $shell) {
-            if ($shellName === $shell->shellName) {
+        foreach ($this->chatbotConfig->shells as $shellConfig) {
+            if ($shellName === $shellConfig->shellName) {
                 return new IShell(
-                    $this->container,
+                    $this->getProcContainer(),
                     $this->chatbotConfig,
+                    $shellConfig,
+                    $this->logInfo,
+                    $this->consoleLogger
                 );
-
             }
         }
+
+        throw new BootingException(
+            $this->logInfo->bootShellNotDefined($shellName)
+        );
     }
 
 

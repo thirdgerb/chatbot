@@ -15,7 +15,7 @@ use Commune\Chatbot\ChatbotConfig;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\LogInfo;
-use Commune\Framework\Prototype\AApp;
+use Commune\Framework\Prototype\AbstractApplication;
 use Commune\Shell\Blueprint\Kernels\RequestKernel;
 use Commune\Shell\Blueprint\Render\Renderer;
 use Commune\Shell\Blueprint\Shell;
@@ -24,7 +24,7 @@ use Commune\Shell\ShellConfig;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IShell extends AApp implements Shell
+class IShell extends AbstractApplication implements Shell
 {
 
     /**
@@ -49,16 +49,16 @@ class IShell extends AApp implements Shell
 
     public function __construct(
         ContainerContract $procContainer,
-        ChatbotConfig $config,
+        ChatbotConfig $chatbotConfig,
         ShellConfig $shellConfig,
         LogInfo $logInfo = null,
         ConsoleLogger $consoleLogger = null
     )
     {
         $reqContainer = new IShellReqContainer($procContainer);
-        $debug = $config->debug;
-        $this->chatbotConfig = $config;
-        $this->chatbotName = $config->chatbotName;
+        $debug = $chatbotConfig->debug;
+        $this->chatbotConfig = $chatbotConfig;
+        $this->chatbotName = $chatbotConfig->chatbotName;
         $this->shellConfig = $shellConfig;
         $this->shellName = $shellConfig->shellName;
 

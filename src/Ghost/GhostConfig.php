@@ -12,7 +12,6 @@
 namespace Commune\Ghost;
 
 use Commune\Ghost\Prototype\Kernels\IApiKernel;
-use Commune\Ghost\Prototype\Kernels\IAsyncKernel;
 use Commune\Ghost\Prototype\Kernels\IMessageKernel;
 use Commune\Support\Struct\Structure;
 
@@ -41,7 +40,6 @@ class GhostConfig extends Structure
             // kernel
             'messageKernel' => IMessageKernel::class,
             'apiKernel' => IApiKernel::class,
-            'asyncKernel' => IAsyncKernel::class,
 
             'providers' => [
 
@@ -49,6 +47,5 @@ class GhostConfig extends Structure
 
         ];
     }
-
 
 }

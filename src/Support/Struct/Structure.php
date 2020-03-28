@@ -41,9 +41,8 @@ abstract class Structure extends Entry implements Struct
         if (!empty($error)){
             throw new InvalidArgumentException(
                 static::class
-                . ' error, ' . $error
+                . ' construct fail: ' . $error
                 . ', ' . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
-                . ' given'
             );
         }
 
