@@ -28,7 +28,7 @@ abstract class AMessage implements Message
      * 毫秒级的时间戳.
      * @var float
      */
-    protected $_createdAt;
+    protected $createdAt;
 
     /**
      * 可以做依赖注入的对象名
@@ -38,23 +38,48 @@ abstract class AMessage implements Message
 
     /**
      * AMessage constructor.
-     * @param float $_createdAt
+     * @param float $createdAt
      */
-    public function __construct(float $_createdAt = null)
+    public function __construct(float $createdAt = null)
     {
-        $this->_createdAt = $_createdAt ?? microtime(true);
+        $this->createdAt = $createdAt ?? microtime(true);
     }
 
 
-    /**
-     * @param string $input
-     * @return static|null
-     */
-    abstract public static function babelUnSerialize(string $input) : ? BabelSerializable;
+    abstract public function __sleep() : array;
 
-    abstract public function babelSerialize(): string;
 
-    abstract public function getData(): array;
+
+    public function getData(): array
+    {
+        $data = [];
+        foreach ($this->__sleep() as $field) {
+            $value = $this->{$field};
+            $data[$field] = $value;
+        }
+        return $data;
+    }
+
+
+    public static function babelUnSerialize(string $input): ? BabelSerializable
+    {
+        $data = json_decode($input, true);
+        if (!is_array($data)) {
+            return null;
+        }
+
+        $object = new static();
+        $fields = $object->__sleep();
+        foreach ($fields as $field) {
+            $object->{$field} = $data[$field];
+        }
+        return $object;
+    }
+
+    public function babelSerialize(): string
+    {
+        return json_encode($this->getData(), JSON_UNESCAPED_UNICODE);
+    }
 
     public function toArray(): array
     {
@@ -72,8 +97,8 @@ abstract class AMessage implements Message
 
     public function getCreatedAt() : float
     {
-        return $this->_createdAt
-            ?? $this->_createdAt = microtime(true);
+        return $this->createdAt
+            ?? $this->createdAt = microtime(true);
     }
 
 

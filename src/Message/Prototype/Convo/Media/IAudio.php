@@ -9,12 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Blueprint\Convo;
+namespace Commune\Message\Prototype\Convo\Media;
+
+use Commune\Message\Blueprint\Convo\Media\AudioMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface LinkMsg extends ConvoMsg
+class IAudio extends AMedia implements AudioMsg
 {
-    public function getUrl() : string;
 }

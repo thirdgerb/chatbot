@@ -23,6 +23,7 @@ use Commune\Support\DI\Injectable;
  */
 interface Message extends ArrayAndJsonAble, BabelSerializable, Injectable
 {
+    public function isEmpty() : bool;
 
     /**
      * 消息的数据用数组的形式来表示.

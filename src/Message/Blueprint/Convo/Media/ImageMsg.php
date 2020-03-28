@@ -18,5 +18,4 @@ use Commune\Message\Blueprint\Convo\MediaMsg;
  */
 interface ImageMsg extends MediaMsg
 {
-
 }

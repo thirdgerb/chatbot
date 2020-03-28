@@ -9,24 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Blueprint\Convo;
+namespace Commune\Message\Blueprint\Convo\Media;
+
+use Commune\Message\Blueprint\Convo\MediaMsg;
 
 /**
- * 用 Json 的方式传递的数据.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface JsonMsg extends ConvoMsg
+interface LinkMsg extends MediaMsg
 {
-
-    /**
-     * Json 字符串.
-     * @return string
-     */
-    public function getJson() : string;
-
-    public function isValid() : bool;
-
-    public function getJsonData() : array;
-
+    public function getTitle() : string;
 }

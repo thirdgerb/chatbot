@@ -33,46 +33,38 @@ class IText extends AMessage implements TextMsg
     protected $level;
 
     /**
+     * @var string
+     */
+    protected $trimmed;
+
+    /**
      * IText constructor.
      * @param string $text
      * @param string $level
      * @param float|null $createdAt
      */
-    public function __construct(string $text, string $level = TextMsg::INFO, float $createdAt = null)
+    public function __construct(string $text = '', string $level = TextMsg::INFO, float $createdAt = null)
     {
         $this->text = $text;
         $this->level = $level;
         parent::__construct($createdAt);
     }
 
-
-    public static function babelUnSerialize(string $input): ? BabelSerializable
-    {
-        $data = json_decode($input, true);
-        if (!is_array($data)) {
-            return null;
-        }
-
-        return new static(
-            $data['text'] ?? '',
-            $data['level'] ?? TextMsg::INFO,
-            $data['createdAt'] ?? microtime(true)
-        );
-    }
-
-    public function babelSerialize(): string
-    {
-        return json_encode($this->getData(), JSON_UNESCAPED_UNICODE);
-    }
-
-    public function getData(): array
+    public function __sleep(): array
     {
         return [
-            'text' => $this->text,
-            'level' => $this->level,
-            'createdAt' => $this->getCreatedAt()
+            'text',
+            'level',
+            'createdAt'
         ];
     }
+
+    public function isEmpty(): bool
+    {
+        $text = $this->getTrimmedText();
+        return $text === '';
+    }
+
 
     public function getText(): string
     {
@@ -82,7 +74,8 @@ class IText extends AMessage implements TextMsg
 
     public function getTrimmedText(): string
     {
-        return  StringUtils::trim(StringUtils::sbc2dbc($this->text));
+        return $this->trimmed
+            ?? $this->trimmed = StringUtils::trim(StringUtils::sbc2dbc($this->text));
     }
 
     public function getLevel(): string

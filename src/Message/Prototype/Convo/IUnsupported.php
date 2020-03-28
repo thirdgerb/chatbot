@@ -20,19 +20,14 @@ use Commune\Message\Prototype\AMessage;
  */
 class IUnsupported extends AMessage implements UnsupportedMsg
 {
-    public static function babelUnSerialize(string $input)
+    public function __sleep(): array
     {
-        // TODO: Implement babelUnSerialize() method.
+        return ['createdAt'];
     }
 
-    public function babelSerialize(): string
+    public function isEmpty(): bool
     {
-        // TODO: Implement babelSerialize() method.
-    }
-
-    public function getData(): array
-    {
-        return [];
+        return false;
     }
 
 
