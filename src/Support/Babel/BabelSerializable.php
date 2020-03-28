@@ -29,12 +29,12 @@ interface BabelSerializable
      * 对于 Babel 而言的 ID
      * @return string
      */
-    public static function getBabelId() : string;
+    public static function getSerializableId() : string;
 
     /**
      * 反序列化.
      * @param string $input
-     * @return static
+     * @return static|null
      */
-    public static function babelUnSerialize(string $input);
+    public static function babelUnSerialize(string $input) : ? BabelSerializable;
 }

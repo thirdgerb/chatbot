@@ -6,13 +6,17 @@ namespace Commune\Support\Utils;
 
 class StringUtils
 {
+    public static function trim(string $str) : string
+    {
+        return trim($str, " \t\n\r\0\x0B.,;");
+    }
 
     public static function couldBeString($value) : bool
     {
         return is_scalar($value) || (is_object($value) && method_exists($value, '__toString'));
     }
 
-    public static function normalizeContextName(string $name) : string
+    public static function normalizeClassName(string $name) : string
     {
         return strtolower(static::namespaceSlashToDot($name));
     }
