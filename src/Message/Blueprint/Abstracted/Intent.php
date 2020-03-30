@@ -62,9 +62,9 @@ interface Intent extends ArrayAndJsonAble
     /**
      * 获取所有的意图信息, 通常用于记录日志, 分析, 展示.
      *
-     * @return string[]
+     * @return array
      */
-    public function getPossibleIntents() : array;
+    public function getPossibleIntentData() : array;
 
     /**
      * 判断某个意图是否存在
@@ -98,28 +98,22 @@ interface Intent extends ArrayAndJsonAble
      *
      * @param array $entities
      */
-    public function setEntities(array $entities) : void;
+    public function setPublicEntities(array $entities) : void;
 
-    /**
-     * 合并新的 Entities 到全局的 Entities 中
-     *
-     * 添加 entities 信息, 到 global entity
-     * @param array $entities
-     */
-    public function mergeEntities(array $entities) : void;
-
-    /**
-     * @param string $intentName
-     * @param array $entities
-     */
-    public function setIntentEntities(string $intentName, array $entities) : void;
 
     /**
      * 全局的entity. 有些 NLU 的 entity 和 intent 是分开匹配的.
      *
      * @return array
      */
-    public function getGlobalEntities() : array;
+    public function getPublicEntities() : array;
+
+
+    /**
+     * @param string $intentName
+     * @param array $entities
+     */
+    public function setIntentEntities(string $intentName, array $entities) : void;
 
     /**
      * 获取 全局entities + 命中意图的 entities

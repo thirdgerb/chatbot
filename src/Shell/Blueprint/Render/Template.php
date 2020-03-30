@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Blueprint\Render;
 
-use Commune\Message\Blueprint\ConvoMsg;
+use Commune\Message\Blueprint\Convo\ConvoMsg;
 use Commune\Message\Blueprint\Reaction\ReactionMsg;
 
 /**

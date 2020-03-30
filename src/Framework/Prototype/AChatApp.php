@@ -12,7 +12,7 @@
 namespace Commune\Framework\Prototype;
 
 use Commune\Container\ContainerContract;
-use Commune\Framework\Blueprint\Application;
+use Commune\Framework\Blueprint\ChatApp;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Contracts\Bootstrapper;
 use Commune\Framework\Contracts\Cache;
@@ -33,7 +33,7 @@ use Psr\Log\LoggerInterface;
  *`
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbstractApplication implements Application
+abstract class AChatApp implements ChatApp
 {
 
     /*------ configure ------*/
@@ -126,8 +126,8 @@ abstract class AbstractApplication implements Application
         $this->reqContainer->instance(ConsoleLogger::class, $this->consoleLogger);
 
         // 绑定自己
-        $this->procContainer->instance(Application::class, $this);
-        $this->reqContainer->instance(Application::class, $this);
+        $this->procContainer->instance(ChatApp::class, $this);
+        $this->reqContainer->instance(ChatApp::class, $this);
 
         // 绑定 ReqContainer 的基本单例.
         $container = $this->reqContainer;
@@ -135,54 +135,45 @@ abstract class AbstractApplication implements Application
         // 绑定 Server
         $container->singleton(Server::class, function(ContainerContract $ioc) {
             /**
-             * @var Application $app
+             * @var ChatApp $app
              */
-            $app = $ioc->get(Application::class);
+            $app = $ioc->get(ChatApp::class);
             return $app->getServer();
         });
 
         // 日志是请求级单例. 是否是进程级单例, 取决于日志底层是否实现好了协程等非阻塞机制.
         $container->singleton(LoggerInterface::class, function(ContainerContract $ioc){
             /**
-             * @var Application $app
+             * @var ChatApp $app
              */
-            $app = $ioc->get(Application::class);
+            $app = $ioc->get(ChatApp::class);
             return $app->getLogger();
         });
 
         // 绑定 cache 为请求级单例
         $container->singleton(Cache::class, function(ContainerContract $ioc){
             /**
-             * @var Application $app
+             * @var ChatApp $app
              */
-            $app = $ioc->get(Application::class);
+            $app = $ioc->get(ChatApp::class);
             return $app->getCache();
         });
 
         // 绑定 Messenger 为请求级单例
         $container->singleton(Messenger::class, function(ContainerContract $ioc){
             /**
-             * @var Application $app
+             * @var ChatApp $app
              */
-            $app = $ioc->get(Application::class);
+            $app = $ioc->get(ChatApp::class);
             return $app->getMessenger();
-        });
-
-        // 绑定 Babel 为请求级单例
-        $container->singleton(BabelResolver::class, function(ContainerContract $ioc){
-            /**
-             * @var Application $app
-             */
-            $app = $ioc->get(Application::class);
-            return $app->getBabel();
         });
 
         // 绑定 ExceptionReporter 为请求级单例.
         $container->singleton(ExceptionReporter::class, function(ContainerContract $ioc){
             /**
-             * @var Application $app
+             * @var ChatApp $app
              */
-            $app = $ioc->get(Application::class);
+            $app = $ioc->get(ChatApp::class);
             return $app->getExceptionReporter();
         });
 
@@ -200,8 +191,9 @@ abstract class AbstractApplication implements Application
         }
 
         try {
+            $method = static::class . '::' . __FUNCTION__;
             $this->consoleLogger->info(
-                $this->logInfo->bootStartKeyStep(__METHOD__)
+                $this->logInfo->bootStartKeyStep($method)
             );
 
             foreach ($this->bootstrappers as $bootstrapperName) {
@@ -222,7 +214,7 @@ abstract class AbstractApplication implements Application
             }
 
             $this->consoleLogger->info(
-                $this->logInfo->bootEndKeyStep(__METHOD__)
+                $this->logInfo->bootEndKeyStep($method)
             );
             $this->booted = true;
 

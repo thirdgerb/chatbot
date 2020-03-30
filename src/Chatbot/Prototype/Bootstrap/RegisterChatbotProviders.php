@@ -110,8 +110,11 @@ class RegisterChatbotProviders implements Bootstrapper
             );
         }
 
-        foreach ($providers as $provider) {
+        foreach ($providers as $id => $provider) {
             $provider->boot($container);
+            $this->console->debug(
+                $this->logInfo->bootDoBootProvider($id)
+            );
         }
     }
 

@@ -15,17 +15,23 @@ use Commune\Chatbot\ChatbotConfig;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\LogInfo;
-use Commune\Framework\Prototype\AbstractApplication;
+use Commune\Framework\Prototype\AChatApp;
+use Commune\Ghost\Prototype\Bootstrap\ValidateGhostContracts;
 use Commune\Shell\Blueprint\Kernels\RequestKernel;
 use Commune\Shell\Blueprint\Render\Renderer;
 use Commune\Shell\Blueprint\Shell;
+use Commune\Shell\Prototype\Bootstrap;
 use Commune\Shell\ShellConfig;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IShell extends AbstractApplication implements Shell
+class IShell extends AChatApp implements Shell
 {
+    protected $bootstrappers = [
+        Bootstrap\RegisterShellProviders::class,
+        ValidateGhostContracts::class,
+    ];
 
     /**
      * @var ChatbotConfig
@@ -63,6 +69,26 @@ class IShell extends AbstractApplication implements Shell
         $this->shellName = $shellConfig->shellName;
 
         parent::__construct($procContainer, $reqContainer, $debug, $logInfo, $consoleLogger);
+    }
+
+    protected function basicBinding(): void
+    {
+        parent::basicBinding();
+
+        // 绑定配置
+        $this->procContainer->instance(ChatbotConfig::class, $this->chatbotConfig);
+        $this->reqContainer->instance(ChatbotConfig::class, $this->chatbotConfig);
+
+        $this->procContainer->instance(ShellConfig::class, $this->shellConfig);
+        $this->reqContainer->instance(ShellConfig::class, $this->shellConfig);
+
+        // 绑定 Shell 与 App
+        $this->procContainer->instance(Shell::class, $this);
+        $this->reqContainer->instance(Shell::class, $this);
+
+        // 绑定 Kernel
+        $this->procContainer->bind(RequestKernel::class, $this->shellConfig->requestKernel);
+
     }
 
     /**

@@ -57,7 +57,11 @@ class WelcomeToCommune implements Bootstrapper
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 EOF;
         $this->console->info($info);
-        $this->console->info("### boot chatbot : $botName, debug: $debug ###");
+        $this->console->info("### boot chatbot : $botName");
+
+        if ($debug) {
+            $this->console->warning("chatbot is debugging");
+        }
     }
 
 

@@ -20,10 +20,10 @@ interface BabelSerializable
 {
 
     /**
-     * 序列化成字符串.
-     * @return string
+     * 转化为数组
+     * @return array
      */
-    public function babelSerialize() : string;
+    public function toSerializableArray() : array;
 
     /**
      * 对于 Babel 而言的 ID
@@ -32,9 +32,9 @@ interface BabelSerializable
     public static function getSerializableId() : string;
 
     /**
-     * 反序列化.
-     * @param string $input
+     * 从数组还原。
+     * @param array $data
      * @return static|null
      */
-    public static function babelUnSerialize(string $input) : ? BabelSerializable;
+    public static function fromSerializableArray(array $data) : ? BabelSerializable;
 }

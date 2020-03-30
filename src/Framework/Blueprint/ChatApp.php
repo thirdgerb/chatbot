@@ -20,7 +20,6 @@ use Commune\Framework\Contracts\Messenger;
 use Commune\Framework\Contracts\Server;
 use Commune\Framework\Contracts\ServiceProvider;
 use Commune\Framework\Exceptions\BootingException;
-use Commune\Support\Babel\BabelResolver;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -29,7 +28,7 @@ use Psr\Log\LoggerInterface;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Application
+interface ChatApp
 {
     /**
      * 是否调试状态.

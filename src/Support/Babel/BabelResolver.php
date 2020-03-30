@@ -43,6 +43,15 @@ interface BabelResolver
         string $serializableId
     ) : bool;
 
+    public function toSerializingArray(BabelSerializable $serializable) : array;
+
+    /**
+     * 从数组还原。
+     * @param array $data
+     * @return static|null
+     */
+    public function fromSerializableArray(array $data) : ? BabelSerializable;
+
 
     /**
      * 序列化, 通常有一个加密环节.
@@ -50,6 +59,7 @@ interface BabelResolver
      * @return string
      */
     public function serialize($serializable) : string;
+
 
     /**
      * 反序列化. 通常还有一个解密环节.

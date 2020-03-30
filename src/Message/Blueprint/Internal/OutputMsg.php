@@ -11,20 +11,13 @@
 
 namespace Commune\Message\Blueprint\Internal;
 
-use Commune\Message\Blueprint\ConvoMsg;
-use Commune\Message\Blueprint\Message;
-use Commune\Message\Blueprint\Reaction\ReactionMsg;
-use Commune\Support\Arr\ArrayAndJsonAble;
-use Commune\Support\Babel\BabelSerializable;
-
 /**
  * Ghost 到 Shell 的输出消息
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read Message|ConvoMsg|ReactionMsg $message
- * @property-read Scope $scope
+ * @mixin InternalMsg
  */
-interface OutputMsg extends BabelSerializable, ArrayAndJsonAble
+interface OutputMsg extends InternalMsg
 {
 }

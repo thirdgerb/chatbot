@@ -14,7 +14,7 @@ namespace Commune\Ghost\Prototype;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\LogInfo;
-use Commune\Framework\Prototype\AbstractApplication;
+use Commune\Framework\Prototype\AChatApp;
 use Commune\Ghost\Blueprint\Ghost;
 use Commune\Ghost\Blueprint\Kernels;
 use Commune\Chatbot\ChatbotConfig;
@@ -25,12 +25,11 @@ use Commune\Ghost\Prototype\Bootstrap;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  */
-class IGhost extends AbstractApplication implements Ghost
+class IGhost extends AChatApp implements Ghost
 {
     /*------- config -------*/
 
     protected $bootstrappers = [
-        Bootstrap\BootGhost::class,
         Bootstrap\RegisterGhostProviders::class,
         Bootstrap\ValidateGhostContracts::class,
     ];

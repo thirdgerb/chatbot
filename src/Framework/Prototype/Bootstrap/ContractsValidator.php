@@ -11,7 +11,7 @@
 
 namespace Commune\Framework\Prototype\Bootstrap;
 
-use Commune\Framework\Blueprint\Application;
+use Commune\Framework\Blueprint\ChatApp;
 use Commune\Framework\Contracts\Bootstrapper;
 use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\LogInfo;
@@ -24,7 +24,7 @@ abstract class ContractsValidator implements Bootstrapper
 {
 
     /**
-     * @var Application
+     * @var ChatApp
      */
     protected $app;
 
@@ -40,11 +40,11 @@ abstract class ContractsValidator implements Bootstrapper
 
     /**
      * ContractsValidator constructor.
-     * @param Application $app
+     * @param ChatApp $app
      * @param ConsoleLogger $console
      * @param LogInfo $logInfo
      */
-    public function __construct(Application $app, ConsoleLogger $console, LogInfo $logInfo)
+    public function __construct(ChatApp $app, ConsoleLogger $console, LogInfo $logInfo)
     {
         $this->app = $app;
         $this->console = $console;

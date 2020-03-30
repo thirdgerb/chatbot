@@ -11,9 +11,8 @@
 
 namespace Commune\Shell\Prototype\Kernels;
 
-use Commune\Chatbot\Exceptions\MessengerReqException;
 use Commune\Framework\Blueprint\ReqContainer;
-use Commune\Message\Blueprint\ConvoMsg;
+use Commune\Message\Blueprint\Convo\ConvoMsg;
 use Commune\Message\Blueprint\Directive\DirectiveMsg;
 use Commune\Message\Blueprint\Internal\OutputMsg;
 use Commune\Message\Blueprint\Reaction\ReactionMsg;
@@ -62,8 +61,7 @@ class IRequestKernel implements RequestKernel
                 return;
             }
 
-
-            $reqContainer = $this->createReqContainer($request);
+            $reqContainer = $this->createReqContainer($request, $response);
             $session = $reqContainer->get(ShlSession::class);
             $session = $this->sendSessionThroughPipes($session);
 
@@ -79,7 +77,6 @@ class IRequestKernel implements RequestKernel
 
         // 终止流程, 并且不响应的异常.
         // 响应应该提前发送掉.
-        // todo
 
 
         // 未预料到的错误.
@@ -110,10 +107,10 @@ class IRequestKernel implements RequestKernel
             return true;
         }
 
-        // todo 记录日志
         $warning = $this->shell
             ->getLogInfo()
             ->shellReceiveInvalidRequest($request->getBrief());
+
         $this->shell
             ->getLogger()
             ->warning($warning);
@@ -122,22 +119,25 @@ class IRequestKernel implements RequestKernel
         return false;
     }
 
-    protected function createReqContainer(ShlRequest $request) : ReqContainer
+    protected function createReqContainer(
+        ShlRequest $request,
+        ShlResponse $response
+    ) : ReqContainer
     {
         $procContainer = $this->shell->getProcContainer();
 
         // 获取新的请求级实例.
         $reqContainer =  $this->shell
             ->getReqContainer()
-            ->newInstance($procContainer);
+            ->newInstance($request->fetchTraceId(), $procContainer);
 
         // 绑定 request
         $reqContainer->share(ReqContainer::class, $reqContainer);
         $reqContainer->share(ShlRequest::class, $request);
+        $reqContainer->share(ShlResponse::class, $response);
 
         // 重新 boot 服务.
         $this->shell->bootReqServices($reqContainer);
-
         return $reqContainer;
     }
 
@@ -189,12 +189,12 @@ class IRequestKernel implements RequestKernel
         $messenger = $this->shell->messenger;
         try {
 
-            $replies = $messenger->syncSendIncoming($session->getIncomingMsg());
-            $session->reply($replies);
+            $replies = $messenger->syncSendIncoming($session->getInputMsg());
+            $session->output($replies);
 
         // 请求失败的话, 应该给出结果.
         } catch (MessengerReqException $e) {
-            $session->reply([ $e->getOutgoingMsg() ]);
+            $session->output([ $e->getOutgoingMsg() ]);
         }
 
         return $session;
@@ -203,7 +203,7 @@ class IRequestKernel implements RequestKernel
     protected function handleReplies(ShlSession $session, ShlResponse $response) : void
     {
         $renderer = $this->shell->renderer;
-        $buffer = $session->getReplies();
+        $buffer = $session->getOutputs();
 
         foreach ($buffer as $outgoingMsg) {
             // 如果发现了不同类的消息.
@@ -276,7 +276,7 @@ class IRequestKernel implements RequestKernel
      */
     protected function validateOutgoing(ShlSession $session, OutputMsg $message) : bool
     {
-        $inScope = $session->getIncomingMsg()->scope;
+        $inScope = $session->getInputMsg()->scope;
         $outScope = $message->scope;
 
         if (

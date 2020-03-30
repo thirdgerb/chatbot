@@ -12,7 +12,7 @@
 namespace Commune\Shell\Contracts;
 
 use Commune\Message\Blueprint\Abstracted\Comprehension;
-use Commune\Message\Blueprint\ConvoMsg;
+use Commune\Message\Blueprint\Convo\ConvoMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -68,6 +68,11 @@ interface ShlRequest
      * @return ConvoMsg
      */
     public function fetchMessage() : ConvoMsg;
+
+    /**
+     * @return string
+     */
+    public function fetchTraceId() : string;
 
     /**
      * 从 input 中获取消息ID, 或者生成一个ID.

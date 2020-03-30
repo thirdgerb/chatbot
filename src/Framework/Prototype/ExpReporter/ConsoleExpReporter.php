@@ -17,7 +17,7 @@ use Commune\Framework\Contracts\ExceptionReporter;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IExpReporter implements ExceptionReporter
+class ConsoleExpReporter implements ExceptionReporter
 {
     /**
      * @var ConsoleLogger

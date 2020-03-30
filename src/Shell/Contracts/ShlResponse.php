@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Contracts;
 
-use Commune\Message\Blueprint\ConvoMsg;
+use Commune\Message\Blueprint\Internal\InternalMsg;
 
 /**
  * 负责向 Shell 的客户端发送响应的模块
@@ -25,7 +25,7 @@ interface ShlResponse
 
     /**
      * 增加一个需要同步回复的消息.
-     * @param ConvoMsg[] $messages
+     * @param InternalMsg[] $messages
      */
     public function buffer(array $messages) : void;
 
@@ -48,6 +48,4 @@ interface ShlResponse
      * @param \Exception|null $e   异常, 会使用异常的 message 和 code. 同时有一个默认值.
      */
     public function sendFailureResponse(\Exception $e = null) : void;
-
-
 }

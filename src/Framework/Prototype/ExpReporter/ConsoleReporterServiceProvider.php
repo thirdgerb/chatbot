@@ -18,7 +18,7 @@ use Commune\Framework\Contracts\ServiceProvider;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ExpReporterServiceProvider extends ServiceProvider
+class ConsoleReporterServiceProvider extends ServiceProvider
 {
     public function isProcessServiceProvider(): bool
     {
@@ -31,7 +31,7 @@ class ExpReporterServiceProvider extends ServiceProvider
 
     public function register(ContainerContract $app): void
     {
-        $app->singleton(ExceptionReporter::class, IExpReporter::class);
+        $app->singleton(ExceptionReporter::class, ConsoleExpReporter::class);
     }
 
     public static function stub(): array

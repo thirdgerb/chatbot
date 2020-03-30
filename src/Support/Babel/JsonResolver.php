@@ -17,7 +17,6 @@ namespace Commune\Support\Babel;
  */
 class JsonResolver implements BabelResolver
 {
-
     protected $transformers = [];
 
     public function registerSerializable(string $serializable) : void
@@ -29,9 +28,9 @@ class JsonResolver implements BabelResolver
         static::register(
             call_user_func([$serializable, 'getSerializableId']),
             function(BabelSerializable $obj) {
-                return $obj->babelSerialize();
+                return $obj->toSerializableArray();
             },
-            [$serializable, 'babelUnSerialize']
+            [$serializable, 'fromSerializableArray']
         );
     }
 
@@ -58,6 +57,36 @@ class JsonResolver implements BabelResolver
         return array_key_exists($serializableId, $this->transformers);
     }
 
+    public function toSerializingArray(BabelSerializable $serializable): array
+    {
+        return [
+            'i' => $serializable->getSerializableId(),
+            'd' => $serializable->toSerializableArray()
+        ];
+    }
+
+    public function fromSerializableArray(array $data): ? BabelSerializable
+    {
+        $serializableId = $data['i'];
+        $serialized = $data['d'];
+
+        if ($this->hasRegistered($serializableId)) {
+            $unSerializer = $this->transformers[$serializableId][1];
+            return call_user_func($unSerializer, $serialized);
+        }
+
+        if (
+            is_string($serializableId)
+            && is_a($serializableId, BabelSerializable::class, TRUE)
+        ) {
+            $this->registerSerializable($serializableId);
+            return call_user_func([$serializableId, 'fromSerializableArray'], $serialized);
+        }
+
+        return null;
+    }
+
+
     /**
      * 序列化, 通常有一个加密环节.
      * @param BabelSerializable $serializable
@@ -72,18 +101,14 @@ class JsonResolver implements BabelResolver
                 static::registerSerializable(get_class($serializable));
             }
 
-            $serializer = $this->transformers[$id][0];
-            $data =  call_user_func($serializer, $serializable);
-        } else {
-            $id = '';
-            $data = serialize($serializable);
+            $data = $this->toSerializingArray($serializable);
+            return json_encode(
+                $data,
+                JSON_UNESCAPED_UNICODE
+            );
         }
 
-        return json_encode(
-            [$id, $data],
-            JSON_UNESCAPED_UNICODE
-        );
-
+        return serialize($serializable);
     }
 
     /**
@@ -95,20 +120,15 @@ class JsonResolver implements BabelResolver
     {
         $data = json_decode($input, true);
 
-        if (!is_array($data) && count($data) === 2) {
-            return null;
+        if (
+            is_array($data)
+            && count($data) === 2
+            && isset($data['i'])
+            && isset($data['d'])
+        ) {
+            return $this->fromSerializableArray($data);
         }
-
-        list($serializableId, $serialized) = $data;
-
-
-        if ($this->hasRegistered($serializableId)) {
-            $unSerializer = $this->transformers[$serializableId][1];
-            return call_user_func($unSerializer, $serialized);
-        }
-
-        $output = unserialize($serialized);
-        return false === $output ? null : $output;
+        return unserialize($input);
     }
 
 

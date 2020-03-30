@@ -26,7 +26,7 @@ use Commune\Ghost\Contracts\GhtRequest;
 use Commune\Ghost\Contracts\GhtResponse;
 use Commune\Message\Blueprint\Internal\InputMsg;
 use Commune\Message\Blueprint\Internal\OutputMsg;
-use Commune\Message\Blueprint\Internal\Scope;
+use Commune\Message\Blueprint\Internal\ShellScope;
 use Commune\Message\Blueprint\Message;
 use Commune\Support\Babel\BabelResolver;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
@@ -44,7 +44,7 @@ use SebastianBergmann\CodeCoverage\Driver\Driver;
  * @property-read GhtResponse $response             本轮对话的同步响应
  * @property-read InputMsg $incoming                输入的消息
  * @property-read Scene $scene                      场景信息
- * @property-read Scope $scope                      本轮对话的作用域
+ * @property-read ShellScope $scope                      本轮对话的作用域
  * @property-read ReqContainer $container           请求级容器
  *
  * 组件

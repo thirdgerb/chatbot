@@ -11,6 +11,7 @@
 
 namespace Commune\Shell;
 
+use Commune\Shell\Prototype\Kernels\IRequestKernel;
 use Commune\Support\Struct\Structure;
 
 /**
@@ -19,12 +20,13 @@ use Commune\Support\Struct\Structure;
  *
  *
  *
- * @property-read string $shellName Shell的名称
+ * @property-read string $shellName                 Shell的名称
  *
- * @property-read string[] $pipeline Shell运行的管道
- * @property-read string[] $directives Shell 预加载的命令. id => DirectiveClass
+ * @property-read string[] $pipeline                Shell运行的管道
+ * @property-read string[] $directives              Shell 预加载的命令. id => DirectiveClass
  *
- * @property-read string[] $babel  type => serializable
+ * @property-read string $requestKernel
+ * @property-read string[] $providers
  */
 class ShellConfig extends Structure
 {
@@ -33,6 +35,19 @@ class ShellConfig extends Structure
 
     public static function stub(): array
     {
-        return [];
+        return [
+            'shellName' => 'test',
+
+            'pipeline' => [
+            ],
+
+            'directives' => [
+            ],
+
+            'providers' => [
+            ],
+
+            'requestKernel' => IRequestKernel::class,
+        ];
     }
 }

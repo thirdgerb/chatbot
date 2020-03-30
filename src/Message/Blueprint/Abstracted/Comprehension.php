@@ -21,8 +21,7 @@ use Commune\Support\Babel\BabelSerializable;
  *
  * @property-read Intent $intent                    意图和实体理解. 可以针对任何输入信息
  * @property-read Choice $choice                    选项. 可以来自各种输入信息
- * @property-read Command $command                  命令. 通常源消息是字符串.
- * @property-read DefaultReplies $replies           默认回复.
+ * @property-read CmdStr $command                   命令. 通常源消息是字符串.
  * @property-read Emotion $emotion                  情感. 通常来自 NLU
  * @property-read Recognition $recognition          对多媒体信息的识别.
  * @property-read Tokenization $tokenization        分词, 关键词.

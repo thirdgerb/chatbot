@@ -9,19 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Blueprint\Abstracted;
+namespace Commune\Shell\Contracts;
 
-use Commune\Message\Blueprint\Message;
+use Commune\Framework\Contracts\Server;
 
 /**
- * 默认回复
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DefaultReplies
+interface ShlServer extends Server
 {
-    public function addReply(Message $message) : void;
-
-    public function getReplies() : array;
 
 }

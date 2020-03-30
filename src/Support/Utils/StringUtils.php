@@ -16,7 +16,7 @@ class StringUtils
         return is_scalar($value) || (is_object($value) && method_exists($value, '__toString'));
     }
 
-    public static function normalizeClassName(string $name) : string
+    public static function normalizeIntentName(string $name) : string
     {
         return strtolower(static::namespaceSlashToDot($name));
     }

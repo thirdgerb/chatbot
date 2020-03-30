@@ -16,7 +16,7 @@ use Commune\Framework\Contracts\Messenger;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Message\Blueprint\Internal\InputMsg;
 use Commune\Message\Blueprint\Internal\OutputMsg;
-use Commune\Message\Blueprint\Internal\Scope;
+use Commune\Message\Blueprint\Internal\ShellScope;
 use Commune\Shell\Blueprint\Shell;
 use Commune\Shell\Contracts\ShlRequest;
 use Commune\Shell\Contracts\ShlResponse;
@@ -27,10 +27,10 @@ use Commune\Shell\Contracts\ShlResponse;
  *
  * 以下组件可以依赖注入
  *
+ * @property-read ReqContainer $container       容器
  * @property-read ShlRequest $request           当前的请求.
  * @property-read ShlResponse $response         当前请求的响应
  * @property-read Shell $shell                  获取 Shell 本身.
- * @property-read ReqContainer $container       容器
  * @property-read ShlSessionLogger $logger      会话自己的日志, 会记录 Req 相关信息.
  *
  * 请求级单例
@@ -40,33 +40,43 @@ use Commune\Shell\Contracts\ShlResponse;
  */
 interface ShlSession
 {
+    /**
+     * 获取 Session Id
+     * @return string
+     */
+    public function getId() : string;
 
-    public function getIncomingMsg() : InputMsg;
+    /**
+     * 生成输入消息
+     *
+     * @return InputMsg
+     */
+    public function getInputMsg() : InputMsg;
 
     /**
      * 查看 SessionId 是否对应一个已知的 Scope
-     * @return Scope
+     * @return ShellScope
      */
-    public function getScope() : Scope;
+    public function getScope() : ShellScope;
 
     /**
      * 用于变更 shell Session 对应的 internal scope, 与 ghost 通讯
      *
-     * @param Scope $scope
+     * @param ShellScope $scope
      * @return bool
      */
-    public function setScope(Scope $scope) : bool;
+    public function setScope(ShellScope $scope) : bool;
 
 
     /**
      * @param OutputMsg[] $replies
      */
-    public function reply(array $replies) : void;
+    public function output(array $replies) : void;
 
     /**
      * @return OutputMsg[]
      */
-    public function getReplies() : array;
+    public function getOutputs() : array;
 
     /**
      * 结束 Session, 处理垃圾回收

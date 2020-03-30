@@ -11,12 +11,12 @@
 
 namespace Commune\Ghost\Contracts;
 
-use Commune\Message\Blueprint\Internal\Scope;
+use Commune\Message\Blueprint\Internal\ShellScope;
 use Commune\Message\Blueprint\Message;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- * @property-read Scope $scope
+ * @property-read ShellScope $scope
  */
 interface GhtResponse
 {

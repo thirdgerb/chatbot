@@ -21,7 +21,7 @@ use Commune\Ghost\Blueprint\Runtime\Route;
 use Commune\Ghost\Blueprint\Runtime\Runtime;
 use Commune\Ghost\Blueprint\Speak\Speaker;
 use Commune\Message\Blueprint\Abstracted\Comprehension;
-use Commune\Message\Blueprint\ConvoMsg;
+use Commune\Message\Blueprint\Convo\ConvoMsg;
 use Commune\Message\Blueprint\Directive\DirectiveMsg;
 use Commune\Message\Blueprint\Internal\InputMsg;
 use Commune\Message\Blueprint\Message;

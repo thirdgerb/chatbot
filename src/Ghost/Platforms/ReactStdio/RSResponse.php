@@ -9,17 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Blueprint\Abstracted;
+namespace Commune\Ghost\Platforms\ReactStdio;
 
-use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Command extends ArrayAndJsonAble
+class RSResponse
 {
-    public function setCommandStr(string $commandStr) : void;
-
-    public function getCommandStr() : ? string;
 
 }

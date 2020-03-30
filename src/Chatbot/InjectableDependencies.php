@@ -12,17 +12,15 @@
 namespace Commune\Chatbot;
 
 use Commune\Chatbot\Blueprint\Chatbot;
-use Commune\Framework\Blueprint\Application;
+use Commune\Framework\Blueprint\ChatApp;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Contracts\Cache;
 use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\ExceptionReporter;
 use Commune\Framework\Contracts\LogInfo;
 use Commune\Framework\Contracts\Messenger;
-use Commune\Framework\Contracts\Server;
 use Commune\Ghost\Blueprint\Ghost;
 use Commune\Ghost\Blueprint\Kernels\ApiKernel;
-use Commune\Ghost\Blueprint\Kernels\AsyncKernel;
 use Commune\Ghost\Blueprint\Kernels\MessageKernel;
 use Commune\Ghost\Blueprint\Session\GhtSession;
 use Commune\Ghost\Contracts\GhtRequest;
@@ -34,6 +32,7 @@ use Commune\Shell\Blueprint\Session\ShlSession;
 use Commune\Shell\Blueprint\Shell;
 use Commune\Shell\Contracts\ShlRequest;
 use Commune\Shell\Contracts\ShlResponse;
+use Commune\Shell\Contracts\ShlServer;
 use Commune\Shell\ShellConfig;
 use Commune\Support\Babel\BabelResolver;
 use Psr\Log\LoggerInterface;
@@ -55,8 +54,7 @@ class InjectableDependencies
         // 单例
         Cache::class,
         BabelResolver::class,
-        Server::class,
-        Application::class,
+        ChatApp::class,
 
         // 非单例
         Messenger::class,
@@ -72,6 +70,7 @@ class InjectableDependencies
         ChatbotConfig::class,
         ShellConfig::class,
         Renderer::class,
+        ShlServer::class,
 
         // 非单例
         RequestKernel::class,
@@ -85,7 +84,6 @@ class InjectableDependencies
         // 非单例
         MessageKernel::class,
         ApiKernel::class,
-        AsyncKernel::class,
     ];
 
     const REQUEST_LEVEL = [

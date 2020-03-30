@@ -12,6 +12,7 @@
 namespace Commune\Message\Blueprint\Abstracted;
 
 use Commune\Support\Arr\ArrayAndJsonAble;
+use Commune\Support\Babel\BabelSerializable;
 
 /**
  * 选择结果. 如果是 conversational 的消息, 结果应该是可选的.
@@ -23,7 +24,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  */
 interface Choice extends ArrayAndJsonAble
 {
-    public function isChosen() : bool;
+    public function countChoices() : int;
 
     public function addChoice($index, string $answer) : void;
 

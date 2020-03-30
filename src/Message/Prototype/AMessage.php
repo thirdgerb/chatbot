@@ -13,8 +13,7 @@ namespace Commune\Message\Prototype;
 
 use Commune\Message\Blueprint\Message;
 use Commune\Support\Arr\ArrayAbleToJson;
-use Commune\Support\Babel\BabelSerializable;
-use Commune\Support\Utils\StringUtils;
+use Commune\Support\Babel\TSerializable;
 
 
 /**
@@ -22,7 +21,7 @@ use Commune\Support\Utils\StringUtils;
  */
 abstract class AMessage implements Message
 {
-    use ArrayAbleToJson;
+    use ArrayAbleToJson, TSerializable;
 
     /**
      * 毫秒级的时间戳.
@@ -45,55 +44,13 @@ abstract class AMessage implements Message
         $this->createdAt = $createdAt ?? microtime(true);
     }
 
-
-    abstract public function __sleep() : array;
-
-
-
-    public function getData(): array
-    {
-        $data = [];
-        foreach ($this->__sleep() as $field) {
-            $value = $this->{$field};
-            $data[$field] = $value;
-        }
-        return $data;
-    }
-
-
-    public static function babelUnSerialize(string $input): ? BabelSerializable
-    {
-        $data = json_decode($input, true);
-        if (!is_array($data)) {
-            return null;
-        }
-
-        $object = new static();
-        $fields = $object->__sleep();
-        foreach ($fields as $field) {
-            $object->{$field} = $data[$field];
-        }
-        return $object;
-    }
-
-    public function babelSerialize(): string
-    {
-        return json_encode($this->getData(), JSON_UNESCAPED_UNICODE);
-    }
-
     public function toArray(): array
     {
         return [
             'type' => static::getSerializableId(),
-            'data' => $this->getData()
+            'data' => $this->toSerializableArray()[0],
         ];
     }
-
-    public static function getSerializableId(): string
-    {
-        return StringUtils::normalizeClassName(static::class);
-    }
-
 
     public function getCreatedAt() : float
     {
