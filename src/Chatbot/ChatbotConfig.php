@@ -13,6 +13,7 @@ namespace Commune\Chatbot;
 
 use Commune\Chatbot\Prototype\Bootstrap\ConfigBindings;
 use Commune\Chatbot\Providers\BabelServiceProvider;
+use Commune\Chatbot\Providers\MonologServiceProvider;
 use Commune\Chatbot\Providers\RunningSpyServiceProvider;
 use Commune\Framework\Prototype\Cache\ArrCacheServiceProvider;
 use Commune\Framework\Prototype\ExpReporter\ConsoleReporterServiceProvider;
@@ -61,10 +62,13 @@ class ChatbotConfig extends Structure
                 RunningSpyServiceProvider::class,
                 // console 日志
                 ConsoleReporterServiceProvider::class,
+                // 公共日志
+                MonologServiceProvider::class,
                 // babel 传输
                 BabelServiceProvider::class,
                 // 缓存
                 ArrCacheServiceProvider::class,
+
             ],
             'configs' => [],
             'ghost' => GhostConfig::stub(),

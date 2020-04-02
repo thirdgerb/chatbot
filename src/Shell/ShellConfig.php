@@ -30,7 +30,7 @@ use Commune\Support\Struct\Structure;
  * @property-read string[] $pipeline                Shell运行的管道
  * @property-read string[] $directives              Shell 预加载的命令. id => DirectiveClass
  *
- * @property-read string $requestKernel
+ * @property-read string $kernel
  *
  * @property-read string[] $providers
  *
@@ -48,6 +48,14 @@ class ShellConfig extends Structure
         return [
             'shellName' => 'test',
 
+            'sessionExpire' => 3600,
+
+            'providers' => [
+                ShlSessionServiceProvider::class,
+            ],
+
+            'kernel' => IRequestKernel::class,
+
             'pipeline' => [
                 // 发送响应
                 ResponsePipe::class,
@@ -56,14 +64,6 @@ class ShellConfig extends Structure
                 RenderPipe::class,
                 SendToGhostPipe::class,
             ],
-
-            'sessionExpire' => 3600,
-
-            'providers' => [
-                ShlSessionServiceProvider::class,
-            ],
-
-            'requestKernel' => IRequestKernel::class,
 
         ];
     }

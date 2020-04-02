@@ -87,7 +87,7 @@ class IShell extends AChatApp implements Shell
         $this->reqContainer->instance(Shell::class, $this);
 
         // 绑定 Kernel
-        $this->procContainer->bind(RequestKernel::class, $this->shellConfig->requestKernel);
+        $this->procContainer->bind(RequestKernel::class, $this->shellConfig->kernel);
 
     }
 
