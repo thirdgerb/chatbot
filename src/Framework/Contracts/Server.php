@@ -18,6 +18,10 @@ namespace Commune\Framework\Contracts;
 interface Server
 {
 
+    /**
+     * 服务端实例的 ID, 方便排查问题.
+     * @return string
+     */
     public function getId() : string;
 
     /*---------- 运行相关 ---------*/

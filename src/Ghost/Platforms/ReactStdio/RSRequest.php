@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Platforms\ReactStdio;
 
 use Commune\Ghost\Contracts\GhtRequest;
-use Commune\Message\Blueprint\Internal\InputMsg;
+use Commune\Framework\Blueprint\Intercom\ShellInput;
 
 
 /**
@@ -25,7 +25,7 @@ class RSRequest implements GhtRequest
         return true;
     }
 
-    public function fetchIncoming(): InputMsg
+    public function fetchIncoming(): ShellInput
     {
         // TODO: Implement fetchIncoming() method.
     }

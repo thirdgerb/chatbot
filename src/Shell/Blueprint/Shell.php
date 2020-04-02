@@ -18,8 +18,6 @@ use Commune\Shell\Blueprint\Render\Renderer;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * 相关属性
- *
  */
 interface Shell extends ChatApp
 {

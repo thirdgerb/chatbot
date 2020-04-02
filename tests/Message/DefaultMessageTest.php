@@ -11,13 +11,13 @@
 
 namespace Commune\Test\Message;
 
-use Commune\Message\Prototype\Convo\IIntent;
-use Commune\Message\Prototype\Convo\IJson;
-use Commune\Message\Prototype\Convo\IText;
-use Commune\Message\Prototype\Convo\IUnsupported;
-use Commune\Message\Prototype\Convo\Media\IAudio;
-use Commune\Message\Prototype\Convo\Media\IImage;
-use Commune\Message\Prototype\Convo\Media\ILink;
+use Commune\Message\Prototype\IIntent;
+use Commune\Message\Prototype\IJson;
+use Commune\Message\Prototype\IText;
+use Commune\Message\Prototype\IUnsupported;
+use Commune\Message\Prototype\Media\IAudio;
+use Commune\Message\Prototype\Media\IImage;
+use Commune\Message\Prototype\Media\ILink;
 use Commune\Message\Prototype\MessagesTestCase;
 
 

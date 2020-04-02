@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Contracts;
 
-use Commune\Message\Blueprint\Internal\ShellScope;
+use Commune\Framework\Blueprint\Intercom\ShellScope;
 use Commune\Message\Blueprint\Message;
 
 /**

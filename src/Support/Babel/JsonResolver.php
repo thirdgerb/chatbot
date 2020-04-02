@@ -21,7 +21,11 @@ class JsonResolver implements BabelResolver
 
     public function registerSerializable(string $serializable) : void
     {
-        if (!is_a($serializable, BabelSerializable::class, TRUE)) {
+        if (!is_a(
+            $serializable,
+            BabelSerializable::class,
+            TRUE
+        )) {
             throw new \InvalidArgumentException("$serializable is not instance of " . BabelSerializable::class);
         }
 

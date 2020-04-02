@@ -12,18 +12,11 @@
 namespace Commune\Chatbot;
 
 use Commune\Chatbot\Prototype\Bootstrap\ConfigBindings;
-use Commune\Chatbot\Prototype\Providers\BabelServiceProvider;
-use Commune\Chatbot\Prototype\Providers\RunningSpyServiceProvider;
+use Commune\Chatbot\Providers\BabelServiceProvider;
+use Commune\Chatbot\Providers\RunningSpyServiceProvider;
 use Commune\Framework\Prototype\Cache\ArrCacheServiceProvider;
 use Commune\Framework\Prototype\ExpReporter\ConsoleReporterServiceProvider;
 use Commune\Ghost\GhostConfig;
-use Commune\Message\Prototype\Convo\IIntent;
-use Commune\Message\Prototype\Convo\IJson;
-use Commune\Message\Prototype\Convo\IText;
-use Commune\Message\Prototype\Convo\IUnsupported;
-use Commune\Message\Prototype\Convo\Media\IAudio;
-use Commune\Message\Prototype\Convo\Media\IImage;
-use Commune\Message\Prototype\Convo\Media\ILink;
 use Commune\Shell\ShellConfig;
 use Commune\Support\Struct\Struct;
 use Commune\Support\Struct\Structure;
@@ -64,9 +57,13 @@ class ChatbotConfig extends Structure
             'chatbotName' => 'commune-demo',
             'debug' => true,
             'providers' => [
+                // 检查单例和内存泄漏
                 RunningSpyServiceProvider::class,
+                // console 日志
                 ConsoleReporterServiceProvider::class,
+                // babel 传输
                 BabelServiceProvider::class,
+                // 缓存
                 ArrCacheServiceProvider::class,
             ],
             'configs' => [],

@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Contracts;
 
-use Commune\Message\Blueprint\Internal\InputMsg;
+use Commune\Framework\Blueprint\Intercom\ShellInput;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -27,9 +27,9 @@ interface GhtRequest
 
     /**
      * 从请求中获取 IncomingMsg
-     * @return InputMsg
+     * @return ShellInput
      */
-    public function fetchIncoming() : InputMsg;
+    public function fetchIncoming() : ShellInput;
 
 
 }

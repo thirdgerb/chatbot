@@ -290,7 +290,7 @@ abstract class AChatApp implements ChatApp
          * @var ServiceProvider $provider
          */
         $provider = new $serviceProvider($data);
-        $this->registerProvider($provider, $top);
+        $this->registerProviderIns($provider, $top);
     }
 
     public function registerProviderIns(

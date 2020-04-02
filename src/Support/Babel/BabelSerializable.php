@@ -32,7 +32,7 @@ interface BabelSerializable
     public static function getSerializableId() : string;
 
     /**
-     * 从数组还原。
+     * 从数组还原
      * @param array $data
      * @return static|null
      */

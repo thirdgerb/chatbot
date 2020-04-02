@@ -13,7 +13,7 @@ namespace Commune\Message\Prototype;
 
 use Commune\Message\Blueprint\Message;
 use Commune\Support\Arr\ArrayAbleToJson;
-use Commune\Support\Babel\TSerializable;
+use Commune\Support\Babel\TBabelSerializable;
 
 
 /**
@@ -21,11 +21,11 @@ use Commune\Support\Babel\TSerializable;
  */
 abstract class AMessage implements Message
 {
-    use ArrayAbleToJson, TSerializable;
+    use ArrayAbleToJson, TBabelSerializable;
 
     /**
      * 毫秒级的时间戳.
-     * @var float
+     * @var int
      */
     protected $createdAt;
 
@@ -52,10 +52,10 @@ abstract class AMessage implements Message
         ];
     }
 
-    public function getCreatedAt() : float
+    public function getCreatedAt() : int
     {
         return $this->createdAt
-            ?? $this->createdAt = microtime(true);
+            ?? $this->createdAt = time();
     }
 
 

@@ -11,20 +11,21 @@
 
 namespace Commune\Shell\Blueprint\Render;
 
-use Commune\Message\Blueprint\Convo\ConvoMsg;
-use Commune\Message\Blueprint\Reaction\ReactionMsg;
+use Commune\Message\Blueprint\IntentMsg;
+use Commune\Message\Blueprint\Message;
 
 /**
+ * 将一个意图数据, 渲染成若干个常规 Message
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Template
 {
 
     /**
-     * 将一个 Reaction 消息 渲染成多条 ConvoMsg
-     * @param ReactionMsg $message
-     * @return ConvoMsg[]
+     * @param IntentMsg $message
+     * @return Message[]
      */
-    public function render(ReactionMsg $message) : array;
+    public function render(IntentMsg $message) : array;
 
 }

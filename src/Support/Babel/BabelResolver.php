@@ -46,7 +46,7 @@ interface BabelResolver
     public function toSerializingArray(BabelSerializable $serializable) : array;
 
     /**
-     * 从数组还原。
+     * 从数组还原
      * @param array $data
      * @return static|null
      */

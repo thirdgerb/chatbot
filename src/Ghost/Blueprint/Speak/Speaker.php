@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Speak;
 
-use Commune\Message\Blueprint\Convo\ConvoMsg;
+use Commune\Message\Blueprint\Message;
 use Commune\Message\Blueprint\Directive\DirectiveMsg;
 use Commune\Message\Blueprint\Message;
 use Commune\Message\Blueprint\Reaction\ReactionMsg;
@@ -38,7 +38,7 @@ interface Speaker
     /**
      * 发送一个同步的响应消息, 给当前的 Shell
      *
-     * @param ReactionMsg|ConvoMsg|DirectiveMsg|Message $message
+     * @param ReactionMsg|Message|DirectiveMsg|Message $message
      * @return static
      */
     public function reply(Message $message) : Speaker;

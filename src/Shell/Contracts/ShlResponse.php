@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Contracts;
 
-use Commune\Message\Blueprint\Internal\InternalMsg;
+use Commune\Framework\Blueprint\Intercom\ShellMsg;
 
 /**
  * 负责向 Shell 的客户端发送响应的模块
@@ -25,7 +25,7 @@ interface ShlResponse
 
     /**
      * 增加一个需要同步回复的消息.
-     * @param InternalMsg[] $messages
+     * @param ShellMsg[] $messages
      */
     public function buffer(array $messages) : void;
 

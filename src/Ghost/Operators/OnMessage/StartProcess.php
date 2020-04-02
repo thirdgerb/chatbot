@@ -22,7 +22,7 @@ class StartProcess extends AbsOperator
 {
     public function invoke(): ? Operator
     {
-        // 第一步， 检查路由。
+        // 第一步， 检查路由
         $route = $this->runtime->getRoute();
         if (!$this->mind->hasContextDef()) {
             // todo failue

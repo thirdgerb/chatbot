@@ -11,7 +11,7 @@
 
 namespace Commune\Test\Message\Abstracted;
 
-use Commune\Message\Prototype\Abstracted\IComprehension;
+use Commune\Framework\Prototype\Abstracted\IComprehension;
 use Commune\Support\Babel\Babel;
 use PHPUnit\Framework\TestCase;
 

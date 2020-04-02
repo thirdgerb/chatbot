@@ -24,15 +24,24 @@ interface Conversational
     public function getSuggestions() : array;
 
     /**
-     * 默认选项
-     * @return int|string
+     * @return array
      */
-    public function getDefaultIndex();
+    public function getAnswers() : array;
 
     /**
-     * 是否单选.
-     * @return bool
+     * 默认答案
+     * @return string[]
+     *
+     * [
+         * index => answer
+     * ]
      */
-    public function isExclusive() : bool;
+    public function getDefaultAnswers() : array;
+
+    /**
+     * 最大答案数. 0 以下表示不限.
+     * @return int
+     */
+    public function getMaxChoiceCount() : int;
 
 }

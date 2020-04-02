@@ -16,8 +16,7 @@ use Commune\Support\Babel\BabelSerializable;
 use Commune\Support\DI\Injectable;
 
 /**
- * 所有消息的公共抽象.
- * 并要求可以作为字符串来传输.
+ * 基础消息类型
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
@@ -27,8 +26,8 @@ interface Message extends ArrayAndJsonAble, BabelSerializable, Injectable
 
     /**
      * 消息创建时间.
-     * @return float
+     * @return int
      */
-    public function getCreatedAt() : float;
+    public function getCreatedAt() : int;
 
 }

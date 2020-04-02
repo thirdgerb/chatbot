@@ -17,10 +17,6 @@ use Commune\Ghost\Blueprint\Kernels\MessageKernel;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- * @property-read string $chatbotName               机器人的名称
- *
  */
 interface Ghost extends ChatApp
 {

@@ -12,18 +12,16 @@
 namespace Commune\Shell\Prototype\Kernels;
 
 use Commune\Framework\Blueprint\ReqContainer;
-use Commune\Message\Blueprint\Convo\ConvoMsg;
-use Commune\Message\Blueprint\Directive\DirectiveMsg;
-use Commune\Message\Blueprint\Internal\OutputMsg;
-use Commune\Message\Blueprint\Reaction\ReactionMsg;
 use Commune\Shell\Blueprint\Pipeline\ShellPipe;
-use Commune\Shell\Blueprint\Render\Renderer;
 use Commune\Shell\Blueprint\Session\ShlSession;
 use Commune\Shell\Blueprint\Shell;
 use Commune\Shell\Blueprint\Kernels\RequestKernel;
 use Commune\Shell\Contracts\ShlRequest;
 use Commune\Shell\Contracts\ShlResponse;
 use Commune\Shell\Exceptions\RequestException;
+use Commune\Shell\Prototype\Events\FinishShlSession;
+use Commune\Shell\Prototype\Events\StartShlSession;
+use Commune\Shell\ShellConfig;
 use Commune\Support\Pipeline\OnionPipeline;
 
 
@@ -40,12 +38,20 @@ class IRequestKernel implements RequestKernel
     protected $shell;
 
     /**
-     * IShellKernel constructor.
-     * @param Shell $shell
+     * @var ShellConfig
      */
-    public function __construct(Shell $shell)
+    protected $shellConfig;
+
+
+    /**
+     * IRequestKernel constructor.
+     * @param Shell $shell
+     * @param ShellConfig $shellConfig
+     */
+    public function __construct(Shell $shell, ShellConfig $shellConfig)
     {
         $this->shell = $shell;
+        $this->shellConfig = $shellConfig;
     }
 
 
@@ -57,15 +63,19 @@ class IRequestKernel implements RequestKernel
         try {
 
             // 请求不合法
-            if (!$this->validateRequest($request, $response)) {
+            if (!$this->validateRequest($request)) {
+                $response->sendRejectResponse();
                 return;
             }
 
             $reqContainer = $this->createReqContainer($request, $response);
+            /**
+             * @var ShlSession $session
+             */
             $session = $reqContainer->get(ShlSession::class);
-            $session = $this->sendSessionThroughPipes($session);
+            $session->fire(new StartShlSession());
 
-            $this->handleReplies($session, $response);
+            $session = $this->sendSessionThroughPipes($session);
 
             // 完成响应.
             $response->sendResponse();
@@ -75,8 +85,7 @@ class IRequestKernel implements RequestKernel
         } catch (RequestException $e) {
             $response->sendFailureResponse($e);
 
-        // 终止流程, 并且不响应的异常.
-        // 响应应该提前发送掉.
+        // 关闭 Session, 关闭客户端
 
 
         // 未预料到的错误.
@@ -89,6 +98,7 @@ class IRequestKernel implements RequestKernel
         } finally {
 
             if (isset($session)) {
+                $session->fire(new FinishShlSession());
                 $session->finish();
             }
 
@@ -98,10 +108,7 @@ class IRequestKernel implements RequestKernel
         }
     }
 
-    protected function validateRequest(
-        ShlRequest $request,
-        ShlResponse $response
-    ) : bool
+    protected function validateRequest(ShlRequest $request) : bool
     {
         if ($request->validate()) {
             return true;
@@ -115,7 +122,6 @@ class IRequestKernel implements RequestKernel
             ->getLogger()
             ->warning($warning);
 
-        $response->sendRejectResponse();
         return false;
     }
 
@@ -129,7 +135,7 @@ class IRequestKernel implements RequestKernel
         // 获取新的请求级实例.
         $reqContainer =  $this->shell
             ->getReqContainer()
-            ->newInstance($request->fetchTraceId(), $procContainer);
+            ->newInstance($request->getTraceId(), $procContainer);
 
         // 绑定 request
         $reqContainer->share(ReqContainer::class, $reqContainer);
@@ -150,13 +156,7 @@ class IRequestKernel implements RequestKernel
      */
     protected function sendSessionThroughPipes(ShlSession $session) : ShlSession
     {
-        $pipes = $this->shell->config->pipeline;
-
-        // 没有管道的话, 直接执行.
-        if (empty($pipeline)) {
-            return $this->callGhost($session);
-        }
-
+        $pipes = $this->shellConfig->pipeline;
         $pipeline = new OnionPipeline($session->container);
 
         while($pipe = array_shift($pipes)) {
@@ -172,122 +172,11 @@ class IRequestKernel implements RequestKernel
         $session = $pipeline->send(
             $session,
             function (ShlSession $session): ShlSession {
-                return $this->callGhost($session);
+                return $session;
             }
         );
 
         return $session;
-    }
-
-    /**
-     * 与 Ghost 进行通讯.
-     * @param ShlSession $session
-     * @return ShlSession
-     */
-    protected function callGhost(ShlSession $session) : ShlSession
-    {
-        $messenger = $this->shell->messenger;
-        try {
-
-            $replies = $messenger->syncSendIncoming($session->getInputMsg());
-            $session->output($replies);
-
-        // 请求失败的话, 应该给出结果.
-        } catch (MessengerReqException $e) {
-            $session->output([ $e->getOutgoingMsg() ]);
-        }
-
-        return $session;
-    }
-
-    protected function handleReplies(ShlSession $session, ShlResponse $response) : void
-    {
-        $renderer = $this->shell->renderer;
-        $buffer = $session->getOutputs();
-
-        foreach ($buffer as $outgoingMsg) {
-            // 如果发现了不同类的消息.
-            if (!$this->validateOutgoing($session, $outgoingMsg)) {
-                continue;
-            }
-
-            $message = $outgoingMsg->message;
-
-            // 如果是 Convo, 直接 buffer 给 request
-            if ($message instanceof ConvoMsg) {
-                $response->buffer([$message]);
-                continue;
-            }
-
-            // 如果是 Reaction, 则需要渲染.
-            if ($message instanceof ReactionMsg) {
-                $this->renderReaction($renderer, $message, $response);
-                continue;
-            }
-
-
-            if ($message instanceof DirectiveMsg) {
-                $directive = $directives[$message->getId()] ?? '';
-                if (!empty($directive)) {
-                    $invoker = $session->container->get($directive);
-                    $invoker($session, $message);
-                }
-            }
-        }
-
-    }
-
-    protected function renderReaction(
-        Renderer $renderer,
-        ReactionMsg $message,
-        ShlResponse $response
-    ) : void
-    {
-        $template = $renderer->findTemplate($message->getId());
-        // 消息其实也可能为空.
-        $messages = isset($template) ? $template->render($message) : [];
-        $response->buffer($messages);
-    }
-
-    protected function runDirective(
-        ShlSession $session,
-        DirectiveMsg $message
-    ) : void
-    {
-        $directives = $this->shell->config->directives;
-        $directiveId = $message->getId();
-        $directive = $directives[$directiveId] ?? '';
-
-        if (!empty($directive)) {
-            $invoker = $session->container->get($directive);
-            $invoker($session, $message);
-
-        } else {
-            $warning = $this->shell->getLogInfo()->shellDirectiveNotExists($directiveId);
-            $this->shell->getLogger()->warning($warning);
-        }
-    }
-
-    /**
-     * 校验消息是否合法.
-     * @param ShlSession $session
-     * @param OutputMsg $message
-     * @return bool
-     */
-    protected function validateOutgoing(ShlSession $session, OutputMsg $message) : bool
-    {
-        $inScope = $session->getInputMsg()->scope;
-        $outScope = $message->scope;
-
-        if (
-            $inScope->chatId !== $outScope->chatId
-            || $inScope->shellName != $outScope->shellName
-        ) {
-            // todo 记录日志.
-
-            return false;
-        }
-        return true;
     }
 
 

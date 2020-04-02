@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Platforms\ReactStdio;
 
-use Commune\Message\Blueprint\Internal\InternalMsg;
+use Commune\Framework\Blueprint\Intercom\ShellMsg;
 use Commune\Shell\Contracts\ShlResponse;
 
 /**
@@ -27,7 +27,7 @@ class RSResponse implements ShlResponse
         $this->buffered = array_merge($this->buffered, $messages);
     }
 
-    protected function write(InternalMsg $message) : void
+    protected function write(ShellMsg $message) : void
     {
 
     }

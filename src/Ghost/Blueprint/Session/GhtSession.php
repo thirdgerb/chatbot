@@ -11,10 +11,12 @@
 
 namespace Commune\Ghost\Blueprint\Session;
 
+use Commune\Framework\Blueprint\Intercom\GhostOutput;
 use Commune\Framework\Contracts\Cache;
 use Commune\Framework\Contracts\Messenger;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Ghost\Blueprint\Auth\Authority;
+use Commune\Ghost\Blueprint\Chat\Chat;
 use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Definition\Mindset;
 use Commune\Ghost\Blueprint\Ghost;
@@ -24,9 +26,9 @@ use Commune\Ghost\Blueprint\Runtime\Runtime;
 use Commune\Ghost\Blueprint\Speak\Speaker;
 use Commune\Ghost\Contracts\GhtRequest;
 use Commune\Ghost\Contracts\GhtResponse;
-use Commune\Message\Blueprint\Internal\InputMsg;
-use Commune\Message\Blueprint\Internal\OutputMsg;
-use Commune\Message\Blueprint\Internal\ShellScope;
+use Commune\Framework\Blueprint\Intercom\ShellInput;
+use Commune\Framework\Blueprint\Intercom\ShellOutput;
+use Commune\Framework\Blueprint\Intercom\ShellScope;
 use Commune\Message\Blueprint\Message;
 use Commune\Support\Babel\BabelResolver;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
@@ -42,10 +44,11 @@ use SebastianBergmann\CodeCoverage\Driver\Driver;
  *
  * @property-read GhtRequest $request               本轮对话的同步请求
  * @property-read GhtResponse $response             本轮对话的同步响应
- * @property-read InputMsg $incoming                输入的消息
+ * @property-read ShellInput $incoming                输入的消息
  * @property-read Scene $scene                      场景信息
  * @property-read ShellScope $scope                      本轮对话的作用域
  * @property-read ReqContainer $container           请求级容器
+ * @property-read Chat $chat
  *
  * 组件
  *
@@ -67,15 +70,14 @@ interface GhtSession
 
 
     /**
-     * @param OutputMsg[] $replies
+     * @param ShellOutput[] $replies
      */
     public function output(array $replies) : void;
 
     /**
-     * @return OutputMsg[]
+     * @return GhostOutput[]
      */
     public function getOutputs() : array;
-
 
     /**
      * @param string $policy

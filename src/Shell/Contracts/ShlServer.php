@@ -18,5 +18,9 @@ use Commune\Framework\Contracts\Server;
  */
 interface ShlServer extends Server
 {
+    /**
+     * 关闭会话.
+     */
+    public function closeSession() : void;
 
 }

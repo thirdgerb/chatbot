@@ -11,9 +11,9 @@
 
 namespace Commune\Shell\Platforms\ReactStdio;
 
-use Commune\Message\Blueprint\Abstracted\Comprehension;
-use Commune\Message\Blueprint\Convo\ConvoMsg;
-use Commune\Message\Prototype\Convo\IText;
+use Commune\Framework\Blueprint\Abstracted\Comprehension;
+use Commune\Message\Blueprint\Message;
+use Commune\Message\Prototype\IText;
 use Commune\Shell\Contracts\ShlRequest;
 
 /**
@@ -55,7 +55,7 @@ class RSRequest implements ShlRequest
         return [];
     }
 
-    public function getScene(): string
+    public function getSceneId(): string
     {
         return '';
     }
@@ -70,27 +70,27 @@ class RSRequest implements ShlRequest
         return $this->data;
     }
 
-    public function fetchMessage(): ConvoMsg
+    public function getMessage(): Message
     {
         return new IText($this->data);
     }
 
-    public function fetchMessageId(): string
+    public function getMessageId(): string
     {
         return $this->messageId ?? $this->messageId = strval(time());
     }
 
-    public function fetchUserId(): string
+    public function getUserId(): string
     {
         return $this->config->userId;
     }
 
-    public function fetchComprehension(): ? Comprehension
+    public function getComprehension(): ? Comprehension
     {
         return null;
     }
 
-    public function fetchSessionId(): ? string
+    public function getSessionId(): ? string
     {
         return null;
     }

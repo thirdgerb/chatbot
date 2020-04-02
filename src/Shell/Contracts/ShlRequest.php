@@ -11,8 +11,8 @@
 
 namespace Commune\Shell\Contracts;
 
-use Commune\Message\Blueprint\Abstracted\Comprehension;
-use Commune\Message\Blueprint\Convo\ConvoMsg;
+use Commune\Framework\Blueprint\Abstracted\Comprehension;
+use Commune\Message\Blueprint\Message;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -42,10 +42,17 @@ interface ShlRequest
     /*-------- 必须有的参数 --------*/
 
     /**
+     * 请求原始的输入信息.
+     * @return mixed
+     */
+    public function getInput();
+
+
+    /**
      * 请求的场景
      * @return string
      */
-    public function getScene() : string;
+    public function getSceneId() : string;
 
     /**
      * 当前场景的环境变量.
@@ -55,24 +62,18 @@ interface ShlRequest
 
 
     /**
-     * 请求原始的输入信息.
-     * @return mixed
-     */
-    public function getInput();
-
-    /**
      * 从 input 中获取 message
      *
      * fetch message from request input
      *
-     * @return ConvoMsg
+     * @return Message
      */
-    public function fetchMessage() : ConvoMsg;
+    public function getMessage() : Message;
 
     /**
      * @return string
      */
-    public function fetchTraceId() : string;
+    public function getTraceId() : string;
 
     /**
      * 从 input 中获取消息ID, 或者生成一个ID.
@@ -80,27 +81,33 @@ interface ShlRequest
      *
      * @return string
      */
-    public function fetchMessageId() : string;
+    public function getMessageId() : string;
 
     /**
      * 发送消息的用户 ID
      *
      * @return string
      */
-    public function fetchUserId() : string;
+    public function getUserId() : string;
 
     /**
      * 请求内已经包含的高级抽象理解.
      *
      * @return null|Comprehension
      */
-    public function fetchComprehension() : ? Comprehension;
+    public function getComprehension() : ? Comprehension;
+
+    /**
+     * 从请求中给出 ChatId, 是 shell 内部的 chatId
+     * @return null|string
+     */
+    public function getChatId() : ? string;
 
     /**
      * 请求给出的 sessionId, 是 Shell 内部的 SessionId
      * @return null|string
      */
-    public function fetchSessionId() : ? string;
+    public function getSessionId() : ? string;
 
 
 }

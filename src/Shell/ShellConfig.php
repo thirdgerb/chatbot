@@ -11,7 +11,12 @@
 
 namespace Commune\Shell;
 
+use Commune\Message\Blueprint\QuestionMsg;
 use Commune\Shell\Prototype\Kernels\IRequestKernel;
+use Commune\Shell\Prototype\Pipeline\SendToGhostPipe;
+use Commune\Shell\Prototype\Pipeline\RenderPipe;
+use Commune\Shell\Prototype\Pipeline\ResponsePipe;
+use Commune\Shell\Providers\ShlSessionServiceProvider;
 use Commune\Support\Struct\Structure;
 
 /**
@@ -26,7 +31,12 @@ use Commune\Support\Struct\Structure;
  * @property-read string[] $directives              Shell 预加载的命令. id => DirectiveClass
  *
  * @property-read string $requestKernel
+ *
  * @property-read string[] $providers
+ *
+ * @property-read int $sessionExpire                shell session 的过期时间.
+ *
+ * @property-read bool $isBroadcasting              shell 的消息发布是通过广播方式.
  */
 class ShellConfig extends Structure
 {
@@ -39,15 +49,22 @@ class ShellConfig extends Structure
             'shellName' => 'test',
 
             'pipeline' => [
+                // 发送响应
+                ResponsePipe::class,
+                // 检查问题, 尝试回答
+                QuestionMsg::class,
+                RenderPipe::class,
+                SendToGhostPipe::class,
             ],
 
-            'directives' => [
-            ],
+            'sessionExpire' => 3600,
 
             'providers' => [
+                ShlSessionServiceProvider::class,
             ],
 
             'requestKernel' => IRequestKernel::class,
+
         ];
     }
 }

@@ -44,6 +44,37 @@ interface Cache
      */
     public function get(string $key) : ? string;
 
+    /**
+     * 为一个 key 设定过期的时间.
+     *
+     * @param string $key
+     * @param int $ttl
+     * @return bool
+     */
+    public function expire(string $key, int $ttl) : bool;
+//
+//    /**
+//     * @param string $key
+//     * @param string $memberKey
+//     * @param string $value
+//     * @param int|null $ttl
+//     * @return bool
+//     */
+//    public function hSet(string $key, string $memberKey, string $value, int $ttl =null ) : bool;
+//
+//
+//    /**
+//     * @param string $key
+//     * @param string $memberKey
+//     * @return null|string
+//     */
+//    public function hGet(string $key, string $memberKey) : ? string;
+//
+//    /**
+//     * @param string $key
+//     * @return array
+//     */
+//    public function hGetAll(string $key) : array;
 
     /**
      * @param array $keys

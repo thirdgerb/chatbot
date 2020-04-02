@@ -14,7 +14,7 @@ namespace Commune\Ghost\Operators\OnMessage;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Operators\AbsOperator;
-use Commune\Message\Blueprint\Internal\InputMsg;
+use Commune\Framework\Blueprint\Intercom\ShellInput;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -22,7 +22,7 @@ use Commune\Message\Blueprint\Internal\InputMsg;
 class IntentRouting extends AbsOperator
 {
     /**
-     * @var InputMsg
+     * @var ShellInput
      */
     protected $incoming;
 
