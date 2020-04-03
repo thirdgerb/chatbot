@@ -12,17 +12,19 @@
 namespace Commune\Shell\Prototype\Kernels;
 
 use Commune\Framework\Blueprint\ReqContainer;
-use Commune\Shell\Blueprint\Pipeline\ShellPipe;
+use Commune\Framework\Blueprint\Session\SessionPipe;
+use Commune\Framework\Prototype\Session\Events\FinishSession;
+use Commune\Framework\Prototype\Session\Events\StartSession;
 use Commune\Shell\Blueprint\Session\ShlSession;
 use Commune\Shell\Blueprint\Shell;
 use Commune\Shell\Blueprint\Kernels\RequestKernel;
 use Commune\Shell\Contracts\ShlRequest;
 use Commune\Shell\Contracts\ShlResponse;
-use Commune\Shell\Exceptions\RequestException;
-use Commune\Shell\Prototype\Events\FinishShlSession;
-use Commune\Shell\Prototype\Events\StartShlSession;
+use Commune\Framework\Exceptions\RequestException;
 use Commune\Shell\ShellConfig;
 use Commune\Support\Pipeline\OnionPipeline;
+use Commune\Shell\Prototype\Pipeline;
+
 
 
 /**
@@ -32,6 +34,25 @@ use Commune\Support\Pipeline\OnionPipeline;
  */
 class IRequestKernel implements RequestKernel
 {
+
+    /*------- configure -------*/
+
+    protected $startPipeline = [
+        // 发送响应
+        Pipeline\ResponsePipe::class,
+        // 检查问题, 尝试回答
+        Pipeline\QuestionPipe::class,
+        // 渲染管道
+        Pipeline\RenderPipe::class,
+    ];
+
+    protected $endPipeline = [
+        // 发送消息给 Ghost
+        Pipeline\ShellMessengerPipe::class,
+    ];
+
+    /*------- cached -------*/
+
     /**
      * @var Shell
      */
@@ -73,7 +94,7 @@ class IRequestKernel implements RequestKernel
              * @var ShlSession $session
              */
             $session = $reqContainer->get(ShlSession::class);
-            $session->fire(new StartShlSession());
+            $session->fire(new StartSession());
 
             $session = $this->sendSessionThroughPipes($session);
 
@@ -98,7 +119,7 @@ class IRequestKernel implements RequestKernel
         } finally {
 
             if (isset($session)) {
-                $session->fire(new FinishShlSession());
+                $session->fire(new FinishSession());
                 $session->finish();
             }
 
@@ -156,14 +177,20 @@ class IRequestKernel implements RequestKernel
      */
     protected function sendSessionThroughPipes(ShlSession $session) : ShlSession
     {
-        $pipes = $this->shellConfig->pipeline;
         $pipeline = new OnionPipeline($session->container);
 
-        while($pipe = array_shift($pipes)) {
+        // 合成为管道.
+        $pipes = array_merge(
+            $this->startPipeline,
+            $this->shellConfig->pipeline,
+            $this->endPipeline
+        );
+
+        foreach ($pipes as $pipe) {
             $pipeline->through($pipe);
         }
 
-        $pipeline->via(ShellPipe::HANDLER);
+        $pipeline->via(SessionPipe::HANDLER);
 
         // 发送会话
         /**

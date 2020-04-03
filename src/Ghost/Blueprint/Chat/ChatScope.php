@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Chat;
 
+use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -21,14 +22,13 @@ namespace Commune\Ghost\Blueprint\Chat;
  * @property-read string $chatId            会话的唯一ID
  * @property-read string $userId            发送与接受请求的用户 id, 用于追踪唯一用户. 平台相通.
  * @property-read string $sessionId         所属的 Session Id. 一个 Chat 不同时间有多个 Session
- * @property-read string $sceneId           请求的场景 ID. 请求可能来自不同的场景.
- * @property-read string $messageId         消息的 ID. 消息本身可能有来自平台的ID
  *
  * @property-read string[] $shells          Chat 已经建立的 Shell 通道.
  *  [
  *      shellName => chatId
  *  ]
  */
-interface ChatScope
+interface ChatScope extends ArrayAndJsonAble
 {
+
 }

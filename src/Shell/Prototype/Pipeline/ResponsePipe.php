@@ -11,20 +11,29 @@
 
 namespace Commune\Shell\Prototype\Pipeline;
 
+use Commune\Framework\Prototype\Session\ASessionPipe;
 use Commune\Shell\Blueprint\Session\ShlSession;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ResponsePipe extends AShellPipe
+class ResponsePipe extends ASessionPipe
 {
-    public function doHandle(ShlSession $session, callable $next): ShlSession
+    /**
+     * @param ShlSession $session
+     * @return ShlSession
+     */
+    protected function before($session)
     {
-        /**
-         * @var ShlSession $session
-         */
-        $session = $next($session);
+        return $session;
+    }
 
+    /**
+     * @param ShlSession $session
+     * @return ShlSession
+     */
+    protected function after($session)
+    {
         // buffer response
         $outputs = $session->getShellOutputs();
         $response = $session->response;

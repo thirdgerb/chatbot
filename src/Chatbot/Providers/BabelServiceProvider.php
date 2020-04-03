@@ -39,7 +39,7 @@ class BabelServiceProvider extends ServiceProvider
                 Prototype\IText::class,
                 Prototype\IUnsupported::class,
                 Prototype\IJson::class,
-                Prototype\IIntent::class,
+                Prototype\IIntentMsg::class,
                 Prototype\Media\IAudio::class,
                 Prototype\Media\IImage::class,
                 Prototype\Media\ILink::class,

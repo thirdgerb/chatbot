@@ -11,6 +11,7 @@
 
 namespace Commune\Shell\Prototype\Pipeline;
 
+use Commune\Framework\Prototype\Session\ASessionPipe;
 use Commune\Message\Blueprint\IntentMsg;
 use Commune\Shell\Blueprint\Session\ShlSession;
 
@@ -18,17 +19,19 @@ use Commune\Shell\Blueprint\Session\ShlSession;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RenderPipe extends AShellPipe
+class RenderPipe extends ASessionPipe
 {
-
-    public function doHandle(ShlSession $session, callable $next): ShlSession
+    protected function before($session)
     {
+        return $session;
+    }
 
-        /**
-         * @var ShlSession $session
-         */
-        $session = $next($session);
-
+    /**
+     * @param ShlSession $session
+     * @return ShlSession
+     */
+    protected function after($session)
+    {
         $outputs = $session->getShellOutputs();
         $renderer = $session->renderer;
 
@@ -59,7 +62,7 @@ class RenderPipe extends AShellPipe
         }
 
         // 替换原来的回复消息.
-        $session->setShellOutputs($newOutputs);
+        $session->addShellOutputs($newOutputs);
         return $session;
     }
 

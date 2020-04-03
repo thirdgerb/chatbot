@@ -12,6 +12,7 @@
 namespace Commune\Shell\Prototype\Pipeline;
 
 use Commune\Framework\Blueprint\Intercom\GhostInput;
+use Commune\Framework\Prototype\Session\ASessionPipe;
 use Commune\Message\Blueprint\QuestionMsg;
 use Commune\Shell\Blueprint\Question\Answerable;
 use Commune\Shell\Blueprint\Session\ShlSession;
@@ -20,20 +21,13 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class QuestionPipe extends AShellPipe
+class QuestionPipe extends ASessionPipe
 {
-    public function doHandle(ShlSession $session, callable $next): ShlSession
-    {
-        $session = $this->comprehendIncoming($session);
-
-        /**
-         * @var ShlSession $session
-         */
-        $session = $next($session);
-        return $this->restoreQuestion($session);
-    }
-
-    protected function restoreQuestion(ShlSession $session) : ShlSession
+    /**
+     * @param ShlSession $session
+     * @return ShlSession
+     */
+    protected function after($session)
     {
         $outputs = $session->getShellOutputs();
         $question = null;
@@ -51,7 +45,11 @@ class QuestionPipe extends AShellPipe
         return $session;
     }
 
-    protected function comprehendIncoming(ShlSession $session) : ShlSession
+    /**
+     * @param ShlSession $session
+     * @return ShlSession
+     */
+    protected function before($session)
     {
         $question = $session->storage->getQuestion();
         if (empty($question)) {

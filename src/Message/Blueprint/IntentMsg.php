@@ -11,13 +11,15 @@
 
 namespace Commune\Message\Blueprint;
 
+use Commune\Message\Blueprint\Tag\MsgLevel;
+
 /**
  * 对消息意图的抽象.
  * 既可以来自于用户, 也可以来自于 Ghost. 后者需要 Shell 渲染成一般消息.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface IntentMsg extends Message
+interface IntentMsg extends Message, MsgLevel
 {
 //
 //    /*-------- 用户输入消息的常见意图 -------*/

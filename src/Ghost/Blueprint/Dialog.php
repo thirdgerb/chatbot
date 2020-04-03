@@ -16,7 +16,7 @@ use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Session\Scene;
 use Commune\Ghost\Blueprint\Memory\Memory;
 use Commune\Ghost\Blueprint\Meta\MetaRegistrar;
-use Commune\Ghost\Blueprint\Definition\Mindset;
+use Commune\Ghost\Blueprint\Mind\Mindset;
 use Commune\Ghost\Blueprint\Runtime\Route;
 use Commune\Ghost\Blueprint\Runtime\Runtime;
 use Commune\Ghost\Blueprint\Speak\Speaker;

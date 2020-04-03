@@ -11,11 +11,7 @@
 
 namespace Commune\Shell;
 
-use Commune\Message\Blueprint\QuestionMsg;
 use Commune\Shell\Prototype\Kernels\IRequestKernel;
-use Commune\Shell\Prototype\Pipeline\SendToGhostPipe;
-use Commune\Shell\Prototype\Pipeline\RenderPipe;
-use Commune\Shell\Prototype\Pipeline\ResponsePipe;
 use Commune\Shell\Providers\ShlSessionServiceProvider;
 use Commune\Support\Struct\Structure;
 
@@ -36,7 +32,7 @@ use Commune\Support\Struct\Structure;
  *
  * @property-read int $sessionExpire                shell session 的过期时间.
  *
- * @property-read bool $isBroadcasting              shell 的消息发布是通过广播方式.
+ * @property-read bool $isDuplex                    shell 的消息是否是双通的.
  */
 class ShellConfig extends Structure
 {
@@ -57,12 +53,7 @@ class ShellConfig extends Structure
             'kernel' => IRequestKernel::class,
 
             'pipeline' => [
-                // 发送响应
-                ResponsePipe::class,
-                // 检查问题, 尝试回答
-                QuestionMsg::class,
-                RenderPipe::class,
-                SendToGhostPipe::class,
+
             ],
 
         ];

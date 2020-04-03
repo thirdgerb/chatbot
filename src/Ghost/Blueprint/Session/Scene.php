@@ -19,7 +19,6 @@ namespace Commune\Ghost\Blueprint\Session;
  *
  * @property-read string $sceneName
  * @property-read string $contextName
- * @property-read array $defaultEnv
  * @property-read array $env
  */
 interface Scene

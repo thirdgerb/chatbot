@@ -12,7 +12,6 @@
 namespace Commune\Ghost\Contracts;
 
 use Commune\Framework\Blueprint\Intercom\ShellScope;
-use Commune\Message\Blueprint\Message;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -22,12 +21,6 @@ interface GhtResponse
 {
 
     /*--------- 发送响应 ----------*/
-
-    /**
-     * 增加一个需要同步回复的消息.
-     * @param Message[] $messages
-     */
-    public function buffer(array $messages) : void;
 
     /**
      * 将当前准备要发送的信息, 全部发送给用户.

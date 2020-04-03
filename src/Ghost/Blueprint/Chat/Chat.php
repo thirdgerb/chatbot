@@ -14,15 +14,17 @@ namespace Commune\Ghost\Blueprint\Chat;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read ChatScope $scope
  */
 interface Chat
 {
-    public function getChatId() : string;
-
-    public function getScope() : ChatScope;
+    public function getId() : string;
 
     public function lock() : bool;
 
     public function unlock() : bool;
+
+    public function setScope(ChatScope $scope) : void;
 
 }

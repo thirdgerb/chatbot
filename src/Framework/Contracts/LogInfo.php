@@ -47,4 +47,8 @@ interface LogInfo
     public function shellReceiveInvalidRequest(string $message) : string;
 
     public function shellDirectiveNotExists(string $directiveId) : string;
+
+    /*------ ghost info ------*/
+
+    public function ghostReceiveInvalidRequest(string $message) : string;
 }

@@ -12,11 +12,13 @@
 namespace Commune\Shell\Blueprint\Session;
 
 use Commune\Framework\Blueprint\Intercom\GhostInput;
+use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Contracts\Cache;
 use Commune\Framework\Contracts\Messenger;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Blueprint\Intercom\ShellInput;
 use Commune\Framework\Blueprint\Intercom\ShellOutput;
+use Commune\Message\Blueprint\Message;
 use Commune\Shell\Blueprint\Event\ShellEvent;
 use Commune\Shell\Blueprint\Render\Renderer;
 use Commune\Shell\Blueprint\Shell;
@@ -47,55 +49,17 @@ use Commune\Shell\Contracts\ShlResponse;
  * @property-read Messenger $messenger
  * @property-read ShlSessionStorage $storage
  */
-interface ShlSession
+interface ShlSession extends Session
 {
-
-    /**
-     * @return string
-     */
-    public function getChatId() : string;
-
-    /**
-     * @return bool
-     */
-    public function isFinished() : bool;
-
-    /*------- setter -------*/
-
-    public function setProperty(string $name, $object) : void;
-
-    /*------- i/o -------*/
 
     /**
      * @param ShellOutput[] $outputs
      */
-    public function setShellOutputs(array $outputs) : void;
+    public function addShellOutputs(array $outputs) : void;
 
     /**
      * @return ShellOutput[]
      */
     public function getShellOutputs() : array;
-
-    /*------- finish -------*/
-
-    /**
-     * 结束 Session, 处理垃圾回收
-     */
-    public function finish() : void;
-
-
-    /*------- 事件机制 -------*/
-
-    /**
-     * 触发一个 Session 事件.
-     * @param ShellEvent $event
-     */
-    public function fire(ShellEvent $event) : void;
-
-    /**
-     * @param string $eventName
-     * @param callable $handler  function(ShlSession $session, SessionEvent $event){}
-     */
-    public function listen(string $eventName, callable $handler) : void;
 
 }

@@ -11,15 +11,14 @@
 
 namespace Commune\Shell\Blueprint\Session;
 
-use Psr\Log\LoggerInterface;
-
+use Commune\Framework\Blueprint\Session\SessionLogger;
 
 /**
  * Shell 的请求级日志, 应当记录下 Request 的 logContext
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlSessionLogger extends LoggerInterface
+interface ShlSessionLogger extends SessionLogger
 {
 
 }

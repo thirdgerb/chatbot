@@ -13,6 +13,7 @@ namespace Commune\Framework\Blueprint\Intercom;
 
 use Commune\Framework\Blueprint\Abstracted\Comprehension;
 use Commune\Message\Blueprint\IntentMsg;
+use Commune\Message\Blueprint\Message;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -32,4 +33,6 @@ interface GhostInput extends GhostMsg
     public function getTrimmedText() : string;
 
     public function getMatchedIntent() : ? IntentMsg;
+
+    public function reply(Message $message, int $deliverAt = null) : GhostOutput;
 }

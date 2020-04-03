@@ -13,12 +13,13 @@ namespace Commune\Framework\Prototype\Intercom;
 
 use Commune\Framework\Blueprint\Abstracted\Comprehension;
 use Commune\Framework\Blueprint\Intercom\GhostInput;
+use Commune\Framework\Blueprint\Intercom\GhostOutput;
 use Commune\Framework\Blueprint\Intercom\ShellInput;
-use Commune\Framework\Blueprint\Intercom\ShellMsg;
 use Commune\Framework\Prototype\Abstracted\IComprehension;
 use Commune\Message\Blueprint\IntentMsg;
+use Commune\Message\Blueprint\Message;
 use Commune\Message\Blueprint\Tag\Verbal;
-use Commune\Message\Prototype\IIntent;
+use Commune\Message\Prototype\IIntentMsg;
 use Commune\Support\Utils\StringUtils;
 
 
@@ -44,6 +45,10 @@ class IGhostInput extends AGhostMsg implements GhostInput
      */
     protected $comprehension;
 
+    /**
+     * @var ShellInput
+     */
+    protected $shellMessage;
 
     /*------ cached -------*/
 
@@ -112,7 +117,7 @@ class IGhostInput extends AGhostMsg implements GhostInput
         $intentRepo = $this->comprehension->intent;
         $matchedIntentName = $intentRepo->getMatchedIntent();
         if (isset($matchedIntentName)) {
-            return $this->matchedIntent = new IIntent(
+            return $this->matchedIntent = new IIntentMsg(
                 $matchedIntentName,
                 $intentRepo->getIntentEntities($matchedIntentName)
             );
@@ -120,6 +125,17 @@ class IGhostInput extends AGhostMsg implements GhostInput
 
         return null;
     }
+
+    public function reply(Message $message, int $deliverAt = null): GhostOutput
+    {
+        return new IGhostOutput(
+            $this->shellName,
+            $this->chatId,
+            $this->shellMessage->output($message),
+            $deliverAt
+        );
+    }
+
 
     public function __sleep(): array
     {

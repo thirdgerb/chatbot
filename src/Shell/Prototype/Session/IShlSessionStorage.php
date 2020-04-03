@@ -78,7 +78,7 @@ class IShlSessionStorage implements ShlSessionStorage, HasIdGenerator
      */
     public function __construct(ShlSession $session, ShellConfig $config)
     {
-        $this->shellChatId = $session->getShellInput()->scope->chatId;
+        $this->shellChatId = $session->getChatId();
         $this->cache = $session->cache;
         $expire = $config->sessionExpire;
         $this->expire = $expire > 0 ? $expire : null;

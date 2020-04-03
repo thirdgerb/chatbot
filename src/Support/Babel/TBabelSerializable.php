@@ -11,6 +11,8 @@
 
 namespace Commune\Support\Babel;
 
+use Commune\Support\Utils\StringUtils;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -40,7 +42,7 @@ trait TBabelSerializable
 
     public static function getSerializableId(): string
     {
-        return static::class;
+        return StringUtils::namespaceSlashToDot(static::class);
     }
 
     /**
@@ -60,6 +62,7 @@ trait TBabelSerializable
                 $value = isset($value)
                     ? Babel::getResolver()->fromSerializableArray($value)
                     : null;
+
             } elseif (is_string($value)) {
                 $value = unserialize($value);
             }

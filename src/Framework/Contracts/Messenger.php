@@ -12,8 +12,8 @@
 namespace Commune\Framework\Contracts;
 
 use Commune\Framework\Blueprint\Intercom\GhostInput;
+use Commune\Framework\Blueprint\Intercom\GhostMsg;
 use Commune\Framework\Blueprint\Intercom\GhostOutput;
-use Commune\Framework\Blueprint\Intercom\ShellOutput;
 
 /**
  * Shell 和 Ghost 进行通讯的桥梁.
@@ -31,9 +31,9 @@ interface Messenger
      * 如果是全异步的通讯, 可能需要这个通道
      *
      * @param GhostInput $message
-     * @return mixed
+     * @param bool $atHead
      */
-    public function pushInput(GhostInput $message);
+    public function pushInput(GhostInput $message, bool $atHead = true) : void;
 
     /**
      * 如果是全异步的通讯, 可能需要用这个管道来获取新的消息
@@ -88,4 +88,11 @@ interface Messenger
      */
     public function popOutput(string $shellName) : ? GhostOutput;
 
+
+    /*-------- 记录消息 ---------*/
+
+    /**
+     * @param GhostMsg[] $messages
+     */
+    public function recordMessage(array $messages) : void;
 }

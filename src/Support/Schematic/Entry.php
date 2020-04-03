@@ -177,4 +177,10 @@ class Entry
 		}
 	}
 
+    public function __sleep()
+    {
+        return [
+            'data',
+        ];
+    }
 }

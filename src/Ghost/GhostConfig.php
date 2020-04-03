@@ -11,17 +11,16 @@
 
 namespace Commune\Ghost;
 
-use Commune\Ghost\Prototype\Kernels\IApiKernel;
-use Commune\Ghost\Prototype\Kernels\IMessageKernel;
+use Commune\Ghost\Blueprint\Session\Scene;
+use Commune\Ghost\Options\KernelOption;
+use Commune\Ghost\Options\SceneOption;
 use Commune\Support\Struct\Structure;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $messageKernel
- * @property-read string $apiKernel
- * @property-read string $asyncKernel
+
  *
  * @property-read array $providers 需要注册的服务
  *  [
@@ -30,22 +29,78 @@ use Commune\Support\Struct\Structure;
  *  ]
  *
  * @property-read string $defaultComprehension
+ *
+ *
+ * ## Scene
+ *
+ * @property-read SceneOption[] $scenes
+ *
+ * ## Kernels
+ *
+ * @property-read KernelOption $kernels
  */
 class GhostConfig extends Structure
 {
+    protected static $associations = [
+
+        'scenes[]' => SceneOption::class,
+        'kernels' => KernelOption::class,
+    ];
+
+
+    /**
+     * @var SceneOption[]
+     */
+    protected $sceneMap;
+
     public static function stub(): array
     {
         return [
 
-            // kernel
-            'messageKernel' => IMessageKernel::class,
-            'apiKernel' => IApiKernel::class,
 
             'providers' => [
 
             ],
 
+            'meta' => [
+
+            ],
+
+            'kernels' => KernelOption::stub(),
+
+            'scenes' => [],
         ];
+    }
+
+    /*------ scene ------*/
+
+    public function hasScene(string $sceneId) : bool
+    {
+        $map = $this->getSceneMap();
+        return array_key_exists($sceneId, $map);
+    }
+
+    /**
+     * @return SceneOption[]
+     */
+    public function getSceneMap() : array
+    {
+        if (!isset($this->sceneMap)) {
+            $map = [];
+            foreach ($this->scenes as $scene) {
+                $map[$scene->id] = $scene;
+            }
+            $this->sceneMap = $map;
+        }
+
+        return $this->sceneMap;
+    }
+
+    public function getScene(string $sceneId, array $data) : Scene
+    {
+        $map = $this->getSceneMap();
+        $scene = $map[$sceneId] ?? reset($map);
+        return $scene->toSceneIns($data);
     }
 
 }

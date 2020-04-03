@@ -9,7 +9,10 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Blueprint\Definition;
+namespace Commune\Ghost\Blueprint\Mind;
+
+use Commune\Ghost\Blueprint\Definition\ContextDef;
+use Commune\Ghost\Blueprint\Definition\RoutingDef;
 
 
 /**

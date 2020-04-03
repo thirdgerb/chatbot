@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Support\Babel;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -28,6 +29,10 @@ class JsonResolver implements BabelResolver
         )) {
             throw new \InvalidArgumentException("$serializable is not instance of " . BabelSerializable::class);
         }
+
+        /**
+         * @var BabelSerializable $serializable
+         */
 
         static::register(
             call_user_func([$serializable, 'getSerializableId']),
@@ -64,24 +69,25 @@ class JsonResolver implements BabelResolver
     public function toSerializingArray(BabelSerializable $serializable): array
     {
         return [
-            'i' => $serializable->getSerializableId(),
-            'd' => $serializable->toSerializableArray()
+            $serializable->getSerializableId(),
+            $serializable->toSerializableArray()
         ];
     }
 
     public function fromSerializableArray(array $data): ? BabelSerializable
     {
-        $serializableId = $data['i'];
-        $serialized = $data['d'];
+        $serializableId = $data[0];
+        $serialized = $data[1];
 
         if ($this->hasRegistered($serializableId)) {
             $unSerializer = $this->transformers[$serializableId][1];
             return call_user_func($unSerializer, $serialized);
         }
 
-        if (
-            is_string($serializableId)
-            && is_a($serializableId, BabelSerializable::class, TRUE)
+
+        $serializableId = StringUtils::dotToNamespaceSlash($serializableId);
+
+        if (is_a($serializableId, BabelSerializable::class, TRUE)
         ) {
             $this->registerSerializable($serializableId);
             return call_user_func([$serializableId, 'fromSerializableArray'], $serialized);
@@ -127,8 +133,8 @@ class JsonResolver implements BabelResolver
         if (
             is_array($data)
             && count($data) === 2
-            && isset($data['i'])
-            && isset($data['d'])
+            && isset($data[0])
+            && isset($data[1])
         ) {
             return $this->fromSerializableArray($data);
         }

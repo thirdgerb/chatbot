@@ -11,7 +11,7 @@
 
 namespace Commune\Test\Message;
 
-use Commune\Message\Prototype\IIntent;
+use Commune\Message\Prototype\IIntentMsg;
 use Commune\Message\Prototype\IJson;
 use Commune\Message\Prototype\IText;
 use Commune\Message\Prototype\IUnsupported;
@@ -31,7 +31,7 @@ class DefaultMessageTest extends MessagesTestCase
         return [
             IUnsupported::class,
             IText::class,
-            IIntent::class,
+            IIntentMsg::class,
             IJson::class,
 
             // media

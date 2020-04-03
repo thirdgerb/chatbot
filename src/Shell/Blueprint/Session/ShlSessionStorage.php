@@ -10,30 +10,18 @@
  */
 
 namespace Commune\Shell\Blueprint\Session;
-use Commune\Message\Blueprint\QuestionMsg;
 
+use Commune\Framework\Blueprint\Session\SessionStorage;
+use Commune\Message\Blueprint\QuestionMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlSessionStorage
+interface ShlSessionStorage extends SessionStorage
 {
-    /**
-     * @param string $name
-     * @return mixed
-     */
-    public function get(string $name);
-
-    public function set(string $name, $value) : void;
-
-    public function setAll(array $values) : void;
-
-    public function getAll() : array;
 
     public function setQuestion(QuestionMsg $question) : void;
 
     public function getQuestion() : ? QuestionMsg;
-
-    public function save() : void;
 
 }

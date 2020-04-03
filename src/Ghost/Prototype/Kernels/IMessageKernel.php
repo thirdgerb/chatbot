@@ -12,11 +12,20 @@
 namespace Commune\Ghost\Prototype\Kernels;
 
 use Commune\Ghost\Blueprint\Kernels\MessageKernel;
+use Commune\Ghost\Contracts\GhtRequest;
+use Commune\Ghost\Contracts\GhtResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class IMessageKernel implements MessageKernel
 {
+    public function onRequest(
+        GhtRequest $request,
+        GhtResponse $response
+    ): void
+    {
+    }
+
 
 }
