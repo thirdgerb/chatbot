@@ -16,7 +16,7 @@ use Commune\Chatbot\ChatbotConfig;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Blueprint\ChatApp;
 use Commune\Framework\Contracts\ServiceProvider;
-use Commune\Support\RunningSpy\Agency;
+use Commune\Support\RunningSpy\SpyAgency;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -34,7 +34,7 @@ class RunningSpyServiceProvider extends ServiceProvider
          * @var ChatbotConfig $config
          */
         $config = $app->get(ChatbotConfig::class);
-        Agency::$run = $config->debug;
+        SpyAgency::$running = $config->debug;
     }
 
     public function register(ContainerContract $app): void

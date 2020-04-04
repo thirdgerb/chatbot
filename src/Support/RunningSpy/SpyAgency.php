@@ -3,7 +3,7 @@
 namespace Commune\Support\RunningSpy;
 
 
-class Agency
+class SpyAgency
 {
     private static $spies = [];
 
@@ -11,7 +11,7 @@ class Agency
      * 可决定是否使用.
      * @var bool
      */
-    public static $run = false;
+    public static $running = false;
 
     public static function addSpy(string $class) : void
     {
@@ -24,7 +24,7 @@ class Agency
      */
     public static function isRunning() : bool
     {
-        return self::$run;
+        return self::$running;
     }
 
     /**

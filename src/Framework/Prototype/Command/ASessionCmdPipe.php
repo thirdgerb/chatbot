@@ -45,7 +45,7 @@ abstract class ASessionCmdPipe implements SessionCmdPipe
         $name = static::class;
         // reactor 内只注册一次.
         if (!isset(self::$commandNames[$name])) {
-            foreach ($this->commands as $commandName) {
+            foreach ($this->getCommands() as $commandName) {
                 $this->registerCommandName($commandName);
             }
         }

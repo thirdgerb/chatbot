@@ -11,26 +11,28 @@
 
 namespace Commune\Message\Blueprint;
 
-use Commune\Support\Arr\ArrayAndJsonAble;
-use Commune\Support\Babel\BabelSerializable;
-use Commune\Support\DI\Injectable;
 
 /**
- * 基础消息类型
+ * 用于同步当前的 Context.
+ * 通常不一定要渲染.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Message extends ArrayAndJsonAble, BabelSerializable, Injectable
+interface ContextMsg extends Message
 {
     /**
-     * @return bool
+     * @return string
      */
-    public function isEmpty() : bool;
+    public function getContextId() : string;
 
     /**
-     * 消息创建时间.
-     * @return int
+     * @return string
      */
-    public function getCreatedAt() : int;
+    public function getContextName() : string;
+
+    /**
+     * @return array
+     */
+    public function getEntities() : array;
 
 }

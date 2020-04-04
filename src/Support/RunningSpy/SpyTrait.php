@@ -17,12 +17,12 @@ trait SpyTrait
     public function addRunningTrace(string $traceId, string $id): void
     {
         // 如果功能没启用, 则不存储
-        if (!Agency::isRunning()) {
+        if (!SpyAgency::isRunning()) {
             return;
         }
 
         self::$runningSpyTraces[$traceId] = $id;
-        Agency::addSpy(static::class);
+        SpyAgency::addSpy(static::class);
     }
 
     /**
@@ -32,7 +32,7 @@ trait SpyTrait
     public function removeRunningTrace(string $traceId = null): void
     {
         // 如果功能没启用, 则不存储
-        if (!Agency::isRunning()) {
+        if (!SpyAgency::isRunning()) {
             return;
         }
 
