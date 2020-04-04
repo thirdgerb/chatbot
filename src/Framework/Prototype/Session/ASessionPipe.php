@@ -13,14 +13,39 @@ namespace Commune\Framework\Prototype\Session;
 
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Blueprint\Session\SessionPipe;
-use Commune\Framework\Prototype\Session\Events\EndSessionPipe;
-use Commune\Framework\Prototype\Session\Events\StartSessionPipe;
+use Commune\Framework\Prototype\Session\Events\LeaveSessionPipe;
+use Commune\Framework\Prototype\Session\Events\EnterSessionPipe;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 abstract class ASessionPipe implements SessionPipe
 {
+    /**
+     * @var bool
+     */
+    private static $debug = false;
+
+    /**
+     * @var string
+     */
+    private static $pipelineLogInfo;
+
+    /**
+     * @var float|null
+     */
+    protected $startAt;
+
+    /**
+     * @var bool
+     */
+    protected $propagation = true;
+
+    /**
+     * @var string
+     */
+    protected $via = SessionPipe::SYNC;
+
     /**
      * @param Session $session
      * @return Session
@@ -33,26 +58,106 @@ abstract class ASessionPipe implements SessionPipe
      */
     abstract protected function after($session);
 
-    public function handle(Session $session, callable $next): Session
+    public function stopPropagation(): void
     {
-        $session->fire(new StartSessionPipe($this));
-        $debug = $session->getApp()->isDebugging();
+        $this->propagation = false;
+    }
 
-        if ($debug) {
-            $start = microtime(true);
+
+    public function sync(Session $session, callable $next): Session
+    {
+        $this->onEnter($session);
+        $session = $this->before($session);
+
+        // 执行下一步.
+        $session = $this->next($session, $next);
+
+        // 结束了就没有 after 环节了.
+        if ($this->propagation && !$session->isFinished()) {
+            $session = $this->after($session);
         }
+        $this->onLeave($session);
 
+        return $session;
+    }
+
+    public function isAsync(): bool
+    {
+        return $this->via !== SessionPipe::SYNC;
+    }
+
+    public function isAsyncInput(): bool
+    {
+        return $this->via === SessionPipe::ASYNC_INPUT;
+    }
+
+    public function isAsyncOutput(): bool
+    {
+        return $this->via === SessionPipe::ASYNC_OUTPUT;
+    }
+
+
+    public function asyncInput(Session $session, callable $next): Session
+    {
+        $this->via = SessionPipe::ASYNC_INPUT;
+        $this->onEnter($session);
         $session = $this->before($session);
         $session = $this->next($session, $next);
 
-        if (isset($start)) {
+        // 没有 after 环节.
+        $this->onLeave($session);
+        return $session;
+    }
+
+    public function asyncOutput(Session $session, callable $next): Session
+    {
+        $this->via = SessionPipe::ASYNC_OUTPUT;
+        $this->onEnter($session);
+        // 没有 before 环节.
+        $session = $this->next($session, $next);
+        $session = $this->after($session);
+        $this->onLeave($session);
+        return $session;
+    }
+
+
+    protected function next(Session $session, callable $next): Session
+    {
+        // 结束了就没有下一步了.
+        if ($this->propagation && !$session->isFinished()) {
+            $session = $next($session);
+        }
+        return $session;
+    }
+
+
+    protected function onEnter(Session $session) : void
+    {
+        $session->fire(new EnterSessionPipe($this));
+        $debug = self::$debug
+            ?? self::$debug = $session->getApp()->isDebugging();
+
+        if ($debug) {
+            $this->startAt = microtime(true);
+        }
+    }
+
+    protected function onLeave(Session $session) : void
+    {
+        if (isset($this->start)) {
             $pipeName = static::class;
             // 记录时间.
             $end = microtime(true);
-            $gap = abs(intval(($end - $start) * 1000));
+            $gap = abs(intval(($end - $this->start) * 1000));
+
+            $logInfo = self::$pipelineLogInfo
+                ?? self::$pipelineLogInfo = $session
+                    ->getApp()
+                    ->getLogInfo()
+                    ->sessionPipelineLog();
 
             $session->getLogger()->info(
-                "end ghost pipe",
+                $logInfo,
                 [
                     'pipe' => $pipeName,
                     'gap' => $gap,
@@ -61,23 +166,7 @@ abstract class ASessionPipe implements SessionPipe
             );
         }
 
-        return $session;
-    }
-
-    protected function next(Session $session, callable $next): Session
-    {
-        // 结束了就没有下一步了.
-        if (!$session->isFinished()) {
-            $session = $next($session);
-        }
-
-        // 结束了就没有 after 环节了.
-        if (!$session->isFinished()) {
-            $session = $this->after($session);
-        }
-
-        $session->fire(new EndSessionPipe($this));
-        return $session;
+        $session->fire(new LeaveSessionPipe($this));
     }
 
 

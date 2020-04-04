@@ -11,7 +11,6 @@
 
 namespace Commune\Ghost\Prototype\Pipeline;
 
-use Commune\Chatbot\ChatbotConfig;
 use Commune\Framework\Prototype\Session\ASessionPipe;
 use Commune\Ghost\Blueprint\Chat\Chat;
 use Commune\Ghost\Blueprint\Session\GhtSession;
@@ -49,7 +48,7 @@ class GhostMessengerPipe extends ASessionPipe
         $outputs = $session->getOutputs();
         if (!empty($outputs)) {
             foreach ($outputs as $output) {
-                $delivery[$output->shellName][] = $output;
+                $delivery[$output->shn][] = $output;
             }
         }
 
@@ -72,18 +71,18 @@ class GhostMessengerPipe extends ASessionPipe
         $input = $session->ghostInput;
         $shells = $chat->scope->shells;
         $inputBroadcasts = $input->derive(
-            $input->shellMessage->message,
+            $input->shm->message,
             $shells
         );
 
         foreach ($inputBroadcasts as $output) {
 
             // 不需要广播到自己身上.
-            if ($output->shellName === $input->shellName) {
+            if ($output->shn === $input->shn) {
                 continue;
             }
 
-            $delivery[$output->shellName][] = $output;
+            $delivery[$output->shn][] = $output;
         }
 
         return $delivery;

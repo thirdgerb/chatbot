@@ -14,7 +14,6 @@ namespace Commune\Ghost\Prototype\Kernels;
 use Commune\Framework\Blueprint\Intercom\GhostInput;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Ghost\Blueprint\Ghost;
-use Commune\Ghost\Blueprint\Pipeline\GhostPipe;
 use Commune\Ghost\Blueprint\Session\GhtSession;
 use Commune\Ghost\Contracts\GhtRequest;
 use Commune\Ghost\Contracts\GhtResponse;
@@ -28,11 +27,6 @@ use Commune\Support\Pipeline\OnionPipeline;
  */
 abstract class AKernel
 {
-    /*------- 配置 ------*/
-
-    protected $startPipeline = [];
-
-    protected $endPipeline = [];
 
     /*------- cached ------*/
 
@@ -54,7 +48,7 @@ abstract class AKernel
     /**
      * @return string[]
      */
-    abstract public function getUserMiddleware() : array;
+    abstract public function getPipes() : array;
 
     public function onRequest(
         GhtRequest $request,
@@ -128,7 +122,7 @@ abstract class AKernel
         // 获取新的请求级实例.
         $reqContainer =  $this->ghost
             ->getReqContainer()
-            ->newInstance($input->messageId, $procContainer);
+            ->newInstance($input->mid, $procContainer);
 
         // 绑定 request
         $reqContainer->share(ReqContainer::class, $reqContainer);
@@ -184,7 +178,7 @@ abstract class AKernel
 
         $warning = $this->ghost
             ->getLogInfo()
-            ->ghostReceiveInvalidRequest($request->getBrief());
+            ->appReceiveInvalidRequest($request->getBrief());
 
         $this->ghost
             ->getLogger()

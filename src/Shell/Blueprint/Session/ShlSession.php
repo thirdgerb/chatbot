@@ -13,6 +13,7 @@ namespace Commune\Shell\Blueprint\Session;
 
 use Commune\Framework\Blueprint\Intercom\GhostInput;
 use Commune\Framework\Blueprint\Session\Session;
+use Commune\Framework\Blueprint\Session\SessionLogger;
 use Commune\Framework\Contracts\Cache;
 use Commune\Framework\Contracts\Messenger;
 use Commune\Framework\Blueprint\ReqContainer;
@@ -38,7 +39,7 @@ use Commune\Shell\Contracts\ShlResponse;
  * @property-read ReqContainer $container       容器
  * @property-read ShlRequest $request           当前的请求.
  * @property-read ShlResponse $response         当前请求的响应
- * @property-read ShlSessionLogger $logger      会话自己的日志, 会记录 Req 相关信息.
+ * @property-read SessionLogger $logger         会话自己的日志, 会记录 Req 相关信息.
  * @property-read ShellInput $shellInput
  * @property-read GhostInput $ghostInput
  *

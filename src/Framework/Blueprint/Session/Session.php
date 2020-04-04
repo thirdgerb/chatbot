@@ -14,6 +14,9 @@ namespace Commune\Framework\Blueprint\Session;
 use Commune\Framework\Blueprint\ChatApp;
 use Commune\Framework\Blueprint\Intercom\GhostInput;
 use Commune\Framework\Blueprint\ReqContainer;
+use Commune\Framework\Blueprint\Server\Request;
+use Commune\Framework\Blueprint\Server\Response;
+use Commune\Framework\Blueprint\Server\Server;
 use Commune\Message\Blueprint\Message;
 
 /**
@@ -30,17 +33,33 @@ interface Session
     public function getChatId() : string;
 
     /**
+     * Session 在当前进程的唯一ID
      * @return string
      */
     public function getTraceId() : string;
-
-    public function getGhostInput() : GhostInput;
 
     /**
      * @param string $name
      * @param $object
      */
     public function setProperty(string $name, $object): void;
+
+    /*------ input ------*/
+
+    /**
+     * @return Server
+     */
+    public function getServer() : Server;
+
+    /**
+     * @return Request
+     */
+    public function getRequest() : Request;
+
+    /**
+     * @return Response
+     */
+    public function getResponse() : Response;
 
     /*------ component ------*/
 
@@ -69,12 +88,12 @@ interface Session
     /**
      * 不进行保存.
      */
-    public function silence() : void;
+    public function noState() : void;
 
     /**
      * @return bool
      */
-    public function isSilent() : bool;
+    public function isStateless() : bool;
 
     /*------ output ------*/
 

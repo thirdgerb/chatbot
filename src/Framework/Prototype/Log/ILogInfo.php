@@ -67,15 +67,14 @@ class ILogInfo implements LogInfo
         return "shell $shell not defined";
     }
 
-
-    public function shellReceiveInvalidRequest(string $message): string
+    public function appReceiveInvalidRequest(string $message): string
     {
         return "invalid request: $message";
     }
 
-    public function shellDirectiveNotExists(string $directiveId): string
+    public function sessionPipelineLog(): string
     {
-        return "directive $directiveId not exists";
+        return 'end session pipe';
     }
 
 

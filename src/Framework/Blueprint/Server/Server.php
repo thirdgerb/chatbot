@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\Contracts;
+namespace Commune\Framework\Blueprint\Server;
 
 
 /**

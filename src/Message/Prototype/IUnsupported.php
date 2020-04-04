@@ -12,7 +12,6 @@
 namespace Commune\Message\Prototype;
 
 use Commune\Message\Blueprint\UnsupportedMsg;
-use Commune\Message\Prototype\AMessage;
 
 
 /**

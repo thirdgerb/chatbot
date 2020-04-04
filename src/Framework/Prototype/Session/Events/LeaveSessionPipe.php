@@ -11,10 +11,9 @@
 
 namespace Commune\Framework\Prototype\Session\Events;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StartSessionPipe extends ASessionPipeEvent
+class LeaveSessionPipe extends ASessionPipeEvent
 {
 }

@@ -55,8 +55,9 @@ class RenderPipe extends ASessionPipe
                 // 模板存在, 使用模板渲染.
                 } else {
                     $messages = $template->render($message);
-                    $renderedOutputs = $output->derive($messages);
-                    $newOutputs = array_merge($newOutputs, $renderedOutputs);
+                    foreach ($messages as $message) {
+                        $newOutputs[] = $output->derive($message);
+                    }
                 }
             }
         }

@@ -42,13 +42,11 @@ interface LogInfo
 
     public function bootShellNotDefined(string $shell) : string;
 
-    /*------ shell info ------*/
+    /*------ app info ------*/
 
-    public function shellReceiveInvalidRequest(string $message) : string;
+    public function appReceiveInvalidRequest(string $message) : string;
 
-    public function shellDirectiveNotExists(string $directiveId) : string;
+    /*------ session ------*/
 
-    /*------ ghost info ------*/
-
-    public function ghostReceiveInvalidRequest(string $message) : string;
+    public function sessionPipelineLog() : string;
 }

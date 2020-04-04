@@ -76,12 +76,12 @@ class QuestionPipe extends ASessionPipe
     ) : ? ShlSession
     {
         if (
-            $ghostInput->shellMessage->message->isEmpty()
+            $ghostInput->shm->message->isEmpty()
             && $question->isNullable()
         ) {
             $defaultAnswers = $question->getDefaultAnswers();
             $ghostInput
-                ->comprehension
+                ->cph
                 ->choice
                 ->setChoices($defaultAnswers);
             return $session;
@@ -155,7 +155,7 @@ class QuestionPipe extends ASessionPipe
         }
 
         $ghostInput
-            ->comprehension
+            ->cph
             ->choice
             ->addChoice($matchedIndex, $answers[$matched]);
 

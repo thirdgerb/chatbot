@@ -28,5 +28,4 @@ class IShellInput extends AShellMsg implements ShellInput
         );
     }
 
-
 }

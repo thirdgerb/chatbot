@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Platforms\ReactStdio;
 
-use Commune\Framework\Prototype\Server\AReactStdioServer;
+use Commune\Framework\Prototype\Servers\AReactStdioServer;
 use Commune\Shell\Blueprint\Shell;
 use Commune\Shell\Contracts\ShlServer;
 

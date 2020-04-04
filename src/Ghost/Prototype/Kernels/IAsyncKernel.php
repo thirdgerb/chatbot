@@ -20,7 +20,7 @@ use Commune\Ghost\Blueprint\Kernels\AsyncKernel;
 class IAsyncKernel extends AKernel implements AsyncKernel
 {
 
-    public function getUserMiddleware(): array
+    public function getPipes(): array
     {
     }
 

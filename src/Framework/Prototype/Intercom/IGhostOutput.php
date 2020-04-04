@@ -19,27 +19,37 @@ use Commune\Framework\Blueprint\Intercom\ShellMsg;
  */
 class IGhostOutput extends AGhostMsg implements GhostOutput
 {
+    const PROPERTIES = [
+        'chatId' => 'cid',
+        'shellName' => 'shn',
+        'shellMessage' => 'shm',
+        'traceId' => 'tid',
+        'messageId' => 'mid',
+        'deliverAt' =>  'dlt',
+    ];
+
     /**
      * @var int
      */
-    protected $deliverAt;
+    protected $dlt;
 
     public function __construct(
         string $shellName,
         string $chatId,
         ShellMsg $shellMessage,
+        string $traceId,
         int $deliverAt = 0,
         string $messageId = null
     )
     {
-        $this->deliverAt = $deliverAt;
-        parent::__construct($shellName, $chatId, $shellMessage, $messageId);
+        $this->dlt = $deliverAt;
+        parent::__construct($shellName, $chatId, $shellMessage, $traceId, $messageId);
     }
 
     public function __sleep(): array
     {
         $sleeps = parent::__sleep();
-        $sleeps[] = 'deliverAt';
+        $sleeps[] = 'dlt';
         return $sleeps;
     }
 

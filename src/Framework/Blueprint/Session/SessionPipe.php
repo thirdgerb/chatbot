@@ -18,8 +18,23 @@ namespace Commune\Framework\Blueprint\Session;
  */
 interface SessionPipe
 {
-    const HANDLER = 'handle';
+    const SYNC = 'sync';
+    const ASYNC_INPUT = 'asyncInput';
+    const ASYNC_OUTPUT = 'asyncOutput';
 
-    public function handle(Session $session, callable $next) : Session;
+    public function stopPropagation() : void;
+
+    public function isAsync() : bool;
+
+    public function isAsyncInput() : bool;
+
+    public function isAsyncOutput() : bool;
+
+    public function sync(Session $session, callable $next) : Session;
+
+    public function asyncInput(Session $session, callable $next) : Session;
+
+    public function asyncOutput(Session $session, callable $next) : Session;
+
 
 }

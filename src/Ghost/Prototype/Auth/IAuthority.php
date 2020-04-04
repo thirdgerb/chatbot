@@ -12,7 +12,6 @@
 namespace Commune\Ghost\Prototype\Auth;
 
 use Commune\Framework\Blueprint\ReqContainer;
-use Commune\Framework\Exceptions\AppLogicException;
 use Commune\Framework\Exceptions\InvalidClassException;
 use Commune\Ghost\Blueprint\Auth\Authority;
 use Commune\Ghost\Blueprint\Auth\Policy;
@@ -35,6 +34,11 @@ class IAuthority implements Authority
                 Policy::class,
                 $policy
             );
+        }
+
+        // 没有绑定过就算允许.
+        if (!$this->container->bound($policy)) {
+            return null;
         }
 
         /**

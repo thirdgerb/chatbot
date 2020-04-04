@@ -52,9 +52,6 @@ trait TBabelSerializable
     public static function fromSerializableArray(array $input): ? BabelSerializable
     {
         list($info, $recursive) = $input;
-
-        $object = new static();
-
         foreach ($recursive as $field) {
             $value = $info[$field] ?? null;
 
@@ -66,15 +63,23 @@ trait TBabelSerializable
             } elseif (is_string($value)) {
                 $value = unserialize($value);
             }
-
-            $object->{$field} = $value;
-            unset($info[$field]);
+            $info[$field] = $value;
         }
 
-        foreach ($info as $field => $value) {
+        return static::createNewSerializable($info);
+    }
+
+    /**
+     * @param array $input
+     * @return static|null
+     */
+    public static function createNewSerializable(array $input): ? BabelSerializable
+    {
+        $object = new static();
+        foreach ($input as $field => $value) {
             $object->{$field} = $value;
         }
-
         return $object;
     }
+
 }

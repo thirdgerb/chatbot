@@ -71,7 +71,7 @@ abstract class ASessionCmdPipe implements SessionCmdPipe
 
 
 
-    public function handle(Session $session, callable $next) : Session
+    public function sync(Session $session, callable $next) : Session
     {
         $this->init($session);
 

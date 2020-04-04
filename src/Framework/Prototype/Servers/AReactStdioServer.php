@@ -9,10 +9,10 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\Prototype\Server;
+namespace Commune\Framework\Prototype\Servers;
 
 use Clue\React\Stdio\Stdio;
-use Commune\Framework\Contracts\Server;
+use Commune\Framework\Blueprint\Server\Server;
 use React\EventLoop\Factory;
 use React\EventLoop\LoopInterface;
 

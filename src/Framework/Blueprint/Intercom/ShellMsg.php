@@ -29,6 +29,9 @@ use Commune\Support\Babel\BabelSerializable;
  */
 interface ShellMsg extends BabelSerializable, ArrayAndJsonAble
 {
+
+    public function replace(Message $message) : void;
+
     /**
      * 衍生出 Scope 相同的消息.
      * @param Message $message

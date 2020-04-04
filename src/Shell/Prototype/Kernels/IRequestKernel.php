@@ -190,7 +190,7 @@ class IRequestKernel implements RequestKernel
             $pipeline->through($pipe);
         }
 
-        $pipeline->via(SessionPipe::HANDLER);
+        $pipeline->via(SessionPipe::SYNC);
 
         // 发送会话
         /**

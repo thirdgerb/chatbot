@@ -62,7 +62,7 @@ class GhostReqServiceProvider extends ServiceProvider
             $config = $app->make(GhostConfig::class);
             $ghostInput = $session->ghostInput;
 
-            $scene = $config->getScene($ghostInput->sceneId, $ghostInput->sceneEnv);
+            $scene = $config->getScene($ghostInput->sid, $ghostInput->env);
 
             return $scene;
         });

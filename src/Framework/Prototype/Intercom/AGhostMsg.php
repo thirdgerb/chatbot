@@ -27,37 +27,52 @@ abstract class AGhostMsg implements GhostMsg, HasIdGenerator
 {
     use ArrayAbleToJson, TBabelSerializable, IdGeneratorHelper;
 
-    /**
-     * @var string
-     */
-    protected $chatId;
+    const PROPERTIES = [
+        'chatId' => 'cid',
+        'shellName' => 'shn',
+        'shellMessage' => 'shm',
+        'traceId' => 'tid',
+        'messageId' => 'mid',
+    ];
 
     /**
      * @var string
      */
-    protected $shellName;
+    protected $cid;
+
+    /**
+     * @var string
+     */
+    protected $shn;
 
     /**
      * @var ShellMsg
      */
-    protected $shellMessage;
+    protected $shm;
 
     /**
      * @var string
      */
-    protected $messageId;
+    protected $tid;
+
+    /**
+     * @var string
+     */
+    protected $mid;
 
     public function __construct(
         string $shellName,
-        string $chatId,
+        string $cid,
         ShellMsg $shellMessage,
+        string $traceId,
         string $messageId = null
     )
     {
-        $this->shellName = $shellName;
-        $this->chatId = $chatId;
-        $this->shellMessage = $shellMessage;
-        $this->messageId = $messageId ?? $this->createUuId();
+        $this->shn = $shellName;
+        $this->cid = $cid;
+        $this->shm = $shellMessage;
+        $this->tid = $traceId;
+        $this->mid = $messageId ?? $this->createUuId();
     }
 
 
@@ -77,14 +92,21 @@ abstract class AGhostMsg implements GhostMsg, HasIdGenerator
         return $data;
     }
 
-    public function derive(Message $message, array $shellChatIds, int $deliverAt = null): array
+    public function replace(Message $message): void
+    {
+        $this->shm->replace($message);
+    }
+
+
+    public function derive(Message $message, array $shellcids, int $deliverAt = null): array
     {
         $outputs = [];
-        foreach ($shellChatIds as $shell => $chatId) {
+        foreach ($shellcids as $shell => $cid) {
             $output = new IGhostOutput(
                 $shell,
-                $chatId,
-                $this->shellMessage->derive($message),
+                $cid,
+                $this->shm->derive($message),
+                $this->tid,
                 $deliverAt
             );
 
@@ -97,19 +119,23 @@ abstract class AGhostMsg implements GhostMsg, HasIdGenerator
 
     public function __get($name)
     {
-        if (property_exists($this, $name)) {
-            return $this->{$name};
+        $propertyName = static::PROPERTIES[$name] ?? '';
+
+        if (!empty($propertyName)) {
+            return $this->{$propertyName};
         }
+
         return null;
     }
 
     public function __sleep(): array
     {
         return [
-            'shellName',
-            'chatId',
-            'messageId',
-            'shellMessage',
+            'shn',
+            'cid',
+            'shm',
+            'mid',
+            'tid',
         ];
     }
 }

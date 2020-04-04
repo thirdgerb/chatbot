@@ -9,17 +9,18 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Shell\Prototype\Session;
+namespace Commune\Framework\Prototype\Session;
 
-use Commune\Shell\Blueprint\Session\ShlSessionLogger;
-use Psr\Log\LoggerInterface;
+use Commune\Framework\Blueprint\Server\Request;
 use Psr\Log\LoggerTrait;
+use Psr\Log\LoggerInterface;
+use Commune\Framework\Blueprint\Session\SessionLogger;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IShlSessionLogger implements ShlSessionLogger
+class ISessionLogger implements SessionLogger
 {
     use LoggerTrait;
 
@@ -34,7 +35,7 @@ class IShlSessionLogger implements ShlSessionLogger
     protected $requestContext;
 
     /**
-     * IShlSessionLogger constructor.
+     * ISessionLogger constructor.
      * @param LoggerInterface $logger
      * @param array $context
      */

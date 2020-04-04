@@ -20,6 +20,7 @@ use Commune\Message\Blueprint\IntentMsg;
 use Commune\Message\Blueprint\Message;
 use Commune\Message\Blueprint\Tag\Verbal;
 use Commune\Message\Prototype\IIntentMsg;
+use Commune\Support\Babel\BabelSerializable;
 use Commune\Support\Utils\StringUtils;
 
 
@@ -29,26 +30,36 @@ use Commune\Support\Utils\StringUtils;
  */
 class IGhostInput extends AGhostMsg implements GhostInput
 {
+    const PROPERTIES = [
+        'shellName' => 'shn',
+        'chatId' => 'cid',
+        'shellMessage' => 'shm',
+        'traceId' => 'tid',
+        'sceneId' => 'sid',
+        'sceneEnv' => 'env',
+        'messageId' => 'mid',
+        'comprehension' => 'cph',
+    ];
 
     /**
      * @var string
      */
-    protected $sceneId;
+    protected $sid;
 
     /**
      * @var array
      */
-    protected $sceneEnv;
+    protected $env;
 
     /**
      * @var Comprehension
      */
-    protected $comprehension;
+    protected $cph;
 
     /**
      * @var ShellInput
      */
-    protected $shellMessage;
+    protected $shm;
 
     /*------ cached -------*/
 
@@ -69,18 +80,32 @@ class IGhostInput extends AGhostMsg implements GhostInput
         string $shellName,
         string $chatId,
         ShellInput $shellMessage,
+        string $traceId,
         string $sceneId,
         array $sceneEnv,
         string $messageId = null,
         Comprehension $comprehension = null
     )
     {
-        $this->sceneId = $sceneId;
-        $this->sceneEnv = $sceneEnv;
-        $this->comprehension = $comprehension ?? new IComprehension();
-        parent::__construct($shellName, $chatId, $shellMessage, $messageId);
+        $this->sid = $sceneId;
+        $this->env = $sceneEnv;
+        $this->cph = $comprehension ?? new IComprehension();
+        parent::__construct($shellName, $chatId, $shellMessage, $traceId, $messageId);
     }
 
+    public static function createNewSerializable(array $input): ? BabelSerializable
+    {
+        return new static(
+            $input['shn'],
+            $input['cid'],
+            $input['shm'],
+            $input['tid'],
+            $input['cid'],
+            $input['env'],
+            $input['mid'],
+            $input['cph']
+        );
+    }
 
     /*-------- methods ---------*/
 
@@ -90,12 +115,12 @@ class IGhostInput extends AGhostMsg implements GhostInput
             return $this->trimmed;
         }
 
-        $recognition = $this->comprehension->recognition->getRecognition();
+        $recognition = $this->cph->recognition->getRecognition();
         if (isset($recognition)) {
             return $this->trimmed = StringUtils::trim($recognition);
         }
 
-        $message = $this->shellMessage->message;
+        $message = $this->shm->message;
         if ($message instanceof Verbal) {
             return $this->trimmed = $message->getTrimmedText();
         }
@@ -109,12 +134,12 @@ class IGhostInput extends AGhostMsg implements GhostInput
             return $this->matchedIntent;
         }
 
-        $message = $this->shellMessage->message;
+        $message = $this->shm->message;
         if ($message instanceof IntentMsg) {
             return $this->matchedIntent = $message;
         }
 
-        $intentRepo = $this->comprehension->intent;
+        $intentRepo = $this->cph->intent;
         $matchedIntentName = $intentRepo->getMatchedIntent();
         if (isset($matchedIntentName)) {
             return $this->matchedIntent = new IIntentMsg(
@@ -129,9 +154,9 @@ class IGhostInput extends AGhostMsg implements GhostInput
     public function reply(Message $message, int $deliverAt = null): GhostOutput
     {
         return new IGhostOutput(
-            $this->shellName,
+            $this->shn,
             $this->chatId,
-            $this->shellMessage->output($message),
+            $this->shm->output($message),
             $deliverAt
         );
     }
@@ -140,7 +165,7 @@ class IGhostInput extends AGhostMsg implements GhostInput
     public function __sleep(): array
     {
         $fields = parent::__sleep();
-        return array_merge($fields, ['sceneId', 'sceneEnv', 'comprehension']);
+        return array_merge($fields, ['sid', 'env', 'cph']);
     }
 
 

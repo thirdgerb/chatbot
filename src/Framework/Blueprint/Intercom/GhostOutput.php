@@ -16,11 +16,12 @@ namespace Commune\Framework\Blueprint\Intercom;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
- * @property-read string $chatId            会话 ID
- * @property-read string $shellName         决定发送给哪个 Shell
+ * @property-read string $chatId
+ * @property-read string $shellName
  * @property-read string $messageId
- * @property-read ShellMsg $shellMessage    发送的内容
- * @property-read int $deliverAt            发送的时间
+ * @property-read string $traceId               链路追踪的ID
+ * @property-read ShellMsg $shellMessage
+ * @property-read int $dlt                发送的时间
  */
 interface GhostOutput extends GhostMsg
 {

@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Contracts;
 
-use Commune\Framework\Contracts\Server;
+use Commune\Framework\Blueprint\Server\Server;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

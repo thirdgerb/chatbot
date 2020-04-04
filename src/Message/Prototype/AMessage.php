@@ -14,6 +14,7 @@ namespace Commune\Message\Prototype;
 use Commune\Message\Blueprint\Message;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Babel\TBabelSerializable;
+use Commune\Support\DI\TInjectable;
 
 
 /**
@@ -21,19 +22,13 @@ use Commune\Support\Babel\TBabelSerializable;
  */
 abstract class AMessage implements Message
 {
-    use ArrayAbleToJson, TBabelSerializable;
+    use ArrayAbleToJson, TBabelSerializable, TInjectable;
 
     /**
      * 毫秒级的时间戳.
      * @var int
      */
     protected $createdAt;
-
-    /**
-     * 可以做依赖注入的对象名
-     * @var string[][]
-     */
-    private static $_interfaces = [];
 
     /**
      * AMessage constructor.
@@ -58,39 +53,9 @@ abstract class AMessage implements Message
             ?? $this->createdAt = time();
     }
 
-
     final public function getInterfaces(): array
     {
-        $class = static::class;
-
-        if (isset(self::$_interfaces[$class])) {
-            return self::$_interfaces[$class];
-        }
-
-        $r = new \ReflectionClass($class);
-
-        // 根 message 类名
-        $names[] = Message::class;
-        // 所有 interface 里继承 message 的.
-        foreach ( $r->getInterfaces() as $interfaceReflect ) {
-            if ($interfaceReflect->isSubclassOf(Message::class)) {
-                $names[] = $interfaceReflect->getName();
-            }
-        }
-
-        // 抽象父类.
-        do  {
-            if ($r->isAbstract()) {
-                $names[] = $r->getName();
-            }
-
-
-        } while ($r = $r->getParentClass());
-
-        // 当前类名
-        $names[] = $r->getName();
-
-        return self::$_interfaces[$class] = $names;
+        return static::getInterfacesOf(Message::class);
     }
 
 }

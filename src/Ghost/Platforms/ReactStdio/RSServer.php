@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Platforms\ReactStdio;
 
-use Commune\Framework\Prototype\Server\AReactStdioServer;
+use Commune\Framework\Prototype\Servers\AReactStdioServer;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

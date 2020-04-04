@@ -18,7 +18,6 @@ use Commune\Message\Blueprint\Message;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $messageId
  * @property-read Message $message
  * @property-read ShellScope $scope
  */

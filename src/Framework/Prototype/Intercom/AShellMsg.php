@@ -16,6 +16,7 @@ use Commune\Framework\Blueprint\Intercom\ShellOutput;
 use Commune\Framework\Blueprint\Intercom\ShellScope;
 use Commune\Message\Blueprint\Message;
 use Commune\Support\Arr\ArrayAbleToJson;
+use Commune\Support\Babel\BabelSerializable;
 use Commune\Support\Babel\TBabelSerializable;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
@@ -27,56 +28,76 @@ abstract class AShellMsg implements ShellMsg, HasIdGenerator
 {
     use ArrayAbleToJson, TBabelSerializable, IdGeneratorHelper;
 
+    const PROPERTIES = [
+        'message' => 'msg',
+        'scope' => 'scp',
+    ];
+
     /**
      * @var Message
      */
-    protected $message;
+    protected $msg;
 
     /**
      * @var ShellScope
      */
-    protected $scope;
+    protected $scp;
 
     /**
      * AShellMsg constructor.
-     * @param Message $message
-     * @param ShellScope $scope
+     * @param Message $msg
+     * @param ShellScope $scp
      */
     public function __construct(
-        Message $message,
-        ShellScope $scope
+        Message $msg,
+        ShellScope $scp
     )
     {
-        $this->message = $message;
-        $this->scope = $scope;
+        $this->msg = $msg;
+        $this->scp = $scp;
     }
 
-    public function derive(Message $message) : ShellOutput
+    public function replace(Message $msg): void
     {
-        return new IShellOutput($message, $this->scope);
+        $this->msg = $msg;
+    }
+
+
+    public function derive(Message $msg) : ShellOutput
+    {
+        return new IShellOutput($msg, $this->scp);
     }
 
 
     public function toArray(): array
     {
         return [
-            'message' => $this->message->toArray(),
-            'scope' => $this->scope->toArray(),
+            'msg' => $this->msg->toArray(),
+            'scp' => $this->scp->toArray(),
         ];
     }
 
     public function __sleep(): array
     {
         return [
-            'message',
-            'scope',
+            'msg',
+            'scp',
         ];
+    }
+
+    public static function createNewSerializable(array $input): ? BabelSerializable
+    {
+        return new static(
+            $input['msg'],
+            $input['scp']
+        );
     }
 
     public function __get($name)
     {
-        if (property_exists($this, $name)) {
-            return $this->{$name};
+        $property = static::PROPERTIES[$name] ?? '';
+        if (!empty($property)) {
+            return $this->{$property};
         }
         return null;
     }

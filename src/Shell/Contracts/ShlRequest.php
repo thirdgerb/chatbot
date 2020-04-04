@@ -12,41 +12,14 @@
 namespace Commune\Shell\Contracts;
 
 use Commune\Framework\Blueprint\Abstracted\Comprehension;
+use Commune\Framework\Blueprint\Server\Request;
 use Commune\Message\Blueprint\Message;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlRequest
+interface ShlRequest extends Request
 {
-
-    /**
-     * 在平台上可以有自己的请求校验策略.
-     * 校验失败自行返回结果.
-     * @return bool
-     */
-    public function validate() : bool ;
-
-    /**
-     * 关于请求的描述. 通常用于日志.
-     * @return string
-     */
-    public function getBrief() : string;
-
-    /**
-     * 获取应该存到日志里的信息
-     * @return array
-     */
-    public function getLogContext() : array;
-
-    /*-------- 必须有的参数 --------*/
-
-    /**
-     * 请求原始的输入信息.
-     * @return mixed
-     */
-    public function getInput();
-
 
     /**
      * 请求的场景
@@ -60,7 +33,6 @@ interface ShlRequest
      */
     public function getSceneEnv() : array;
 
-
     /**
      * 从 input 中获取 message
      *
@@ -69,11 +41,6 @@ interface ShlRequest
      * @return Message
      */
     public function getMessage() : Message;
-
-    /**
-     * @return string
-     */
-    public function getTraceId() : string;
 
     /**
      * 从 input 中获取消息ID, 或者生成一个ID.

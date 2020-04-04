@@ -14,27 +14,34 @@ namespace Commune\Ghost\Prototype\Pipeline;
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Prototype\Session\ASessionPipe;
 use Commune\Ghost\Blueprint\Session\GhtSession;
+use Commune\Message\Constants\OutgoingIntents;
+use Commune\Message\Prototype\IIntentMsg;
+
 
 /**
+ * 同步锁, 用于锁定对话.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class DuplexChatLockerPipe extends ASessionPipe
+class ChatLockerPipe extends ASessionPipe
 {
     protected $locked = false;
 
     /**
+     *
      * @param GhtSession $session
      * @param callable $next
      * @return GhtSession
      * @throws \Throwable
      */
-    public function handle(Session $session, callable $next): Session
+    protected function next(Session $session, callable $next): Session
     {
         try {
 
-            return parent::handle($session, $next);
+            return parent::next($session, $next);
 
         } catch (\Throwable $e) {
+
             if ($this->locked) {
                 $session->chat->unlock();
             }
@@ -42,6 +49,7 @@ class DuplexChatLockerPipe extends ASessionPipe
             throw $e;
         }
     }
+
 
     /**
      * @param GhtSession $session
@@ -55,10 +63,9 @@ class DuplexChatLockerPipe extends ASessionPipe
         if ($this->locked) {
             return $session;
         }
-
-        // 如果锁住了, 就将输入消息重新入队.
-        $session->messenger->pushInput($session->ghostInput, false);
-        $session->finish();
+        $session->output(new IIntentMsg(OutgoingIntents::CHAT_BLOCKED));
+        // 挡住了就不要继续了.
+        $this->stopPropagation();
         return $session;
     }
 
@@ -73,6 +80,5 @@ class DuplexChatLockerPipe extends ASessionPipe
         }
         return $session;
     }
-
 
 }

@@ -17,7 +17,7 @@ use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\ExceptionReporter;
 use Commune\Framework\Contracts\LogInfo;
 use Commune\Framework\Contracts\Messenger;
-use Commune\Framework\Contracts\Server;
+use Commune\Framework\Blueprint\Server\Server;
 use Commune\Framework\Contracts\ServiceProvider;
 use Commune\Framework\Exceptions\BootingException;
 use Psr\Log\LoggerInterface;

@@ -15,17 +15,20 @@ use Commune\Container\ContainerContract;
 use Commune\Framework\Blueprint\Intercom\GhostInput;
 use Commune\Framework\Blueprint\Intercom\ShellInput;
 use Commune\Framework\Blueprint\Intercom\ShellScope;
+use Commune\Framework\Blueprint\Server\Request;
+use Commune\Framework\Blueprint\Session\Session;
+use Commune\Framework\Blueprint\Session\SessionLogger;
 use Commune\Framework\Contracts\ServiceProvider;
 use Commune\Framework\Prototype\Intercom\IGhostInput;
 use Commune\Framework\Prototype\Intercom\IShellInput;
 use Commune\Framework\Prototype\Intercom\IShellScope;
+use Commune\Framework\Prototype\Session\ISessionLogger;
 use Commune\Shell\Blueprint\Session\ShlSession;
 use Commune\Shell\Blueprint\Session\ShlSessionLogger;
 use Commune\Shell\Blueprint\Session\ShlSessionStorage;
 use Commune\Shell\Contracts\ShlRequest;
 use Commune\Shell\Contracts\ShlServer;
 use Commune\Shell\Prototype\Session\IShlSession;
-use Commune\Shell\Prototype\Session\IShlSessionLogger;
 use Commune\Shell\Prototype\Session\IShlSessionStorage;
 use Psr\Log\LoggerInterface;
 
@@ -149,20 +152,18 @@ class ShlSessionServiceProvider extends ServiceProvider
     protected function registerLogger(ContainerContract $app) : void
     {
         $app->singleton(
-            ShlSessionLogger::class,
-            function(ContainerContract $container) : ShlSessionLogger {
+            SessionLogger::class,
+            function(ContainerContract $container) : SessionLogger {
                 /**
-                 * @var ShlRequest $request
-                 * @var ShlServer $server
+                 * @var Session $session
                  */
-                $request = $container->get(ShlRequest::class);
-                $server = $container->get(ShlServer::class);
+                $session = $container->get(Session::class);
                 $logger = $container->get(LoggerInterface::class);
 
-                $context = $request->getLogContext();
-                $context['serverId'] = $server->getId();
+                $context = $session->getRequest()->getLogContext();
+                $context['serverId'] = $session->getServer()->getId();
 
-                return new IShlSessionLogger(
+                return new ISessionLogger(
                     $logger,
                     $context
                 );

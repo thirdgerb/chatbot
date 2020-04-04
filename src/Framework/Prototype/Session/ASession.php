@@ -12,7 +12,11 @@
 namespace Commune\Framework\Prototype\Session;
 
 use Commune\Framework\Blueprint\ChatApp;
+use Commune\Framework\Blueprint\Intercom\GhostInput;
 use Commune\Framework\Blueprint\ReqContainer;
+use Commune\Framework\Blueprint\Server\Request;
+use Commune\Framework\Blueprint\Server\Response;
+use Commune\Framework\Blueprint\Server\Server;
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Blueprint\Session\SessionEvent;
 use Commune\Framework\Exceptions\SerializeSessionException;
@@ -107,6 +111,17 @@ class ASession implements Session, Spied
         return $this->traceId;
     }
 
+    public function getChatId(): string
+    {
+        return $this->getRequest()->getChatId();
+    }
+
+    public function getServer(): Server
+    {
+        return $this->getApp()->getServer();
+    }
+
+
 
     public function isFinished(): bool
     {
@@ -147,12 +162,12 @@ class ASession implements Session, Spied
 
     /*------ silence ------*/
 
-    public function silence(): void
+    public function noState(): void
     {
         $this->silent = true;
     }
 
-    public function isSilent(): bool
+    public function isStateless(): bool
     {
         return $this->silent;
     }
@@ -179,7 +194,7 @@ class ASession implements Session, Spied
 
     public function finish(): void
     {
-        if (!$this->isSilent()) {
+        if (!$this->isStateless()) {
             $this->getStorage()->save();
             $this->save();
         }

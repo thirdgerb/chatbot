@@ -20,7 +20,6 @@ use Commune\Message\Prototype\AMessage;
  */
 class AEvent extends AMessage implements EventMsg
 {
-
     /**
      * @var array
      */
