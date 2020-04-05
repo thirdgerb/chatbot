@@ -19,6 +19,7 @@ use Commune\Framework\Blueprint\Session\SessionStorage;
 use Commune\Framework\Contracts;
 use Commune\Framework\Blueprint\Intercom\ShellInput;
 use Commune\Framework\Blueprint\Intercom\ShellOutput;
+use Commune\Framework\Contracts\Cache;
 use Commune\Framework\Prototype\Session\ASession;
 use Commune\Message\Blueprint\Message;
 use Commune\Shell\Blueprint\Session\ShlSession;
@@ -26,12 +27,14 @@ use Commune\Shell\Blueprint\Session\ShlSessionStorage;
 use Commune\Shell\Blueprint\Shell;
 use Commune\Shell\Contracts\ShlRequest;
 use Commune\Shell\Contracts\ShlResponse;
+use Commune\Shell\ShellConfig;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read ShellConfig $shellConfig
  */
 class IShlSession extends ASession implements ShlSession, HasIdGenerator
 {
@@ -46,13 +49,21 @@ class IShlSession extends ASession implements ShlSession, HasIdGenerator
         'response' => ShlResponse::class,
         'shell' => Shell::class,
         'shellInput' => ShellInput::class,
-        'ghostInput' => GhostInput::class
+        'ghostInput' => GhostInput::class,
+        'shellConfig' => ShellConfig::class,
     ];
+
+    const SESSION_ID_KEY = 'shell:%s:chat:%s:sessionId';
 
     /**
      * @var ShellOutput[]
      */
     protected $outputs = [];
+
+    /**
+     * @var string
+     */
+    protected $sessionId;
 
     /**
      * @var string
@@ -83,15 +94,7 @@ class IShlSession extends ASession implements ShlSession, HasIdGenerator
     public function getChatId(): string
     {
         return $this->chatId
-            ?? $this->chatId = (
-                $this->request->getChatId()
-                ?? sha1(
-                    'shell:'
-                    . $this->shell->getShellName()
-                    . ':user:'
-                    . $this->request->getUserId()
-                )
-            );
+            ?? $this->chatId = $this->request->getChatId();
     }
 
     public function getStorage(): SessionStorage
@@ -103,6 +106,36 @@ class IShlSession extends ASession implements ShlSession, HasIdGenerator
     {
         return $this->logger;
     }
+
+    protected function getSessionIdKey(): string
+    {
+        return printf(
+            static::SESSION_ID_KEY,
+            $this->shell->getShellName(),
+            $this->getChatId()
+        );
+    }
+
+    public function getSessionExpire(): int
+    {
+        return $this->shellConfig->sessionExpire;
+    }
+
+    public function getCache(): Cache
+    {
+        return $this->cache;
+    }
+
+    public function reset(): void
+    {
+        if ($this->isStateless()) {
+            return;
+        }
+
+        $key = $this->getSessionIdKey();
+        $this->cache->forget($key);
+    }
+
 
     public function output(Message $message): void
     {
@@ -122,12 +155,14 @@ class IShlSession extends ASession implements ShlSession, HasIdGenerator
 
     /*------ finish ------*/
 
-    protected function flush(): void
+
+
+    protected function flushInstances(): void
     {
         $this->outputs = [];
     }
 
-    protected function save(): void
+    protected function saveSession(): void
     {
     }
 

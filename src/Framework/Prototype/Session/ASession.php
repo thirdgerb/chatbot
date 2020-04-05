@@ -12,24 +12,23 @@
 namespace Commune\Framework\Prototype\Session;
 
 use Commune\Framework\Blueprint\App;
-use Commune\Framework\Blueprint\Intercom\GhostInput;
 use Commune\Framework\Blueprint\ReqContainer;
-use Commune\Framework\Blueprint\Server\Request;
-use Commune\Framework\Blueprint\Server\Response;
 use Commune\Framework\Blueprint\Server\Server;
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Blueprint\Session\SessionEvent;
 use Commune\Framework\Exceptions\SerializeForbiddenException;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
+use Commune\Support\Uuid\HasIdGenerator;
+use Commune\Support\Uuid\IdGeneratorHelper;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ASession implements Session, Spied
+abstract class ASession implements Session, Spied, HasIdGenerator
 {
-    use SpyTrait;
+    use SpyTrait, IdGeneratorHelper;
 
     const INJECTABLE_PROPERTIES = [
     ];
@@ -52,11 +51,15 @@ class ASession implements Session, Spied
      */
     protected $listened = [];
 
+    /**
+     * @var string
+     */
+    protected $sessionId;
 
     /**
      * @var string
      */
-    protected $traceId;
+    protected $uuid;
 
     /**
      * @var bool
@@ -66,7 +69,7 @@ class ASession implements Session, Spied
     /**
      * @var bool
      */
-    protected $silent = false;
+    protected $stateless = false;
 
     /**
      * @var App
@@ -80,16 +83,20 @@ class ASession implements Session, Spied
     public function __construct(ReqContainer $container)
     {
         $this->container = $container;
+        $this->uuid = $container->getUuid();
+        // 初始化 stateless
+        $this->stateless = $this->getRequest()->isStateless();
 
-        $this->traceId = $container->getId();
-        static::addRunningTrace($this->traceId, $this->traceId);
+        static::addRunningTrace($this->uuid, $this->uuid);
     }
 
     /*------ abstract ------*/
 
-    abstract protected function flush() : void;
+    abstract protected function getSessionIdKey() :  string;
 
-    abstract protected function save() : void;
+    abstract protected function flushInstances() : void;
+
+    abstract protected function saveSession() : void;
 
     /*------ components ------*/
 
@@ -106,9 +113,9 @@ class ASession implements Session, Spied
 
     /*------ status ------*/
 
-    public function getTraceId(): string
+    public function getUuId(): string
     {
-        return $this->traceId;
+        return $this->uuid;
     }
 
     public function getChatId(): string
@@ -121,7 +128,27 @@ class ASession implements Session, Spied
         return $this->getApp()->getServer();
     }
 
+    public function getSessionId(): string
+    {
+        if ($this->isStateless()) {
+            return $this->sessionId
+                ?? $this->sessionId = $this->createUuId();
+        }
 
+        $key = $this->getSessionIdKey();
+        $cache = $this->getCache();
+        $expire = $this->getSessionExpire();
+        $expire = $expire > 0 ? $expire : null;
+
+        $id = $cache->get($key);
+
+        if (empty($id)) {
+           $id = $this->createUuId();
+           $cache->set($key, $id, $expire);
+        }
+        $cache->expire($key, $expire);
+        return $this->sessionId = $id;
+    }
 
     public function isFinished(): bool
     {
@@ -160,16 +187,17 @@ class ASession implements Session, Spied
         $this->listened[$eventName][] = $handler;
     }
 
+
     /*------ silence ------*/
 
     public function noState(): void
     {
-        $this->silent = true;
+        $this->stateless = true;
     }
 
     public function isStateless(): bool
     {
-        return $this->silent;
+        return $this->stateless;
     }
 
 
@@ -195,15 +223,16 @@ class ASession implements Session, Spied
     public function finish(): void
     {
         if (!$this->isStateless()) {
+            $this->saveSession();
             $this->getStorage()->save();
-            $this->save();
         }
 
         $this->container = null;
         $this->app = null;
+        // important! otherwise object stored in the array wouldn't gc
         $this->properties = [];
         $this->listened = [];
-        $this->flush();
+        $this->flushInstances();
         $this->finished = true;
     }
 
@@ -216,6 +245,6 @@ class ASession implements Session, Spied
 
     public function __destruct()
     {
-        static::removeRunningTrace($this->traceId);
+        static::removeRunningTrace($this->uuid);
     }
 }

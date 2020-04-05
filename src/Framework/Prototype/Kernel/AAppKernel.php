@@ -223,7 +223,7 @@ abstract class AAppKernel implements AppKernel
         // 获取新的请求级实例.
         $reqContainer =  $this->app
             ->getReqContainer()
-            ->newInstance($request->getTraceId(), $procContainer);
+            ->newInstance($request->getUuid(), $procContainer);
 
         // 绑定 request
         $reqContainer->share(ReqContainer::class, $reqContainer);

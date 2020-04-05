@@ -24,7 +24,7 @@ interface ReqContainer extends ContainerContract
      * 请求容器的 ID. 理论上是唯一 ID
      * @return string
      */
-    public function getId() : string;
+    public function getUuid() : string;
 
     /**
      * @return ContainerContract

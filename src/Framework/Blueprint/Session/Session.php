@@ -16,6 +16,7 @@ use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Blueprint\Server\Request;
 use Commune\Framework\Blueprint\Server\Response;
 use Commune\Framework\Blueprint\Server\Server;
+use Commune\Framework\Contracts\Cache;
 use Commune\Message\Blueprint\Message;
 
 /**
@@ -37,16 +38,21 @@ interface Session
     public function getSessionId() : string;
 
     /**
-     * Session 在当前进程的唯一ID
+     * Session 在所有进程的唯一ID
      * @return string
      */
-    public function getTraceId() : string;
+    public function getUuId() : string;
 
     /**
      * @param string $name
      * @param $object
      */
     public function setProperty(string $name, $object): void;
+
+    /**
+     * @return int
+     */
+    public function getSessionExpire() : int;
 
     /*------ input ------*/
 
@@ -64,6 +70,7 @@ interface Session
      * @return Response
      */
     public function getResponse() : Response;
+
 
     /*------ component ------*/
 
@@ -86,6 +93,11 @@ interface Session
      * @return SessionLogger
      */
     public function getLogger() : SessionLogger;
+
+    /**
+     * @return Cache
+     */
+    public function getCache() : Cache;
 
     /*------ status save ------*/
 

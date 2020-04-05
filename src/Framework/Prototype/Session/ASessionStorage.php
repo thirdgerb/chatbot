@@ -16,19 +16,18 @@ use Commune\Framework\Blueprint\Session\SessionStorage;
 use Commune\Framework\Contracts\Cache;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
+use Commune\Support\Uuid\HasIdGenerator;
+use Commune\Support\Uuid\IdGeneratorHelper;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class ASessionStorage implements SessionStorage, Spied
+abstract class ASessionStorage implements SessionStorage, Spied, HasIdGenerator
 {
-    use SpyTrait;
+    use SpyTrait, IdGeneratorHelper;
 
-    /**
-     * @var string
-     */
-    protected $chatId;
+    const SESSION_ID = 'sessionId';
 
     /**
      * @var string
@@ -61,16 +60,16 @@ abstract class ASessionStorage implements SessionStorage, Spied
      * @var string
      */
     protected $cacheKey;
-
-
-    public function __construct(
-        Session $session,
-        int $expire
-    )
+    /**
+     * ASessionStorage constructor.
+     * @param Session $session
+     */
+    public function __construct(Session $session)
     {
-        $this->chatId = $session->getChatId();
-        $this->expire = $expire > 0 ? $expire : null;
         $this->cacheKey = $this->makeSessionCacheKey($session);
+
+        $expire = $session->getSessionExpire();
+        $this->expire = $expire > 0 ? $expire : null;
 
         if (!$session->isStateless()) {
             $this->cache = $session->getContainer()->make(Cache::class);
@@ -83,7 +82,7 @@ abstract class ASessionStorage implements SessionStorage, Spied
             }
         }
 
-        $this->traceId = $session->getTraceId();
+        $this->traceId = $session->getUuId();
         static::addRunningTrace($this->traceId, $this->traceId);
     }
 

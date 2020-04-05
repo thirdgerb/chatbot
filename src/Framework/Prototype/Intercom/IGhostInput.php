@@ -33,6 +33,7 @@ class IGhostInput extends AGhostMsg implements GhostInput
     const PROPERTIES = [
         'shellName' => 'shn',
         'chatId' => 'cid',
+        'stateless' => 'stt',
         'shellMessage' => 'shm',
         'traceId' => 'tid',
         'sceneId' => 'sid',
@@ -40,6 +41,11 @@ class IGhostInput extends AGhostMsg implements GhostInput
         'messageId' => 'mid',
         'comprehension' => 'cph',
     ];
+
+    /**
+     * @var bool
+     */
+    protected $stt;
 
     /**
      * @var string
@@ -79,6 +85,7 @@ class IGhostInput extends AGhostMsg implements GhostInput
     public function __construct(
         string $shellName,
         string $chatId,
+        bool $stateless,
         ShellInput $shellMessage,
         string $traceId,
         string $sceneId,
@@ -87,6 +94,7 @@ class IGhostInput extends AGhostMsg implements GhostInput
         Comprehension $comprehension = null
     )
     {
+        $this->stt = $stateless;
         $this->sid = $sceneId;
         $this->env = $sceneEnv;
         $this->cph = $comprehension ?? new IComprehension();
@@ -98,6 +106,7 @@ class IGhostInput extends AGhostMsg implements GhostInput
         return new static(
             $input['shn'],
             $input['cid'],
+            $input['stt'],
             $input['shm'],
             $input['tid'],
             $input['cid'],
@@ -165,7 +174,7 @@ class IGhostInput extends AGhostMsg implements GhostInput
     public function __sleep(): array
     {
         $fields = parent::__sleep();
-        return array_merge($fields, ['sid', 'env', 'cph']);
+        return array_merge($fields, ['sid', 'stt', 'env', 'cph']);
     }
 
 
