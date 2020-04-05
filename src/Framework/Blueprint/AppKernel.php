@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\Blueprint\Kernel;
+namespace Commune\Framework\Blueprint;
 
 use Commune\Framework\Blueprint\Server\Request;
 use Commune\Framework\Blueprint\Server\Response;
@@ -18,19 +18,19 @@ use Commune\Framework\Blueprint\Server\Response;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Kernel
+interface AppKernel
 {
     /**
      * 同步请求.
      *
      * @param Request $request
      * @param Response $response
-     * @param bool $noState
+     * @param array $middleware
      */
-    public function onSyncRequest(
+    public function handleRequest(
         Request $request,
         Response $response,
-        bool $noState = false
+        array $middleware
     ) : void;
 
     /**
@@ -38,12 +38,12 @@ interface Kernel
      *
      * @param Request $request
      * @param Response $response
-     * @param bool $noState
+     * @param array $middleware
      */
-    public function onAsyncRequest(
+    public function asyncHandleRequest(
         Request $request,
         Response $response,
-        bool $noState = false
+        array $middleware
     ) : void;
 
     /**
@@ -51,11 +51,11 @@ interface Kernel
      *
      * @param Request $request
      * @param Response $response
-     * @param bool $noState
+     * @param array $middleware
      */
-    public function onAsyncResponse(
+    public function asyncHandleResponse(
         Request $request,
         Response $response,
-        bool $noState = false
+        array $middleware
     ) : void;
 }

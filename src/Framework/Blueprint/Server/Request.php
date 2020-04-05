@@ -11,13 +11,17 @@
 
 namespace Commune\Framework\Blueprint\Server;
 
-use Commune\Support\DI\Injectable;
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Request extends Injectable
+interface Request
 {
+    /**
+     * 是否是无状态的请求.
+     * @return bool
+     */
+    public function isStateless() :bool;
+
     /**
      * 在平台上可以有自己的请求校验策略.
      * 校验失败自行返回结果.
@@ -49,6 +53,7 @@ interface Request extends Injectable
      */
     public function getTraceId() : string;
 
+
     /**
      * 请求的唯一ID.
      * @return string
@@ -59,6 +64,27 @@ interface Request extends Injectable
      * @return string
      */
     public function getChatId() : string;
+
+    /**
+     * 发送消息的用户 ID
+     *
+     * @return string
+     */
+    public function getUserId() : string;
+
+    /**
+     * 从 input 中获取消息ID, 或者生成一个ID.
+     * 需要生成 ID 时, 应当调用 generateMessageId() 方法
+     *
+     * @return string
+     */
+    public function getMessageId() : string;
+
+    /**
+     * @return string
+     */
+    public function getSceneId() : ? string;
+
 
 
 }

@@ -34,6 +34,12 @@ interface Server
     /*---------- 特殊操作 ---------*/
 
     /**
+     * 关闭客户端. 如果是长连接的话尤其.
+     * @param string $chatId
+     */
+    public function closeClient(string $chatId) : void;
+
+    /**
      * 非阻塞地休眠. 如果可以做到的话.
      * @param float $seconds
      */

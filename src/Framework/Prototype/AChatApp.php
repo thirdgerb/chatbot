@@ -12,7 +12,7 @@
 namespace Commune\Framework\Prototype;
 
 use Commune\Container\ContainerContract;
-use Commune\Framework\Blueprint\ChatApp;
+use Commune\Framework\Blueprint\App;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Contracts\Bootstrapper;
 use Commune\Framework\Contracts\Cache;
@@ -33,7 +33,7 @@ use Psr\Log\LoggerInterface;
  *`
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AChatApp implements ChatApp
+abstract class AChatApp implements App
 {
 
     /*------ configure ------*/
@@ -126,8 +126,8 @@ abstract class AChatApp implements ChatApp
         $this->reqContainer->instance(ConsoleLogger::class, $this->consoleLogger);
 
         // 绑定自己
-        $this->procContainer->instance(ChatApp::class, $this);
-        $this->reqContainer->instance(ChatApp::class, $this);
+        $this->procContainer->instance(App::class, $this);
+        $this->reqContainer->instance(App::class, $this);
 
         // 绑定 ReqContainer 的基本单例.
         $container = $this->reqContainer;
@@ -135,45 +135,45 @@ abstract class AChatApp implements ChatApp
         // 绑定 Server
         $container->singleton(Server::class, function(ContainerContract $ioc) {
             /**
-             * @var ChatApp $app
+             * @var App $app
              */
-            $app = $ioc->get(ChatApp::class);
+            $app = $ioc->get(App::class);
             return $app->getServer();
         });
 
         // 日志是请求级单例. 是否是进程级单例, 取决于日志底层是否实现好了协程等非阻塞机制.
         $container->singleton(LoggerInterface::class, function(ContainerContract $ioc){
             /**
-             * @var ChatApp $app
+             * @var App $app
              */
-            $app = $ioc->get(ChatApp::class);
+            $app = $ioc->get(App::class);
             return $app->getLogger();
         });
 
         // 绑定 cache 为请求级单例
         $container->singleton(Cache::class, function(ContainerContract $ioc){
             /**
-             * @var ChatApp $app
+             * @var App $app
              */
-            $app = $ioc->get(ChatApp::class);
+            $app = $ioc->get(App::class);
             return $app->getCache();
         });
 
         // 绑定 Messenger 为请求级单例
         $container->singleton(Messenger::class, function(ContainerContract $ioc){
             /**
-             * @var ChatApp $app
+             * @var App $app
              */
-            $app = $ioc->get(ChatApp::class);
+            $app = $ioc->get(App::class);
             return $app->getMessenger();
         });
 
         // 绑定 ExceptionReporter 为请求级单例.
         $container->singleton(ExceptionReporter::class, function(ContainerContract $ioc){
             /**
-             * @var ChatApp $app
+             * @var App $app
              */
-            $app = $ioc->get(ChatApp::class);
+            $app = $ioc->get(App::class);
             return $app->getExceptionReporter();
         });
 

@@ -12,7 +12,6 @@
 namespace Commune\Framework\Contracts;
 
 use Commune\Framework\Blueprint\Intercom\GhostInput;
-use Commune\Framework\Blueprint\Intercom\GhostMsg;
 use Commune\Framework\Blueprint\Intercom\GhostOutput;
 
 /**
@@ -52,7 +51,6 @@ interface Messenger
 
     /*-------- 异步输入消息 ---------*/
 
-
     /**
      * 广播多条消息给各个接受方.
      *
@@ -88,11 +86,4 @@ interface Messenger
      */
     public function popOutput(string $shellName) : ? GhostOutput;
 
-
-    /*-------- 记录消息 ---------*/
-
-    /**
-     * @param GhostMsg[] $messages
-     */
-    public function recordMessage(array $messages) : void;
 }

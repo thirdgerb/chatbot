@@ -12,6 +12,8 @@
 namespace Commune\Shell\Prototype\Session;
 
 use Commune\Framework\Blueprint\Intercom\GhostInput;
+use Commune\Framework\Blueprint\Server\Request;
+use Commune\Framework\Blueprint\Server\Response;
 use Commune\Framework\Blueprint\Session\SessionLogger;
 use Commune\Framework\Blueprint\Session\SessionStorage;
 use Commune\Framework\Contracts;
@@ -20,7 +22,6 @@ use Commune\Framework\Blueprint\Intercom\ShellOutput;
 use Commune\Framework\Prototype\Session\ASession;
 use Commune\Message\Blueprint\Message;
 use Commune\Shell\Blueprint\Session\ShlSession;
-use Commune\Shell\Blueprint\Session\ShlSessionLogger;
 use Commune\Shell\Blueprint\Session\ShlSessionStorage;
 use Commune\Shell\Blueprint\Shell;
 use Commune\Shell\Contracts\ShlRequest;
@@ -40,7 +41,7 @@ class IShlSession extends ASession implements ShlSession, HasIdGenerator
         'cache' => Contracts\Cache::class,
         'messenger' => Contracts\Messenger::class,
         'storage' => ShlSessionStorage::class,
-        'logger' => ShlSessionLogger::class,
+        'logger' => SessionLogger::class,
         'request' => ShlRequest::class,
         'response' => ShlResponse::class,
         'shell' => Shell::class,
@@ -64,6 +65,16 @@ class IShlSession extends ASession implements ShlSession, HasIdGenerator
     protected $shellInput;
 
     /*------ i/o ------*/
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
+    public function getResponse(): Response
+    {
+        return $this->response;
+    }
+
 
     /**
      * 生成 chatId

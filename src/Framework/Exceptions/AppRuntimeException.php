@@ -11,15 +11,13 @@
 
 namespace Commune\Framework\Exceptions;
 
+
 /**
+ * 有可能会发生, 需要专门响应的异常.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SerializeSessionException extends AppLogicException
+class AppRuntimeException extends \RuntimeException
 {
-
-    public function __construct(string $sessionClass)
-    {
-        parent::__construct("forbid to serialize session $sessionClass");
-    }
 
 }

@@ -15,31 +15,28 @@ use Commune\Message\Blueprint\Tag\MsgLevel;
 use Commune\Message\Constants\OutgoingIntents;
 use Commune\Message\Prototype\IIntentMsg;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $commandName
- * @property-read string $args
- * @property-read string $options
+ * @property-read int $errcode
+ * @property-read string $errmsg
  */
-class CommandDescInt extends IIntentMsg
+class IntercomFailureInt extends IIntentMsg
 {
     public function __construct(
-        string $commandName = '',
-        string $args = '',
-        string $options = ''
+        string $message = '',
+        int $code = 0
     )
     {
         parent::__construct(
-            OutgoingIntents::COMMAND_DESC,
+            OutgoingIntents::INTERCOM_FAILURE,
             [
-                'commandName' => $commandName,
-                'args' => $args,
-                'opts' => $options
+                'errcode' => $code,
+                'errmsg' => $message
             ],
-            MsgLevel::INFO
+            MsgLevel::ERROR
         );
     }
+
 
 }

@@ -11,9 +11,11 @@
 
 namespace Commune\Shell\Prototype\Pipeline;
 
+use Commune\Framework\Exceptions\ChatRequestException;
 use Commune\Framework\Prototype\Session\ASessionPipe;
 use Commune\Message\Constants\OutgoingIntents;
 use Commune\Message\Prototype\IIntentMsg;
+use Commune\Message\Prototype\Intents\IntercomFailureInt;
 use Commune\Shell\Blueprint\Session\ShlSession;
 
 /**
@@ -39,25 +41,15 @@ class ShellMessengerPipe extends ASessionPipe
             // 同步信号
             // 如果发送不成功, 要告知用户失败.
             if (!$success) {
-                $session->addShellOutputs([
-                    new IIntentMsg(OutgoingIntents::INTERCOM_FAILURE)
-                ]);
-                return $session;
-            }
-
-            // 获取推送到收件箱里的输出消息.
-            $outputs = $messenger->fetchOutputs(
-                $session->shell->getShellName(),
-                $session->getChatId()
-            );
-
-            // 整理需要发送的消息.
-            if (!empty($outputs)) {
-                $session = $this->receiveDeliveringMessage($session, $outputs);
+                throw new ChatRequestException('send sync input fail');
             }
 
         } catch (\Exception $e) {
-            // todo 目前还不知道要抛出哪些异常.
+
+            $session->addShellOutputs([
+                new IntercomFailureInt($e->getMessage(), $e->getCode())
+            ]);
+            $this->stopPropagation();
         }
         return $session;
     }
@@ -68,6 +60,19 @@ class ShellMessengerPipe extends ASessionPipe
      */
     protected function after($session)
     {
+        $messenger = $session->messenger;
+
+        // 获取推送到收件箱里的输出消息.
+        $outputs = $messenger->fetchOutputs(
+            $session->shell->getShellName(),
+            $session->getChatId()
+        );
+
+        // 整理需要发送的消息.
+        if (!empty($outputs)) {
+            $session = $this->receiveDeliveringMessage($session, $outputs);
+        }
+
         return $session;
     }
 

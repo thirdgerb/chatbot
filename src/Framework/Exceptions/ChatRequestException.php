@@ -9,14 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Kernels;
+namespace Commune\Framework\Exceptions;
 
-use Commune\Ghost\Blueprint\Kernels\ApiKernel;
 
 /**
+ * 请求级别的异常. 通知用户告知异常, 并且可以恢复.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IApiKernel implements ApiKernel
+class ChatRequestException extends \RuntimeException
 {
-
 }

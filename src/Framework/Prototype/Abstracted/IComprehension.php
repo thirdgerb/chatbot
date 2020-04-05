@@ -89,5 +89,10 @@ class IComprehension implements Comprehension
         return $object;
     }
 
+    public function __destruct()
+    {
+        // 方便垃圾回收.
+        $this->data = [];
+    }
 
 }

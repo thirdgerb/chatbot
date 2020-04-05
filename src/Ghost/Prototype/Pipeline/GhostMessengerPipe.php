@@ -42,13 +42,13 @@ class GhostMessengerPipe extends ASessionPipe
         $delivery = [];
 
         // 广播 input
-        $this->broadcastInput($delivery, $session, $chat);
+        $delivery = $this->broadcastInput($delivery, $session, $chat);
 
         // 广播输出消息
         $outputs = $session->getOutputs();
         if (!empty($outputs)) {
             foreach ($outputs as $output) {
-                $delivery[$output->shn][] = $output;
+                $delivery[$output->shellName][] = $output;
             }
         }
 
@@ -71,18 +71,18 @@ class GhostMessengerPipe extends ASessionPipe
         $input = $session->ghostInput;
         $shells = $chat->scope->shells;
         $inputBroadcasts = $input->derive(
-            $input->shm->message,
+            $input->shellMessage->message,
             $shells
         );
 
         foreach ($inputBroadcasts as $output) {
 
             // 不需要广播到自己身上.
-            if ($output->shn === $input->shn) {
+            if ($output->shellName === $input->shellName) {
                 continue;
             }
 
-            $delivery[$output->shn][] = $output;
+            $delivery[$output->shellName][] = $output;
         }
 
         return $delivery;

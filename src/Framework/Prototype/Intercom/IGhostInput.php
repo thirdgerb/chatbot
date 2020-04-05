@@ -120,7 +120,7 @@ class IGhostInput extends AGhostMsg implements GhostInput
             return $this->trimmed = StringUtils::trim($recognition);
         }
 
-        $message = $this->shm->message;
+        $message = $this->shellMessage->message;
         if ($message instanceof Verbal) {
             return $this->trimmed = $message->getTrimmedText();
         }
@@ -134,7 +134,7 @@ class IGhostInput extends AGhostMsg implements GhostInput
             return $this->matchedIntent;
         }
 
-        $message = $this->shm->message;
+        $message = $this->shellMessage->message;
         if ($message instanceof IntentMsg) {
             return $this->matchedIntent = $message;
         }
@@ -154,9 +154,9 @@ class IGhostInput extends AGhostMsg implements GhostInput
     public function reply(Message $message, int $deliverAt = null): GhostOutput
     {
         return new IGhostOutput(
-            $this->shn,
+            $this->shellName,
             $this->chatId,
-            $this->shm->output($message),
+            $this->shellMessage->output($message),
             $deliverAt
         );
     }

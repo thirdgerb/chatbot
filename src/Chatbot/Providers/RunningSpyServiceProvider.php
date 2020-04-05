@@ -14,7 +14,7 @@ namespace Commune\Chatbot\Providers;
 use Commune\Chatbot\Blueprint\Chatbot;
 use Commune\Chatbot\ChatbotConfig;
 use Commune\Container\ContainerContract;
-use Commune\Framework\Blueprint\ChatApp;
+use Commune\Framework\Blueprint\App;
 use Commune\Framework\Contracts\ServiceProvider;
 use Commune\Support\RunningSpy\SpyAgency;
 

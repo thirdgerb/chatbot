@@ -28,7 +28,7 @@ use Psr\Log\LoggerInterface;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ChatApp
+interface App
 {
     /**
      * 是否调试状态.

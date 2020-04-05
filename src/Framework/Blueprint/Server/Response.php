@@ -11,12 +11,10 @@
 
 namespace Commune\Framework\Blueprint\Server;
 
-use Commune\Support\DI\Injectable;
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Response extends Injectable
+interface Response
 {
     /**
      * @return string
@@ -28,6 +26,14 @@ interface Response extends Injectable
      * @return string
      */
     public function getTraceId() : string;
+
+    /**
+     * 发送消息的用户 ID
+     *
+     * @return string
+     */
+    public function getUserId() : string;
+
 
     /**
      * 将当前准备要发送的信息, 全部发送给用户.

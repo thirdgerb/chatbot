@@ -11,8 +11,7 @@
 
 namespace Commune\Framework\Blueprint\Session;
 
-use Commune\Framework\Blueprint\ChatApp;
-use Commune\Framework\Blueprint\Intercom\GhostInput;
+use Commune\Framework\Blueprint\App;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Blueprint\Server\Request;
 use Commune\Framework\Blueprint\Server\Response;
@@ -31,6 +30,11 @@ interface Session
      * @return string
      */
     public function getChatId() : string;
+
+    /**
+     * @return string
+     */
+    public function getSessionId() : string;
 
     /**
      * Session 在当前进程的唯一ID
@@ -64,9 +68,9 @@ interface Session
     /*------ component ------*/
 
     /**
-     * @return ChatApp
+     * @return App
      */
-    public function getApp() : ChatApp;
+    public function getApp() : App;
 
     /**
      * @return ReqContainer
@@ -101,6 +105,10 @@ interface Session
      * @param Message $message
      */
     public function output(Message $message) : void;
+
+    /*------ reset ------*/
+
+    public function reset() : void;
 
     /*------ finish ------*/
 

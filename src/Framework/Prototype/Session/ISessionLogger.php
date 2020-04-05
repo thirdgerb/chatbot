@@ -11,7 +11,6 @@
 
 namespace Commune\Framework\Prototype\Session;
 
-use Commune\Framework\Blueprint\Server\Request;
 use Psr\Log\LoggerTrait;
 use Psr\Log\LoggerInterface;
 use Commune\Framework\Blueprint\Session\SessionLogger;

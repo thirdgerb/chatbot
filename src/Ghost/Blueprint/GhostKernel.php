@@ -9,23 +9,23 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Blueprint\Kernels;
+namespace Commune\Ghost\Blueprint;
 
+use Commune\Framework\Blueprint\AppKernel;
 use Commune\Ghost\Contracts\GhtRequest;
 use Commune\Ghost\Contracts\GhtResponse;
 
+
 /**
- * API 调用的运行内核.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ApiKernel
+interface GhostKernel extends AppKernel
 {
 
-    public function onRequest(
+    public function onSync(
         GhtRequest $request,
         GhtResponse $response
-    ) : void;
+    ): void;
 
-
+    public function onAsync() : bool;
 }

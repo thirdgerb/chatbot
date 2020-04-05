@@ -73,7 +73,7 @@ abstract class ASessionPipe implements SessionPipe
         $session = $this->next($session, $next);
 
         // 结束了就没有 after 环节了.
-        if ($this->propagation && !$session->isFinished()) {
+        if (!$session->isFinished()) {
             $session = $this->after($session);
         }
         $this->onLeave($session);

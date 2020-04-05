@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Blueprint;
 
-use Commune\Framework\Blueprint\ChatApp;
+use Commune\Framework\Blueprint\App;
 use Commune\Shell\Blueprint\Kernels\RequestKernel;
 use Commune\Shell\Blueprint\Render\Renderer;
 
@@ -19,7 +19,7 @@ use Commune\Shell\Blueprint\Render\Renderer;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  */
-interface Shell extends ChatApp
+interface Shell extends App
 {
 
     public function getChatbotName() : string;

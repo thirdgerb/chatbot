@@ -16,7 +16,7 @@ use Commune\Framework\Contracts\ConsoleLogger;
 use Commune\Framework\Contracts\LogInfo;
 use Commune\Framework\Prototype\AChatApp;
 use Commune\Ghost\Blueprint\Ghost;
-use Commune\Ghost\Blueprint\Kernels;
+use Commune\Ghost\Blueprint\GhostKernel;
 use Commune\Chatbot\ChatbotConfig;
 use Commune\Ghost\GhostConfig;
 use Commune\Ghost\Prototype\Bootstrap;
@@ -90,19 +90,12 @@ class IGhost extends AChatApp implements Ghost
         $this->reqContainer->instance(Ghost::class, $this);
 
         // 绑定 Kernel
-        $this->procContainer->bind(Kernels\MessageKernel::class, $this->ghostConfig->messageKernel);
-        $this->procContainer->bind(Kernels\ApiKernel::class, $this->ghostConfig->apiKernel);
+        $this->procContainer->bind(GhostKernel::class, $this->ghostConfig->kernel);
     }
 
-
-    public function getApiKernel(): Kernels\ApiKernel
+    public function getKernel(): GhostKernel
     {
-        return $this->getProcContainer()->get(Kernels\ApiKernel::class);
-    }
-
-    public function getMessageKernel(): Kernels\MessageKernel
-    {
-        return $this->getProcContainer()->get(Kernels\MessageKernel::class);
+        return $this->procContainer->make(GhostKernel::class);
     }
 
 

@@ -9,22 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Blueprint\Kernels;
+namespace Commune\Framework\Exceptions;
 
-use Commune\Ghost\Contracts\GhtRequest;
-use Commune\Ghost\Contracts\GhtResponse;
 
 /**
- * 消息调用的运行内核.
- *
+ * 会话级别的异常. 需要重置当前会话.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface MessageKernel
+class ChatSessionException extends AppRuntimeException
 {
-
-    public function onRequest(
-        GhtRequest $request,
-        GhtResponse $response
-    ) : void;
-
 }

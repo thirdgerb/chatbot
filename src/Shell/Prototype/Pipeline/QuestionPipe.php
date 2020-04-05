@@ -76,7 +76,7 @@ class QuestionPipe extends ASessionPipe
     ) : ? ShlSession
     {
         if (
-            $ghostInput->shm->message->isEmpty()
+            $ghostInput->shellMessage->message->isEmpty()
             && $question->isNullable()
         ) {
             $defaultAnswers = $question->getDefaultAnswers();

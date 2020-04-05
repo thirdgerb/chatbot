@@ -11,6 +11,7 @@
 
 namespace Commune\Shell;
 
+use Commune\Shell\Prototype\IShellKernel;
 use Commune\Shell\Prototype\Kernels\IRequestKernel;
 use Commune\Shell\Providers\ShlSessionServiceProvider;
 use Commune\Support\Struct\Structure;
@@ -18,13 +19,11 @@ use Commune\Support\Struct\Structure;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
- *
- *
  * @property-read string $shellName                 Shell的名称
  *
  * @property-read string[] $pipeline                Shell运行的管道
- * @property-read string[] $directives              Shell 预加载的命令. id => DirectiveClass
+ *
+ * @property-read string[] $scenes                  Shell允许的场景
  *
  * @property-read string $kernel
  *
@@ -46,16 +45,25 @@ class ShellConfig extends Structure
 
             'sessionExpire' => 3600,
 
+            'scenes' => [
+            ],
+
             'providers' => [
                 ShlSessionServiceProvider::class,
             ],
 
-            'kernel' => IRequestKernel::class,
+            'kernel' => IShellKernel::class,
 
             'pipeline' => [
 
             ],
 
         ];
+    }
+
+
+    public function allowScene(string $id) : bool
+    {
+        return in_array($id, $this->scenes);
     }
 }

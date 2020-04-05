@@ -11,7 +11,7 @@
 
 namespace Commune\Framework\Prototype\Session;
 
-use Commune\Framework\Blueprint\ChatApp;
+use Commune\Framework\Blueprint\App;
 use Commune\Framework\Blueprint\Intercom\GhostInput;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Blueprint\Server\Request;
@@ -19,7 +19,7 @@ use Commune\Framework\Blueprint\Server\Response;
 use Commune\Framework\Blueprint\Server\Server;
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Blueprint\Session\SessionEvent;
-use Commune\Framework\Exceptions\SerializeSessionException;
+use Commune\Framework\Exceptions\SerializeForbiddenException;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
 
@@ -69,7 +69,7 @@ class ASession implements Session, Spied
     protected $silent = false;
 
     /**
-     * @var ChatApp
+     * @var App
      */
     protected $app;
 
@@ -98,10 +98,10 @@ class ASession implements Session, Spied
         return $this->container;
     }
 
-    public function getApp(): ChatApp
+    public function getApp(): App
     {
         return $this->app
-            ?? $this->app = $this->container->make(ChatApp::class);
+            ?? $this->app = $this->container->make(App::class);
     }
 
     /*------ status ------*/
@@ -210,7 +210,7 @@ class ASession implements Session, Spied
 
     public function __sleep()
     {
-        throw new SerializeSessionException(static::class);
+        throw new SerializeForbiddenException(static::class);
     }
 
 

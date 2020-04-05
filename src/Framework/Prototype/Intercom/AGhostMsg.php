@@ -68,9 +68,9 @@ abstract class AGhostMsg implements GhostMsg, HasIdGenerator
         string $messageId = null
     )
     {
-        $this->shn = $shellName;
+        $this->shellName = $shellName;
         $this->cid = $cid;
-        $this->shm = $shellMessage;
+        $this->shellMessage = $shellMessage;
         $this->tid = $traceId;
         $this->mid = $messageId ?? $this->createUuId();
     }
@@ -94,7 +94,7 @@ abstract class AGhostMsg implements GhostMsg, HasIdGenerator
 
     public function replace(Message $message): void
     {
-        $this->shm->replace($message);
+        $this->shellMessage->replace($message);
     }
 
 
@@ -105,7 +105,7 @@ abstract class AGhostMsg implements GhostMsg, HasIdGenerator
             $output = new IGhostOutput(
                 $shell,
                 $cid,
-                $this->shm->derive($message),
+                $this->shellMessage->derive($message),
                 $this->tid,
                 $deliverAt
             );

@@ -35,16 +35,14 @@ use Commune\Support\Struct\Structure;
  *
  * @property-read SceneOption[] $scenes
  *
- * ## Kernels
+ * ## Kernel
+ * @property-read string $kernel
  *
- * @property-read KernelOption $kernels
  */
 class GhostConfig extends Structure
 {
     protected static $associations = [
-
         'scenes[]' => SceneOption::class,
-        'kernels' => KernelOption::class,
     ];
 
 

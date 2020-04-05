@@ -9,17 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Blueprint\Kernels;
+namespace Commune\Message\Prototype\Event;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface AsyncKernel
+class AsyncShellReqEvt extends AEvent
 {
 
-    /**
-     * 尝试处理一条消息.
-     * @return bool 处理到了消息
-     */
-    public function onMessage() : bool;
 }

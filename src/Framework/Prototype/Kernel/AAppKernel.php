@@ -11,14 +11,16 @@
 
 namespace Commune\Framework\Prototype\Kernel;
 
-use Commune\Framework\Blueprint\ChatApp;
-use Commune\Framework\Blueprint\Kernel\Kernel;
+use Commune\Framework\Blueprint\App;
+use Commune\Framework\Blueprint\AppKernel;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Blueprint\Server\Request;
 use Commune\Framework\Blueprint\Server\Response;
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Blueprint\Session\SessionPipe;
-use Commune\Framework\Exceptions\RequestException;
+use Commune\Framework\Exceptions\ChatClientException;
+use Commune\Framework\Exceptions\ChatRequestException;
+use Commune\Framework\Exceptions\ChatSessionException;
 use Commune\Framework\Prototype\Session\Events\FinishSession;
 use Commune\Framework\Prototype\Session\Events\StartSession;
 use Commune\Support\Pipeline\OnionPipeline;
@@ -26,31 +28,33 @@ use Commune\Support\Pipeline\OnionPipeline;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AKernel implements Kernel
+abstract class AAppKernel implements AppKernel
 {
     /**
-     * @var ChatApp
+     * @var App
      */
     protected $app;
 
     /**
      * AKernel constructor.
-     * @param ChatApp $app
+     * @param App $app
      */
-    public function __construct(ChatApp $app)
+    public function __construct(App $app)
     {
         $this->app = $app;
     }
 
-    abstract public function getPipes() : array;
+    abstract public function basicReqBinding(ReqContainer $container) : void;
 
     public function onRequest(
         Request $request,
         Response $response,
-        string $via,
-        bool $noState = false
+        array $middleware,
+        string $via
     ): void
     {
+        $chatId = $request->getChatId();
+
         try {
 
             // 请求不合法
@@ -65,23 +69,32 @@ abstract class AKernel implements Kernel
              * @var Session $session
              */
             $session = $reqContainer->make(Session::class);
-            if ($noState) {
-                $session->noState();
-            }
 
             $session->fire(new StartSession());
-            $this->sendSessionThroughPipes($session, $via);
+            $this->sendSessionThroughPipes($session, $via, $middleware);
 
             // 完成响应.
             $response->sendResponse();
 
-            // 请求本身可发回的异常
-            // 不记录日志. 日志通常应该抛异常的地方记录.
-        } catch (RequestException $e) {
+        // 请求偶发的异常
+        // 不记录日志. 日志通常应该抛异常的地方记录.
+        } catch (ChatRequestException $e) {
             $response->sendFailureResponse($e);
-            // 关闭 Session, 关闭客户端
 
-            // 未预料到的错误.
+        // 客户端连接需要重置
+        } catch (ChatClientException $e) {
+            $this->app->getExceptionReporter()->report($e);
+            $this->app->getServer()->closeClient($chatId);
+
+        // session 级别的异常.
+        } catch (ChatSessionException $e) {
+            $this->app->getExceptionReporter()->report($e);
+            // 重置当前 session.
+            if (isset($session)) {
+                $session->reset();
+            }
+
+        // 未预料到的错误.
         } catch (\Throwable $e) {
             $this->app->getExceptionReporter()->report($e);
             // 发送默认的异常信息.
@@ -89,6 +102,7 @@ abstract class AKernel implements Kernel
 
         } finally {
 
+            // 关闭 Session, 关闭客户端
             if (isset($session)) {
                 $session->fire(new FinishSession());
                 $session->finish();
@@ -100,31 +114,46 @@ abstract class AKernel implements Kernel
         }
     }
 
-    public function onSyncRequest(
+    public function handleRequest(
         Request $request,
         Response $response,
-        bool $noState = false
+        array $middleware
     ): void
     {
-        $this->onRequest($request, $response, SessionPipe::SYNC, $noState);
+        $this->onRequest(
+            $request,
+            $response,
+            $middleware,
+            SessionPipe::SYNC
+        );
     }
 
-    public function onAsyncRequest(
+    public function asyncHandleRequest(
         Request $request,
         Response $response,
-        bool $noState = false
+        array $middleware
     ): void
     {
-        $this->onRequest($request, $response, SessionPipe::ASYNC_INPUT, $noState);
+        $this->onRequest(
+            $request,
+            $response,
+            $middleware,
+            SessionPipe::ASYNC_INPUT
+        );
     }
 
-    public function onAsyncResponse(
+    public function asyncHandleResponse(
         Request $request,
         Response $response,
-        bool $noState = false
+        array $middleware
     ): void
     {
-        $this->onRequest($request, $response, SessionPipe::ASYNC_OUTPUT, $noState);
+        $this->onRequest(
+            $request,
+            $response,
+            $middleware,
+            SessionPipe::ASYNC_OUTPUT
+        );
     }
 
 
@@ -133,16 +162,18 @@ abstract class AKernel implements Kernel
      *
      * @param Session $session
      * @param string $via
+     * @param array $middleware
      * @return Session
      */
-    protected function sendSessionThroughPipes(Session $session, string $via) : Session
+    protected function sendSessionThroughPipes(
+        Session $session,
+        string $via,
+        array $middleware
+    ) : Session
     {
         $pipeline = new OnionPipeline($session->getContainer());
 
-        // 合成为管道.
-        $pipes = $this->getPipes();
-
-        foreach ($pipes as $pipe) {
+        foreach ($middleware as $pipe) {
             $pipeline->through($pipe);
         }
 
@@ -166,8 +197,8 @@ abstract class AKernel implements Kernel
 
     protected function validateRequest(Request $request) : bool
     {
-        if ($request->validate()) {
-            return true;
+        if (!$request->validate()) {
+            return false;
         }
 
         $warning = $this->app
@@ -178,7 +209,7 @@ abstract class AKernel implements Kernel
             ->getLogger()
             ->warning($warning);
 
-        return false;
+        return true;
     }
 
 
@@ -197,16 +228,14 @@ abstract class AKernel implements Kernel
         // 绑定 request
         $reqContainer->share(ReqContainer::class, $reqContainer);
 
-        foreach ($request->getInterfaces() as $interface) {
-            $reqContainer->share($interface, $request);
-        }
+        $reqContainer->share(Request::class, $request);
+        $reqContainer->share(Response::class, $response);
 
-        foreach ($response->getInterfaces() as $interface) {
-            $reqContainer->share($interface, $response);
-        }
+        $this->basicReqBinding($reqContainer);
 
         // 重新 boot 服务.
         $this->app->bootReqServices($reqContainer);
         return $reqContainer;
     }
+
 }

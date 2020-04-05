@@ -9,19 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Events;
+namespace Commune\Framework\Exceptions;
 
-use Commune\Ghost\Blueprint\Event\GhostEvent;
 
 /**
+ * 需要关闭客户端连接 (如果有长连接) 的异常.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StartGhostSession implements GhostEvent
+class ChatClientException extends AppRuntimeException
 {
-    public function getId(): string
-    {
-        return static::class;
-    }
-
-
 }

@@ -11,10 +11,15 @@
 
 namespace Commune\Framework\Exceptions;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RequestException extends \RuntimeException
+class SerializeForbiddenException extends AppLogicException
 {
+
+    public function __construct(string $sessionClass)
+    {
+        parent::__construct("forbid to serialize $sessionClass");
+    }
+
 }

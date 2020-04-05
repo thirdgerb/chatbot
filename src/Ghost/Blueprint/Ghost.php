@@ -11,18 +11,14 @@
 
 namespace Commune\Ghost\Blueprint;
 
-use Commune\Framework\Blueprint\ChatApp;
-use Commune\Ghost\Blueprint\Kernels\ApiKernel;
-use Commune\Ghost\Blueprint\Kernels\MessageKernel;
+use Commune\Framework\Blueprint\App;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Ghost extends ChatApp
+interface Ghost extends App
 {
     public function getChatbotName() : string;
 
-    public function getApiKernel() : ApiKernel;
-
-    public function getMessageKernel() : MessageKernel;
+    public function getKernel() : GhostKernel;
 }

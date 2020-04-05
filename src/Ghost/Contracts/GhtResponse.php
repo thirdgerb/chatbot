@@ -11,36 +11,11 @@
 
 namespace Commune\Ghost\Contracts;
 
-use Commune\Framework\Blueprint\Intercom\ShellScope;
+use Commune\Framework\Blueprint\Server\Response;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- * @property-read ShellScope $scope
  */
-interface GhtResponse
+interface GhtResponse extends Response
 {
-
-    /*--------- 发送响应 ----------*/
-
-    /**
-     * 将当前准备要发送的信息, 全部发送给用户.
-     *
-     * send all messages from buffer and clear buffer
-     */
-    public function sendResponse() : void;
-
-    /**
-     * 告知请求不合法. 这样的信息不走机器人, 直接拒绝掉.
-     */
-    public function sendRejectResponse() : void;
-
-    /**
-     * 系统响应失败, 而且无法用消息管道通知用户.
-     * 通常因为异常导致.
-     *
-     * @param \Exception|null $e   异常, 会使用异常的 message 和 code. 同时有一个默认值.
-     */
-    public function sendFailureResponse(\Exception $e = null) : void;
-
-
 }
