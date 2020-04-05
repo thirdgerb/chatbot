@@ -24,4 +24,6 @@ interface GhtRequest extends Request
      * @return GhostInput
      */
     public function getGhostInput() : GhostInput;
+
+    public function getSessionId() : string;
 }

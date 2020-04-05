@@ -49,4 +49,8 @@ interface LogInfo
     /*------ session ------*/
 
     public function sessionPipelineLog() : string;
+
+    /*------ shell ------*/
+
+    public function shellNotAllowScene(string $shellName, string $sceneId) : string;
 }

@@ -66,7 +66,7 @@ class IText extends AMessage implements TextMsg
 
     public function getText(): string
     {
-        return $this->getText();
+        return $this->text;
     }
 
 

@@ -11,15 +11,20 @@
 
 namespace Commune\Ghost\Blueprint\Chat;
 
+use Commune\Framework\Blueprint\Session\Session;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read ChatScope $scope
  */
 interface Chat
 {
-    public function getId() : string;
+    public function getChatId() : string;
+
+    public function getSessionId() : string;
+
+    public function getScope() : ChatScope;
+
+    public function resetSession() : void;
 
     public function lock() : bool;
 
@@ -27,4 +32,5 @@ interface Chat
 
     public function setScope(ChatScope $scope) : void;
 
+    public function save(Session $session) : void;
 }

@@ -12,29 +12,26 @@
 namespace Commune\Ghost\Prototype\Kernel;
 
 use Commune\Framework\Blueprint\Intercom\GhostInput;
-use Commune\Framework\Blueprint\Server\Response;
+use Commune\Ghost\Contracts\GhtResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class AsyncGhtResponse implements Response
+class AsyncGhtResponse implements GhtResponse
 {
-
     /**
      * @var GhostInput
      */
     protected $ghostInput;
 
-
     /**
-     * GhtAsyncResponse constructor.
+     * AsyncGhtRequest constructor.
      * @param GhostInput $ghostInput
      */
     public function __construct(GhostInput $ghostInput)
     {
         $this->ghostInput = $ghostInput;
     }
-
 
     public function getChatId(): string
     {
@@ -46,16 +43,24 @@ class AsyncGhtResponse implements Response
         return $this->ghostInput->traceId;
     }
 
+    public function getUserId(): string
+    {
+        return $this->ghostInput->shellMessage->scope->userId;
+    }
+
     public function sendResponse(): void
     {
+        // TODO: Implement sendResponse() method.
     }
 
     public function sendRejectResponse(): void
     {
+        // TODO: Implement sendRejectResponse() method.
     }
 
     public function sendFailureResponse(\Exception $e = null): void
     {
+        // TODO: Implement sendFailureResponse() method.
     }
 
 

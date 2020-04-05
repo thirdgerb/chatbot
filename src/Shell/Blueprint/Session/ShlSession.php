@@ -12,6 +12,7 @@
 namespace Commune\Shell\Blueprint\Session;
 
 use Commune\Framework\Blueprint\Intercom\GhostInput;
+use Commune\Framework\Blueprint\Server\Server;
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Blueprint\Session\SessionLogger;
 use Commune\Framework\Contracts\Cache;
@@ -40,6 +41,7 @@ use Commune\Shell\Contracts\ShlResponse;
  * @property-read SessionLogger $logger         会话自己的日志, 会记录 Req 相关信息.
  * @property-read ShellInput $shellInput
  * @property-read GhostInput $ghostInput
+ * @property-read Server $server
  *
  * 请求级单例
  *

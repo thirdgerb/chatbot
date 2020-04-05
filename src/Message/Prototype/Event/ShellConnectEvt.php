@@ -9,17 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Blueprint\Memory;
-
-use Commune\Framework\Blueprint\Session\Session;
+namespace Commune\Message\Prototype\Event;
 
 
 /**
+ * Shell 重新连接事件
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Memory
+class ShellConnectEvt extends AEvent
 {
-
-    public function save(Session $session) : void;
-
 }

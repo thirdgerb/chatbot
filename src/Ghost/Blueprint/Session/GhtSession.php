@@ -11,15 +11,18 @@
 
 namespace Commune\Ghost\Blueprint\Session;
 
+use Commune\Framework\Blueprint\Session\Session;
+use Commune\Framework\Blueprint\Session\SessionLogger;
+use Commune\Framework\Blueprint\Session\SessionStorage;
 use Commune\Framework\Contracts\Cache;
 use Commune\Framework\Contracts\Messenger;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Blueprint\Intercom;
 use Commune\Ghost\Blueprint;
-use Commune\Ghost\Contracts;
+use Commune\Ghost\Contracts\GhtRequest;
+use Commune\Ghost\Contracts\GhtResponse;
+use Commune\Ghost\Contracts\SessionDriver;
 use Commune\Message\Blueprint\Message;
-use Commune\Support\Babel\BabelResolver;
-use SebastianBergmann\CodeCoverage\Driver\Driver;
 
 
 /**
@@ -38,7 +41,9 @@ use SebastianBergmann\CodeCoverage\Driver\Driver;
  * @property-read Scene $scene                                  场景信息
  * @property-read GhtSessionScope $scope                        本轮对话的作用域
  * @property-read Blueprint\Chat\Chat $chat
- * @property-read GhtSessionLogger $logger                      请求级日志
+ * @property-read SessionLogger $logger                         请求级日志
+ * @property-read GhtRequest $request
+ * @property-read GhtResponse $response
  *
  * ## Ghost 组件
  *
@@ -48,25 +53,21 @@ use SebastianBergmann\CodeCoverage\Driver\Driver;
  *
  * ## 驱动类组件
  *
- * @property-read Driver $driver                                Session 的驱动, 读写各种数据.
+ * @property-read SessionDriver $driver                         Session 的驱动, 读写各种数据.
  * @property-read Cache $cache                                  缓存
  * @property-read Messenger $messenger
+ * @property-read SessionStorage $storage                       Session 缓存.
  *
  * ## 功能组件
  *
- * @property-read Blueprint\Auth\Authority $authority
+ * @property-read Blueprint\Auth\Authority $auth
  * @property-read Blueprint\Memory\Memory $memory               机器人的记忆
  * @property-read Blueprint\Speak\Speaker $speaker
+ * @property-read Blueprint\Runtime\Runtime $runtime
  *
  */
-interface GhtSession
+interface GhtSession extends Session
 {
-    /*------ silence ------*/
-
-    /**
-     * 让 Session 不做任何记录.
-     */
-    public function silence() : void;
 
     /*------ output ------*/
 
@@ -86,30 +87,15 @@ interface GhtSession
      */
     public function getOutputs() : array;
 
-    /*------ event ------*/
-
     /**
-     * 注册一个handler, 用于在 Ghost 不同生命周期的时候进行响应.
-     * @param string $eventId
-     * @param callable $handler
+     * @return Message[][]
+     *  [
+     *    chatId => [
+     *         $message1,
+     *         $message2,
+     *      ]
+     *  ]
      */
-    public function listen(string $eventId, callable $handler) : void;
+    public function getDelivery() : array;
 
-    /**
-     * 触发一个事件
-     * @param Blueprint\Event\GhostEvent $event
-     */
-    public function fire(Blueprint\Event\GhostEvent $event) : void;
-
-    /*------ life circle ------*/
-
-    /**
-     * 结束 Session, 处理垃圾回收
-     */
-    public function finish() : void;
-
-    /**
-     * @return bool
-     */
-    public function isFinished() : bool;
 }

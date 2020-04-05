@@ -13,9 +13,9 @@ namespace Commune\Shell\Prototype\Pipeline;
 
 use Commune\Framework\Exceptions\ChatRequestException;
 use Commune\Framework\Prototype\Session\ASessionPipe;
-use Commune\Message\Constants\OutgoingIntents;
+use Commune\Message\Constants\SystemIntents;
 use Commune\Message\Prototype\IIntentMsg;
-use Commune\Message\Prototype\Intents\IntercomFailureInt;
+use Commune\Message\Prototype\SystemInts\IntercomFailureInt;
 use Commune\Shell\Blueprint\Session\ShlSession;
 
 /**

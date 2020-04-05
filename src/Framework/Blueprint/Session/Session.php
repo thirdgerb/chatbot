@@ -27,10 +27,20 @@ interface Session
 {
     /*------ properties ------*/
 
+
     /**
+     * Session 在所有进程的唯一ID
+     * @return string
+     */
+    public function getUuId() : string;
+
+
+    /**
+     * Session 所处的 Chat Id
      * @return string
      */
     public function getChatId() : string;
+
 
     /**
      * @return string
@@ -38,10 +48,10 @@ interface Session
     public function getSessionId() : string;
 
     /**
-     * Session 在所有进程的唯一ID
+     * 当前请求的场景 ID
      * @return string
      */
-    public function getUuId() : string;
+    public function getSceneId() : string;
 
     /**
      * @param string $name
@@ -50,6 +60,7 @@ interface Session
     public function setProperty(string $name, $object): void;
 
     /**
+     * Session 缓存的过期时间.
      * @return int
      */
     public function getSessionExpire() : int;
@@ -102,11 +113,17 @@ interface Session
     /*------ status save ------*/
 
     /**
-     * 不进行保存.
+     * 设置为无状态请求
      */
     public function noState() : void;
 
     /**
+     * 重置 session 信息.
+     */
+    public function reset() : void;
+
+    /**
+     * 是否是无状态的 session
      * @return bool
      */
     public function isStateless() : bool;
@@ -114,13 +131,10 @@ interface Session
     /*------ output ------*/
 
     /**
+     * 回复单条 message
      * @param Message $message
      */
     public function output(Message $message) : void;
-
-    /*------ reset ------*/
-
-    public function reset() : void;
 
     /*------ finish ------*/
 

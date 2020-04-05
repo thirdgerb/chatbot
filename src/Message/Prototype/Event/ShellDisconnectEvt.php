@@ -9,13 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Constants;
+namespace Commune\Message\Prototype\Event;
 
 
 /**
+ * Shell 断开连接事件.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface IncomingIntent
+class ShellDisconnectEvt extends AEvent
 {
-
 }

@@ -9,34 +9,34 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Prototype\Intents;
+namespace Commune\Message\Prototype\SystemInts;
 
 use Commune\Message\Blueprint\Tag\MsgLevel;
-use Commune\Message\Constants\OutgoingIntents;
+use Commune\Message\Constants\SystemIntents;
 use Commune\Message\Prototype\IIntentMsg;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read int $errcode
- * @property-read string $errmsg
+ * @property-read string $commandName
+ * @property-read string $errorMsg
  */
-class IntercomFailureInt extends IIntentMsg
+class CommandInvalidInt extends IIntentMsg
 {
     public function __construct(
-        string $message = '',
-        int $code = 0
+        string $commandName = '',
+        string $errorMsg = ''
     )
     {
         parent::__construct(
-            OutgoingIntents::INTERCOM_FAILURE,
+            SystemIntents::COMMAND_INVALID,
             [
-                'errcode' => $code,
-                'errmsg' => $message
+                'commandName' => $commandName,
+                'error' => $errorMsg
             ],
             MsgLevel::ERROR
         );
     }
-
 
 }

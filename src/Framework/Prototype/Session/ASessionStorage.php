@@ -19,15 +19,12 @@ use Commune\Support\RunningSpy\SpyTrait;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 abstract class ASessionStorage implements SessionStorage, Spied, HasIdGenerator
 {
     use SpyTrait, IdGeneratorHelper;
-
-    const SESSION_ID = 'sessionId';
 
     /**
      * @var string
@@ -129,6 +126,8 @@ abstract class ASessionStorage implements SessionStorage, Spied, HasIdGenerator
 
     public function __destruct()
     {
+        $this->cache = [];
+        $this->data = [];
         static::removeRunningTrace($this->traceId);
     }
 

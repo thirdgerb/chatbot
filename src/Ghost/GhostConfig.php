@@ -38,6 +38,9 @@ use Commune\Support\Struct\Structure;
  * ## Kernel
  * @property-read string $kernel
  *
+ * ## Session
+ * @property-read int $sessionExpire
+ *
  */
 class GhostConfig extends Structure
 {
@@ -67,6 +70,8 @@ class GhostConfig extends Structure
             'kernels' => KernelOption::stub(),
 
             'scenes' => [],
+
+            'sessionExpire' => 3600,
         ];
     }
 

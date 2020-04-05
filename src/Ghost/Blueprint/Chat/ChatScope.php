@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Blueprint\Chat;
 
 use Commune\Support\Arr\ArrayAndJsonAble;
+use Commune\Support\Babel\BabelSerializable;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -20,15 +21,23 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @property-read string $chatbotName       机器人的名称.
  * @property-read string $chatId            会话的唯一ID
- * @property-read string $userId            发送与接受请求的用户 id, 用于追踪唯一用户. 平台相通.
  * @property-read string $sessionId         所属的 Session Id. 一个 Chat 不同时间有多个 Session
  *
- * @property-read string[] $shells          Chat 已经建立的 Shell 通道.
+ * @property-read string[] $shellChatIds          Chat 已经建立的 Shell 通道.
  *  [
- *      shellName => chatId
+ *      chatId => shellName
  *  ]
  */
-interface ChatScope extends ArrayAndJsonAble
+interface ChatScope extends ArrayAndJsonAble, BabelSerializable
 {
 
+    public function setSessionId(string $sessionId) : void;
+
+    public function resetSessionId() : void;
+
+    public function isChanged() : bool;
+
+    public function addShellChat(string $chatId, string $shellName) : void;
+
+    public function removeShellChat(string $chatId) : void;
 }

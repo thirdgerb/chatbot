@@ -19,7 +19,7 @@ use Commune\Ghost\Blueprint\Chat\ChatScope;
  */
 interface SessionDriver
 {
-    /*----- scope -----*/
+    /*----- chat scope -----*/
 
     public function findScope(string $shellChatId) : ? ChatScope;
 

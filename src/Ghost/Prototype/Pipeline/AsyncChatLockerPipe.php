@@ -14,21 +14,16 @@ namespace Commune\Ghost\Prototype\Pipeline;
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Prototype\Session\ASessionPipe;
 use Commune\Ghost\Blueprint\Session\GhtSession;
-use Commune\Message\Constants\SystemIntents;
-use Commune\Message\Prototype\IIntentMsg;
-
 
 /**
- * 同步锁, 用于锁定对话.
- *
+ * 异步锁. 如果没锁上, 重新入队.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ChatLockerPipe extends ASessionPipe
+class AsyncChatLockerPipe extends ASessionPipe
 {
     protected $locked = false;
 
     /**
-     *
      * @param GhtSession $session
      * @param callable $next
      * @return GhtSession
@@ -63,9 +58,9 @@ class ChatLockerPipe extends ASessionPipe
         if ($this->locked) {
             return $session;
         }
-        $session->output(new IIntentMsg(SystemIntents::CHAT_BLOCKED));
-        // 挡住了就不要继续了.
-        $this->stopPropagation();
+
+        $session->messenger->pushInput($session->ghostInput);
+        $session->finish();
         return $session;
     }
 
@@ -80,5 +75,6 @@ class ChatLockerPipe extends ASessionPipe
         }
         return $session;
     }
+
 
 }

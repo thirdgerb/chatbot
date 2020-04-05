@@ -37,9 +37,6 @@ interface Verbal
         self::DEBUG,
     ];
 
-    /**
-     * @return string
-     */
     public function getText() : string;
 
     /**

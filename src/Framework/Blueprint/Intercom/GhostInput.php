@@ -23,9 +23,8 @@ use Commune\Message\Blueprint\Message;
  * @property-read string $shellName             平台的名称
  * @property-read string $traceId               链路追踪的ID
  * @property-read ShellInput $shellMessage      平台输入消息
- * @property-read bool $stateless               是否无状态请求
  *
- * @property-read string $sceneId               请求场景信息
+ * @property-read bool $stateless               是否无状态请求
  * @property-read array $sceneEnv               请求场景变量
  * @property-read Comprehension $comprehension  对请求的抽象理解
  *

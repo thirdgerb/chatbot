@@ -13,6 +13,7 @@ namespace Commune\Message\Prototype\Event;
 
 
 /**
+ * shell 异步请求消息.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class AsyncShellReqEvt extends AEvent

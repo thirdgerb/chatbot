@@ -9,10 +9,10 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Prototype\Intents;
+namespace Commune\Message\Prototype\SystemInts;
 
 use Commune\Message\Blueprint\Tag\MsgLevel;
-use Commune\Message\Constants\OutgoingIntents;
+use Commune\Message\Constants\SystemIntents;
 use Commune\Message\Prototype\IIntentMsg;
 
 
@@ -20,17 +20,25 @@ use Commune\Message\Prototype\IIntentMsg;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $commandName
+ * @property-read string $args
+ * @property-read string $options
  */
-class CommandNotExistsInt extends IIntentMsg
+class CommandDescInt extends IIntentMsg
 {
-    public function __construct(string $commandName = '')
+    public function __construct(
+        string $commandName = '',
+        string $args = '',
+        string $options = ''
+    )
     {
         parent::__construct(
-            OutgoingIntents::COMMAND_NOT_EXISTS,
+            SystemIntents::COMMAND_DESC,
             [
                 'commandName' => $commandName,
+                'args' => $args,
+                'opts' => $options
             ],
-            MsgLevel::ERROR
+            MsgLevel::INFO
         );
     }
 

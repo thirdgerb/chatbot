@@ -14,6 +14,7 @@ namespace Commune\Shell\Prototype\Session;
 use Commune\Framework\Blueprint\Intercom\GhostInput;
 use Commune\Framework\Blueprint\Server\Request;
 use Commune\Framework\Blueprint\Server\Response;
+use Commune\Framework\Blueprint\Server\Server;
 use Commune\Framework\Blueprint\Session\SessionLogger;
 use Commune\Framework\Blueprint\Session\SessionStorage;
 use Commune\Framework\Contracts;
@@ -51,19 +52,15 @@ class IShlSession extends ASession implements ShlSession, HasIdGenerator
         'shellInput' => ShellInput::class,
         'ghostInput' => GhostInput::class,
         'shellConfig' => ShellConfig::class,
+        'server' => Server::class,
     ];
 
-    const SESSION_ID_KEY = 'shell:%s:chat:%s:sessionId';
+    const SESSION_ID_KEY = 'shell:%s:chat:%s:sid';
 
     /**
      * @var ShellOutput[]
      */
     protected $outputs = [];
-
-    /**
-     * @var string
-     */
-    protected $sessionId;
 
     /**
      * @var string
@@ -75,7 +72,19 @@ class IShlSession extends ASession implements ShlSession, HasIdGenerator
      */
     protected $shellInput;
 
+    /**
+     * @var string
+     */
+    protected $sceneId;
+
+
+    /**
+     * @var string
+     */
+    protected $sessionId;
+
     /*------ i/o ------*/
+
     public function getRequest(): Request
     {
         return $this->request;
@@ -84,6 +93,50 @@ class IShlSession extends ASession implements ShlSession, HasIdGenerator
     public function getResponse(): Response
     {
         return $this->response;
+    }
+
+    /*------ properties ------*/
+
+    public function getSessionId(): string
+    {
+        if (isset($this->sessionId)) {
+            return $this->sessionId;
+        }
+
+        if ($this->isStateless()) {
+            return $this->sessionId = $this->request->getSessionId()
+                ?? $this->createUuId();
+        }
+
+        $id = $this->request->getSessionId();
+        if (isset($id)) {
+            return $this->sessionId = $id;
+        }
+
+        $key = $this->makeSessionIdKey();
+
+        $id = $this->cache->get($key);
+        if (empty($id)) {
+            $id = $this->createUuId();
+            $this->cache->set($key, $id, $this->getSessionExpire());
+        } else {
+            $this->cache->expire($key, $this->getSessionExpire());
+        }
+
+        return $this->sessionId = $id;
+    }
+
+    public function reset(): void
+    {
+        if (!$this->isStateless()) {
+            $this->cache->forget($this->makeSessionIdKey());
+        }
+    }
+
+
+    protected function makeSessionIdKey() : string
+    {
+        return printf(static::SESSION_ID_KEY, $this->shell->getShellName(), $this->getChatId());
     }
 
 
@@ -107,15 +160,6 @@ class IShlSession extends ASession implements ShlSession, HasIdGenerator
         return $this->logger;
     }
 
-    protected function getSessionIdKey(): string
-    {
-        return printf(
-            static::SESSION_ID_KEY,
-            $this->shell->getShellName(),
-            $this->getChatId()
-        );
-    }
-
     public function getSessionExpire(): int
     {
         return $this->shellConfig->sessionExpire;
@@ -126,14 +170,27 @@ class IShlSession extends ASession implements ShlSession, HasIdGenerator
         return $this->cache;
     }
 
-    public function reset(): void
+    public function getSceneId(): string
     {
-        if ($this->isStateless()) {
-            return;
+        if (isset($this->sceneId)) {
+            return $this->sceneId;
         }
 
-        $key = $this->getSessionIdKey();
-        $this->cache->forget($key);
+        $request = $this->request;
+        $id = $request->getSceneId();
+        $allow = $this->shellConfig->allowScene($id);
+        if ($allow) {
+            return $this->sceneId = $id;
+        }
+
+        $warning = $this->getApp()->getLogInfo()->shellNotAllowScene(
+            $this->shell->getShellName(),
+            $id
+        );
+
+        $this->getLogger()->warning($warning);
+
+        return $this->sceneId = '';
     }
 
 

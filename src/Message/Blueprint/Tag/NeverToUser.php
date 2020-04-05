@@ -9,17 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Blueprint\Memory;
-
-use Commune\Framework\Blueprint\Session\Session;
+namespace Commune\Message\Blueprint\Tag;
 
 
 /**
+ * 这类消息不应该发送给用户.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Memory
+interface NeverToUser
 {
-
-    public function save(Session $session) : void;
 
 }

@@ -22,6 +22,7 @@ use Commune\Support\DI\Injectable;
  */
 interface Message extends ArrayAndJsonAble, BabelSerializable, Injectable
 {
+
     /**
      * @return bool
      */

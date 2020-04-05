@@ -14,14 +14,19 @@ namespace Commune\Ghost\Prototype;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Blueprint\Server\Request;
 use Commune\Framework\Blueprint\Server\Response;
+use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Prototype\Kernel\AAppKernel;
 use Commune\Ghost\Blueprint\Ghost;
 use Commune\Ghost\Blueprint\GhostKernel;
+use Commune\Ghost\Blueprint\Session\GhtSession;
 use Commune\Ghost\Contracts\GhtRequest;
 use Commune\Ghost\Contracts\GhtResponse;
 use Commune\Ghost\GhostConfig;
 use Commune\Ghost\Prototype\Kernel\AsyncGhtRequest;
 use Commune\Ghost\Prototype\Kernel\AsyncGhtResponse;
+use Commune\Ghost\Prototype\Pipeline\AsyncChatLockerPipe;
+use Commune\Ghost\Prototype\Pipeline\ChatLockerPipe;
+use Commune\Ghost\Prototype\Pipeline\GhostMessengerPipe;
 
 
 /**
@@ -31,7 +36,25 @@ class IGhostKernel extends AAppKernel implements GhostKernel
 {
     /*---- config ----*/
 
-    protected $syncMiddleware = [];
+    protected $headPipes = [
+        ChatLockerPipe::class,
+        GhostMessengerPipe::class,
+    ];
+
+    protected $rearPipes = [
+
+    ];
+
+
+    protected $asyncHeadPipes = [
+        AsyncChatLockerPipe::class,
+        GhostMessengerPipe::class
+    ];
+
+    protected $asyncRearPipes = [
+
+    ];
+
 
     /*---- cached ----*/
 
@@ -51,10 +74,16 @@ class IGhostKernel extends AAppKernel implements GhostKernel
         parent::__construct($app);
     }
 
-    public function basicReqBinding(ReqContainer $container): void
+    protected function basicReqBinding(ReqContainer $container): void
     {
-        $container->singleton(GhtRequest::class, Request::class);
-        $container->singleton(GhtResponse::class, Response::class);
+        $container->alias(GhtRequest::class, Request::class);
+        $container->alias(GhtResponse::class, Response::class);
+    }
+
+    protected function makeSession(ReqContainer $container): Session
+    {
+        $session = $container->make(GhtSession::class);
+        return $session;
     }
 
 

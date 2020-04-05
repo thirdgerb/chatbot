@@ -11,20 +11,15 @@
 
 namespace Commune\Message\Blueprint;
 
-
 /**
  * 用于同步当前的 Context.
- * 通常不一定要渲染.
+ * 如果端上能对 Context 作出响应, 则有必要添加该 Message.
+ * Ghost 也应该对 Context 消息作出响应, 强制改变状态.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface ContextMsg extends Message
 {
-    /**
-     * @return string
-     */
-    public function getContextId() : string;
-
     /**
      * @return string
      */

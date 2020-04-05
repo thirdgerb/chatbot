@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Runtime;
 
+use Commune\Framework\Blueprint\Session\Session;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -20,6 +21,6 @@ interface Runtime
 
     public function getProcess() : Process;
 
-    public function save() : void;
+    public function save(Session $session) : void;
 
 }

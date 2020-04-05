@@ -15,20 +15,7 @@ namespace Commune\Message\Constants;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface OutgoingIntents
+interface UserIntent
 {
-    /*------- messenger -------*/
-
-    const INTERCOM_FAILURE = 'system.intercom.failure';
-
-    const CHAT_BLOCKED = 'system.chat.blocked';
-
-    /*------- command -------*/
-
-    const COMMAND_INVALID = 'system.command.invalid';
-
-    const COMMAND_NOT_EXISTS = 'system.command.notExists';
-
-    const COMMAND_DESC = 'system.command.desc';
 
 }

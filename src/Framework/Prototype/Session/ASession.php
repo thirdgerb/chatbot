@@ -54,11 +54,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     /**
      * @var string
      */
-    protected $sessionId;
-
-    /**
-     * @var string
-     */
     protected $uuid;
 
     /**
@@ -91,8 +86,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     }
 
     /*------ abstract ------*/
-
-    abstract protected function getSessionIdKey() :  string;
 
     abstract protected function flushInstances() : void;
 
@@ -128,27 +121,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         return $this->getApp()->getServer();
     }
 
-    public function getSessionId(): string
-    {
-        if ($this->isStateless()) {
-            return $this->sessionId
-                ?? $this->sessionId = $this->createUuId();
-        }
-
-        $key = $this->getSessionIdKey();
-        $cache = $this->getCache();
-        $expire = $this->getSessionExpire();
-        $expire = $expire > 0 ? $expire : null;
-
-        $id = $cache->get($key);
-
-        if (empty($id)) {
-           $id = $this->createUuId();
-           $cache->set($key, $id, $expire);
-        }
-        $cache->expire($key, $expire);
-        return $this->sessionId = $id;
-    }
 
     public function isFinished(): bool
     {

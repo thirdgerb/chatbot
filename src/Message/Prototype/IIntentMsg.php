@@ -13,6 +13,7 @@ namespace Commune\Message\Prototype;
 
 use Commune\Message\Blueprint\IntentMsg;
 use Commune\Message\Blueprint\Tag\MsgLevel;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -49,7 +50,7 @@ class IIntentMsg extends AMessage implements IntentMsg
         float $createdAt = null
     )
     {
-        $this->intentName = $intentName;
+        $this->intentName = StringUtils::namespaceSlashToDot($intentName);
         $this->entities = $entities;
         $this->level = $level;
         parent::__construct($createdAt);

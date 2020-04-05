@@ -18,7 +18,7 @@ use Commune\Framework\Blueprint\Session\SessionCmd;
 use Commune\Framework\Blueprint\Session\SessionCmdPipe;
 use Commune\Message\Blueprint\Message;
 use Commune\Message\Prototype\IIntentMsg;
-use Commune\Message\Prototype\Intents\CommandInvalidInt;
+use Commune\Message\Prototype\SystemInts\CommandInvalidInt;
 use Psr\Log\LoggerTrait;
 use Symfony\Component\Console\Input\InputOption;
 

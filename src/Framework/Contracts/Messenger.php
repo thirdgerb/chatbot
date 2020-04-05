@@ -60,6 +60,8 @@ interface Messenger
     public function sendOutputs(array $messages) : int;
 
 
+    public function hasOutput(string $shellName, string $shellChatId) : bool;
+
     /**
      * 取出一个 Shell + Chat 的所有异步消息.
      *
@@ -78,12 +80,13 @@ interface Messenger
     /*-------- 订阅  ---------*/
 
     /**
-     * 监听任何一条消息
-     * 当 Shell 可以主动推送任何 Chat 消息时, 可以通过这种方式来获取
+     * 监听某个 shell 是否有新的 output chat
+     * 用于全异步发送.
+     * 不过考虑到消费能力, 这个管道的消息可以设置上限.
      *
      * @param string $shellName
-     * @return GhostOutput|null
+     * @return string  outputting chatId
      */
-    public function popOutput(string $shellName) : ? GhostOutput;
+    public function popOutputtingChat(string $shellName) : ? string;
 
 }

@@ -25,7 +25,7 @@ class AsyncGhtRequest implements GhtRequest
     protected $ghostInput;
 
     /**
-     * AsyncGhostInputReq constructor.
+     * AsyncGhtRequest constructor.
      * @param GhostInput $ghostInput
      */
     public function __construct(GhostInput $ghostInput)
@@ -41,7 +41,7 @@ class AsyncGhtRequest implements GhtRequest
 
     public function isStateless(): bool
     {
-        return false;
+        return $this->ghostInput->stateless;
     }
 
     public function validate(): bool
@@ -54,14 +54,20 @@ class AsyncGhtRequest implements GhtRequest
         return $this->ghostInput->toJson();
     }
 
+    public function getSessionId(): string
+    {
+        return $this->ghostInput->shellMessage->scope->sessionId;
+    }
+
+
     public function getLogContext(): array
     {
         return [
-            'shn' => $this->ghostInput->shellName,
-            'cid' => $this->ghostInput->chatId,
-            'tid' => $this->ghostInput->traceId,
-            'sid' => $this->ghostInput->sceneId,
-            'mid' => $this->ghostInput->messageId
+            'chatId' => $this->getChatId(),
+            'shellName' => $this->ghostInput->shellName,
+            'sessionId' => $this->getSessionId(),
+            'sceneId' => $this->getSceneId(),
+            'messageId' => $this->getMessageId()
         ];
     }
 
@@ -83,6 +89,21 @@ class AsyncGhtRequest implements GhtRequest
     public function getChatId(): string
     {
         return $this->ghostInput->chatId;
+    }
+
+    public function getUserId(): string
+    {
+        return $this->ghostInput->shellMessage->scope->userId;
+    }
+
+    public function getMessageId(): string
+    {
+        return $this->ghostInput->messageId;
+    }
+
+    public function getSceneId(): ? string
+    {
+        return $this->ghostInput->sceneId;
     }
 
 

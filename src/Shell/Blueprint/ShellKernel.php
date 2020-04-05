@@ -36,8 +36,16 @@ interface ShellKernel extends AppKernel
      *
      * @param ShlResponse $response
      */
-    public function onAsync(
+    public function onAsyncResponse(
         ShlResponse $response
     ) : void;
 
+
+    /**
+     * 异步发送请求.
+     * @param ShlRequest $request
+     */
+    public function onAsyncRequest(
+        ShlRequest $request
+    ) : void;
 }

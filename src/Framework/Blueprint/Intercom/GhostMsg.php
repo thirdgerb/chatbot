@@ -28,6 +28,20 @@ use Commune\Support\Babel\BabelSerializable;
  */
 interface GhostMsg extends BabelSerializable, ArrayAndJsonAble
 {
+    /*----- properties -------*/
+
+    public function getMessage() : Message;
+
+    public function getUserName() : string;
+
+    public function getUserId() : string;
+
+    public function getSessionId() : ? string;
+
+    public function getSceneId() : string;
+
+    public function getChatbotName() : string;
+
     /**
      * 根据当前消息的作用域, 衍生出不同发送渠道的消息
      *

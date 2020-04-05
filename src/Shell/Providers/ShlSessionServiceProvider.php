@@ -106,7 +106,7 @@ class ShlSessionServiceProvider extends ServiceProvider
                     'chatId' => $session->getChatId(),
                     'userId' => $request->getUserId(),
                     'sessionId' => $request->getSessionId(),
-                    'sceneId' => $request->getSceneId(),
+                    'sceneId' => $session->getSceneId(),
                 ]);
             }
         );

@@ -44,7 +44,9 @@ abstract class AAppKernel implements AppKernel
         $this->app = $app;
     }
 
-    abstract public function basicReqBinding(ReqContainer $container) : void;
+    abstract protected function basicReqBinding(ReqContainer $container) : void;
+
+    abstract protected function makeSession(ReqContainer $container) : Session;
 
     public function onRequest(
         Request $request,
@@ -68,7 +70,7 @@ abstract class AAppKernel implements AppKernel
             /**
              * @var Session $session
              */
-            $session = $reqContainer->make(Session::class);
+            $session = $this->makeSession($reqContainer);
 
             $session->fire(new StartSession());
             $this->sendSessionThroughPipes($session, $via, $middleware);

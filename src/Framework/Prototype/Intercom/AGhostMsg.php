@@ -75,6 +75,31 @@ abstract class AGhostMsg implements GhostMsg, HasIdGenerator
         $this->mid = $messageId ?? $this->createUuId();
     }
 
+    public function getMessage(): Message
+    {
+        return $this->shellMessage->message;
+    }
+
+    public function getUserId(): string
+    {
+        return $this->shellMessage->scope->userId;
+    }
+
+    public function getSessionId(): ? string
+    {
+        return $this->shellMessage->scope->sessionId;
+    }
+
+    public function getSceneId(): string
+    {
+        return $this->shellMessage->scope->sceneId;
+    }
+
+    public function getChatbotName(): string
+    {
+        return $this->shellMessage->scope->chatbotName;
+    }
+
 
     public function toArray(): array
     {
@@ -98,10 +123,10 @@ abstract class AGhostMsg implements GhostMsg, HasIdGenerator
     }
 
 
-    public function derive(Message $message, array $shellcids, int $deliverAt = null): array
+    public function derive(Message $message, array $shellChatIds, int $deliverAt = null): array
     {
         $outputs = [];
-        foreach ($shellcids as $shell => $cid) {
+        foreach ($shellChatIds as $cid => $shell) {
             $output = new IGhostOutput(
                 $shell,
                 $cid,
