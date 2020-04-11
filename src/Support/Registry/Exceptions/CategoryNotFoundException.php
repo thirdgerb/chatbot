@@ -9,13 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Support\Meta;
+namespace Commune\Support\Registry\Exceptions;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class MetaException extends \Exception
+class CategoryNotFoundException extends \LogicException
 {
-
+    public function __construct(string $categoryName = "")
+    {
+        $message = "category $categoryName not found";
+        parent::__construct($message);
+    }
 }

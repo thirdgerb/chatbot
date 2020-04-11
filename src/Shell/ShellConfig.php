@@ -14,7 +14,7 @@ namespace Commune\Shell;
 use Commune\Shell\Prototype\IShellKernel;
 use Commune\Shell\Prototype\Kernels\IRequestKernel;
 use Commune\Shell\Providers\ShlSessionServiceProvider;
-use Commune\Support\Struct\Structure;
+use Commune\Support\Struct\AbsStruct;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -33,7 +33,7 @@ use Commune\Support\Struct\Structure;
  *
  * @property-read bool $isDuplex                    shell 的消息是否是双通的.
  */
-class ShellConfig extends Structure
+class ShellConfig extends AbsStruct
 {
 
     const IDENTITY = 'shellName';

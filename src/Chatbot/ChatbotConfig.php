@@ -20,7 +20,7 @@ use Commune\Framework\Prototype\ExpReporter\ConsoleReporterServiceProvider;
 use Commune\Ghost\GhostConfig;
 use Commune\Shell\ShellConfig;
 use Commune\Support\Struct\Struct;
-use Commune\Support\Struct\Structure;
+use Commune\Support\Struct\AbsStruct;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -43,7 +43,7 @@ use Commune\Support\Struct\Structure;
  * @property-read GhostConfig $ghost            Ghost 的定义
  * @property-read ShellConfig[] $shells         Shell 的定义
  */
-class ChatbotConfig extends Structure
+class ChatbotConfig extends AbsStruct
 {
     const IDENTITY = 'chatbotName';
 

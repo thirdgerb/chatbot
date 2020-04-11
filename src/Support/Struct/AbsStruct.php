@@ -15,7 +15,7 @@ use InvalidArgumentException;
  * 比普通的Entry要麻烦许多, 但自带默认值.
  *
  */
-abstract class Structure extends Entry implements Struct
+abstract class AbsStruct extends Entry implements Struct
 {
     use ArrayAbleToJson;
 

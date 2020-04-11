@@ -12,12 +12,12 @@
 namespace Commune\Framework\Contracts;
 
 use Commune\Container\ContainerContract;
-use Commune\Support\Struct\Structure;
+use Commune\Support\Struct\AbsStruct;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class ServiceProvider extends Structure
+abstract class ServiceProvider extends AbsStruct
 {
     /**
      * Provider 的唯一 ID, 可以根据实际情况重写.

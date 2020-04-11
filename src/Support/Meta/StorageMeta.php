@@ -15,7 +15,7 @@ namespace Commune\Support\Meta;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Registrar
+class StorageMeta
 {
 
 }

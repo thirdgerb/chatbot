@@ -13,7 +13,7 @@ namespace Commune\Ghost\Options;
 
 use Commune\Ghost\Blueprint\Session\Scene;
 use Commune\Ghost\Prototype\Session\IScene;
-use Commune\Support\Struct\Structure;
+use Commune\Support\Struct\AbsStruct;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -23,7 +23,7 @@ use Commune\Support\Struct\Structure;
  * @property-read string $contextName
  * @property-read array $env
  */
-class SceneOption extends Structure
+class SceneOption extends AbsStruct
 {
     const IDENTITY = 'id';
 

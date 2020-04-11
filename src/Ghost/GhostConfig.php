@@ -14,7 +14,7 @@ namespace Commune\Ghost;
 use Commune\Ghost\Blueprint\Session\Scene;
 use Commune\Ghost\Options\KernelOption;
 use Commune\Ghost\Options\SceneOption;
-use Commune\Support\Struct\Structure;
+use Commune\Support\Struct\AbsStruct;
 
 
 /**
@@ -42,7 +42,7 @@ use Commune\Support\Struct\Structure;
  * @property-read int $sessionExpire
  *
  */
-class GhostConfig extends Structure
+class GhostConfig extends AbsStruct
 {
     protected static $associations = [
         'scenes[]' => SceneOption::class,

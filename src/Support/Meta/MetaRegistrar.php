@@ -15,16 +15,7 @@ namespace Commune\Support\Meta;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Wrapper
+interface MetaRegistrar
 {
-    const WRAP_METHOD = 'wrap';
-
-    /**
-     * @param Meta $meta
-     * @return static
-     */
-    public static function wrap(Meta $meta) : Wrapper;
-
-    public function getMeta() : Meta;
 
 }

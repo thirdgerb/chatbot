@@ -13,13 +13,13 @@ namespace Commune\Ghost\Options;
 
 use Commune\Ghost\Prototype\Kernels\IApiKernel;
 use Commune\Ghost\Prototype\Kernels\IMessageKernel;
-use Commune\Support\Struct\Structure;
+use Commune\Support\Struct\AbsStruct;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class KernelOption extends Structure
+class KernelOption extends AbsStruct
 {
     public static function stub(): array
     {
