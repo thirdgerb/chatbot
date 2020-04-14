@@ -64,8 +64,30 @@ interface IntentMsg extends Message, MsgLevel
 
     /*-------- 系统输出消息常见意图名 -------*/
 
+    /**
+     * @return string
+     */
     public function getIntentName() : string;
 
+    /**
+     * 获得原始传入的 Entity 数据.
+     * @return array
+     */
     public function getEntities() : array;
+
+    /**
+     * 传入的单一实体数据应该是个一维数组. 每个 Entity 都可能有多个值.
+     * @param string $entityName
+     * @return array
+     */
+    public function getEntityValues(string $entityName) : array;
+
+    /**
+     * 实体认为只有单一值.
+     *
+     * @param string $entityName
+     * @return mixed
+     */
+    public function getEntity(string $entityName);
 
 }

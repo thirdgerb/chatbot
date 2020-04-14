@@ -20,20 +20,23 @@ interface Backward
 {
     /**
      * 回到上一轮对话的终态
+     *
+     * @param bool $quiet   不需要重复消息.
      * @return Operator
      */
-    public function rewind() : Operator;
+    public function rewind(bool $quiet) : Operator;
 
     /**
-     * 返回若干步之前.
+     * 返回若干步之前. 并且发送消息.
+     *
      * @param int $steps
      * @return Operator
      */
     public function backStep(int $steps) : Operator;
 
     /**
-     * 不说话
+     * 装作没听见, 不需要任何反应
      * @return Operator
      */
-    public function dumb() : Operator;
+    public function unheard() : Operator;
 }

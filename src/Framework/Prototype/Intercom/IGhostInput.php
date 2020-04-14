@@ -28,7 +28,7 @@ use Commune\Support\Utils\StringUtils;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  */
-class IGhostInput extends AGhostMsg implements GhostInput
+class IGhostInput extends AGhostMessage implements GhostInput
 {
     const PROPERTIES = [
         'shellName' => 'shn',
@@ -152,7 +152,7 @@ class IGhostInput extends AGhostMsg implements GhostInput
         return null;
     }
 
-    public function reply(Message $message, int $deliverAt = null): GhostOutput
+    public function output(Message $message, int $deliverAt = null): GhostOutput
     {
         return new IGhostOutput(
             $this->shellName,

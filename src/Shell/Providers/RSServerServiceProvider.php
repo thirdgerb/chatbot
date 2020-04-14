@@ -13,7 +13,7 @@ namespace Commune\Shell\Providers;
 
 use Commune\Container\ContainerContract;
 use Commune\Framework\Contracts\ServiceProvider;
-use Commune\Shell\Contracts\ShlServer;
+use Commune\Shell\Contracts\ShellServer;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -45,7 +45,7 @@ class RSServerServiceProvider extends ServiceProvider
     {
         $app->instance(static::class, $this);
 
-        $app->singleton(ShlServer::class, function(ContainerContract $app){
+        $app->singleton(ShellServer::class, function(ContainerContract $app){
 
         });
     }

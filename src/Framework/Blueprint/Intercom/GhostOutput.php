@@ -16,13 +16,14 @@ namespace Commune\Framework\Blueprint\Intercom;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
- * @property-read string $chatId
- * @property-read string $shellName
- * @property-read string $messageId
- * @property-read string $traceId               链路追踪的ID
- * @property-read ShellMsg $shellMessage
- * @property-read int $dlt                发送的时间
+ * @property-read string $traceId               链路 ID
+ * @property-read string $cloneId               消息所属的机器人 ID
+ * @property-read string $shellId               投递的 shellId
+ * @property-read string $shellName             投递的目标 shell
+ *
+ * @property-read ShellMessage $shellMessage
+ * @property-read int $deliverAt                发送的时间
  */
-interface GhostOutput extends GhostMsg
+interface GhostOutput extends GhostMessage
 {
 }

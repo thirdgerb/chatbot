@@ -21,6 +21,10 @@ interface Runtime
 
     public function getProcess() : Process;
 
+    public function addYielding(Thread $thread) : void;
+
+    public function popYielding(string $threadId) : ? Thread;
+
     public function save(Session $session) : void;
 
 }

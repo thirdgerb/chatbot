@@ -13,7 +13,7 @@ namespace Commune\Shell;
 
 use Commune\Shell\Prototype\IShellKernel;
 use Commune\Shell\Prototype\Kernels\IRequestKernel;
-use Commune\Shell\Providers\ShlSessionServiceProvider;
+use Commune\Shell\Providers\ShellSessionServiceProvider;
 use Commune\Support\Struct\AbsStruct;
 
 /**
@@ -49,7 +49,7 @@ class ShellConfig extends AbsStruct
             ],
 
             'providers' => [
-                ShlSessionServiceProvider::class,
+                ShellSessionServiceProvider::class,
             ],
 
             'kernel' => IShellKernel::class,

@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Runtime;
 
+use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
@@ -25,6 +26,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 interface Thread extends ArrayAndJsonAble
 {
 
+    public function dependOn(Context $context) : void;
 
 
     /*--------- gc ---------*/

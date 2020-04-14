@@ -12,8 +12,8 @@
 namespace Commune\Ghost\Blueprint;
 
 use Commune\Framework\Blueprint\AppKernel;
-use Commune\Ghost\Contracts\GhtRequest;
-use Commune\Ghost\Contracts\GhtResponse;
+use Commune\Ghost\Contracts\GhostRequest;
+use Commune\Ghost\Contracts\GhostResponse;
 
 
 /**
@@ -23,8 +23,8 @@ interface GhostKernel extends AppKernel
 {
 
     public function onSync(
-        GhtRequest $request,
-        GhtResponse $response
+        GhostRequest $request,
+        GhostResponse $response
     ): void;
 
     public function onAsync() : bool;

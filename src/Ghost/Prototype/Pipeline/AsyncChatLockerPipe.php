@@ -13,7 +13,7 @@ namespace Commune\Ghost\Prototype\Pipeline;
 
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Prototype\Session\ASessionPipe;
-use Commune\Ghost\Blueprint\Session\GhtSession;
+use Commune\Ghost\Blueprint\Convo\Conversation;
 
 /**
  * 异步锁. 如果没锁上, 重新入队.
@@ -24,9 +24,9 @@ class AsyncChatLockerPipe extends ASessionPipe
     protected $locked = false;
 
     /**
-     * @param GhtSession $session
+     * @param Conversation $session
      * @param callable $next
-     * @return GhtSession
+     * @return Conversation
      * @throws \Throwable
      */
     protected function next(Session $session, callable $next): Session
@@ -38,7 +38,7 @@ class AsyncChatLockerPipe extends ASessionPipe
         } catch (\Throwable $e) {
 
             if ($this->locked) {
-                $session->chat->unlock();
+                $session->cloner->unlock();
             }
 
             throw $e;
@@ -47,12 +47,12 @@ class AsyncChatLockerPipe extends ASessionPipe
 
 
     /**
-     * @param GhtSession $session
-     * @return GhtSession
+     * @param Conversation $session
+     * @return Conversation
      */
     protected function before($session)
     {
-        $chat = $session->chat;
+        $chat = $session->cloner;
         $this->locked = $chat->lock();
 
         if ($this->locked) {
@@ -65,13 +65,13 @@ class AsyncChatLockerPipe extends ASessionPipe
     }
 
     /**
-     * @param GhtSession $session
-     * @return GhtSession
+     * @param Conversation $session
+     * @return Conversation
      */
     protected function after($session)
     {
         if ($this->locked) {
-            $session->chat->unlock();
+            $session->cloner->unlock();
         }
         return $session;
     }

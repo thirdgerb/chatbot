@@ -13,9 +13,9 @@ namespace Commune\Shell\Prototype\Pipeline;
 
 use Commune\Framework\Blueprint\Intercom\GhostInput;
 use Commune\Framework\Prototype\Session\ASessionPipe;
-use Commune\Message\Blueprint\QuestionMsg;
+use Commune\Message\Blueprint\ConversationalMsg;
 use Commune\Shell\Blueprint\Question\Answerable;
-use Commune\Shell\Blueprint\Session\ShlSession;
+use Commune\Shell\Blueprint\Session\ShellSession;
 use Commune\Support\Utils\StringUtils;
 
 /**
@@ -24,8 +24,8 @@ use Commune\Support\Utils\StringUtils;
 class QuestionPipe extends ASessionPipe
 {
     /**
-     * @param ShlSession $session
-     * @return ShlSession
+     * @param ShellSession $session
+     * @return ShellSession
      */
     protected function after($session)
     {
@@ -33,7 +33,7 @@ class QuestionPipe extends ASessionPipe
         $question = null;
         foreach ($outputs as $output) {
             $message = $output->message;
-            if ($message instanceof QuestionMsg) {
+            if ($message instanceof ConversationalMsg) {
                 $question = $message;
             }
         }
@@ -46,8 +46,8 @@ class QuestionPipe extends ASessionPipe
     }
 
     /**
-     * @param ShlSession $session
-     * @return ShlSession
+     * @param ShellSession $session
+     * @return ShellSession
      */
     protected function before($session)
     {
@@ -70,10 +70,10 @@ class QuestionPipe extends ASessionPipe
     }
 
     protected function isNullable(
-        ShlSession $session,
-        QuestionMsg $question,
+        ShellSession $session,
+        ConversationalMsg $question,
         GhostInput $ghostInput
-    ) : ? ShlSession
+    ) : ? ShellSession
     {
         if (
             $ghostInput->shellMessage->message->isEmpty()
@@ -91,10 +91,10 @@ class QuestionPipe extends ASessionPipe
     }
 
     protected function isInSuggestions(
-        ShlSession $session,
-        QuestionMsg $question,
+        ShellSession $session,
+        ConversationalMsg $question,
         GhostInput $ghostInput
-    ) : ? ShlSession
+    ) : ? ShellSession
     {
         $text = $ghostInput->getTrimmedText();
         if (!isset($text)) {

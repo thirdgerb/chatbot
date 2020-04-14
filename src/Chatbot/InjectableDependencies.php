@@ -22,17 +22,17 @@ use Commune\Framework\Contracts\Messenger;
 use Commune\Ghost\Blueprint\Ghost;
 use Commune\Ghost\Blueprint\Kernels\ApiKernel;
 use Commune\Ghost\Blueprint\Kernels\MessageKernel;
-use Commune\Ghost\Blueprint\Session\GhtSession;
-use Commune\Ghost\Contracts\GhtRequest;
-use Commune\Ghost\Contracts\GhtResponse;
+use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Ghost\Contracts\GhostRequest;
+use Commune\Ghost\Contracts\GhostResponse;
 use Commune\Ghost\GhostConfig;
 use Commune\Shell\Blueprint\Kernels\RequestKernel;
 use Commune\Shell\Blueprint\Render\Renderer;
-use Commune\Shell\Blueprint\Session\ShlSession;
+use Commune\Shell\Blueprint\Session\ShellSession;
 use Commune\Shell\Blueprint\Shell;
-use Commune\Shell\Contracts\ShlRequest;
-use Commune\Shell\Contracts\ShlResponse;
-use Commune\Shell\Contracts\ShlServer;
+use Commune\Shell\Contracts\ShellRequest;
+use Commune\Shell\Contracts\ShellResponse;
+use Commune\Shell\Contracts\ShellServer;
 use Commune\Shell\ShellConfig;
 use Commune\Support\Babel\BabelResolver;
 use Psr\Log\LoggerInterface;
@@ -70,7 +70,7 @@ class InjectableDependencies
         ChatbotConfig::class,
         ShellConfig::class,
         Renderer::class,
-        ShlServer::class,
+        ShellServer::class,
 
         // 非单例
         RequestKernel::class,
@@ -98,15 +98,15 @@ class InjectableDependencies
 
 
     const SHELL_REQUEST_LEVEL = [
-        ShlSession::class,
-        ShlRequest::class,
-        ShlResponse::class,
+        ShellSession::class,
+        ShellRequest::class,
+        ShellResponse::class,
     ];
 
     const GHOST_REQUEST_LEVEL = [
-        GhtSession::class,
-        GhtResponse::class,
-        GhtRequest::class,
+        Conversation::class,
+        GhostResponse::class,
+        GhostRequest::class,
     ];
 
 }

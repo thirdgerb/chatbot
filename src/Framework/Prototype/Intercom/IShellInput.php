@@ -18,7 +18,7 @@ use Commune\Message\Blueprint\Message;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IShellInput extends AShellMsg implements ShellInput
+class IShellInput extends AShellMessage implements ShellInput
 {
     public function output(Message $message): ShellOutput
     {

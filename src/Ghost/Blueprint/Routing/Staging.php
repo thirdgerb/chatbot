@@ -19,14 +19,13 @@ use Commune\Ghost\Blueprint\Operator\Operator;
  */
 interface Staging
 {
-
     public function restartContext() : Operator;
 
     public function resetContext() : Operator;
 
-    public function go(string $stageName) : Operator;
+    public function next(...$stageNames) : Operator;
 
-    public function goPipes(array $stagePipes) : Operator;
+    public function fulfill() : Operator;
 
-    public function goNext() : Operator;
+
 }

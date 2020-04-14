@@ -18,12 +18,12 @@ use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Prototype\Kernel\AAppKernel;
 use Commune\Ghost\Blueprint\Ghost;
 use Commune\Ghost\Blueprint\GhostKernel;
-use Commune\Ghost\Blueprint\Session\GhtSession;
-use Commune\Ghost\Contracts\GhtRequest;
-use Commune\Ghost\Contracts\GhtResponse;
+use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Ghost\Contracts\GhostRequest;
+use Commune\Ghost\Contracts\GhostResponse;
 use Commune\Ghost\GhostConfig;
-use Commune\Ghost\Prototype\Kernel\AsyncGhtRequest;
-use Commune\Ghost\Prototype\Kernel\AsyncGhtResponse;
+use Commune\Ghost\Prototype\Kernel\AsyncGhostRequest;
+use Commune\Ghost\Prototype\Kernel\AsyncGhostResponse;
 use Commune\Ghost\Prototype\Pipeline\AsyncChatLockerPipe;
 use Commune\Ghost\Prototype\Pipeline\ChatLockerPipe;
 use Commune\Ghost\Prototype\Pipeline\GhostMessengerPipe;
@@ -76,20 +76,20 @@ class IGhostKernel extends AAppKernel implements GhostKernel
 
     protected function basicReqBinding(ReqContainer $container): void
     {
-        $container->alias(GhtRequest::class, Request::class);
-        $container->alias(GhtResponse::class, Response::class);
+        $container->alias(GhostRequest::class, Request::class);
+        $container->alias(GhostResponse::class, Response::class);
     }
 
     protected function makeSession(ReqContainer $container): Session
     {
-        $session = $container->make(GhtSession::class);
+        $session = $container->make(Conversation::class);
         return $session;
     }
 
 
     public function onSync(
-        GhtRequest $request,
-        GhtResponse $response
+        GhostRequest $request,
+        GhostResponse $response
     ): void
     {
         $middleware = [];
@@ -109,8 +109,8 @@ class IGhostKernel extends AAppKernel implements GhostKernel
             return false;
         }
 
-        $request = new AsyncGhtRequest($input);
-        $response = new AsyncGhtResponse($input);
+        $request = new AsyncGhostRequest($input);
+        $response = new AsyncGhostResponse($input);
         $middleware = [];
 
         $this->handleRequest(

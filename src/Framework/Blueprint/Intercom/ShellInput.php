@@ -18,10 +18,15 @@ use Commune\Message\Blueprint\Message;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @property-read string $messageId
  * @property-read Message $message
- * @property-read ShellScope $scope
+ * @property-read string $shellName
+ * @property-read string $shellId
+ * @property-read string $senderId
+ * @property-read string $senderName
+ * @property-read string $sessionId
  */
-interface ShellInput extends ShellMsg
+interface ShellInput extends ShellMessage
 {
     /**
      * 派生出 output 消息.

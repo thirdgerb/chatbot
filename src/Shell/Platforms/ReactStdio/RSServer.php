@@ -13,12 +13,12 @@ namespace Commune\Shell\Platforms\ReactStdio;
 
 use Commune\Framework\Prototype\Servers\AReactStdioServer;
 use Commune\Shell\Blueprint\Shell;
-use Commune\Shell\Contracts\ShlServer;
+use Commune\Shell\Contracts\ShellServer;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RSServer extends AReactStdioServer implements ShlServer
+class RSServer extends AReactStdioServer implements ShellServer
 {
 
     /**

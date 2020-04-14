@@ -15,8 +15,6 @@ use Commune\Framework\Blueprint\App;
 use Commune\Framework\Blueprint\ReqContainer;
 use Commune\Framework\Blueprint\Server\Request;
 use Commune\Framework\Blueprint\Server\Response;
-use Commune\Framework\Blueprint\Server\Server;
-use Commune\Framework\Contracts\Cache;
 use Commune\Message\Blueprint\Message;
 
 /**
@@ -25,39 +23,9 @@ use Commune\Message\Blueprint\Message;
  */
 interface Session
 {
-    /*------ properties ------*/
+    public function getUuid() : string;
 
-
-    /**
-     * Session 在所有进程的唯一ID
-     * @return string
-     */
-    public function getUuId() : string;
-
-
-    /**
-     * Session 所处的 Chat Id
-     * @return string
-     */
-    public function getChatId() : string;
-
-
-    /**
-     * @return string
-     */
     public function getSessionId() : string;
-
-    /**
-     * 当前请求的场景 ID
-     * @return string
-     */
-    public function getSceneId() : string;
-
-    /**
-     * @param string $name
-     * @param $object
-     */
-    public function setProperty(string $name, $object): void;
 
     /**
      * Session 缓存的过期时间.
@@ -65,12 +33,13 @@ interface Session
      */
     public function getSessionExpire() : int;
 
-    /*------ input ------*/
-
     /**
-     * @return Server
+     * 是否是调试模式.
+     * @return bool
      */
-    public function getServer() : Server;
+    public function isDebugging() : bool;
+
+    /*------ request ------*/
 
     /**
      * @return Request
@@ -95,20 +64,6 @@ interface Session
      */
     public function getContainer() : ReqContainer;
 
-    /**
-     * @return SessionStorage
-     */
-    public function getStorage() : SessionStorage;
-
-    /**
-     * @return SessionLogger
-     */
-    public function getLogger() : SessionLogger;
-
-    /**
-     * @return Cache
-     */
-    public function getCache() : Cache;
 
     /*------ status save ------*/
 
@@ -116,11 +71,6 @@ interface Session
      * 设置为无状态请求
      */
     public function noState() : void;
-
-    /**
-     * 重置 session 信息.
-     */
-    public function reset() : void;
 
     /**
      * 是否是无状态的 session
@@ -147,6 +97,15 @@ interface Session
      * @return bool
      */
     public function isFinished() : bool;
+
+    /*------ pipe ------*/
+
+    /**
+     * @param array $pipes
+     * @param string $via
+     * @return static
+     */
+    public function goThroughPipes(array $pipes, string $via);
 
     /*------ event ------*/
 

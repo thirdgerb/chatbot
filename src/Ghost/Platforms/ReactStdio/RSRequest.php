@@ -11,14 +11,14 @@
 
 namespace Commune\Ghost\Platforms\ReactStdio;
 
-use Commune\Ghost\Contracts\GhtRequest;
+use Commune\Ghost\Contracts\GhostRequest;
 use Commune\Framework\Blueprint\Intercom\ShellInput;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RSRequest implements GhtRequest
+class RSRequest implements GhostRequest
 {
     public function validate(): bool
     {

@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Blueprint\Runtime;
 
 use Commune\Ghost\Blueprint\Context\Context;
-use Commune\Ghost\Blueprint\Session\GhtSession;
+use Commune\Ghost\Blueprint\Convo\Conversation;
 
 /**
  * 对话场景切换的状态. 
@@ -28,7 +28,7 @@ interface Route
 {
     public function depth() : int;
 
-    public function fetchContext(GhtSession $session) : Context;
+    public function fetchContext(Conversation $session) : Context;
 
     /*------ 前进 ------*/
 

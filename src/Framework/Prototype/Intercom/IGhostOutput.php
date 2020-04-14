@@ -12,12 +12,12 @@
 namespace Commune\Framework\Prototype\Intercom;
 
 use Commune\Framework\Blueprint\Intercom\GhostOutput;
-use Commune\Framework\Blueprint\Intercom\ShellMsg;
+use Commune\Framework\Blueprint\Intercom\ShellMessage;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IGhostOutput extends AGhostMsg implements GhostOutput
+class IGhostOutput extends AGhostMessage implements GhostOutput
 {
     const PROPERTIES = [
         'chatId' => 'cid',
@@ -36,7 +36,7 @@ class IGhostOutput extends AGhostMsg implements GhostOutput
     public function __construct(
         string $shellName,
         string $chatId,
-        ShellMsg $shellMessage,
+        ShellMessage $shellMessage,
         string $traceId,
         int $deliverAt = 0,
         string $messageId = null

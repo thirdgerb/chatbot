@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Contracts;
 
-use Commune\Framework\Blueprint\Intercom\ShellMsg;
+use Commune\Framework\Blueprint\Intercom\ShellMessage;
 use Commune\Framework\Blueprint\Server\Response;
 
 /**
@@ -19,14 +19,14 @@ use Commune\Framework\Blueprint\Server\Response;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlResponse extends Response
+interface ShellResponse extends Response
 {
 
     /*--------- 发送响应 ----------*/
 
     /**
      * 增加一个需要同步回复的消息.
-     * @param ShellMsg[] $messages
+     * @param ShellMessage[] $messages
      */
     public function buffer(array $messages) : void;
 

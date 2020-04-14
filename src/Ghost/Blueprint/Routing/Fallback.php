@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Blueprint\Routing;
 
 use Commune\Ghost\Blueprint\Operator\Operator;
+use Commune\Message\Blueprint\Message;
 
 
 /**
@@ -19,11 +20,20 @@ use Commune\Ghost\Blueprint\Operator\Operator;
  */
 interface Fallback
 {
-    public function home() : Operator;
+    /**
+     * 拒绝访问
+     * @param Message|null $message
+     * @return Operator
+     */
+    public function reject(Message $message = null) : Operator;
 
+    /**
+     * @return Operator
+     */
     public function cancel() : Operator;
 
-    public function fulfill() : Operator;
-
+    /**
+     * @return Operator
+     */
     public function quit() : Operator;
 }

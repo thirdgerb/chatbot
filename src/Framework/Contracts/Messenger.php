@@ -59,34 +59,34 @@ interface Messenger
      */
     public function sendOutputs(array $messages) : int;
 
-
-    public function hasOutput(string $shellName, string $shellChatId) : bool;
+    /**
+     * @param string $shellName
+     * @param string $shellId
+     * @return bool
+     */
+    public function hasOutput(string $shellName, string $shellId) : bool;
 
     /**
-     * 取出一个 Shell + Chat 的所有异步消息.
-     *
-     * Shell 在同步请求中取, 可以用来发送同步响应
-     * Shell 在双工服务端可以遍历, 获取所有 connection 对应的消息
+     * 取出一个 ShellId 的所有异步消息.
      *
      * @param string $shellName
-     * @param string $shellChatId
+     * @param string $shellId
      * @return GhostOutput[]
      */
-    public function fetchOutputs(
-        string $shellName,
-        string $shellChatId
-    ) : array;
+    public function fetchOutputs(string $shellName, string $shellId) : array;
 
     /*-------- 订阅  ---------*/
 
     /**
-     * 监听某个 shell 是否有新的 output chat
-     * 用于全异步发送.
-     * 不过考虑到消费能力, 这个管道的消息可以设置上限.
+     * 监听某个 shell 是否有新的 output
+     *
+     * 用于某些 shell 的非双工全异步发送 (shell 并不知道哪些 shellId 已经建立连接, 但能把任何一个输出消息发送给任何一个 shellId) .
+     *
+     * 考虑到消费能力, 这个管道的消息可以设置上限.
      *
      * @param string $shellName
      * @return string  outputting chatId
      */
-    public function popOutputtingChat(string $shellName) : ? string;
+    public function popOutputtingShellId(string $shellName) : ? string;
 
 }

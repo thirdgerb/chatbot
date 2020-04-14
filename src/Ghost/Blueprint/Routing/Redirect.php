@@ -22,21 +22,51 @@ use Commune\Ghost\Blueprint\Operator\Operator;
  */
 interface Redirect
 {
-    public function sleepTo() : Operator;
+    public function sleepTo(
+        Context $to = null,
+        int $gc = 0
+    ) : Operator;
 
-    public function dependOn() : Operator;
+    /**
+     * @param Context $depending
+     * @return Operator
+     */
+    public function dependOn(
+        Context $depending
+    ) : Operator;
 
     /**
      * 将当前 Thread 撤出, 等待服务回调.
-     *
-     * @param string $serviceName
-     * @param array $payload
-     * @param null|string|Context $toContext
+     * @param Context $asyncContext
+     * @param Context|null $wakeContext
+     * @return Operator
+     */
+    /**
+     * @param Context $asyncContext
+     * @param Context|null $wakeContext
+     * @param int $expire 过期时间
      * @return Operator
      */
     public function yieldTo(
-        string $serviceName,
-        array $payload,
-        $toContext = null
+        Context $asyncContext,
+        Context $wakeContext = null,
+        int $expire
     ) : Operator;
+
+    /**
+     * @param Context $context
+     * @return Operator
+     */
+    public function replaceThread(Context $context) : Operator;
+
+    /**
+     * @param Context $context
+     * @return Operator
+     */
+    public function replaceProcess(Context $context) : Operator;
+
+    /**
+     * @return Operator
+     */
+    public function home() : Operator;
 }

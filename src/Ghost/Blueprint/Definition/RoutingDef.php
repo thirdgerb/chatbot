@@ -11,8 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Definition;
 
-use Commune\Ghost\Blueprint\Session\GhtSession;
-
+use Commune\Ghost\Blueprint\Convo\Conversation;
 
 /**
  * 一个可以被命中的意图的定义. 通常从属于 StageDef.
@@ -35,29 +34,7 @@ interface RoutingDef
      */
     public function getStageDef() : StageDef;
 
-    /**
-     * 意图名称. 通过 NLU 来命中
-     * 通常是对应 Stage 的全名, 也可能是
-     *
-     * @return string
-     */
-    public function intentName() : string;
-
-    /**
-     * 意图对应的命令.
-     *
-     * @return CommandDef|null
-     */
-    public function commandDef() : ? CommandDef;
-
-    /**
-     * 正则的匹配规则.
-     * @return RegexDef|null
-     */
-    public function regexDef() : ? RegexDef;
-
-
     /*--------- 操作 ---------*/
 
-    public function validate(GhtSession $session) : bool;
+    public function validate(Conversation $session) : bool;
 }

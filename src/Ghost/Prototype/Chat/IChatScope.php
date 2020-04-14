@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Prototype\Chat;
 
-use Commune\Ghost\Blueprint\Chat\ChatScope;
+use Commune\Ghost\Blueprint\Cloner\ChatScope;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Babel\BabelSerializable;
 use Commune\Support\Babel\TBabelSerializable;

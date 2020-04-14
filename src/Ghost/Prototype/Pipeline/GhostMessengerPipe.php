@@ -12,8 +12,8 @@
 namespace Commune\Ghost\Prototype\Pipeline;
 
 use Commune\Framework\Prototype\Session\ASessionPipe;
-use Commune\Ghost\Blueprint\Chat\Chat;
-use Commune\Ghost\Blueprint\Session\GhtSession;
+use Commune\Ghost\Blueprint\Cloner\Cloner;
+use Commune\Ghost\Blueprint\Convo\Conversation;
 
 
 /**
@@ -22,8 +22,8 @@ use Commune\Ghost\Blueprint\Session\GhtSession;
 class GhostMessengerPipe extends ASessionPipe
 {
     /**
-     * @param GhtSession $session
-     * @return GhtSession
+     * @param Conversation $session
+     * @return Conversation
      */
     protected function before($session)
     {
@@ -32,13 +32,13 @@ class GhostMessengerPipe extends ASessionPipe
 
 
     /**
-     * @param GhtSession $session
-     * @return GhtSession
+     * @param Conversation $session
+     * @return Conversation
      */
     protected function after($session)
     {
         // 试图传输消息.
-        $chat = $session->chat;
+        $chat = $session->cloner;
         $delivery = [];
 
         // 广播 input
@@ -66,7 +66,7 @@ class GhostMessengerPipe extends ASessionPipe
         return $session;
     }
 
-    protected function broadcastInput(array $delivery, GhtSession $session, Chat $chat) : array
+    protected function broadcastInput(array $delivery, Conversation $session, Cloner $chat) : array
     {
         $input = $session->ghostInput;
         $shells = $chat->scope->shells;

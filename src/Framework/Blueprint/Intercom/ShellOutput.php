@@ -19,8 +19,12 @@ use Commune\Message\Blueprint\Message;
  *
  * @property-read string $messageId
  * @property-read Message $message
- * @property-read ShellScope $scope
+ * @property-read string $shellName
+ * @property-read string $shellId
+ * @property-read string $senderId
+ * @property-read string $senderName
+ * @property-read string $sessionId
  */
-interface ShellOutput extends ShellMsg
+interface ShellOutput extends ShellMessage
 {
 }

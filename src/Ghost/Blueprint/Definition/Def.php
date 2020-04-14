@@ -24,5 +24,7 @@ interface Def
      */
     public function getName() : string;
 
+    public function nameEquals(string $name) : bool;
+
 
 }

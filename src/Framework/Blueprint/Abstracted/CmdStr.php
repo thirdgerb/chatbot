@@ -22,4 +22,6 @@ interface CmdStr extends ArrayAndJsonAble
 
     public function getCommandStr() : ? string;
 
+    public function getCommandName() : ? string;
+
 }

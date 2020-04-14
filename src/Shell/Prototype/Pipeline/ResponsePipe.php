@@ -12,7 +12,7 @@
 namespace Commune\Shell\Prototype\Pipeline;
 
 use Commune\Framework\Prototype\Session\ASessionPipe;
-use Commune\Shell\Blueprint\Session\ShlSession;
+use Commune\Shell\Blueprint\Session\ShellSession;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -20,8 +20,8 @@ use Commune\Shell\Blueprint\Session\ShlSession;
 class ResponsePipe extends ASessionPipe
 {
     /**
-     * @param ShlSession $session
-     * @return ShlSession
+     * @param ShellSession $session
+     * @return ShellSession
      */
     protected function before($session)
     {
@@ -29,8 +29,8 @@ class ResponsePipe extends ASessionPipe
     }
 
     /**
-     * @param ShlSession $session
-     * @return ShlSession
+     * @param ShellSession $session
+     * @return ShellSession
      */
     protected function after($session)
     {

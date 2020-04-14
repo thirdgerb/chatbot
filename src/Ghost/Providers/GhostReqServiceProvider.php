@@ -14,8 +14,8 @@ namespace Commune\Ghost\Providers;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Contracts\ServiceProvider;
 use Commune\Ghost\Blueprint\Auth\Authority;
-use Commune\Ghost\Blueprint\Session\GhtSession;
-use Commune\Ghost\Blueprint\Session\Scene;
+use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Ghost\Blueprint\Convo\Scene;
 use Commune\Ghost\GhostConfig;
 use Commune\Ghost\Prototype\Auth\IAuthority;
 
@@ -55,10 +55,10 @@ class GhostReqServiceProvider extends ServiceProvider
         $app->singleton(Scene::class, function(ContainerContract $app){
 
             /**
-             * @var GhtSession $session
+             * @var Conversation $session
              * @var GhostConfig $config
              */
-            $session = $app->make(GhtSession::class);
+            $session = $app->make(Conversation::class);
             $config = $app->make(GhostConfig::class);
             $ghostInput = $session->ghostInput;
 

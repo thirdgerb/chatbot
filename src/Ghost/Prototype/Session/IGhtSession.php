@@ -26,13 +26,13 @@ use Commune\Ghost\Blueprint\Ghost;
 use Commune\Ghost\Blueprint\Memory\Memory;
 use Commune\Ghost\Blueprint\Meta\MetaRegistrar;
 use Commune\Ghost\Blueprint\Mind\Mindset;
-use Commune\Ghost\Blueprint\Session\GhtSession;
-use Commune\Ghost\Blueprint\Session\GhtSessionScope;
-use Commune\Ghost\Blueprint\Session\Scene;
+use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Ghost\Blueprint\Convo\GhostSessionScope;
+use Commune\Ghost\Blueprint\Convo\Scene;
 use Commune\Ghost\Blueprint\Speak\Speaker;
-use Commune\Ghost\Contracts\GhtRequest;
-use Commune\Ghost\Contracts\GhtResponse;
-use Commune\Ghost\Contracts\SessionDriver;
+use Commune\Ghost\Contracts\GhostRequest;
+use Commune\Ghost\Contracts\GhostResponse;
+use Commune\Ghost\Contracts\Driver;
 use Commune\Ghost\GhostConfig;
 use Commune\Message\Blueprint\Message;
 
@@ -42,26 +42,26 @@ use Commune\Message\Blueprint\Message;
  *
  * @property-read GhostConfig $ghostConfig
  */
-class IGhtSession extends ASession implements GhtSession
+class IConversation extends ASession implements Conversation
 {
     const SESSION_ID_KEY = 'ghost:chatId:%s:sessionId';
 
     const INJECTABLE_PROPERTIES = [
         'ghostInput' => GhostInput::class,
         'scene' => Scene::class,
-        'scope' => GhtSessionScope::class,
+        'scope' => GhostSessionScope::class,
         'logger' => SessionLogger::class,
         'ghost' => Ghost::class,
         'mind' => Mindset::class,
         'metaReg' => MetaRegistrar::class,
-        'driver' => SessionDriver::class,
+        'driver' => Driver::class,
         'cache' => Cache::class,
         'messenger' => Messenger::class,
         'auth' => Authority::class,
         'memory' => Memory::class,
         'speaker' => Speaker::class,
-        'request' => GhtRequest::class,
-        'response' => GhtResponse::class,
+        'request' => GhostRequest::class,
+        'response' => GhostResponse::class,
         'server' => Server::class,
         'ghostConfig' => GhostConfig::class,
         'storage' => SessionStorage::class,
@@ -151,12 +151,12 @@ class IGhtSession extends ASession implements GhtSession
      */
     public function getChatId(): string
     {
-        return $this->chat->getChatId();
+        return $this->cloner->getCloneId();
     }
 
     public function getSessionId(): string
     {
-        return $this->chat->getSessionId();
+        return $this->cloner->getSessionId();
     }
 
     public function getSceneId(): string
@@ -190,9 +190,9 @@ class IGhtSession extends ASession implements GhtSession
 
     /*---------- output ---------*/
 
-    public function deliver(string $chatId, Message $message): void
+    public function deliver(string $cloneId, Message $message): void
     {
-        $scope = $this->driver->findScope($chatId);
+        $scope = $this->driver->findScope($cloneId);
 
         // 如果能找到 scope, 就向目标进行投递
         if (isset($scope)) {
@@ -204,12 +204,12 @@ class IGhtSession extends ASession implements GhtSession
             $outputs = $this->ghostInput->derive(
                 $message,
                 [
-                    $chatId => $this->ghostInput->shellName
+                    $cloneId => $this->ghostInput->shellName
                 ]
             );
         }
 
-        $this->delivery[$chatId][] = $message;
+        $this->delivery[$cloneId][] = $message;
         $this->outputs = array_merge($this->outputs, $outputs);
     }
 
@@ -223,7 +223,7 @@ class IGhtSession extends ASession implements GhtSession
         $outputs = $this->ghostInput
             ->derive(
                 $message,
-                $this->chat->getScope()->shellChatIds
+                $this->cloner->getScope()->shellChatIds
             );
 
         $this->delivery[$this->getChatId()][] = $message;
@@ -249,7 +249,7 @@ class IGhtSession extends ASession implements GhtSession
 
     protected function saveSession(): void
     {
-        $this->chat->save($this);
+        $this->cloner->save($this);
         $this->runtime->save($this);
         $this->memory->save($this);
 

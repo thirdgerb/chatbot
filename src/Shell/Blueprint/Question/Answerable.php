@@ -11,21 +11,21 @@
 
 namespace Commune\Shell\Blueprint\Question;
 
-use Commune\Message\Blueprint\QuestionMsg;
-use Commune\Shell\Blueprint\Session\ShlSession;
+use Commune\Message\Blueprint\ConversationalMsg;
+use Commune\Shell\Blueprint\Session\ShellSession;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Answerable extends QuestionMsg
+interface Answerable extends ConversationalMsg
 {
     /**
      * 可以自己理解答案的问题消息.
      * 能够主动分析 Session
      *
-     * @param ShlSession $session
-     * @return ShlSession|null
+     * @param ShellSession $session
+     * @return ShellSession|null
      */
-    public function parse(ShlSession $session) : ShlSession;
+    public function parse(ShellSession $session) : ShellSession;
 }

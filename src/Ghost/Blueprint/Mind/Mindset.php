@@ -11,9 +11,6 @@
 
 namespace Commune\Ghost\Blueprint\Mind;
 
-use Commune\Ghost\Blueprint\Definition\ContextDef;
-use Commune\Ghost\Blueprint\Definition\RoutingDef;
-
 
 /**
  * 对话机器人的思维.
@@ -23,22 +20,15 @@ use Commune\Ghost\Blueprint\Definition\RoutingDef;
 interface Mindset
 {
 
-    /*--------- context ---------*/
+    /**
+     * 清空所有的逻辑记忆.
+     */
+    public function reload() : void;
 
-    public function hasContextDef(string $contextName) : ContextDef;
 
-    public function getContextDef(string $contextName) : ContextDef;
+    public function commandReg() : CommandReg;
 
-    /*--------- intent ---------*/
+    public function contextReg() : ContextReg;
 
-    public function hasIntentDef(string $intentName) : bool;
-
-    public function getIntentNamesByPrefix(string $intentNamePrefix) : array;
-
-    public function countIntentsByPrefix(string $intentNamePrefix) : int;
-
-    public function getIntentDef(string $intentName) : RoutingDef;
-
-    public function registerIntentDef(RoutingDef $def) : void;
-
+    public function stageReg() : StageReg;
 }

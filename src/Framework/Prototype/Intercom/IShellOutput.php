@@ -16,7 +16,7 @@ use Commune\Framework\Blueprint\Intercom\ShellOutput;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IShellOutput extends AShellMsg implements ShellOutput
+class IShellOutput extends AShellMessage implements ShellOutput
 {
 
 }

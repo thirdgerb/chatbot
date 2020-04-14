@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost;
 
-use Commune\Ghost\Blueprint\Session\Scene;
+use Commune\Ghost\Blueprint\Convo\Scene;
 use Commune\Ghost\Options\KernelOption;
 use Commune\Ghost\Options\SceneOption;
 use Commune\Support\Struct\AbsStruct;
@@ -28,8 +28,9 @@ use Commune\Support\Struct\AbsStruct;
  *      'providerClass' => [ configs ]  # 使用类名, 同时设定初始值
  *  ]
  *
- * @property-read string $defaultComprehension
  *
+ * @property-read string $commandMark               命令的前缀. 最好带前缀.
+ * @property-read string[] $comprehendPipes         尝试理解消息的管道.
  *
  * ## Scene
  *
@@ -58,20 +59,6 @@ class GhostConfig extends AbsStruct
     {
         return [
 
-
-            'providers' => [
-
-            ],
-
-            'meta' => [
-
-            ],
-
-            'kernels' => KernelOption::stub(),
-
-            'scenes' => [],
-
-            'sessionExpire' => 3600,
         ];
     }
 

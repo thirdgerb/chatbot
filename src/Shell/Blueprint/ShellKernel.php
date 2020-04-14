@@ -12,8 +12,8 @@
 namespace Commune\Shell\Blueprint;
 
 use Commune\Framework\Blueprint\AppKernel;
-use Commune\Shell\Contracts\ShlRequest;
-use Commune\Shell\Contracts\ShlResponse;
+use Commune\Shell\Contracts\ShellRequest;
+use Commune\Shell\Contracts\ShellResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -23,29 +23,29 @@ interface ShellKernel extends AppKernel
 
     /**
      * 同步请求
-     * @param ShlRequest $request
-     * @param ShlResponse $response
+     * @param ShellRequest $request
+     * @param ShellResponse $response
      */
     public function onSync(
-        ShlRequest $request,
-        ShlResponse $response
+        ShellRequest $request,
+        ShellResponse $response
     ): void;
 
     /**
      * 异步接受响应.
      *
-     * @param ShlResponse $response
+     * @param ShellResponse $response
      */
     public function onAsyncResponse(
-        ShlResponse $response
+        ShellResponse $response
     ) : void;
 
 
     /**
      * 异步发送请求.
-     * @param ShlRequest $request
+     * @param ShellRequest $request
      */
     public function onAsyncRequest(
-        ShlRequest $request
+        ShellRequest $request
     ) : void;
 }

@@ -1,3 +1,60 @@
+一些关键的概念需要尽早厘清, 并且在实现上要避免歧义.
+
+原来的概念.
+
+- shell : 平台的服务端, 每个端都有自己的通信和形态. 例如 wechat/webSocket 等
+- ghost : 机器人的灵魂, 单一的状态管理机
+- chat : 对话发生的群体 ID, 可能是 1v1 对话, 也可能是群聊.
+- shellSession : shell 的一个 Chat 内一次多轮对话的生命周期.
+- ghostSession : 对于 Ghost 而言的一次多轮对话
+- user : 发送消息的对象. 与回复消息无关. 回复消息唯一的对象是 Chat
+- message : 传输的消息本身的抽象
+- shellMessage : 对 shell 内部传输消息的封装.
+- ghostMessage : shell 与 ghost 通信时使用的消息.
+- context : 当前所处的对话语境, 关系到上下文记忆, 与对话逻辑
+- stage : 当前 Context 所处的状态
+- dialog : 对话管理工具.
+
+现在考虑用新的概念梳理一遍.
+
+
+- ghost : 机器人的唯一灵魂.
+    - clone : 机器人的一个分身. 与所处环境有关. 所有的思维都用 cloneId 进行区隔.
+    - conversation : ghost 内的 session, 可以串联多个 clone.
+    - context : 当前所处的语境.
+- shell : 与客户端通信的服务端.
+    - shellId : 对应通信通道, 应该是全局唯一的.
+    - session : shell 内部的 session, shellId 对应唯一的 session
+    - sender : 输入消息对象的身份.
+    - message : 消息的抽象
+- messenger : 系统内部的通信
+    - shellMessage : shell 与客户端交换的消息.
+    - ghostMessage : shell 与 ghost 交换的信息
+
+* Chatbot架构
+
+----
+
+之前一直有一个思路, Chat 下分若干个 Session 通过 SessionId 来区分.
+但实现做成了同一个 Chat 可以同时拥有多个 Session. 这样其实造成了复杂的影响和干扰.
+
+接下来应该把所有的 Chat 做成单一 Session, 根据 SessionId 来判断 Session 的一致性.
+不一致时要清空 Session 从头开始.
+
+* Chatbot架构
+
+----
+
+有个技术方案反复变化过很多次, 这次要不再变了.
+Shell 自己有 Chat, Ghost 也应该自己有 Chat, 这是作为非单一机器人所必须的设置.
+
+多个 Shell 在 Ghost 内的互通, 需要 Ghost 层来实现. 因为 Ghost 层需要做通讯准备.
+不能让 Shell 自己去认 Ghost, 否则通信就不能使用多 Shell 的通道了.
+
+* Chatbot架构
+
+----
+
 考虑 Async 问题如何投递 Context 到其它的 Chat. 目前首要考虑第二种情况, 只投递一个 Context 节点.
 这种 Context 应该允许一个 Redirect 是 deliver 方法. 用于投递到别的 Chat.
 

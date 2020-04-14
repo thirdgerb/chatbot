@@ -18,7 +18,7 @@ use Commune\Message\Blueprint\Message;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlRequest extends Request
+interface ShellRequest extends Request
 {
 
     /**

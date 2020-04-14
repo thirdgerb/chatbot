@@ -16,13 +16,13 @@ use Commune\Framework\Blueprint\Server\Request;
 use Commune\Framework\Blueprint\Server\Response;
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Prototype\Kernel\AAppKernel;
-use Commune\Shell\Blueprint\Session\ShlSession;
+use Commune\Shell\Blueprint\Session\ShellSession;
 use Commune\Shell\Blueprint\Shell;
 use Commune\Shell\Blueprint\ShellKernel;
-use Commune\Shell\Contracts\ShlRequest;
-use Commune\Shell\Contracts\ShlResponse;
-use Commune\Shell\Prototype\Kernel\AsyncShlRequest;
-use Commune\Shell\Prototype\Kernel\AsyncShlResponse;
+use Commune\Shell\Contracts\ShellRequest;
+use Commune\Shell\Contracts\ShellResponse;
+use Commune\Shell\Prototype\Kernel\AsyncShellRequest;
+use Commune\Shell\Prototype\Kernel\AsyncShellResponse;
 use Commune\Shell\Prototype\Pipeline\QuestionPipe;
 use Commune\Shell\Prototype\Pipeline\RenderPipe;
 use Commune\Shell\Prototype\Pipeline\ResponsePipe;
@@ -75,19 +75,19 @@ class IShellKernel extends AAppKernel implements ShellKernel
 
     public function basicReqBinding(ReqContainer $container): void
     {
-        $container->alias(ShlRequest::class, Request::class);
-        $container->alias(ShlResponse::class, Response::class);
+        $container->alias(ShellRequest::class, Request::class);
+        $container->alias(ShellResponse::class, Response::class);
     }
 
     protected function makeSession(ReqContainer $container): Session
     {
-        return $container->make(ShlSession::class);
+        return $container->make(ShellSession::class);
     }
 
 
     public function onSync(
-        ShlRequest $request,
-        ShlResponse $response
+        ShellRequest $request,
+        ShellResponse $response
     ): void
     {
         $middleware = array_merge(
@@ -98,9 +98,9 @@ class IShellKernel extends AAppKernel implements ShellKernel
         $this->handleRequest($request, $response, $middleware);
     }
 
-    public function onAsyncResponse(ShlResponse $response) : void
+    public function onAsyncResponse(ShellResponse $response) : void
     {
-        $request = new AsyncShlRequest($response);
+        $request = new AsyncShellRequest($response);
 
         $middleware = array_merge(
             $this->headPipes,
@@ -117,10 +117,10 @@ class IShellKernel extends AAppKernel implements ShellKernel
     }
 
     public function onAsyncRequest(
-        ShlRequest $request
+        ShellRequest $request
     ): void
     {
-        $response = new AsyncShlResponse($request);
+        $response = new AsyncShellResponse($request);
 
         $middleware = array_merge(
             $this->headPipes,

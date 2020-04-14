@@ -12,25 +12,25 @@
 namespace Commune\Framework\Blueprint\Intercom;
 
 use Commune\Framework\Blueprint\Abstracted\Comprehension;
+use Commune\Message\Blueprint\ContextMsg;
 use Commune\Message\Blueprint\IntentMsg;
 use Commune\Message\Blueprint\Message;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $messageId             消息的唯一ID
- * @property-read string $chatId                对话域的唯一ID
- * @property-read string $shellName             平台的名称
- * @property-read string $traceId               链路追踪的ID
+ * @property-read string $traceId               链路 ID
+ * @property-read string|null $cloneId          消息所属的机器人分身ID
  * @property-read ShellInput $shellMessage      平台输入消息
  *
- * @property-read bool $stateless               是否无状态请求
- * @property-read array $sceneEnv               请求场景变量
- * @property-read Comprehension $comprehension  对请求的抽象理解
+ * # 对话理解
+ *
+ * @property Comprehension $comprehension  对请求的抽象理解
  *
  */
-interface GhostInput extends GhostMsg
+interface GhostInput extends GhostMessage
 {
+
     /**
      * 输入消息的文字表达
      * @return string
@@ -49,5 +49,5 @@ interface GhostInput extends GhostMsg
      * @param int|null $deliverAt
      * @return GhostOutput
      */
-    public function reply(Message $message, int $deliverAt = null) : GhostOutput;
+    public function output(Message $message, int $deliverAt = null) : GhostOutput;
 }

@@ -16,7 +16,7 @@ use Commune\Framework\Blueprint\Server\Server;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlServer extends Server
+interface ShellServer extends Server
 {
     /**
      * 关闭会话.

@@ -13,6 +13,8 @@ namespace Commune\Framework\Prototype\Session;
 
 use Commune\Framework\Blueprint\App;
 use Commune\Framework\Blueprint\ReqContainer;
+use Commune\Framework\Blueprint\Server\Request;
+use Commune\Framework\Blueprint\Server\Response;
 use Commune\Framework\Blueprint\Server\Server;
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Blueprint\Session\SessionEvent;
@@ -41,12 +43,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     /*------ cached ------*/
 
     /**
-     * @var array
-     */
-    protected $properties = [];
-
-
-    /**
      * @var string[]
      */
     protected $listened = [];
@@ -72,7 +68,12 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     protected $app;
 
     /**
-     * IShlSession constructor.
+     * @var bool
+     */
+    protected $debug;
+
+    /**
+     * IShellSession constructor.
      * @param ReqContainer $container
      */
     public function __construct(ReqContainer $container)
@@ -84,6 +85,22 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
         static::addRunningTrace($this->uuid, $this->uuid);
     }
+
+    public function getRequest(): Request
+    {
+        return $this->container->get(Request::class);
+    }
+
+    public function getResponse(): Response
+    {
+        return $this->container->get(Response::class);
+    }
+
+    public function isDebugging(): bool
+    {
+        return $this->debug ?? $this->debug = $this->getApp()->isDebugging();
+    }
+
 
     /*------ abstract ------*/
 
@@ -121,22 +138,9 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         return $this->getApp()->getServer();
     }
 
-
     public function isFinished(): bool
     {
         return $this->finished;
-    }
-
-
-    public function setProperty(string $name, $object): void
-    {
-        $abstract = static::INJECTABLE_PROPERTIES[$name] ?? null;
-        if (empty($abstract) || !is_a($object, $abstract, TRUE)) {
-            return;
-        }
-
-        $this->container->share($abstract, $object);
-        $this->properties[$name] = $object;
     }
 
     /*------ event ------*/
@@ -183,8 +187,7 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
         $injectable = static::INJECTABLE_PROPERTIES[$name] ?? null;
         if (!empty($injectable)) {
-            return $this->properties[$name]
-                ?? $this->properties[$name] = $this->container->get($injectable);
+            return $this->container->get($injectable);
         }
 
         return null;
@@ -196,13 +199,10 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     {
         if (!$this->isStateless()) {
             $this->saveSession();
-            $this->getStorage()->save();
         }
 
         $this->container = null;
         $this->app = null;
-        // important! otherwise object stored in the array wouldn't gc
-        $this->properties = [];
         $this->listened = [];
         $this->flushInstances();
         $this->finished = true;

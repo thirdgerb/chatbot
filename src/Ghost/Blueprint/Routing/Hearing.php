@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Routing;
 
+use Commune\Ghost\Blueprint\Match\ToDo;
 use Commune\Ghost\Blueprint\Operator\Operator;
 
 /**
@@ -21,6 +22,8 @@ interface Hearing
 
     public function confuse() : Operator;
 
-    public function end() : Operator;
+    public function dumb() : Operator;
+
+    public function toDo(callable $action) : ToDo;
 
 }

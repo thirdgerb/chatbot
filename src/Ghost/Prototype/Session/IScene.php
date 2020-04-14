@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Prototype\Session;
 
-use Commune\Ghost\Blueprint\Session\Scene;
+use Commune\Ghost\Blueprint\Convo\Scene;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

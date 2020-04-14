@@ -13,6 +13,7 @@ namespace Commune\Message\Blueprint;
 
 /**
  * 用于同步当前的 Context.
+ *
  * 如果端上能对 Context 作出响应, 则有必要添加该 Message.
  * Ghost 也应该对 Context 消息作出响应, 强制改变状态.
  *

@@ -16,7 +16,7 @@ use Commune\Framework\Prototype\Session\ASessionPipe;
 use Commune\Message\Constants\SystemIntents;
 use Commune\Message\Prototype\IIntentMsg;
 use Commune\Message\Prototype\SystemInts\IntercomFailureInt;
-use Commune\Shell\Blueprint\Session\ShlSession;
+use Commune\Shell\Blueprint\Session\ShellSession;
 
 /**
  * 与 Ghost 进行同步通讯的环节
@@ -27,8 +27,8 @@ class ShellMessengerPipe extends ASessionPipe
 {
 
     /**
-     * @param ShlSession $session
-     * @return ShlSession
+     * @param ShellSession $session
+     * @return ShellSession
      */
     protected function before($session)
     {
@@ -55,8 +55,8 @@ class ShellMessengerPipe extends ASessionPipe
     }
 
     /**
-     * @param ShlSession $session
-     * @return ShlSession
+     * @param ShellSession $session
+     * @return ShellSession
      */
     protected function after($session)
     {
@@ -77,11 +77,11 @@ class ShellMessengerPipe extends ASessionPipe
     }
 
     /**
-     * @param ShlSession $session
+     * @param ShellSession $session
      * @param array $outputs
-     * @return ShlSession
+     * @return ShellSession
      */
-    protected function receiveDeliveringMessage(ShlSession $session, array $outputs) : ShlSession
+    protected function receiveDeliveringMessage(ShellSession $session, array $outputs) : ShellSession
     {
         $now = time();
         $beforeDelivery = [];

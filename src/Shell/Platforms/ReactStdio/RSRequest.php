@@ -14,12 +14,12 @@ namespace Commune\Shell\Platforms\ReactStdio;
 use Commune\Framework\Blueprint\Abstracted\Comprehension;
 use Commune\Message\Blueprint\Message;
 use Commune\Message\Prototype\IText;
-use Commune\Shell\Contracts\ShlRequest;
+use Commune\Shell\Contracts\ShellRequest;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RSRequest implements ShlRequest
+class RSRequest implements ShellRequest
 {
     /**
      * @var string

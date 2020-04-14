@@ -42,10 +42,5 @@ interface Verbal
     /**
      * @return string
      */
-    public function getTrimmedText() : string;
-
-    /**
-     * @return string
-     */
     public function getLevel() : string;
 }

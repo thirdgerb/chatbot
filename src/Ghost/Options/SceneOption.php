@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Options;
 
-use Commune\Ghost\Blueprint\Session\Scene;
+use Commune\Ghost\Blueprint\Convo\Scene;
 use Commune\Ghost\Prototype\Session\IScene;
 use Commune\Support\Struct\AbsStruct;
 

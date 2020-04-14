@@ -11,8 +11,8 @@
 
 namespace Commune\Shell\Blueprint\Kernels;
 
-use Commune\Shell\Contracts\ShlRequest;
-use Commune\Shell\Contracts\ShlResponse;
+use Commune\Shell\Contracts\ShellRequest;
+use Commune\Shell\Contracts\ShellResponse;
 
 /**
  * 处理单个请求的 Kernel, 同步的请求给予同步的响应.
@@ -24,12 +24,12 @@ interface RequestKernel
     /**
      * 完成同步响应.
      *
-     * @param ShlRequest $request
-     * @param ShlResponse $response
+     * @param ShellRequest $request
+     * @param ShellResponse $response
      */
     public function onRequest(
-        ShlRequest $request,
-        ShlResponse $response
+        ShellRequest $request,
+        ShellResponse $response
     ) : void;
 
 }
