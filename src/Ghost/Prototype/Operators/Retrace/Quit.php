@@ -9,20 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Operators\Hear;
+namespace Commune\Ghost\Prototype\Operators\Retrace;
 
-use Commune\Ghost\Blueprint\Operator\Operator;
-use Commune\Ghost\Blueprint\Convo\Conversation;
-use Commune\Ghost\Prototype\Operators\AbsOperator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class Heard extends AbsOperator
+class Quit
 {
-    public function invoke(Conversation $conversation): ? Operator
-    {
-    }
-
 
 }

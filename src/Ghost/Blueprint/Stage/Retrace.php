@@ -12,7 +12,6 @@
 namespace Commune\Ghost\Blueprint\Stage;
 
 use Commune\Ghost\Blueprint\Context\Context;
-use Commune\Ghost\Blueprint\Stage;
 use Commune\Ghost\Blueprint\Routing\Fallback;
 use Commune\Ghost\Blueprint\Routing\Staging;
 
@@ -21,7 +20,7 @@ use Commune\Ghost\Blueprint\Routing\Staging;
  *
  * @property-read Context $prevContext
  */
-interface Retrace extends Dialog
+interface Retrace extends Stage
 {
     public function staging() : Staging;
 

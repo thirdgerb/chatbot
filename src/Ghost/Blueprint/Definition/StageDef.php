@@ -11,6 +11,8 @@
 
 namespace Commune\Ghost\Blueprint\Definition;
 
+use Commune\Ghost\Blueprint\Context\Context;
+use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Stage;
 use Commune\Ghost\Blueprint\Operator\Operator;
 
@@ -43,11 +45,13 @@ interface StageDef
 
     /*------- relations -------*/
 
-    /**
-     * 所属的 Context
-     * @return ContextDef
-     */
-    public function getContextDef() : ContextDef;
+//    /**
+//     * 所属的 Context
+//     * @return ContextDef
+//     */
+//    public function getContextDef() : ContextDef;
+
+    public function getContextName() : string;
 
     /**
      * 作为 Intent 的匹配规则.
@@ -58,111 +62,119 @@ interface StageDef
     /*------- stage 路由 -------*/
 
     /**
-     * 在 wait 状态下, 可以重定向走的意图
-     * @return string[]
-     */
-    public function routingIntents() : array;
-
-    /**
-     * 可以路由到的 Context 内部的 Stage
+     * 在 wait 状态下, 可以跳转直达的 Context 名称.
+     * 允许用 * 作为通配符.
      *
-     * @return string[] 监听的 Stage 名称. 允许使用 * 作为通配符.
-     */
-    public function routingStages() : array;
-
-    /**
+     * @param Conversation $conversation
      * @return string[]
      */
-    public function comprehendPipes() : array;
+    public function contextRoutes(Conversation $conversation) : array;
 
-    /*------- stage 启动 -------*/
+    /**
+     * 在 wait 状态下, 可以跳转直达的 Context 内部 Stage 的名称.
+     * 允许用 * 作为通配符.
+     *
+     * @param Conversation $conversation
+     * @return string[]
+     */
+    public function stageRoutes(Conversation $conversation) : array;
+
+    /**
+     * 当前 Stage 自定义的理解管道.
+     * @param Conversation $conversation
+     * @return string[]
+     */
+    public function comprehendPipes(Conversation $conversation) : array;
+
+    /*------- intend to stage -------*/
 
     /**
      * 作为意图被命中时, 还未进入当前 Stage
      *
-     * @param Stage\Intend $dialog
+     * @param Stage\Intend $stage
      * @return Operator
      */
     public function onIntend(
-        Stage\Intend $dialog
+        Stage\Intend $stage
     ) : Operator;
 
     /**
      * 正式进入 Stage 后
      *
-     * @param Stage\Activate $dialog
+     * @param Stage\Activate $stage
      * @return Operator
      */
     public function onActivate(
-        Stage\Activate $dialog
+        Stage\Activate $stage
     ) : Operator;
 
-
-    /*------- wait -------*/
-
-    /**
-     * 没有命中任何分支, 由当前 Stage 自行响应.
-     *
-     * @param Stage\Heed $dialog
-     * @return Operator
-     */
-    public function onHeed(
-        Stage\Heed $dialog
-    ) : Operator;
-
-    /*------- sleep 相关 -------*/
 
     /**
      * 当前 Thread 从 sleep 状态被唤醒时.
      *
-     * @param Stage\Retrace $dialog
+     * @param Stage\Activate $stage
      * @return Operator
      */
     public function onWake(
-        Stage\Retrace $dialog
+        Stage\Activate $stage
     ) : Operator ;
 
-    /*------- depend 相关 -------*/
+
+
+    /*------- heed -------*/
+
+    /**
+     * 没有命中任何分支, 由当前 Stage 自行响应.
+     *
+     * @param Stage\Heed $stage
+     * @return Operator
+     */
+    public function onHeed(
+        Stage\Heed $stage
+    ) : Operator;
+
+
+    /*------- retrace -------*/
 
     /**
      * 依赖语境被拒绝时. 通常是因为权限不足.
      *
-     * @param Stage\Retrace $dialog
+     * @param Stage\Retrace $stage
      * @return Operator
      */
     public function onReject(
-        Stage\Retrace $dialog
+        Stage\Retrace $stage
     ) : Operator;
 
     /**
      * 当前 Thread 被用户要求 cancel 时
      *
-     * @param Stage\Retrace $dialog
+     * @param Stage\Retrace $stage
      * @return Operator
      */
     public function onCancel(
-        Stage\Retrace $dialog
+        Stage\Retrace $stage
     ) : Operator;
 
     /**
      * 依赖语境完成, 回调时.
      *
-     * @param Stage\Retrace $dialog
+     * @param Stage\Retrace $stage
      * @return Operator
      */
     public function onFulfill(
-        Stage\Retrace $dialog
+        Stage\Retrace $stage
     ) : Operator;
 
 
     /**
      * Process 结束时, 会检查所有的 Thread 的态度.
      *
-     * @param Stage\Retrace $dialog
+     * @param Stage\Retrace $stage
      * @return Operator
      */
     public function onQuit(
-        Stage\Retrace $dialog
+        Stage\Retrace $stage
     ) : Operator ;
 
 }

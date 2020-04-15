@@ -14,6 +14,7 @@ namespace Commune\Ghost\Blueprint\Context;
 use ArrayAccess;
 use Commune\Ghost\Blueprint\Memory\Recollection;
 use Commune\Ghost\Blueprint\Definition\ContextDef;
+use Commune\Ghost\Blueprint\Runtime\Node;
 use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Ghost\Blueprint\Convo\SessionInstance;
 use Commune\Support\DI\Injectable;
@@ -45,4 +46,6 @@ interface Context extends ArrayAccess, ArrayAndJsonAble, SessionInstance, Inject
     public function getDef() : ContextDef;
 
     public function getRecollection() : Recollection;
+
+    public function toNewNode() : Node;
 }

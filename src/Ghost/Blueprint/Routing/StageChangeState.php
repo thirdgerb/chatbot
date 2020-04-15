@@ -19,7 +19,7 @@ use Commune\Ghost\Blueprint\Operator\Operator;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface StageEvent
+interface StageChangeState
 {
     public function onIntend(Context $context) : Operator;
 

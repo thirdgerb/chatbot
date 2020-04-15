@@ -15,6 +15,9 @@ use Commune\Ghost\Blueprint\Operator\Operator;
 
 
 /**
+ * 运行多轮对话的逻辑中, 允许通过异常来中断复杂的逻辑
+ * 直接指定下一步方向.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class OperatorException extends \RuntimeException
@@ -33,6 +36,16 @@ class OperatorException extends \RuntimeException
         $this->operator = $operator;
         parent::__construct();
     }
+
+    /**
+     * @return Operator
+     */
+    public function getOperator(): Operator
+    {
+        return $this->operator;
+    }
+
+
 
 
 }

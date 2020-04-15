@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Operators\Staging;
+namespace Commune\Ghost\Prototype\Operators\Retrace;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class Next
+class Cancel
 {
 
 }

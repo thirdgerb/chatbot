@@ -14,8 +14,10 @@ namespace Commune\Ghost\Prototype\Operators\Process;
 use Commune\Framework\Blueprint\Intercom\YieldMsg;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Operator\Operator;
+use Commune\Ghost\Blueprint\Runtime\Process;
 use Commune\Ghost\Contexts\YieldContext;
-use Commune\Ghost\Prototype\Dialog\IIntend;
+use Commune\Ghost\Prototype\Operators\Redirect\TryBlock;
+use Commune\Ghost\Prototype\Stage\IIntendStage;
 use Commune\Ghost\Prototype\Operators\AbsOperator;
 
 /**
@@ -30,19 +32,21 @@ class ProcessFromYield extends AbsOperator
 
     /**
      * ProcessFromYield constructor.
+     * @param Process $process
      * @param YieldMsg $yieldMsg
      */
-    public function __construct(YieldMsg $yieldMsg)
+    public function __construct(Process $process, YieldMsg $yieldMsg)
     {
         $this->yieldMsg = $yieldMsg;
+        parent::__construct($process);
     }
 
 
     public function invoke(Conversation $conversation): ? Operator
     {
         $context = new YieldContext($this->yieldMsg);
-        $dialog = new IIntend($conversation, $context);
-        return $dialog->stageEvent()->onActivate();
+
+        return new TryBlock($this->process, $context);
     }
 
 

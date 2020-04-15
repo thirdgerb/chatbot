@@ -11,9 +11,12 @@
 
 namespace Commune\Ghost\Blueprint\Stage;
 
+use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Operator\Operator;
-use Commune\Ghost\Blueprint\Routing\StageEvent;
+use Commune\Ghost\Blueprint\Routing\StageChangeState;
+use Commune\Ghost\Blueprint\Runtime\Process;
 use Commune\Ghost\Blueprint\Speak\Speaker;
 
 
@@ -21,6 +24,11 @@ use Commune\Ghost\Blueprint\Speak\Speaker;
  * 多轮对话管理器. 在多轮对话逻辑中, 一切都通过它来管理.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ *
+ * @property-read Conversation $conversation
+ * @property-read StageDef $def
+ * @property-read Context $self
  */
 interface Stage
 {
@@ -43,15 +51,10 @@ interface Stage
     public function operate(callable $action) : ? Operator;
 
     /**
-     * @return Conversation
-     */
-    public function getConversation() : Conversation;
-
-    /**
      * 当前 stage 的状态管理.
-     * @return StageEvent
+     * @return StageChangeState
      */
-    public function fireEvent() : StageEvent;
+    public function change() : StageChangeState;
 
     /**
      * @return Speaker

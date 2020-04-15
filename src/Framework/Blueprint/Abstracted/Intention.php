@@ -16,8 +16,28 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Intent extends ArrayAndJsonAble
+interface Intention extends ArrayAndJsonAble
 {
+    /*----- do match -----*/
+
+    /**
+     * @param string $intent
+     * @return bool
+     */
+    public function isWildcardIntent(string $intent) : bool;
+
+    /**
+     * 模糊匹配意图.
+     * @param string $intentPattern
+     * @return null|string
+     */
+    public function wildcardIntentMatch(string $intentPattern) : ? string;
+
+    /**
+     * @param string $intentName
+     * @return bool
+     */
+    public function exactIntentMatch(string $intentName) : bool;
 
     /*----- matched intent -----*/
 

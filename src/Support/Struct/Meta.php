@@ -28,9 +28,11 @@ interface Meta extends Struct
     public function getMetaType() : string;
 
     /**
-     * 将自身封装的 $config 封装成 Struct 对象.
-     * @return Struct
+     * 将自身封装的 $config 封装成一个 wrapper 对象.
+     * 不需要依赖注入.
+     *
+     * @return Wrapper
      */
-    public function wrap() : Struct;
+    public function wrap() : Wrapper;
 
 }

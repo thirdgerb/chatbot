@@ -11,10 +11,11 @@
 
 namespace Commune\Ghost\Blueprint\Mind;
 
-use Commune\Ghost\Blueprint\Definition\DefRegistry;
+use Commune\Ghost\Blueprint\Definition\IntentDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ * @method IntentDef getDef(string $defName)
  */
 interface IntentReg extends DefRegistry
 {

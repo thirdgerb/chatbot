@@ -6,31 +6,86 @@ namespace Commune\Support\Utils;
 
 class StringUtils
 {
+
+    /**
+     * 字符串是否包含通配符
+     *
+     * @param string $string
+     * @return bool
+     */
+    public static function isWildCardPattern(string $string) : bool
+    {
+        return strpos($string, '*') !== false;
+    }
+
+    /**
+     * 通配符专为正则. 通配符只能匹配 \w
+     * @param string $string
+     * @return string
+     */
+    public static function wildcardToRegex(string $string) : string
+    {
+        $string = str_replace('*', '\w+', $string);
+        return "/^$string$/";
+    }
+
+    /**
+     * 字符串去掉默认的符号
+     *
+     * @param string $str
+     * @return string
+     */
     public static function trim(string $str) : string
     {
         return trim($str, " \t\n\r\0\x0B.,;");
     }
 
+    /**
+     * 对象是否可以转化为字符串
+     * @param mixed $value
+     * @return bool
+     */
     public static function couldBeString($value) : bool
     {
         return is_scalar($value) || (is_object($value) && method_exists($value, '__toString'));
     }
 
+    /**
+     * 将意图名称标准化.
+     *
+     * @param string $name
+     * @return string
+     */
     public static function normalizeIntentName(string $name) : string
     {
         return strtolower(static::namespaceSlashToDot($name));
     }
 
+    /**
+     * 命名空间 \ 转为用 . 连接的字符串.
+     * @param string $name
+     * @return string
+     */
     public static function namespaceSlashToDot(string $name) : string
     {
         return str_replace('\\', '.', $name);
     }
 
+    /**
+     * 用 . 连接的字符串专为类名
+     * @param string $name
+     * @return string
+     */
     public static function dotToNamespaceSlash(string $name) : string
     {
         return str_replace('.', '\\', $name);
     }
 
+    /**
+     * 获取 description 注解
+     * @param string $docComment
+     * @return null|string
+     */
     public static function fetchDescAnnotation(string $docComment) : ? string
     {
         $matches = [];
@@ -39,6 +94,7 @@ class StringUtils
     }
 
     /**
+     * 获取 property 注解
      * @param string $docComment
      * @return array  [ [propertyName, propertyDesc], [name2, desc2]]
      */
@@ -58,6 +114,7 @@ class StringUtils
     }
 
     /**
+     * 把严格的 property 注解拆分成 name, type, desc
      * @param string $docComment
      * @param string $marker
      * @return array [ [propertyName, type, desc], ]
@@ -87,12 +144,24 @@ class StringUtils
     }
 
 
+    /**
+     * 是否包含某个注解
+     *
+     * @param string $doc
+     * @param string $annotation
+     * @return bool
+     */
     public static function hasAnnotation(string $doc, string $annotation) : bool
     {
         $matched = preg_match('/@'. $annotation.'\s/', $doc);
         return is_int($matched) && $matched > 0;
     }
 
+    /**
+     * 把 className@ method 转化为 [className, method]
+     * @param string $name
+     * @return array|null
+     */
     public static function matchNameAndMethod(string $name) : ? array
     {
         $matches = [];
@@ -108,13 +177,19 @@ class StringUtils
         return null;
     }
 
+    /**
+     * 标准化字符串, 包括转化全角, 和大小写一致
+     * @param string $str
+     * @return string
+     */
     public static function normalizeString(string $str) : string
     {
         return static::sbc2dbc(strtolower($str));
     }
 
     /**
-     * 把全角符号做一些替换.
+     * 把全角符号替换成一般字符.
+     *
      * @see https://www.bbsmax.com/A/Ae5Ry6bAJQ/
      * @param string $str
      * @return string
@@ -141,6 +216,11 @@ class StringUtils
         return strtr($str, $arr);
     }
 
+    /**
+     * 将一部分序数字符转化为整形
+     * @param string $char
+     * @return int|null
+     */
     public static function simpleCharToInt(string $char) : ? int
     {
         $matcher = [
@@ -225,6 +305,18 @@ class StringUtils
     }
 
 
+    /**
+     * 将用 . 分割开来的相对路径, 转化为绝对路径.
+     *
+     * 例如:
+     *  .xxx        同级目录
+     *  ..xxx       上级目录
+     *  ...xxx      上N级目录
+     *
+     * @param string $current
+     * @param string $target
+     * @return string
+     */
     public static function dotPathParser(string $current, string $target) : string
     {
         $start = $target[0] ?? '';

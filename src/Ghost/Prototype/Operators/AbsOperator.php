@@ -18,4 +18,5 @@ use Commune\Ghost\Blueprint\Operator\Operator;
  */
 abstract class AbsOperator implements Operator
 {
+
 }

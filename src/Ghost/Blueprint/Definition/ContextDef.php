@@ -30,9 +30,7 @@ interface ContextDef extends Def
 
     /*------- stage -------*/
 
-    public function initialStageDef() : StageDef;
-
-    public function invokeStageDef() : StageDef;
+    public function getInitialStageDef() : StageDef;
 
     public function hasStage(string $stageName) : bool;
 

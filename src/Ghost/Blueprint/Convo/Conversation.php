@@ -50,9 +50,8 @@ use Commune\Ghost\Blueprint\Context\Context;
  * @property-read Blueprint\Mind\Mindset $mind                  对话机器人的思维. 公共的
  * @property-read Blueprint\Meta\MetaRegistrar $metaReg         元数据的注册表
  *
- * ## 驱动类组件
+ * ## IO 组件
  *
- * @property-read Driver $driver                         Session 的驱动, 读写各种数据.
  * @property-read Cache $cache                                  缓存
  * @property-read Messenger $messenger
  *
@@ -62,6 +61,7 @@ use Commune\Ghost\Blueprint\Context\Context;
  * @property-read Blueprint\Memory\Memory $memory               机器人的记忆
  * @property-read Blueprint\Speak\Speaker $speaker
  * @property-read Blueprint\Runtime\Runtime $runtime
+ * @property-read Blueprint\Match\Matcher $matcher
  *
  */
 interface Conversation extends Session
@@ -85,7 +85,6 @@ interface Conversation extends Session
      */
     public function runDialogManager(Operator $operator = null) : void;
 
-    public function newContext(string $contextName, array $entities) : Context;
 
     /*------ deliver ------*/
 

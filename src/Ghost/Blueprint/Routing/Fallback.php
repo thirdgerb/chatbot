@@ -36,4 +36,10 @@ interface Fallback
      * @return Operator
      */
     public function quit() : Operator;
+
+    /**
+     * @param int $gcTurn
+     * @return Operator
+     */
+    public function fulfill(int $gcTurn = 0) : Operator;
 }

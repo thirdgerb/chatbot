@@ -42,7 +42,7 @@ class NLUPipe extends ComprehendPipe
     {
         $ghostInput = $conversation->ghostInput;
         $comprehension = $ghostInput->comprehension;
-        $matched = $comprehension->intent->getMatchedIntent();
+        $matched = $comprehension->intention->getMatchedIntent();
 
         if (!empty($matched)) {
             return $next($conversation);

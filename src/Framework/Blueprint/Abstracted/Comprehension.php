@@ -19,7 +19,7 @@ use Commune\Support\Babel\BabelSerializable;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read Intent $intent                    意图和实体理解. 可以针对任何输入信息
+ * @property-read Intention $intention              意图和实体理解. 可以针对任何输入信息
  * @property-read Choice $choice                    选项. 可以来自各种输入信息
  * @property-read CmdStr $command                   命令. 通常源消息是字符串.
  * @property-read Emotion $emotion                  情感. 通常来自 NLU

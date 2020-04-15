@@ -9,13 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Operators\Fallback;
+namespace Commune\Ghost\Prototype\Stage;
+
+use Commune\Ghost\Blueprint\Stage\Heed;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class Quit
+class IHeedStage extends AStage implements Heed
 {
+
 
 }

@@ -32,6 +32,4 @@ interface RetainMsg extends Message
      * @return string
      */
     public function getRetainFrom() : string;
-
-
 }

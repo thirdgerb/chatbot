@@ -12,7 +12,6 @@
 namespace Commune\Ghost\Blueprint\Runtime;
 
 use Commune\Framework\Blueprint\Abstracted\Comprehension;
-use Generator;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
@@ -24,36 +23,46 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read string $id            进程的唯一 ID. 每一轮请求的 ID 都不一样.
  * @property-read string[] $sleeping    sleep Thread 的 id
  * @property-read string[] $blocking    block Thread 的 id
- * @property-read string[] $watching
  *
  * @property-read string|null $parentId
  * @property-read string|null $childId
  */
 interface Process extends ArrayAndJsonAble
 {
-//
-//    /**
-//     * @return bool
-//     */
-//    public function isAlive() : bool;
-//
 
     /*-------- 状态相关 --------*/
 
-//
-//    /**
-//     * 当前运行中的进程.
-//     * @return Thread
-//     */
-//    public function aliveThread() : Thread;
-//
-//    public function aliveContext() : string;
-//
-//    public function aliveThreadId() : string;
-//
+
+    /**
+     * 当前运行中的进程.
+     * @return Thread
+     */
+    public function aliveThread() : Thread;
+
     public function aliveStage() : string;
 
     public function aliveStageFullname() : string;
+
+
+    /*-------- challenge --------*/
+
+    /**
+     * 尝试将一个 Thread 取代当前的 Thread,
+     * 通过比较 priority
+     * 成功的话, 会把当前 Thread 踢出来
+     *
+     * @param Thread $thread
+     * @param bool $force       强制取代
+     * @return Thread|null
+     */
+    public function challenge(Thread $thread, bool $force = false) : ? Thread;
+
+
+    /*-------- 获取进程内的 Thread --------*/
+
+    public function hasThread(string $threadId) : bool;
+
+    public function getThread(string $threadId) : ? Thread;
 //
 //    /*-------- sleeping --------*/
 //
@@ -63,18 +72,15 @@ interface Process extends ArrayAndJsonAble
 //     */
 //    public function eachSleeping() : Generator;
 //
-//    /**
-//     * 将当前的 Thread
-//     * @param Thread $thread
-//     * @return bool
-//     */
-//    public function sleepThreadTo(Thread $thread) : bool;
-//
-//    /**
-//     * 弄醒一个睡着的 Thread
-//     * @return bool
-//     */
-//    public function wakeThread() : bool;
+    /**
+     * 将当前的 Thread 睡眠.
+     * @param Thread $to
+     * @return bool
+     */
+    public function sleepToThread(Thread $to) : bool;
+
+    public function popSleeping(string $threadId = null) : ? Thread;
+
 //
 //    /*-------- block --------*/
 //
@@ -84,13 +90,7 @@ interface Process extends ArrayAndJsonAble
 //     */
 //    public function eachBlocked() : Generator;
 //
-    /**
-     * 尝试将一个 Thread 阻塞当前进程中.
-     *
-     * @param Thread $thread
-     * @return bool
-     */
-    public function blockThread(Thread $thread) : bool;
+
 //
 //    /**
 //     * 是否被插入的 Thread 挡住了.
@@ -106,14 +106,18 @@ interface Process extends ArrayAndJsonAble
 //     */
 //    public function shouldSave() : bool;
 //
-//    /*-------- gc 相关 --------*/
-//
-//    /**
-//     * 需要 gc 的 Thread
-//     * @return Thread[]
-//     */
-//    public function gc() : array;
-//
+    /*-------- gc 相关 --------*/
+
+    /**
+     * 把一个 Thread 加入到 gc 行列中.
+     * 在剩余的几个回合内, 这个 Thread 仍然有被唤醒的可能, 否则就死翘翘了
+     *
+     * @param Thread $thread
+     * @param int $gcTurn
+     */
+    public function addGc(Thread $thread, int $gcTurn) : void;
+
+
 //
 //    /*-------- snapshot 快照历史 --------*/
 //
@@ -142,6 +146,24 @@ interface Process extends ArrayAndJsonAble
 //     * @return bool
 //     */
 //    public function expireStep(int $max) : bool;
+
+    /*---------- gc ----------*/
+
+    /*---------- block ----------*/
+
+    /**
+     * @return bool
+     */
+    public function hasBlocking() : bool;
+
+    /**
+     * @return Thread
+     */
+    public function popBlocking() : Thread;
+
+    /*---------- yielding ----------*/
+
+    public function popYielding(string $threadId) : ? Thread;
 
     /*---------- wait ----------*/
 

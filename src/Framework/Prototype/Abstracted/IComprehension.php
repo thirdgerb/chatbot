@@ -24,7 +24,7 @@ class IComprehension implements Comprehension
     use ArrayAbleToJson;
 
     const PROPERTIES = [
-        'intent' => IIntent::class,
+        'intent' => IIntention::class,
         'choice' => IChoice::class,
         'command' => ICmdStr::class,
         'emotion' => IEmotion::class,

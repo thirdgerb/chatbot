@@ -28,16 +28,37 @@ interface Session
     public function getSessionId() : string;
 
     /**
+     * 是否是调试模式.
+     * @return bool
+     */
+    public function isDebugging() : bool;
+
+    /*------ expire ------*/
+
+
+    /**
+     * 设置为无状态请求
+     */
+    public function noState() : void;
+
+    /**
+     * 是否是无状态的 session
+     * @return bool
+     */
+    public function isStateless() : bool;
+
+
+    /**
      * Session 缓存的过期时间.
      * @return int
      */
     public function getSessionExpire() : int;
 
     /**
-     * 是否是调试模式.
-     * @return bool
+     * 设置当前 session 的过期时间, 可用来更改 session 默认的续期.
+     * @param int $int
      */
-    public function isDebugging() : bool;
+    public function setSessionExpire(int $int) : void;
 
     /*------ request ------*/
 
@@ -63,20 +84,6 @@ interface Session
      * @return ReqContainer
      */
     public function getContainer() : ReqContainer;
-
-
-    /*------ status save ------*/
-
-    /**
-     * 设置为无状态请求
-     */
-    public function noState() : void;
-
-    /**
-     * 是否是无状态的 session
-     * @return bool
-     */
-    public function isStateless() : bool;
 
     /*------ output ------*/
 

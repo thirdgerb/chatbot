@@ -11,6 +11,9 @@
 
 namespace Commune\Ghost\Blueprint\Runtime;
 
+use Commune\Ghost\Blueprint\Context\Context;
+use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
@@ -27,27 +30,31 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 interface Node extends ArrayAndJsonAble
 {
 
+    public function toThread() : Thread;
+
+    public function getStageFullname() : string;
+
     /**
-     * 切换当前 stage
-     * @param string $stageName
+     * @return bool
      */
-    public function goStage(string $stageName) : void;
+    public function next() : bool;
 
     /**
      * 预订接下来要经过的 Stage
      * @param array $stageNames
      */
-    public function goStagePipes(array $stageNames) : void;
+    public function pushStack(array $stageNames) : void;
+
 
     /**
      * 重置管道
      */
-    public function resetPipes() : void;
+    public function flushStack() : void;
 
-    /**
-     * 前进一个节点
-     * @return bool
-     */
-    public function forward() : bool;
 
+    /*-------- find ---------*/
+
+    public function findStageDef(Conversation $conversation) : StageDef;
+
+    public function findContext(Conversation $conversation) : Context;
 }

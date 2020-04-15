@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Runtime;
 
-use Commune\Ghost\Blueprint\Context\Context;
+use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
@@ -26,8 +26,27 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 interface Thread extends ArrayAndJsonAble
 {
 
-    public function dependOn(Context $context) : void;
+    /**
+     * 当前节点
+     * @return Node
+     */
+    public function currentNode() : Node;
 
+    /**
+     * 前进一个 Node
+     * @param Node $node
+     */
+    public function pushNode(Node $node) : void;
+
+    /**
+     * 后退一个节点, 并把当前节点当成一个新的 Thread 抛出.
+     * @return Node|null
+     */
+    public function popNode() : ? Node;
+
+    /*--------- more information ---------*/
+
+    public function getDescription(Conversation $conversation) : string;
 
     /*--------- gc ---------*/
 

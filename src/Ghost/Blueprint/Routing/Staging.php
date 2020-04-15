@@ -25,7 +25,6 @@ interface Staging
 
     public function next(...$stageNames) : Operator;
 
-    public function fulfill() : Operator;
 
 
 }

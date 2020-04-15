@@ -29,13 +29,7 @@ interface Activate extends Stage
      * 等待用户消息
      * @return Operator
      */
-    public function listen() : Operator;
-
-    /**
-     * @param string $belongsTo
-     * @return Operator
-     */
-    public function toSubProcess(string $belongsTo) : Operator;
+    public function await() : Operator;
 
     public function staging() : Staging;
 

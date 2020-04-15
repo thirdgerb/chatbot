@@ -11,11 +11,35 @@
 
 namespace Commune\Ghost\Prototype\Operators\Redirect;
 
+use Commune\Ghost\Blueprint\Context\Context;
+use Commune\Ghost\Prototype\Operators\AbsOperator;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SleepTo
+class SleepTo extends AbsOperator
 {
+    /**
+     * @var Context|null
+     */
+    protected $to;
+
+    /**
+     * @var int
+     */
+    protected $gc;
+
+    /**
+     * SleepTo constructor.
+     * @param Context|null $to
+     * @param int $gc
+     */
+    public function __construct(?Context $to, int $gc = 0)
+    {
+        $this->to = $to;
+        $this->gc = $gc;
+    }
+
 
 }

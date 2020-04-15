@@ -9,13 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Operators\Staging;
+namespace Commune\Ghost\Prototype\Stage;
 
+use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Ghost\Blueprint\Stage\Activate;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class Fulfill
+class IActivateStage extends AStage implements Activate
 {
-
 }

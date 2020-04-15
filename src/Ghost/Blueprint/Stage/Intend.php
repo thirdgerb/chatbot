@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Stage;
 
-use Commune\Ghost\Blueprint\Stage;
+use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Routing\Backward;
 use Commune\Ghost\Blueprint\Routing\Fallback;
 use Commune\Ghost\Blueprint\Routing\Redirect;
@@ -26,10 +26,10 @@ use Commune\Ghost\Blueprint\Routing\Redirect;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * 更多属性
- * @see Stage
+ *
+ * @property-read Context $intending
  */
-interface Intend extends Dialog
+interface Intend extends Stage
 {
     public function redirect() : Redirect;
 

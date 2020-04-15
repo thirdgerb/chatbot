@@ -140,7 +140,7 @@ class IGhostInput extends AGhostMessage implements GhostInput
             return $this->matchedIntent = $message;
         }
 
-        $intentRepo = $this->cph->intent;
+        $intentRepo = $this->cph->intention;
         $matchedIntentName = $intentRepo->getMatchedIntent();
         if (isset($matchedIntentName)) {
             return $this->matchedIntent = new IIntentMsg(

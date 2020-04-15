@@ -9,32 +9,21 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Operators\Hear;
+namespace Commune\Ghost\Prototype\Operators\Breakpoint;
 
-use Commune\Ghost\Blueprint\Definition\StageDef;
-use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Ghost\Blueprint\Operator\Operator;
+use Commune\Ghost\Prototype\Operators\AbsOperator;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RoutingStages extends AbsHear
+class EndOperation extends AbsOperator
 {
-    /**
-     * @var StageDef
-     */
-    protected $stageDef;
-
 
     public function invoke(Conversation $conversation): ? Operator
     {
-        return $this->routingStages($conversation)
-            ?? $this->routingIntents($conversation)
-            ?? $this->toChildProcess($conversation)
-            ?? $this->heard($conversation);
-
+        return null;
     }
-
-
 }

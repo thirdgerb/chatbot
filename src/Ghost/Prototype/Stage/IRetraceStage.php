@@ -9,20 +9,35 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Dialog;
+namespace Commune\Ghost\Prototype\Stage;
 
 use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Stage\Retrace;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read Context $from
  */
-class IRetrace extends ADialog implements Retrace
+class IRetraceStage extends AStage implements Retrace
 {
-    public function __construct(Conversation $conversation, Context $fallback)
+    /**
+     * @var Context
+     */
+    protected $from;
+
+    public function __construct(
+        Conversation $conversation,
+        StageDef $stageDef,
+        Context $self,
+        Context $from
+    )
     {
-        parent::__construct($conversation);
+        $this->from = $from;
+        parent::__construct($conversation, $stageDef, $self);
     }
+
 
 }

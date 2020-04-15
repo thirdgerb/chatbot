@@ -11,7 +11,7 @@
 
 namespace Commune\Framework\Prototype\Abstracted;
 
-use Commune\Framework\Blueprint\Abstracted\Intent;
+use Commune\Framework\Blueprint\Abstracted\Intention;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Utils\StringUtils;
 
@@ -19,7 +19,7 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IIntent implements Intent
+class IIntention implements Intention
 {
     use ArrayAbleToJson;
 
@@ -54,6 +54,31 @@ class IIntent implements Intent
             'intentEntities' => $this->intentEntities,
         ];
     }
+
+    public function isWildcardIntent(string $intent): bool
+    {
+        return StringUtils::isWildCardPattern($intent);
+    }
+
+    public function wildcardIntentMatch(string $intentPattern): ? string
+    {
+        $pattern = StringUtils::wildcardToRegex($intentPattern);
+
+        foreach ($this->getPossibleIntentNames(true) as $name) {
+            $matched = preg_match($pattern, $name);
+            if ((int) $matched > 0) {
+                return $name;
+            }
+        }
+
+        return null;
+    }
+
+    public function exactIntentMatch(string $intentName): bool
+    {
+        return $this->hasPossibleIntent($intentName);
+    }
+
 
     public function getMatchedIntent(): ? string
     {

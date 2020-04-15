@@ -35,7 +35,7 @@ class IComprehensionTest extends TestCase
     public function testSerialize()
     {
         $c = new IComprehension();
-        $c->intent->setMatchedIntent('hello');
+        $c->intention->setMatchedIntent('hello');
 
         $s = Babel::getResolver()->serialize($c);
         $c2 = Babel::getResolver()->unSerialize($s);

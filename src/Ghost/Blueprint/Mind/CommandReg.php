@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Mind;
 
-use Commune\Ghost\Blueprint\Definition\DefRegistry;
+use Commune\Ghost\Blueprint\Mind\DefRegistry;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

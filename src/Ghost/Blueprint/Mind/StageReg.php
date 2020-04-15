@@ -11,11 +11,13 @@
 
 namespace Commune\Ghost\Blueprint\Mind;
 
-use Commune\Ghost\Blueprint\Definition\DefRegistry;
-
+use Commune\Ghost\Blueprint\Definition\StageDef;
 
 /**
+ *
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
+ * @method StageDef getDef(string $stageName)
  */
 interface StageReg extends DefRegistry
 {

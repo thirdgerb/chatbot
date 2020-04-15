@@ -11,10 +11,12 @@
 
 namespace Commune\Ghost\Blueprint\Mind;
 
-use Commune\Ghost\Blueprint\Definition\DefRegistry;
+use Commune\Ghost\Blueprint\Definition\ContextDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @method ContextDef getDef(string $contextName)
  */
 interface ContextReg extends DefRegistry
 {

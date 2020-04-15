@@ -14,9 +14,9 @@ namespace Commune\Ghost\Prototype\Operators\Process;
 use Commune\Framework\Blueprint\Intercom\RetainMsg;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Operator\Operator;
-use Commune\Ghost\Prototype\Dialog\IHeed;
+use Commune\Ghost\Blueprint\Runtime\Process;
+use Commune\Ghost\Prototype\Stage\IHeedStage;
 use Commune\Ghost\Prototype\Operators\AbsOperator;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -30,17 +30,19 @@ class ProcessToRetain extends AbsOperator
 
     /**
      * ProcessToRetain constructor.
+     * @param Process $process
      * @param RetainMsg $retainMsg
      */
-    public function __construct(RetainMsg $retainMsg)
+    public function __construct(Process $process, RetainMsg $retainMsg)
     {
         $this->retainMsg = $retainMsg;
+        parent::__construct($process);
     }
 
     public function invoke(Conversation $conversation): ? Operator
     {
         $threadId = $this->retainMsg->getThreadId();
-        $yielding = $conversation->runtime->popYielding($threadId);
+        $yielding = $this->process->popYielding($threadId);
 
         // 如果回调的目标 Thread 找不到了, 则放弃掉.
         // yield 可以设置一个等待时间.
@@ -51,12 +53,13 @@ class ProcessToRetain extends AbsOperator
             return null;
         }
 
+        // 得到 Context 实例
         $context = $conversation->newContext(
             $this->retainMsg->getContextName(),
             $this->retainMsg->getEntities()
         );
 
-        $yielding->dependOn($context);
+        $yielding->pushNode($context->toNewNode());
 
         $blocked = $conversation->runtime->getProcess()->blockThread($yielding);
 
@@ -65,9 +68,10 @@ class ProcessToRetain extends AbsOperator
             return null;
         }
 
-        // context 进行回调.
-        $heed = new IHeed($conversation);
-        return $heed->staging()->fulfill();
+        $heed = new IHeedStage($conversation);
+
+        // fulfill 的话执行完成逻辑.
+        return $heed->fallback()->fulfill();
     }
 
 
