@@ -13,6 +13,7 @@ namespace Commune\Ghost\Blueprint\Runtime;
 
 use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Ghost\Blueprint\Definition\ContextDef;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
@@ -47,12 +48,18 @@ interface Node extends ArrayAndJsonAble
 
 
     /**
-     * 重置管道
+     * 清空管道
      */
     public function flushStack() : void;
 
+    /**
+     * 完全重置.
+     */
+    public function reset() : void;
 
     /*-------- find ---------*/
+
+    public function findContextDef(Conversation $conversation) : ContextDef;
 
     public function findStageDef(Conversation $conversation) : StageDef;
 

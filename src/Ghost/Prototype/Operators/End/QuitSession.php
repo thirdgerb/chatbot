@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Blueprint\Routing;
+namespace Commune\Ghost\Prototype\Operators\End;
 
 use Commune\Ghost\Blueprint\Operator\Operator;
 
@@ -17,20 +17,7 @@ use Commune\Ghost\Blueprint\Operator\Operator;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Staging
+class QuitSession implements Operator
 {
-    public function restartContext() : Operator;
-
-    public function resetContext() : Operator;
-
-    /**
-     * 沿着一个或者多个 Stage 的路径前进.
-     *
-     * @param mixed ...$stageNames
-     * @return Operator
-     */
-    public function next(...$stageNames) : Operator;
-
-
 
 }

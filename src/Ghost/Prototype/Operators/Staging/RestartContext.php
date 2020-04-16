@@ -17,16 +17,12 @@ use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Runtime\Node;
 use Commune\Ghost\Prototype\Operators\Events\ActivateStage;
 
+
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ResetContext implements Operator
+class RestartContext implements Operator
 {
-
-    /**
-     * @var Context
-     */
-    protected $context;
 
     /**
      * @var Node
@@ -35,27 +31,23 @@ class ResetContext implements Operator
 
     /**
      * ResetContext constructor.
-     * @param Context $context
      * @param Node $node
      */
-    public function __construct(Context $context, Node $node)
+    public function __construct(Node $node)
     {
-        $this->context = $context;
         $this->node = $node;
     }
 
     public function invoke(Conversation $conversation): ? Operator
     {
-        // 重置所有数据.
-        $this->context->reset([]);
         $this->node->reset();
-        $stageDef = $this->context->getDef()->getInitialStageDef();
+        $contextDef = $this->node->findContextDef($conversation);
+        $stageDef = $contextDef->getInitialStageDef();
 
         return new ActivateStage(
             $stageDef,
             $this->node
         );
     }
-
 
 }

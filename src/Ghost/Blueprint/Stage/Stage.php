@@ -16,7 +16,7 @@ use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\StageChangeState;
-use Commune\Ghost\Blueprint\Runtime\Process;
+use Commune\Ghost\Blueprint\Runtime\Node;
 use Commune\Ghost\Blueprint\Speak\Speaker;
 
 
@@ -29,6 +29,7 @@ use Commune\Ghost\Blueprint\Speak\Speaker;
  * @property-read Conversation $conversation
  * @property-read StageDef $def
  * @property-read Context $self
+ * @property-read Node $node
  */
 interface Stage
 {

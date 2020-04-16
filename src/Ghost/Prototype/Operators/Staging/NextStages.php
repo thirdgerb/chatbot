@@ -14,6 +14,7 @@ namespace Commune\Ghost\Prototype\Operators\Staging;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Operator\Operator;
+use Commune\Ghost\Prototype\Operators\Current\FulfillCurrent;
 use Commune\Ghost\Prototype\Operators\Events\ActivateStage;
 
 /**
@@ -33,20 +34,31 @@ class NextStages implements Operator
     protected $next;
 
     /**
+     * @var bool
+     */
+    protected $flush;
+
+    /**
      * NextStages constructor.
      * @param StageDef $stageDef
-     * @param string[] $next
+     * @param array $next
+     * @param bool $flush
      */
-    public function __construct(StageDef $stageDef, array $next)
+    public function __construct(StageDef $stageDef, array $next, bool $flush)
     {
         $this->stageDef = $stageDef;
         $this->next = $next;
+        $this->flush = $flush;
     }
 
 
     public function invoke(Conversation $conversation): ? Operator
     {
         $node = $conversation->runtime->getCurrentProcess()->aliveThread()->currentNode();
+
+        if ($this->flush) {
+            $node->flushStack();
+        }
 
         // 入栈新的路径.
         if (!empty($this->next)) {
@@ -62,7 +74,7 @@ class NextStages implements Operator
             );
         }
 
-        // todo
+        return new FulfillCurrent();
     }
 
 

@@ -14,6 +14,10 @@ namespace Commune\Ghost\Prototype\Routing;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Fallback;
 use Commune\Ghost\Blueprint\Stage\Stage;
+use Commune\Ghost\Prototype\Operators\Current\CancelCurrent;
+use Commune\Ghost\Prototype\Operators\Current\FulfillCurrent;
+use Commune\Ghost\Prototype\Operators\Current\QuitCurrent;
+use Commune\Ghost\Prototype\Operators\Current\RejectCurrent;
 use Commune\Message\Blueprint\Message;
 
 
@@ -39,22 +43,22 @@ class IFallback implements Fallback
 
     public function reject(Message $message = null): Operator
     {
-        // TODO: Implement reject() method.
+        return new RejectCurrent();
     }
 
     public function cancel(): Operator
     {
-        // TODO: Implement cancel() method.
+        return new CancelCurrent();
     }
 
     public function quit(): Operator
     {
-        // TODO: Implement quit() method.
+        return new QuitCurrent();
     }
 
     public function fulfill(int $gcTurn = 0): Operator
     {
-        // TODO: Implement fulfill() method.
+        return new FulfillCurrent($gcTurn);
     }
 
 

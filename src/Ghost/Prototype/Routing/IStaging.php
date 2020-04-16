@@ -14,7 +14,10 @@ namespace Commune\Ghost\Prototype\Routing;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Staging;
 use Commune\Ghost\Blueprint\Stage\Stage;
+use Commune\Ghost\Prototype\Operators\Events\ActivateStage;
 use Commune\Ghost\Prototype\Operators\Staging\NextStages;
+use Commune\Ghost\Prototype\Operators\Staging\ResetContext;
+use Commune\Ghost\Prototype\Operators\Staging\RestartContext;
 
 
 /**
@@ -27,14 +30,24 @@ class IStaging implements Staging
      */
     protected $stage;
 
+    /**
+     * IStaging constructor.
+     * @param Stage $stage
+     */
+    public function __construct(Stage $stage)
+    {
+        $this->stage = $stage;
+    }
+
+
     public function restartContext(): Operator
     {
-        // TODO: Implement restartContext() method.
+        return new RestartContext($this->stage->node);
     }
 
     public function resetContext(): Operator
     {
-        // TODO: Implement resetContext() method.
+        return new ResetContext($this->stage->self, $this->stage->node);
     }
 
     public function next(...$stageNames): Operator
