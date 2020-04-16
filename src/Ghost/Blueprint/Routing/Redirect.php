@@ -34,6 +34,7 @@ interface Redirect
     public function sleepTo(Context $to = null, string $wakeThreadId = null) : Operator;
 
     /**
+     * 依赖一个 Context, 该 Context 回调时会触发 onReject/onCancel/onFulfill 等状态.
      * @param Context $depending
      * @return Operator
      */
@@ -41,28 +42,39 @@ interface Redirect
 
 
     /**
-     * 依赖一个 Context, 该 Context 回调时会触发 onReject/onCancel/onFulfill 等状态.
-     * @param Context $context
-     * @return Operator
-     */
-    public function block(Context $context) : Operator;
-
-    /**
      * 将当前 Thread 暂时撤出, 等待服务回调.
      *
+     * @param string $shellName
+     * @param string $shellId
      * @param Context $asyncContext
      * @param Context|null $toContext
      * @param string|null $wakeThreadId
-     * @param int|null $expire 任务过期时间. 默认和 Session 周期一样长.
+     * @param int|null $expire
      * @return Operator
      */
     public function yieldTo(
+        string $shellName,
+        string $shellId,
         Context $asyncContext,
         Context $toContext = null,
         string $wakeThreadId = null,
         int $expire = null
     ) : Operator;
 
+
+    /**
+     * @param string $shellName
+     * @param string $shellId
+     * @param Context $asyncContext
+     * @param int|null $expire
+     * @return Operator
+     */
+    public function blockTo(
+        string $shellName,
+        string $shellId,
+        Context $asyncContext,
+        int $expire = null
+    ) : Operator;
 
     /**
      * 用一个 Context 替换掉当前的 Context. 应该要保证回退的时候一致.
@@ -86,8 +98,8 @@ interface Redirect
     public function replaceProcess(Context $context) : Operator;
 
     /**
-     * 清空所有的信息, 回到当前 Process 的起点.
+     * @param Context|null $context
      * @return Operator
      */
-    public function home() : Operator;
+    public function home(Context $context = null) : Operator;
 }

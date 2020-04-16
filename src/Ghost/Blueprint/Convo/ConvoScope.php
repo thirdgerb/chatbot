@@ -9,19 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Blueprint\Memory;
-
-use Commune\Framework\Blueprint\Session\Session;
+namespace Commune\Ghost\Blueprint\Convo;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Memory
+interface ConvoScope
 {
-
-    public function recall() : Recollection;
-
-    public function save(Session $session) : void;
 
 }

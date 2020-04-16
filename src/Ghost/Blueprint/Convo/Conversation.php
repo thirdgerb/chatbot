@@ -43,6 +43,7 @@ use Commune\Ghost\Blueprint\Context\Context;
  * @property-read ConversationLogger $logger                         请求级日志
  * @property-read GhostRequest $request
  * @property-read GhostResponse $response
+ * @property-read ConvoScope $scope
  *
  * ## Ghost 组件
  *

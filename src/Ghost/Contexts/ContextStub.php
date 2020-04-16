@@ -46,13 +46,13 @@ class ContextStub implements Context
     }
 
     /**
-     * @param Conversation $session
+     * @param Conversation $conversation
      * @return Context
      */
-    public function toInstance(Conversation $session): ConvoInstance
+    public function toInstance(Conversation $conversation): ConvoInstance
     {
         $data = empty($this->data) ? null : $this->data;
-        return $session->newContext($this->contextName, $data);
+        return $conversation->newContext($this->contextName, $data);
     }
 
 

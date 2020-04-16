@@ -12,8 +12,6 @@
 namespace Commune\Ghost\Blueprint\Context;
 
 use ArrayAccess;
-use Commune\Ghost\Blueprint\Memory\Recollection;
-use Commune\Ghost\Blueprint\Definition\ContextDef;
 use Commune\Ghost\Blueprint\Runtime\Node;
 use Commune\Ghost\Exceptions\ConvoInstanceException;
 use Commune\Support\Arr\ArrayAndJsonAble;
@@ -54,6 +52,7 @@ interface Context extends ArrayAccess, ArrayAndJsonAble, ConvoInstance, Injectab
      */
     public function getId() : string;
 
+    public function getPriority() : int;
 
     /*----- 方法 -----*/
 

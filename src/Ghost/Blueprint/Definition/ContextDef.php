@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Blueprint\Definition;
 
 use Commune\Ghost\Blueprint\Context\Context;
+use Commune\Ghost\Blueprint\Convo\ConvoScope;
 
 
 /**
@@ -27,7 +28,11 @@ interface ContextDef extends Def
      */
     public function isPublic() : bool;
 
+    public function getPriority() : int;
+
     public function entityNames() : array;
+
+    public function makeId(ConvoScope $scope) : string;
 
     /*------- methods -------*/
 

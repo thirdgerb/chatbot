@@ -11,12 +11,12 @@
 
 namespace Commune\Ghost\Exceptions;
 
-use Commune\Framework\Exceptions\AppRuntimeException;
+use Commune\Framework\Exceptions\AppLogicException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ConvoInstanceException extends AppRuntimeException
+class ConvoInstanceException extends AppLogicException
 {
     public function __construct(string $method)
     {

@@ -20,9 +20,9 @@ interface ConvoInstance
     public function isInstanced() : bool;
 
     /**
-     * @param Conversation $session
+     * @param Conversation $conversation
      * @return static
      */
-    public function toInstance(Conversation $session) : ConvoInstance;
+    public function toInstance(Conversation $conversation) : ConvoInstance;
 
 }

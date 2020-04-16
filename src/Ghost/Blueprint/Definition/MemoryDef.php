@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Ghost\Blueprint\Definition;
+use Commune\Ghost\Blueprint\Convo\ConvoScope;
 
 
 /**
@@ -46,5 +47,9 @@ interface MemoryDef
      */
     public function isLongTerm() : bool;
 
-    public function makeId(Scope $scope) : string;
+    /**
+     * @param ConvoScope $scope
+     * @return string
+     */
+    public function makeId(ConvoScope $scope) : string;
 }

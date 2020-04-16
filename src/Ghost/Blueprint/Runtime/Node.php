@@ -25,7 +25,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read string $contextName       当前节点所属的语境名称
  * @property-read int $priority             当前语境的优先级
  * @property-read string $stageName         当前节点所属的 stage 名称
- * @property-read string[] $forwards        接下来要经过的 stage
+ * @property-read string[] $stack        接下来要经过的 stage
  *
  */
 interface Node extends ArrayAndJsonAble

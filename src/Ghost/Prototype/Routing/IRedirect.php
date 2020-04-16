@@ -11,6 +11,8 @@
 
 namespace Commune\Ghost\Prototype\Routing;
 
+use Commune\Ghost\Blueprint\Context\Context;
+use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Redirect;
 use Commune\Ghost\Blueprint\Stage\Stage;
 
@@ -32,6 +34,51 @@ class IRedirect implements Redirect
     public function __construct(Stage $stage)
     {
         $this->stage = $stage;
+    }
+
+    public function sleepTo(Context $to = null, string $wakeThreadId = null): Operator
+    {
+        // TODO: Implement sleepTo() method.
+    }
+
+    public function dependOn(Context $depending): Operator
+    {
+        // TODO: Implement dependOn() method.
+    }
+
+    public function block(Context $context): Operator
+    {
+        // TODO: Implement block() method.
+    }
+
+    public function yieldTo(
+        Context $asyncContext,
+        Context $toContext = null,
+        string $wakeThreadId = null,
+        int $expire = null
+    ): Operator
+    {
+        // TODO: Implement yieldTo() method.
+    }
+
+    public function replaceNode(Context $context): Operator
+    {
+        // TODO: Implement replaceNode() method.
+    }
+
+    public function replaceThread(Context $context): Operator
+    {
+        // TODO: Implement replaceThread() method.
+    }
+
+    public function replaceProcess(Context $context): Operator
+    {
+        // TODO: Implement replaceProcess() method.
+    }
+
+    public function home(): Operator
+    {
+        // TODO: Implement home() method.
     }
 
 
