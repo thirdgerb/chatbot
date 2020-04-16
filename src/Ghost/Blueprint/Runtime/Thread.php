@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Blueprint\Runtime;
 
 use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Message\Blueprint\QuestionMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
@@ -47,6 +48,12 @@ interface Thread extends ArrayAndJsonAble
     /*--------- more information ---------*/
 
     public function getDescription(Conversation $conversation) : string;
+
+    /*--------- question ---------*/
+
+    public function getQuestion() : ? QuestionMsg;
+
+    public function setQuestion(QuestionMsg $questionMsg) : void;
 
     /*--------- gc ---------*/
 

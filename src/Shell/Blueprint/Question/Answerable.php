@@ -11,14 +11,14 @@
 
 namespace Commune\Shell\Blueprint\Question;
 
-use Commune\Message\Blueprint\ConversationalMsg;
+use Commune\Message\Blueprint\QuestionMsg;
 use Commune\Shell\Blueprint\Session\ShellSession;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Answerable extends ConversationalMsg
+interface Answerable extends QuestionMsg
 {
     /**
      * 可以自己理解答案的问题消息.

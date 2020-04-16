@@ -47,15 +47,21 @@ interface Process extends ArrayAndJsonAble
     /*-------- challenge --------*/
 
     /**
-     * 尝试将一个 Thread 取代当前的 Thread,
-     * 通过比较 priority
+     * 尝试用 Blocking Thread 取代当前的 Alive Thread,
+     * 通过比较 Thread 的 priority
      * 成功的话, 会把当前 Thread 踢出来
      *
-     * @param Thread $thread
-     * @param bool $force       强制取代
      * @return Thread|null
      */
-    public function challenge(Thread $thread, bool $force = false) : ? Thread;
+    public function challengeAliveThread() : ? Thread;
+
+    /**
+     * 替换掉当前的 Thread
+     *
+     * @param Thread $thread
+     * @return Thread
+     */
+    public function replaceAliveThread(Thread $thread) : Thread;
 
 
     /*-------- 获取进程内的 Thread --------*/
@@ -72,14 +78,17 @@ interface Process extends ArrayAndJsonAble
 //     */
 //    public function eachSleeping() : Generator;
 //
+
+
     /**
-     * 将当前的 Thread 睡眠.
-     * @param Thread $to
-     * @return bool
+     * @param Thread $thread
+     * @param bool $top             放在栈顶, 还是栈尾
      */
-    public function sleepToThread(Thread $to) : bool;
+    public function addSleepingThread(Thread $thread, bool $top = true) : void;
 
     public function popSleeping(string $threadId = null) : ? Thread;
+
+
 
 //
 //    /*-------- block --------*/
@@ -118,38 +127,31 @@ interface Process extends ArrayAndJsonAble
     public function addGc(Thread $thread, int $gcTurn) : void;
 
 
-//
-//    /*-------- snapshot 快照历史 --------*/
-//
-//    /**
-//     * 上一步的进程. 只是获得实例, 不会设置为 alive
-//     * @return Process|null
-//     */
-//    public function prev() : ? Process;
-//
-//    /**
-//     * 返回若干步.
-//     * @param int $steps
-//     * @return Process|null
-//     */
-//    public function backStep(int $steps) : ? Process;
-//
-//    /**
-//     * 进程栈快照的深度.
-//     * @return int
-//     */
-//    public function stepDepth() : int;
-//
-//    /**
-//     * 检查进程快照栈是否过长了, 如果过长了的话会去掉最深的一个.
-//     * @param int $max
-//     * @return bool
-//     */
-//    public function expireStep(int $max) : bool;
 
-    /*---------- gc ----------*/
+    /*-------- snapshot 快照历史 --------*/
+
+    /**
+     * 上一步的进程.
+     * @return Process|null
+     */
+    public function prev() : ? Process;
+
+    /**
+     * 返回若干步.
+     * @param int $steps
+     * @return string|null
+     */
+    public function backStep(int $steps) : ? string;
+
+    /**
+     * 进程栈快照的深度.
+     * @return int
+     */
+    public function stepDepth() : int;
 
     /*---------- block ----------*/
+
+    public function blockThread(Thread $thread) : void;
 
     /**
      * @return bool
@@ -160,10 +162,6 @@ interface Process extends ArrayAndJsonAble
      * @return Thread
      */
     public function popBlocking() : Thread;
-
-    /*---------- yielding ----------*/
-
-    public function popYielding(string $threadId) : ? Thread;
 
     /*---------- wait ----------*/
 

@@ -13,7 +13,7 @@ namespace Commune\Shell\Prototype\Session;
 
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Prototype\Session\ASessionStorage;
-use Commune\Message\Blueprint\ConversationalMsg;
+use Commune\Message\Blueprint\QuestionMsg;
 use Commune\Shell\Blueprint\Session\ShellSession;
 use Commune\Shell\Blueprint\Session\ShellStorage;
 use Commune\Support\Babel\Babel;
@@ -28,12 +28,12 @@ class IShellStorage extends ASessionStorage implements ShellStorage
     const QUESTION_KEY = 'shellQuestion';
 
 
-    public function setQuestion(ConversationalMsg $question): void
+    public function setQuestion(QuestionMsg $question): void
     {
         $this->set(static::QUESTION_KEY, Babel::getResolver()->serialize($question));
     }
 
-    public function getQuestion(): ? ConversationalMsg
+    public function getQuestion(): ? QuestionMsg
     {
         $value = $this->get(static::QUESTION_KEY);
 

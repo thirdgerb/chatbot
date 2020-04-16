@@ -14,6 +14,7 @@ namespace Commune\Ghost\Prototype\Stage;
 use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
+use Commune\Ghost\Blueprint\Runtime\Node;
 use Commune\Ghost\Blueprint\Stage\Stage;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
@@ -39,45 +40,65 @@ abstract class AStage implements Stage, Spied
     protected $stageDef;
 
     /**
-     * @var Context
+     * @var Node
      */
     protected $self;
+
+
+    /*------- cached -------*/
+
+    /**
+     * @var Context
+     */
+    protected $selfContext;
 
     /**
      * AStage constructor.
      * @param Conversation $conversation
      * @param StageDef $stageDef
-     * @param Context $self
+     * @param Node $self
      */
     public function __construct(
         Conversation $conversation,
         StageDef $stageDef,
-        Context $self
+        Node $self
     )
     {
         $this->conversation = $conversation;
-        $this->uuid = $conversation->getUuid();
+        $this->uuid = md5($self->contextId . $stageDef->getFullname() . static::class);
         $this->stageDef = $stageDef;
         $this->self = $self;
         static::addRunningTrace($this->uuid, $this->uuid);
     }
 
 
+    /**
+     * @param $name
+     * @return null
+     *
+     * * @property-read Conversation $conversation
+     * @property-read StageDef $def
+     * @property-read Context $self
+     */
     public function __get($name)
     {
-        if (property_exists($this, $name)) {
-            return $this->{$name};
+        switch ($name) {
+            case 'conversation' :
+                return $this->conversation;
+            case 'def' :
+                return $this->def;
+            case 'self' :
+                return $this->selfContext
+                    ?? $this->selfContext = $this->self->findContext($this->conversation);
+            default :
+                return null;
         }
-
-        return null;
     }
 
 
     public function __destruct()
     {
         static::removeRunningTrace($this->uuid);
-        $this->stageDef = null;
-        $this->conversation = null;
     }
 
 }

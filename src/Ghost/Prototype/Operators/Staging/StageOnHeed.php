@@ -1,28 +1,21 @@
 <?php
 
+
 /**
- * This file is part of CommuneChatbot.
- *
- * @link     https://github.com/thirdgerb/chatbot
- * @document https://github.com/thirdgerb/chatbot/blob/master/README.md
- * @contact  <thirdgerb@gmail.com>
- * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
+ * Class StageOnHeed
+ * @package Commune\Ghost\Prototype\Operators\Staging
  */
 
 namespace Commune\Ghost\Prototype\Operators\Staging;
 
-use Commune\Ghost\Blueprint\Context\Context;
+
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Operator\Operator;
+use Commune\Ghost\Blueprint\Runtime\Node;
 use Commune\Ghost\Prototype\Stage\IHeedStage;
-use Commune\Ghost\Prototype\Operators\AbsOperator;
 
-
-/**
- * @author thirdgerb <thirdgerb@gmail.com>
- */
-class StageOnHeed extends AbsOperator
+class StageOnHeed implements Operator
 {
     /**
      * @var StageDef
@@ -30,30 +23,30 @@ class StageOnHeed extends AbsOperator
     protected $stageDef;
 
     /**
-     * @var Context
+     * @var Node
      */
-    protected $context;
+    protected $node;
 
     /**
      * StageOnHeed constructor.
      * @param StageDef $stageDef
-     * @param Context $context
+     * @param Node $node
      */
-    public function __construct(StageDef $stageDef, Context $context)
+    public function __construct(StageDef $stageDef, Node $node)
     {
         $this->stageDef = $stageDef;
-        $this->context = $context;
+        $this->node = $node;
     }
+
 
     public function invoke(Conversation $conversation): ? Operator
     {
-        $dialog = new IHeedStage(
+        $heed = new IHeedStage(
             $conversation,
             $this->stageDef,
-            $this->context
+            $this->node
         );
-
-        return $this->stageDef->onHeed($dialog);
+        return $this->stageDef->onHeed($heed);
     }
 
 

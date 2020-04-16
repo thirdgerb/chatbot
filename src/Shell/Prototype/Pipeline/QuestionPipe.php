@@ -13,7 +13,7 @@ namespace Commune\Shell\Prototype\Pipeline;
 
 use Commune\Framework\Blueprint\Intercom\GhostInput;
 use Commune\Framework\Prototype\Session\ASessionPipe;
-use Commune\Message\Blueprint\ConversationalMsg;
+use Commune\Message\Blueprint\QuestionMsg;
 use Commune\Shell\Blueprint\Question\Answerable;
 use Commune\Shell\Blueprint\Session\ShellSession;
 use Commune\Support\Utils\StringUtils;
@@ -33,7 +33,7 @@ class QuestionPipe extends ASessionPipe
         $question = null;
         foreach ($outputs as $output) {
             $message = $output->message;
-            if ($message instanceof ConversationalMsg) {
+            if ($message instanceof QuestionMsg) {
                 $question = $message;
             }
         }
@@ -71,7 +71,7 @@ class QuestionPipe extends ASessionPipe
 
     protected function isNullable(
         ShellSession $session,
-        ConversationalMsg $question,
+        QuestionMsg $question,
         GhostInput $ghostInput
     ) : ? ShellSession
     {
@@ -92,7 +92,7 @@ class QuestionPipe extends ASessionPipe
 
     protected function isInSuggestions(
         ShellSession $session,
-        ConversationalMsg $question,
+        QuestionMsg $question,
         GhostInput $ghostInput
     ) : ? ShellSession
     {

@@ -16,16 +16,27 @@ use Commune\Ghost\Blueprint\Context\Context;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read Trace $trace  Operator 的跟踪器
+ * @property-read Route $route  Context Stage 的跟踪器.
  */
 interface Runtime
 {
+
+
+
     /*------ process -------*/
 
-    public function getProcess() : Process;
+    public function getCurrentProcess() : Process;
+
+    public function setCurrentProcess(Process $process) : void;
+
+    public function findProcess(string $processId) : ? Process;
+
+    public function expireProcess(string $processId) : void;
 
     /*------ context -------*/
 
-    public function newContext(string $contextName, array $entities = null) : Context;
 
     public function findContext(string $contextId) : ? Context;
 
@@ -33,7 +44,7 @@ interface Runtime
 
     /*------ yielding -------*/
 
-    public function addYielding(Thread $thread) : void;
+    public function setYielding(Thread $thread, int $ttl = null) : void;
 
     public function findYielding(string $threadId) : ? Thread;
 

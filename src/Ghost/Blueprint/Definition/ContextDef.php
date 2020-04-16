@@ -20,6 +20,11 @@ use Commune\Ghost\Blueprint\Context\Context;
 interface ContextDef extends Def
 {
 
+    /**
+     * 公共类意图可以被全局访问到.
+     * 否则无法用意图的方式命中.
+     * @return bool
+     */
     public function isPublic() : bool;
 
     public function entityNames() : array;

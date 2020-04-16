@@ -85,6 +85,7 @@ interface Conversation extends Session
      */
     public function runDialogManager(Operator $operator = null) : void;
 
+    public function newContext(string $contextName, array $entities = null) : Context;
 
     /*------ deliver ------*/
 

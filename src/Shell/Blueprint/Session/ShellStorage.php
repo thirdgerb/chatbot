@@ -12,7 +12,7 @@
 namespace Commune\Shell\Blueprint\Session;
 
 use Commune\Framework\Blueprint\Session\SessionStorage;
-use Commune\Message\Blueprint\ConversationalMsg;
+use Commune\Message\Blueprint\QuestionMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -20,8 +20,8 @@ use Commune\Message\Blueprint\ConversationalMsg;
 interface ShellStorage extends SessionStorage
 {
 
-    public function setQuestion(ConversationalMsg $question) : void;
+    public function setQuestion(QuestionMsg $question) : void;
 
-    public function getQuestion() : ? ConversationalMsg;
+    public function getQuestion() : ? QuestionMsg;
 
 }

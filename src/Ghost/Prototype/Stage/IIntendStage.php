@@ -14,6 +14,7 @@ namespace Commune\Ghost\Prototype\Stage;
 use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
+use Commune\Ghost\Blueprint\Runtime\Node;
 use Commune\Ghost\Blueprint\Stage\Intend;
 
 /**
@@ -24,13 +25,32 @@ class IIntendStage extends AStage implements Intend
     /**
      * @var Context
      */
-    protected $intending;
+    protected $intendingContext;
 
-    public function __construct(Conversation $conversation, StageDef $stageDef, Context $self, Context $intending)
+    /**
+     * @var Node
+     */
+    protected $intendingNode;
+
+    public function __construct(
+        Conversation $conversation,
+        StageDef $stageDef,
+        Node $self,
+        Node $intending
+    )
     {
-        $this->intending = $intending;
+        $this->intendingNode = $intending;
         parent::__construct($conversation, $stageDef, $self);
     }
 
+    public function __get($name)
+    {
+        if ($name === 'intending') {
+            return $this->intendingContext
+                ?? $this->intendingContext = $this->intendingNode->findContext($this->conversation);
+        }
+
+        return parent::__get($name);
+    }
 
 }

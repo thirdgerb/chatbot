@@ -37,6 +37,20 @@ interface Context extends ArrayAccess, ArrayAndJsonAble, SessionInstance, Inject
 //
 //    public function isThread() : bool;
 
+    /*----- 数据 -----*/
+
+    /**
+     * 合并 Data 到当前数据.
+     * @param array $data
+     */
+    public function merge(array $data) : void;
+
+    /**
+     * 重置当前数据
+     * @param array $data
+     */
+    public function reset(array $data) : void;
+
     /*----- 属性 -----*/
 
     public function getName() : string;
@@ -47,5 +61,11 @@ interface Context extends ArrayAccess, ArrayAndJsonAble, SessionInstance, Inject
 
     public function getRecollection() : Recollection;
 
+    /*----- 方法 -----*/
+
+    /**
+     * 将一个 Context 生成为一个 Node 节点.
+     * @return Node
+     */
     public function toNewNode() : Node;
 }

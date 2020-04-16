@@ -14,30 +14,49 @@ namespace Commune\Ghost\Prototype\Stage;
 use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
+use Commune\Ghost\Blueprint\Runtime\Node;
 use Commune\Ghost\Blueprint\Stage\Retrace;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @property-read Conversation $conversation
+ * @property-read StageDef $def
+ * @property-read Context $self
  * @property-read Context $from
  */
 class IRetraceStage extends AStage implements Retrace
 {
     /**
+     * @var Node
+     */
+    protected $fromNode;
+
+    /**
      * @var Context
      */
-    protected $from;
+    protected $fromContext;
+
 
     public function __construct(
         Conversation $conversation,
         StageDef $stageDef,
-        Context $self,
-        Context $from
+        Node $self,
+        Node $from
     )
     {
-        $this->from = $from;
+        $this->fromNode = $from;
         parent::__construct($conversation, $stageDef, $self);
     }
 
+    public function __get($name)
+    {
+        if ($name === 'from') {
+            return $this->fromContext
+                ?? $this->fromContext = $this->fromNode->findContext($this->conversation);
+        }
+
+        return parent::__get($name);
+    }
 
 }

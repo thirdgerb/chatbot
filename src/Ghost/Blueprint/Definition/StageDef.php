@@ -110,7 +110,7 @@ interface StageDef
 
 
     /**
-     * 当前 Thread 从 sleep 状态被唤醒时.
+     * 当前 Thread 从 sleep 或者 gc 状态被唤醒时.
      *
      * @param Stage\Activate $stage
      * @return Operator
@@ -119,6 +119,15 @@ interface StageDef
         Stage\Activate $stage
     ) : Operator ;
 
+    /**
+     * 当前 Thread 从 blocking 状态抢占成功时.
+     *
+     * @param Stage\Activate $stage
+     * @return Operator
+     */
+    public function onRetain(
+        Stage\Activate $stage
+    ) : Operator;
 
 
     /*------- heed -------*/
@@ -140,41 +149,41 @@ interface StageDef
      * 依赖语境被拒绝时. 通常是因为权限不足.
      *
      * @param Stage\Retrace $stage
-     * @return Operator
+     * @return null|Operator
      */
     public function onReject(
         Stage\Retrace $stage
-    ) : Operator;
+    ) : ? Operator;
 
     /**
      * 当前 Thread 被用户要求 cancel 时
      *
      * @param Stage\Retrace $stage
-     * @return Operator
+     * @return null|Operator
      */
     public function onCancel(
         Stage\Retrace $stage
-    ) : Operator;
+    ) : ? Operator;
 
     /**
      * 依赖语境完成, 回调时.
      *
      * @param Stage\Retrace $stage
-     * @return Operator
+     * @return null|Operator
      */
     public function onFulfill(
         Stage\Retrace $stage
-    ) : Operator;
+    ) : ? Operator;
 
 
     /**
      * Process 结束时, 会检查所有的 Thread 的态度.
      *
      * @param Stage\Retrace $stage
-     * @return Operator
+     * @return null|Operator
      */
     public function onQuit(
         Stage\Retrace $stage
-    ) : Operator ;
+    ) : ? Operator ;
 
 }

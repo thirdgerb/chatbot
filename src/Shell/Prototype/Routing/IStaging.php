@@ -14,8 +14,8 @@ namespace Commune\Shell\Prototype\Routing;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Staging;
 use Commune\Ghost\Blueprint\Stage\Stage;
-use Commune\Ghost\Prototype\Operators\Staging\ToFulfillStage;
-use Commune\Ghost\Prototype\Operators\Staging\NextStage;
+use Commune\Ghost\Prototype\OperatorsBack\Staging\ToFulfillStage;
+use Commune\Ghost\Prototype\OperatorsBack\Staging\NextStage;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
