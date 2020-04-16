@@ -9,13 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\OperatorsBack\Retrace;
-
+namespace Commune\Ghost\Blueprint\Convo;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class Cancel
+interface ConvoInstance
 {
+
+    public function isInstanced() : bool;
+
+    /**
+     * @param Conversation $session
+     * @return static
+     */
+    public function toInstance(Conversation $session) : ConvoInstance;
 
 }

@@ -9,13 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\OperatorsBack\Redirect;
+namespace Commune\Ghost\Blueprint\Callables;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class DependOn
+interface Prediction
 {
+
+    public function __invoke() : bool;
 
 }

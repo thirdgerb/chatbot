@@ -13,6 +13,7 @@ namespace Commune\Ghost\Blueprint\Runtime;
 
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Ghost\Blueprint\Context\Context;
+use Commune\Message\Blueprint\ContextMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -37,6 +38,7 @@ interface Runtime
 
     /*------ context -------*/
 
+    public function toContextMsg() : ? ContextMsg;
 
     public function findContext(string $contextId) : ? Context;
 

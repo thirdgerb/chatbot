@@ -14,10 +14,9 @@ namespace Commune\Ghost\Blueprint\Stage;
 use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
-use Commune\Ghost\Blueprint\Operator\Operator;
-use Commune\Ghost\Blueprint\Routing\StageChangeState;
 use Commune\Ghost\Blueprint\Runtime\Node;
 use Commune\Ghost\Blueprint\Speak\Speaker;
+use Commune\Message\Blueprint\Message;
 
 
 /**
@@ -37,28 +36,22 @@ interface Stage
      * 用依赖注入的方式调用一个 callable.
      * 与laravel 的区别在于, $parameters 允许用 interface => $instance 的方式注入临时依赖.
      *
-     * @param callable $caller
+     * @param callable|string $caller
      * @param array $parameters
      * @return mixed
      */
-    public function call(callable $caller, array $parameters = []);
+    public function call($caller, array $parameters = []);
 
     /**
-     * 运行一个逻辑, 然后得到一个 Operator 算子.
-     *
-     * @param callable $action
-     * @return Operator|null
-     */
-    public function operate(callable $action) : ? Operator;
-
-    /**
-     * 当前 stage 的状态管理.
-     * @return StageChangeState
-     */
-    public function change() : StageChangeState;
-
-    /**
+     * 开口说话.
      * @return Speaker
      */
     public function speak() : Speaker;
+
+    /**
+     * 匹配当前消息用的工具
+     * @param Message|null $message
+     * @return Matcher
+     */
+    public function matcher(Message $message = null) : Matcher;
 }

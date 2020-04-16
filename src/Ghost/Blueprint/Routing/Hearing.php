@@ -11,8 +11,8 @@
 
 namespace Commune\Ghost\Blueprint\Routing;
 
-use Commune\Ghost\Blueprint\Match\ToDo;
 use Commune\Ghost\Blueprint\Operator\Operator;
+use Commune\Ghost\Blueprint\Routing\Hearing\When;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -20,10 +20,11 @@ use Commune\Ghost\Blueprint\Operator\Operator;
 interface Hearing
 {
 
-    public function confuse() : Operator;
+    public function toDo(callable $action) : When;
+
+    public function end() : Operator;
 
     public function dumb() : Operator;
 
-    public function toDo(callable $action) : ToDo;
-
+    public function confuse() : Operator;
 }

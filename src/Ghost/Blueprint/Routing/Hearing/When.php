@@ -9,14 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\OperatorsBack\Reply;
+namespace Commune\Ghost\Blueprint\Routing\Hearing;
 
-use Commune\Ghost\Prototype\OperatorsBack\AbsOperator;
+use Commune\Ghost\Blueprint\Routing\Hearing;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class Wait extends AbsOperator
+interface When
 {
+
+    public function when(callable $rules) : Hearing;
 
 }

@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\OperatorsBack\Fallback;
+namespace Commune\Message\Blueprint;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RejectCurrent
+interface ArrayMsg extends Message, \ArrayAccess
 {
-
+    public function getData() : array;
 }

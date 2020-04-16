@@ -18,6 +18,7 @@ use Commune\Ghost\Blueprint\Routing\Fallback;
 use Commune\Ghost\Blueprint\Routing\Staging;
 
 /**
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read Conversation $conversation

@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Prototype\Routing;
 
 use Commune\Ghost\Blueprint\Routing\Redirect;
+use Commune\Ghost\Blueprint\Stage\Stage;
 
 
 /**
@@ -19,5 +20,19 @@ use Commune\Ghost\Blueprint\Routing\Redirect;
  */
 class IRedirect implements Redirect
 {
+    /**
+     * @var Stage
+     */
+    protected $stage;
+
+    /**
+     * IRedirect constructor.
+     * @param Stage $stage
+     */
+    public function __construct(Stage $stage)
+    {
+        $this->stage = $stage;
+    }
+
 
 }

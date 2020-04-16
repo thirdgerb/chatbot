@@ -15,8 +15,9 @@ use ArrayAccess;
 use Commune\Ghost\Blueprint\Memory\Recollection;
 use Commune\Ghost\Blueprint\Definition\ContextDef;
 use Commune\Ghost\Blueprint\Runtime\Node;
+use Commune\Ghost\Exceptions\ConvoInstanceException;
 use Commune\Support\Arr\ArrayAndJsonAble;
-use Commune\Ghost\Blueprint\Convo\SessionInstance;
+use Commune\Ghost\Blueprint\Convo\ConvoInstance;
 use Commune\Support\DI\Injectable;
 
 /**
@@ -24,42 +25,35 @@ use Commune\Support\DI\Injectable;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Context extends ArrayAccess, ArrayAndJsonAble, SessionInstance, Injectable
+interface Context extends ArrayAccess, ArrayAndJsonAble, ConvoInstance, Injectable
 {
 
-//    /*----- 状态 -----*/
-//
-//    public function isPrepared() : bool;
-//
-//    public function isActive() : bool;
-//
-//    public function isSleeping() : bool;
-//
-//    public function isThread() : bool;
+    /*----- name -----*/
+
+    public function getName() : string;
 
     /*----- 数据 -----*/
 
     /**
      * 合并 Data 到当前数据.
      * @param array $data
+     * @throws ConvoInstanceException
      */
     public function merge(array $data) : void;
 
     /**
      * 重置当前数据
-     * @param array $data
+     * @param array|null $data 为 null 则用默认值
+     * @throws ConvoInstanceException
      */
-    public function reset(array $data) : void;
+    public function reset(array $data = null) : void;
 
-    /*----- 属性 -----*/
-
-    public function getName() : string;
-
+    /**
+     * @return string
+     * @throws ConvoInstanceException
+     */
     public function getId() : string;
 
-    public function getDef() : ContextDef;
-
-    public function getRecollection() : Recollection;
 
     /*----- 方法 -----*/
 

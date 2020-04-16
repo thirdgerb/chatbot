@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Exceptions;
 
+use Commune\Framework\Exceptions\AppRuntimeException;
 use Commune\Ghost\Blueprint\Operator\Operator;
 
 
@@ -20,7 +21,7 @@ use Commune\Ghost\Blueprint\Operator\Operator;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class OperatorException extends \RuntimeException
+class OperatorException extends AppRuntimeException
 {
     /**
      * @var Operator

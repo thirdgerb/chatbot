@@ -9,13 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\OperatorsBack\Staging;
+namespace Commune\Ghost\Exceptions;
 
+use Commune\Framework\Exceptions\AppRuntimeException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RestartContext
+class ConvoInstanceException extends AppRuntimeException
 {
+    public function __construct(string $method)
+    {
+        $message = "Convo Instance should call toInstance(\$convo) first : $method";
+        parent::__construct($message);
+    }
 
 }

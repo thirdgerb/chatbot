@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Blueprint\Stage;
 
+use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Backward;
 use Commune\Ghost\Blueprint\Routing\Fallback;
 use Commune\Ghost\Blueprint\Routing\Hearing;
@@ -24,6 +25,13 @@ use Commune\Ghost\Blueprint\Routing\Staging;
  */
 interface Heed extends Stage
 {
+
+    /**
+     * @return Operator
+     */
+    public function dumb() : Operator;
+
+    public function confuse() : Operator;
 
     public function hearing() : Hearing;
 

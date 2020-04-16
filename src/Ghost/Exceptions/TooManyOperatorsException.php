@@ -11,11 +11,12 @@
 
 namespace Commune\Ghost\Exceptions;
 
+use Commune\Framework\Exceptions\AppRuntimeException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class TooManyOperatorsException extends \RuntimeException
+class TooManyOperatorsException extends AppRuntimeException
 {
 
 }

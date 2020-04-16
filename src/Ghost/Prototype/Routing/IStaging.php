@@ -39,7 +39,6 @@ class IStaging implements Staging
         $this->stage = $stage;
     }
 
-
     public function restartContext(): Operator
     {
         return new RestartContext($this->stage->node);
@@ -52,7 +51,12 @@ class IStaging implements Staging
 
     public function next(...$stageNames): Operator
     {
-        return new NextStages($this->stage->def, $stageNames);
+        return new NextStages($this->stage->def, $stageNames, false);
+    }
+
+    public function swerve(...$stageNames): Operator
+    {
+        return new NextStages($this->stage->def, $stageNames, true);
     }
 
 
