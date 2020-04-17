@@ -11,33 +11,29 @@
 
 namespace Commune\Ghost\Blueprint\Stage;
 
-use Commune\Ghost\Blueprint\Operator\Operator;
+use Commune\Ghost\Blueprint\Context\Context;
+use Commune\Ghost\Blueprint\Routing\Backward;
 use Commune\Ghost\Blueprint\Routing\Fallback;
 use Commune\Ghost\Blueprint\Routing\Redirect;
-use Commune\Ghost\Blueprint\Routing\Staging;
-use Commune\Message\Blueprint\QuestionMsg;
+
 
 /**
+ * 在 A Context Stage 通过意图命中了 B Context Stage
+ *
+ * 会用 B Context Stage 的 onIntend 方法调用 A Context 对应的 Dialog
+ *
+ * 本质上还是在操作 A Context
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * 更多属性
- * @see Stage
+ *
+ * @property-read Context $intending
  */
-interface Activate extends Stage
+interface OnIntend extends Stage
 {
-
-    /**
-     * 等待用户回复.
-     *
-     * @param QuestionMsg|null $question
-     * @return Operator
-     */
-    public function await(QuestionMsg $question = null) : Operator;
-
-    public function staging() : Staging;
-
     public function redirect() : Redirect;
 
     public function fallback() : Fallback;
 
+    public function backward() : Backward;
 }

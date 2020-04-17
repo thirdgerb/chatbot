@@ -14,7 +14,7 @@ namespace Commune\Ghost\Prototype\Operators\Current;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Prototype\Operators\Fallback\CheckBlockBeforeWake;
-use Commune\Ghost\Prototype\Stage\IRetraceStage;
+use Commune\Ghost\Prototype\Stage\IOnRetraceStage;
 
 
 /**
@@ -31,7 +31,7 @@ class CancelCurrent implements Operator
 
             $current = $thread->currentNode();
             $stageDef = $current->findStageDef($conversation);
-            $retrace = new IRetraceStage(
+            $retrace = new IOnRetraceStage(
                 $conversation,
                 $stageDef,
                 $current,

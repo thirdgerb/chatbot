@@ -13,7 +13,7 @@ namespace Commune\Ghost\Prototype\Operators\Current;
 
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Operator\Operator;
-use Commune\Ghost\Prototype\Stage\IActivateStage;
+use Commune\Ghost\Prototype\Stage\IOnActivateStage;
 
 
 /**
@@ -29,7 +29,7 @@ class RetainStage implements Operator
         $node = $process->aliveThread()->currentNode();
         $stageDef = $node->findStageDef($conversation);
 
-        $stage = new IActivateStage(
+        $stage = new IOnActivateStage(
             $conversation,
             $stageDef,
             $node

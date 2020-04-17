@@ -16,7 +16,7 @@ use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Fallback;
 use Commune\Ghost\Blueprint\Routing\Redirect;
 use Commune\Ghost\Blueprint\Routing\Staging;
-use Commune\Ghost\Blueprint\Stage\Activate;
+use Commune\Ghost\Blueprint\Stage\OnActivate;
 use Commune\Ghost\Prototype\Operators\End\Await;
 use Commune\Ghost\Prototype\Routing\IFallback;
 use Commune\Ghost\Prototype\Routing\IRedirect;
@@ -26,7 +26,7 @@ use Commune\Message\Blueprint\QuestionMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IActivateStage extends AStage implements Activate
+class IOnActivateStage extends AStage implements OnActivate
 {
     public function await(QuestionMsg $question = null): Operator
     {

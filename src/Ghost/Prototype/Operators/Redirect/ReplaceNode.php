@@ -14,7 +14,7 @@ namespace Commune\Ghost\Prototype\Operators\Redirect;
 use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Operator\Operator;
-use Commune\Ghost\Prototype\Operators\Events\ActivateStage;
+use Commune\Ghost\Prototype\Operators\Events\ToActivateStage;
 
 
 /**
@@ -43,7 +43,7 @@ class ReplaceNode implements Operator
 
         $thread->replaceNode($node);
         $stageDef = $node->findStageDef($conversation);
-        return new ActivateStage($stageDef, $node);
+        return new ToActivateStage($stageDef, $node);
     }
 
 

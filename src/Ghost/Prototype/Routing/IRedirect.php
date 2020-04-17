@@ -17,6 +17,7 @@ use Commune\Ghost\Blueprint\Routing\Redirect;
 use Commune\Ghost\Blueprint\Stage\Stage;
 use Commune\Ghost\Prototype\Operators\Redirect\DependOn;
 use Commune\Ghost\Prototype\Operators\Redirect\ReplaceNode;
+use Commune\Ghost\Prototype\Operators\Redirect\ReplaceProcess;
 use Commune\Ghost\Prototype\Operators\Redirect\ReplaceThread;
 use Commune\Ghost\Prototype\Operators\Redirect\SleepTo;
 
@@ -93,11 +94,13 @@ class IRedirect implements Redirect
         if (!$context->isInstanced()) {
             $context = $context->toInstance($this->stage->conversation);
         }
+
+        return new ReplaceProcess($context);
     }
 
     public function home(): Operator
     {
-        // TODO: Implement home() method.
+        return new ReplaceProcess(null);
     }
 
 

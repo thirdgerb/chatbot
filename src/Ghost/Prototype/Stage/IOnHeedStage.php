@@ -11,13 +11,13 @@
 
 namespace Commune\Ghost\Prototype\Stage;
 
-use Commune\Ghost\Blueprint\Stage\Heed;
+use Commune\Ghost\Blueprint\Stage\OnHeed;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IHeedStage extends AStage implements Heed
+class IOnHeedStage extends AStage implements OnHeed
 {
 
 

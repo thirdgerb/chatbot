@@ -15,7 +15,7 @@ use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Runtime\Node;
-use Commune\Ghost\Blueprint\Stage\Retrace;
+use Commune\Ghost\Blueprint\Stage\OnRetrace;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -25,7 +25,7 @@ use Commune\Ghost\Blueprint\Stage\Retrace;
  * @property-read Context $self
  * @property-read Context $from
  */
-class IRetraceStage extends AStage implements Retrace
+class IOnRetraceStage extends AStage implements OnRetrace
 {
     /**
      * @var Node

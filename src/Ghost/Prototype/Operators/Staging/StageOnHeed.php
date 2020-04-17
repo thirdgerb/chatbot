@@ -13,7 +13,7 @@ use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Runtime\Node;
-use Commune\Ghost\Prototype\Stage\IHeedStage;
+use Commune\Ghost\Prototype\Stage\IOnHeedStage;
 
 class StageOnHeed implements Operator
 {
@@ -41,7 +41,7 @@ class StageOnHeed implements Operator
 
     public function invoke(Conversation $conversation): ? Operator
     {
-        $heed = new IHeedStage(
+        $heed = new IOnHeedStage(
             $conversation,
             $this->stageDef,
             $this->node

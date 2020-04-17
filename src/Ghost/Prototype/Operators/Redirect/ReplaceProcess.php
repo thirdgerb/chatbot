@@ -20,18 +20,18 @@ use Commune\Ghost\Prototype\Operators\Events\ToActivateStage;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ReplaceThread implements Operator
+class ReplaceProcess implements Operator
 {
     /**
-     * @var Context
+     * @var Context|null
      */
     protected $context;
 
     /**
-     * ReplaceNode constructor.
-     * @param Context $context
+     * ReplaceProcess constructor.
+     * @param Context|null $context
      */
-    public function __construct(Context $context)
+    public function __construct(Context $context = null)
     {
         $this->context = $context;
     }
@@ -39,16 +39,13 @@ class ReplaceThread implements Operator
     public function invoke(Conversation $conversation): ? Operator
     {
         $process = $conversation->runtime->getCurrentProcess();
-        $node = $this->context->toNewNode();
-        $thread = $node->toThread();
+        $process->home($this->context);
 
-        // 替换当前的 Thread
-        $process->replaceAliveThread($thread);
+        $node = $process->aliveThread()->currentNode();
         $stageDef = $node->findStageDef($conversation);
 
         return new ToActivateStage($stageDef, $node);
     }
-
 
 
 }

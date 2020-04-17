@@ -23,7 +23,7 @@ use Commune\Ghost\Blueprint\Routing\Staging;
  * 更多属性
  * @see Stage
  */
-interface Heed extends Stage
+interface OnHeed extends Stage
 {
 
     /**

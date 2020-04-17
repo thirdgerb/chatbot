@@ -64,6 +64,11 @@ interface Process extends ArrayAndJsonAble
     public function replaceAliveThread(Thread $thread) : Thread;
 
 
+    /**
+     * @param Node|null $node
+     */
+    public function home(Node $node = null) : void;
+
     /*-------- 获取进程内的 Thread --------*/
 
     public function hasThread(string $threadId) : bool;

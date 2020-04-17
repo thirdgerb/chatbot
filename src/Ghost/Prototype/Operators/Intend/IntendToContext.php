@@ -15,7 +15,7 @@ use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Runtime\Node;
-use Commune\Ghost\Prototype\Stage\IIntendStage;
+use Commune\Ghost\Prototype\Stage\IOnIntendStage;
 
 
 /**
@@ -62,7 +62,7 @@ class IntendToContext implements Operator
     public function invoke(Conversation $conversation): ? Operator
     {
         // 以 form 为状态, 创建 Stage 对象
-        $intendStage = new IIntendStage(
+        $intendStage = new IOnIntendStage(
             $conversation,
             $this->stageDef,
             $this->fromNode,

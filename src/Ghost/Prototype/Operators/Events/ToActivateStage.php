@@ -15,14 +15,14 @@ use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Runtime\Node;
-use Commune\Ghost\Prototype\Stage\IActivateStage;
+use Commune\Ghost\Prototype\Stage\IOnActivateStage;
 
 
 /**
  * 启动当前 Stage
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ActivateStage implements Operator
+class ToActivateStage implements Operator
 {
 
     /**
@@ -49,7 +49,7 @@ class ActivateStage implements Operator
 
     public function invoke(Conversation $conversation): ? Operator
     {
-        $stage = new IActivateStage(
+        $stage = new IOnActivateStage(
             $conversation,
             $this->stageDef,
             $this->node

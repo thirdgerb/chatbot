@@ -18,7 +18,7 @@ use Commune\Ghost\Blueprint\Routing\Backward;
 use Commune\Ghost\Blueprint\Routing\Fallback;
 use Commune\Ghost\Blueprint\Routing\Redirect;
 use Commune\Ghost\Blueprint\Runtime\Node;
-use Commune\Ghost\Blueprint\Stage\Intend;
+use Commune\Ghost\Blueprint\Stage\OnIntend;
 use Commune\Ghost\Prototype\Routing\IBackward;
 use Commune\Ghost\Prototype\Routing\IFallback;
 use Commune\Ghost\Prototype\Routing\IRedirect;
@@ -26,7 +26,7 @@ use Commune\Ghost\Prototype\Routing\IRedirect;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IIntendStage extends AStage implements Intend
+class IOnIntendStage extends AStage implements OnIntend
 {
     /**
      * @var Context

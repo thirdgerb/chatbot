@@ -19,7 +19,7 @@ use Commune\Ghost\GhostConfig;
 use Commune\Ghost\Prototype\Comprehend\ComprehendPipe;
 use Commune\Ghost\Prototype\Operators\Intend\IntendToContext;
 use Commune\Ghost\Prototype\Operators\Staging\StageOnHeed;
-use Commune\Ghost\Prototype\Stage\IHeedStage;
+use Commune\Ghost\Prototype\Stage\IOnHeedStage;
 
 /**
  * 用当前 Process 的 aliveThread 去处理输入消息.
@@ -119,7 +119,7 @@ class HearStage implements Operator
                     ->getDef($matched);
 
                 // 命中 Stage 的话, 直接执行 heed 方法.
-                $heed = new IHeedStage(
+                $heed = new IOnHeedStage(
                     $conversation,
                     $intendingStage,
                     $node

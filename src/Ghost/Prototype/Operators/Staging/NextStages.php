@@ -15,7 +15,7 @@ use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Prototype\Operators\Current\FulfillCurrent;
-use Commune\Ghost\Prototype\Operators\Events\ActivateStage;
+use Commune\Ghost\Prototype\Operators\Events\ToActivateStage;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -68,7 +68,7 @@ class NextStages implements Operator
         // 下一个节点存在.
         if ($node->next()) {
             $stageDef = $node->findStageDef($conversation);
-            return new ActivateStage(
+            return new ToActivateStage(
                 $stageDef,
                 $node
             );

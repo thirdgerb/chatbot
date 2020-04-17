@@ -14,7 +14,7 @@ namespace Commune\Ghost\Prototype\Routing;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Staging;
 use Commune\Ghost\Blueprint\Stage\Stage;
-use Commune\Ghost\Prototype\Operators\Events\ActivateStage;
+use Commune\Ghost\Prototype\Operators\Events\ToActivateStage;
 use Commune\Ghost\Prototype\Operators\Staging\NextStages;
 use Commune\Ghost\Prototype\Operators\Staging\ResetContext;
 use Commune\Ghost\Prototype\Operators\Staging\RestartContext;

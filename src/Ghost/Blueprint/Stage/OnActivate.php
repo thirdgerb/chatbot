@@ -11,24 +11,32 @@
 
 namespace Commune\Ghost\Blueprint\Stage;
 
-use Commune\Ghost\Blueprint\Context\Context;
-use Commune\Ghost\Blueprint\Convo\Conversation;
-use Commune\Ghost\Blueprint\Definition\StageDef;
+use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Fallback;
+use Commune\Ghost\Blueprint\Routing\Redirect;
 use Commune\Ghost\Blueprint\Routing\Staging;
+use Commune\Message\Blueprint\QuestionMsg;
 
 /**
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read Conversation $conversation
- * @property-read StageDef $def
- * @property-read Context $self
- * @property-read Context $from
+ * 更多属性
+ * @see Stage
  */
-interface Retrace extends Stage
+interface OnActivate extends Stage
 {
+
+    /**
+     * 等待用户回复.
+     *
+     * @param QuestionMsg|null $question
+     * @return Operator
+     */
+    public function await(QuestionMsg $question = null) : Operator;
+
     public function staging() : Staging;
+
+    public function redirect() : Redirect;
 
     public function fallback() : Fallback;
 

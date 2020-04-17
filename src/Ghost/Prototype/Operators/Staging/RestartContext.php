@@ -15,7 +15,7 @@ use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Runtime\Node;
-use Commune\Ghost\Prototype\Operators\Events\ActivateStage;
+use Commune\Ghost\Prototype\Operators\Events\ToActivateStage;
 
 
 /**
@@ -44,7 +44,7 @@ class RestartContext implements Operator
         $contextDef = $this->node->findContextDef($conversation);
         $stageDef = $contextDef->getInitialStageDef();
 
-        return new ActivateStage(
+        return new ToActivateStage(
             $stageDef,
             $this->node
         );

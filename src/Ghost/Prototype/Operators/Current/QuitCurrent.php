@@ -16,7 +16,7 @@ use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Runtime\Process;
 use Commune\Ghost\Blueprint\Runtime\Thread;
 use Commune\Ghost\Prototype\Operators\End\QuitSession;
-use Commune\Ghost\Prototype\Stage\IRetraceStage;
+use Commune\Ghost\Prototype\Stage\IOnRetraceStage;
 
 
 /**
@@ -33,7 +33,7 @@ class QuitCurrent implements Operator
         while($popped = $thread->popNode()) {
             $current = $thread->currentNode();
             $stageDef = $current->findStageDef($conversation);
-            $retrace = new IRetraceStage(
+            $retrace = new IOnRetraceStage(
                 $conversation,
                 $stageDef,
                 $current,
@@ -73,7 +73,7 @@ class QuitCurrent implements Operator
         $popped = $process->replaceAliveThread($retrace)->currentNode();
         $current = $process->aliveThread()->currentNode();
         $stageDef = $current->findStageDef($conversation);
-        $retrace = new IRetraceStage(
+        $retrace = new IOnRetraceStage(
             $conversation,
             $stageDef,
             $current,

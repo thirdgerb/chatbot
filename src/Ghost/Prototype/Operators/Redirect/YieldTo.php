@@ -9,31 +9,33 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Operators\Current;
+namespace Commune\Ghost\Prototype\Operators\Redirect;
 
+use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Operator\Operator;
-use Commune\Ghost\Prototype\Stage\IOnActivateStage;
-
 
 /**
- * 让当前的 Stage wake
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class WakeStage implements Operator
+class YieldTo implements Operator
 {
+    public function __construct(
+        string $shellName,
+        string $shellId,
+        Context $asyncContext,
+        Context $toContext = null,
+        string $wakeThreadId = null,
+        int $expire = null
+    )
+    {
+
+
+    }
+
     public function invoke(Conversation $conversation): ? Operator
     {
-        $node = $conversation->runtime->getCurrentProcess()->aliveThread()->currentNode();
 
-        $stageDef = $node->findStageDef($conversation);
-        $stage = new IOnActivateStage(
-            $conversation,
-            $stageDef,
-            $node
-        );
-
-        return $stageDef->onWake($stage);
     }
 
 
