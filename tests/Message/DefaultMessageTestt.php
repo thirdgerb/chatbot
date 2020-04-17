@@ -24,7 +24,7 @@ use Commune\Message\Prototype\MessagesTestCase;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class DefaultMessageTest extends MessagesTestCase
+class DefaultMessageTestt extends MessagesTestCase
 {
     public function getMessages(): array
     {

@@ -11,12 +11,24 @@
 
 namespace Commune\Ghost\Prototype\Runtime;
 
+use Commune\Ghost\Blueprint\Context\Context;
+use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Ghost\Blueprint\Definition\ContextDef;
+use Commune\Ghost\Blueprint\Definition\StageDef;
 use Commune\Ghost\Blueprint\Runtime\Node;
+use Commune\Ghost\Blueprint\Runtime\Thread;
 use Commune\Support\Arr\ArrayAbleToJson;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $contextId         当前节点所属语境 id
+ * @property-read string $contextName       当前节点所属的语境名称
+ * @property-read int $priority             当前语境的优先级
+ * @property-read string $stageName         当前节点所属的 stage 名称
+ * @property-read string[] $stack        接下来要经过的 stage
  */
 class INode implements Node
 {
@@ -66,11 +78,8 @@ class INode implements Node
 
     public function getStageFullname(): string
     {
-        $str = empty($this->stageName) ? '' : '.' . $this->stageName;
-        return $this->contextName . $str;
+        return StringUtils::gluePrefixAndName($this->contextName, $this->stageName, Context::NAMESPACE_SEPARATOR);
     }
-
-
 
     public function next(): bool
     {
@@ -99,12 +108,35 @@ class INode implements Node
         $this->stack = [];
     }
 
-
-    public function __clone()
+    public function toThread(): Thread
     {
+        return new IThread($this);
     }
 
-    public function __destruct()
+    public function toArray(): array
     {
+        return get_object_vars($this);
     }
+
+    public function findContextDef(Conversation $conversation): ContextDef
+    {
+        return $conversation->mind->contextReg()->getDef($this->contextName);
+    }
+
+    public function findStageDef(Conversation $conversation): StageDef
+    {
+        return $conversation->mind->stageReg()->getDef($this->getStageFullname());
+    }
+
+    public function findContext(Conversation $conversation) : Context
+    {
+        return $conversation->runtime->findContext($this->contextId)
+            ?? $conversation->newContext($this->contextName, null);
+    }
+
+    public function __get($name)
+    {
+        return $this->{$name};
+    }
+
 }

@@ -8,6 +8,45 @@ class StringUtils
 {
 
     /**
+     * @param string $string
+     * @param string $separator
+     * @return array
+     */
+    public static function dividePrefixAndName(string $string, string $separator = '.') : array
+    {
+        $len = strlen($string);
+
+        $last = '';
+        for($i = ($len - 1) ; $i >= 0 ; $i --) {
+
+            // 到了标记
+            if ($string[$i] === $separator) {
+                return [substr($string, 0, $i), $last];
+            }
+
+            $last = $string[$i] . $last;
+        }
+
+        return ['', $last];
+    }
+
+    /**
+     * @param string $prefix
+     * @param string $id
+     * @param string $separator
+     * @return string
+     */
+    public static function gluePrefixAndName(string $prefix, string $id, string $separator = '.') : string
+    {
+        $prefix = trim($prefix, $separator);
+
+        if (empty($id)) {
+            return $prefix;
+        }
+        return "$prefix$separator$id";
+    }
+
+    /**
      * 字符串是否包含通配符
      *
      * @param string $string

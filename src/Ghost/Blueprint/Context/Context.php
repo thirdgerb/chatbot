@@ -25,6 +25,7 @@ use Commune\Support\DI\Injectable;
  */
 interface Context extends ArrayAccess, ArrayAndJsonAble, ConvoInstance, Injectable
 {
+    const NAMESPACE_SEPARATOR = '.';
 
     /*----- name -----*/
 
