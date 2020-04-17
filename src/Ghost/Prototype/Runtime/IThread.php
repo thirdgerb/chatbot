@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Prototype\Runtime;
 
+use Commune\Ghost\Blueprint\Runtime\Node;
 use Commune\Ghost\Blueprint\Runtime\Thread;
 
 
@@ -20,7 +21,7 @@ use Commune\Ghost\Blueprint\Runtime\Thread;
 class IThread implements Thread
 {
 
-    public function __construct(INode $node)
+    public function __construct(Node $node)
     {
     }
 

@@ -28,10 +28,11 @@ interface Redirect
      * 如果当前 Thread 就是唯一的 Thread, 则会触发 Quit
      *
      * @param Context|null $to
-     * @param string|null $wakeThreadId         允许主动唤醒一个 Thread, 前提是知道.
+     * @param string|null $wakeThreadId         允许主动唤醒一个 Thread, 前提是知道它的 Id
+     * @param int $gcTurn                       当前 Thread 不是 sleep, 而是进入 GC 周期, 除非被唤醒, 否则消失.
      * @return Operator
      */
-    public function sleepTo(Context $to = null, string $wakeThreadId = null) : Operator;
+    public function sleepTo(Context $to = null, string $wakeThreadId = null, int $gcTurn = 0) : Operator;
 
     /**
      * 依赖一个 Context, 该 Context 回调时会触发 onReject/onCancel/onFulfill 等状态.
@@ -61,21 +62,6 @@ interface Redirect
         int $expire = null
     ) : Operator;
 
-
-    /**
-     * @param string $shellName
-     * @param string $shellId
-     * @param Context $asyncContext
-     * @param int|null $expire
-     * @return Operator
-     */
-    public function blockTo(
-        string $shellName,
-        string $shellId,
-        Context $asyncContext,
-        int $expire = null
-    ) : Operator;
-
     /**
      * 用一个 Context 替换掉当前的 Context. 应该要保证回退的时候一致.
      * @param Context $context
@@ -98,8 +84,8 @@ interface Redirect
     public function replaceProcess(Context $context) : Operator;
 
     /**
-     * @param Context|null $context
+     * 回到当前 Process 的起点.
      * @return Operator
      */
-    public function home(Context $context = null) : Operator;
+    public function home() : Operator;
 }

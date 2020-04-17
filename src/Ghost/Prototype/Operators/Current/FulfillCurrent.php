@@ -46,7 +46,7 @@ class FulfillCurrent implements Operator
 
         // 当 popped 就是根节点时, 允许在垃圾回收过程中, 仍然被唤醒.
         if ($this->gcTurn > 0 && isset($popped)) {
-            $process->addGc($popped->toThread(), $this->gcTurn);
+            $process->addGcThread($popped->toThread(), $this->gcTurn);
         }
 
         // 尝试回退. 调用 retrace

@@ -11,7 +11,6 @@
 
 namespace Commune\Ghost\Blueprint\Runtime;
 
-use Commune\Framework\Blueprint\Abstracted\Comprehension;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
@@ -19,13 +18,13 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $belongsTo     进程所属的父 ID
- * @property-read string $id            进程的唯一 ID. 每一轮请求的 ID 都不一样.
- * @property-read string[] $sleeping    sleep Thread 的 id
- * @property-read string[] $blocking    block Thread 的 id
- *
- * @property-read string|null $parentId
- * @property-read string|null $childId
+ * @property-read string $belongsTo         进程所属的父 ID
+ * @property-read string $id                进程的唯一 ID. 每一轮请求的 ID 都不一样.
+ * @property-read string $prevId
+ * @property-read string[] $sleeping        sleeping Thread 的 id
+ * @property-read string[] $blocking        blocking Thread 的 id
+ * @property-read string[] $backtrace
+ * @property-read Node $root                root Node
  */
 interface Process extends ArrayAndJsonAble
 {
@@ -39,8 +38,9 @@ interface Process extends ArrayAndJsonAble
      */
     public function aliveThread() : Thread;
 
-    public function aliveStage() : string;
-
+    /**
+     * @return string
+     */
     public function aliveStageFullname() : string;
 
 
@@ -69,16 +69,8 @@ interface Process extends ArrayAndJsonAble
     public function hasThread(string $threadId) : bool;
 
     public function getThread(string $threadId) : ? Thread;
-//
-//    /*-------- sleeping --------*/
-//
-//    /**
-//     * 遍历所有的 sleeping 进程
-//     * @return Generator
-//     */
-//    public function eachSleeping() : Generator;
-//
 
+    /*-------- sleeping --------*/
 
     /**
      * @param Thread $thread
@@ -89,32 +81,14 @@ interface Process extends ArrayAndJsonAble
     public function popSleeping(string $threadId = null) : ? Thread;
 
 
+    /*-------- 保存 --------*/
 
-//
-//    /*-------- block --------*/
-//
-//    /**
-//     * 遍历所有的 sleeping Thread
-//     * @return Thread[]
-//     */
-//    public function eachBlocked() : Generator;
-//
+    /**
+     * 是否要保存
+     * @return bool
+     */
+    public function shouldSave() : bool;
 
-//
-//    /**
-//     * 是否被插入的 Thread 挡住了.
-//     * @return bool
-//     */
-//    public function isBlocked() : bool;
-//
-//    /*-------- 保存 --------*/
-//
-//    /**
-//     * 是否要保存
-//     * @return bool
-//     */
-//    public function shouldSave() : bool;
-//
     /*-------- gc 相关 --------*/
 
     /**
@@ -124,11 +98,17 @@ interface Process extends ArrayAndJsonAble
      * @param Thread $thread
      * @param int $gcTurn
      */
-    public function addGc(Thread $thread, int $gcTurn) : void;
+    public function addGcThread(Thread $thread, int $gcTurn) : void;
 
 
 
     /*-------- snapshot 快照历史 --------*/
+
+    /**
+     * 生成一个新的快照
+     * @return Process
+     */
+    public function nextSnapshot() : Process;
 
     /**
      * 上一步的进程.
@@ -163,27 +143,4 @@ interface Process extends ArrayAndJsonAble
      */
     public function popBlocking() : Thread;
 
-    /*---------- wait ----------*/
-
-    /**
-     * @param string[] $answers     answer => stageFullname
-     * @param string[] $commands    command => stageFullname
-     * @return mixed
-     */
-    public function wait(
-        array $answers,
-        array $commands
-    );
-
-    /**
-     * @param Comprehension $comprehension
-     * @return null|string                      stageFullName
-     */
-    public function hearCommand(Comprehension $comprehension) : ? string;
-
-    /**
-     * @param Comprehension $comprehension
-     * @return null|string                      stageFullName
-     */
-    public function hearAnswer(Comprehension $comprehension) : ? string;
 }

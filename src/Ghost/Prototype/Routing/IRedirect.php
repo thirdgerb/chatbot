@@ -15,6 +15,10 @@ use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Redirect;
 use Commune\Ghost\Blueprint\Stage\Stage;
+use Commune\Ghost\Prototype\Operators\Redirect\DependOn;
+use Commune\Ghost\Prototype\Operators\Redirect\ReplaceNode;
+use Commune\Ghost\Prototype\Operators\Redirect\ReplaceThread;
+use Commune\Ghost\Prototype\Operators\Redirect\SleepTo;
 
 
 /**
@@ -36,22 +40,27 @@ class IRedirect implements Redirect
         $this->stage = $stage;
     }
 
-    public function sleepTo(Context $to = null, string $wakeThreadId = null): Operator
+    public function sleepTo(Context $to = null, string $wakeThreadId = null, int $gcTurn = 0): Operator
     {
-        // TODO: Implement sleepTo() method.
+        if (isset($to) && !$to->isInstanced()) {
+            $to = $to->toInstance($this->stage->conversation);
+        }
+
+        return new SleepTo($to, $wakeThreadId, $gcTurn);
     }
 
     public function dependOn(Context $depending): Operator
     {
-        // TODO: Implement dependOn() method.
-    }
+        if (!$depending->isInstanced()) {
+            $depending = $depending->toInstance($this->stage->conversation);
+        }
 
-    public function block(Context $context): Operator
-    {
-        // TODO: Implement block() method.
+        return new DependOn($depending);
     }
 
     public function yieldTo(
+        string $shellName,
+        string $shellId,
         Context $asyncContext,
         Context $toContext = null,
         string $wakeThreadId = null,
@@ -63,17 +72,27 @@ class IRedirect implements Redirect
 
     public function replaceNode(Context $context): Operator
     {
-        // TODO: Implement replaceNode() method.
+        if (!$context->isInstanced()) {
+            $context = $context->toInstance($this->stage->conversation);
+        }
+
+        return new ReplaceNode($context);
     }
 
     public function replaceThread(Context $context): Operator
     {
-        // TODO: Implement replaceThread() method.
+        if (!$context->isInstanced()) {
+            $context = $context->toInstance($this->stage->conversation);
+        }
+
+        return new ReplaceThread($context);
     }
 
     public function replaceProcess(Context $context): Operator
     {
-        // TODO: Implement replaceProcess() method.
+        if (!$context->isInstanced()) {
+            $context = $context->toInstance($this->stage->conversation);
+        }
     }
 
     public function home(): Operator

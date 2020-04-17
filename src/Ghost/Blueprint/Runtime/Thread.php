@@ -33,6 +33,8 @@ interface Thread extends ArrayAndJsonAble
      */
     public function currentNode() : Node;
 
+    public function replaceNode(Node $node) : void;
+
     /**
      * 前进一个 Node
      * @param Node $node
