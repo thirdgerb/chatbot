@@ -17,14 +17,17 @@ namespace Commune\Message\Blueprint\Tag;
  */
 interface MsgLevel
 {
-    const EMERGENCY = 'emergency';
-    const ALERT     = 'alert';
-    const CRITICAL  = 'critical';
     const ERROR     = 'error';
-    const WARNING   = 'warning';
     const NOTICE    = 'notice';
     const INFO      = 'info';
     const DEBUG     = 'debug';
+
+    const LEVELS = [
+        self::ERROR,
+        self::NOTICE,
+        self::INFO,
+        self::DEBUG,
+    ];
 
     public function getLevel() : string;
 

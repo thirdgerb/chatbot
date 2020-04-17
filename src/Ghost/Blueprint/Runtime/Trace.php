@@ -13,12 +13,13 @@ namespace Commune\Ghost\Blueprint\Runtime;
 
 use Commune\Ghost\Blueprint\Operator\Operator;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Trace
 {
     public function record(Operator $operator) : void;
+
+    public function getTrace() : array;
 
 }

@@ -17,30 +17,7 @@ namespace Commune\Message\Blueprint\Tag;
  */
 interface Verbal
 {
-    const EMERGENCY = 'emergency';
-    const ALERT     = 'alert';
-    const CRITICAL  = 'critical';
-    const ERROR     = 'error';
-    const WARNING   = 'warning';
-    const NOTICE    = 'notice';
-    const INFO      = 'info';
-    const DEBUG     = 'debug';
-
-    const LEVELS = [
-        self::EMERGENCY,
-        self::ALERT,
-        self::CRITICAL,
-        self::ERROR,
-        self::WARNING,
-        self::NOTICE,
-        self::INFO,
-        self::DEBUG,
-    ];
 
     public function getText() : string;
 
-    /**
-     * @return string
-     */
-    public function getLevel() : string;
 }

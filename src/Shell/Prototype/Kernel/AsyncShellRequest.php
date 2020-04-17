@@ -13,7 +13,7 @@ namespace Commune\Shell\Prototype\Kernel;
 
 use Commune\Framework\Blueprint\Abstracted\Comprehension;
 use Commune\Message\Blueprint\Message;
-use Commune\Message\Prototype\Event\AsyncShellReqEvt;
+use Commune\Message\Predefined\Event\AsyncShellReqEvt;
 use Commune\Shell\Contracts\ShellRequest;
 use Commune\Shell\Contracts\ShellResponse;
 use Commune\Support\Uuid\HasIdGenerator;

@@ -11,7 +11,6 @@
 
 namespace Commune\Ghost\Prototype\Stage;
 
-use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Ghost\Blueprint\Routing\Fallback;
 use Commune\Ghost\Blueprint\Routing\Redirect;

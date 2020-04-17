@@ -15,6 +15,8 @@ use Commune\Ghost\Blueprint\Operator\Operator;
 
 
 /**
+ * 同一个 Context 内部变更 Stage
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Staging

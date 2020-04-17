@@ -61,23 +61,21 @@ class DialogManager implements Spied
     public function runDialogManage(Operator $operator = null) : bool
     {
         $operator = $operator ?? new ProcessStart();
+        $trace = $this->runtime->trace;
 
         try {
-
 
             // 循环计算
             while(isset($operator)) {
 
                 // 记录算子的路径.
                 // 超出最大重定向记录的话, 会抛出异常.
-                $this->runtime->trace->record($operator);
+                $trace->record($operator);
 
                 // 运行算子.
                 $operator = $operator->invoke($this->convo);
-
             }
 
-            return true;
 
         // 拿到了一个用异常做的重定向算子
         } catch (OperatorException $e) {
@@ -92,8 +90,9 @@ class DialogManager implements Spied
         } catch (\Throwable $e) {
 
         }
-    }
 
+        return true;
+    }
 
     public function __destruct()
     {

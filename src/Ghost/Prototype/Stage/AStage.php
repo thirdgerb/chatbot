@@ -58,6 +58,11 @@ abstract class AStage implements Stage, Spied, Injectable
     protected $selfContext;
 
     /**
+     * @var Matcher
+     */
+    protected $matcher;
+
+    /**
      * AStage constructor.
      * @param Conversation $conversation
      * @param StageDef $stageDef
@@ -78,14 +83,27 @@ abstract class AStage implements Stage, Spied, Injectable
 
     public function matcher(Message $message = null): Matcher
     {
+        if (!isset($message) && isset($this->matcher)) {
+            return $this->matcher;
+        }
+
         $message = $message ?? $this->conversation->ghostInput->getMessage();
-        return new IMatcher($this, $message);
+        return $this->matcher = new IMatcher($this, $message);
     }
 
     public function speak(): Speaker
     {
         return $this->conversation->speaker;
     }
+
+    public function make(string $abstract, array $parameters = [])
+    {
+        $parameters = $parameters + $this->getContextInjections();
+        // 容器
+        $container = $this->conversation->container;
+        return $container->make($abstract, $parameters);
+    }
+
 
     /**
      * @param callable|string $caller
@@ -96,12 +114,24 @@ abstract class AStage implements Stage, Spied, Injectable
      */
     public function call($caller, array $parameters = [])
     {
+        $parameters = $parameters + $this->getContextInjections();
+
+        // 容器
+        $container = $this->conversation->container;
+        return $container->call($caller, $parameters);
+    }
+
+    public function getContextInjections(): array
+    {
+        $parameters = [];
+
         $injectable = [
             'stage' => $this,
             'conversation' => $this->conversation,
             'self' => $this->self,
             'node' => $this->selfNode,
-            'message' => $this->conversation->ghostInput->getMessage()
+            'message' => $this->conversation->ghostInput->getMessage(),
+            'matcher' => $this->matcher(),
         ];
 
         // 准备好各种依赖注入.
@@ -117,15 +147,9 @@ abstract class AStage implements Stage, Spied, Injectable
 
         // 可以用 $dependencies 来查看可以依赖注入的对象.
         $parameters['dependencies'] = array_keys($parameters);
-
-        // 容器
-        $container = $this->conversation->container;
-        if (!is_callable($caller) && is_string($caller) && class_exists($caller)) {
-            $caller = $container->make($caller, $parameters);
-        }
-
-        return $container->call($caller, $parameters);
+        return $parameters;
     }
+
 
     public function getInterfaces(): array
     {
@@ -161,6 +185,7 @@ abstract class AStage implements Stage, Spied, Injectable
         $this->selfNode = null;
         $this->selfContext = null;
         $this->stageDef = null;
+        $this->matcher = null;
         static::removeRunningTrace($this->uuid);
     }
 

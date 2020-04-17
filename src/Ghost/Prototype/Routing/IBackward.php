@@ -35,8 +35,4 @@ class IBackward implements Backward
         return new BackStep($steps);
     }
 
-    public function unheard(): Operator
-    {
-        return new NoStateEnd();
-    }
 }

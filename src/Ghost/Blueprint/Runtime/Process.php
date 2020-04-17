@@ -122,6 +122,13 @@ interface Process extends ArrayAndJsonAble
     public function prev() : ? Process;
 
     /**
+     * 对比两个 Process 的语境当前, 如果不相同, 则返回当前 Process 的语境.
+     * @param Process $process
+     * @return Node|null
+     */
+    public function compareContext(Process $process) : ? Node;
+
+    /**
      * 返回若干步.
      * @param int $steps
      * @return string|null

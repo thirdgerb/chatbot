@@ -14,6 +14,7 @@ namespace Commune\Ghost\Prototype\Operators\End;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Operator\Operator;
 use Commune\Message\Blueprint\QuestionMsg;
+use Commune\Message\Predefined\IContextMsg;
 
 
 /**
@@ -38,8 +39,9 @@ class Await implements Operator
     public function invoke(Conversation $conversation): ? Operator
     {
         $runtime = $conversation->runtime;
+        $process = $runtime->getCurrentProcess();
         // 获取线程
-        $thread = $runtime->getCurrentProcess()->aliveThread();
+        $thread = $process->aliveThread();
 
         // 准备好 question
         if (isset($this->question)) {
@@ -47,9 +49,19 @@ class Await implements Operator
         }
 
         // 准备好 ContextMsg, 用于同步状态.
-        $contextMsg = $runtime->toContextMsg();
-        if (isset($contextMsg)) {
-            $conversation->output($contextMsg);
+        $prev = $process->prev();
+        if (isset($prev)) {
+            // 如果状态有变更的话.
+            $node = $process->compareContext($prev);
+            if (isset($node)) {
+                $context = $node->findContext($conversation);
+                $contextMsg = new IContextMsg(
+                    $context->getId(),
+                    $context->getName(),
+                    $context->toEntities()
+                );
+                $conversation->output($contextMsg);
+            }
         }
 
         return null;

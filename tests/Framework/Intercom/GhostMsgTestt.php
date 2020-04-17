@@ -14,7 +14,7 @@ namespace Commune\Test\Framework\Intercom;
 use Commune\Framework\Prototype\Intercom\IGhostInput;
 use Commune\Framework\Prototype\Intercom\IShellInput;
 use Commune\Framework\Prototype\Intercom\IShellScope;
-use Commune\Message\Prototype\IText;
+use Commune\Message\Predefined\IText;
 use Commune\Support\Babel\Babel;
 use PHPUnit\Framework\TestCase;
 

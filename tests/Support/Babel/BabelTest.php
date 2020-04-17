@@ -12,7 +12,7 @@
 namespace Commune\Test\Support\Babel;
 
 use Commune\Message\Blueprint\TextMsg;
-use Commune\Message\Prototype\IText;
+use Commune\Message\Predefined\IText;
 use Commune\Support\Babel\Babel;
 use PHPUnit\Framework\TestCase;
 

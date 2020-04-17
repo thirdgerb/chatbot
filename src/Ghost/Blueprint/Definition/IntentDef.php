@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Blueprint\Definition;
 
 use Commune\Ghost\Blueprint\Convo\Conversation;
+use Commune\Message\Blueprint\IntentMsg;
 
 
 /**
@@ -42,4 +43,5 @@ interface IntentDef extends Def
 {
     public function validate(Conversation $conversation) : bool;
 
+    public function parseData(array $entities) : IntentMsg;
 }

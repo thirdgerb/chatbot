@@ -11,14 +11,14 @@
 
 namespace Commune\Test\Message;
 
-use Commune\Message\Prototype\IIntentMsg;
-use Commune\Message\Prototype\IJson;
-use Commune\Message\Prototype\IText;
-use Commune\Message\Prototype\IUnsupported;
-use Commune\Message\Prototype\Media\IAudio;
-use Commune\Message\Prototype\Media\IImage;
-use Commune\Message\Prototype\Media\ILink;
-use Commune\Message\Prototype\MessagesTestCase;
+use Commune\Message\Predefined\IIntentMsg;
+use Commune\Message\Predefined\IJson;
+use Commune\Message\Predefined\IText;
+use Commune\Message\Predefined\IUnsupported;
+use Commune\Message\Predefined\Media\IAudio;
+use Commune\Message\Predefined\Media\IImage;
+use Commune\Message\Predefined\Media\ILink;
+use Commune\Message\Predefined\MessagesTestCase;
 
 
 /**

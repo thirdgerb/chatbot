@@ -19,7 +19,7 @@ use Commune\Framework\Prototype\Abstracted\IComprehension;
 use Commune\Message\Blueprint\IntentMsg;
 use Commune\Message\Blueprint\Message;
 use Commune\Message\Blueprint\Tag\Verbal;
-use Commune\Message\Prototype\IIntentMsg;
+use Commune\Message\Predefined\IIntentMsg;
 use Commune\Support\Babel\BabelSerializable;
 use Commune\Support\Utils\StringUtils;
 

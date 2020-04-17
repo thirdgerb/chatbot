@@ -53,7 +53,22 @@ interface Context extends ArrayAccess, ArrayAndJsonAble, ConvoInstance, Injectab
      */
     public function getId() : string;
 
+    /**
+     * @return int
+     */
     public function getPriority() : int;
+
+    /**
+     * 获取所有的变量值.
+     * @return array
+     */
+    public function toAttributes() : array;
+
+    /**
+     * 获取所有 Entity 的值.
+     * @return array
+     */
+    public function toEntities() : array;
 
     /*----- 方法 -----*/
 

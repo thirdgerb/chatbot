@@ -53,4 +53,6 @@ interface LogInfo
     /*------ shell ------*/
 
     public function shellNotAllowScene(string $shellName, string $sceneId) : string;
+
+    /*------ logic ------*/
 }

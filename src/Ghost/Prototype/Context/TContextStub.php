@@ -45,6 +45,10 @@ trait TContextStub
         throw new ConvoInstanceException(__METHOD__);
     }
 
+    public function getPriority(): int
+    {
+        throw new ConvoInstanceException(__METHOD__);
+    }
 
     public function isInstanced(): bool
     {

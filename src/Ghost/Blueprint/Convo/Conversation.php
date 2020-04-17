@@ -11,6 +11,8 @@
 
 namespace Commune\Ghost\Blueprint\Convo;
 
+use Commune\Framework\Blueprint\App;
+use Commune\Framework\Blueprint\Server\Server;
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Contracts\Cache;
 use Commune\Framework\Contracts\Messenger;
@@ -33,14 +35,16 @@ use Commune\Ghost\Blueprint\Context\Context;
  *
  * ## 容器
  *
+ * @property-read App $app                                      所在应用
  * @property-read ReqContainer $container                       请求级容器
+ * @property-read Server $server                                服务端实例
  *
  * ## 请求
  *
  * @property-read Intercom\GhostInput $ghostInput
  * @property-read Scene $scene                                  场景信息
- * @property-read Blueprint\Cloner\Cloner $cloner
- * @property-read ConversationLogger $logger                         请求级日志
+ * @property-read Blueprint\Cloner\Cloner $cloner               当前机器人的身份
+ * @property-read ConversationLogger $logger                    请求级日志
  * @property-read GhostRequest $request
  * @property-read GhostResponse $response
  * @property-read ConvoScope $scope
@@ -77,16 +81,32 @@ interface Conversation extends Session
     public function getCloneId() : string;
 
 
-    /*------ ghost logic ------*/
+    /*------ dialog manage ------*/
 
     /**
-     * 运行机器人的逻辑.
+     * 运行机器人的多轮对话逻辑.
      *
      * @param Operator|null $operator
      */
     public function runDialogManager(Operator $operator = null) : void;
 
+    /**
+     * 在当前的上下文中创建一个 Context
+     *
+     * @param string $contextName
+     * @param array|null $entities
+     * @return Context
+     */
     public function newContext(string $contextName, array $entities = null) : Context;
+
+
+    /**
+     * 让 Conversation 通过一个管道
+     * @param array $pipes
+     * @param string $via
+     * @return Conversation
+     */
+    public function goThroughPipes(array $pipes, string $via) : Conversation;
 
     /*------ deliver ------*/
 
@@ -112,24 +132,32 @@ interface Conversation extends Session
      */
     public function deliverInput(string $shellName, string $shellId, Message $message) : void;
 
+    /**
+     * 发送一个消息.
+     * @param Intercom\GhostMessage $message
+     */
+    public function deliver(Intercom\GhostMessage $message) : void;
 
     /*------ output ------*/
 
     /**
+     * 获取所有的输出消息.
+     *
      * @return Intercom\GhostOutput[]
      */
     public function getOutputs() : array;
 
     /**
-     * @return Message[][]
+     * 将所有的输出消息按投递的目标排列好
+     *
+     * @return Intercom\GhostOutput[][]
      *  [
-     *    chatId => [
-     *         $message1,
-     *         $message2,
+     *    string $shellId => [
+     *         GhostOutput $message1,
+     *         GhostOutput $message2,
      *      ]
      *  ]
      */
     public function getDelivery() : array;
 
-    public function goThroughPipes(array $pipes, string $via) : Conversation;
 }

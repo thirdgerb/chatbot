@@ -15,7 +15,7 @@ use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Prototype\Session\ASessionPipe;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Message\Constants\SystemIntents;
-use Commune\Message\Prototype\IIntentMsg;
+use Commune\Message\Predefined\IIntentMsg;
 
 
 /**

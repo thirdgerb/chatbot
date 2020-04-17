@@ -11,13 +11,14 @@
 
 namespace Commune\Ghost\Blueprint\Callables;
 
+use Commune\Ghost\Blueprint\Match\Matcher;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Prediction
 {
+    public function __construct(Matcher $matcher);
 
     public function __invoke() : bool;
-
 }

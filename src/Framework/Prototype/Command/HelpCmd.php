@@ -8,8 +8,8 @@ use Commune\Framework\Blueprint\Command\CommandDef;
 use Commune\Framework\Blueprint\Command\CommandMsg;
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Framework\Blueprint\Session\SessionCmdPipe;
-use Commune\Message\Prototype\SystemInts\CommandDescInt;
-use Commune\Message\Prototype\SystemInts\CommandNotExistsInt;
+use Commune\Message\Predefined\SystemInts\CommandDescInt;
+use Commune\Message\Predefined\SystemInts\CommandNotExistsInt;
 
 /**
  * 帮助命令. 查看当前可用的命令. 或者查看当前命令的选项.

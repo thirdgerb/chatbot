@@ -14,6 +14,7 @@ namespace Commune\Ghost\Blueprint\Routing;
 use Commune\Ghost\Blueprint\Operator\Operator;
 
 /**
+ * 用户视角对话状态的回归.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Backward
@@ -34,9 +35,4 @@ interface Backward
      */
     public function backStep(int $steps) : Operator;
 
-    /**
-     * 装作没听见, 不需要任何反应, 也不需要任何状态变更.
-     * @return Operator
-     */
-    public function unheard() : Operator;
 }

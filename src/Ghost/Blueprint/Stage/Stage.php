@@ -32,6 +32,16 @@ use Commune\Message\Blueprint\Message;
  */
 interface Stage
 {
+
+    /**
+     * 在 Stage 的上下文中通过抽象获取一个对象.
+     *
+     * @param string $abstract
+     * @param array $parameters
+     * @return mixed
+     */
+    public function make(string $abstract, array $parameters = []);
+
     /**
      * 用依赖注入的方式调用一个 callable.
      * 与laravel 的区别在于, $parameters 允许用 interface => $instance 的方式注入临时依赖.
@@ -41,6 +51,13 @@ interface Stage
      * @return mixed
      */
     public function call($caller, array $parameters = []);
+
+    /**
+     * 获取上下文相关的依赖注入对象.
+     * Stage::call , Stage::make 方法都会注入这些对象.
+     * @return array
+     */
+    public function getContextInjections() : array;
 
     /**
      * 开口说话.

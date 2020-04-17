@@ -11,6 +11,7 @@
 
 namespace Commune\Message\Blueprint;
 
+use Commune\Message\Blueprint\Tag\MsgLevel;
 use Commune\Message\Blueprint\Tag\Verbal;
 
 /**
@@ -18,6 +19,6 @@ use Commune\Message\Blueprint\Tag\Verbal;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface TextMsg extends Message, Verbal
+interface TextMsg extends Message, Verbal, MsgLevel
 {
 }

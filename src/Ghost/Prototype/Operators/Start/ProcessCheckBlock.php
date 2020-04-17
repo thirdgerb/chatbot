@@ -25,7 +25,8 @@ class ProcessCheckBlock implements Operator
 {
     public function invoke(Conversation $conversation): ? Operator
     {
-        $process = $conversation->runtime->getCurrentProcess();
+        $runtime = $conversation->runtime;
+        $process = $runtime->getCurrentProcess();
 
         if (!$process->hasBlocking()) {
             return new HearStage();

@@ -13,7 +13,7 @@ namespace Commune\Shell\Platforms\ReactStdio;
 
 use Commune\Framework\Blueprint\Abstracted\Comprehension;
 use Commune\Message\Blueprint\Message;
-use Commune\Message\Prototype\IText;
+use Commune\Message\Predefined\IText;
 use Commune\Shell\Contracts\ShellRequest;
 
 /**

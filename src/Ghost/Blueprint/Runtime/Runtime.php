@@ -13,18 +13,20 @@ namespace Commune\Ghost\Blueprint\Runtime;
 
 use Commune\Framework\Blueprint\Session\Session;
 use Commune\Ghost\Blueprint\Context\Context;
+use Commune\Ghost\Blueprint\Operator\Operation;
 use Commune\Message\Blueprint\ContextMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read Trace $trace  Operator 的跟踪器
- * @property-read Route $route  Context Stage 的跟踪器.
+ * @property-read Trace $trace
+ * @property-read Route $route
  */
 interface Runtime
 {
+    /*------ trace -------*/
 
-
+    public function recordRoute(Node $node) : void;
 
     /*------ process -------*/
 

@@ -11,7 +11,6 @@
 
 namespace Commune\Ghost\Blueprint\Definition;
 
-use Commune\Ghost\Blueprint\Context\Context;
 use Commune\Ghost\Blueprint\Convo\Conversation;
 use Commune\Ghost\Blueprint\Stage;
 use Commune\Ghost\Blueprint\Operator\Operator;
@@ -39,25 +38,23 @@ interface StageDef
     public function getFullname() : string;
 
     /**
+     * 作为意图的名称. 有可能对应的意图和全名不一致
      * @return string
      */
     public function getIntentName() : string;
 
-    /*------- relations -------*/
-
-//    /**
-//     * 所属的 Context
-//     * @return ContextDef
-//     */
-//    public function getContextDef() : ContextDef;
-
+    /**
+     * 所属 Context 的名称.
+     * @return string
+     */
     public function getContextName() : string;
 
-    /**
-     * 作为 Intent 的匹配规则.
-     * @return null|RoutingDef
-     */
-    public function getRoutingDef() : ? RoutingDef;
+    /*------- relations -------*/
+
+    public function findContextDef(Conversation $conversation) : ContextDef;
+
+    public function findIntentDef(Conversation $conversation) : ? IntentDef;
+
 
     /*------- stage 路由 -------*/
 

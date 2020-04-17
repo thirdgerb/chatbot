@@ -30,7 +30,6 @@ use Commune\Support\Struct\AbsStruct;
  *
  *
  * @property-read string $commandMark               命令的前缀. 最好带前缀.
- * @property-read string[] $comprehendPipes         尝试理解消息的管道.
  *
  * ## Scene
  *
@@ -41,6 +40,11 @@ use Commune\Support\Struct\AbsStruct;
  *
  * ## Session
  * @property-read int $sessionExpire
+ *
+ *
+ * ## DialogManager
+ * @property-read string[] $comprehendPipes         尝试理解消息的管道.
+ * @property-read callable[] $heedFallback          Heed 状态下, 全局的处理逻辑. 见 OnHeed::end()
  *
  */
 class GhostConfig extends AbsStruct

@@ -18,7 +18,7 @@ use Commune\Framework\Prototype\Intercom\IShellInput;
 use Commune\Support\Babel\Babel;
 use Commune\Support\Babel\BabelResolver;
 use Commune\Support\Babel\BabelSerializable;
-use Commune\Message\Prototype;
+use Commune\Message\Predefined;
 use Commune\Support\Babel\JsonResolver;
 
 /**
@@ -36,13 +36,13 @@ class BabelServiceProvider extends ServiceProvider
             'serializable' => [
 
                 // message
-                Prototype\IText::class,
-                Prototype\IUnsupported::class,
-                Prototype\IJson::class,
-                Prototype\IIntentMsg::class,
-                Prototype\Media\IAudio::class,
-                Prototype\Media\IImage::class,
-                Prototype\Media\ILink::class,
+                Predefined\IText::class,
+                Predefined\IUnsupported::class,
+                Predefined\IJson::class,
+                Predefined\IIntentMsg::class,
+                Predefined\Media\IAudio::class,
+                Predefined\Media\IImage::class,
+                Predefined\Media\ILink::class,
 
                 // intercom
                 IShellInput::class,

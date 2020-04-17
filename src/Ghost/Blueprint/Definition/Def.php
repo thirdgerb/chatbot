@@ -34,5 +34,16 @@ interface Def extends Wrapper
      */
     public function nameEquals(string $name) : bool;
 
+    /**
+     * 文字标题
+     * @return string
+     */
+    public function getTitle() : string;
+
+    /**
+     * 详细介绍.
+     * @return string
+     */
+    public function getDescription() : string;
 
 }
