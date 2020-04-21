@@ -19,6 +19,11 @@ namespace Commune\Blueprint\Configs;
  *
  *
  * @property-read string $ghostName             Ghost 的名称
+ *
+ * # Services
+ * @property-read array $providers              需要绑定的服务.
+ *
+ * @property-read string[] $sceneContextNames   场景对应的根路径. 第一个是默认的.
  */
 interface GhostConfig
 {

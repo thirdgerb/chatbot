@@ -3,7 +3,7 @@
 namespace Commune\Support\OptionRepo\Contracts;
 
 use Commune\Support\OptionRepo\Options\CategoryMeta;
-use Commune\Support\Struct;
+use Commune\Support\Option;
 use Commune\Support\OptionRepo\Exceptions\OptionNotFoundException;
 use Commune\Support\OptionRepo\Exceptions\RepositoryMetaNotExistsException;
 use Commune\Support\OptionRepo\Exceptions\SynchroniseFailException;

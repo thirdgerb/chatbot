@@ -3,7 +3,7 @@
 
 namespace Commune\Support\OptionRepo\Options;
 
-use Commune\Support\Struct;
+use Commune\Support\Option;
 
 /**
  * OptionRepo 是一个配置中心的抽象层.

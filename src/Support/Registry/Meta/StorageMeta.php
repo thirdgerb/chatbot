@@ -11,7 +11,7 @@
 
 namespace Commune\Support\Registry\Meta;
 
-use Commune\Support\Struct\AbsMeta;
+use Commune\Support\Option\AbsMeta;
 
 
 /**

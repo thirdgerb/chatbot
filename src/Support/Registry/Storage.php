@@ -13,7 +13,7 @@ namespace Commune\Support\Registry;
 
 use Commune\Support\Registry\Meta\CategoryMeta;
 use Commune\Support\Registry\Meta\StorageMeta;
-use Commune\Support\Struct\Struct;
+use Commune\Support\Option\Option;
 
 
 /**
@@ -38,25 +38,25 @@ interface Storage
      *
      * @param CategoryMeta $category
      * @param StorageMeta $storage
-     * @param Struct[] $options
+     * @param Option[] $options
      */
     public function save(
         CategoryMeta $category,
         StorageMeta $storage,
-        Struct ...$options
+        Option ...$options
     ) : void;
 
     /**
      * @param CategoryMeta $category
      * @param StorageMeta $storage
      * @param string $id
-     * @return Struct|null
+     * @return Option|null
      */
     public function get(
         CategoryMeta $category,
         StorageMeta $storage,
         string $id
-    ) : ? Struct;
+    ) : ? Option;
 
     /**
      * 查看一个 option 是否定义过, 已经存在.

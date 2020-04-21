@@ -31,10 +31,10 @@ interface App
 
     /**
      * 创建一个请求级容器, 并添加默认的绑定
-     * @param string $id
+     * @param string $uuid
      * @return ReqContainer
      */
-    public function newReqContainerInstance(string $id) : ReqContainer;
+    public function newReqContainerInstance(string $uuid) : ReqContainer;
 
 
 }

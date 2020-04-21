@@ -4,7 +4,7 @@
 namespace Commune\Support\OptionRepo\Options;
 
 
-use Commune\Support\Struct;
+use Commune\Support\Option;
 
 /**
  * 定义一个 option Storage

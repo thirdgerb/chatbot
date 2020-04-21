@@ -13,7 +13,7 @@ namespace Commune\Support\Registry;
 
 use Commune\Support\Registry\Meta\CategoryMeta;
 use Commune\Support\Registry\Meta\StorageMeta;
-use Commune\Support\Struct\Struct;
+use Commune\Support\Option\Option;
 
 
 /**
@@ -65,7 +65,7 @@ interface RootStorage extends Storage
      * @param CategoryMeta $category
      * @param StorageMeta $storage
      * @param array $ids
-     * @return Struct[]
+     * @return Option[]
      */
     public function findByIds(CategoryMeta $category, StorageMeta $storage, array $ids) : array;
 

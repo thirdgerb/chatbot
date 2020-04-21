@@ -32,7 +32,7 @@ trait IdGeneratorHelper
 
     public function createUuId()
     {
-        return static::generateUUid();
+        return str_replace('-', '', static::generateUUid());
     }
 
 

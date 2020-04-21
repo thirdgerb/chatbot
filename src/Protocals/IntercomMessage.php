@@ -11,15 +11,26 @@
 
 namespace Commune\Protocals;
 
-use Commune\Protocals\Intercom\IntercomProto;
 use Commune\Support\Message\Message;
+use Commune\Support\Message\Protocal;
 
 /**
  * 机器人内部通信用的消息.
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * # 内部通信的基础协议
+ *
+ * ## ID
+ * @property-read string $messageId         消息的唯一 ID
+ * @property-read string $batchId           消息的批次. 发出和回复是同一批.
+ *
+ * # 消息体
+ * @property-read HostMsg $message          消息体
+ *
+ * # 时间戳
+ * @property-read float  $createdAt         创建时间, 精确到毫秒
+ * @property-read float  $deliverAt         发送时间.
  */
-interface IntercomMessage extends Message, IntercomProto
+interface IntercomMessage extends Message, Protocal
 {
-
 }

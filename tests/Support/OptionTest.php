@@ -7,7 +7,7 @@
 
 namespace Commune\Test\Support;
 
-use Commune\Support\Struct\AbsStruct;
+use Commune\Support\Option\AbsOption;
 use PHPUnit\Framework\TestCase;
 
 class OptionTest extends TestCase
@@ -97,7 +97,7 @@ class OptionTest extends TestCase
  * @property-read  int $a
  * @property-read Option2 $b
  */
-class Option1 extends AbsStruct
+class Option1 extends AbsOption
 {
     protected static $associations =[
         'b' => Option2::class,
@@ -120,7 +120,7 @@ class Option1 extends AbsStruct
  * @property-read int $a
  * @property-read int $b
  */
-class Option2 extends AbsStruct
+class Option2 extends AbsOption
 {
     const IDENTITY = 'a';
 
@@ -138,7 +138,7 @@ class Option2 extends AbsStruct
  * @property-read Option1 $option1
  * @property-read Option2[] $option2
  */
-class Option3 extends AbsStruct
+class Option3 extends AbsOption
 {
     protected static $associations =[
         'option1' => Option1::class,

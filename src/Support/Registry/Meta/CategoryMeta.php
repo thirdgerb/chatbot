@@ -11,8 +11,8 @@
 
 namespace Commune\Support\Registry\Meta;
 
-use Commune\Support\Struct\AbsStruct;
-use Commune\Support\Struct\Struct;
+use Commune\Support\Option\AbsOption;
+use Commune\Support\Option\Option;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -32,7 +32,7 @@ use Commune\Support\Struct\Struct;
  *
  *
  */
-class CategoryMeta extends AbsStruct
+class CategoryMeta extends AbsOption
 {
     const IDENTITY = 'name';
 
@@ -63,7 +63,7 @@ class CategoryMeta extends AbsStruct
         }
 
         $class = $data['optionClass'];
-        if (!is_string($class) || !is_a($class, Struct::class, TRUE)) {
+        if (!is_string($class) || !is_a($class, Option::class, TRUE)) {
             return 'invalid option class';
         }
 

@@ -14,7 +14,7 @@ namespace Commune\Support\Registry\Impl;
 use Commune\Support\Registry\Category;
 use Commune\Support\Registry\Exceptions\StructNotFoundException;
 use Commune\Support\Registry\Meta\CategoryMeta;
-use Commune\Support\Struct\Struct;
+use Commune\Support\Option\Option;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -57,7 +57,7 @@ class ICategory implements Category
         // TODO: Implement has() method.
     }
 
-    public function find(string $optionId): Struct
+    public function find(string $optionId): Option
     {
         // TODO: Implement find() method.
     }
@@ -67,14 +67,14 @@ class ICategory implements Category
         // TODO: Implement getStorageVersions() method.
     }
 
-    public function save(Struct $struct, bool $draft = false): void
+    public function save(Option $struct, bool $draft = false): void
     {
         // TODO: Implement save() method.
     }
 
     public function saveBatch(
         bool $draft,
-        Struct ...$structs
+        Option ...$structs
     ): void
     {
         // TODO: Implement saveBatch() method.

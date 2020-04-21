@@ -4,7 +4,7 @@
 namespace Commune\Support\OptionRepo\Demo;
 
 
-use Commune\Support\Struct;
+use Commune\Support\Option;
 
 class TestSubOption extends Option
 {

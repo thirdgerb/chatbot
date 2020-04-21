@@ -11,7 +11,7 @@
 
 namespace Commune\Support\Meta;
 
-use Commune\Support\Struct\AbsStruct;
+use Commune\Support\Option\AbsOption;
 
 
 /**
@@ -29,7 +29,7 @@ use Commune\Support\Struct\AbsStruct;
  * 读取数据时, 从上往下读, 读到任何合法数据则返回.
  * 更新数据时数据从根节点往上同步.
  */
-class CategoryMeta extends AbsStruct
+class CategoryMeta extends AbsOption
 {
 
 }

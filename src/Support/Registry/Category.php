@@ -12,7 +12,7 @@
 namespace Commune\Support\Registry;
 
 use Commune\Support\Registry\Exceptions\StructNotFoundException;
-use Commune\Support\Struct\Struct;
+use Commune\Support\Option\Option;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -34,17 +34,17 @@ interface Category
      * 获取一个 struct
      *
      * @param string $optionId          struct id
-     * @return Struct
+     * @return Option
      * @throws StructNotFoundException struct不存在也抛出异常
      */
-    public function find(string $optionId) : Struct;
+    public function find(string $optionId) : Option;
 
     /**
      * 获取一个 struct 在所有 storage 中的版本.
      * 可以用于检查存储介质是否发生了不一致.
      *
      * @param string $optionId
-     * @return Struct[]
+     * @return Option[]
      */
     public function getStorageVersions(string $optionId) : array;
 
@@ -53,23 +53,23 @@ interface Category
      * 会先存储到 root storage, 然后从上往下一层层存储.
      * meta 必须存在.
      *
-     * @param Struct $struct
+     * @param Option $struct
      * @param bool $draft 如果是草稿, 则不会立刻同步.
      *
      * @throws StructNotFoundException
      */
-    public function save(Struct $struct, bool $draft = false) : void;
+    public function save(Option $struct, bool $draft = false) : void;
 
 
     /**
      * 更新, 或者创建一批 struct. meta 必须存在.
      *
      * @param bool $draft 是否立刻同步.
-     * @param Struct[] $structs
+     * @param Option[] $structs
      */
     public function saveBatch(
         bool $draft,
-        Struct ...$structs
+        Option ...$structs
     ) : void;
 
     /**
@@ -118,7 +118,7 @@ interface Category
      * @param string $query
      * @param int $offset
      * @param int $lines
-     * @return Struct[]
+     * @return Option[]
      */
     public function paginate(string $query = '', int $offset = 0, int $lines = 20) : array;
 
@@ -126,7 +126,7 @@ interface Category
      * 使用 id 数组, 取出相关 struct 的 map
      *
      * @param array $ids
-     * @return Struct[]
+     * @return Option[]
      */
     public function findByIds(array $ids) : array;
 
