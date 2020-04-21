@@ -28,7 +28,7 @@ trait TBabelSerializable
         foreach ($this->__sleep() as $field) {
             $value = $this->{$field};
             if ($value instanceof BabelSerializable) {
-                $value = Babel::getResolver()->toSerializingArray($value);
+                $value = Babel::getResolver()->encodeToArray($value);
                 $recursive[] = $field;
             } elseif (is_object($value)) {
                 $value = serialize($value);
@@ -57,7 +57,7 @@ trait TBabelSerializable
 
             if (is_array($value)) {
                 $value = isset($value)
-                    ? Babel::getResolver()->fromSerializableArray($value)
+                    ? Babel::getResolver()->decodeFromArray($value)
                     : null;
 
             } elseif (is_string($value)) {

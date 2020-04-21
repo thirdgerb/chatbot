@@ -183,4 +183,9 @@ class Entry
             'data',
         ];
     }
+
+    public function __destruct()
+    {
+        $this->data = [];
+    }
 }

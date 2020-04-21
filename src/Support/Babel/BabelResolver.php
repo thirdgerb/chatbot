@@ -22,9 +22,6 @@ interface BabelResolver
 {
 
 
-    public function registerSerializable(string $serializable) : void;
-
-
     /**
      * 注册一个 resolver
      *
@@ -38,23 +35,36 @@ interface BabelResolver
         callable $unSerializer
     ) : void;
 
+    /**
+     * 注册一个 BabelSerializable
+     * @param string $serializable   类名
+     */
+    public function registerSerializableClass(string $serializable) : void;
 
-    public function hasRegistered(
-        string $serializableId
-    ) : bool;
+    /**
+     * 检查一个 serializableId 是否已经注册.
+     * @param string $serializableId
+     * @return bool
+     */
+    public function hasRegistered(string $serializableId) : bool;
 
-    public function toSerializingArray(BabelSerializable $serializable) : array;
+    /**
+     * 将对象变为数组
+     * @param BabelSerializable $serializable
+     * @return array
+     */
+    public function encodeToArray(BabelSerializable $serializable) : array;
 
     /**
      * 从数组还原
      * @param array $data
      * @return static|null
      */
-    public function fromSerializableArray(array $data) : ? BabelSerializable;
+    public function decodeFromArray(array $data) : ? BabelSerializable;
 
 
     /**
-     * 序列化, 通常有一个加密环节.
+     * 序列化.
      * @param BabelSerializable $serializable
      * @return string
      */
@@ -62,7 +72,7 @@ interface BabelResolver
 
 
     /**
-     * 反序列化. 通常还有一个解密环节.
+     * 反序列化.
      * @param string $input
      * @return null|mixed 如果为 null, 表示无法反序列化.
      */

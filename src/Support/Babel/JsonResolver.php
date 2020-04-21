@@ -10,8 +10,8 @@
  */
 
 namespace Commune\Support\Babel;
-use Commune\Support\Utils\StringUtils;
 
+use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -20,7 +20,7 @@ class JsonResolver implements BabelResolver
 {
     protected $transformers = [];
 
-    public function registerSerializable(string $serializable) : void
+    public function registerSerializableClass(string $serializable) : void
     {
         if (!is_a(
             $serializable,
@@ -66,7 +66,7 @@ class JsonResolver implements BabelResolver
         return array_key_exists($serializableId, $this->transformers);
     }
 
-    public function toSerializingArray(BabelSerializable $serializable): array
+    public function encodeToArray(BabelSerializable $serializable): array
     {
         return [
             $serializable->getSerializableId(),
@@ -74,7 +74,7 @@ class JsonResolver implements BabelResolver
         ];
     }
 
-    public function fromSerializableArray(array $data): ? BabelSerializable
+    public function decodeFromArray(array $data): ? BabelSerializable
     {
         $serializableId = $data[0];
         $serialized = $data[1];
@@ -89,7 +89,7 @@ class JsonResolver implements BabelResolver
 
         if (is_a($serializableId, BabelSerializable::class, TRUE)
         ) {
-            $this->registerSerializable($serializableId);
+            $this->registerSerializableClass($serializableId);
             return call_user_func([$serializableId, 'fromSerializableArray'], $serialized);
         }
 
@@ -108,10 +108,10 @@ class JsonResolver implements BabelResolver
             $id = $serializable->getSerializableId();
 
             if (!static::hasRegistered($id)) {
-                static::registerSerializable(get_class($serializable));
+                static::registerSerializableClass(get_class($serializable));
             }
 
-            $data = $this->toSerializingArray($serializable);
+            $data = $this->encodeToArray($serializable);
             return json_encode(
                 $data,
                 JSON_UNESCAPED_UNICODE
@@ -136,7 +136,7 @@ class JsonResolver implements BabelResolver
             && isset($data[0])
             && isset($data[1])
         ) {
-            return $this->fromSerializableArray($data);
+            return $this->decodeFromArray($data);
         }
         return unserialize($input);
     }

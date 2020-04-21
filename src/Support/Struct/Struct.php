@@ -24,12 +24,6 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  */
 interface Struct extends ArrayAndJsonAble, IteratorAggregate
 {
-    /**
-     * Struct constructor.
-     * @param array $data
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(array $data = []);
 
     /**
      * 默认样板数据. 为真实数据提供默认值.
