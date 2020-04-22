@@ -9,19 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Message\Convo;
+namespace Commune\Protocals\Host\Convo;
 
-use Commune\Protocals\Message\ConvoMsg;
+use Commune\Protocals\Host\ConvoMsg;
 
 
 /**
- * 客户端或服务端不支持的消息.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
- * @property-read string $type      消息的类型.
+ * @property-read string $query             问题
+ * @property-read string[] $suggestions     建议
  */
-interface UnsupportedMsg extends ConvoMsg
+interface QuestionMsg extends ConvoMsg
 {
 }

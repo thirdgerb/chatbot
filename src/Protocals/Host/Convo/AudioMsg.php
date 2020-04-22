@@ -9,17 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Message\Convo;
-
-use Commune\Protocals\Message\ConvoMsg;
+namespace Commune\Protocals\Host\Convo;
 
 
 /**
+ * 音频类消息
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read string $query             问题
- * @property-read string[] $suggestions     建议
  */
-interface QuestionMsg extends ConvoMsg
+interface AudioMsg extends MediaMsg
 {
 }

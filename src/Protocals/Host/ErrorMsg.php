@@ -9,15 +9,22 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Message\Ghost;
+namespace Commune\Protocals\Host;
 
 use Commune\Protocals\HostMsg;
 
-
 /**
- * 指令类型的消息. 通常用于各个模块之间采取一些响应.
+ * 异常类消息.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read int $errcode          错误码
+ * @property-read string $errmsg        错误描述
  */
-interface DirectiveMsg extends HostMsg
+interface ErrorMsg extends HostMsg
 {
+    const INVALID_REQUEST = 400;
+    const SCENE_NOT_EXISTS = 404;
+    const SYSTEM_FAILURE = 500;
+    const RUNTIME_EXCEPTION = 504;
 }

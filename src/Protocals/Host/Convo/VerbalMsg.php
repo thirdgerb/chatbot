@@ -9,13 +9,18 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Message\Convo;
+namespace Commune\Protocals\Host\Convo;
 
+use Commune\Protocals\Host\ConvoMsg;
 
 /**
- * 音频类消息
+ * 文字类型的消息. 通常用于翻译.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $text
+ * @property-read string $level         消息的级别.
  */
-interface AudioMsg extends MediaMsg
+interface VerbalMsg extends ConvoMsg
 {
 }

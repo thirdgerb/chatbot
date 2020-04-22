@@ -38,4 +38,5 @@ interface Message extends
     ProtocalInstance,       // 可以用来实现各种协议
     BabelSerializable       // 可以通过 Babel 的约定进行格式化传输
 {
+    public function isEmpty() : bool;
 }

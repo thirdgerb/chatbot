@@ -9,18 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Message\Convo;
+namespace Commune\Protocals\Host;
 
-use Commune\Protocals\Message\ConvoMsg;
+use Commune\Protocals\HostMsg;
 
 /**
- * 文字类型的消息. 通常用于翻译.
+ * 对话类型的消息.
+ * 对 Ghost 可能引起多轮对话状态的变动, 对 Client 则产生对话内容的展示等.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $text
- * @property-read array $slots
  */
-interface VerbalMsg extends ConvoMsg
+interface ConvoMsg extends HostMsg
 {
 }

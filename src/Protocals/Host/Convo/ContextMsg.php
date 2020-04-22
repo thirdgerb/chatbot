@@ -9,23 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Message;
+namespace Commune\Protocals\Host\Convo;
 
-use Commune\Protocals\HostMsg;
+use Commune\Protocals\Host\ConvoMsg;
 
 
 /**
- * Ghost 对外发表的响应意图.
- * 通常会被解析成多个其它类型的 Message
+ * 用于同步状态的消息
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
- *
- * @property-read string $reactionId        响应的 ID, 不同的 ID 可能会调用不同的解析.
- *
- * @property-read array $slots
+ * @property-read string $contextName       语境名称
+ * @property-read string $contextId         语境Id
+ * @property-read array $data               语境的数据.
  */
-interface ReactionMsg extends HostMsg
+interface ContextMsg extends ConvoMsg
 {
 }

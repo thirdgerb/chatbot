@@ -17,7 +17,6 @@ use Commune\Support\Protocal\Protocal;
  * Host 对消息体的基本抽象.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
  * @property-read string $level         消息的级别.
  */
 interface HostMsg extends Protocal
@@ -34,4 +33,5 @@ interface HostMsg extends Protocal
         self::ERROR,
     ];
 
+    public function getTrimmedText() : string;
 }

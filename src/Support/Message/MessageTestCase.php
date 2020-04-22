@@ -13,6 +13,8 @@ namespace Commune\Support\Message;
 
 use Commune\Support\Babel\Babel;
 use Commune\Support\Protocal\Protocal;
+use Commune\Support\Struct\AbsStruct;
+use Commune\Support\Utils\StringUtils;
 use PHPUnit\Framework\TestCase;
 
 
@@ -87,9 +89,28 @@ class MessageTestCase extends TestCase
                 $this->assertTrue(is_a($message, $protocal, TRUE));
                 $this->assertTrue(is_a($message, Protocal::class, TRUE));
             }
+
+            $this->protocalPropertyTest($message);
         }
     }
 
+    protected function protocalPropertyTest(Message $message)
+    {
+        foreach ($message->getProtocals() as $protocal) {
+            $r = new \ReflectionClass($protocal);
+            $properties = StringUtils::fetchPropertyAnnotations($r->getDocComment());
+
+            $stub = $message->stub();
+            foreach ($properties as list($name, $desc)) {
+
+                $this->assertTrue(
+                    array_key_exists($name, $stub)
+                    || method_exists($message, AbsStruct::GETTER_PREFIX. $name)
+                );
+            }
+        }
+
+    }
 
 
     public function testBabel()
@@ -100,7 +121,6 @@ class MessageTestCase extends TestCase
              */
             $message = call_user_func([$name, 'create']);
             $str = Babel::serialize($message);
-            dd($str);
             $un = Babel::unserialize($str);
 
             $this->assertEquals($message->toArray(), $un->toArray());

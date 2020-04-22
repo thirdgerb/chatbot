@@ -9,22 +9,23 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Message;
+namespace Commune\Protocals\Host;
 
 use Commune\Protocals\HostMsg;
 
+
 /**
- * 对话类型的消息.
- * 对 Ghost 可能引起多轮对话状态的变动, 对 Client 则产生对话内容的展示等.
+ * Ghost 对外发表的响应意图.
+ * 通常会被解析成多个其它类型的 Message
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ *
+ *
+ * @property-read string $reactionId        响应的 ID, 不同的 ID 可能会调用不同的解析.
+ *
+ * @property-read array $slots
  */
-interface ConvoMsg extends HostMsg
+interface ReactionMsg extends HostMsg
 {
-    // 只有能渲染才发送的消息
-    const DEBUG = 'debug';
-
-    // 正常的消息
-    const INFO = 'info';
 }

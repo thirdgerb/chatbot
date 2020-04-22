@@ -13,9 +13,9 @@ namespace Commune\Blueprint\Ghost\Stage;
 
 use Commune\Blueprint\Ghost\Callables\Prediction;
 use Commune\Protocals\HostMsg;
-use Commune\Protocals\Message\Convo\EventMsg;
-use Commune\Protocals\Message\Convo\QuestionMsg;
-use Commune\Protocals\Message\Convo\VerbalMsg;
+use Commune\Protocals\Host\Convo\EventMsg;
+use Commune\Protocals\Host\Convo\QuestionMsg;
+use Commune\Protocals\Host\Convo\VerbalMsg;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Illuminate\Support\Collection;

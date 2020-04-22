@@ -48,7 +48,8 @@
         "psr/event-dispatcher": "^1.0",
         "guzzlehttp/guzzle": "^6.2",
         "overtrue/pinyin": "~4.0",
-        "swoole/ide-helper": "^4.4"
+        "swoole/ide-helper": "^4.4",
+        "wixel/gump": "^1.11"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.5",

@@ -15,7 +15,7 @@ namespace Commune\Support\Struct;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AStruct extends AbstractStruct
+abstract class AStruct extends AbsStruct
 {
     public function getId()
     {

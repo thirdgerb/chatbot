@@ -16,11 +16,12 @@ use Commune\Support\Arr\ArrayAbleToJson;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbstractStruct implements Struct, \Serializable
+abstract class AbsStruct implements Struct, \Serializable
 {
     use ArrayAbleToJson;
 
-    protected static $validators = [];
+    const GETTER_PREFIX = '__get_';
+
 
     /**
      * @var array
@@ -31,14 +32,24 @@ abstract class AbstractStruct implements Struct, \Serializable
     {
 
         $stub = static::stub();
-        $data = $data + $stub;
+        $data = $this->_filter($data) + $stub;
 
         $error = static::validate($data);
         if (isset($error)) {
             throw new InvalidStructException("struct validate data fail: $error");
         }
 
-        $this->_data = $this->recursiveConstruct($data);
+        $this->_data = $this->_recursiveConstruct($data);
+    }
+
+    /**
+     * 过滤
+     * @param array $data
+     * @return array
+     */
+    public function _filter(array $data) : array
+    {
+        return $data;
     }
 
     /**
@@ -52,14 +63,35 @@ abstract class AbstractStruct implements Struct, \Serializable
 
     public function __get($name)
     {
+        if (method_exists($this, $method = static::GETTER_PREFIX . $name)) {
+            return $this->{$method}();
+        }
         return $this->_data[$name] ?? null;
     }
 
     public function __set($name, $value)
     {
-        $data = $this->_data;
-        $data[$name] = $value;
-        $this->_data = $this->recursiveConstruct($data);
+        if (!static::isRelation($name)) {
+            $this->_data[$name] = $value;
+            return;
+        }
+
+        if (!is_array($value)) {
+            throw new InvalidStructException("relation $name data must be array");
+        }
+
+        $struct = static::getRelationClass($name);
+
+        if (!static::isListRelation($name)) {
+            $this->_data[$name] = call_user_func([$struct, 'create'], $value);
+            return;
+        }
+
+        foreach ($value as $key => $val) {
+            $value[$key] = call_user_func([$struct, 'create'], $val);
+        }
+
+        $this->_data[$name] = $value;
     }
 
     public function __isset($name)
@@ -67,7 +99,7 @@ abstract class AbstractStruct implements Struct, \Serializable
         return isset($this->_data[$name]);
     }
 
-    private function recursiveConstruct(array $data) : array
+    private function _recursiveConstruct(array $data) : array
     {
         $relations = static::relations();
         if (empty($relations)) {
@@ -75,8 +107,8 @@ abstract class AbstractStruct implements Struct, \Serializable
         }
 
         foreach ($relations as $field => $structType) {
-            $isArray = $this->isArrayFieldName($field);
-            $field = $isArray ? $this->fieldWithOutArrMark($field) : $field;
+            $isArray = $this->_isArrayFieldName($field);
+            $field = $isArray ? $this->_fieldWithOutArrMark($field) : $field;
 
             // 不能不存在
             if (!array_key_exists($field, $data)) {
@@ -84,13 +116,13 @@ abstract class AbstractStruct implements Struct, \Serializable
             }
 
             if (!$isArray) {
-                $data[$field] = $this->buildRelatedStruct(
+                $data[$field] = $this->_buildRelatedStruct(
                     $structType,
                     $data[$field]
                 );
             } else {
                 foreach ($data[$field] as $key => $value) {
-                    $data[$field][$key] = $this->buildRelatedStruct(
+                    $data[$field][$key] = $this->_buildRelatedStruct(
                         $structType,
                         $value
                     );
@@ -126,8 +158,8 @@ abstract class AbstractStruct implements Struct, \Serializable
     {
         $names = [];
         foreach(static::relations() as $relation) {
-            $names[] = self::isArrayFieldName($relation)
-                ? self::fieldWithOutArrMark($relation)
+            $names[] = self::_isArrayFieldName($relation)
+                ? self::_fieldWithOutArrMark($relation)
                 : $relation;
         }
         return $names;
@@ -141,18 +173,18 @@ abstract class AbstractStruct implements Struct, \Serializable
     }
 
 
-    private static function fieldWithOutArrMark(string $field) : string
+    private static function _fieldWithOutArrMark(string $field) : string
     {
         return substr($field, 0, -2);
     }
 
-    private static function isArrayFieldName($field) : bool
+    private static function _isArrayFieldName($field) : bool
     {
         return substr($field, -2, 2) === '[]';
     }
 
 
-    private function buildRelatedStruct(string $type, $data) : Struct
+    private function _buildRelatedStruct(string $type, $data) : Struct
     {
         if (is_object($data) && is_a($data, $type, TRUE)) {
             return $data;
@@ -177,8 +209,8 @@ abstract class AbstractStruct implements Struct, \Serializable
         }
 
         foreach ($relations as $field => $structType) {
-            $isArray = $this->isArrayFieldName($field);
-            $field = $isArray ? $this->fieldWithOutArrMark($field) : $field;
+            $isArray = $this->_isArrayFieldName($field);
+            $field = $isArray ? $this->_fieldWithOutArrMark($field) : $field;
 
             if (!isset($data[$field])) {
                 continue;

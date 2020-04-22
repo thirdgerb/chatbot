@@ -11,7 +11,7 @@
 
 namespace Commune\Test\Message;
 
-use Commune\Message\IHostMsg;
+use Commune\Message;
 use Commune\Support\Message\MessageTestCase;
 
 /**
@@ -20,7 +20,7 @@ use Commune\Support\Message\MessageTestCase;
 class MessagesTest extends MessageTestCase
 {
     protected $messages = [
-        IHostMsg::class,
+        Message\Host\Convo\Text::class,
     ];
 
 
