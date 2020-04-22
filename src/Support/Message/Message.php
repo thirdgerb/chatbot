@@ -12,6 +12,9 @@
 namespace Commune\Support\Message;
 
 use Commune\Support\Arr\ArrayAndJsonAble;
+use Commune\Support\Babel\BabelSerializable;
+use Commune\Support\Protocal\ProtocalInstance;
+use Commune\Support\Struct\Struct;
 
 /**
  * PHP 通用传输消息的设计. 有以下几个特点:
@@ -26,11 +29,15 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * 消息序列化与反序列化:
  *
- *  $message->toTransfer()->toArray();
+ *  $str = Babel::serialize($message);
+ *  $message = Babel::unserialize($str);
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Message extends ProtocalInstance, ArrayAndJsonAble
+interface Message extends
+    Struct,                 // 结构体模式
+    ProtocalInstance,       // 可以用来实现各种协议
+    BabelSerializable       // 可以通过 Babel 的约定进行格式化传输
 {
     const RELATIONS = [
         // 'fieldName' => Message::class,
@@ -50,22 +57,11 @@ interface Message extends ProtocalInstance, ArrayAndJsonAble
     public static function create(array $data) : Message;
 
     /**
-     * 作为传输对象的 ID
-     * @return string
-     */
-    public static function getTransferType() : string;
-
-    /**
      * 校验一个数组是否是合法的协议数组. 返回字符串来标记第一条错误信息
      * @param array $data
      * @return null|string
      */
     public static function validate(array $data) : ? string /* errorMsg */;
 
-    /**
-     * 转化为一个传输对象.
-     * @return Transfer
-     */
-    public function toTransfer() : Transfer;
 
 }

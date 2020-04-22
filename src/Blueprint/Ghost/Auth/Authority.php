@@ -11,21 +11,11 @@
 
 namespace Commune\Blueprint\Ghost\Auth;
 
-use Commune\Blueprint\Exceptions\Logic\InvalidClassException;
-use Commune\Protocals\HostMsg;
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Authority
 {
-    /**
-     * @param string $policy
-     * @param array $payload
-     * @return HostMsg|null
-     * @throws InvalidClassException
-     */
-    public function forbid(string $policy, array $payload) : ? HostMsg;
 
     /**
      * @param string $policy

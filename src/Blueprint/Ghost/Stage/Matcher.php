@@ -16,7 +16,7 @@ use Commune\Protocals\HostMsg;
 use Commune\Protocals\Message\Convo\EventMsg;
 use Commune\Protocals\Message\Convo\QuestionMsg;
 use Commune\Protocals\Message\Convo\VerbalMsg;
-use Commune\Support\Message\Protocal;
+use Commune\Support\Protocal\Protocal;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Illuminate\Support\Collection;
 

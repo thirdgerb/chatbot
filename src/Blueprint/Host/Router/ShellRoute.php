@@ -9,18 +9,21 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Abstracted;
-
-use Commune\Protocals\Abstracted;
+namespace Commune\Blueprint\Host\Router;
 
 
 /**
- * 将用户的回答理解成一个确认
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * # 可以根据 ShellName 来广播.
  *
- * @property-read bool $positive        是否积极.
+ * @property-read string $id            根据下面三者算出来的一个id
+ *
+ * @property-read string $shellName
+ * @property-read string $shellId
+ * @property-read string $sessionId
  */
-interface Confirmation extends Abstracted
+interface ShellRoute
 {
+
 }

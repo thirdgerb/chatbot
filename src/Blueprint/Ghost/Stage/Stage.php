@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\Definition\StageDef;
 use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Blueprint\Ghost\Speak\Speaker;
 use Commune\Message\Blueprint\Message;
+use Commune\Protocals\HostMsg;
 
 
 /**
@@ -70,5 +71,5 @@ interface Stage
      * @param Message|null $message
      * @return Matcher
      */
-    public function matcher(Message $message = null) : Matcher;
+    public function matcher(HostMsg $message = null) : Matcher;
 }

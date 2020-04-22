@@ -21,48 +21,6 @@ namespace Commune\Support\Babel;
 interface BabelResolver
 {
 
-
-    /**
-     * 注册一个 resolver
-     *
-     * @param string $serializableId
-     * @param callable $serializer
-     * @param callable $unSerializer
-     */
-    public function register(
-        string $serializableId,
-        callable $serializer,
-        callable $unSerializer
-    ) : void;
-
-    /**
-     * 注册一个 BabelSerializable
-     * @param string $serializable   类名
-     */
-    public function registerSerializableClass(string $serializable) : void;
-
-    /**
-     * 检查一个 serializableId 是否已经注册.
-     * @param string $serializableId
-     * @return bool
-     */
-    public function hasRegistered(string $serializableId) : bool;
-
-    /**
-     * 将对象变为数组
-     * @param BabelSerializable $serializable
-     * @return array
-     */
-    public function encodeToArray(BabelSerializable $serializable) : array;
-
-    /**
-     * 从数组还原
-     * @param array $data
-     * @return static|null
-     */
-    public function decodeFromArray(array $data) : ? BabelSerializable;
-
-
     /**
      * 序列化.
      * @param BabelSerializable $serializable
@@ -76,7 +34,7 @@ interface BabelResolver
      * @param string $input
      * @return null|mixed 如果为 null, 表示无法反序列化.
      */
-    public function unSerialize(string $input);
+    public function unserialize(string $input);
 
 
 }

@@ -46,11 +46,4 @@ interface Convo
      */
     public function deliver(GhostMsg $message) : Convo;
 
-    /**
-     * 获取所有的输出消息.
-     *
-     * @return GhostMsg[]
-     */
-    public function getOutputs() : array;
-
 }

@@ -11,9 +11,7 @@
 
 namespace Commune\Protocals\Intercom;
 
-use Commune\Blueprint\Ghost\CloneScope;
 use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -23,10 +21,10 @@ use Commune\Protocals\HostMsg;
  * @see GhostMsg
  *
  * # 请求的 shell 相关信息
- * @property-read string $shellName
- * @property-read string $shellId
- * @property-read string $sceneId
- * @property-read array $env
+ * @property-read string $shellName     创建输入消息所属的 Shell
+ * @property-read string $shellId       创建输入消息所属的 ShellId
+ * @property-read string $sceneId       请求所处的场景ID
+ * @property-read array $env            从 Shell 传入的环境变量.
  *
  * # 抽象
  * @property-read Comprehension $comprehension  传递过来的语境理解.
@@ -34,10 +32,4 @@ use Commune\Protocals\HostMsg;
 interface GhostInput extends GhostMsg
 {
 
-    /**
-     * 替换当前输入信息对应的分身.
-     *
-     * @param CloneScope $scope
-     */
-    public function replaceScope(CloneScope $scope) : void;
 }

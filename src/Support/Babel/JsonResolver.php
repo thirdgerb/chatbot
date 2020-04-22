@@ -35,11 +35,11 @@ class JsonResolver implements BabelResolver
          */
 
         static::register(
-            call_user_func([$serializable, 'getSerializableId']),
+            call_user_func([$serializable, 'getTransferId']),
             function(BabelSerializable $obj) {
-                return $obj->toSerializableArray();
+                return $obj->toTransferArr();
             },
-            [$serializable, 'fromSerializableArray']
+            [$serializable, 'fromTransferArray']
         );
     }
 
@@ -69,28 +69,25 @@ class JsonResolver implements BabelResolver
     public function encodeToArray(BabelSerializable $serializable): array
     {
         return [
-            $serializable->getSerializableId(),
-            $serializable->toSerializableArray()
+            'type' => $serializable->getTransferId(),
+            'data' => $serializable->toTransferArr(),
         ];
     }
 
-    public function decodeFromArray(array $data): ? BabelSerializable
+    public function decodeFromArray(string $type, array $data): ? BabelSerializable
     {
-        $serializableId = $data[0];
-        $serialized = $data[1];
-
-        if ($this->hasRegistered($serializableId)) {
-            $unSerializer = $this->transformers[$serializableId][1];
-            return call_user_func($unSerializer, $serialized);
+        if ($this->hasRegistered($type)) {
+            $unSerializer = $this->transformers[$type][1];
+            return call_user_func($unSerializer, $data);
         }
 
 
-        $serializableId = StringUtils::dotToNamespaceSlash($serializableId);
+        $serializableId = StringUtils::dotToNamespaceSlash($type);
 
         if (is_a($serializableId, BabelSerializable::class, TRUE)
         ) {
             $this->registerSerializableClass($serializableId);
-            return call_user_func([$serializableId, 'fromSerializableArray'], $serialized);
+            return static::decodeFromArray($type, $data);
         }
 
         return null;
@@ -105,7 +102,7 @@ class JsonResolver implements BabelResolver
     public function serialize($serializable) : string
     {
         if ($serializable instanceof BabelSerializable) {
-            $id = $serializable->getSerializableId();
+            $id = $serializable->getTransferId();
 
             if (!static::hasRegistered($id)) {
                 static::registerSerializableClass(get_class($serializable));
@@ -126,17 +123,19 @@ class JsonResolver implements BabelResolver
      * @param string $input
      * @return null|mixed 如果为 null, 表示无法反序列化.
      */
-    public function unSerialize(string $input)
+    public function unserialize(string $input)
     {
         $data = json_decode($input, true);
 
         if (
             is_array($data)
             && count($data) === 2
-            && isset($data[0])
-            && isset($data[1])
+            && isset($data['type'])
+            && is_string($data['type'])
+            && isset($data['data'])
+            && is_array($data['data'])
         ) {
-            return $this->decodeFromArray($data);
+            return $this->decodeFromArray($data['type'], $data['data']);
         }
         return unserialize($input);
     }

@@ -20,21 +20,21 @@ interface BabelSerializable
 {
 
     /**
-     * 转化为数组
+     * 转化为数组, 用于序列化
      * @return array
      */
-    public function toSerializableArray() : array;
+    public function toTransferArr() : array;
+
+    /**
+     * @param array $data
+     * @return static|null
+     */
+    public function fromTransferArr(array $data) : ? BabelSerializable;
 
     /**
      * 对于 Babel 而言的 ID
      * @return string
      */
-    public static function getSerializableId() : string;
+    public static function getTransferId() : string;
 
-    /**
-     * 从数组还原
-     * @param array $data
-     * @return static|null
-     */
-    public static function fromSerializableArray(array $data) : ? BabelSerializable;
 }

@@ -11,7 +11,8 @@
 
 namespace Commune\Blueprint\Framework;
 
-use Commune\Blueprint\Framework\Session\Event;
+use Commune\Blueprint\Framework\Session\SessionEvent;
+use Commune\Support\Protocal\Protocal;
 
 
 /**
@@ -36,6 +37,40 @@ interface Session
      * @return bool
      */
     public function isDebugging() : bool;
+
+
+    /**
+     * 根据配置, 基于协议获取一个 Handler
+     * 调用 $handler($request) : $response 可以得到结果.
+     * 用这种策略避免去开发复杂的通用 Kernel, 而可以适用于各种情况.
+     *
+     * @param string $group         假设协议处理器是分组的.
+     * @param Protocal $protocal
+     * @return callable|null
+     */
+    public function getProtocalHandler(string $group, Protocal $protocal) : ? callable ;
+
+    /*----- 锁 -----*/
+
+    /**
+     * 锁定一个机器人的分身. 禁止通讯.
+     *
+     * @param int $second
+     * @return bool
+     */
+    public function lock(int $second) : bool;
+
+    /**
+     * @return bool
+     */
+    public function isLocked() : bool;
+
+    /**
+     * 解锁一个机器人的分身. 允许通讯.
+     * @return bool
+     */
+    public function unlock() : bool;
+
 
     /*------ expire ------*/
 
@@ -98,13 +133,13 @@ interface Session
 
     /**
      * 触发一个 Session 事件.
-     * @param Event $event
+     * @param SessionEvent $event
      */
-    public function fire(Event $event) : void;
+    public function fire(SessionEvent $event) : void;
 
     /**
      * @param string $eventName
-     * @param callable $handler function(Session $session, SessionEvent $event){}
+     * @param callable $handler function(Session $session, Event $event){}
      */
     public function listen(string $eventName, callable $handler) : void;
 

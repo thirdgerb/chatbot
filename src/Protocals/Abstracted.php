@@ -12,7 +12,7 @@
 namespace Commune\Protocals;
 
 use Commune\Support\Message\Message;
-use Commune\Support\Message\Protocal;
+use Commune\Support\Protocal\Protocal;
 
 
 /**

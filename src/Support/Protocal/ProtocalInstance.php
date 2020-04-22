@@ -9,11 +9,11 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Support\Message;
+namespace Commune\Support\Protocal;
 
 
 /**
- * 协议实例. 表示 Message 是一种 protocal 的实现.
+ * 协议实例. 表示是若干种 protocal 的实现.
  * 用于表示消息实现了哪些协议, 可以用于这些协议的指令.
  *
  * @author thirdgerb <thirdgerb@gmail.com>

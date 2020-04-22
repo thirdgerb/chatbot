@@ -11,9 +11,6 @@
 
 namespace Commune\Blueprint\Ghost\Auth;
 
-use Commune\Protocals\HostMsg;
-
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
@@ -24,7 +21,7 @@ interface Policy
      * 有消息表示拒绝的消息.
      *
      * @param array $payload
-     * @return HostMsg|null
+     * @return bool
      */
-    public function invoke(array $payload = []) : ? HostMsg;
+    public function invoke(array $payload = []) : bool;
 }

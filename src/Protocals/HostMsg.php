@@ -11,8 +11,7 @@
 
 namespace Commune\Protocals;
 
-use Commune\Support\Message\Message;
-use Commune\Support\Message\Protocal;
+use Commune\Support\Protocal\Protocal;
 
 /**
  * Host 对消息体的基本抽象.
@@ -21,6 +20,6 @@ use Commune\Support\Message\Protocal;
  *
  * @property-read string $level         消息的级别.
  */
-interface HostMsg extends Message, Protocal
+interface HostMsg extends Protocal
 {
 }

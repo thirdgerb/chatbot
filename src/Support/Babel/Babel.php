@@ -20,16 +20,38 @@ class Babel
     /**
      * @var BabelResolver
      */
-    protected static $resolver;
+    private static $resolver;
 
     public static function getResolver() : BabelResolver
     {
-        return static::$resolver ?? (static::$resolver = new JsonResolver());
+        return self::$resolver ?? (self::$resolver = new JsonResolver());
     }
 
     public static function setResolver(? BabelResolver $resolver) : void
     {
-        static::$resolver = $resolver;
+        self::$resolver = $resolver;
+    }
+
+
+    /**
+     * 转化到字符串这一步, 更进一步的转化就不由 Babel 实现了
+     *
+     * @param mixed $serializable
+     * @return string
+     */
+    public static function serialize($serializable) : string
+    {
+        return self::getResolver()->serialize($serializable);
+    }
+
+    /**
+     * 从字符串转化为对象.
+     * @param string $serialized
+     * @return mixed|null
+     */
+    public static function unserialize(string $serialized)
+    {
+        return self::getResolver()->unserialize($serialized);
     }
 
 }

@@ -11,8 +11,7 @@
 
 namespace Commune\Protocals;
 
-use Commune\Support\Message\Message;
-use Commune\Support\Message\Protocal;
+use Commune\Support\Protocal\Protocal;
 
 /**
  * 机器人内部通信用的消息.
@@ -31,6 +30,6 @@ use Commune\Support\Message\Protocal;
  * @property-read float  $createdAt         创建时间, 精确到毫秒
  * @property-read float  $deliverAt         发送时间.
  */
-interface IntercomMessage extends Message, Protocal
+interface IntercomMessage extends Protocal
 {
 }
