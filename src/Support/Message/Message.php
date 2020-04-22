@@ -11,7 +11,6 @@
 
 namespace Commune\Support\Message;
 
-use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\Babel\BabelSerializable;
 use Commune\Support\Protocal\ProtocalInstance;
 use Commune\Support\Struct\Struct;
@@ -39,29 +38,4 @@ interface Message extends
     ProtocalInstance,       // 可以用来实现各种协议
     BabelSerializable       // 可以通过 Babel 的约定进行格式化传输
 {
-    const RELATIONS = [
-        // 'fieldName' => Message::class,
-        // 'fieldName[]' => Message::class,
-    ];
-
-    /**
-     * Message 的默认值.
-     * @return array
-     */
-    public static function stub() : array;
-
-    /**
-     * @param array $data
-     * @return static
-     */
-    public static function create(array $data) : Message;
-
-    /**
-     * 校验一个数组是否是合法的协议数组. 返回字符串来标记第一条错误信息
-     * @param array $data
-     * @return null|string
-     */
-    public static function validate(array $data) : ? string /* errorMsg */;
-
-
 }

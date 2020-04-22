@@ -39,7 +39,7 @@ class JsonResolver implements BabelResolver
             function(BabelSerializable $obj) {
                 return $obj->toTransferArr();
             },
-            [$serializable, 'fromTransferArray']
+            [$serializable, 'fromTransferArr']
         );
     }
 

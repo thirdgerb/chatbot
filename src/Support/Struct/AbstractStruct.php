@@ -16,7 +16,7 @@ use Commune\Support\Arr\ArrayAbleToJson;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbstractStruct implements Struct
+abstract class AbstractStruct implements Struct, \Serializable
 {
     use ArrayAbleToJson;
 
@@ -29,17 +29,23 @@ abstract class AbstractStruct implements Struct
 
     public function __construct(array $data = [])
     {
+
+        $stub = static::stub();
+        $data = $data + $stub;
+
         $error = static::validate($data);
         if (isset($error)) {
             throw new InvalidStructException("struct validate data fail: $error");
         }
 
-        $stub = static::stub();
-        $data = $data + $stub;
         $this->_data = $this->recursiveConstruct($data);
     }
 
-    public static function create(array $data): Struct
+    /**
+     * @param array $data
+     * @return static
+     */
+    public static function create(array $data = []): Struct
     {
         return new static($data);
     }
@@ -95,13 +101,52 @@ abstract class AbstractStruct implements Struct
         return $data;
     }
 
-    private function fieldWithOutArrMark(string $field) : string
+    public static function isRelation(string $fieldName): bool
+    {
+        $relations = static::relations();
+        if (empty($relations)) {
+            return false;
+        }
+
+        return array_key_exists($fieldName, $relations)
+            || array_key_exists($fieldName . '[]', $relations);
+    }
+
+    public static function isListRelation(string $fieldName): bool
+    {
+        $relations = static::relations();
+        if (empty($relations)) {
+            return false;
+        }
+        return array_key_exists($fieldName . '[]', $relations);
+    }
+
+
+    public static function getRelationNames() : array
+    {
+        $names = [];
+        foreach(static::relations() as $relation) {
+            $names[] = self::isArrayFieldName($relation)
+                ? self::fieldWithOutArrMark($relation)
+                : $relation;
+        }
+        return $names;
+    }
+
+    public static function getRelationClass(string $fieldName): ? string
+    {
+        $relations = static::relations();
+
+        return $relations[$fieldName] ?? $relations[$fieldName . '[]'] ?? null;
+    }
+
+
+    private static function fieldWithOutArrMark(string $field) : string
     {
         return substr($field, 0, -2);
     }
 
-
-    private function isArrayFieldName($field) : bool
+    private static function isArrayFieldName($field) : bool
     {
         return substr($field, -2, 2) === '[]';
     }
@@ -160,5 +205,16 @@ abstract class AbstractStruct implements Struct
         // 防止不回收垃圾.
         $this->_data = [];
     }
+
+    public function serialize()
+    {
+        return $this->toJson();
+    }
+
+    public function unserialize($serialized)
+    {
+        return static::create(json_decode($serialized, true));
+    }
+
 
 }

@@ -24,6 +24,26 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 interface Struct extends ArrayAndJsonAble
 {
 
+    /*------- construct -------*/
+
+    /**
+     * @param array $data
+     * @return static
+     */
+    public static function create(array $data = []) : Struct;
+
+    /**
+     * 校验一个数组是否是合法的协议数组. 返回字符串来标记第一条错误信息
+     * 可以在这里使用一些 Validator 例如:
+     *  - Wixel/GUMP
+     *  -
+     * @param array $data
+     * @return null|string
+     */
+    public static function validate(array $data) : ? string /* errorMsg */;
+
+    /*------- definition -------*/
+
     /**
      * Message 的默认值.
      * @return array
@@ -39,21 +59,28 @@ interface Struct extends ArrayAndJsonAble
      */
     public static function relations() : array;
 
-    /**
-     * @param array $data
-     * @return static
-     */
-    public static function create(array $data) : Struct;
+    /*------- reflection -------*/
 
     /**
-     * 校验一个数组是否是合法的协议数组. 返回字符串来标记第一条错误信息
-     * 可以在这里使用一些 Validator 例如:
-     *  - Wixel/GUMP
-     *  -
-     * @param array $data
+     * @return string[]
+     */
+    public static function getRelationNames() : array;
+
+    /**
+     * @param string $fieldName
+     * @return bool
+     */
+    public static function isRelation(string $fieldName) : bool;
+
+    /**
+     * @param string $fieldName
+     * @return bool
+     */
+    public static function isListRelation(string $fieldName) : bool;
+
+    /**
+     * @param string $fieldName
      * @return null|string
      */
-    public static function validate(array $data) : ? string /* errorMsg */;
-
-
+    public static function getRelationClass(string $fieldName) : ? string;
 }

@@ -35,6 +35,7 @@ class StructTest extends TestCase
     public function testBExample()
     {
         $b = new B();
+
         $this->assertEquals('a', $b->a);
         $this->assertEquals(1, $b->b->a);
         $this->assertEquals(2, $b->b->b);

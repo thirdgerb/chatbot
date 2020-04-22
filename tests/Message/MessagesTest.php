@@ -9,24 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Support\Struct;
+namespace Commune\Test\Message;
 
+use Commune\Message\IHostMsg;
+use Commune\Support\Message\MessageTestCase;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AStruct extends AbstractStruct
+class MessagesTest extends MessageTestCase
 {
-    public function getId()
-    {
-        return static::class;
-    }
-
-    abstract public static function stub(): array;
-
-    abstract public static function validate(array $data): ? string; /* errorMsg */
-    abstract public static function relations(): array;
-
+    protected $messages = [
+        IHostMsg::class,
+    ];
 
 
 }

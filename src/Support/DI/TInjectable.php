@@ -47,7 +47,7 @@ trait TInjectable
         } while ($r = $r->getParentClass());
 
         // 当前类名
-        $names[] = $r->getName();
+        $names[] = $class;
 
         return self::$_interfaces[$class][$baseType] = $names;
     }

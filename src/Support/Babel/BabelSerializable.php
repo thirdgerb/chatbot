@@ -29,7 +29,7 @@ interface BabelSerializable
      * @param array $data
      * @return static|null
      */
-    public function fromTransferArr(array $data) : ? BabelSerializable;
+    public static function fromTransferArr(array $data) : ? BabelSerializable;
 
     /**
      * 对于 Babel 而言的 ID

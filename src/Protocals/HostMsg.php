@@ -22,4 +22,16 @@ use Commune\Support\Protocal\Protocal;
  */
 interface HostMsg extends Protocal
 {
+    const DEBUG = 'debug';
+    const INFO = 'info';
+    const NOTICE = 'notice';
+    const ERROR = 'error';
+
+    const LEVELS = [
+        self::DEBUG,
+        self::INFO,
+        self::NOTICE,
+        self::ERROR,
+    ];
+
 }
