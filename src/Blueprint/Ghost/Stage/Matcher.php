@@ -12,6 +12,11 @@
 namespace Commune\Blueprint\Ghost\Stage;
 
 use Commune\Blueprint\Ghost\Callables\Prediction;
+use Commune\Protocals\HostMsg;
+use Commune\Protocals\Message\Convo\EventMsg;
+use Commune\Protocals\Message\Convo\QuestionMsg;
+use Commune\Protocals\Message\Convo\VerbalMsg;
+use Commune\Support\Message\Protocal;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Illuminate\Support\Collection;
 
@@ -27,15 +32,15 @@ interface Matcher
     /**
      * 如果不主动拦截, 则event 消息都会被忽视.
      * @param string $eventName
-     * @return bool
+     * @return EventMsg|null
      */
-    public function isEvent(string $eventName) : bool;
+    public function isEvent(string $eventName) : ?  EventMsg;
 
     /**
      * @param string[] $eventName
-     * @return bool
+     * @return EventMsg|null
      */
-    public function isEventIn(array $eventName) : bool;
+    public function isEventIn(array $eventName) : ? EventMsg;
 
 
     /*------- php matcher -------*/
@@ -83,24 +88,26 @@ interface Matcher
      * 判断输入信息是否是口头或文字的.
      *
      * 相当于 instanceOf(Verbal::class)
+     *
+     * @return VerbalMsg|null
      */
-    public function isVerbal() : bool;
+    public function isVerbal() : ? VerbalMsg;
 
     /**
      * 判断传入的 message 是否是某个 MessageSubClass 的实例.
      *
      * @param string $messageClazz
-     * @return bool
+     * @return HostMsg|null
      */
-    public function isInstanceOf(string $messageClazz) : bool;
+    public function isInstanceOf(string $messageClazz) : ? HostMsg;
 
 
     /**
      * 符合某个协议
      * @param string $protocalName
-     * @return bool
+     * @return Protocal|null
      */
-    public function isProtocal(string $protocalName) : bool;
+    public function isProtocal(string $protocalName) : ? Protocal;
 
     /**
      * 发音相似. 目前应该只支持中文.
@@ -133,16 +140,18 @@ interface Matcher
      * 通常就是关键词匹配算法.
      *
      * @param string $entityName
-     * @param callable|null $action
      * @return null|Collection
      */
-    public function matchEntity(
-        string $entityName,
-        callable $action = null
-    ) : ? Collection;
+    public function matchEntity(string $entityName) : ? Collection;
 
 
     /*------- question matcher -------*/
+
+    /**
+     * 输入是否是一个问题.
+     * @return QuestionMsg|null
+     */
+    public function isQuestion() : ? QuestionMsg;
 
     /**
      * 只要有answer, 不管上文有没有命中过.
@@ -215,8 +224,7 @@ interface Matcher
     /*------- intents -------*/
 
     /**
-     * 匹配单个意图. $session->getPossibleIntent($intentName) 如果存在
-     * 如果没有 intentAction, 不会立刻执行.
+     * 匹配单个意图.
      *
      * @param string $intentName  可以是意图的 ContextName, 也可以是意图的类名
      * @return bool
@@ -224,9 +232,9 @@ interface Matcher
     public function isIntent(string $intentName) : bool;
 
     /**
-     * 如果没有 intentAction, 不会立刻执行.
+     * 在多个意图中匹配一个最近似的.
      *
-     * @param array $intentNames
+     * @param string[] $intentNames (可以用 * 做通配符)
      * @return string|null
      */
     public function isIntentIn(array $intentNames) : ? string;
@@ -248,7 +256,8 @@ interface Matcher
     public function hasPossibleIntent(string $intentName) : bool;
 
     /**
-     * 是否匹配到了entity 类型. 如果没有匹配过, 会尝试用实体提取去匹配.
+     * 检查 Intention 内是否匹配到了 Entity
+     * 不会调用自己的检查机制.
      *
      * @param string $entityName
      * @return bool
@@ -257,28 +266,13 @@ interface Matcher
 
 
     /**
-     * 存在entity, 并且值 equals(==) $expect
+     * 存在entity, 并且值中包含有 $expect
      *
      * @param string $entityName
      * @param mixed $expect
      * @return bool
      */
     public function hasEntityValue(string $entityName, $expect) : bool;
-
-    /*------- help -------*/
-
-    /**
-     * 遇到了用户寻求帮助, 则会执行 helping 的内容.
-     *
-     * help 默认的两种匹配方式
-     * - is('mark')
-     * - is(HelpInt)
-     *
-     * @param string $mark  默认表示 help 的标记, 方便快速匹配. 默认是 ?
-     * @return bool
-     */
-    public function onHelp(string $mark = '?') : bool;
-
 
 
 }

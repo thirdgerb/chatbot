@@ -13,7 +13,7 @@ namespace Commune\Blueprint\Ghost\Mind;
 
 
 /**
- * 对话机器人的思维.
+ * 对话机器人的基础思维
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
