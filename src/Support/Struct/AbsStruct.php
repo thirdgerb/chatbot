@@ -22,6 +22,7 @@ abstract class AbsStruct implements Struct, \Serializable
 
     const GETTER_PREFIX = '__get_';
 
+    const STRICT = true;
 
     /**
      * @var array
@@ -32,24 +33,45 @@ abstract class AbsStruct implements Struct, \Serializable
     {
 
         $stub = static::stub();
-        $data = $this->_filter($data) + $stub;
+        $data = $data + $stub;
+        // 先过滤数据.
+        $data = $this->_filter($data);
+        // 构建关系
+        $data = $this->_recursiveConstruct($data);
 
+        // 校验数据.
         $error = static::validate($data);
+
         if (isset($error)) {
             throw new InvalidStructException("struct validate data fail: $error");
         }
 
-        $this->_data = $this->_recursiveConstruct($data);
+        $this->_data = $data;
     }
 
     /**
-     * 过滤
+     * 过滤数据. 自定义规则
      * @param array $data
      * @return array
      */
     public function _filter(array $data) : array
     {
-        return $data;
+        // 如果是强类型, 则不转换.
+        if (static::STRICT) {
+            return $data;
+        } else {
+            return StructReflections::parse(static::class, $data);
+        }
+    }
+
+    /**
+     * 默认的校验机制是用注解加反射
+     * @param array $data
+     * @return null|string
+     */
+    public static function validate(array $data): ? string /* errorMsg */
+    {
+        return StructReflections::validate(static::class, $data);
     }
 
     /**
@@ -99,6 +121,12 @@ abstract class AbsStruct implements Struct, \Serializable
         return isset($this->_data[$name]);
     }
 
+    /**
+     * 递归地构建数据.
+     *
+     * @param array $data
+     * @return array
+     */
     private function _recursiveConstruct(array $data) : array
     {
         $relations = static::relations();
@@ -113,6 +141,11 @@ abstract class AbsStruct implements Struct, \Serializable
             // 不能不存在
             if (!array_key_exists($field, $data)) {
                 throw new InvalidStructException("relation field $field is missing");
+            }
+
+            // 如果值是 null, 则继续.
+            if (!isset($data[$field])) {
+                continue;
             }
 
             if (!$isArray) {
@@ -154,6 +187,10 @@ abstract class AbsStruct implements Struct, \Serializable
     }
 
 
+    /**
+     * 获取关系的名称.
+     * @return array
+     */
     public static function getRelationNames() : array
     {
         $names = [];
@@ -165,6 +202,11 @@ abstract class AbsStruct implements Struct, \Serializable
         return $names;
     }
 
+    /**
+     * 获取某个 relation 关联的类
+     * @param string $fieldName
+     * @return null|string
+     */
     public static function getRelationClass(string $fieldName): ? string
     {
         $relations = static::relations();
@@ -199,6 +241,10 @@ abstract class AbsStruct implements Struct, \Serializable
         );
     }
 
+    /**
+     * 递归生成数组数据.
+     * @return array
+     */
     public function toArray(): array
     {
         $data = $this->_data;

@@ -169,4 +169,70 @@ EOF;
         $this->assertFalse(StringUtils::validateDefName('a_b0'));
 
     }
+
+
+    public function testPropertiesAnnotations()
+    {
+        $a = '/**
+         * @property string $hello
+         * @property string[]|int $hello1
+         * @property-read string[]|int $hello2
+         * @property-write string $hello3 dskjdlfjkskdjf
+         * @property $hello4
+         */';
+
+        $matched = StringUtils::fetchVariableAnnotationsWithType($a);
+        $this->assertEquals(
+            array (
+                array (
+                    0 => 'hello',
+                    1 => 'string',
+                    2 => '',
+                ),
+                array (
+                    0 => 'hello1',
+                    1 => 'string[]|int',
+                    2 => '',
+                ),
+                array (
+                    0 => 'hello2',
+                    1 => 'string[]|int',
+                    2 => '',
+                ),
+                array (
+                    0 => 'hello3',
+                    1 => 'string',
+                    2 => 'dskjdlfjkskdjf',
+                ),
+                array (
+                    0 => 'hello4',
+                    1 => '',
+                    2 => '',
+                )
+            ),
+            $matched
+        );
+        $matched = StringUtils::fetchVariableAnnotationsWithType($a,'@property', true);
+        $this->assertEquals(
+            array (
+                array (
+                    0 => 'hello',
+                    1 => 'string',
+                    2 => '',
+                ),
+                array (
+                    0 => 'hello1',
+                    1 => 'string[]|int',
+                    2 => '',
+                ),
+                array (
+                    0 => 'hello4',
+                    1 => '',
+                    2 => '',
+                )
+            ),
+            $matched
+        );
+
+    }
 }

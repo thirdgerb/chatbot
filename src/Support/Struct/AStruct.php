@@ -17,14 +17,23 @@ namespace Commune\Support\Struct;
  */
 abstract class AStruct extends AbsStruct
 {
-    public function getId()
-    {
-        return static::class;
-    }
+    // 强类型校验.
+    const STRICT = true;
 
+    /**
+     * 默认值
+     * @return array
+     */
     abstract public static function stub(): array;
 
-    abstract public static function validate(array $data): ? string; /* errorMsg */
+    /**
+     * 定义关联关系
+     * @return array
+     *  [
+     *      string $fieldName => string $relationClassName,
+     *      string "$fieldName[]" => string $relationClassName,  //数组式的.
+     * ]
+     */
     abstract public static function relations(): array;
 
 

@@ -279,7 +279,7 @@ abstract class Option extends Entry implements \IteratorAggregate, ArrayAndJsonA
     public static function getProperties() : array
     {
         $r = new \ReflectionClass(static::class);
-        $properties = StringUtils::fetchPropertyAnnotationsDetails(
+        $properties = StringUtils::fetchVariableAnnotationsWithType(
             $r->getDocComment(),
             '@property-read'
         );

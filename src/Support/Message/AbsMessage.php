@@ -25,6 +25,16 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
 {
     use TInjectable;
 
+
+    /**
+     * 默认的 Validate 基于反射来实现.
+     * @param array $data
+     * @return null|string
+     */
+    public static function validate(array $data): ? string
+    {
+    }
+
     public function toTransferArr(): array
     {
         $data = $this->toArray();

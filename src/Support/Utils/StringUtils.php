@@ -153,18 +153,23 @@ class StringUtils
     }
 
     /**
-     * 把严格的 property 注解拆分成 name, type, desc
+     * 把严格的 property 类注解拆分成 name, type, desc
+     *
      * @param string $docComment
-     * @param string $marker
+     * @param string $prefix       @"param"|@"property" 等注解.
+     * @param bool $noSuffix
      * @return array [ [propertyName, type, desc], ]
      */
-    public static function fetchPropertyAnnotationsDetails(string $docComment, string $marker = '@property') : array
+    public static function fetchVariableAnnotationsWithType(string $docComment, string $prefix = '@property', bool $noSuffix = false) : array
     {
         $matches = [];
+        $suffix = $noSuffix ? '' : '[a-zA-Z-]*';
         $pattern = sprintf(
-            '/%s([^\$]+)\$(\w+)(.*)/',
-            $marker
+            '/%s%s\s+([^\$]*)\$(\w+)(.*)/',
+            $prefix,
+            $suffix
         );
+
         preg_match_all(
             $pattern,
             $docComment,

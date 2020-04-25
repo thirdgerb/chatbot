@@ -274,7 +274,7 @@ abstract class AbsOption extends Entry implements Option
     public static function getProperties() : array
     {
         $r = new \ReflectionClass(static::class);
-        $properties = StringUtils::fetchPropertyAnnotationsDetails(
+        $properties = StringUtils::fetchVariableAnnotationsWithType(
             $r->getDocComment(),
             '@property-read'
         );
