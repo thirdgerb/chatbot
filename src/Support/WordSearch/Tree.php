@@ -31,7 +31,7 @@ class Tree
 
     /**
      * @param string $text
-     * @return int[]  string => int  值 => 出现次数
+     * @return int[]  string $final => int  值 => 出现次数
      */
     public function search(string $text) : array
     {

@@ -84,6 +84,13 @@ class OptionTest extends TestCase
         $this->assertEquals(3, $i);
     }
 
+    public function testHash()
+    {
+        $o1 = new Option3();
+        $o2 = new Option3();
+        $this->assertEquals($o1->getHash(), $o2->getHash());
+    }
+
 
 }
 
