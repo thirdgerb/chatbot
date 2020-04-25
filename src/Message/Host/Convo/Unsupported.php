@@ -12,12 +12,50 @@
 namespace Commune\Message\Host\Convo;
 
 use Commune\Protocals\Host\Convo\UnsupportedMsg;
+use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
+use Commune\Support\Struct\Struct;
 
 /**
+ * 系统不支持的消息.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class Unsupported extends AbsMessage implements UnsupportedMsg
 {
+
+    public function __construct(string $type = '', string $level = HostMsg::NOTICE)
+    {
+        parent::__construct(['type' => $type, 'level' => $level]);
+    }
+
+    public static function stub(): array
+    {
+        return [
+            'type' => '',
+            'level' => HostMsg::NOTICE
+        ];
+    }
+
+    public static function create(array $data = []): Struct
+    {
+        return new static($data['type'] ?? '', $data['level'] ?? HostMsg::NOTICE);
+    }
+
+
+    public static function relations(): array
+    {
+        return [];
+    }
+
+    public function getTrimmedText(): string
+    {
+        return '';
+    }
+
+    public function isEmpty(): bool
+    {
+        return false;
+    }
+
 
 }

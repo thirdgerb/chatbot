@@ -20,7 +20,9 @@ use Commune\Support\Message\MessageTestCase;
 class MessagesTest extends MessageTestCase
 {
     protected $messages = [
+        // 默认文本消息
         Message\Host\Convo\Text::class,
+        Message\Host\Convo\Unsupported::class,
     ];
 
 
