@@ -34,9 +34,7 @@ class OptionTest extends TestCase
     public function testOptionToArray()
     {
         $c = new Option3();
-
         $this->assertEquals(Option3::stub(), $c->toArray());
-        $this->assertEquals(Option3::stub(), $c->toRecursiveArray());
     }
 
     public function testOptionIterator()
@@ -99,9 +97,6 @@ class OptionTest extends TestCase
  */
 class Option1 extends AbsOption
 {
-    protected static $associations =[
-        'b' => Option2::class,
-    ];
 
     public static function stub(): array
     {
@@ -110,6 +105,14 @@ class Option1 extends AbsOption
             'b' => Option2::stub()
         ];
     }
+
+    public static function relations(): array
+    {
+        return [
+            'b' => Option2::class,
+        ];
+    }
+
 
 }
 
@@ -132,6 +135,12 @@ class Option2 extends AbsOption
         ];
     }
 
+    public static function relations(): array
+    {
+        return [];
+    }
+
+
 }
 
 /**
@@ -140,10 +149,15 @@ class Option2 extends AbsOption
  */
 class Option3 extends AbsOption
 {
-    protected static $associations =[
-        'option1' => Option1::class,
-        'option2[]' => Option2::class,
-    ];
+
+    public static function relations(): array
+    {
+        return [
+            'option1' => Option1::class,
+            'option2[]' => Option2::class,
+        ];
+    }
+
 
     public static function stub(): array
     {

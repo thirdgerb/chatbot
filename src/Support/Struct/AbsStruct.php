@@ -12,7 +12,6 @@
 namespace Commune\Support\Struct;
 
 use Commune\Support\Arr\ArrayAbleToJson;
-use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

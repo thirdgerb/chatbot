@@ -11,6 +11,8 @@
 
 namespace Commune\Support\Option;
 
+use Commune\Support\DI\Injectable;
+use Commune\Support\Struct\Struct;
 use IteratorAggregate;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
@@ -22,7 +24,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Option extends ArrayAndJsonAble
+interface Option extends Struct, Injectable
 {
 
     /**
