@@ -29,4 +29,8 @@ interface StructFieldReflector
      * @return mixed
      */
     public function filterValue($value);
+
+    public function getTypes() : string;
+
+    public function getRules() : array;
 }

@@ -10,8 +10,8 @@
  */
 
 namespace Commune\Support\Struct;
-use Commune\Support\Arr\ArrayAndJsonAble;
 
+use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * PHP 结构体. 可以用注解 @"property" 或者 @"property-read" 的方式来定义强类型.
@@ -21,8 +21,10 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Struct extends ArrayAndJsonAble
+interface Struct extends ArrayAndJsonAble, \IteratorAggregate
 {
+    const GETTER_PREFIX = '__get_';
+    const SETTER_PREFIX = '__set_';
 
     /*------- construct -------*/
 

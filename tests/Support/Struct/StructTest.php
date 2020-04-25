@@ -26,6 +26,8 @@ class StructTest extends TestCase
         $aObj = new A();
         $this->assertEquals(1, $aObj->a);
         $this->assertEquals(2, $aObj->b);
+        // 测试 getter
+        $this->assertTrue('1' === $aObj->c);
 
         $this->assertEquals([
             'a'=> 1,
@@ -44,9 +46,10 @@ class StructTest extends TestCase
 
     public function testBWithNull()
     {
-        $b = new B(['a' => '234','b' =>  null]);
+        $b = new B(['a' => '234','b' =>  null, 'c' => 3]);
         $this->assertEquals('234', $b->a);
         $this->assertNull($b->b);
+        $this->assertEquals(3, $b->t);
     }
 
     public function testTypeError()
@@ -64,6 +67,20 @@ class StructTest extends TestCase
         $this->assertTrue(1 === $b->c);
     }
 
+    public function testSetter()
+    {
+        $obj = new A();
+        $obj->a = 123;
+        $this->assertEquals(123, $obj->a);
+
+        try {
+
+            $obj->a = 123.1;
+        } catch (\Exception $e) {
+        }
+
+        $this->assertTrue(isset($e));
+    }
 }
 
 /**
@@ -72,6 +89,7 @@ class StructTest extends TestCase
  * @property string $a
  * @property A|null $b
  * @property int $c
+ * @property-read int $t
  */
 class B extends AStruct
 {
@@ -93,12 +111,17 @@ class B extends AStruct
         return ['b' => A::class];
     }
 
+    public function __get_t()
+    {
+        return $this->c;
+    }
 
 }
 
 /**
  * @property int $a
  * @property int $b
+ * @property-read string $c
  */
 class A extends AStruct
 {
@@ -122,4 +145,8 @@ class A extends AStruct
         return [];
     }
 
+    public function __get_c() : string
+    {
+        return strval($this->a);
+    }
 }

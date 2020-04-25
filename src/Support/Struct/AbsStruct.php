@@ -12,6 +12,7 @@
 namespace Commune\Support\Struct;
 
 use Commune\Support\Arr\ArrayAbleToJson;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -20,7 +21,6 @@ abstract class AbsStruct implements Struct, \Serializable
 {
     use ArrayAbleToJson;
 
-    const GETTER_PREFIX = '__get_';
 
     const STRICT = true;
 
@@ -34,19 +34,8 @@ abstract class AbsStruct implements Struct, \Serializable
 
         $stub = static::stub();
         $data = $data + $stub;
-        // 先过滤数据.
-        $data = $this->_filter($data);
         // 构建关系
-        $data = $this->_recursiveConstruct($data);
-
-        // 校验数据.
-        $error = static::validate($data);
-
-        if (isset($error)) {
-            throw new InvalidStructException("struct validate data fail: $error");
-        }
-
-        $this->_data = $data;
+        $this->_constructData($data);
     }
 
     /**
@@ -93,32 +82,62 @@ abstract class AbsStruct implements Struct, \Serializable
 
     public function __set($name, $value)
     {
-        if (!static::isRelation($name)) {
+        if (method_exists($this, $method = static::SETTER_PREFIX . $name)) {
+            $this->{$method}($value);
+            return;
+        }
+
+        // 关系
+        if (static::isRelation($name)) {
+            $this->_data[$name] = $value;
+            $this->_constructData($this->_data);
+            return;
+        }
+
+        $reflector = StructReflections::getFieldReflector(static::class, $name);
+        // 允许赋值
+        if (!isset($reflector)) {
             $this->_data[$name] = $value;
             return;
         }
 
-        if (!is_array($value)) {
-            throw new InvalidStructException("relation $name data must be array");
+        // 弱类型转换
+        if (!static::STRICT) {
+            $value = $reflector->filterValue($value);
         }
 
-        $struct = static::getRelationClass($name);
-
-        if (!static::isListRelation($name)) {
-            $this->_data[$name] = call_user_func([$struct, 'create'], $value);
-            return;
-        }
-
-        foreach ($value as $key => $val) {
-            $value[$key] = call_user_func([$struct, 'create'], $val);
+        // 校验.
+        $error = $reflector->validateValue($value);
+        if (isset($error)) {
+            throw new InvalidStructException("set field $name fail : $error");
         }
 
         $this->_data[$name] = $value;
+        return;
     }
 
     public function __isset($name)
     {
         return isset($this->_data[$name]);
+    }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->_data);
+    }
+
+    private function _constructData(array $data) : void
+    {
+        // 先过滤数据.
+        $data = $this->_filter($data);
+        $data = $this->_recursiveParse($data);
+        // 校验数据.
+        $error = static::validate($data);
+
+        if (isset($error)) {
+            throw new InvalidStructException("struct validate data fail: $error");
+        }
+        $this->_data = $data;
     }
 
     /**
@@ -127,8 +146,9 @@ abstract class AbsStruct implements Struct, \Serializable
      * @param array $data
      * @return array
      */
-    private function _recursiveConstruct(array $data) : array
+    private function _recursiveParse(array $data) : array
     {
+        // 校验
         $relations = static::relations();
         if (empty($relations)) {
             return $data;

@@ -22,8 +22,20 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Option extends ArrayAndJsonAble, IteratorAggregate
+interface Option extends ArrayAndJsonAble
 {
+
+    /**
+     * 当option 作为列表元素被使用的时候
+     * getId() 能让我们知道哪个是哪个
+     * 所以最好每个可作为列表元素的, 都重写本方法.
+     *
+     * when there are list of options,
+     * getId() could identify them
+     *
+     * @return string|mixed
+     */
+    public function getId() : string;
 
     /**
      * 默认样板数据. 为真实数据提供默认值.
@@ -49,32 +61,7 @@ interface Option extends ArrayAndJsonAble, IteratorAggregate
      */
     public static function createById($id, array $data = []) : Option;
 
-    /**
-     * 默认的校验方法. 如果有错误, 将错误提示字符串返回.
-     * 会作为 抛出异常的 message
-     *
-     * if validate success, return null
-     * otherwise return error message as string
-     *
-     * @param array $data
-     * @return null|string   error message
-     */
-    public static function validate(array $data) : ? string;
-
     /*------- 实例属性 -------*/
-
-
-    /**
-     * 当option 作为列表元素被使用的时候
-     * getId() 能让我们知道哪个是哪个
-     * 所以最好每个可作为列表元素的, 都重写本方法.
-     *
-     * when there are list of options,
-     * getId() could identify them
-     *
-     * @return string|mixed
-     */
-    public function getId() : string;
 
     /**
      * 当前 Option 对象的自我简介.
@@ -85,6 +72,12 @@ interface Option extends ArrayAndJsonAble, IteratorAggregate
      */
     public function getBrief() : string;
 
+    /**
+     * 根据 @description 注解, 获取option 的说明.
+     *
+     * @return string
+     */
+    public static function getDescription() : string;
 
     /*------- methods -------*/
 
@@ -105,55 +98,5 @@ interface Option extends ArrayAndJsonAble, IteratorAggregate
      */
     public function getHash() : string;
 
-    /**
-     * 获取当前 option 的原始数组.
-     * @return array
-     */
-    public function getData(): array;
-
-    /**
-     * 递归地获取对象的值.
-     * @return array
-     */
-    public function toRecursiveArray() : array;
-
-
-    /*------- reflections -------*/
-
-
-    /**
-     * 获取 sub option 的定义.
-     * @return string[]
-     */
-    public static function getAssociations() : array;
-
-    /**
-     * 检查一个key 是不是另一个option 对象
-     * @param string $key
-     * @return bool
-     */
-    public static function isAssociation(string $key) : bool;
-
-    /**
-     * 检查一个key 是不是一个option的数组
-     * @param string $key
-     * @return bool
-     */
-    public static function isListAssociation(string $key) : bool;
-
-    /**
-     * 获取已有的 sub option class
-     *
-     * @param string $key
-     * @return null|string
-     */
-    public static function getAssociationClass(string $key) : ? string;
-
-    /**
-     * 根据 @description 注解, 获取option 的说明.
-     *
-     * @return string
-     */
-    public static function getDescription() : string;
 
 }

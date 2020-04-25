@@ -24,12 +24,20 @@ class StructReflections
      */
     protected static $validators = [];
 
+    public static function getFieldReflector(
+        string $className,
+        string $fieldName
+    ) : ? StructFieldReflector
+    {
+        static::register($className);
+        return static::$validators[$className][$fieldName] ?? null;
+    }
 
     public static function register(string $className) : void
     {
         if (!is_a($className, Struct::class, TRUE)) {
             $expect = Struct::class;
-            throw new InvalidStructException("reflection class must be subclass of $expect, $className given");
+            throw new InvalidStructException("reflection class must be subclass of $expect, $className given.");
         }
 
         if (isset(static::$validators[$className])) {
@@ -44,6 +52,11 @@ class StructReflections
         $fields = [];
 
         foreach ($defines as list($name, $types, $desc)) {
+            // 跳过 getter 方法
+            $getter = constant($className.'::GETTER_PREFIX') . $name;
+            if (method_exists($className, $getter)) {
+                continue;
+            }
             $fields[$name] = empty($types) ? [] : explode('|', $types);
         }
 
@@ -86,7 +99,7 @@ class StructReflections
         $validators = static::$validators[$className] ?? null;
 
         if (is_null($validators)) {
-            throw new InvalidStructException("$className default validators not found");
+            throw new InvalidStructException("$className default validators not found.");
         }
 
         foreach ($validators as $field => $validator) {

@@ -229,4 +229,23 @@ class IStructFieldReflector implements StructFieldReflector
         }
     }
 
+    public function getRules(): array
+    {
+        $rules = $this->rules;
+        if ($this->nullable) {
+            $rules[] = 'null';
+        }
+        if ($this->relationClass) {
+            $rules[] = $this->isListRelation ? $this->relationClass . '[]' : $this->relationClass;
+        }
+
+        return $rules;
+    }
+
+    public function getTypes(): string
+    {
+        return implode('|', $this->getRules());
+    }
+
+
 }
