@@ -101,10 +101,12 @@ interface ServiceRegistrar
 
     /**
      * 启动请求类服务
-     * @return bool
+     *
      * @throws HostBootingException
+     * @param ReqContainer $container
+     * @return bool
      */
-    public function bootReqServices() : bool;
+    public function bootReqServices(ReqContainer $container) : bool;
 
     /*----------- 状态 -----------*/
 
@@ -112,11 +114,6 @@ interface ServiceRegistrar
      * @return bool
      */
     public function isConfigServicesBooted() : bool;
-
-    /**
-     * @return bool
-     */
-    public function isReqServicesBooted() : bool;
 
     /**
      * @return bool

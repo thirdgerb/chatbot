@@ -33,6 +33,8 @@ interface LogInfo
 
     public function bootRegisterProvider(string $id) : string;
 
+    public function bootUnInstancedReqContainer() : string;
+
     public function bootDoBootProvider(string $id) : string;
 
     public function bootInvalidProviderConfiguration($index, $value) : string;

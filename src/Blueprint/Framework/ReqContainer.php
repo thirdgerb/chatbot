@@ -37,6 +37,20 @@ interface ReqContainer extends ContainerContract
     public function isInstanced() : bool;
 
     /**
+     * 一个请求 boot 一次.
+     * 是否已经boot.
+     * @return bool
+     */
+    public function isBooted() : bool;
+
+    /**
+     * 启动.
+     */
+    public function booted() : void;
+
+
+
+    /**
      * 获取实例, 并且进行初始化.
      *
      * ReqContainer 会用一个公共的实例来绑定各种工厂, 但每个请求需要再生成一个实例.

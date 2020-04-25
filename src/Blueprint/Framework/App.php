@@ -12,6 +12,8 @@
 namespace Commune\Blueprint\Framework;
 
 use Commune\Container\ContainerContract;
+use Commune\Contracts\Log\ConsoleLogger;
+use Commune\Contracts\Log\LogInfo;
 
 /**
  * 基于双容器策略的基本框架.
@@ -54,4 +56,10 @@ interface App
      * @return ServiceRegistrar
      */
     public function getServiceRegistrar() : ServiceRegistrar;
+
+    /*------ logger ------*/
+
+    public function getConsoleLogger() : ConsoleLogger;
+
+    public function getLogInfo() : LogInfo;
 }
