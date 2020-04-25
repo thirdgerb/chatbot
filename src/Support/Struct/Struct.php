@@ -64,6 +64,12 @@ interface Struct extends ArrayAndJsonAble, \IteratorAggregate
     /*------- reflection -------*/
 
     /**
+     * 获得当前类的注解.
+     * @return string
+     */
+    public static function getDocComment() : string;
+
+    /**
      * @return string[]
      */
     public static function getRelationNames() : array;

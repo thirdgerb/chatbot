@@ -296,6 +296,12 @@ abstract class AbsStruct implements Struct, \Serializable
         return $data;
     }
 
+    public static function getDocComment(): string
+    {
+        $r = new \ReflectionClass(static::class);
+        return $r->getDocComment();
+    }
+
 
     public function __destruct()
     {
@@ -312,6 +318,7 @@ abstract class AbsStruct implements Struct, \Serializable
     {
         return static::create(json_decode($serialized, true));
     }
+
 
 
 }

@@ -43,6 +43,6 @@ interface ProtocalInstance
      * 通常是类名的 dot 表示法
      * @return string[]
      */
-    public function getProtocals() : array;
+    public static function getProtocals() : array;
 
 }

@@ -26,6 +26,11 @@ use Commune\Support\Utils\StringUtils;
 class Text extends AbsMessage implements VerbalMsg
 {
 
+    /**
+     * Text constructor.
+     * @param string $text
+     * @param string $level
+     */
     public function __construct($text = '', string $level = HostMsg::INFO)
     {
         parent::__construct([
@@ -60,19 +65,8 @@ class Text extends AbsMessage implements VerbalMsg
         return StringUtils::trim($this->text);
     }
 
-
     public static function relations(): array
     {
         return [];
     }
-
-    public static function validate(array $data): ? string
-    {
-        $valid = is_string($data['text'] ?? null)
-            && in_array($data['level'] ?? null, HostMsg::LEVELS);
-
-        return $valid ? null : 'invalid type';
-    }
-
-
 }

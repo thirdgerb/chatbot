@@ -14,6 +14,7 @@ namespace Commune\Support\Message;
 use Commune\Support\Babel\Babel;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\Struct\AbsStruct;
+use Commune\Support\Struct\StructReflections;
 use Commune\Support\Utils\StringUtils;
 use PHPUnit\Framework\TestCase;
 
@@ -91,6 +92,13 @@ class MessageTestCase extends TestCase
             }
 
             $this->protocalPropertyTest($message);
+
+            $e = null;
+            try {
+                $docs = call_user_func([$name, 'getDocComment']);
+            } catch (\Exception $e) {
+            }
+            $this->assertTrue(is_null($e), isset($e) ? $e->getMessage() : '');
         }
     }
 
@@ -109,8 +117,8 @@ class MessageTestCase extends TestCase
                 );
             }
         }
-
     }
+
 
 
     public function testBabel()

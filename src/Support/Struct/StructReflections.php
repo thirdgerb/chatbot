@@ -15,6 +15,7 @@ use Commune\Support\Utils\StringUtils;
 
 
 /**
+ * 获取 Struct 对象的反射信息
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class StructReflections
@@ -24,6 +25,12 @@ class StructReflections
      */
     protected static $validators = [];
 
+    /**
+     * 获得字段的 Reflection, 来自于 Struct::getDocComment()
+     * @param string $className
+     * @param string $fieldName
+     * @return StructFieldReflector|null
+     */
     public static function getFieldReflector(
         string $className,
         string $fieldName
@@ -33,19 +40,47 @@ class StructReflections
         return static::$validators[$className][$fieldName] ?? null;
     }
 
+    public static function getAllFieldReflectors(string $className) : array
+    {
+        static::register($className);
+        return static::$validators[$className] ?? [];
+    }
+
+    /**
+     * 类是否已经注册了.
+     * @param string $className
+     * @return bool
+     */
+    public static function isRegistered(string $className) : bool
+    {
+        return isset(static::$validators[$className]);
+    }
+
+    /**
+     * 注册一个 Struct 类.
+     * @param string $className
+     */
     public static function register(string $className) : void
+    {
+        if (isset(static::$validators[$className])) {
+            return;
+        }
+
+        $doc = call_user_func([$className, 'getDocComment']);
+        static::registerClassByDoc($className, $doc);
+    }
+
+    /**
+     * 使用 DocComment 来注册目标 Struct 类
+     * @param string $className
+     * @param string $doc
+     */
+    public static function registerClassByDoc(string $className, string $doc) : void
     {
         if (!is_a($className, Struct::class, TRUE)) {
             $expect = Struct::class;
             throw new InvalidStructException("reflection class must be subclass of $expect, $className given.");
         }
-
-        if (isset(static::$validators[$className])) {
-            return;
-        }
-
-        $r = new \ReflectionClass($className);
-        $doc = $r->getDocComment();
 
         $defines = StringUtils::fetchVariableAnnotationsWithType($doc, '@property', false);
 
@@ -92,6 +127,13 @@ class StructReflections
         return $data;
     }
 
+    /**
+     * 校验一个数组是否符合  Struct 的定义.
+     *
+     * @param string $className
+     * @param array $data
+     * @return null|string
+     */
     public static function validate(string $className, array $data) : ? string
     {
         static::register($className);
@@ -112,4 +154,11 @@ class StructReflections
         return null;
     }
 
+    private function __construct()
+    {
+    }
+
+    private function __clone()
+    {
+    }
 }
