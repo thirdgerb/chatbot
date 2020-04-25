@@ -40,6 +40,10 @@ class StructReflections
         return static::$validators[$className][$fieldName] ?? null;
     }
 
+    /**
+     * @param string $className
+     * @return StructFieldReflector[]
+     */
     public static function getAllFieldReflectors(string $className) : array
     {
         static::register($className);
