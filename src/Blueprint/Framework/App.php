@@ -11,9 +11,11 @@
 
 namespace Commune\Blueprint\Framework;
 
-use Commune\Blueprint\Host;
+use Commune\Container\ContainerContract;
 
 /**
+ * 基于双容器策略的基本框架.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface App
@@ -25,16 +27,31 @@ interface App
     public function isDebugging() : bool;
 
     /**
-     * @return Host
-     */
-    public function getHost() : Host;
-
-    /**
-     * 创建一个请求级容器, 并添加默认的绑定
+     * 创建一个请求级容器
+     * 并添加 ReqContainer 的单例绑定到容器自身.
+     *
      * @param string $uuid
      * @return ReqContainer
      */
     public function newReqContainerInstance(string $uuid) : ReqContainer;
 
+    /*------ container ------*/
 
+    /**
+     * @return ContainerContract
+     */
+    public function getProcContainer() : ContainerContract;
+
+    /**
+     * @return ContainerContract
+     */
+    public function getReqContainer() : ContainerContract;
+
+    /*------ registrar ------*/
+
+    /**
+     * 服务注册中心.
+     * @return ServiceRegistrar
+     */
+    public function getServiceRegistrar() : ServiceRegistrar;
 }

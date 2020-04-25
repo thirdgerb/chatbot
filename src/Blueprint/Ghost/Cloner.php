@@ -14,7 +14,7 @@ namespace Commune\Blueprint\Ghost;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost;
-use Commune\Blueprint\Messenger;
+use Commune\Blueprint\Host\Messenger;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Auth\Authority;

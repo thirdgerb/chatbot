@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Messenger;
+namespace Commune\Blueprint\Host\Messenger;
 
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Protocals\Intercom\GhostMsg;

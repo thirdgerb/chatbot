@@ -22,6 +22,15 @@ use Commune\Support\Protocal\Protocal;
  */
 interface Session
 {
+    /*----- properties -----*/
+
+    /**
+     * 是否是调试模式.
+     * @return bool
+     */
+    public function isDebugging() : bool;
+
+
     /**
      * @return string
      */
@@ -32,12 +41,22 @@ interface Session
      */
     public function getSessionId() : string;
 
-    /**
-     * 是否是调试模式.
-     * @return bool
-     */
-    public function isDebugging() : bool;
+    /*----- component -----*/
 
+    /**
+     * 获取容器
+     * @return ReqContainer
+     */
+    public function getContainer() : ReqContainer;
+
+
+    /**
+     * 获取 App 自身.
+     * @return App
+     */
+    public function getApp() : App;
+
+    /*----- run 运行逻辑 -----*/
 
     /**
      * 根据配置, 基于协议获取一个 Handler
@@ -49,6 +68,31 @@ interface Session
      * @return callable|null
      */
     public function getProtocalHandler(string $group, Protocal $protocal) : ? callable ;
+
+
+    /*------ pipe ------*/
+
+    /**
+     * 生成一个管道.
+     *
+     * @param array $pipes
+     * @param string $via
+     * @return \Closure
+     */
+    public function buildPipeline(array $pipes, string $via) : \Closure;
+
+    /**
+     * 触发一个 Session 事件.
+     * @param SessionEvent $event
+     */
+    public function fire(SessionEvent $event) : void;
+
+    /**
+     * @param string $eventName
+     * @param callable $handler function(Session $session, Event $event){}
+     */
+    public function listen(string $eventName, callable $handler) : void;
+
 
     /*----- 锁 -----*/
 
@@ -99,13 +143,6 @@ interface Session
      */
     public function setSessionExpire(int $int) : void;
 
-    /*------ request ------*/
-
-    /**
-     * @return ReqContainer
-     */
-    public function getContainer() : ReqContainer;
-
     /*------ finish ------*/
 
     /**
@@ -117,32 +154,5 @@ interface Session
      * @return bool
      */
     public function isFinished() : bool;
-
-    /*------ pipe ------*/
-
-    /**
-     * 生成一个管道.
-     *
-     * @param array $pipes
-     * @param string $via
-     * @return \Closure
-     */
-    public function buildPipeline(array $pipes, string $via) : \Closure;
-
-    /*------ event ------*/
-
-    /**
-     * 触发一个 Session 事件.
-     * @param SessionEvent $event
-     */
-    public function fire(SessionEvent $event) : void;
-
-    /**
-     * @param string $eventName
-     * @param callable $handler function(Session $session, Event $event){}
-     */
-    public function listen(string $eventName, callable $handler) : void;
-
-
 
 }

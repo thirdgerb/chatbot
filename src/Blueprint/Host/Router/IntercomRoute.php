@@ -24,6 +24,23 @@ use Commune\Protocals\Intercom\ShellInput;
  */
 interface IntercomRoute
 {
+
+    /**
+     * 和 Route 的内容保持一致.
+     * 如果 Route 值更改了, 所以在 Route 中的 Shell 都能更新缓存ID
+     * 这样其它已经被踢掉的 Shell 就因为找不到 Route, 无法连进来了.
+     *
+     * @return string
+     */
+    public function getId() : string;
+
+    /**
+     * Route 实例的 Id 随着内容变化而更新
+     * 如果两个 ID 不一样, 应该把上一个删了.
+     * @return string
+     */
+    public function getLastId() : string;
+
     /**
      * Shell 生成 GhostMsg 用于发送.
      *

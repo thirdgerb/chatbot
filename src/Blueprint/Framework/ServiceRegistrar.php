@@ -9,14 +9,26 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Host;
+namespace Commune\Blueprint\Framework;
 
 use Commune\Blueprint\Exceptions\HostBootingException;
 use Commune\Framework\Contracts\ServiceProvider;
 
 
 /**
- * Host 各种服务的注册中心.
+ * 各种服务的注册中心.
+ * 管理两类容器, 三类服务
+ *
+ * 两类容器:
+ * - ProcContainer
+ * - ReqContainer
+ *
+ * 三类服务:
+ * - ConfigService : 配置
+ * - ProcService : 进程级服务
+ * - ReqService : 请求级服务
+ *
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface ServiceRegistrar

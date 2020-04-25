@@ -99,13 +99,13 @@ interface Router
      * @param IntercomRoute $route
      * @param int $expire               通常和 Session 保持一致.
      */
-    public function save(IntercomRoute $route, int $expire) : void;
+    public function saveRoute(IntercomRoute $route, int $expire) : void;
 
     /**
      * 去掉所有位置存储的路由.
      * @param IntercomRoute $route
      */
-    public function forget(IntercomRoute $route) : void;
+    public function forgetRoute(IntercomRoute $route) : void;
 
     /**
      * 检查现存的有状态对话数量.

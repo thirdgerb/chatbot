@@ -9,10 +9,10 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint;
+namespace Commune\Blueprint\Host;
 
-use Commune\Blueprint\Messenger\Broadcast;
-use Commune\Blueprint\Messenger\MessageDB;
+use Commune\Blueprint\Host\Messenger\Broadcast;
+use Commune\Blueprint\Host\Messenger\MessageDB;
 
 
 /**
