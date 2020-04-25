@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Operators\End;
 
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Operator\Operator;
 
 

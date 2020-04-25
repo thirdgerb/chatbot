@@ -23,7 +23,7 @@ use Commune\Blueprint\Platform\Server;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Blueprint\Configs\HostConfig;
-use Commune\Support\Option\Registry;
+use Commune\Support\Option\OptRegistry;
 
 
 /**
@@ -92,9 +92,9 @@ interface Host
 
     /**
      * 配置中心注册表.
-     * @return Registry
+     * @return OptRegistry
      */
-    public function getOptionRegistry() : Registry;
+    public function getOptionRegistry() : OptRegistry;
 
     /*----- global singletons 系统全局单例. -----*/
 

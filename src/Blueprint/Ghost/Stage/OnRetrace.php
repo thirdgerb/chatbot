@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Ghost\Stage;
 
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Definition\StageDef;
 use Commune\Blueprint\Ghost\Routing\Fallback;
 use Commune\Blueprint\Ghost\Routing\Staging;
@@ -21,7 +21,7 @@ use Commune\Blueprint\Ghost\Routing\Staging;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read Conversation $conversation
+ * @property-read Cloner $cloner
  * @property-read StageDef $def
  * @property-read Context $self
  * @property-read Context $from

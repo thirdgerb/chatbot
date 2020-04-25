@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\Mind;
 
 use Commune\Blueprint\Ghost\Definition\Def;
+use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
 
 /**
  * 存放各种多轮对话逻辑单元的仓库.
@@ -23,6 +24,11 @@ interface DefRegistry
 
     public function hasDef(string $defName) : bool;
 
+    /**
+     * @param string $defName
+     * @return Def
+     * @throws DefNotDefinedException
+     */
     public function getDef(string $defName) : Def;
 
     public function registerDef(Def $def) : void;

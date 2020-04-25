@@ -19,13 +19,11 @@ use Commune\Support\Option\AbsOption;
  */
 abstract class ServiceProvider extends AbsOption
 {
-    /**
-     * Provider 的唯一 ID, 可以根据实际情况重写.
-     * @return string
-     */
-    public function getId(): string
+    const IDENTITY = '';
+
+    public static function relations(): array
     {
-        return static::class;
+        return [];
     }
 
     /**

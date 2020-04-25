@@ -13,7 +13,7 @@ namespace Commune\Ghost\Operators\Start;
 
 use Commune\Framework\Blueprint\Intercom\RetainMsg;
 use Commune\Framework\Blueprint\Intercom\YieldMsg;
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Message\Blueprint\ContextMsg;
 use Commune\Message\Blueprint\IntentMsg;

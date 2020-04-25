@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Ghost\Stage;
 
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Definition\StageDef;
 use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Blueprint\Ghost\Speak\Speaker;
@@ -26,7 +26,7 @@ use Commune\Protocals\HostMsg;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
- * @property-read Conversation $conversation
+ * @property-read Cloner $cloner
  * @property-read StageDef $def
  * @property-read Context $self
  * @property-read Node $node

@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Definition;
 
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 
 /**
  * 一个可以被命中的意图的定义. 通常从属于 StageDef.

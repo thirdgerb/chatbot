@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Definition;
 
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Stage;
 use Commune\Blueprint\Ghost\Operator\Operator;
 
@@ -51,9 +51,9 @@ interface StageDef
 
     /*------- relations -------*/
 
-    public function findContextDef(Conversation $conversation) : ContextDef;
+    public function findContextDef(Cloner $cloner) : ContextDef;
 
-    public function findIntentDef(Conversation $conversation) : ? IntentDef;
+    public function findIntentDef(Cloner $cloner) : ? IntentDef;
 
 
     /*------- stage 路由 -------*/
@@ -62,26 +62,26 @@ interface StageDef
      * 在 wait 状态下, 可以跳转直达的 Context 名称.
      * 允许用 * 作为通配符.
      *
-     * @param Conversation $conversation
+     * @param Cloner $cloner
      * @return string[]
      */
-    public function contextRoutes(Conversation $conversation) : array;
+    public function contextRoutes(Cloner $cloner) : array;
 
     /**
      * 在 wait 状态下, 可以跳转直达的 Context 内部 Stage 的名称.
      * 允许用 * 作为通配符.
      *
-     * @param Conversation $conversation
+     * @param Cloner $cloner
      * @return string[]
      */
-    public function stageRoutes(Conversation $conversation) : array;
+    public function stageRoutes(Cloner $cloner) : array;
 
     /**
      * 当前 Stage 自定义的理解管道.
-     * @param Conversation $conversation
+     * @param Cloner $cloner
      * @return string[]
      */
-    public function comprehendPipes(Conversation $conversation) : array;
+    public function comprehendPipes(Cloner $cloner) : array;
 
     /*------- intend to stage -------*/
 

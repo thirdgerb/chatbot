@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Operators\Start;
 
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Ghost\Operators\Current\HearStage;
 use Commune\Ghost\Operators\Intend\IntendToContext;

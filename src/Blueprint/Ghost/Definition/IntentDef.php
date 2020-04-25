@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Definition;
 
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Message\Blueprint\IntentMsg;
 
 
@@ -41,7 +41,7 @@ use Commune\Message\Blueprint\IntentMsg;
  */
 interface IntentDef extends Def
 {
-    public function validate(Conversation $conversation) : bool;
+    public function validate(Cloner $cloner) : bool;
 
     public function parseData(array $entities) : IntentMsg;
 }

@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Ghost\Definition;
 
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Convo\ConvoScope;
 
 
@@ -83,10 +83,10 @@ interface ContextDef extends Def
      * 根据传入参数, 生成一个新的 Context 实例.
      *
      * @param array $assignment
-     * @param Conversation $conversation
+     * @param Cloner $cloner
      * @return Context
      */
-    public function newContext(array $assignment = [], Conversation $conversation) : Context;
+    public function newContext(array $assignment = [], Cloner $cloner) : Context;
 
     /*------- routing -------*/
 
@@ -97,10 +97,10 @@ interface ContextDef extends Def
      * 在 wait 状态下, 可以跳转直达的 Context 名称.
      * 允许用 * 作为通配符.
      *
-     * @param Conversation $conversation
+     * @param Cloner $cloner
      * @return string[]
      */
-    public function contextRoutes(Conversation $conversation) : array;
+    public function contextRoutes(Cloner $cloner) : array;
 
     /**
      * Context 语境下公共的 stageRoutes
@@ -109,19 +109,19 @@ interface ContextDef extends Def
      * 在 wait 状态下, 可以跳转直达的 Context 内部 Stage 的名称.
      * 允许用 * 作为通配符.
      *
-     * @param Conversation $conversation
+     * @param Cloner $cloner
      * @return string[]
      */
-    public function stageRoutes(Conversation $conversation) : array;
+    public function stageRoutes(Cloner $cloner) : array;
 
     /**
      * Context 语境下公共的 Pipes 管道.
      * 理论上每一个 Stage 都默认继承, 也可以选择不继承.
      *
-     * @param Conversation $conversation
+     * @param Cloner $cloner
      * @return string[]
      */
-    public function comprehendPipes(Conversation $conversation) : array;
+    public function comprehendPipes(Cloner $cloner) : array;
 
 
     /*------- stage -------*/

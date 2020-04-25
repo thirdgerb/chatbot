@@ -64,12 +64,12 @@ class OnionPipeline
 
     /**
      * 通过一个字符串标明的管道.
-     * @param  string|callable  $pipe
+     * @param  string[]|callable[]  $pipes
      * @return $this
      */
-    public function through($pipe) : self
+    public function through(...$pipes) : self
     {
-        $this->pipes[] = $pipe;
+        $this->pipes = array_merge($this->pipes, $pipes);
         return $this;
     }
 

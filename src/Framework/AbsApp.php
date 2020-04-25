@@ -22,7 +22,6 @@ use Commune\Framework\Log\IConsoleLogger;
 use Commune\Framework\Log\ILogInfo;
 use Commune\Framework\Prototype\IReqContainer;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
@@ -78,6 +77,12 @@ abstract class AbsApp implements App
             $this->console,
             $this->logInfo
         );
+
+        // 不怕重复绑定.
+        $this->instance(ConsoleLogger::class, $this->console);
+        $this->instance(LogInfo::class, $this->logInfo);
+        $this->instance(ServiceRegistrar::class, $this->registrar);
+
         // 默认绑定关系.
         $this->basicBindings();
     }
@@ -89,9 +94,17 @@ abstract class AbsApp implements App
         return $this->debug;
     }
 
+    protected function instance($abstract, $instance) : void
+    {
+        $this->procC->instance($abstract, $instance);
+        $this->reqC->instance($abstract, $instance);
+    }
+
     public function newReqContainerInstance(string $uuid): ReqContainer
     {
-        return $this->reqC->newInstance($uuid, $this->procC);
+        $container = $this->reqC->newInstance($uuid, $this->procC);
+        $container->share(ReqContainer::class, $container);
+        return $container;
     }
 
     public function getProcContainer(): ContainerContract
@@ -99,7 +112,7 @@ abstract class AbsApp implements App
         return $this->procC;
     }
 
-    public function getReqContainer(): ContainerContract
+    public function getReqContainer(): ReqContainer
     {
         return $this->reqC;
     }

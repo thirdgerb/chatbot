@@ -29,6 +29,18 @@ interface App
     public function isDebugging() : bool;
 
     /**
+     * App 的唯一 ID 标识, 可用于各种缓存和数据存储.
+     * @return string
+     */
+    public function getId() : string;
+
+    /**
+     * App 的名称. 可以对外展示的.
+     * @return string
+     */
+    public function getName() : string;
+
+    /**
      * 创建一个请求级容器
      * 并添加 ReqContainer 的单例绑定到容器自身.
      *
@@ -45,9 +57,9 @@ interface App
     public function getProcContainer() : ContainerContract;
 
     /**
-     * @return ContainerContract
+     * @return ReqContainer
      */
-    public function getReqContainer() : ContainerContract;
+    public function getReqContainer() : ReqContainer;
 
     /*------ registrar ------*/
 
@@ -57,9 +69,25 @@ interface App
      */
     public function getServiceRegistrar() : ServiceRegistrar;
 
+    /**
+     * 应用初始化.
+     */
+    public function bootstrap() : void;
+
+    /**
+     *
+     */
+    public function boot() : void;
+
     /*------ logger ------*/
 
+    /**
+     * @return ConsoleLogger
+     */
     public function getConsoleLogger() : ConsoleLogger;
 
+    /**
+     * @return LogInfo
+     */
     public function getLogInfo() : LogInfo;
 }

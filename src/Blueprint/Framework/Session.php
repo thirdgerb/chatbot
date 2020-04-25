@@ -13,6 +13,7 @@ namespace Commune\Blueprint\Framework;
 
 use Commune\Blueprint\Framework\Session\SessionEvent;
 use Commune\Support\Protocal\Protocal;
+use Commune\Support\Protocal\ProtocalInstance;
 
 
 /**
@@ -64,10 +65,13 @@ interface Session
      * 用这种策略避免去开发复杂的通用 Kernel, 而可以适用于各种情况.
      *
      * @param string $group         假设协议处理器是分组的.
-     * @param Protocal $protocal
+     * @param ProtocalInstance $protocal
      * @return callable|null
      */
-    public function getProtocalHandler(string $group, Protocal $protocal) : ? callable ;
+    public function getProtocalHandler(
+        string $group,
+        ProtocalInstance $protocal
+    ) : ? callable ;
 
 
     /*------ pipe ------*/
@@ -77,9 +81,10 @@ interface Session
      *
      * @param array $pipes
      * @param string $via
+     * @param \Closure $destination
      * @return \Closure
      */
-    public function buildPipeline(array $pipes, string $via) : \Closure;
+    public function buildPipeline(array $pipes, string $via, \Closure $destination) : \Closure;
 
     /**
      * 触发一个 Session 事件.
@@ -139,9 +144,9 @@ interface Session
 
     /**
      * 设置当前 session 的过期时间, 可用来更改 session 默认的续期.
-     * @param int $int
+     * @param int $seconds
      */
-    public function setSessionExpire(int $int) : void;
+    public function setSessionExpire(int $seconds) : void;
 
     /*------ finish ------*/
 

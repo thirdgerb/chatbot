@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Definition\ContextDef;
 use Commune\Blueprint\Ghost\Definition\StageDef;
 
@@ -35,11 +35,11 @@ interface Route
 
     /*------ Context ------*/
 
-    public function findContext(Conversation $conversation) : Context;
+    public function findContext(Cloner $cloner) : Context;
 
-    public function findContextDef(Conversation $conversation) : ContextDef;
+    public function findContextDef(Cloner $cloner) : ContextDef;
 
-    public function findStageDef(Conversation $conversation)  : StageDef;
+    public function findStageDef(Cloner $cloner)  : StageDef;
 
     /*------ 重定向 ------*/
 

@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Message\Blueprint\QuestionMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
@@ -49,7 +49,7 @@ interface Thread extends ArrayAndJsonAble
 
     /*--------- more information ---------*/
 
-    public function getDescription(Conversation $conversation) : string;
+    public function getDescription(Cloner $cloner) : string;
 
     /*--------- question ---------*/
 

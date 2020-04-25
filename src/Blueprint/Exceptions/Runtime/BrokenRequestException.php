@@ -9,12 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Support\Option;
+namespace Commune\Blueprint\Exceptions\Runtime;
 
+use Commune\Blueprint\Exceptions\HostRuntimeException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Registry
+class BrokenRequestException extends HostRuntimeException
 {
+
 }

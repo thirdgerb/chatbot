@@ -19,7 +19,7 @@ use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Auth\Authority;
 use Commune\Protocals\Intercom\GhostInput;
-use Commune\Support\Option\Registry;
+use Commune\Support\Option\OptRegistry;
 use Commune\Contracts\Cache;
 use Commune\Blueprint\Ghost\Operator\Operator;
 
@@ -45,29 +45,30 @@ use Commune\Blueprint\Ghost\Operator\Operator;
  * @property-read ReqContainer $container           容器
  *
  * # 请求相关
- * @property-read GhostInput $ghostInput
- * @property-read Convo\Scene $scene
- * @property-read Convo\ConvoRouter $router
+ * @property-read GhostInput $ghostInput            输入
+ * @property-read Convo\Scene $scene                场景信息
  * @property-read Convo\ConvoLogger $logger         日志
  *
  * # 功能组件
  * @property-read Cache $cache                      公共缓存
- * @property-read Messenger $messenger              消息管理器.
  * @property-read Authority $auth                   授权模块
  *
  * # 复杂对话逻辑组件
  *
  * @property-read Ghost\Mind\Mindset $mind          机器人的思维
- * @property-read Ghost\Memory\Memory $memory       机器人的记忆
  * @property-read Runtime $runtime                  机器人的运行状态
  *
  * # Host 组件
  * @property-read Ghost $ghost                      Ghost 本体
- * @property-read Registry $registry                注册表
+ * @property-read OptRegistry $registry                注册表
  *
  */
 interface Cloner extends Session
 {
+    /**
+     * @return string
+     */
+    public function getClonerId() : string;
 
     /*----- 运行对话管理逻辑 -----*/
 

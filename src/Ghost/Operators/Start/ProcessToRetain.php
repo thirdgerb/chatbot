@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Operators\Start;
 
 use Commune\Framework\Blueprint\Intercom\RetainMsg;
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Ghost\Operators\Current\RetainStage;
 use Commune\Ghost\Operators\End\NoStateEnd;

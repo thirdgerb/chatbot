@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Operators\Fallback;
 
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Ghost\Operators\Current\WakeStage;

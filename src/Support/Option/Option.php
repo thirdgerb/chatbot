@@ -13,8 +13,6 @@ namespace Commune\Support\Option;
 
 use Commune\Support\DI\Injectable;
 use Commune\Support\Struct\Struct;
-use IteratorAggregate;
-use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * 将数组转化为结构体. 
@@ -40,18 +38,19 @@ interface Option extends Struct, Injectable
     public function getId() : string;
 
     /**
+     * ID 对应的字段名.
+     * @return string
+     */
+    public static function getIdentityName() : string;
+
+
+    /**
      * 默认样板数据. 为真实数据提供默认值.
      *
      * default data of option
      * @return array
      */
     public static function stub() : array;
-
-    /**
-     * ID 对应的字段名.
-     * @return string
-     */
-    public static function getIdentityName() : string;
 
 
     /**

@@ -11,11 +11,11 @@
 
 namespace Commune\Ghost\Operators;
 
-use Commune\Blueprint\Ghost\Convo\Conversation;
+use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Exceptions\OperatorException;
+use Commune\Blueprint\Ghost\Exceptions\TooManyOperatorsException;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
-use Commune\Ghost\Exceptions\OperatorException;
-use Commune\Ghost\Exceptions\TooManyOperatorsException;
 use Commune\Ghost\Operators\Start\ProcessStart;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
@@ -36,24 +36,20 @@ class DialogManager implements Spied
     protected $uuid;
 
     /**
-     * @var Conversation
+     * @var Cloner
      */
-    protected $convo;
+    protected $cloner;
 
     /**
      * @var Runtime
      */
     protected $runtime;
 
-    /**
-     * DialogManager constructor.
-     * @param Conversation $convo
-     */
-    public function __construct(Conversation $convo)
+    public function __construct(Cloner $cloner)
     {
-        $this->convo = $convo;
-        $this->uuid = $convo->getUuid();
-        $this->runtime = $convo->runtime;
+        $this->cloner = $cloner;
+        $this->uuid = $cloner->getUuid();
+        $this->runtime = $cloner->runtime;
         static::addRunningTrace($this->uuid, $this->uuid);
     }
 
@@ -73,7 +69,7 @@ class DialogManager implements Spied
                 $trace->record($operator);
 
                 // 运行算子.
-                $operator = $operator->invoke($this->convo);
+                $operator = $operator->invoke($this->cloner);
             }
 
 
@@ -86,6 +82,8 @@ class DialogManager implements Spied
         // 超过算子的最大数量.
         } catch (TooManyOperatorsException $e) {
 
+            // todo
+
         // 无法处理的异常.
         } catch (\Throwable $e) {
 
@@ -97,7 +95,7 @@ class DialogManager implements Spied
     public function __destruct()
     {
         static::removeRunningTrace($this->uuid);
-        $this->convo = null;
+        $this->cloner = null;
         $this->runtime = null;
     }
 
