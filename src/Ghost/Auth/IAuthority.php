@@ -26,6 +26,16 @@ class IAuthority implements Authority
      */
     protected $container;
 
+    /**
+     * IAuthority constructor.
+     * @param ReqContainer $container
+     */
+    public function __construct(ReqContainer $container)
+    {
+        $this->container = $container;
+    }
+
+
     public function allow(string $policy, array $payload): bool
     {
         if (!is_a($policy, Policy::class, TRUE)) {

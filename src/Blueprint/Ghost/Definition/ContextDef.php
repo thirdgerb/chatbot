@@ -11,9 +11,10 @@
 
 namespace Commune\Blueprint\Ghost\Definition;
 
+use Commune\Blueprint\Ghost\ClonerScope;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Convo\ConvoScope;
+use Commune\Blueprint\Ghost\Memory\Recollection;
 
 
 /**
@@ -30,13 +31,6 @@ interface ContextDef extends Def
      */
     public function getPriority() : int;
 
-    /**
-     * 所有需要填满的属性, 不填满时通常会触发多轮对话来要求输入.
-     * @return string[]
-     */
-    public function getEntityNames() : array;
-
-
     /*------- intend -------*/
 
     /**
@@ -45,6 +39,28 @@ interface ContextDef extends Def
      * @return bool
      */
     public function isPublic() : bool;
+
+    /*------- entities -------*/
+
+    /**
+     * 过滤 Entity 的值
+     * @param array $entities
+     * @return array
+     */
+    public function parseIntentEntities(array $entities) : array;
+
+    /**
+     * 所有需要填满的属性, 不填满时通常会触发多轮对话来要求输入.
+     * @return string[]
+     */
+    public function getEntityNames() : array;
+
+    /**
+     * Context 的默认值.
+     * @return array
+     */
+    public function getDefaultValues() : array;
+
 
     /*------- scope -------*/
 
@@ -72,21 +88,14 @@ interface ContextDef extends Def
      * 根据当前作用域生成一个全局唯一的 ID.
      * 也可以不和 Scope 相关.
      *
-     * @param ConvoScope $scope
+     * @param Cloner $cloner
      * @return string
      */
-    public function makeId(ConvoScope $scope) : string;
+    public function makeId(Cloner $cloner) : string;
 
     /*------- methods -------*/
 
-    /**
-     * 根据传入参数, 生成一个新的 Context 实例.
-     *
-     * @param array $assignment
-     * @param Cloner $cloner
-     * @return Context
-     */
-    public function newContext(array $assignment = [], Cloner $cloner) : Context;
+    public function wrapContext(Recollection $recollection, Cloner $cloner) : Context;
 
     /*------- routing -------*/
 
@@ -132,8 +141,16 @@ interface ContextDef extends Def
      */
     public function getInitialStageDef() : StageDef;
 
+    /**
+     * @param string $stageName
+     * @return bool
+     */
     public function hasStage(string $stageName) : bool;
 
+    /**
+     * @param string $stageName
+     * @return StageDef
+     */
     public function getStage(string $stageName) : StageDef;
 
     /**

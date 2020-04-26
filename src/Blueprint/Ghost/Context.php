@@ -12,10 +12,10 @@
 namespace Commune\Blueprint\Ghost;
 
 use ArrayAccess;
+use Commune\Blueprint\Ghost\Convo\ConvoInstance;
 use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
 use Commune\Support\Arr\ArrayAndJsonAble;
-use Commune\Blueprint\Ghost\Convo\ConvoInstance;
 use Commune\Support\DI\Injectable;
 
 /**
@@ -23,15 +23,36 @@ use Commune\Support\DI\Injectable;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Context extends ArrayAccess, ArrayAndJsonAble, ConvoInstance, Injectable
+interface Context extends
+        ArrayAccess, // 默认用数组方式来获取参数. 也可以用 getter setter
+        ArrayAndJsonAble, // Context 可以得到数组
+        ConvoInstance, //
+        Injectable // Context 可以用各种方式依赖注入
 {
     const NAMESPACE_SEPARATOR = '.';
 
-    /*----- name -----*/
+    /*----- properties -----*/
 
+    /**
+     * Context 名称
+     * @return string
+     */
     public function getName() : string;
 
-    /*----- 数据 -----*/
+
+    /**
+     * @return string
+     * @throws NotInstanceException
+     */
+    public function getId() : string;
+
+    /**
+     * @return int
+     */
+    public function getPriority() : int;
+
+
+    /*----- assignment -----*/
 
     /**
      * 合并 Data 到当前数据.
@@ -47,16 +68,7 @@ interface Context extends ArrayAccess, ArrayAndJsonAble, ConvoInstance, Injectab
      */
     public function reset(array $data = null) : void;
 
-    /**
-     * @return string
-     * @throws NotInstanceException
-     */
-    public function getId() : string;
-
-    /**
-     * @return int
-     */
-    public function getPriority() : int;
+    /*----- array -----*/
 
     /**
      * 获取所有的变量值.
@@ -76,10 +88,10 @@ interface Context extends ArrayAccess, ArrayAndJsonAble, ConvoInstance, Injectab
      */
     public function toArray(): array;
 
-    /*----- 方法 -----*/
+    /*----- node -----*/
 
     /**
-     * 将一个 Context 生成为一个 Node 节点.
+     * 将一个 Context 生成为一个新的 Node 节点.
      * @return Node
      */
     public function toNewNode() : Node;

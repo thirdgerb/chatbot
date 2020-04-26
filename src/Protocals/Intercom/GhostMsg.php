@@ -25,16 +25,28 @@ use Commune\Protocals\IntercomMessage;
  *
  * @property-read string $hostName              机器人的名称.
  *
- * # 可替换属性
- * # 以下几个属性可能在上下文中被替换, 从而让 Shell 之间对接起来.
  *
- * @property-read string $cloneId               Ghost 分身的 Id
+ * ## 上下文维度
+ * @property-read string $cloneId               Ghost 分身的 Id. 为空则是 shellId
  * @property-read string $sessionId             消息所属的 SessionId
- * @property-read string $guestId               对接 Host 的对方 Id
- * @property-read string $guestName             对接 Host 的对方名称.
+ *
+ * ## 用户在 Clone 内的信息
+ * @property-read string $guestId               消息投递的目标用户Id. 为空则与 senderId 一致
+ * @property-read string $guestName             消息投递的目标用户名. 为空则与 senderName 一致.
+ *
+ * ## Shell 相关信息
+ * @property-read string $senderId              创建输入消息的 SenderId
+ * @property-read string $shellName             创建输入消息所属的 Shell
+ * @property-read string $shellId               创建输入消息所属的 ShellId
  *
  */
 interface GhostMsg extends IntercomMessage
 {
+
+    public function getGuestId() : string;
+
+    public function getGuestName() : string;
+
+    public function getCloneId() : string;
 
 }

@@ -20,10 +20,12 @@ use Commune\Container\ContainerContract;
 interface ReqContainer extends ContainerContract
 {
     /**
-     * 请求容器的 ID. 理论上是唯一 ID
+     * 请求容器的 ID.
+     * 理论上是唯一 ID
+     *
      * @return string
      */
-    public function getUuid() : string;
+    public function getId() : string;
 
     /**
      * @return ContainerContract

@@ -9,13 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Convo;
+namespace Commune\Ghost\Convo;
 
-use Psr\Log\LoggerInterface;
+use Commune\Blueprint\Ghost\Convo\ConvoLogger;
+use Commune\Framework\Log\ContextLogger;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ConvoLogger extends LoggerInterface
+class IConvoLogger extends ContextLogger implements ConvoLogger
 {
 }

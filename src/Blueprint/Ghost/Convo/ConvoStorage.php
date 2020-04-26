@@ -11,11 +11,14 @@
 
 namespace Commune\Blueprint\Ghost\Convo;
 
-use Psr\Log\LoggerInterface;
+use Commune\Blueprint\Framework\Session\Storage;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ConvoLogger extends LoggerInterface
+interface ConvoStorage extends Storage
 {
+    // 当前进程的存储
+    const CURRENT_PROCESS_ID = 'currentProcessId';
+
 }

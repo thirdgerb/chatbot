@@ -9,13 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Convo;
+namespace Commune\Ghost\Prototype\Runtime;
 
-use Psr\Log\LoggerInterface;
+use Commune\Blueprint\Ghost\Runtime\Node;
+use Commune\Blueprint\Ghost\Runtime\Thread;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ConvoLogger extends LoggerInterface
+class IThread implements Thread
 {
+
+    public function __construct(Node $node)
+    {
+    }
+
 }

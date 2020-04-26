@@ -11,11 +11,21 @@
 
 namespace Commune\Blueprint\Ghost\Convo;
 
-use Psr\Log\LoggerInterface;
-
 /**
+ * 需要在对话中二次实例化的对象.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ConvoLogger extends LoggerInterface
+interface ConvoInstance
 {
+
+    /**
+     * 以已经执行了实例化
+     * @return bool
+     */
+    public function isInstanced() : bool;
+
+    /**
+     * @return ConvoStub
+     */
+    public function toConvoStub() : ConvoStub;
 }

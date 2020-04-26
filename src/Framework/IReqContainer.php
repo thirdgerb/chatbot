@@ -69,7 +69,7 @@ class IReqContainer implements ReqContainer
         return $container;
     }
 
-    public function getUuid(): string
+    public function getId(): string
     {
         return $this->uuid;
     }

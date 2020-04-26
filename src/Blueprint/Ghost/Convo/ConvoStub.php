@@ -11,11 +11,15 @@
 
 namespace Commune\Blueprint\Ghost\Convo;
 
-use Psr\Log\LoggerInterface;
+use Commune\Blueprint\Ghost\Cloner;
 
 /**
+ * ConvoInstance 的替身.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ConvoLogger extends LoggerInterface
+interface ConvoStub
 {
+
+    public function toInstance(Cloner $cloner) : ConvoInstance;
+
 }

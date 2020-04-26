@@ -21,7 +21,7 @@ use Commune\Support\Protocal\Protocal;
  *
  * ## ID
  * @property-read string $messageId         消息的唯一 ID
- * @property-read string $batchId           消息的批次. 发出和回复是同一批.
+ * @property-read string $batchId           消息的批次. 为空则是 MessageId
  *
  * # 消息体
  * @property-read HostMsg $message          消息体
@@ -32,4 +32,5 @@ use Commune\Support\Protocal\Protocal;
  */
 interface IntercomMessage extends Protocal
 {
+    public function getBatchId() : string;
 }

@@ -128,7 +128,7 @@ interface Intention extends Abstracted
     /**
      * 设置匹配到的 Entity, 是全局的 Entity
      *
-     * @param array $entities
+     * @param array[] $entities
      */
     public function setPublicEntities(array $entities) : void;
 
@@ -136,21 +136,21 @@ interface Intention extends Abstracted
     /**
      * 全局的entity. 有些 NLU 的 entity 和 intent 是分开匹配的.
      *
-     * @return array
+     * @return array[]
      */
     public function getPublicEntities() : array;
 
 
     /**
      * @param string $intentName
-     * @param array $entities
+     * @param array[] $entities
      */
     public function setIntentEntities(string $intentName, array $entities) : void;
 
     /**
      * 获取 全局entities + 命中意图的 entities
      *
-     * @return array
+     * @return array[]
      */
     public function getMatchedEntities() : array;
 
@@ -158,7 +158,7 @@ interface Intention extends Abstracted
      * 获取某个意图的所有实体.
      *
      * @param string $intentName
-     * @return array
+     * @return array[]
      */
     public function getIntentEntities(string $intentName) : array;
 

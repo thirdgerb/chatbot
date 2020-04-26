@@ -3,18 +3,16 @@
 
 namespace Commune\Framework\Log;
 
-
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 use Commune\Contracts\Log\ExceptionReporter;
 
-class MonologWriter implements LoggerInterface
+class ContextLogger implements LoggerInterface
 {
     use LoggerTrait;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $monolog;
 
@@ -30,17 +28,17 @@ class MonologWriter implements LoggerInterface
 
     /**
      * MonologWriter constructor.
-     * @param Logger $monolog
+     * @param LoggerInterface $logger
      * @param ExceptionReporter $reporter
      * @param array $context
      */
     public function __construct(
-        Logger $monolog,
+        LoggerInterface $logger,
         ExceptionReporter $reporter,
         array $context = []
     )
     {
-        $this->monolog = $monolog;
+        $this->monolog = $logger;
         $this->reporter = $reporter;
         $this->context = $context;
     }

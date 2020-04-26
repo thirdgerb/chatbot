@@ -14,6 +14,7 @@ namespace Commune\Ghost;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
+use Commune\Blueprint\Framework\Session\Storage;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
@@ -21,8 +22,10 @@ use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Contracts\Cache;
 use Commune\Framework\ASession;
 use Commune\Ghost\Operators\DialogManager;
+use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Support\Option\OptRegistry;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -31,7 +34,7 @@ class ICloner extends ASession implements Cloner
 {
 
     const SINGLETONS =  [
-        'scope' => Ghost\CloneScope::class,
+        'scope' => Ghost\ClonerScope::class,
         'config' => GhostConfig::class,
         'convo' => Ghost\Convo::class,
         'cache' => Cache::class,
@@ -68,11 +71,6 @@ class ICloner extends ASession implements Cloner
     /**
      * @var string
      */
-    protected $sessionId;
-
-    /**
-     * @var string
-     */
     protected $hostName;
 
     /**
@@ -90,22 +88,29 @@ class ICloner extends ASession implements Cloner
         $container->share(GhostInput::class, $input);
 
         // id
-        $this->clonerId = $input->cloneId;
-        $this->sessionId = $input->sessionId;
+        $this->clonerId = $input->getCloneId();
         $this->hostName = $input->hostName;
 
         // expire
         $this->expire = $this->ghostConfig->sessionExpire;
 
-        parent::__construct($container);
+        parent::__construct($container, $input->sessionId);
     }
 
-    protected function basicBinding(): void
+    protected function requestBinding(): void
     {
+        // self sharing
         $this->container->share(ReqContainer::class, $this->container);
         $this->container->share(Cloner::class, $this);
-        $this->container->share(GhostInput::class, $this->singletons[GhostInput::class]);
         $this->container->share(Session::class, $this);
+
+        /**
+         * @var GhostInput $ghostInput
+         */
+        $ghostInput = $this->singletons[GhostInput::class];
+        $this->container->share(GhostInput::class, $ghostInput);
+        $this->container->share(Comprehension::class, $ghostInput->comprehension);
+
     }
 
     public function getClonerId(): string
@@ -128,14 +133,51 @@ class ICloner extends ASession implements Cloner
                 ->intention
                 ->getIntentEntities($contextName);
 
+        // Def
         $contextDef = $this->mind->contextReg()->getDef($contextName);
-        return $contextDef->newContext($entities, $this);
+
+        // 生成新的 Id
+        $id = $contextDef->makeId($this);
+
+        // 获得 Recollection 的默认值.
+        $values = $contextDef->getDefaultValues();
+        $entities = empty($entities)
+            ? []
+            : $contextDef->parseIntentEntities($entities);
+        $values = $entities + $values;
+
+        // 创建记忆体.
+        $recollection = $this->runtime->findRecollection($id)
+            ?? $this->runtime->createRecollection(
+                $id,
+                $contextDef->getName(),
+                $contextDef->isLongTerm(),
+                $values
+            );
+
+        // 生成 Context 对象
+        return $contextDef->wrapContext($recollection, $this);
     }
 
 
     protected function getProtocalOptions(): array
     {
         return $this->ghostConfig->protocals;
+    }
+
+    public function getName(): string
+    {
+        return $this->config->name;
+    }
+
+    public function getStorage(): Storage
+    {
+        return $this->storage;
+    }
+
+    public function getLogger(): LoggerInterface
+    {
+        return $this->logger;
     }
 
 
@@ -224,7 +266,7 @@ class ICloner extends ASession implements Cloner
 
     protected function saveSession(): void
     {
-        // TODO: Implement saveSession() method.
+        $this->runtime->save();
     }
 
 }

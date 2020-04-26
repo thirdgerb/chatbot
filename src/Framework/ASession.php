@@ -17,7 +17,6 @@ use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
 use Commune\Framework\Exceptions\SerializeForbiddenException;
 use Commune\Support\Pipeline\OnionPipeline;
-use Commune\Support\Protocal\Protocal;
 use Commune\Support\Protocal\ProtocalInstance;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
@@ -40,6 +39,11 @@ abstract class ASession implements Session, Spied, HasIdGenerator
      */
     protected $container;
 
+    /**
+     * @var string
+     */
+    protected $sessionId;
+
     /*------ cached ------*/
 
     /**
@@ -56,7 +60,7 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     /**
      * @var string
      */
-    protected $uuid;
+    protected $traceId;
 
     /**
      * @var bool
@@ -84,15 +88,24 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     protected $protocalMap;
 
     /**
-     * IShellSession constructor.
+     * ASession constructor.
      * @param ReqContainer $container
+     * @param string $sessionId
      */
-    public function __construct(ReqContainer $container)
+    public function __construct(ReqContainer $container, string $sessionId)
     {
         $this->container = $container;
-        $this->uuid = $container->getUuid();
-        static::addRunningTrace($this->uuid, $this->uuid);
-        $this->basicBinding();
+        $this->traceId = $container->getId();
+        $this->sessionId = $sessionId;
+        static::addRunningTrace($this->traceId, $this->traceId);
+        $this->requestBinding();
+    }
+
+    /*------ id ------*/
+
+    public function getSessionId(): string
+    {
+        return $this->sessionId;
     }
 
 
@@ -102,7 +115,7 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
     abstract protected function saveSession() : void;
 
-    abstract protected function basicBinding() : void;
+    abstract protected function requestBinding() : void;
 
 
     public function isDebugging(): bool
@@ -170,9 +183,9 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
     /*------ status ------*/
 
-    public function getUuId(): string
+    public function getTraceId(): string
     {
-        return $this->uuid;
+        return $this->traceId;
     }
 
 
@@ -192,7 +205,8 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
         // 执行所有的事件.
         foreach ($this->listened[$id] as $handler) {
-            $handler($this, $event);
+
+            call_user_func($handler, $this, $event);
         }
     }
 
@@ -261,6 +275,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
     public function __destruct()
     {
-        static::removeRunningTrace($this->uuid);
+        static::removeRunningTrace($this->traceId);
     }
 }

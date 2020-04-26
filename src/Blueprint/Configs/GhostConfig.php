@@ -55,7 +55,8 @@ use Commune\Support\Option\Option;
  *
  * # 多轮对话相关逻辑.
  *
- * @property-read string[] $sceneContextNames   场景对应的根路径. 第一个是默认的.
+ * @property-read string[] $sceneContextNames   场景对应的根路径.
+ * @property-read string $defaultScene          默认场景.
  */
 interface GhostConfig extends Option
 {

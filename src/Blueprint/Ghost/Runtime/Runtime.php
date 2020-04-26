@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Context;
+use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Protocals\Host\Convo\ContextMsg;
 
 /**
@@ -60,7 +61,29 @@ interface Runtime
      */
     public function findProcess(string $processId) : ? Process;
 
-    public function expireProcess(string $processId) : void;
+    /*------ recollection -------*/
+
+    /**
+     * 通过唯一 Id 寻找记忆体
+     * @param string $id
+     * @return Recollection|null
+     */
+    public function findRecollection(string $id) : ? Recollection;
+
+    /**
+     * @param string $id
+     * @param string $name
+     * @param bool $longTerm
+     * @param array $defaults
+     * @return Recollection
+     */
+    public function createRecollection(
+        string $id,
+        string $name,
+        bool $longTerm,
+        array $defaults
+    ) : Recollection;
+
 
     /*------ context -------*/
 
@@ -100,4 +123,8 @@ interface Runtime
      */
     public function findYielding(string $threadId) : ? Thread;
 
+
+    /*------ save -------*/
+
+    public function save() : void;
 }

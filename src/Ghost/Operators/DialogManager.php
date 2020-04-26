@@ -48,7 +48,7 @@ class DialogManager implements Spied
     public function __construct(Cloner $cloner)
     {
         $this->cloner = $cloner;
-        $this->uuid = $cloner->getUuid();
+        $this->uuid = $cloner->getTraceId();
         $this->runtime = $cloner->runtime;
         static::addRunningTrace($this->uuid, $this->uuid);
     }

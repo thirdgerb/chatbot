@@ -9,19 +9,18 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost;
+namespace Commune\Blueprint\Ghost\Convo;
 
 
 /**
+ * 当前请求的场景信息.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * 当前 Ghost 分身的作用域.
- *
- * @property-read string $cloneId
- * @property-read string $sessionId
- * @property-read string $guestId
- * @property-read string $guestName
+ * @property-read string $sceneId
+ * @property-read string $contextName
+ * @property-read array $env
  */
-interface CloneScope
+interface ConvoScene
 {
 }

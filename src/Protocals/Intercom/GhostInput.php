@@ -21,8 +21,6 @@ use Commune\Protocals\Comprehension;
  * @see GhostMsg
  *
  * # 请求的 shell 相关信息
- * @property-read string $shellName     创建输入消息所属的 Shell
- * @property-read string $shellId       创建输入消息所属的 ShellId
  * @property-read string $sceneId       请求所处的场景ID
  * @property-read array $env            从 Shell 传入的环境变量.
  *

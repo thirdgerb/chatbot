@@ -11,17 +11,17 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Ghost;
+use Commune\Contracts\Cache;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\Session;
-use Commune\Blueprint\Ghost;
-use Commune\Blueprint\Host\Messenger;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Auth\Authority;
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Support\Option\OptRegistry;
-use Commune\Contracts\Cache;
 use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Convo;
 
 
 /**
@@ -35,19 +35,20 @@ use Commune\Blueprint\Ghost\Operator\Operator;
  *
  *
  * # 作用域
- * @property-read CloneScope $scope                 当前分身的维度.
+ * @property-read ClonerScope $scope                当前分身的维度.
  * @property-read GhostConfig $config               机器人配置
  *
  * # 对话模块
  * @property-read Convo $convo                      对话模块
+ * @property-read Convo\ConvoLogger $logger         日志
+ * @property-read Convo\ConvoStorage $storage       Session Storage
  *
  * # 容器
  * @property-read ReqContainer $container           容器
  *
  * # 请求相关
  * @property-read GhostInput $ghostInput            输入
- * @property-read Convo\Scene $scene                场景信息
- * @property-read Convo\ConvoLogger $logger         日志
+ * @property-read Convo\ConvoScene $scene           场景信息
  *
  * # 功能组件
  * @property-read Cache $cache                      公共缓存

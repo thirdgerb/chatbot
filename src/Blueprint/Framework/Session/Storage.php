@@ -9,18 +9,18 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Convo;
+namespace Commune\Blueprint\Framework\Session;
 
 
 /**
- * 当前请求的场景信息.
+ * Session 的公共缓存. 与 SessionId 保持一致.
+ * 持久化存储的不需要放在这里.
+ * 如果是 stateless 调用则会新创建.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read string $sceneId
- * @property-read string $contextName
- * @property-read array $env
  */
-interface Scene
+interface Storage extends \ArrayAccess
 {
+
+    public function save() : void;
 }

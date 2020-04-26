@@ -12,8 +12,11 @@
 namespace Commune\Blueprint\Framework;
 
 use Commune\Blueprint\Framework\Session\SessionEvent;
+use Commune\Blueprint\Framework\Session\SessionLogger;
+use Commune\Blueprint\Framework\Session\Storage;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\Protocal\ProtocalInstance;
+use Psr\Log\LoggerInterface;
 
 
 /**
@@ -35,12 +38,26 @@ interface Session
     /**
      * @return string
      */
-    public function getUuid() : string;
+    public function getTraceId() : string;
+
 
     /**
+     * Session 的名称. 如果一个应用有多个 Session, 考虑到缓存等, 可以做区别.
+     * @return string
+     */
+    public function getName() : string;
+
+    /**
+     * SessionId 并不是
      * @return string
      */
     public function getSessionId() : string;
+
+
+    /**
+     * @return Storage
+     */
+    public function getStorage() : Storage;
 
     /*----- component -----*/
 
@@ -137,7 +154,7 @@ interface Session
 
 
     /**
-     * Session 缓存的过期时间.
+     * Session 缓存的过期时间. 为 0 表示不限时间.
      * @return int
      */
     public function getSessionExpire() : int;
@@ -147,6 +164,10 @@ interface Session
      * @param int $seconds
      */
     public function setSessionExpire(int $seconds) : void;
+
+    /*------ logger ------*/
+
+    public function getLogger() : LoggerInterface;
 
     /*------ finish ------*/
 

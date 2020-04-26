@@ -9,13 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Convo;
+namespace Commune\Ghost\Convo;
 
-use Psr\Log\LoggerInterface;
+use Commune\Blueprint\Ghost\Convo\ConvoStorage;
+use Commune\Framework\Session\AStorage;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ConvoLogger extends LoggerInterface
+class IConvoStorage extends AStorage implements ConvoStorage
 {
+    public function getSessionKey(string $sessionName, string $sessionId): string
+    {
+        return "ghost:$sessionName:id:$sessionId:storage";
+    }
+
+
 }

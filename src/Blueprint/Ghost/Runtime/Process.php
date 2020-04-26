@@ -11,10 +11,9 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
- * 对话进程.
+ * 对话进程. 通常只缓存.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
@@ -26,7 +25,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read string[] $backtrace
  * @property-read Node $root                root Node
  */
-interface Process extends ArrayAndJsonAble
+interface Process extends Cachable
 {
 
     /*-------- 状态相关 --------*/
@@ -71,8 +70,16 @@ interface Process extends ArrayAndJsonAble
 
     /*-------- 获取进程内的 Thread --------*/
 
+    /**
+     * @param string $threadId
+     * @return bool
+     */
     public function hasThread(string $threadId) : bool;
 
+    /**
+     * @param string $threadId
+     * @return Thread|null
+     */
     public function getThread(string $threadId) : ? Thread;
 
     /*-------- sleeping --------*/
@@ -83,16 +90,20 @@ interface Process extends ArrayAndJsonAble
      */
     public function addSleepingThread(Thread $thread, bool $top = true) : void;
 
+    /**
+     * @param string|null $threadId
+     * @return Thread|null
+     */
     public function popSleeping(string $threadId = null) : ? Thread;
 
 
     /*-------- 保存 --------*/
 
     /**
-     * 是否要保存
+     * 是否要销毁.
      * @return bool
      */
-    public function shouldSave() : bool;
+    public function isExpired() : bool;
 
     /*-------- gc 相关 --------*/
 
@@ -111,9 +122,10 @@ interface Process extends ArrayAndJsonAble
 
     /**
      * 生成一个新的快照
+     * @param string|null $processId
      * @return Process
      */
-    public function nextSnapshot() : Process;
+    public function nextSnapshot(string $processId = null) : Process;
 
     /**
      * 上一步的进程.
@@ -154,5 +166,6 @@ interface Process extends ArrayAndJsonAble
      * @return Thread
      */
     public function popBlocking() : Thread;
+
 
 }

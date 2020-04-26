@@ -9,13 +9,23 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Convo;
+namespace Commune\Blueprint\Ghost\Runtime;
 
-use Psr\Log\LoggerInterface;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * 需要长期保存的数据.
  */
-interface ConvoLogger extends LoggerInterface
+interface Savable
 {
+    /**
+     * 保存的 ID
+     * @return string
+     */
+    public function getSavableId() : string;
+
+    public function isSaving() : bool;
+
+    public function isChanged() : bool;
 }
