@@ -11,7 +11,10 @@
 
 namespace Commune\Framework;
 
+use Commune\Blueprint\Exceptions\HostBootingException;
+use Commune\Blueprint\Exceptions\Logic\InvalidConfigException;
 use Commune\Blueprint\Framework\App;
+use Commune\Blueprint\Framework\Bootstrapper;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\ServiceRegistrar;
 use Commune\Container\Container;
@@ -27,6 +30,12 @@ use Commune\Framework\Prototype\IReqContainer;
  */
 abstract class AbsApp implements App
 {
+
+    /**
+     * @var string[]
+     */
+    protected $bootstrappers = [];
+
     /**
      * @var bool
      */
@@ -56,6 +65,17 @@ abstract class AbsApp implements App
      * @var LogInfo
      */
     protected $logInfo;
+
+    /**
+     * @var bool
+     */
+    protected $activated;
+
+    /**
+     * @var bool
+     */
+    protected $ranBootstrap = false;
+
 
     public function __construct(
         bool $debug,
@@ -130,6 +150,88 @@ abstract class AbsApp implements App
     public function getLogInfo(): LogInfo
     {
         return $this->logInfo;
+    }
+
+    /**
+     * 项目总启动.
+     * @return App
+     */
+    public function activate(): App
+    {
+        if (!$this->ranBootstrap) {
+            throw new HostBootingException(
+                "app should run bootstrap() before activate()"
+            );
+        }
+
+        $registrar = $this->getServiceRegistrar();
+
+        // 检查是否已经激活过了.
+        $activated = $this->activated
+            ?? $this->activated = $registrar->isComponentsBooted()
+                && $registrar->isConfigServicesBooted()
+                && $registrar->isProcServicesBooted();
+
+        // 激活过了直接继续.
+        if ($activated) {
+            return $this;
+        }
+
+        $this->console->notice(
+            $this->logInfo->bootStartKeyStep(__METHOD__)
+        );
+
+        // 第一步, 初始化所有的组件.
+        $registrar->bootComponents();
+
+        // 第二步, 初始化所有的进程级服务.
+        $registrar->bootConfigServices();
+        $registrar->bootProcServices();
+
+        // 激活结束了.
+        $this->console->info(
+            $this->logInfo->bootEndKeyStep(__METHOD__)
+        );
+
+        return $this;
+    }
+
+    public function bootstrap(): App
+    {
+        if ($this->ranBootstrap) {
+            return $this;
+        }
+
+        $this->console->notice(
+            $this->logInfo->bootStartKeyStep(__METHOD__)
+        );
+
+        foreach ($this->bootstrappers as $bootstrapper) {
+            $this->console->debug(
+                $this->logInfo->bootStartKeyStep($bootstrapper)
+            );
+
+            if (!is_a($bootstrapper, Bootstrapper::class, TRUE)) {
+                throw new InvalidConfigException(
+                    __METHOD__,
+                    'bootstrapper',
+                    'must be subclass of ' . Bootstrapper::class
+                );
+            }
+
+            /**
+             * @var Bootstrapper $bootstrapperIns
+             */
+            $bootstrapperIns = new $bootstrapper($this);
+            $bootstrapperIns->bootstrap();
+        }
+
+
+        $this->console->info(
+            $this->logInfo->bootEndKeyStep(__METHOD__)
+        );
+        $this->ranBootstrap = true;
+        return $this;
     }
 
 

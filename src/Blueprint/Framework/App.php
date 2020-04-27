@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Framework;
 
+use Commune\Blueprint\Exceptions\HostBootingException;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
@@ -40,6 +41,24 @@ interface App
      */
     public function getName() : string;
 
+    /*------ run ------*/
+
+    /**
+     * 应用初始化. 主要是注册各种服务.
+     * @return static
+     */
+    public function bootstrap() : App;
+
+    /**
+     * 激活应用, 主要是注册所有的 Components, 然后启动 (boot) 所有进程级容器的服务.
+     * $app->bootstrap()->activate();
+     *
+     * @return static
+     * @throws HostBootingException
+     */
+    public function activate() : App;
+
+
     /**
      * 创建一个请求级容器
      * 并添加 ReqContainer 的单例绑定到容器自身.
@@ -68,19 +87,6 @@ interface App
      * @return ServiceRegistrar
      */
     public function getServiceRegistrar() : ServiceRegistrar;
-
-    /**
-     * 应用初始化. 主要是注册各种服务.
-     * @return static
-     */
-    public function bootstrap() : App;
-
-    /**
-     * 激活应用, 主要是注册所有的 Components, 然后启动 (boot) 所有进程级容器的服务.
-     * $app->bootstrap()->activate();
-     * @return static
-     */
-    public function activate() : App;
 
     /*------ logger ------*/
 

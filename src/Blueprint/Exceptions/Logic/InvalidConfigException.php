@@ -19,9 +19,10 @@ use Commune\Blueprint\Exceptions\HostLogicException;
 class InvalidConfigException extends HostLogicException
 {
 
-    public function __construct(string $configType, string $configKey)
+    public function __construct(string $configType, string $optionName, string $error = '')
     {
-        $message = "invalid config, type $configType, key $configKey";
+        $error = empty($error) ? '' : ", error $error";
+        $message = "invalid host config, config type is $configType, option name is $optionName$error";
         parent::__construct($message);
     }
 

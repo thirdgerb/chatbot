@@ -45,7 +45,6 @@ interface ServiceRegistrar
         bool $top
     ) : void;
 
-
     /**
      * 注册进程级的服务.
      * @param ServiceProvider $provider
@@ -66,6 +65,7 @@ interface ServiceRegistrar
         bool $top
     ) : void;
 
+
     /*----------- 获取服务 -----------*/
 
     /**
@@ -83,6 +83,41 @@ interface ServiceRegistrar
      */
     public function getReqProviders() : array;
 
+    /*----------- Components -----------*/
+
+    /**
+     * 注册一个组件.
+     * @param string $componentName
+     * @param array $options
+     */
+    public function registerComponent(
+        string $componentName,
+        array $options
+    ) : void;
+
+    /**
+     * 记录依赖一个组件
+     * @param string $componentName
+     * @param string $dependedBy
+     * @param array $options
+     */
+    public function dependComponent(
+        string $componentName,
+        string $dependedBy,
+        array $options = []
+    ) : void;
+
+    /**
+     * 初始化所有的组件.
+     */
+    public function bootComponents() : void;
+
+    /**
+     * 组件是否都已经加载.
+     * @return bool
+     */
+    public function isComponentsBooted() : bool;
+
     /*----------- 初始化服务 -----------*/
 
     /**
@@ -91,6 +126,7 @@ interface ServiceRegistrar
      * @throws HostBootingException
      */
     public function bootConfigServices() : bool;
+
 
     /**
      * 启动进程类服务

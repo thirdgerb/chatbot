@@ -12,6 +12,7 @@
 namespace Commune\Ghost;
 
 use Commune\Blueprint\Configs\GhostConfig;
+use Commune\Blueprint\Exceptions\HostBootingException;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
@@ -85,6 +86,11 @@ class IGhost extends AbsApp implements Ghost
 
     public function newCloner(GhostInput $input): Cloner
     {
+        if (!$this->activated) {
+            throw new HostBootingException(
+                'Ghost not activated'
+            );
+        }
         // MessageId 应该是唯一的.
         $container = $this->newReqContainerInstance($input->messageId);
 
