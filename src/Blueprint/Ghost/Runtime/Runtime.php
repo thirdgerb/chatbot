@@ -93,13 +93,6 @@ interface Runtime
     public function toContextMsg() : ? ContextMsg;
 
     /**
-     * 从介质中获取一个 Context 对象.
-     * @param string $contextId
-     * @return Context|null
-     */
-    public function findContext(string $contextId) : ? Context;
-
-    /**
      * 缓存一个 Context 对象.
      * @param Context $context
      */

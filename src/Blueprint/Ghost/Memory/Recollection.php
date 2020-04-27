@@ -54,4 +54,5 @@ interface Recollection extends
      */
     public function isChanged(): bool;
 
+
 }

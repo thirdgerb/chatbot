@@ -19,10 +19,10 @@ use Commune\Support\Message\AbsMessage;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $contextName       语境名称
- * @property-read string $contextId         语境Id
- * @property-read array $data               语境的数据.
- * @property-read string $level             语境的数据.
+ * @property string $contextName       语境名称
+ * @property string $contextId         语境Id
+ * @property array $data               语境的数据.
+ * @property string $level             语境的数据.
  */
 class IContextMsg extends AbsMessage implements ContextMsg
 {
@@ -41,9 +41,9 @@ class IContextMsg extends AbsMessage implements ContextMsg
         return [];
     }
 
-    public function getTrimmedText(): string
+    public function getNormalizedText(): string
     {
-        return '';
+        return $this->toJson();
     }
 
     public function isEmpty(): bool

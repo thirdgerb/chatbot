@@ -107,6 +107,18 @@ class ICloner extends ASession implements Cloner
         return $manager->runDialogManage($operator);
     }
 
+    public function findContext(string $contextId, string $contextName): Context
+    {
+        $contextDef = $this->mind->contextReg()->getDef($contextName);
+        $recollection = $this->runtime->findRecollection($contextId);
+
+        if (isset($recollection)) {
+            return $contextDef->wrapContext($recollection, $this);
+        }
+
+        return $this->newContext($contextName);
+    }
+
     public function newContext(string $contextName, array $entities = null): Context
     {
         $entities = $entities ?? $this
@@ -128,14 +140,13 @@ class ICloner extends ASession implements Cloner
             : $contextDef->parseIntentEntities($entities);
         $values = $entities + $values;
 
-        // 创建记忆体.
-        $recollection = $this->runtime->findRecollection($id)
-            ?? $this->runtime->createRecollection(
-                $id,
-                $contextDef->getName(),
-                $contextDef->isLongTerm(),
-                $values
-            );
+        // 创建新的记忆体.
+        $recollection = $this->runtime->createRecollection(
+            $id,
+            $contextDef->getName(),
+            $contextDef->isLongTerm(),
+            $values
+        );
 
         // 生成 Context 对象
         return $contextDef->wrapContext($recollection, $this);

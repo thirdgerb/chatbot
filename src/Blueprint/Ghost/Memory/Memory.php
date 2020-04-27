@@ -12,14 +12,13 @@
 namespace Commune\Blueprint\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * 用静态方法来获取一个记忆单元.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Memory extends \ArrayAccess, ArrayAndJsonAble, Memorable
+interface Memory extends \ArrayAccess, Memorable
 {
 
     /**

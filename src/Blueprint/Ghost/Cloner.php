@@ -91,4 +91,15 @@ interface Cloner extends Session
      * @return Context
      */
     public function newContext(string $contextName, array $entities = null) : Context;
+
+
+    /**
+     * 在当前上下文中找到一个 Context, 或者创建一个新的Context
+     *
+     * @param string $contextId
+     * @param string $contextName
+     * @return Context
+     */
+    public function findContext(string $contextId, string $contextName) : Context;
+
 }

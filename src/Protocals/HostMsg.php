@@ -33,5 +33,5 @@ interface HostMsg extends Protocal
         self::ERROR,
     ];
 
-    public function getTrimmedText() : string;
+    public function getNormalizedText() : string;
 }

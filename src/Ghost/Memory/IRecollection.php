@@ -59,47 +59,47 @@ class IRecollection implements Recollection
 
     /**
      * IRecollection constructor.
-     * @param string $_id
-     * @param string $_name
-     * @param bool $_longTerm
-     * @param array $_data
+     * @param string $id
+     * @param string $name
+     * @param bool $longTerm
+     * @param array $data
      */
-    public function __construct(string $_id, string $_name, bool $_longTerm, array $_data)
+    public function __construct(string $id, string $name, bool $longTerm, array $data)
     {
-        $this->_id = $_id;
-        $this->_name = $_name;
-        $this->_longTerm = $_longTerm;
-        array_map([$this, 'checkValue'], $_data);
-
-        $this->_data = $_data;
+        $this->_id = $id;
+        $this->_name = $name;
+        $this->_longTerm = $longTerm;
+        $this->_data = array_map([$this, 'parseValue'], $data);
     }
 
     /**
-     * 检查参数是否合法. Recollection 目前只允许 scalar, 纯数组, Stub 三种数据.
+     * 检查参数是否合法.
+     * Recollection 目前只允许 scalar, 纯数组, Stub 三种数据.
+     * 是否要允许 Stub 数组, 暂时还没想清楚(2020-4-27)
      *
      * @param $value
      * @param bool $allowStub
+     * @return mixed
      */
-    public function checkValue($value, bool $allowStub = true) : void
+    public function parseValue($value, bool $allowStub = true)
     {
         if (is_scalar($value)) {
-            return;
+            return $value;
         }
 
         // 递归地检查数组.
         if (is_array($value)) {
             foreach ($value as $name => $val) {
                 // 数组里不允许再有 Stub
-                $this->checkValue($val, false);
+                $value[$name] = $this->parseValue($val, false);
             }
-            return;
+            return $value;
         }
 
         // 允许作为 Stub 传入.
         if ($value instanceof Stub && $allowStub) {
-            return;
+            return $value;
         }
-
 
         throw new InvalidArgumentException(
             __METHOD__,
@@ -122,13 +122,42 @@ class IRecollection implements Recollection
 
     public function offsetSet($offset, $value)
     {
-        $this->_data[$offset] = $value;
+        $this->_changed = true;
+        $this->_data[$offset] = $this->parseValue($value);
     }
 
     public function offsetUnset($offset)
     {
+        $this->_changed = true;
         unset($this->_data[$offset]);
     }
+
+    public function toData(): array
+    {
+        return $this->_data;
+    }
+
+
+    /**
+     * 合并数据
+     * @param array $data
+     */
+    public function mergeData(array $data): void
+    {
+        foreach ($data as $name => $val) {
+            $this->offsetSet($name, $val);
+        }
+    }
+
+    /**
+     * 重置数据.
+     * @param array|null $data
+     */
+    public function resetData(array $data = null): void
+    {
+        $this->_data = array_map([$this, 'parseValue'], $data);
+    }
+
 
     /*---- babel ----*/
 
@@ -243,7 +272,7 @@ class IRecollection implements Recollection
 
     public function getCachableId(): string
     {
-        return 'rec:cah:' . $this->getId();
+        return $this->getId();
     }
 
     /*---- memorable ----*/
@@ -253,12 +282,11 @@ class IRecollection implements Recollection
         return new RecStub(['id' => $this->getId()]);
     }
 
-
     /*---- savable ----*/
 
     public function getSavableId(): string
     {
-        return 'rec:sav:' . $this->getId();
+        return $this->getId();
     }
 
     public function isSaving(): bool

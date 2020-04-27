@@ -19,6 +19,9 @@ use Commune\Support\Struct\Struct;
 /**
  * 系统不支持的消息.
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property string $type      消息的类型.
+ * @property string $level         消息的级别.
  */
 class IUnsupported extends AbsMessage implements UnsupportedMsg
 {
@@ -47,9 +50,9 @@ class IUnsupported extends AbsMessage implements UnsupportedMsg
         return [];
     }
 
-    public function getTrimmedText(): string
+    public function getNormalizedText(): string
     {
-        return '';
+        return $this->toJson();
     }
 
     public function isEmpty(): bool

@@ -12,10 +12,9 @@
 namespace Commune\Blueprint\Ghost;
 
 use ArrayAccess;
-use Commune\Blueprint\Ghost\Convo\ConvoInstance;
+use Commune\Blueprint\Ghost\Memory\Memorable;
 use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
-use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\DI\Injectable;
 
 /**
@@ -25,8 +24,7 @@ use Commune\Support\DI\Injectable;
  */
 interface Context extends
         ArrayAccess, // 默认用数组方式来获取参数. 也可以用 getter setter
-        ArrayAndJsonAble, // Context 可以得到数组
-        ConvoInstance, //
+        Memorable,
         Injectable // Context 可以用各种方式依赖注入
 {
     const NAMESPACE_SEPARATOR = '.';
@@ -38,7 +36,6 @@ interface Context extends
      * @return string
      */
     public function getName() : string;
-
 
     /**
      * @return string
@@ -52,21 +49,13 @@ interface Context extends
     public function getPriority() : int;
 
 
-    /*----- assignment -----*/
+    /*----- entity -----*/
 
     /**
-     * 合并 Data 到当前数据.
-     * @param array $data
-     * @throws NotInstanceException
+     * 按顺序第一个未被填满的 Entity 名称.
+     * @return null|string
      */
-    public function merge(array $data) : void;
-
-    /**
-     * 重置当前数据
-     * @param array|null $data 为 null 则用默认值
-     * @throws NotInstanceException
-     */
-    public function reset(array $data = null) : void;
+    public function dependEntity() : ? string /* entityName */;
 
     /*----- array -----*/
 
@@ -74,7 +63,7 @@ interface Context extends
      * 获取所有的变量值.
      * @return array
      */
-    public function toAttributes() : array;
+    public function toData() : array;
 
     /**
      * 获取所有 Entity 的值.

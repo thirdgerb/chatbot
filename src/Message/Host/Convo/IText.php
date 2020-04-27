@@ -20,8 +20,8 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $text          文本正文
- * @property-read string $level         消息的级别.
+ * @property string $text          文本正文
+ * @property string $level         消息的级别.
  */
 class IText extends AbsMessage implements VerbalMsg
 {
@@ -60,9 +60,10 @@ class IText extends AbsMessage implements VerbalMsg
         return empty($this->_data['text']);
     }
 
-    public function getTrimmedText(): string
+    public function getNormalizedText(): string
     {
-        return StringUtils::trim($this->text);
+        $trimmed = StringUtils::trim($this->text);
+        return StringUtils::normalizeString($trimmed);
     }
 
     public static function relations(): array
