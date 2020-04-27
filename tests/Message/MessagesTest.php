@@ -21,8 +21,8 @@ class MessagesTest extends MessageTestCase
 {
     protected $messages = [
         // 默认文本消息
-        Message\Host\Convo\Text::class,
-        Message\Host\Convo\Unsupported::class,
+        Message\Host\Convo\IText::class,
+        Message\Host\Convo\IUnsupported::class,
     ];
 
 

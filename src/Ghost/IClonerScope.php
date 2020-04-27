@@ -61,7 +61,7 @@ class IClonerScope implements ClonerScope
         $this->time = time();
     }
 
-    public function makeLongTermId(string $name, array $longTermDimensions): string
+    public function makeScopeId(string $name, array $longTermDimensions): string
     {
         $map = $this->getLongTermDimensionsDict($longTermDimensions);
         return $this->makeId($name, $map);

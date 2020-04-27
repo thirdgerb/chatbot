@@ -20,7 +20,7 @@ use Commune\Support\Struct\Struct;
  * 系统不支持的消息.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class Unsupported extends AbsMessage implements UnsupportedMsg
+class IUnsupported extends AbsMessage implements UnsupportedMsg
 {
 
     public function __construct(string $type = '', string $level = HostMsg::NOTICE)

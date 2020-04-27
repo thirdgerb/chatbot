@@ -41,6 +41,10 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
             $result['relations'] = $relations;
         }
 
+        $result['protocals'] = array_map(function(string $protocal) {
+            return StringUtils::namespaceSlashToDot($protocal);
+        }, $this->getProtocals());
+
         return $result;
     }
 
@@ -77,7 +81,11 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
 
     final public static function getProtocals(): array
     {
-        return static::getInterfacesOf(Protocal::class);
+        return static::getInterfacesOf(
+            Protocal::class,
+            false,
+            true
+        );
     }
 
     final public function getInterfaces(): array

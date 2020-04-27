@@ -23,18 +23,26 @@ interface RuntimeDriver
     /*------ cachable ------*/
 
     /**
-     * 缓存所有可以缓存的对象.
-     * @param Cachable[] $cachable
+     * 缓存已经存在. 决定读取数据时是否尝试从缓存中寻找.
+     *
      * @return bool
      */
-    public function cache(array $cachable) : bool;
+    public function cacheExists() : bool;
 
     /**
-     * 清除掉 Cachable 对象, 只需要 Id 就可以了.
+     * 缓存所有可以缓存的对象.
+     * @param Cachable[] $cachable
+     * @param int $expire   延长的缓存时间.
+     * @return bool
+     */
+    public function cacheCachable(array $cachable, int $expire) : bool;
+
+    /**
+     * 垃圾回收, 清除掉 Cachable 对象, 只需要 Id 就可以了.
      * @param string[] $cachableIds
      * @return bool
      */
-    public function expireCachable(array $cachableIds) : bool;
+    public function gcCachable(array $cachableIds) : bool;
 
     /**
      * @param string $cachableId
@@ -58,10 +66,16 @@ interface RuntimeDriver
     /*------ savable ------*/
 
     /**
+     * @param string $savableId
+     * @return Savable|null
+     */
+    public function fetchSavable(string $savableId) : ? Savable;
+
+    /**
      * 保存长期对象.
      * @param Savable[] $savable
      * @return bool
      */
-    public function save(array $savable) : bool;
+    public function saveSavable(array $savable) : bool;
 
 }

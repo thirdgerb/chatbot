@@ -61,7 +61,7 @@ interface App
      */
     public function getReqContainer() : ReqContainer;
 
-    /*------ registrar ------*/
+    /*------ services ------*/
 
     /**
      * 服务注册中心.
@@ -70,14 +70,17 @@ interface App
     public function getServiceRegistrar() : ServiceRegistrar;
 
     /**
-     * 应用初始化.
+     * 应用初始化. 主要是注册各种服务.
+     * @return static
      */
-    public function bootstrap() : void;
+    public function bootstrap() : App;
 
     /**
-     *
+     * 激活应用, 主要是注册所有的 Components, 然后启动 (boot) 所有进程级容器的服务.
+     * $app->bootstrap()->activate();
+     * @return static
      */
-    public function boot() : void;
+    public function activate() : App;
 
     /*------ logger ------*/
 

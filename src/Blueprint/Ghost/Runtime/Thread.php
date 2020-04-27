@@ -12,8 +12,6 @@
 namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Message\Blueprint\QuestionMsg;
-use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -24,7 +22,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read int $depth Thread 的深度
  *
  */
-interface Thread extends ArrayAndJsonAble
+interface Thread extends Cachable
 {
 
     /**

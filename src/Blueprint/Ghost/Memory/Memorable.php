@@ -9,18 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Convo;
+namespace Commune\Blueprint\Ghost\Memory;
 
-use Commune\Blueprint\Framework\Session\Storage;
 
 /**
+ * 可以被记忆的对象.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ConvoStorage extends Storage
+interface Memorable
 {
-    // 当前进程的存储
-    const CURRENT_PROCESS_ID = 'currentProcessId';
-    // 当前可以要读取的缓存 id
-    const LAST_RECOLLECTION_IDS = 'lastRecollectionIds';
-
+    public function toStub() : Stub;
 }

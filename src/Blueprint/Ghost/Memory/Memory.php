@@ -12,7 +12,6 @@
 namespace Commune\Blueprint\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\ClonerScope;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
@@ -20,8 +19,14 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Memory extends \ArrayAccess, ArrayAndJsonAble
+interface Memory extends \ArrayAccess, ArrayAndJsonAble, Memorable
 {
+
+    /**
+     * 获取当前记忆单元的 Id
+     * @return string
+     */
+    public function getId() : string;
 
     /**
      * @param Cloner $cloner
@@ -36,12 +41,16 @@ interface Memory extends \ArrayAccess, ArrayAndJsonAble
     public static function stub() : array;
 
     /**
-     * 自动生成作用域的 id
-     *
-     * @param ClonerScope $scope
+     * 记忆名称.
      * @return string
      */
-    public static function makeRecollectionId(ClonerScope $scope) : string;
+    public static function getMemoryName() : string;
 
-    public static function getRecollectionName() : string;
+    /**
+     * 在上下文中生成一个唯一的 Id
+     * @param Cloner $cloner
+     * @return string
+     */
+    public static function makeId(Cloner $cloner) : string;
+
 }

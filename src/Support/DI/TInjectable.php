@@ -19,7 +19,11 @@ trait TInjectable
 {
     protected static $_interfaces = [];
 
-    protected static function getInterfacesOf(string $baseType): array
+    protected static function getInterfacesOf(
+        string $baseType,
+        bool $includeBasic = true,
+        bool $includeSelf = true
+    ): array
     {
         $class = static::class;
 
@@ -28,9 +32,13 @@ trait TInjectable
         }
 
         $r = new \ReflectionClass($class);
+        $names = [];
 
         // 根 message 类名
-        $names[] = $baseType;
+        if ($includeBasic) {
+            $names[] = $baseType;
+        }
+
         // 所有 interface 里继承 message 的.
         foreach ( $r->getInterfaces() as $interfaceReflect ) {
             if ($interfaceReflect->isSubclassOf($baseType)) {
@@ -47,7 +55,9 @@ trait TInjectable
         } while ($r = $r->getParentClass());
 
         // 当前类名
-        $names[] = $class;
+        if ($includeSelf) {
+            $names[] = $class;
+        }
 
         return self::$_interfaces[$class][$baseType] = $names;
     }

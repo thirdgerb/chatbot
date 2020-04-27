@@ -11,13 +11,14 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
+use Commune\Support\Babel\BabelSerializable;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * 需要长期保存的数据.
  */
-interface Savable
+interface Savable extends BabelSerializable
 {
     /**
      * 保存的 ID
@@ -26,6 +27,4 @@ interface Savable
     public function getSavableId() : string;
 
     public function isSaving() : bool;
-
-    public function isChanged() : bool;
 }

@@ -21,12 +21,12 @@ use Throwable;
 class SaveDataFailException extends BrokenRequestException
 {
     public function __construct(
-        string $dataType,
+        string $method,
         string $traceId = '',
         Throwable $e = null
     )
     {
-        $message = "save data fail, data type is $dataType"
+        $message = "save data fail, method $method"
             . (empty($traceId) ? '' : ", trace $traceId");
         parent::__construct($message, 0, $e);
     }

@@ -23,7 +23,7 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string $text          文本正文
  * @property-read string $level         消息的级别.
  */
-class Text extends AbsMessage implements VerbalMsg
+class IText extends AbsMessage implements VerbalMsg
 {
 
     /**

@@ -17,14 +17,18 @@ use Commune\Blueprint\Ghost\Runtime\Savable;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
- * 记忆单元.
+ * 记忆单元. 用数组的方式存取信息.
+ * 允许存取的信息只有三种, is_scalar(), 纯 array, Stub 类型对象.
+ *
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Recollection extends
     ArrayAccess, // 数组式的调用
     ArrayAndJsonAble, // 可转化为数组.
     Cachable, // 可以缓存
-    Savable
+    Savable, // 可以长期存储, 重点看 isLongTerm
+    Memorable // Recollection 实例可以放到另一个 Recollection 实例中做参数.
 {
     /**
      * 记忆的 Id
@@ -43,4 +47,11 @@ interface Recollection extends
      * @return bool
      */
     public function isLongTerm() : bool;
+
+    /**
+     * 数据更改过.
+     * @return bool
+     */
+    public function isChanged(): bool;
+
 }

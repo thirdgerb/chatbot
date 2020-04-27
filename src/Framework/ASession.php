@@ -98,7 +98,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         $this->traceId = $container->getId();
         $this->sessionId = $sessionId;
         static::addRunningTrace($this->traceId, $this->traceId);
-        $this->requestBinding();
     }
 
     /*------ id ------*/
@@ -114,8 +113,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     abstract protected function flushInstances() : void;
 
     abstract protected function saveSession() : void;
-
-    abstract protected function requestBinding() : void;
 
 
     public function isDebugging(): bool

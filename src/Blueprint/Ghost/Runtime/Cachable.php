@@ -28,10 +28,16 @@ interface Cachable
     public function isCaching() : bool;
 
     /**
+     * 清楚当前对象的缓存
+     */
+    public function expire() : void;
+
+
+    /**
      * 是否要删掉缓存.
      * @return bool
      */
-    public function isExpired() : bool;
+    public function isExpiring() : bool;
 
     /**
      * 缓存的时候用的 ID

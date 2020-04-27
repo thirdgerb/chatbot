@@ -21,17 +21,9 @@ use Commune\Protocals\Host\Convo\ContextMsg;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read Trace $trace
- * @property-read Route $route
  */
 interface Runtime
 {
-    /*------ trace -------*/
-
-    /**
-     * 记录对话状态变更.
-     * @param Node $node
-     */
-    public function recordRoute(Node $node) : void;
 
     /*------ process -------*/
 
@@ -83,6 +75,12 @@ interface Runtime
         bool $longTerm,
         array $defaults
     ) : Recollection;
+
+    /**
+     * 添加一个.
+     * @param Recollection $recollection
+     */
+    public function addRecollection(Recollection $recollection) : void;
 
 
     /*------ context -------*/

@@ -77,7 +77,7 @@ interface ClonerScope
      * @param string[] $longTermDimensions 维度名称.
      * @return string
      */
-    public function makeLongTermId(string $name, array $longTermDimensions) : string;
+    public function makeScopeId(string $name, array $longTermDimensions) : string;
 
     /**
      * 在当前 scope, 按选择的长程维度, 获得一个维度的 map

@@ -84,9 +84,6 @@ class ICloner extends ASession implements Cloner
         $this->ghostConfig = $ghost->getConfig();
         $this->ghostInput = $input;
 
-        // input
-        $container->share(GhostInput::class, $input);
-
         // id
         $this->clonerId = $input->getCloneId();
         $this->hostName = $input->hostName;
@@ -97,21 +94,6 @@ class ICloner extends ASession implements Cloner
         parent::__construct($container, $input->sessionId);
     }
 
-    protected function requestBinding(): void
-    {
-        // self sharing
-        $this->container->share(ReqContainer::class, $this->container);
-        $this->container->share(Cloner::class, $this);
-        $this->container->share(Session::class, $this);
-
-        /**
-         * @var GhostInput $ghostInput
-         */
-        $ghostInput = $this->singletons[GhostInput::class];
-        $this->container->share(GhostInput::class, $ghostInput);
-        $this->container->share(Comprehension::class, $ghostInput->comprehension);
-
-    }
 
     public function getClonerId(): string
     {
@@ -266,7 +248,10 @@ class ICloner extends ASession implements Cloner
 
     protected function saveSession(): void
     {
+        // runtime 更新.
         $this->runtime->save();
+        // storage 更新.
+        $this->storage->save();
     }
 
 }

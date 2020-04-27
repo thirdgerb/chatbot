@@ -23,7 +23,7 @@ interface BabelResolver
 
     /**
      * 序列化.
-     * @param BabelSerializable $serializable
+     * @param mixed $serializable
      * @return string
      */
     public function serialize($serializable) : string;
@@ -32,7 +32,7 @@ interface BabelResolver
     /**
      * 反序列化.
      * @param string $input
-     * @return null|mixed 如果为 null, 表示无法反序列化.
+     * @return null|mixed 如果为 null, 表示无法反序列化. 可以返回原来的字符串.
      */
     public function unserialize(string $input);
 

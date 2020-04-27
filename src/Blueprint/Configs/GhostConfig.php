@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Blueprint\Configs;
+
 use Commune\Blueprint\Configs\Nest\ProtocalOption;
 use Commune\Support\Option\Option;
 
@@ -22,22 +23,26 @@ use Commune\Support\Option\Option;
  * @property-read string $id                    Ghost 的 Id, 必须纯字母
  * @property-read string $name                  Ghost 的名称. 任意表达
  *
- * ## 系统配置
+ * ## 服务注册
  *
- * @property-read array $providers              需要绑定的服务.
+ * @property-read array $configProviders        需要绑定的配置服务.
+ * @property-read array $procProviders          需要绑定的进程级服务.
  *  [   ServiceProvider::class,
  *      ServiceProvider1::class => [ configs ]]
  *
- * @property-read array $options                默认绑定的 Option 单例
- *  [   OptionClass::class,
- *      OptionClass1::class => [ configs ] ]
+ * @property-read array $reqProviders           需要绑定的请求级服务
  *
+ * ## 组件注册
  * @property-read array $components             默认绑定的组件.
  *  [   ComponentClass::class,
  *      ComponentClass1::class => [configs] ]
  *
+ * ## 配置注册
+ * @property-read array $options                默认绑定的 Option 单例
+ *  [   OptionClass::class,
+ *      OptionClass1::class => [ configs ] ]
  *
- * # Session 配置
+ * ## Session 配置
  *
  * @property-read int $sessionExpire            Session 的过期时间, 秒
  * @property-read int $sessionLockerExpire      Session 锁的过期时间, 为0 则不锁

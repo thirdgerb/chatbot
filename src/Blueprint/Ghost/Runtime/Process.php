@@ -103,7 +103,7 @@ interface Process extends Cachable
      * 是否要销毁.
      * @return bool
      */
-    public function isExpired() : bool;
+    public function isExpiring() : bool;
 
     /*-------- gc 相关 --------*/
 
@@ -135,10 +135,9 @@ interface Process extends Cachable
 
     /**
      * 对比两个 Process 的语境当前, 如果不相同, 则返回当前 Process 的语境.
-     * @param Process $process
      * @return Node|null
      */
-    public function compareContext(Process $process) : ? Node;
+    public function changedNode() : ? Node;
 
     /**
      * 返回若干步.

@@ -14,14 +14,12 @@ namespace Commune\Ghost;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\ReqContainer;
-use Commune\Blueprint\Framework\ServiceRegistrar;
+use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\GhostKernel;
 use Commune\Container\ContainerContract;
-use Commune\Contracts\Log\ConsoleLogger;
-use Commune\Contracts\Log\LogInfo;
 use Commune\Framework\AbsApp;
+use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\GhostInput;
 
 
@@ -39,14 +37,14 @@ class IGhost extends AbsApp implements Ghost
     /**
      * IGhost constructor.
      * @param GhostConfig $config
-     * @param App|null $app
      * @param ContainerContract|null $procC
+     * @param App|null $app
      * @param bool $debug
      */
     public function __construct(
         GhostConfig $config,
-        App $app = null,
         ContainerContract $procC = null,
+        App $app = null,
         bool $debug = false
     )
     {
@@ -68,6 +66,11 @@ class IGhost extends AbsApp implements Ghost
         return $this->config->name;
     }
 
+    public function getId(): string
+    {
+        return $this->config->id;
+    }
+
 
     protected function basicBindings(): void
     {
@@ -85,8 +88,18 @@ class IGhost extends AbsApp implements Ghost
         // MessageId 应该是唯一的.
         $container = $this->newReqContainerInstance($input->messageId);
 
+        $cloner = new ICloner($this, $container, $input);
 
+        $container->share(ReqContainer::class, $container);
+        $container->share(GhostInput::class, $input);
+        $container->share(Comprehension::class, $input->comprehension);
+        $container->share(Cloner::class, $cloner);
+        $container->share(Session::class, $cloner);
 
+        // boot 请求容器.
+        $this->getServiceRegistrar()->bootReqServices($container);
+
+        return $cloner;
     }
 
 

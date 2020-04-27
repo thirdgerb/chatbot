@@ -69,7 +69,7 @@ class JsonResolver implements BabelResolver
     public function encodeToArray(BabelSerializable $serializable): array
     {
         return [
-            'type' => $serializable->getTransferId(),
+            'bbl_type' => $serializable->getTransferId(),
             'data' => $serializable->toTransferArr(),
         ];
     }
@@ -126,18 +126,22 @@ class JsonResolver implements BabelResolver
     public function unserialize(string $input)
     {
         $data = json_decode($input, true);
+        if (!is_array($data)) {
+            $un = unserialize($input);
+            return $un === false ? null : $un;
+        }
 
         if (
-            is_array($data)
-            && count($data) === 2
-            && isset($data['type'])
-            && is_string($data['type'])
+            count($data) === 2
+            && isset($data['bbl_type'])
+            && is_string($data['bbl_type'])
             && isset($data['data'])
             && is_array($data['data'])
         ) {
-            return $this->decodeFromArray($data['type'], $data['data']);
+            return $this->decodeFromArray($data['bbl_type'], $data['data']);
         }
-        return unserialize($input);
+
+        return $data;
     }
 
 
