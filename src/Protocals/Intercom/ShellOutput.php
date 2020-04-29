@@ -16,7 +16,7 @@ namespace Commune\Protocals\Intercom;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @see ShellMsg
- * @see IntercomMessage
+ * @see IntercomMsg
  */
 interface ShellOutput extends ShellMsg
 {

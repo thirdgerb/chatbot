@@ -15,8 +15,6 @@ use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Definition\StageDef;
 use Commune\Blueprint\Ghost\Runtime\Node;
-use Commune\Blueprint\Ghost\Speak\Speaker;
-use Commune\Message\Blueprint\Message;
 use Commune\Protocals\HostMsg;
 
 
@@ -54,22 +52,17 @@ interface Stage
     public function call($caller, array $parameters = []);
 
     /**
+     * 匹配当前消息用的工具
+     * @param HostMsg|null $message
+     * @return Matcher
+     */
+    public function matcher(HostMsg $message = null) : Matcher;
+
+    /**
      * 获取上下文相关的依赖注入对象.
      * Stage::call , Stage::make 方法都会注入这些对象.
      * @return array
      */
-    public function getContextInjections() : array;
+    public function getContextualInjections() : array;
 
-    /**
-     * 开口说话.
-     * @return Speaker
-     */
-    public function speak() : Speaker;
-
-    /**
-     * 匹配当前消息用的工具
-     * @param Message|null $message
-     * @return Matcher
-     */
-    public function matcher(HostMsg $message = null) : Matcher;
 }

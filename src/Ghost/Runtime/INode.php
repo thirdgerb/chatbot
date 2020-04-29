@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Runtime;
+namespace Commune\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Definition\ContextDef;

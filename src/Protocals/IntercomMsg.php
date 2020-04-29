@@ -30,7 +30,7 @@ use Commune\Support\Protocal\Protocal;
  * @property-read float  $createdAt         创建时间, 精确到毫秒
  * @property-read float  $deliverAt         发送时间.
  */
-interface IntercomMessage extends Protocal
+interface IntercomMsg extends Protocal
 {
     public function getBatchId() : string;
 }

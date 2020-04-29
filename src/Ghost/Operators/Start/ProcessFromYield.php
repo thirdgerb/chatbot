@@ -43,7 +43,7 @@ class ProcessFromYield implements Operator
     }
 
     /**
-     * @param Conversation $cloner
+     * @param Cloner $cloner
      * @return Operator|null
      */
     public function invoke(Cloner $cloner): ? Operator

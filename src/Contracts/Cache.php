@@ -15,7 +15,8 @@ use Psr\SimpleCache\CacheInterface;
 
 /**
  * 机器人系统公用的 Cache. 理论上 Shell 与 Ghost 共用的.
- * 所有的 key 都会加入 ChatbotName 相关的前缀. 以保证机器人之间不冲突.
+ * 所有的 key 都应该加入 Hostname 相关的前缀.
+ * 以保证机器人共用资源之间不冲突.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
@@ -23,6 +24,8 @@ interface Cache
 {
 
     public function getPSR16Cache() : CacheInterface;
+
+    /*------- key val --------*/
 
     /**
      * @param string $key
@@ -44,37 +47,7 @@ interface Cache
      */
     public function get(string $key) : ? string;
 
-    /**
-     * 为一个 key 设定过期的时间.
-     *
-     * @param string $key
-     * @param int $ttl
-     * @return bool
-     */
-    public function expire(string $key, int $ttl) : bool;
-//
-//    /**
-//     * @param string $key
-//     * @param string $memberKey
-//     * @param string $value
-//     * @param int|null $ttl
-//     * @return bool
-//     */
-//    public function hSet(string $key, string $memberKey, string $value, int $ttl =null ) : bool;
-//
-//
-//    /**
-//     * @param string $key
-//     * @param string $memberKey
-//     * @return null|string
-//     */
-//    public function hGet(string $key, string $memberKey) : ? string;
-//
-//    /**
-//     * @param string $key
-//     * @return array
-//     */
-//    public function hGetAll(string $key) : array;
+    /*------- multi --------*/
 
     /**
      * @param array $keys
@@ -90,11 +63,32 @@ interface Cache
      */
     public function setMultiple(array $values, int $ttl = null) : bool;
 
+    /*------- expire --------*/
+
+    /**
+     * 为一个 key 设定过期的时间.
+     *
+     * @param string $key
+     * @param int $ttl
+     * @return bool
+     */
+    public function expire(string $key, int $ttl) : bool;
+
+    /**
+     * 解开分布式锁
+     * @param string $key
+     * @return bool
+     */
+    public function forget(string $key) : bool;
+
+
     /**
      * @param array $keys
      * @return bool
      */
     public function delMultiple(array $keys) : bool;
+
+    /*------- locker --------*/
 
     /**
      * 分布式的锁
@@ -111,11 +105,46 @@ interface Cache
      */
     public function unlock(string $key) : bool;
 
+
+    /*------- hash map. 不支持的话改用 multi 就可以 --------*/
+
+
     /**
-     * 解开分布式锁
      * @param string $key
+     * @param string $memberKey
+     * @param string $value
+     * @param int|null $ttl
      * @return bool
      */
-    public function forget(string $key) : bool;
+    public function hSet(string $key, string $memberKey, string $value, int $ttl =null ) : bool;
+
+    /**
+     * @param string $key
+     * @param array $values
+     * @param int|null $ttl
+     * @return bool
+     */
+    public function hMSet(string $key, array $values, int $ttl = null) : bool;
+
+
+    /**
+     * @param string $key
+     * @param array $memberKeys
+     * @return array
+     */
+    public function hMGet(string $key, array $memberKeys) : array;
+
+    /**
+     * @param string $key
+     * @param string $memberKey
+     * @return null|string
+     */
+    public function hGet(string $key, string $memberKey) : ? string;
+
+    /**
+     * @param string $key
+     * @return array
+     */
+    public function hGetAll(string $key) : array;
 
 }

@@ -11,27 +11,23 @@
 
 namespace Commune\Message\Host\Convo;
 
+use Commune\Protocals\Host\Convo\ImageMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\Host\Convo\ContextMsg;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property string $contextName       语境名称
- * @property string $contextId         语境Id
- * @property array $data               语境的数据.
- * @property string $level             语境的数据.
+ * @property-read string $resource
+ * @property-read string $level
  */
-class IContextMsg extends AbsMessage implements ContextMsg
+class IImageMsg extends AbsMessage implements ImageMsg
 {
     public static function stub(): array
     {
         return [
-            'contextName' => '',
-            'contextId' => '',
-            'data' => [],
+            'resource' => '',
             'level' => HostMsg::INFO
         ];
     }
@@ -43,12 +39,12 @@ class IContextMsg extends AbsMessage implements ContextMsg
 
     public function getNormalizedText(): string
     {
-        return $this->toJson();
+        return '';
     }
 
     public function isEmpty(): bool
     {
-        return false;
+        return empty($this->_data['resource']);
     }
 
 

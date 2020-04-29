@@ -9,9 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost;
-
-use Commune\Support\Arr\ArrayAndJsonAble;
+namespace Commune\Blueprint\Ghost\Cloner;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -26,6 +24,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @property-read string $shellName     输入消息产生的 Shell 名
  * @property-read string $shellId       输入消息对应的 Shell Id
+ * @property-read string $sceneId
  *
  *
  * @property-read string $year
@@ -45,6 +44,7 @@ interface ClonerScope
     const GUEST_ID = 'guestId';
     const SHELL_NAME = 'shellName';
     const SHELL_ID = 'shellId';
+    const SCENE_ID = 'sceneId';
 
     // 时间相关的长程维度
     const YEAR = 'year';

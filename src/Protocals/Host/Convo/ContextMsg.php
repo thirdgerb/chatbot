@@ -11,7 +11,7 @@
 
 namespace Commune\Protocals\Host\Convo;
 
-use Commune\Protocals\Host\ConvoMsg;
+use Commune\Protocals\Host\Convo\ConvoMsg;
 
 
 /**

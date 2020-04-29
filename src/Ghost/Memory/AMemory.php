@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\ClonerScope;
+use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Memory\Stub;

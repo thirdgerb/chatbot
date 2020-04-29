@@ -9,19 +9,18 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Providers;
+namespace Commune\Ghost;
 
 use Commune\Blueprint\Ghost\Auth\Authority;
-use Commune\Blueprint\Ghost\ClonerScope;
-use Commune\Blueprint\Ghost\Convo\ConvoLogger;
-use Commune\Blueprint\Ghost\Convo\ConvoScene;
+use Commune\Blueprint\Ghost\Cloner\ClonerScope;
+use Commune\Blueprint\Ghost\Cloner\ClonerLogger;
+use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Container\ContainerContract as Container;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Framework\Contracts\ServiceProvider;
 use Commune\Ghost\Auth\IAuthority;
-use Commune\Ghost\Convo\IConvoLogger;
-use Commune\Ghost\Convo\IConvoScene;
-use Commune\Ghost\IClonerScope;
+use Commune\Ghost\Cloner\IClonerLogger;
+use Commune\Ghost\Cloner\IClonerScene;
 use Psr\Log\LoggerInterface;
 
 
@@ -65,7 +64,7 @@ class GhostServiceProvider extends ServiceProvider
      */
     protected function registerConvoScene(Container $app) : void
     {
-        $app->singleton(ConvoScene::class, IConvoScene::class);
+        $app->singleton(ClonerScene::class, IClonerScene::class);
     }
 
     protected function registerConvoScope(Container $app) : void
@@ -79,7 +78,7 @@ class GhostServiceProvider extends ServiceProvider
      */
     protected function registerConvoLogger(Container $app) : void
     {
-        $app->singleton(ConvoLogger::class, function(Container $app) {
+        $app->singleton(ClonerLogger::class, function(Container $app) {
             /**
              * @var ClonerScope $scope
              * @var ExceptionReporter $reporter
@@ -89,7 +88,7 @@ class GhostServiceProvider extends ServiceProvider
             $logger = $app->make(LoggerInterface::class);
             $reporter = $app->make(ExceptionReporter::class);
 
-            return new IConvoLogger($logger, $reporter, $scope->toArray());
+            return new IClonerLogger($logger, $reporter, $scope->toArray());
         });
     }
 

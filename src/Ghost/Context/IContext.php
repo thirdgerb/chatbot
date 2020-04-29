@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost;
+namespace Commune\Ghost\Context;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
@@ -17,9 +17,8 @@ use Commune\Blueprint\Ghost\Definition\ContextDef;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Memory\Stub;
 use Commune\Blueprint\Ghost\Runtime\Node;
-use Commune\Ghost\Context\ContextStub;
 use Commune\Ghost\Memory\TMemorable;
-use Commune\Ghost\Prototype\Runtime\INode;
+use Commune\Ghost\Runtime\INode;
 use Commune\Support\DI\TInjectable;
 
 

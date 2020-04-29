@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Definition;
 
-use Commune\Blueprint\Ghost\ClonerScope;
+use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Memory\Recollection;

@@ -13,16 +13,14 @@ namespace Commune\Ghost\Runtime;
 
 use Commune\Blueprint\Exceptions\IO\SaveDataFailException;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Convo\ConvoStorage;
+use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Runtime\Thread;
-use Commune\Contracts\Cache;
 use Commune\Contracts\Ghost\RuntimeDriver;
-use Commune\Ghost\Prototype\Runtime\INode;
-use Commune\Ghost\Prototype\Runtime\IProcess;
-use Commune\Message\Host\Convo\IContextMsg;
+use Commune\Ghost\Memory\IRecollection;
+use Commune\Message\Convo\IContextMsg;
 use Commune\Protocals\Host\Convo\ContextMsg;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
@@ -90,6 +88,7 @@ class IRuntime implements Runtime, Spied
         static::addRunningTrace($this->traceId, $this->traceId);
     }
 
+
     /*---- processes ----*/
 
     public function getCurrentProcess(): Process
@@ -101,7 +100,7 @@ class IRuntime implements Runtime, Spied
 
         // 无状态下都是新生成.
         if (!$this->cloner->isStateless()) {
-            $pId = $cloner->storage[ConvoStorage::CURRENT_PROCESS_ID] ?? '';
+            $pId = $cloner->storage[ClonerStorage::CURRENT_PROCESS_ID] ?? '';
             $process = $this->findProcess($pId);
             if (isset($process)) {
                 // 生成一个新的 Snapshot
@@ -153,21 +152,35 @@ class IRuntime implements Runtime, Spied
         array $defaults
     ): Recollection
     {
-        // TODO: Implement createRecollection() method.
+        $recollection = new IRecollection(
+            $id,
+            $name,
+            $longTerm,
+            $defaults
+        );
+        $this->recollections[$recollection->getId()] = $recollection;
+        return $recollection;
     }
 
-    public function toContextMsg(): ? ContextMsg
+    public function addRecollection(Recollection $recollection): void
+    {
+        $this->recollections[$recollection->getId()] = $recollection;
+    }
+
+    public function toContextMsg(): ? IContextMsg
     {
         $process = $this->getCurrentProcess();
         $node = $process->changedNode();
-        $context = $this->findContext($node->contextId);
-        return isset($node)
-            ? new IContextMsg([
-                'contextName' => $node->contextName,
-                'contextId' => $node->contextId,
-                'data' => $context->toArray()
-              ])
-            : null;
+
+        if (!isset($node)) {
+           return null;
+        }
+        $context = $node->findContext($this->cloner);
+        return new IContextMsg([
+            'contextName' => $node->contextName,
+            'contextId' => $node->contextId,
+            'data' => $context->toArray()
+        ]);
     }
 
 
@@ -225,7 +238,7 @@ class IRuntime implements Runtime, Spied
         }
 
         $storage = $this->cloner->storage;
-        $storage[ConvoStorage::CURRENT_PROCESS_ID] = $this->currentProcessId;
+        $storage[ClonerStorage::CURRENT_PROCESS_ID] = $this->currentProcessId;
 
         $cachable = [];
         $recollectionIds = [];
@@ -261,7 +274,7 @@ class IRuntime implements Runtime, Spied
 
         // 缓存上一轮对话改变过的数据. 假设改变过的数据更有可能会改变.
         $storage = $this->cloner->storage;
-        $storage[ConvoStorage::LAST_RECOLLECTION_IDS] = $recollectionIds;
+        $storage[ClonerStorage::LAST_RECOLLECTION_IDS] = $recollectionIds;
 
         // 异常.
         $e = null;

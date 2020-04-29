@@ -12,7 +12,7 @@
 namespace Commune\Protocals\Intercom;
 
 use Commune\Protocals\Comprehension;
-use Commune\Protocals\IntercomMessage;
+use Commune\Protocals\IntercomMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -22,10 +22,10 @@ use Commune\Protocals\IntercomMessage;
  * @property-read array $env                    允许传递的环境变量.
  *
  * # 更多
- * @see IntercomMessage
+ * @see IntercomMsg
  * @see ShellMsg
  */
-interface ShellInput extends IntercomMessage
+interface ShellInput extends IntercomMsg
 {
 
     /**

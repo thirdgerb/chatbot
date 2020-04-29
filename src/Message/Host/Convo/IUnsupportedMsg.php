@@ -12,29 +12,38 @@
 namespace Commune\Message\Host\Convo;
 
 use Commune\Protocals\HostMsg;
+use Commune\Support\Struct\Struct;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\Host\Convo\ContextMsg;
-
+use Commune\Protocals\Host\Convo\UnsupportedMsg;
 
 /**
+ * 系统不支持的消息.
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property string $contextName       语境名称
- * @property string $contextId         语境Id
- * @property array $data               语境的数据.
- * @property string $level             语境的数据.
+ * @property string $type      消息的类型.
+ * @property string $level         消息的级别.
  */
-class IContextMsg extends AbsMessage implements ContextMsg
+class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
 {
+
+    public function __construct(string $type = '', string $level = HostMsg::NOTICE)
+    {
+        parent::__construct(['type' => $type, 'level' => $level]);
+    }
+
     public static function stub(): array
     {
         return [
-            'contextName' => '',
-            'contextId' => '',
-            'data' => [],
-            'level' => HostMsg::INFO
+            'type' => '',
+            'level' => HostMsg::NOTICE
         ];
     }
+
+    public static function create(array $data = []): Struct
+    {
+        return new static($data['type'] ?? '', $data['level'] ?? HostMsg::NOTICE);
+    }
+
 
     public static function relations(): array
     {

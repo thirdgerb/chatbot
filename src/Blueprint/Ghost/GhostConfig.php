@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Configs;
+namespace Commune\Blueprint\Ghost;
 
 use Commune\Blueprint\Configs\Nest\ProtocalOption;
 use Commune\Support\Option\Option;

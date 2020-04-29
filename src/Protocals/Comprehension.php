@@ -11,7 +11,6 @@
 
 namespace Commune\Protocals;
 
-use Commune\Protocals\Abstracted;
 use Commune\Support\Protocal\Protocal;
 
 /**

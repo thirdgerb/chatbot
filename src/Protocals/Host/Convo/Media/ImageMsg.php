@@ -9,14 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Convo;
+namespace Commune\Protocals\Host\Convo\Media;
 
-use Commune\Blueprint\Ghost\Convo\ConvoLogger;
-use Commune\Framework\Log\ContextLogger;
+use Commune\Protocals\Host\Convo\MediaMsg;
 
 /**
+ * 图片类消息
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IConvoLogger extends ContextLogger implements ConvoLogger
+interface ImageMsg extends MediaMsg
 {
 }

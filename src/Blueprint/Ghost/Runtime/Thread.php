@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Protocals\Host\Convo\QuestionMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -19,7 +20,7 @@ use Commune\Blueprint\Ghost\Cloner;
  *
  * @property-read string $id  Thread 的唯一ID, 由 Root 决定
  * @property-read int $priority 当前 Thread 的优先级
- * @property-read int $depth Thread 的深度
+ * @property-read Node[] $nodes
  *
  */
 interface Thread extends Cachable

@@ -9,23 +9,18 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Convo;
+namespace Commune\Blueprint\Ghost\Cloner;
+
+use Commune\Blueprint\Framework\Session\Storage;
 
 /**
- * 需要在对话中二次实例化的对象.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ConvoInstance
+interface ClonerStorage extends Storage
 {
+    // 当前进程的存储
+    const CURRENT_PROCESS_ID = 'currentProcessId';
+    // 当前可以要读取的缓存 id
+    const LAST_RECOLLECTION_IDS = 'lastRecollectionIds';
 
-    /**
-     * 以已经执行了实例化
-     * @return bool
-     */
-    public function isInstanced() : bool;
-
-    /**
-     * @return ConvoStub
-     */
-    public function toConvoStub() : ConvoStub;
 }

@@ -11,11 +11,11 @@
 
 namespace Commune\Message\Host\Convo;
 
-use Commune\Protocals\Host\Convo\VerbalMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Struct\Struct;
 use Commune\Support\Utils\StringUtils;
+use Commune\Protocals\Host\Convo\VerbalMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

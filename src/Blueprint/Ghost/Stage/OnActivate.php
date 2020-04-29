@@ -15,7 +15,7 @@ use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Routing\Fallback;
 use Commune\Blueprint\Ghost\Routing\Redirect;
 use Commune\Blueprint\Ghost\Routing\Staging;
-use Commune\Message\Blueprint\QuestionMsg;
+use Commune\Protocals\Host\Convo\QuestionMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -32,7 +32,9 @@ interface OnActivate extends Stage
      * @param QuestionMsg|null $question
      * @return Operator
      */
-    public function await(QuestionMsg $question = null) : Operator;
+    public function await(
+        QuestionMsg $question = null
+    ) : Operator;
 
     public function staging() : Staging;
 

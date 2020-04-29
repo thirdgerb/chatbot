@@ -9,16 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Host\Convo;
+namespace Commune\Ghost\Cloner;
 
-use Commune\Protocals\Host\ConvoMsg;
-
+use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
+use Commune\Framework\Session\AStorage;
 
 /**
- * 空消息. 在不同场景下可能有不同的意义.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface EmptyMsg extends ConvoMsg
+class IClonerStorage extends AStorage implements ClonerStorage
 {
+    public function getSessionKey(string $sessionName, string $sessionId): string
+    {
+        return "ghost:$sessionName:id:$sessionId:storage";
+    }
+
+
 }

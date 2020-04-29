@@ -9,18 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Convo;
+namespace Commune\Protocals\Host\Convo\Media;
 
-use Commune\Blueprint\Framework\Session\Storage;
+use Commune\Protocals\Host\Convo\MediaMsg;
 
 /**
+ * 音频类消息
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ConvoStorage extends Storage
+interface AudioMsg extends MediaMsg
 {
-    // 当前进程的存储
-    const CURRENT_PROCESS_ID = 'currentProcessId';
-    // 当前可以要读取的缓存 id
-    const LAST_RECOLLECTION_IDS = 'lastRecollectionIds';
-
 }

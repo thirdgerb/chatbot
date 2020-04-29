@@ -9,13 +9,18 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Host\Convo;
+namespace Commune\Blueprint\Ghost\Cloner;
 
 
 /**
- * 图片类消息
+ * 当前请求的场景信息.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $sceneId
+ * @property-read string $contextName
+ * @property-read array $env
  */
-interface ImageMsg extends MediaMsg
+interface ClonerScene
 {
 }

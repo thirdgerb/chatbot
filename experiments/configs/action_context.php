@@ -3,7 +3,7 @@
 use Commune\Blueprint\Ghost\Stage\OnHeed;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Convo ;
+use Commune\Blueprint\Ghost\Cloner ;
 use Commune\Blueprint\Ghost\Stage\Matcher;
 
 // 表单型任务的配置样例

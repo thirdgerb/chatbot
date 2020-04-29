@@ -11,39 +11,26 @@
 
 namespace Commune\Message\Host\Convo;
 
-use Commune\Protocals\Host\Convo\UnsupportedMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Support\Struct\Struct;
+use Commune\Protocals\Host\Convo\Media\AudioMsg;
+
 
 /**
- * 系统不支持的消息.
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property string $type      消息的类型.
- * @property string $level         消息的级别.
+ * @property-read string $resource
+ * @property-read string $level
  */
-class IUnsupported extends AbsMessage implements UnsupportedMsg
+class IAudioMsg extends AbsMessage implements AudioMsg
 {
-
-    public function __construct(string $type = '', string $level = HostMsg::NOTICE)
-    {
-        parent::__construct(['type' => $type, 'level' => $level]);
-    }
-
     public static function stub(): array
     {
         return [
-            'type' => '',
-            'level' => HostMsg::NOTICE
+            'resource' => '',
+            'level' => HostMsg::INFO
         ];
     }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['type'] ?? '', $data['level'] ?? HostMsg::NOTICE);
-    }
-
 
     public static function relations(): array
     {
@@ -52,12 +39,12 @@ class IUnsupported extends AbsMessage implements UnsupportedMsg
 
     public function getNormalizedText(): string
     {
-        return $this->toJson();
+        return '';
     }
 
     public function isEmpty(): bool
     {
-        return false;
+        return empty($this->_data['resource']);
     }
 
 

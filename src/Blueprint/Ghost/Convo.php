@@ -27,9 +27,9 @@ interface Convo
      * 用链式方式指定输出的消息
      *
      * @param array $slots  公共的 Slots
-     * @return Convo\OutputBuilder
+     * @return Cloner\OutputBuilder
      */
-    public function react(array $slots = []) : Ghost\Convo\OutputBuilder;
+    public function react(array $slots = []) : Ghost\Cloner\OutputBuilder;
 
     /**
      * 发送任何类型的同步回复消息.

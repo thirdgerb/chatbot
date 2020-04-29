@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost;
 
-use Commune\Blueprint\Ghost\ClonerScope;
+use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
@@ -51,6 +51,11 @@ class IClonerScope implements ClonerScope
      */
     protected $time;
 
+    /**
+     * @var string
+     */
+    protected $sceneId;
+
     public function __construct(GhostInput $input)
     {
         $this->clonerId = $input->getCloneId();
@@ -58,6 +63,7 @@ class IClonerScope implements ClonerScope
         $this->guestId = $input->getGuestId();
         $this->shellName = $input->shellName;
         $this->shellId = $input->shellId;
+        $this->sceneId = $input->sceneId;
         $this->time = time();
     }
 
@@ -103,6 +109,7 @@ class IClonerScope implements ClonerScope
             case ClonerScope::GUEST_ID :
             case ClonerScope::SHELL_NAME :
             case ClonerScope::SHELL_ID :
+            case ClonerScope::SCENE_ID :
                 return $this->{$name};
             case ClonerScope::YEAR :
                 return date('Y', $this->time);

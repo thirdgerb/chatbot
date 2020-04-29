@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Prototype\Runtime;
+namespace Commune\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Blueprint\Ghost\Runtime\Process;

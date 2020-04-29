@@ -11,7 +11,7 @@
 
 namespace Commune\Protocals\Intercom;
 
-use Commune\Protocals\IntercomMessage;
+use Commune\Protocals\IntercomMsg;
 
 /**
  * Ghost 收到的输入消息.
@@ -19,7 +19,7 @@ use Commune\Protocals\IntercomMessage;
  *
  *
  * # 默认属性
- * @see IntercomMessage
+ * @see IntercomMsg
  *
  * # 机器人名称
  *
@@ -40,7 +40,7 @@ use Commune\Protocals\IntercomMessage;
  * @property-read string $shellId               创建输入消息所属的 ShellId
  *
  */
-interface GhostMsg extends IntercomMessage
+interface GhostMsg extends IntercomMsg
 {
 
     public function getGuestId() : string;

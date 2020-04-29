@@ -54,10 +54,10 @@ class HearStage implements Operator
      * 尝试理解输入消息.
      *
      * @param StageDef $stageDef
-     * @param Conversation $cloner
+     * @param Cloner $cloner
      * @return Operator|null
      */
-    public function comprehendPipes(StageDef $stageDef, Conversation $cloner) : ? Operator
+    public function comprehendPipes(StageDef $stageDef, Cloner $cloner) : ? Operator
     {
         // 检查当前 Stage 是否有自定义的管道.
         $pipes = $stageDef->comprehendPipes($cloner);
@@ -85,13 +85,13 @@ class HearStage implements Operator
 
     /**
      * 检查 Stage 的路由.
-     * @param Conversation $cloner
+     * @param Cloner $cloner
      * @param StageDef $stageDef
      * @param Node $node
      * @return Operator|null
      */
     public function stagesRouting(
-        Conversation $cloner,
+        Cloner $cloner,
         StageDef $stageDef,
         Node $node
     ) : ? Operator
@@ -132,7 +132,7 @@ class HearStage implements Operator
     }
 
     public function contextRouting(
-        Conversation $cloner,
+        Cloner $cloner,
         StageDef $stageDef,
         Node $node
     ) : ? Operator
@@ -176,7 +176,7 @@ class HearStage implements Operator
     }
 
 
-    protected function wildcardIntentMatch(string $intent, Conversation $cloner) : ? string
+    protected function wildcardIntentMatch(string $intent, Cloner $cloner) : ? string
     {
         $intention = $cloner->ghostInput->comprehension->intention;
         // 如果是模糊搜索
@@ -194,7 +194,7 @@ class HearStage implements Operator
         return $matched;
     }
 
-    protected function exactIntentMatch(string $intent, Conversation $cloner) : ? string
+    protected function exactIntentMatch(string $intent, Cloner $cloner) : ? string
     {
         $intentReg = $cloner->mind->intentReg();
         if (! $intentReg->hasDef($intent)) {

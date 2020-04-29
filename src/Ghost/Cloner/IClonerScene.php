@@ -9,11 +9,11 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Convo;
+namespace Commune\Ghost\Cloner;
 
-use Commune\Blueprint\Configs\GhostConfig;
+use Commune\Blueprint\Ghost\GhostConfig;
 use Commune\Blueprint\Exceptions\Logic\InvalidConfigException;
-use Commune\Blueprint\Ghost\Convo\ConvoScene;
+use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Protocals\Intercom\GhostInput;
 
 /**
@@ -23,7 +23,7 @@ use Commune\Protocals\Intercom\GhostInput;
  * @property-read string $contextName
  * @property-read array $env
  */
-class IConvoScene implements ConvoScene
+class IClonerScene implements ClonerScene
 {
 
     protected $sceneId;

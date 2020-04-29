@@ -9,18 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Convo;
+namespace Commune\Blueprint\Ghost\Cloner;
 
+use Psr\Log\LoggerInterface;
 
 /**
- * 当前请求的场景信息.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read string $sceneId
- * @property-read string $contextName
- * @property-read array $env
  */
-interface ConvoScene
+interface ClonerLogger extends LoggerInterface
 {
 }

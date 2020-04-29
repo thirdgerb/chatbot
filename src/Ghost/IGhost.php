@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost;
 
-use Commune\Blueprint\Configs\GhostConfig;
+use Commune\Blueprint\Ghost\GhostConfig;
 use Commune\Blueprint\Exceptions\HostBootingException;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\ReqContainer;

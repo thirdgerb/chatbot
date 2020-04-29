@@ -15,7 +15,8 @@ use Commune\Protocals\HostMsg;
 
 
 /**
- * 指令类型的消息. 通常用于各个模块之间采取一些响应.
+ * 指令类型的消息. 通常用于各个模块之间采取一些特殊的响应.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface DirectiveMsg extends HostMsg

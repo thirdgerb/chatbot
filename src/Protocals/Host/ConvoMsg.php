@@ -22,4 +22,5 @@ use Commune\Protocals\HostMsg;
  */
 interface ConvoMsg extends HostMsg
 {
+    public function isEmpty() : bool;
 }

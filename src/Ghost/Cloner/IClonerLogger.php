@@ -9,13 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Convo;
+namespace Commune\Ghost\Cloner;
 
-use Psr\Log\LoggerInterface;
+use Commune\Blueprint\Ghost\Cloner\ClonerLogger;
+use Commune\Framework\Log\ContextLogger;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ConvoLogger extends LoggerInterface
+class IClonerLogger extends ContextLogger implements ClonerLogger
 {
 }

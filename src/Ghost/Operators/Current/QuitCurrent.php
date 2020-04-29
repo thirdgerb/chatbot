@@ -68,7 +68,7 @@ class QuitCurrent implements Operator
         return new QuitSession();
     }
 
-    protected function retraceThread(Process $process, Thread $retrace, Conversation $cloner) : ? Operator
+    protected function retraceThread(Process $process, Thread $retrace, Cloner $cloner) : ? Operator
     {
         $popped = $process->replaceAliveThread($retrace)->currentNode();
         $current = $process->aliveThread()->currentNode();

@@ -11,7 +11,7 @@
 
 namespace Commune\Protocals\Intercom;
 
-use Commune\Protocals\IntercomMessage;
+use Commune\Protocals\IntercomMsg;
 
 
 /**
@@ -25,11 +25,11 @@ use Commune\Protocals\IntercomMessage;
  * @property-read string $guestName             对接 Host 的对方名称.
  *
  * # 更多
- * @see IntercomMessage
+ * @see IntercomMsg
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellMsg extends IntercomMessage
+interface ShellMsg extends IntercomMsg
 {
 
 }

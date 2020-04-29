@@ -92,12 +92,6 @@ interface Runtime
      */
     public function toContextMsg() : ? ContextMsg;
 
-    /**
-     * 缓存一个 Context 对象.
-     * @param Context $context
-     */
-    public function cacheContext(Context $context) : void;
-
     /*------ yielding -------*/
 
     /**

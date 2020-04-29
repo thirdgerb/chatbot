@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Convo;
+namespace Commune\Blueprint\Ghost\Cloner;
 
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\GhostMsg;

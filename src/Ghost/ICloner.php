@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost;
 
-use Commune\Blueprint\Configs\GhostConfig;
+use Commune\Blueprint\Ghost\GhostConfig;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Framework\Session\Storage;

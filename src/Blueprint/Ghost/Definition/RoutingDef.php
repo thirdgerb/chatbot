@@ -36,5 +36,5 @@ interface RoutingDef
 
     /*--------- 操作 ---------*/
 
-    public function validate(Conversation $session) : bool;
+    public function validate(Cloner $session) : bool;
 }

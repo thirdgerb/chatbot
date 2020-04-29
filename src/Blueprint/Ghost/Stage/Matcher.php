@@ -247,7 +247,7 @@ interface Matcher
     public function isAnyIntent() : ? string;
 
     /**
-     * 仅仅从 Conversation::getNlu() 对象中判断意图是否存在
+     * 仅仅从 Cloner::getNlu() 对象中判断意图是否存在
      * 不需要定义 IntentMessage 对象.
      *
      * @param string $intentName
