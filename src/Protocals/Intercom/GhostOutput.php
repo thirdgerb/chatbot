@@ -12,9 +12,8 @@
 namespace Commune\Protocals\Intercom;
 
 /**
+ * Ghost 的输出消息.
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @see GhostMsg
  */
 interface GhostOutput extends GhostMsg
 {

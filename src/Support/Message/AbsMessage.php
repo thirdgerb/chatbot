@@ -11,6 +11,7 @@
 
 namespace Commune\Support\Message;
 
+use Commune\Support\Babel\Babel;
 use Commune\Support\Babel\BabelSerializable;
 use Commune\Support\DI\Injectable;
 use Commune\Support\DI\TInjectable;
@@ -27,25 +28,36 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
 
     private static $docComments = [];
 
+
+
     public function toTransferArr(): array
     {
-        $data = $this->toArray();
+        $data = $this->_data;
+        $result = [];
+
+        $relationNames = static::getRelationNames();
         $relations = [];
-        foreach (static::getRelationNames() as $name) {
-            $relations[$name] = $data[$name] ?? [];
+        foreach ($relationNames as $name) {
+            $relationVal = $data[$name] ?? null;
+            if (empty($relationVal)) {
+                continue;
+            }
+
+
+            if (static::isListRelation($name)) {
+                $relations[$name] = array_map(function($each) {
+                    return Babel::getResolver()->encodeToArray($each);
+                }, $relationVal);
+            } else {
+                $relations[$name] = Babel::getResolver()->encodeToArray($relationVal);
+            }
             unset($data[$name]);
         }
 
-        $result = ['attrs' => $data];
-        if (!empty($relations)) {
-            $result['relations'] = $relations;
-        }
-
-        $result['protocals'] = array_map(function(string $protocal) {
-            return StringUtils::namespaceSlashToDot($protocal);
-        }, $this->getProtocals());
-
-        return $result;
+        return [
+            'attrs' => $data,
+            'relations' => $relations,
+        ];
     }
 
     /**
@@ -56,6 +68,19 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
     {
         $info = $data['attrs'] ?? [];
         $relations = $data['relations'] ?? [];
+
+        foreach ($relations as $name => $value) {
+
+            $info[$name] = static::isListRelation($name)
+                ? array_map(
+                    function($element){
+                        return Babel::getResolver()->decodeFromArray($element);
+                    },
+                    $value
+                )
+                : Babel::getResolver()->decodeFromArray($value);
+        }
+
         return static::create($info + $relations);
     }
 

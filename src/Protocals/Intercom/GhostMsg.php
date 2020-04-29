@@ -11,42 +11,49 @@
 
 namespace Commune\Protocals\Intercom;
 
+use Commune\Protocals\HostMsg;
 use Commune\Protocals\IntercomMsg;
 
 /**
- * Ghost 收到的输入消息.
+ * Ghost 输入和输出时的消息.
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- * # 默认属性
- * @see IntercomMsg
- *
- * # 机器人名称
- *
- * @property-read string $hostName              机器人的名称.
- *
- *
- * ## 上下文维度
- * @property-read string $cloneId               Ghost 分身的 Id. 为空则是 shellId
- * @property-read string $sessionId             消息所属的 SessionId
- *
- * ## 用户在 Clone 内的信息
- * @property-read string $guestId               消息投递的目标用户Id. 为空则与 senderId 一致
- * @property-read string $guestName             消息投递的目标用户名. 为空则与 senderName 一致.
- *
- * ## Shell 相关信息
- * @property-read string $senderId              创建输入消息的 SenderId
- * @property-read string $shellName             创建输入消息所属的 Shell
- * @property-read string $shellId               创建输入消息所属的 ShellId
- *
  */
 interface GhostMsg extends IntercomMsg
 {
+    /*---- ghost info ----*/
 
+    /**
+     * Ghost 分身的 Id. 默认是 ShellId
+     * @return string
+     */
+    public function getCloneId() : string;
+
+    public function getSessionId() : string;
+
+    /*---- guest info ----*/
+
+    /**
+     * 用户的 身份Id, 默认是 SenderId
+     * @return string
+     */
     public function getGuestId() : string;
 
-    public function getGuestName() : string;
+    /*---- shell info ----*/
 
-    public function getCloneId() : string;
+    public function getShellId() : string;
+
+    public function getShellName() : string;
+
+    public function getSenderId() : string;
+
+    public function getSenderName() : string;
+
+    /*---- status ----*/
+
+    /**
+     * 是否属于需要广播的消息.
+     * @return bool
+     */
+    public function isBroadcasting() : bool;
 
 }

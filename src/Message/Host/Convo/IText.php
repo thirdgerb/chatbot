@@ -55,6 +55,12 @@ class IText extends AbsMessage implements VerbalMsg
         ];
     }
 
+    public function getLevel(): string
+    {
+        return $this->level;
+    }
+
+
     public function isEmpty(): bool
     {
         return empty($this->_data['text']);

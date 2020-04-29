@@ -11,7 +11,7 @@
 
 namespace Commune\Protocals;
 
-use Commune\Support\Protocal\Protocal;
+use Commune\Support\Message\Message;
 
 /**
  * 对输入消息的抽象理解.
@@ -43,7 +43,7 @@ use Commune\Support\Protocal\Protocal;
  * @property-read bool[]        $typeHandled    各种类型的处理结果
  * @property-read string[]      $typeHandledBy  各种类型被处理的对象.
  */
-interface Comprehension extends Protocal
+interface Comprehension extends Message
 {
     /**
      * 标记已经使用某种类型的理解工具进行操作.

@@ -15,21 +15,17 @@ use Commune\Protocals\IntercomMsg;
 
 
 /**
- * # 输入消息的维度
- *
- * @property-read string $hostName              机器人的名称.
- * @property-read string $shellName             消息产生的 shell 名称
- * @property-read string $shellId               消息对应的分身Id. 决定通道
- * @property-read string|null $sessionId        消息所属的 SessionId
- * @property-read string $guestId               对接 Host 的对方 ID
- * @property-read string $guestName             对接 Host 的对方名称.
- *
- * # 更多
- * @see IntercomMsg
+ * Shell 上传输和处理的消息.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface ShellMsg extends IntercomMsg
 {
+
+    public function getShellName() : string;
+
+    public function getShellId() : string;
+
+    public function getSessionId() : ? string;
 
 }

@@ -12,14 +12,12 @@
 namespace Commune\Protocals;
 
 use Commune\Support\Message\Message;
-use Commune\Support\Protocal\Protocal;
-
 
 /**
  * 对输入消息的高度抽象.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Abstracted extends Message, Protocal
+interface Abstracted extends Message
 {
 }

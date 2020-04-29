@@ -21,27 +21,25 @@ use Commune\Protocals\Host\Convo\UnsupportedMsg;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property string $type      消息的类型.
- * @property string $level         消息的级别.
  */
 class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
 {
 
-    public function __construct(string $type = '', string $level = HostMsg::NOTICE)
+    public function __construct(string $type = '')
     {
-        parent::__construct(['type' => $type, 'level' => $level]);
+        parent::__construct(['type' => $type]);
     }
 
     public static function stub(): array
     {
         return [
             'type' => '',
-            'level' => HostMsg::NOTICE
         ];
     }
 
     public static function create(array $data = []): Struct
     {
-        return new static($data['type'] ?? '', $data['level'] ?? HostMsg::NOTICE);
+        return new static($data['type'] ?? '');
     }
 
 
@@ -52,12 +50,17 @@ class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
 
     public function getNormalizedText(): string
     {
-        return $this->toJson();
+        return '';
     }
 
     public function isEmpty(): bool
     {
         return false;
+    }
+
+    public function getLevel(): string
+    {
+        return HostMsg::NOTICE;
     }
 
 

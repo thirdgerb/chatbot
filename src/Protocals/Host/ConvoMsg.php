@@ -18,9 +18,7 @@ use Commune\Protocals\HostMsg;
  * 对 Ghost 可能引起多轮对话状态的变动, 对 Client 则产生对话内容的展示等.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
  */
 interface ConvoMsg extends HostMsg
 {
-    public function isEmpty() : bool;
 }

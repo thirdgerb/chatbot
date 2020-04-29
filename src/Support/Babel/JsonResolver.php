@@ -74,8 +74,15 @@ class JsonResolver implements BabelResolver
         ];
     }
 
-    public function decodeFromArray(string $type, array $data): ? BabelSerializable
+    public function decodeFromArray(array $arr): ? BabelSerializable
     {
+        $type = $arr['bbl_type'] ?? null;
+        $data = $arr['data'] ?? null;
+
+        if (empty($type) || !is_array($data)) {
+            return null;
+        }
+
         if ($this->hasRegistered($type)) {
             $unSerializer = $this->transformers[$type][1];
             return call_user_func($unSerializer, $data);
@@ -87,7 +94,7 @@ class JsonResolver implements BabelResolver
         if (is_a($serializableId, BabelSerializable::class, TRUE)
         ) {
             $this->registerSerializableClass($serializableId);
-            return static::decodeFromArray($type, $data);
+            return static::decodeFromArray($arr);
         }
 
         return null;
@@ -138,7 +145,7 @@ class JsonResolver implements BabelResolver
             && isset($data['data'])
             && is_array($data['data'])
         ) {
-            return $this->decodeFromArray($data['bbl_type'], $data['data']);
+            return $this->decodeFromArray($data);
         }
 
         return $data;

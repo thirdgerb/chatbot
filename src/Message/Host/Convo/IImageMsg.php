@@ -11,16 +11,15 @@
 
 namespace Commune\Message\Host\Convo;
 
-use Commune\Protocals\Host\Convo\ImageMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
+use Commune\Protocals\Host\Convo\Media\ImageMsg;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $resource
- * @property-read string $level
  */
 class IImageMsg extends AbsMessage implements ImageMsg
 {
@@ -28,7 +27,6 @@ class IImageMsg extends AbsMessage implements ImageMsg
     {
         return [
             'resource' => '',
-            'level' => HostMsg::INFO
         ];
     }
 
@@ -45,6 +43,11 @@ class IImageMsg extends AbsMessage implements ImageMsg
     public function isEmpty(): bool
     {
         return empty($this->_data['resource']);
+    }
+
+    public function getLevel(): string
+    {
+        return HostMsg::INFO;
     }
 
 

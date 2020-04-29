@@ -15,7 +15,8 @@ use Commune\Protocals\HostMsg;
 
 
 /**
- * 指令类型的消息. 通常用于各个模块之间采取一些特殊的响应.
+ * 指令类型的消息. 通常用于 Shell 与 Ghost 之间执行交互命令.
+ * 是否广播完全看单个命令的设置.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */

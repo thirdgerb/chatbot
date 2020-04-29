@@ -9,19 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Host\Convo;
+namespace Commune\Protocals\Host;
 
-use Commune\Protocals\Host\ConvoMsg;
-
+use Commune\Protocals\HostMsg;
 
 /**
- * 事件类型的协议. 对于会话而言, 有可能有影响, 有可能没有影响.
+ * 事件类型的协议.
+ * 通常是客户端和 Ghost 通讯, 而不广播.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- * @property-read string $eventName
  */
-interface EventMsg extends ConvoMsg
+interface EventMsg extends HostMsg
 {
+    public function getEventName() : string;
 }

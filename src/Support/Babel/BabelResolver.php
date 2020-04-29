@@ -36,5 +36,9 @@ interface BabelResolver
      */
     public function unserialize(string $input);
 
+    public function encodeToArray(BabelSerializable $serializable): array;
+
+    public function decodeFromArray(array $data): ? BabelSerializable;
+
 
 }

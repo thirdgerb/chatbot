@@ -15,9 +15,7 @@ use Commune\Protocals\HostMsg;
 
 /**
  * Api 调用的消息. 通常是无状态的请求.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
  */
 interface ApiMsg extends HostMsg
 {

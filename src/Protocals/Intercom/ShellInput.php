@@ -28,13 +28,26 @@ use Commune\Protocals\IntercomMsg;
 interface ShellInput extends IntercomMsg
 {
 
+    /*----- 额外的信息 -----*/
+
+    public function getSceneId() : string;
+
+    public function getEnv() : array;
+
+    public function getComprehension() : Comprehension;
+
+    /*----- 转换类方法 -----*/
+
     /**
-     * @param string|null $cloneId          为空则使用 ShellId
-     * @param string|null $sessionId        为空则使用 Shell 的 SessionId
+     *
+     * @param string|null $cloneId
+     * @param string|null $sessionId
+     * @param string|null $guestId
      * @return GhostInput
      */
     public function toGhostInput(
         string $cloneId = null,
-        string $sessionId = null
+        string $sessionId = null,
+        string $guestId = null
     ) : GhostInput;
 }

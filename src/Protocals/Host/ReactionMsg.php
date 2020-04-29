@@ -16,16 +16,13 @@ use Commune\Protocals\HostMsg;
 
 /**
  * Ghost 对外发表的响应意图.
- * 通常会被解析成多个其它类型的 Message
+ * 通常会被解析成多个其它类型的 HostMsg
  *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- *
- * @property-read string $reactionId        响应的 ID, 不同的 ID 可能会调用不同的解析.
- *
- * @property-read array $slots
  */
 interface ReactionMsg extends HostMsg
 {
+    public function getReactionId() : string;
+
+    public function getParams() : array;
 }
