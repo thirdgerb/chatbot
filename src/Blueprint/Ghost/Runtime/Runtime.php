@@ -11,9 +11,9 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Protocals\Host\Convo\ContextMsg;
+use Commune\Blueprint\Ghost\Snapshot\Process;
 
 /**
  * 多轮对话的运行状态

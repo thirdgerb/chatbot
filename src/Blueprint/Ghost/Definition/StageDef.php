@@ -12,6 +12,11 @@
 namespace Commune\Blueprint\Ghost\Definition;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Routes\Activate;
+use Commune\Blueprint\Ghost\Routes\Intend;
+use Commune\Blueprint\Ghost\Routes\React;
+use Commune\Blueprint\Ghost\Routes\Retrace;
+use Commune\Blueprint\Ghost\Routes\Route;
 use Commune\Blueprint\Ghost\Stage;
 use Commune\Blueprint\Ghost\Operator\Operator;
 
@@ -38,12 +43,6 @@ interface StageDef
     public function getFullname() : string;
 
     /**
-     * 作为意图的名称. 有可能对应的意图和全名不一致
-     * @return string
-     */
-    public function getIntentName() : string;
-
-    /**
      * 所属 Context 的名称.
      * @return string
      */
@@ -51,14 +50,24 @@ interface StageDef
 
     /*------- relations -------*/
 
+    /**
+     * @param Cloner $cloner
+     * @return ContextDef
+     */
     public function findContextDef(Cloner $cloner) : ContextDef;
 
-    public function findIntentDef(Cloner $cloner) : ? IntentDef;
+    /**
+     * @return IntentDef
+     */
+    public function asIntentDef() : IntentDef;
 
+    /*------- routes -------*/
 
-    /*------- stage 路由 -------*/
 
     /**
+     * Context 语境下公共的 contextRoutes
+     * 理论上每一个 Stage 都默认继承, 也可以选择不继承.
+     *
      * 在 wait 状态下, 可以跳转直达的 Context 名称.
      * 允许用 * 作为通配符.
      *
@@ -68,6 +77,9 @@ interface StageDef
     public function contextRoutes(Cloner $cloner) : array;
 
     /**
+     * Context 语境下公共的 stageRoutes
+     * 理论上每一个 Stage 都默认继承, 也可以选择不继承.
+     *
      * 在 wait 状态下, 可以跳转直达的 Context 内部 Stage 的名称.
      * 允许用 * 作为通配符.
      *
@@ -86,101 +98,42 @@ interface StageDef
     /*------- intend to stage -------*/
 
     /**
-     * 作为意图被命中时, 还未进入当前 Stage
-     *
-     * @param Stage\OnIntend $stage
-     * @return Operator
+     * @param Cloner $cloner
+     * @param Intend $route
+     * @return Operator|null
      */
     public function onIntend(
-        Stage\OnIntend $stage
-    ) : Operator;
+        Cloner $cloner,
+        Intend $route
+    ) : ? Operator;
 
     /**
-     * 正式进入 Stage 后
-     *
-     * @param Stage\OnActivate $stage
+     * @param Cloner $cloner
+     * @param Activate $route
      * @return Operator
      */
     public function onActivate(
-        Stage\OnActivate $stage
+        Cloner $cloner,
+        Activate $route
     ) : Operator;
 
-
     /**
-     * 当前 Thread 从 sleep 或者 gc 状态被唤醒时.
-     *
-     * @param Stage\OnActivate $stage
+     * @param Cloner $cloner
+     * @param React $route
      * @return Operator
      */
-    public function onWake(
-        Stage\OnActivate $stage
-    ) : Operator ;
-
-    /**
-     * 当前 Thread 从 blocking 状态抢占成功时.
-     *
-     * @param Stage\OnActivate $stage
-     * @return Operator
-     */
-    public function onRetain(
-        Stage\OnActivate $stage
+    public function onReact(
+        Cloner $cloner,
+        React $route
     ) : Operator;
 
-
-    /*------- heed -------*/
-
     /**
-     * 没有命中任何分支, 由当前 Stage 自行响应.
-     *
-     * @param Stage\OnHeed $stage
+     * @param Cloner $cloner
+     * @param Retrace $retrace
      * @return Operator
      */
-    public function onHeed(
-        Stage\OnHeed $stage
+    public function onRetrace(
+        Cloner $cloner,
+        Retrace $retrace
     ) : Operator;
-
-
-    /*------- retrace -------*/
-
-    /**
-     * 依赖语境被拒绝时. 通常是因为权限不足.
-     *
-     * @param Stage\OnRetrace $stage
-     * @return null|Operator
-     */
-    public function onReject(
-        Stage\OnRetrace $stage
-    ) : ? Operator;
-
-    /**
-     * 当前 Thread 被用户要求 cancel 时
-     *
-     * @param Stage\OnRetrace $stage
-     * @return null|Operator
-     */
-    public function onCancel(
-        Stage\OnRetrace $stage
-    ) : ? Operator;
-
-    /**
-     * 依赖语境完成, 回调时.
-     *
-     * @param Stage\OnRetrace $stage
-     * @return null|Operator
-     */
-    public function onFulfill(
-        Stage\OnRetrace $stage
-    ) : ? Operator;
-
-
-    /**
-     * Process 结束时, 会检查所有的 Thread 的态度.
-     *
-     * @param Stage\OnRetrace $stage
-     * @return null|Operator
-     */
-    public function onQuit(
-        Stage\OnRetrace $stage
-    ) : ? Operator ;
-
 }

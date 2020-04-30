@@ -21,7 +21,7 @@ use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Contracts\Cache;
 use Commune\Framework\ASession;
-use Commune\Ghost\Operators\DialogManager;
+use Commune\Ghost\OperatorsBack\DialogManager;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Support\Option\OptRegistry;
@@ -119,9 +119,9 @@ class ICloner extends ASession implements Cloner
         return $this->newContext($contextName);
     }
 
-    public function newContext(string $contextName, array $entities = null): Context
+    public function newContext(string $contextName, array $queries = null): Context
     {
-        $entities = $entities ?? $this
+        $queries = $queries ?? $this
                 ->ghostInput
                 ->comprehension
                 ->intention
@@ -135,10 +135,10 @@ class ICloner extends ASession implements Cloner
 
         // 获得 Recollection 的默认值.
         $values = $contextDef->getDefaultValues();
-        $entities = empty($entities)
+        $queries = empty($queries)
             ? []
-            : $contextDef->parseIntentEntities($entities);
-        $values = $entities + $values;
+            : $contextDef->parseIntentEntities($queries);
+        $values = $queries + $values;
 
         // 创建新的记忆体.
         $recollection = $this->runtime->createRecollection(

@@ -116,7 +116,10 @@ interface Process extends Cachable
      */
     public function addGcThread(Thread $thread, int $gcTurn) : void;
 
-
+    /**
+     * 清除掉过期的 gc thread
+     */
+    public function gcThreads() : void;
 
     /*-------- snapshot 快照历史 --------*/
 
@@ -164,7 +167,7 @@ interface Process extends Cachable
     /**
      * @return Thread
      */
-    public function popBlocking() : Thread;
+    public function popBlocking() : ? Thread;
 
 
 }

@@ -49,6 +49,7 @@ use Commune\Blueprint\Ghost\Operator\Operator;
  * @property-read GhostInput $ghostInput            输入
  * @property-read Cloner\ClonerScene $scene         场景信息
  * @property-read Cloner\ClonerScope $scope         当前分身的维度.
+ * @property-read Ghost\Routing\Matcher
  *
  * # 功能组件
  * @property-read Cache $cache                      公共缓存
@@ -71,6 +72,7 @@ interface Cloner extends Session
      */
     public function getClonerId() : string;
 
+
     /*----- 运行对话管理逻辑 -----*/
 
     /**
@@ -87,19 +89,10 @@ interface Cloner extends Session
      * 在当前的上下文中创建一个 Context
      *
      * @param string $contextName
-     * @param array|null $entities
+     * @param array|null $queries
      * @return Context
      */
-    public function newContext(string $contextName, array $entities = null) : Context;
+    public function getContext(string $contextName, array $queries = null) : Context;
 
-
-    /**
-     * 在当前上下文中找到一个 Context, 或者创建一个新的Context
-     *
-     * @param string $contextId
-     * @param string $contextName
-     * @return Context
-     */
-    public function findContext(string $contextId, string $contextName) : Context;
 
 }

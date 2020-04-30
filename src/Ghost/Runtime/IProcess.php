@@ -28,6 +28,7 @@ use Commune\Support\Uuid\IdGeneratorHelper;
  * @property-read string $prevId            上一个 Process 进程的 ID
  * @property-read string[] $sleeping        sleeping Thread 的 id
  * @property-read string[] $blocking        blocking Thread 的 id
+ * @property-read string[] $gc              gc 中的 thread 的 id
  * @property-read string[] $backtrace
  * @property-read Node $root                root Node
  */
@@ -70,7 +71,7 @@ class IProcess implements Process, HasIdGenerator
     /**
      * @var int[]       [threadId => gcTurn]
      */
-    protected $gcThreads = [];
+    protected $gcStack = [];
 
     /**
      * @var string[]    [threadId => 0]
@@ -82,6 +83,8 @@ class IProcess implements Process, HasIdGenerator
      */
     protected $blockingStack = [];
 
+    /*-------- prev ---------*/
+
     /**
      * @var Process|null
      */
@@ -90,17 +93,20 @@ class IProcess implements Process, HasIdGenerator
     /**
      * @var string|null
      */
-    protected $prevId;
-
-    /**
-     * @var bool
-     */
-    protected $shouldSave = false;
+    protected $prevProcessId;
 
     /**
      * @var string[]    processIds
      */
     protected $backtraceIds = [];
+
+
+    /*-------- expire ---------*/
+
+    /**
+     * @var bool
+     */
+    protected $shouldSave = false;
 
     public function __construct(
         string $belongsTo,
@@ -120,29 +126,55 @@ class IProcess implements Process, HasIdGenerator
         $this->threads[$rootThreadId] = $rootThread;
 
         $this->aliveThreadId = $rootThreadId;
+
+        $this->shouldSave = true;
     }
 
+    /*-------- home --------*/
 
-
-
-    /**
-     * Clone 之后再调用这个方法.
-     * @param Process $prev
-     * @param string|null $processId
-     * @return Process
-     */
-    public function fromPrev(Process $prev, string $processId = null) : Process
+    public function home(Node $node = null): void
     {
-        $this->processId = $processId ?? $this->createUuId();
-        $this->prev = $prev;
-        $this->prevId = $prev->id;
-        array_unshift($this->backtraceIds, $prev->prevId);
-        return $this;
+        if (isset($node)) {
+            $this->rootNode = $node;
+        }
+
+        // 清空 sleeping 和 gc, 但保留 blocking
+        foreach ($this->sleepingStack as $id => $val) {
+            unset($this->threads[$id]);
+        }
+        $this->sleepingStack = [];
+
+        foreach ($this->gcStack as $id => $val) {
+            unset($this->threads[$id]);
+        }
+        $this->gcStack = [];
+
+        // 从 root 节点生成一个新的 Thread.
+        $thread = $this->rootNode->toThread();
+        $id = $thread->id;
+        $this->threads[$id] = $thread;
+        $this->aliveThreadId = $id;
     }
 
-    /*-------- properties --------*/
 
+    /*-------- snapshot --------*/
 
+    public function nextSnapshot(string $processId = null): Process
+    {
+        $processId = $processId ?? $this->createUuId();
+
+        /**
+         * @var IProcess $process
+         */
+        $process = clone $this;
+        $process->processId = $processId;
+        $process->prev = $this;
+        $process->prevProcessId = $this->id;
+        $process->shouldSave = true;
+        array_unshift($process->backtraceIds, $this->prevProcessId);
+        return $process;
+
+    }
 
     /*-------- sleeping --------*/
 
@@ -186,6 +218,31 @@ class IProcess implements Process, HasIdGenerator
         return null;
     }
 
+    /*-------- blocking --------*/
+
+    public function blockThread(Thread $thread): void
+    {
+        $id = $thread->id;
+        $this->threads[$id] = $thread;
+        $this->blockingStack[$id] = $thread->priority;
+        rsort($this->blockingStack);
+    }
+
+    public function hasBlocking(): bool
+    {
+        return !empty($this->blockingStack);
+    }
+
+    public function popBlocking(): ? Thread
+    {
+        $threadId = array_shift($this->blockingStack);
+        if (empty($threadId)) {
+            return null;
+        }
+        $thread = $this->threads[$threadId];
+        unset($this->threads[$threadId]);
+        return $thread;
+    }
 
 
     /*-------- alive --------*/
@@ -198,6 +255,33 @@ class IProcess implements Process, HasIdGenerator
     public function aliveStageFullname(): string
     {
         return $this->aliveThread()->currentNode()->getStageFullname();
+    }
+
+    public function replaceAliveThread(Thread $thread): Thread
+    {
+        $aliveThread = $this->aliveThread();
+        unset($this->threads[$this->aliveThreadId]);
+        $newId = $thread->id;
+        $this->threads[$newId] = $thread;
+        $this->aliveThreadId = $newId;
+        return $aliveThread;
+    }
+
+    public function challengeAliveThread(): ? Thread
+    {
+        $challenger = $this->popBlocking();
+        if (empty($challenger)) {
+            return null;
+        }
+        $aliveThread = $this->aliveThread();
+
+        if ($challenger->priority > $aliveThread->priority) {
+            $loser = $this->replaceAliveThread($challenger);
+            return $loser;
+        } else {
+            $this->blockThread($challenger);
+            return null;
+        }
     }
 
 
@@ -213,6 +297,32 @@ class IProcess implements Process, HasIdGenerator
         return $this->threads[$threadId] ?? null;
     }
 
+
+    /*-------- gc thread --------*/
+
+    public function addGcThread(Thread $thread, int $gcTurn): void
+    {
+        $id = $thread->id;
+        $this->threads[$id] = $thread;
+        $this->gcStack[$id] = $gcTurn;
+        unset($this->blockingStack[$id]);
+        unset($this->sleepingStack[$id]);
+    }
+
+    public function gcThreads(): void
+    {
+        $gcStack = [];
+        foreach ($this->gcStack as $id => $turns) {
+            $turns--;
+            if ($turns > 0) {
+                $gcStack[$id] = $turns;
+            } else {
+                unset($this->threads[$id]);
+            }
+        }
+
+        $this->gcStack = $gcStack;
+    }
 
 
     /*-------- getter --------*/
@@ -230,10 +340,34 @@ class IProcess implements Process, HasIdGenerator
                 return array_keys($this->sleepingStack);
             case 'blocking':
                 return array_keys($this->blockingStack);
+            case 'gc' :
+                return array_keys($this->gcStack);
+            case 'prevId':
+                return $this->prevProcessId;
+            case 'backtrace':
+                return $this->backtraceIds;
             default:
                 return null;
         }
     }
+
+    /*-------- cachable --------*/
+
+    public function isCaching(): bool
+    {
+        // TODO: Implement isCaching() method.
+    }
+
+    public function expire(): void
+    {
+        // TODO: Implement expire() method.
+    }
+
+    public function getCachableId(): string
+    {
+        return $this->processId;
+    }
+
 
     /*-------- clone --------*/
 
@@ -260,7 +394,8 @@ class IProcess implements Process, HasIdGenerator
             'gcThreads',
             'sleepingStack',
             'blockingStack',
-            'prevId',
+            'gcStack',
+            'prevProcessId',
             'backtraceIds',
         ];
     }
@@ -273,7 +408,7 @@ class IProcess implements Process, HasIdGenerator
     public function __destruct()
     {
         $this->threads = [];
-        $this->gcThreads = [];
+        $this->gcStack = [];
         $this->sleepingStack = [];
         $this->blockingStack = [];
         $this->rootNode = null;

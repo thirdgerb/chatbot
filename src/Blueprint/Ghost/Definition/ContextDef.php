@@ -11,11 +11,10 @@
 
 namespace Commune\Blueprint\Ghost\Definition;
 
-use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Memory\Recollection;
-
+use Commune\Blueprint\Ghost\Snapshot\Frame;
+use Illuminate\Support\Collection;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -23,7 +22,7 @@ use Commune\Blueprint\Ghost\Memory\Recollection;
 interface ContextDef extends Def
 {
 
-    /*------- properties -------*/
+    /*------- definition -------*/
 
     /**
      * 优先级, 用于抢占当前 Thread
@@ -31,16 +30,58 @@ interface ContextDef extends Def
      */
     public function getPriority() : int;
 
-    /*------- intend -------*/
-
     /**
-     * 公共类意图可以被全局访问到.
-     * 否则无法用意图的方式命中.
+     * 公共语境, 可以作为意图被全局访问到.
+     * Query 中不足的元素将用多轮对话向用户询问.
+     *
      * @return bool
      */
     public function isPublic() : bool;
 
-    /*------- entities -------*/
+
+    /**
+     * 定义上下文记忆的作用域.
+     * 会把作用域中的元素自动加入到 Query 中间.
+     *
+     * @see ConvoScope
+     * @return array
+     */
+    public function getScopes() : array ;
+
+
+    /*------- parameters -------*/
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasParameter(string $name) : bool;
+
+    /**
+     * @param string $name
+     * @return ContextParameter
+     */
+    public function getParameter(string $name) : ContextParameter;
+
+    /**
+     * @return ContextParameter[]
+     */
+    public function getParameters() : array;
+
+    /**
+     * @return Collection of ContextParameter[]
+     */
+    public function getQueryParams() : Collection;
+
+    /**
+     * @return Collection of ContextParameter[]
+     */
+    public function getLongTermParams() : Collection;
+
+    /**
+     * @return Collection of ContextParameter[]
+     */
+    public function getShortTermParams() : Collection;
 
     /**
      * 过滤 Entity 的值
@@ -50,10 +91,10 @@ interface ContextDef extends Def
     public function parseIntentEntities(array $entities) : array;
 
     /**
-     * 所有需要填满的属性, 不填满时通常会触发多轮对话来要求输入.
+     * 所有需要填满的属性, 不填满时, 要么拒绝对话, 要么启动一个多轮对话去检查.
      * @return string[]
      */
-    public function getEntityNames() : array;
+    public function getQueryNames() : array;
 
     /**
      * Context 的默认值.
@@ -61,41 +102,25 @@ interface ContextDef extends Def
      */
     public function getDefaultValues() : array;
 
-
-    /*------- scope -------*/
-
-    /**
-     * Context 上下文是否是长程的.
-     * 如果是短程的, 一旦不被持有, 就会立刻销毁.
-     *
-     * 长程的分两种, 一种是 ::getScopes() 为空, 这是 Session 级的记忆, 会随着 Session 销毁掉.
-     * 另一种则是 ::getScopes() 不为空, 则不会销毁, 而是长期保存着. 除非主动消除.
-     *
-     * @return bool
-     */
-    public function isLongTerm() : bool;
-
-    /**
-     * 获取上下文记忆的作用域.
-     * 可以从已有中间选一个或者多个
-     *
-     * @see ConvoScope
-     * @return array
-     */
-    public function getScopes() : array ;
-
     /**
      * 根据当前作用域生成一个全局唯一的 ID.
-     * 也可以不和 Scope 相关.
      *
      * @param Cloner $cloner
+     * @param array $queries
      * @return string
      */
-    public function makeId(Cloner $cloner) : string;
+    public function makeId(Cloner $cloner, array $queries) : string;
 
     /*------- methods -------*/
 
-    public function wrapContext(Recollection $recollection, Cloner $cloner) : Context;
+    /**
+     * 将 Context 封装成对象.
+     *
+     * @param Cloner $cloner
+     * @param Frame $frame
+     * @return Context
+     */
+    public function wrapContext(Cloner $cloner, Frame $frame) : Context;
 
     /*------- routing -------*/
 

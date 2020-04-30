@@ -28,7 +28,7 @@ use Commune\Blueprint\Ghost\Cloner;
  * @property-read string $contextName       当前节点所属的语境名称
  * @property-read int $priority             当前语境的优先级
  * @property-read string $stageName         当前节点所属的 stage 名称
- * @property-read string[] $stack           接下来要经过的 stage
+ * @property-read string[] $next        接下来要经过的 stage
  */
 class INode implements Node
 {
@@ -57,7 +57,7 @@ class INode implements Node
     /**
      * @var string[]
      */
-    protected $stack = [];
+    protected $next = [];
 
     /**
      * INode constructor.
@@ -87,7 +87,7 @@ class INode implements Node
 
     public function next(): bool
     {
-        $newStage = array_shift($this->stack);
+        $newStage = array_shift($this->next);
         if (empty($newStage)) {
             return false;
         }
@@ -97,19 +97,19 @@ class INode implements Node
 
     public function pushStack(array $stageNames): void
     {
-        $this->stack = array_merge($stageNames, $this->stack);
+        $this->next = array_merge($stageNames, $this->next);
     }
 
     public function flushStack(): void
     {
-        $this->stack = [];
+        $this->next = [];
     }
 
 
     public function reset(): void
     {
         $this->stageName = '';
-        $this->stack = [];
+        $this->next = [];
     }
 
     public function toThread(): Thread

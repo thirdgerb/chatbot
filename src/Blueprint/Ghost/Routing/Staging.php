@@ -23,15 +23,11 @@ interface Staging
 {
     /**
      * 从开头重新走 Context 的流程.
+     *
+     * @param bool $reset
      * @return Operator
      */
-    public function restartContext() : Operator;
-
-    /**
-     * 重置当前 Context, 所有数据也归零
-     * @return Operator
-     */
-    public function resetContext() : Operator;
+    public function restart(bool $reset = false) : Operator;
 
     /**
      * 沿着一个或者多个 Stage 的路径前进.

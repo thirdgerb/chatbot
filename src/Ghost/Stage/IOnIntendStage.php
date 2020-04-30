@@ -14,14 +14,14 @@ namespace Commune\Ghost\Stage;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Definition\StageDef;
-use Commune\Blueprint\Ghost\Routing\Backward;
-use Commune\Blueprint\Ghost\Routing\Fallback;
-use Commune\Blueprint\Ghost\Routing\Redirect;
+use Commune\Blueprint\Ghost\Routing\Hearing;
+use Commune\Blueprint\Ghost\Routing\Fallbacking;
+use Commune\Blueprint\Ghost\Routing\Redirecting;
 use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Blueprint\Ghost\Stage\OnIntend;
-use Commune\Ghost\Routing\IBackward;
-use Commune\Ghost\Routing\IFallback;
-use Commune\Ghost\Routing\IRedirect;
+use Commune\Ghost\Routing\IHearing;
+use Commune\Ghost\Routing\IFallbacking;
+use Commune\Ghost\Routing\IRedirecting;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -61,19 +61,19 @@ class IOnIntendStage extends AStage implements OnIntend
         return parent::call($caller, $parameters);
     }
 
-    public function redirect(): Redirect
+    public function redirect(): Redirecting
     {
-        return new IRedirect($this);
+        return new IRedirecting($this);
     }
 
-    public function fallback(): Fallback
+    public function fallback(): Fallbacking
     {
-        return new IFallback($this);
+        return new IFallbacking($this);
     }
 
-    public function backward(): Backward
+    public function backward(): Hearing
     {
-        return new IBackward();
+        return new IHearing();
     }
 
 

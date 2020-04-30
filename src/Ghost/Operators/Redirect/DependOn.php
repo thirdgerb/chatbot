@@ -11,10 +11,11 @@
 
 namespace Commune\Ghost\Operators\Redirect;
 
-use Commune\Blueprint\Ghost\Context\Context;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Operator\Operator;
-use Commune\Ghost\Operators\Events\ToActivateStage;
+use Commune\Blueprint\Ghost\Snapshot\Frame;
+use Commune\Ghost\Stage\IOnActivateStage;
 
 
 /**
@@ -22,30 +23,28 @@ use Commune\Ghost\Operators\Events\ToActivateStage;
  */
 class DependOn implements Operator
 {
-    /**
-     * @var Context
-     */
-    protected $on;
 
     /**
-     * DependOn constructor.
-     * @param Context $on
+     * @var Frame
      */
-    public function __construct(Context $on)
-    {
-        $this->on = $on;
-    }
+    protected $from;
+
+    /**
+     * @var Frame
+     */
+    protected $to;
 
     public function invoke(Cloner $cloner): ? Operator
     {
         $process = $cloner->runtime->getCurrentProcess();
-
-        $node = $this->on->toNewNode();
-        $process->aliveThread()->pushNode($node);
-
-        $stageDef = $node->findStageDef($cloner);
-
-        return new ToActivateStage($stageDef, $node);
+        $process->addDepend($this->from, $this->to);
+        $stage = $this->to->findStageDef($cloner);
+        return $stage->onStart(new IOnActivateStage(
+            $cloner,
+            $stage,
+            $this->to,
+            $this->from
+        ));
     }
 
 

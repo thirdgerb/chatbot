@@ -23,7 +23,7 @@ use Commune\Protocals\Host\Convo\QuestionMsg;
  * @property-read Node[] $nodes
  *
  */
-interface Thread extends Cachable
+interface Thread
 {
 
     /**

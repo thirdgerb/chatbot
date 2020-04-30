@@ -15,6 +15,7 @@ use ArrayAccess;
 use Commune\Blueprint\Ghost\Memory\Memorable;
 use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
+use Commune\Blueprint\Ghost\Snapshot\Frame;
 use Commune\Support\DI\Injectable;
 
 /**
@@ -52,10 +53,10 @@ interface Context extends
     /*----- entity -----*/
 
     /**
-     * 按顺序第一个未被填满的 Entity 名称.
+     * 按顺序第一个未被填满的 Query 名称.
      * @return null|string
      */
-    public function dependEntity() : ? string /* entityName */;
+    public function dependQuery() : ? string /* entityName */;
 
     /*----- array -----*/
 
@@ -66,10 +67,9 @@ interface Context extends
     public function toData() : array;
 
     /**
-     * 获取所有 Entity 的值.
      * @return array
      */
-    public function toEntities() : array;
+    public function toQuery() : array;
 
     /**
      * 递归地获取所有属性的值.
@@ -84,4 +84,9 @@ interface Context extends
      * @return Node
      */
     public function toNewNode() : Node;
+
+    /**
+     * @return Frame
+     */
+    public function toFrame() : Frame;
 }

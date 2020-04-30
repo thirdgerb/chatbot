@@ -12,8 +12,6 @@
 namespace Commune\Blueprint\Ghost\Definition;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Message\Blueprint\IntentMsg;
-
 
 /**
  * 关于意图的定义.
@@ -43,5 +41,10 @@ interface IntentDef extends Def
 {
     public function validate(Cloner $cloner) : bool;
 
-    public function parseData(array $entities) : IntentMsg;
+
+    public function getEntityNames() : array;
+
+    public function asCommand() : string;
+
+    public function asSpell() : string;
 }

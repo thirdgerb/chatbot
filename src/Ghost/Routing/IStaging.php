@@ -14,10 +14,10 @@ namespace Commune\Ghost\Routing;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Routing\Staging;
 use Commune\Blueprint\Ghost\Stage\Stage;
-use Commune\Ghost\Operators\Events\ToActivateStage;
-use Commune\Ghost\Operators\Staging\NextStages;
-use Commune\Ghost\Operators\Staging\ResetContext;
-use Commune\Ghost\Operators\Staging\RestartContext;
+use Commune\Ghost\OperatorsBack\Events\ToActivateStage;
+use Commune\Ghost\OperatorsBack\Staging\NextStages;
+use Commune\Ghost\OperatorsBack\Staging\ResetContext;
+use Commune\Ghost\OperatorsBack\Staging\RestartContext;
 
 
 /**

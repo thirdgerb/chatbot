@@ -20,8 +20,6 @@ use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Runtime\Thread;
 use Commune\Contracts\Ghost\RuntimeDriver;
 use Commune\Ghost\Memory\IRecollection;
-use Commune\Message\Convo\IContextMsg;
-use Commune\Protocals\Host\Convo\ContextMsg;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
 
@@ -211,6 +209,7 @@ class IRuntime implements Runtime, Spied
 
     public function findProcess(string $processId): ? Process
     {
+        http_build_query();
         if (array_key_exists($processId, $this->processes)) {
             return $this->processes[$processId];
         }

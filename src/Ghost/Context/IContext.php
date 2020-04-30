@@ -72,7 +72,7 @@ class IContext implements Context
 
     public function toEntities(): array
     {
-        $entities = $this->_def->getEntityNames();
+        $entities = $this->_def->getQueryNames();
         $data = [];
         foreach ($entities as $name) {
             $data[$name] = $this->offsetGet($name);
@@ -82,7 +82,7 @@ class IContext implements Context
 
     public function dependEntity(): ? string /* entityName */
     {
-        $entities = $this->_def->getEntityNames();
+        $entities = $this->_def->getQueryNames();
         foreach ($entities as $name) {
             $value = $this->offsetGet($name);
             if (is_null($value)) {

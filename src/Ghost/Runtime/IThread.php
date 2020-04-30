@@ -19,6 +19,11 @@ use Commune\Protocals\Host\Convo\QuestionMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ *
+ * @property-read string $id  Thread 的唯一ID, 由 Root 决定
+ * @property-read int $priority 当前 Thread 的优先级
+ * @property-read Node[] $nodes
  */
 class IThread implements Thread
 {
@@ -52,8 +57,6 @@ class IThread implements Thread
         $this->id = $node->contextId;
         $this->nodes[] = $node;
     }
-
-
 
     public function currentNode(): Node
     {
@@ -154,10 +157,26 @@ class IThread implements Thread
         }
     }
 
+    public function __sleep()
+    {
+        return [
+            'id',
+            'node',
+            'question',
+            'gcTurns'
+        ];
+    }
+
+    public function __clone()
+    {
+        $this->nodes = array_map(function($node){ return clone $node;}, $this->nodes);
+        $this->question = clone $this->question;
+    }
 
     public function __destruct()
     {
         $this->nodes = [];
+        $this->question = null;
     }
 
 }
