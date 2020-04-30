@@ -13,7 +13,7 @@ namespace Commune\Blueprint\Ghost\Definition;
 
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Snapshot\Frame;
+use Commune\Blueprint\Ghost\Snapshot\Task;
 use Illuminate\Support\Collection;
 
 /**
@@ -84,7 +84,7 @@ interface ContextDef extends Def
     public function getShortTermParams() : Collection;
 
     /**
-     * 过滤 Entity 的值
+     * 过滤 Entity 的值. Entity 默认的每一项都是数组.
      * @param array $entities
      * @return array
      */
@@ -117,10 +117,10 @@ interface ContextDef extends Def
      * 将 Context 封装成对象.
      *
      * @param Cloner $cloner
-     * @param Frame $frame
+     * @param Task $frame
      * @return Context
      */
-    public function wrapContext(Cloner $cloner, Frame $frame) : Context;
+    public function wrapContext(Cloner $cloner, Task $frame) : Context;
 
     /*------- routing -------*/
 

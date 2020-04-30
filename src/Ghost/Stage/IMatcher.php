@@ -11,12 +11,9 @@
 
 namespace Commune\Ghost\Stage;
 
-use Commune\Blueprint\Ghost\Callables\Prediction;
-use Commune\Blueprint\Ghost\Stage\Matcher;
-use Commune\Blueprint\Ghost\Stage\Stage;
+use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Routing\Matcher;
 use Commune\Protocals\HostMsg;
-use Commune\Support\SoundLike\SoundLikeInterface;
-use Illuminate\Support\Collection;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -25,9 +22,9 @@ class IMatcher implements Matcher
 {
 
     /**
-     * @var Stage
+     * @var Cloner
      */
-    protected $stage;
+    protected $cloner;
 
     /**
      * @var HostMsg
@@ -36,15 +33,14 @@ class IMatcher implements Matcher
 
     /**
      * IMatcher constructor.
-     * @param Stage $stage
+     * @param Cloner $cloner
      * @param HostMsg $message
      */
-    public function __construct(Stage $stage, HostMsg $message)
+    public function __construct(Cloner $cloner, HostMsg $message)
     {
-        $this->stage = $stage;
+        $this->cloner = $cloner;
         $this->message = $message;
     }
-
 
 
 }

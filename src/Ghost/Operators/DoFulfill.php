@@ -9,16 +9,29 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Intercom;
+namespace Commune\Ghost\Operators;
 
-use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Snapshot\Task;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface RetainMsg extends GhostMsg
+class DoFulfill implements Operator
 {
-    public function toTask(Cloner $cloner) : Task;
+    /**
+     * @var Task
+     */
+    protected $task;
+
+    /**
+     * DoFulfill constructor.
+     * @param Task $task
+     */
+    public function __construct(Task $task)
+    {
+        $this->task = $task;
+    }
+
+
 }

@@ -24,7 +24,7 @@ use Commune\Blueprint\Ghost\Routing\Redirecting;
  *
  * @property-read Context $current
  */
-interface Intend extends
+interface Intercept extends
     Route,
     Hearing,
     Fallbacking,

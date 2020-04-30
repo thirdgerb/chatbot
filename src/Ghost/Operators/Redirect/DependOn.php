@@ -14,7 +14,7 @@ namespace Commune\Ghost\Operators\Redirect;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Operator\Operator;
-use Commune\Blueprint\Ghost\Snapshot\Frame;
+use Commune\Blueprint\Ghost\Snapshot\Task;
 use Commune\Ghost\Stage\IOnActivateStage;
 
 
@@ -25,12 +25,12 @@ class DependOn implements Operator
 {
 
     /**
-     * @var Frame
+     * @var Task
      */
     protected $from;
 
     /**
-     * @var Frame
+     * @var Task
      */
     protected $to;
 

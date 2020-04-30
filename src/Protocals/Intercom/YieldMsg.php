@@ -11,10 +11,15 @@
 
 namespace Commune\Protocals\Intercom;
 
+use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Snapshot\Task;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface YieldMsg extends GhostInput
 {
+
+    public function toTask(Cloner $cloner) : Task;
 }

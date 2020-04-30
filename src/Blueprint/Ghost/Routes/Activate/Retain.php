@@ -9,15 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Routes\React;
+namespace Commune\Blueprint\Ghost\Routes\Activate;
 
-use Commune\Blueprint\Ghost\Routes\React;
+use Commune\Blueprint\Ghost\Routes\Activate;
 
 /**
  * 从 Block 状态拦截到对话.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Retain extends React
+interface Retain extends Activate
 {
 }

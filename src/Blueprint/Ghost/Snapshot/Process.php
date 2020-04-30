@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Blueprint\Ghost\Snapshot;
+use Commune\Protocals\Host\Convo\QuestionMsg;
 
 
 /**
@@ -22,11 +23,23 @@ namespace Commune\Blueprint\Ghost\Snapshot;
  *
  * # frames
  * @property-read string $curFrameId
- * @property-read Frame[] $frames
- * @property-read string $rootFrameId
+ * @property-read Task[] $tasks
+ * @property-read string $rootTaskId
  *
- * # eventMap
- * @property-read ReactsMap $reacts
+ * ## before
+ * @property-read string[] $yielding
+ * @property-read int[] $blocking
+ * @property-read string[][] $watching
+ *
+ * ## await
+ * @property-read QuestionMsg|null $question
+ * @property-read string[] $stageRoutes
+ * @property-read string[] $contextRoutes
+ * @property-read string $heed
+ *
+ * ## after
+ * @property-read string[][] $sleeping
+ * @property-read string[][] $gc
  *
  * # depending
  * @property-read string[][] $depending
@@ -34,11 +47,23 @@ namespace Commune\Blueprint\Ghost\Snapshot;
 interface Process
 {
 
-    public function currentFrame() : Frame;
+    public function currentTask() : Task;
 
-    public function rootFrame() : Frame;
+    public function rootTask() : Task;
 
-    /*------ broker ------*/
+    public function getTask(string $taskId) : Task;
 
+    /*------ challenge ------*/
+
+    public function challenge(Task $task, bool $force = false) : ? Task;
+
+
+    /*------ block ------*/
+
+    public function blockTask(Task $task) : void;
+
+    public function popBlocking() : ? Task;
+
+    /*------ watch ------*/
 
 }

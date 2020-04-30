@@ -9,14 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Routes\Activate;
+namespace Commune\Ghost\Operators;
 
-use Commune\Blueprint\Ghost\Routes\Activate;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Start extends Activate
+class Confuse
 {
 
 }

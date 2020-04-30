@@ -15,7 +15,7 @@ use ArrayAccess;
 use Commune\Blueprint\Ghost\Memory\Memorable;
 use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
-use Commune\Blueprint\Ghost\Snapshot\Frame;
+use Commune\Blueprint\Ghost\Snapshot\Task;
 use Commune\Support\DI\Injectable;
 
 /**
@@ -86,7 +86,7 @@ interface Context extends
     public function toNewNode() : Node;
 
     /**
-     * @return Frame
+     * @return Task
      */
-    public function toFrame() : Frame;
+    public function toTask() : Task;
 }

@@ -62,6 +62,7 @@ use Commune\Support\Option\Option;
  *
  * @property-read string[] $sceneContextNames   场景对应的根路径.
  * @property-read string $defaultScene          默认场景.
+ * @property-read string[] $comprehensionPipes  理解管道.
  */
 interface GhostConfig extends Option
 {

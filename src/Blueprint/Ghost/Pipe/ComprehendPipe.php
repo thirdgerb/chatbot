@@ -9,25 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Intercom;
+namespace Commune\Blueprint\Ghost\Pipe;
 
-use Commune\Protocals\Comprehension;
+use Commune\Blueprint\Ghost\Cloner;
 
 /**
- * Ghost 的输入消息.
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- *
- * @property-read Comprehension $comprehension
  */
-interface GhostInput extends GhostMsg
+interface ComprehendPipe
 {
+    const HANDLE = 'handle';
 
-    /*----- 额外的信息 -----*/
-
-    public function getSceneId() : string;
-
-    public function getEnv() : array;
+    public function handle(Cloner $cloner, \Closure $next) : Cloner;
 
 }

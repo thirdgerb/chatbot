@@ -9,15 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Routes\Activate;
+namespace Commune\Ghost\Routes\Activate;
 
-use Commune\Blueprint\Ghost\Routes\Activate;
+use Commune\Ghost\Routes\AActivate;
+use Commune\Blueprint\Ghost\Routes\Activate\ActivateStage;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read string $fromStage
  */
-interface Staging extends Activate
+class IActivateStage extends AActivate implements ActivateStage
 {
+
 }

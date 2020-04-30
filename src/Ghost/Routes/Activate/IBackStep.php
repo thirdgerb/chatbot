@@ -9,25 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Intercom;
+namespace Commune\Ghost\Routes\Activate;
 
-use Commune\Protocals\Comprehension;
+use Commune\Ghost\Routes\AActivate;
+use Commune\Blueprint\Ghost\Routes\Activate\BackStep;
 
 /**
- * Ghost 的输入消息.
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- *
- * @property-read Comprehension $comprehension
  */
-interface GhostInput extends GhostMsg
+class IBackStep extends AActivate implements BackStep
 {
-
-    /*----- 额外的信息 -----*/
-
-    public function getSceneId() : string;
-
-    public function getEnv() : array;
 
 }

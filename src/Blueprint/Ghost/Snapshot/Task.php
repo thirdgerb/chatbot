@@ -24,22 +24,49 @@ use Commune\Blueprint\Ghost\Definition\StageDef;
  * @property-read string $contextName
  * @property-read string $stageName
  * @property-read array $query
- * @property-read string[] $next
+ * @property-read string[] $stack
  * @property-read int $priority
  * @property-read int $gc
  */
-interface Frame
+interface Task
 {
+    /**
+     * 进入下一个 Stage
+     * @return bool
+     */
     public function next() : bool;
 
+    /**
+     *
+     * @param string[] $stages
+     */
     public function forward(array $stages) : void;
 
-    public function reset(array $stages) : void;
+    /**
+     * @param string $stageName
+     * @return string
+     */
+    public function fullStageName(string $stageName) : string;
 
+    /**
+     */
+    public function reset() : void;
 
+    /**
+     * @param Cloner $cloner
+     * @return Context
+     */
     public function findContext(Cloner $cloner) : Context;
 
+    /**
+     * @param Cloner $cloner
+     * @return StageDef
+     */
     public function findStageDef(Cloner $cloner) : StageDef;
 
+    /**
+     * @param Cloner $cloner
+     * @return ContextDef
+     */
     public function findContextDef(Cloner $cloner) : ContextDef;
 }

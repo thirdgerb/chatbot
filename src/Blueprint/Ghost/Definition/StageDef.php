@@ -13,11 +13,9 @@ namespace Commune\Blueprint\Ghost\Definition;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Routes\Activate;
-use Commune\Blueprint\Ghost\Routes\Intend;
+use Commune\Blueprint\Ghost\Routes\Intercept;
 use Commune\Blueprint\Ghost\Routes\React;
 use Commune\Blueprint\Ghost\Routes\Retrace;
-use Commune\Blueprint\Ghost\Routes\Route;
-use Commune\Blueprint\Ghost\Stage;
 use Commune\Blueprint\Ghost\Operator\Operator;
 
 /**
@@ -98,16 +96,20 @@ interface StageDef
     /*------- intend to stage -------*/
 
     /**
+     * 当前 Stage 被其它 Context 拦截了.
+     *
      * @param Cloner $cloner
-     * @param Intend $route
+     * @param Intercept $route
      * @return Operator|null
      */
-    public function onIntend(
+    public function onIntercept(
         Cloner $cloner,
-        Intend $route
+        Intercept $route
     ) : ? Operator;
 
     /**
+     * 激活一个 Stage.
+     *
      * @param Cloner $cloner
      * @param Activate $route
      * @return Operator
@@ -118,10 +120,13 @@ interface StageDef
     ) : Operator;
 
     /**
+     * 一个 Stage 响应当前对话.
+     *
      * @param Cloner $cloner
      * @param React $route
      * @return Operator
      */
+
     public function onReact(
         Cloner $cloner,
         React $route

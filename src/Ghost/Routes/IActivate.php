@@ -9,25 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Intercom;
+namespace Commune\Ghost\Routes;
 
-use Commune\Protocals\Comprehension;
+use Commune\Blueprint\Ghost\Routes\Activate;
+
 
 /**
- * Ghost 的输入消息.
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- *
- * @property-read Comprehension $comprehension
  */
-interface GhostInput extends GhostMsg
+class AActivate extends ARoute implements Activate
 {
 
-    /*----- 额外的信息 -----*/
-
-    public function getSceneId() : string;
-
-    public function getEnv() : array;
 
 }

@@ -9,15 +9,12 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Routes\React;
+namespace Commune\Ghost\Operators\Run;
 
-use Commune\Blueprint\Ghost\Routes\React;
 
 /**
- * 在 Watch 状态下拦截到对话.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Watch extends React
+class TryHeed
 {
-
 }

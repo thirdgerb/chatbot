@@ -14,6 +14,7 @@ namespace Commune\Blueprint\Ghost\Routes;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Routing\Matcher;
+use Commune\Support\DI\Injectable;
 
 /**
  * 多轮对话状态变更时的路径事件
@@ -30,7 +31,7 @@ use Commune\Blueprint\Ghost\Routing\Matcher;
  *
  * @property-read Context $self
  */
-interface Route
+interface Route extends Injectable
 {
     /**
      * 在当前上下文中通过抽象获取一个对象.
@@ -58,7 +59,6 @@ interface Route
      * @return array
      */
     public function getContextualInjections() : array;
-
 
     /**
      * 对当前对话进行匹配.
