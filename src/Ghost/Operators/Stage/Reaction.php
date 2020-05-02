@@ -38,17 +38,17 @@ class Reaction implements Operator
         Heed::class,
         Restore::class,
         Wake::class,
+
     ];
 
     /**
-     * Activation constructor.
-     * @param Task $task
+     * Reaction constructor.
+     * @param Task $heed
+     * @param string $stageName
      * @param string $type
      */
-    public function __construct(Task $task, string $type)
+    public function __construct(Task $heed, string $stageName, string $type)
     {
-        $this->task = $task;
-        $this->type = $type;
     }
 
 

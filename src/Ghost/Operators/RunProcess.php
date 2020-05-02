@@ -13,62 +13,26 @@ namespace Commune\Ghost\Operators;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Operator\Operator;
-use Commune\Ghost\Operators\Run;
+use Commune\Blueprint\Ghost\Runtime\Trace;
+use Commune\Ghost\Operators\Flows\ConfuseFlow;
+use Commune\Ghost\Operators\Flows\InputFlow;
 
 /**
+ * 启动多轮对话进程.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class RunProcess implements Operator
 {
+    protected $trace;
 
-    /**
-     * 启动的完整流程
-     * @var string[]
-     */
-    protected $runners = [
-        Run\YieldCheck::class,
-        Run\RetainCheck::class,
-        Run\Challenge::class,
-        Run\ComprehendPipes::class,
-        Run\WatchCheck::class,
-        Run\StageRouting::class,
-        Run\ContextRouting::class,
-        Run\TryHeed::class,
-        Run\TryWake::class,
-        Confuse::class,
-    ];
-
-    protected $index = 0;
-
-    /**
-     * @var int
-     */
-    protected $count;
-
-    public function __construct()
+    public function __construct(Trace $trace)
     {
-        $this->count = count($this->runners);
+        $this->trace = $trace;
     }
 
-    public function invoke(Cloner $cloner): ? Operator
-    {
-        $process = $cloner->runtime->getCurrentProcess();
-        $input = $cloner->ghostInput;
 
-        $className = $this->runners[$this->index];
-        /**
-         * @var Run\Runner $operator
-         */
-        $operator = new $className($process, $input);
 
-        $this->index ++;
-        if ($this->index === $this->count) {
-            return $operator;
-        }
-
-        // 如果有 Operator 就会中断当前的检查流程.
-        return $operator->invoke($cloner) ?? $this;
-    }
 
 
 }

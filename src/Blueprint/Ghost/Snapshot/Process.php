@@ -22,9 +22,9 @@ use Commune\Protocals\Host\Convo\QuestionMsg;
  * @property-read string $processId
  *
  * # frames
- * @property-read string $curFrameId
- * @property-read Task[] $tasks
+ * @property-read string $currentTaskId
  * @property-read string $rootTaskId
+ * @property-read Task[] $tasks
  *
  * ## before
  * @property-read string[] $yielding
@@ -66,4 +66,7 @@ interface Process
 
     /*------ watch ------*/
 
+    /*------ status ------*/
+
+    public function isBrandNew() : bool;
 }

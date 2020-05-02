@@ -14,6 +14,8 @@ namespace Commune\Blueprint\Ghost\Exceptions;
 use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 
 /**
+ * 如果 Def 没有发现, 重置对话.
+ * 有偶发的可能性.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class DefNotDefinedException extends BrokenSessionException

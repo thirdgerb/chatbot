@@ -12,12 +12,12 @@
 namespace Commune\Ghost\Stage;
 
 use Commune\Blueprint\Ghost\Operator\Operator;
-use Commune\Blueprint\Ghost\Routing\Fallbacking;
+use Commune\Blueprint\Ghost\Routing\Retracing;
 use Commune\Blueprint\Ghost\Routing\Redirecting;
 use Commune\Blueprint\Ghost\Routing\Staging;
 use Commune\Blueprint\Ghost\Stage\OnActivate;
 use Commune\Ghost\OperatorsBack\End\Await;
-use Commune\Ghost\Routing\IFallbacking;
+use Commune\Ghost\Routing\IRetracing;
 use Commune\Ghost\Routing\IRedirecting;
 use Commune\Ghost\Routing\IStaging;
 use Commune\Protocals\Host\Convo\QuestionMsg;
@@ -42,9 +42,9 @@ class IOnActivateStage extends AStage implements OnActivate
         return new IRedirecting($this);
     }
 
-    public function fallback(): Fallbacking
+    public function fallback(): Retracing
     {
-        return new IFallbacking($this);
+        return new IRetracing($this);
     }
 
 }

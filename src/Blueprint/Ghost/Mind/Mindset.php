@@ -37,7 +37,5 @@ interface Mindset
 
     public function contextReg() : ContextReg;
 
-    public function intentReg() : IntentReg;
-
     public function stageReg() : StageReg;
 }

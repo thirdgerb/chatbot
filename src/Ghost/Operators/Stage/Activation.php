@@ -34,10 +34,9 @@ class Activation implements Operator
     protected $type;
 
     protected $activations = [
-        Contract\ActivateStage::class => Activate\IActivateStage::class,
+        Contract\Staging::class => Activate\IStaging::class,
         Contract\BackStep::class => Activate\IBackStep::class,
         Contract\Retain::class => Activate\IRetain::class,
-        Contract\StartSession::class => Activate\IStartSession::class,
     ];
 
     /**
@@ -51,8 +50,7 @@ class Activation implements Operator
         $this->type = $type;
     }
 
-
-    public function invoke(Cloner $cloner): ? Operator
+    public function invoke(Cloner $cloner): Operator
     {
         $wrapper = $this->activations[$this->type];
         $stageDef = $this->task->findStageDef($cloner);

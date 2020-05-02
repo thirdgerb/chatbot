@@ -12,16 +12,15 @@
 namespace Commune\Blueprint\Ghost\Routes;
 
 use Commune\Blueprint\Ghost\Routing\Hearing;
-use Commune\Blueprint\Ghost\Routing\Fallbacking;
+use Commune\Blueprint\Ghost\Routing\Retracing;
 
 /**
  * 机器人响应输入消息.
  * @author thirdgerb <thirdgerb@gmail.com>
- *
  */
 interface React extends
     Route,
     Hearing,
-    Fallbacking
+    Retracing
 {
 }

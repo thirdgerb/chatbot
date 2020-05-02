@@ -20,6 +20,7 @@ use Commune\Blueprint\Ghost\Auth\Authority;
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Support\Option\OptRegistry;
 use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Snapshot\Task;
 
 
 /**
@@ -92,7 +93,15 @@ interface Cloner extends Session
      * @param array|null $queries
      * @return Context
      */
-    public function getContext(string $contextName, array $queries = null) : Context;
+    public function findContext(string $contextName, array $queries = null) : Context;
 
+    /**
+     * 在当前上下文中创建一个 Task
+     *
+     * @param string $contextName
+     * @param array|null $queries
+     * @return Task
+     */
+    public function findTask(string $contextName, array $queries = null) : Task;
 
 }

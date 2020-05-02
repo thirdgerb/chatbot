@@ -41,9 +41,9 @@ interface Intention extends Abstracted
     /**
      * 模糊匹配意图.
      * @param string $intentPattern
-     * @return null|string
+     * @return null|string[]
      */
-    public function wildcardIntentMatch(string $intentPattern) : ? string;
+    public function wildcardIntentMatch(string $intentPattern) : ? array;
 
     /**
      * @param string $intentName

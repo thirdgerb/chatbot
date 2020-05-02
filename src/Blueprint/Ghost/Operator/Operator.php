@@ -21,7 +21,5 @@ use Commune\Blueprint\Ghost\Cloner;
 interface Operator
 {
 
-    // public function getName() : string;
-
-    public function invoke(Cloner $cloner) : ? Operator;
+    public function invoke(Cloner $cloner) : Operator;
 }

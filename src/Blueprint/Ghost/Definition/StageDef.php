@@ -12,6 +12,9 @@
 namespace Commune\Blueprint\Ghost\Definition;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Dialogue\Escaper;
+use Commune\Blueprint\Ghost\Dialogue\Retain;
 use Commune\Blueprint\Ghost\Routes\Activate;
 use Commune\Blueprint\Ghost\Routes\Intercept;
 use Commune\Blueprint\Ghost\Routes\React;
@@ -46,99 +49,21 @@ interface StageDef
      */
     public function getContextName() : string;
 
-    /*------- relations -------*/
-
-    /**
-     * @param Cloner $cloner
-     * @return ContextDef
-     */
-    public function findContextDef(Cloner $cloner) : ContextDef;
-
     /**
      * @return IntentDef
      */
     public function asIntentDef() : IntentDef;
 
-    /*------- routes -------*/
-
-
-    /**
-     * Context 语境下公共的 contextRoutes
-     * 理论上每一个 Stage 都默认继承, 也可以选择不继承.
-     *
-     * 在 wait 状态下, 可以跳转直达的 Context 名称.
-     * 允许用 * 作为通配符.
-     *
-     * @param Cloner $cloner
-     * @return string[]
-     */
-    public function contextRoutes(Cloner $cloner) : array;
-
-    /**
-     * Context 语境下公共的 stageRoutes
-     * 理论上每一个 Stage 都默认继承, 也可以选择不继承.
-     *
-     * 在 wait 状态下, 可以跳转直达的 Context 内部 Stage 的名称.
-     * 允许用 * 作为通配符.
-     *
-     * @param Cloner $cloner
-     * @return string[]
-     */
-    public function stageRoutes(Cloner $cloner) : array;
-
-    /**
-     * 当前 Stage 自定义的理解管道.
-     * @param Cloner $cloner
-     * @return string[]
-     */
-    public function comprehendPipes(Cloner $cloner) : array;
+    public function comprehendPipes(Cloner $cloner) : ? array;
 
     /*------- intend to stage -------*/
 
-    /**
-     * 当前 Stage 被其它 Context 拦截了.
-     *
-     * @param Cloner $cloner
-     * @param Intercept $route
-     * @return Operator|null
-     */
-    public function onIntercept(
-        Cloner $cloner,
-        Intercept $route
-    ) : ? Operator;
+    public function onRedirect(Dialog $from, Dialog $to) : Dialog;
 
-    /**
-     * 激活一个 Stage.
-     *
-     * @param Cloner $cloner
-     * @param Activate $route
-     * @return Operator
-     */
-    public function onActivate(
-        Cloner $cloner,
-        Activate $route
-    ) : Operator;
+    public function onActivate(Activate $activate) : Dialog;
 
-    /**
-     * 一个 Stage 响应当前对话.
-     *
-     * @param Cloner $cloner
-     * @param React $route
-     * @return Operator
-     */
+    public function onRetain(Retain $retain) : Dialog;
 
-    public function onReact(
-        Cloner $cloner,
-        React $route
-    ) : Operator;
+    public function onEscape(Escaper $escaper) : Dialog;
 
-    /**
-     * @param Cloner $cloner
-     * @param Retrace $retrace
-     * @return Operator
-     */
-    public function onRetrace(
-        Cloner $cloner,
-        Retrace $retrace
-    ) : Operator;
 }

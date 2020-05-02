@@ -30,6 +30,20 @@ interface Context extends
 {
     const NAMESPACE_SEPARATOR = '.';
 
+    const NEWBORN = 1;
+    const DYING = 1;
+    const DEAD = 1;
+    const BLOCKING = 1;
+    const YIELDING = 1;
+    const SLEEPING = 1;
+    const DEPENDING = 1;
+    const AWAIT = 1;
+    const ALIVE = 1;
+
+    /*----- status -----*/
+
+
+
     /*----- properties -----*/
 
     /**
@@ -56,7 +70,7 @@ interface Context extends
      * 按顺序第一个未被填满的 Query 名称.
      * @return null|string
      */
-    public function dependQuery() : ? string /* entityName */;
+    public function dependEntity() : ? string /* entityName */;
 
     /*----- array -----*/
 
@@ -79,14 +93,4 @@ interface Context extends
 
     /*----- node -----*/
 
-    /**
-     * 将一个 Context 生成为一个新的 Node 节点.
-     * @return Node
-     */
-    public function toNewNode() : Node;
-
-    /**
-     * @return Task
-     */
-    public function toTask() : Task;
 }

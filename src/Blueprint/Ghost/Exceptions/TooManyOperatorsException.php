@@ -11,12 +11,12 @@
 
 namespace Commune\Blueprint\Ghost\Exceptions;
 
-use Commune\Blueprint\Exceptions\HostRuntimeException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class TooManyOperatorsException extends HostRuntimeException
+class TooManyOperatorsException extends BrokenSessionException
 {
 
 }

@@ -56,17 +56,12 @@ class Interception implements Operator
 
     /**
      * Interception constructor.
-     * @param StageDef $stageDef
-     * @param Task $current
-     * @param Context $self
+     * @param Task $interceptor
+     * @param string $stageFullName
      * @param string $type
      */
-    public function __construct(StageDef $stageDef, Task $current, Context $self, string $type)
+    public function __construct(Task $interceptor, string $stageFullName, string $type)
     {
-        $this->stageDef = $stageDef;
-        $this->current = $current;
-        $this->self = $self;
-        $this->type = $type;
     }
 
 

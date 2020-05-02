@@ -37,16 +37,21 @@ interface Task
     public function next() : bool;
 
     /**
+     * @param string $stageName
+     */
+    public function changeStage(string $stageName) : void;
+
+    /**
      *
      * @param string[] $stages
      */
     public function forward(array $stages) : void;
 
     /**
-     * @param string $stageName
+     * @param string|null $stageName  为 null 就是当前 Stage
      * @return string
      */
-    public function fullStageName(string $stageName) : string;
+    public function fullStageName(string $stageName = null) : string;
 
     /**
      */

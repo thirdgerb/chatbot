@@ -13,22 +13,20 @@ namespace Commune\Blueprint\Ghost\Routes;
 
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Routing\Hearing;
-use Commune\Blueprint\Ghost\Routing\Fallbacking;
+use Commune\Blueprint\Ghost\Routing\Retracing;
 use Commune\Blueprint\Ghost\Routing\Redirecting;
 
 /**
- * 在 $current Context 下, 通过路由可能要跳转到 $self Context
- * 可以指定各种处理逻辑
+ * Current Context 的流程被另一个 Context 拦截.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read Context $current
+ * @property-read Context $interceptor  拦截者.
  */
 interface Intercept extends
     Route,
     Hearing,
-    Fallbacking,
+    Retracing,
     Redirecting
 {
-
 }

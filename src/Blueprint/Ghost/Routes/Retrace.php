@@ -12,16 +12,15 @@
 namespace Commune\Blueprint\Ghost\Routes;
 
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Routing\Fallbacking;
+use Commune\Blueprint\Ghost\Routing\Retracing;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read Context $from
- * @property-read Context $self
  */
 interface Retrace extends
     Route,
-    Fallbacking
+    Retracing
 {
 }

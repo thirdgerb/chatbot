@@ -14,7 +14,7 @@ namespace Commune\Ghost\Routes;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Operator\Operator;
-use Commune\Blueprint\Ghost\Routes\Activate\ActivateStage;
+use Commune\Blueprint\Ghost\Routes\Activate\Staging;
 use Commune\Blueprint\Ghost\Routes\Route;
 use Commune\Blueprint\Ghost\Routing\Matcher;
 use Commune\Blueprint\Ghost\Snapshot\Task;
@@ -42,16 +42,14 @@ abstract class ARoute implements Route
      */
     protected $selfTask;
 
+    /*----- cached -----*/
+
     /**
      * @var Context
      */
     protected $selfContext;
 
-    /**
-     * ARoute constructor.
-     * @param Cloner $cloner
-     * @param Task $selfTask
-     */
+
     public function __construct(Cloner $cloner, Task $selfTask)
     {
         $this->cloner = $cloner;
@@ -123,7 +121,7 @@ abstract class ARoute implements Route
         }
         // 重置所有的路径.
         $this->selfTask->reset();
-        return new Activation($this->selfTask, ActivateStage::class);
+        return new Activation($this->selfTask, Staging::class);
     }
 
     public function next(...$stageNames): Operator
@@ -133,7 +131,7 @@ abstract class ARoute implements Route
         }
 
         if ($this->selfTask->next()) {
-            return new Activation($this->selfTask, ActivateStage::class);
+            return new Activation($this->selfTask, Staging::class);
         }
 
         return new DoFulfill($this->selfTask);
@@ -155,7 +153,19 @@ abstract class ARoute implements Route
     {
         if ($name === 'self') {
             return $this->selfContext
-                ?? $this->selfContext = $this->selfTask->findContext($this->cloner);
+                ?? $this->selfContext = $this
+                    ->selfTask
+                    ->findContext($this->cloner);
+        }
+
+        if ($name === 'current') {
+            return $this->currentContext
+                ?? $this->currentContext = $this
+                    ->cloner
+                    ->runtime
+                    ->getCurrentProcess()
+                    ->currentTask()
+                    ->findContext($this->cloner);
         }
 
         return null;

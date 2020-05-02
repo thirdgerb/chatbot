@@ -15,12 +15,12 @@ use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Definition\StageDef;
 use Commune\Blueprint\Ghost\Routing\Hearing;
-use Commune\Blueprint\Ghost\Routing\Fallbacking;
+use Commune\Blueprint\Ghost\Routing\Retracing;
 use Commune\Blueprint\Ghost\Routing\Redirecting;
 use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Blueprint\Ghost\Stage\OnIntend;
 use Commune\Ghost\Routing\IHearing;
-use Commune\Ghost\Routing\IFallbacking;
+use Commune\Ghost\Routing\IRetracing;
 use Commune\Ghost\Routing\IRedirecting;
 
 /**
@@ -66,9 +66,9 @@ class IOnIntendStage extends AStage implements OnIntend
         return new IRedirecting($this);
     }
 
-    public function fallback(): Fallbacking
+    public function fallback(): Retracing
     {
-        return new IFallbacking($this);
+        return new IRetracing($this);
     }
 
     public function backward(): Hearing

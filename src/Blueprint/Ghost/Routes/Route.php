@@ -28,8 +28,7 @@ use Commune\Support\DI\Injectable;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
- * @property-read Context $self
+ * @property-read Context $self         Route 操作者所处的语境.
  */
 interface Route extends Injectable
 {
@@ -51,7 +50,6 @@ interface Route extends Injectable
      * @return mixed
      */
     public function call($caller, array $parameters = []);
-
 
     /**
      * 获取上下文相关的依赖注入对象.

@@ -54,5 +54,4 @@ class PipeOperator implements Operator
         return $this->next;
     }
 
-
 }

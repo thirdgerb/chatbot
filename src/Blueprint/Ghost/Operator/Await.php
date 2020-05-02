@@ -13,9 +13,10 @@ namespace Commune\Blueprint\Ghost\Operator;
 
 
 /**
+ * 等待用户消息.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Await extends Operator
+interface Await extends Ending
 {
     /**
      * @param string $query

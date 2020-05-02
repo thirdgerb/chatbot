@@ -14,13 +14,13 @@ namespace Commune\Ghost\Stage;
 use Commune\Blueprint\Ghost\Callables\Operating;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Routing\Hearing;
-use Commune\Blueprint\Ghost\Routing\Fallbacking;
+use Commune\Blueprint\Ghost\Routing\Retracing;
 use Commune\Blueprint\Ghost\Routing\Hearing;
 use Commune\Blueprint\Ghost\Routing\Staging;
 use Commune\Blueprint\Ghost\Stage\OnHeed;
 use Commune\Ghost\OperatorsBack\End\NoStateEnd;
 use Commune\Ghost\Routing\IHearing;
-use Commune\Ghost\Routing\IFallbacking;
+use Commune\Ghost\Routing\IRetracing;
 use Commune\Ghost\Routing\IHearing;
 use Commune\Ghost\Routing\IStaging;
 
@@ -60,9 +60,9 @@ class IOnHeedStage extends AStage implements OnHeed
         return new IStaging($this);
     }
 
-    public function fallback(): Fallbacking
+    public function fallback(): Retracing
     {
-        return new IFallbacking($this);
+        return new IRetracing($this);
     }
 
     public function backward(): Hearing
