@@ -11,163 +11,49 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
+use Commune\Support\Arr\ArrayAndJsonAble;
+
 
 /**
- * 对话进程. 通常只缓存.
+ * 对话进程.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $belongsTo         进程所属的父 ID
- * @property-read string $id                进程的唯一 ID. 每一轮请求的 ID 都不一样.
- * @property-read string $prevId
- * @property-read string[] $sleeping        sleeping Thread 的 id
- * @property-read string[] $blocking        blocking Thread 的 id
- * @property-read string[] $backtrace
- * @property-read Node $root                root Node
+ * @property-read string $sessionId             进程所属的 Session
+ * @property-read string $id                    进程的唯一 ID.
+ * @property-read Process|null $prev            上一轮对话的进程实例.
+ *
+ * @property-read string[][] $watching          观察中的任务. 可以最先被触发.
+ *  [ string $id => $watchingStageName[] ]
+ *
+ * @property-read string|null $aliveTask        正在运行中的任务.
+ *
+ * @property-read Waiter|null $waiter           当前对话的终态.
+ * @property-read Waiter[] $backtrace           历史记录. 记录的是 waiter
+ *
+ * @property-read int[] $blocking               阻塞中的任务. 有机会就抢占.
+ *  [ string $id => int $priority]
+ *
+ * @property-read string[][] $sleeping          睡眠中的任务. 可以被指定Stage 唤醒.
+ *  [ string $id => $wakenStageName[] ]
+ *
+ * @property-read int[] $dying                  垃圾回收中的任务. 仍然可以被唤醒.
+ *  [ string $id => int $gcTurns ]
+ *
+ * @property-read string[][] $yielding          等待中的任务. 只能被指定语境唤醒.
+ *  [ string $id => string $dependingId ]
+ *
+ * @property-read string[] $depending           依赖中的任务. 被依赖对象唤醒.
+ *  [ string $id => string $id]
+ *
+ * @property-read Task[] $tasks                 进行中的 Task 实例.
+ *  [ string $id => Task $task]
+ *
  */
-interface Process extends Cachable
+interface Process extends ArrayAndJsonAble
 {
 
-    /*-------- 状态相关 --------*/
+    public function buildRouter() : Router;
 
-
-    /**
-     * 当前运行中的进程.
-     * @return Thread
-     */
-    public function aliveThread() : Thread;
-
-    /**
-     * @return string
-     */
-    public function aliveStageFullname() : string;
-
-
-    /*-------- challenge --------*/
-
-    /**
-     * 尝试用 Blocking Thread 取代当前的 Alive Thread,
-     * 通过比较 Thread 的 priority
-     * 成功的话, 会把当前 Thread 踢出来
-     *
-     * @return Thread|null
-     */
-    public function challengeAliveThread() : ? Thread;
-
-    /**
-     * 替换掉当前的 Thread
-     *
-     * @param Thread $thread
-     * @return Thread
-     */
-    public function replaceAliveThread(Thread $thread) : Thread;
-
-
-    /**
-     * @param Node|null $node
-     */
-    public function home(Node $node = null) : void;
-
-    /*-------- 获取进程内的 Thread --------*/
-
-    /**
-     * @param string $threadId
-     * @return bool
-     */
-    public function hasThread(string $threadId) : bool;
-
-    /**
-     * @param string $threadId
-     * @return Thread|null
-     */
-    public function getThread(string $threadId) : ? Thread;
-
-    /*-------- sleeping --------*/
-
-    /**
-     * @param Thread $thread
-     * @param bool $top             放在栈顶, 还是栈尾
-     */
-    public function addSleepingThread(Thread $thread, bool $top = true) : void;
-
-    /**
-     * @param string|null $threadId
-     * @return Thread|null
-     */
-    public function popSleeping(string $threadId = null) : ? Thread;
-
-
-    /*-------- 保存 --------*/
-
-    /**
-     * 是否要销毁.
-     * @return bool
-     */
-    public function isExpiring() : bool;
-
-    /*-------- gc 相关 --------*/
-
-    /**
-     * 把一个 Thread 加入到 gc 行列中.
-     * 在剩余的几个回合内, 这个 Thread 仍然有被唤醒的可能, 否则就死翘翘了
-     *
-     * @param Thread $thread
-     * @param int $gcTurn
-     */
-    public function addGcThread(Thread $thread, int $gcTurn) : void;
-
-    /**
-     * 清除掉过期的 gc thread
-     */
-    public function gcThreads() : void;
-
-    /*-------- snapshot 快照历史 --------*/
-
-    /**
-     * 生成一个新的快照
-     * @param string|null $processId
-     * @return Process
-     */
-    public function nextSnapshot(string $processId = null) : Process;
-
-    /**
-     * 上一步的进程.
-     * @return Process|null
-     */
-    public function prev() : ? Process;
-
-    /**
-     * 对比两个 Process 的语境当前, 如果不相同, 则返回当前 Process 的语境.
-     * @return Node|null
-     */
-    public function changedNode() : ? Node;
-
-    /**
-     * 返回若干步.
-     * @param int $steps
-     * @return string|null
-     */
-    public function backStep(int $steps) : ? string;
-
-    /**
-     * 进程栈快照的深度.
-     * @return int
-     */
-    public function stepDepth() : int;
-
-    /*---------- block ----------*/
-
-    public function blockThread(Thread $thread) : void;
-
-    /**
-     * @return bool
-     */
-    public function hasBlocking() : bool;
-
-    /**
-     * @return Thread
-     */
-    public function popBlocking() : ? Thread;
-
-
+    public function gc() : void;
 }

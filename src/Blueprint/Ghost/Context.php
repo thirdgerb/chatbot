@@ -13,10 +13,9 @@ namespace Commune\Blueprint\Ghost;
 
 use ArrayAccess;
 use Commune\Blueprint\Ghost\Memory\Memorable;
-use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
-use Commune\Blueprint\Ghost\Snapshot\Task;
 use Commune\Support\DI\Injectable;
+use Illuminate\Support\Collection;
 
 /**
  * 当前语境. 用来读写当前语境的变量.
@@ -30,17 +29,6 @@ interface Context extends
 {
     const NAMESPACE_SEPARATOR = '.';
 
-    const NEWBORN = 1;
-    const DYING = 1;
-    const DEAD = 1;
-    const BLOCKING = 1;
-    const YIELDING = 1;
-    const SLEEPING = 1;
-    const DEPENDING = 1;
-    const AWAIT = 1;
-    const ALIVE = 1;
-
-    /*----- status -----*/
 
 
 
@@ -51,6 +39,19 @@ interface Context extends
      * @return string
      */
     public function getName() : string;
+
+    /**
+     * Context 的 Ucl 定位, 可以用字符串来表示.
+     * @return Ucl
+     */
+    public function getUcl() : Ucl;
+
+
+    /**
+     * @return Collection
+     */
+    public function getQuery() : Collection;
+
 
     /**
      * @return string
@@ -79,11 +80,6 @@ interface Context extends
      * @return array
      */
     public function toData() : array;
-
-    /**
-     * @return array
-     */
-    public function toQuery() : array;
 
     /**
      * 递归地获取所有属性的值.

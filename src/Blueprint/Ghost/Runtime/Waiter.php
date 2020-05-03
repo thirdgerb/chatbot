@@ -11,15 +11,19 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Protocals\Host\Convo\QuestionMsg;
 
 /**
+ * 由 Await 生成的等待者, 保留理解对话的现场.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read null|QuestionMsg $question
+ * @property-read string[] $stageRoutes
+ * @property-read string[] $contextRoutes
+ * @property-read string $ucl
  */
-interface Trace
+interface Waiter
 {
-    public function record(Operator $operator) : void;
-
-    public function getTrace() : array;
 
 }

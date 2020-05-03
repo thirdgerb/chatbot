@@ -9,13 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialogue\Activate;
+namespace Commune\Ghost\Dialog;
+
+use Commune\Blueprint\Ghost\Dialog;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Redirect
+class AbsDialogue implements Dialog
 {
 
 }
