@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Operators;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Exceptions\BadOperationEndException;
+use Commune\Blueprint\Ghost\Exceptions\BadDialogEndException;
 use Commune\Blueprint\Ghost\Operator\Operator;
 
 /**
@@ -53,7 +53,7 @@ abstract class FlowOperator implements Operator
         $next = array_shift($flow);
 
         if (empty($next)) {
-            throw new BadOperationEndException(
+            throw new BadDialogEndException(
                 static::class
                 . ' got no ending'
             );

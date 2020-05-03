@@ -13,7 +13,7 @@ namespace Commune\Ghost\OperatorsBack;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Exceptions\OperatorException;
-use Commune\Blueprint\Ghost\Exceptions\TooManyOperatorsException;
+use Commune\Blueprint\Ghost\Exceptions\TooManyRedirectsException;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Ghost\OperatorsBack\Start\ProcessStart;
@@ -80,7 +80,7 @@ class DialogManager implements Spied
             return $this->runDialogManage($e->getOperator());
 
         // 超过算子的最大数量.
-        } catch (TooManyOperatorsException $e) {
+        } catch (TooManyRedirectsException $e) {
 
             // todo
 

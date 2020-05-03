@@ -9,18 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Routes;
+namespace Commune\Blueprint\Ghost\Dialogue\Escape;
 
-use Commune\Blueprint\Ghost\Routing\Hearing;
-use Commune\Blueprint\Ghost\Routing\Retracing;
+use Commune\Blueprint\Ghost\Dialogue\Escape;
 
 /**
- * 机器人响应输入消息.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface React extends
-    Route,
-    Hearing,
-    Retracing
+interface Confuse extends Escape
 {
+
 }

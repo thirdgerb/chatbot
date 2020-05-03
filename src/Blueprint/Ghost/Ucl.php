@@ -10,6 +10,9 @@
  */
 
 namespace Commune\Blueprint\Ghost;
+use Commune\Blueprint\Ghost\Definition\ContextDef;
+use Commune\Blueprint\Ghost\Definition\StageDef;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * Uniform Context Locator
@@ -54,7 +57,7 @@ class Ucl implements \Serializable
      * Ucl constructor.
      * @param string $contextName
      * @param string $stageName
-     * @param string[] $query
+     * @param array $query
      */
     public function __construct(
         string $contextName,
@@ -67,6 +70,17 @@ class Ucl implements \Serializable
     }
 
     public static function decodeUcl(string $string) : ? Ucl
+    {
+        $arr = static::decodeUclArr($string);
+        if (empty($arr)) {
+            return null;
+        }
+
+        list($contextName, $stageName, $query) = $arr;
+        return new static($contextName, $stageName, $query);
+    }
+
+    public static function decodeUclArr(string $string) : ? array
     {
         $data = json_decode($string, true);
         if (empty($data) || !is_array($data)) {
@@ -83,19 +97,24 @@ class Ucl implements \Serializable
             && is_string($stageName)
             && is_array($query)
         ) {
-            return new static($contextName, $stageName, $query);
+            return [$contextName, $stageName, $query];
         }
 
         return null;
     }
 
-    public function encodeUcl() : string
+    public function toEncodeArr() : array
     {
-        return json_encode([
+        return [
             $this->contextName,
             $this->stageName,
             $this->query
-        ]);
+        ];
+    }
+
+    public function encodeUcl() : string
+    {
+        return json_encode($this->toEncodeArr());
     }
 
     public function getContextName() : string
@@ -121,6 +140,38 @@ class Ucl implements \Serializable
         return $this->query;
     }
 
+    public function fullStageName(string $stage = null) : string
+    {
+        $stage = $stage ?? $this->stageName;
+        return StringUtils::gluePrefixAndName(
+            $this->contextName,
+            $stage,
+            Context::NAMESPACE_SEPARATOR
+        );
+    }
+
+    public function findStageDef(Cloner $cloner) : StageDef
+    {
+        $fullname = $this->fullStageName();
+        return $cloner
+            ->mind
+            ->stageReg()
+            ->getDef($fullname);
+    }
+
+    public function findContextDef(Cloner $cloner) : ContextDef
+    {
+        return $cloner
+            ->mind
+            ->contextReg()
+            ->getDef($this->contextName);
+    }
+
+    public function __isset($name)
+    {
+        return in_array($name, ['contextName', 'stageName', 'query']);
+    }
+
     public function __get($name)
     {
         return $this->{$name};
@@ -130,4 +181,20 @@ class Ucl implements \Serializable
     {
         return $this->encodeUcl();
     }
+
+    public function serialize()
+    {
+        return $this->encodeUcl();
+    }
+
+    public function unserialize($serialized)
+    {
+        $arr = static::decodeUclArr($serialized);
+        list($contextName, $stageName, $query) = $arr;
+        $this->contextName = $contextName;
+        $this->stageName = $stageName;
+        $this->query = $query;
+    }
+
+
 }

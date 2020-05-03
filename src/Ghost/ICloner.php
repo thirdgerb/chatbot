@@ -107,7 +107,7 @@ class ICloner extends ASession implements Cloner
         return $manager->runDialogManage($operator);
     }
 
-    public function findContext(string $contextId, string $contextName): Context
+    public function getContext(string $contextId, string $contextName): Context
     {
         $contextDef = $this->mind->contextReg()->getDef($contextName);
         $recollection = $this->runtime->findRecollection($contextId);

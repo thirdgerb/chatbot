@@ -27,7 +27,7 @@ class ContextStub extends AStub implements Stub
 {
     public function toMemorable(Cloner $cloner): ? Memorable
     {
-        return $cloner->findContext($this->contextId, $this->contextName);
+        return $cloner->getContext($this->contextId, $this->contextName);
     }
 
 }

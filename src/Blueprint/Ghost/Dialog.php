@@ -18,10 +18,22 @@ namespace Commune\Blueprint\Ghost;
  *
  * @property-read Cloner $cloner
  * @property-read Context $context
- * @property-read string $stageName
+ * @property-read Ucl $ucl
+ * @property-read Dialog|null $prev
  */
 interface Dialog
 {
+
+    /**
+     * 尝试退出当前多轮对话, 可能被拦截.
+     * @return Dialog
+     */
+    public function quit() : Dialog;
+
+    /**
+     * Dialog 逻辑运行一帧.
+     * @return Dialog
+     */
     public function tick() : Dialog;
 
 }

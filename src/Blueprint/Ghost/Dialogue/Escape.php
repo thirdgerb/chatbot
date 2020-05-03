@@ -9,15 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Exceptions;
+namespace Commune\Blueprint\Ghost\Dialogue;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Ghost\Dialog;
 
 
 /**
- * 定义了无法正常结束的 Operator 流程.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class BadOperationEndException extends HostLogicException
+interface Escape extends Dialog
 {
+
 }

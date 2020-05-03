@@ -134,7 +134,7 @@ class INode implements Node
 
     public function findContext(Cloner $cloner) : Context
     {
-        return $cloner->findContext($this->contextId, $this->contextName);
+        return $cloner->getContext($this->contextId, $this->contextName);
     }
 
     public function __get($name)

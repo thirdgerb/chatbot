@@ -10,19 +10,21 @@
  */
 
 namespace Commune\Blueprint\Ghost\Runtime;
+
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Support\Arr\ArrayAndJsonAble;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property string $ucl
+ * @property-read string $id
+ * @property-read string $contextName
+ * @property-read array $query
  *
  * @property int $status
  * @property array $memory
  *
- * @property string[] $callbackUcl
+ * @property Ucl|null $callbackUcl
  */
 interface Task extends ArrayAndJsonAble
 {

@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 
@@ -26,7 +27,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read string[][] $watching          观察中的任务. 可以最先被触发.
  *  [ string $id => $watchingStageName[] ]
  *
- * @property-read string|null $aliveTask        正在运行中的任务.
+ * @property-read string $aliveTaskId        正在运行中的任务.
  *
  * @property-read Waiter|null $waiter           当前对话的终态.
  * @property-read Waiter[] $backtrace           历史记录. 记录的是 waiter
@@ -53,7 +54,58 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 interface Process extends ArrayAndJsonAble
 {
 
+    /**
+     * 构建 Router
+     * @return Router
+     */
     public function buildRouter() : Router;
 
+    /*-------- alive ---------*/
+
+    /**
+     * @return Task
+     */
+    public function aliveTask() : Task;
+
+    /**
+     * @param Task $task
+     * @param bool $force
+     * @return Task|null    如果挑战不成功, 或者两个 task 是相同的, 就返回 null
+     */
+    public function challengeTask(Task $task, bool $force = false) : ? Task;
+
+    /*-------- task ---------*/
+
+    /**
+     * @param string $contextId
+     * @return Task|null
+     */
+    public function popTask(string $contextId) : ? Task;
+
+    public function getTask(string $contextId) : Task;
+
+    /*-------- block ---------*/
+
+    public function blockTask(Task $task) : void;
+
+    public function popBlocking(string $id = null) : ? Task;
+
+    /*-------- sleep ---------*/
+
+    public function sleepTask(Task $task) : void;
+
+    public function popSleeping(string $id = null) : ? Task;
+
+    /*-------- watch ---------*/
+
+    public function popWatching(string $id = null) : ? Task;
+
+    /*-------- gc ---------*/
+
+    public function addGc(Task $task) : void;
+
+    /**
+     * 清空掉需要 gc 的 Task
+     */
     public function gc() : void;
 }

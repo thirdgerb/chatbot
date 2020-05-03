@@ -13,13 +13,10 @@ namespace Commune\Blueprint\Ghost\Definition;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialogue\Escaper;
+use Commune\Blueprint\Ghost\Dialogue\Escape;
 use Commune\Blueprint\Ghost\Dialogue\Retain;
-use Commune\Blueprint\Ghost\Routes\Activate;
-use Commune\Blueprint\Ghost\Routes\Intercept;
-use Commune\Blueprint\Ghost\Routes\React;
-use Commune\Blueprint\Ghost\Routes\Retrace;
-use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Dialogue\Activate;
+
 
 /**
  * Stage 的封装对象
@@ -54,16 +51,21 @@ interface StageDef
      */
     public function asIntentDef() : IntentDef;
 
+    /**
+     * @param Cloner $cloner
+     * @return array|null
+     */
     public function comprehendPipes(Cloner $cloner) : ? array;
 
     /*------- intend to stage -------*/
 
-    public function onRedirect(Dialog $from, Dialog $to) : Dialog;
+    public function onRedirect(Dialog $from, Dialog $to) : ? Dialog;
+
+    public function onEscape(Escape $escape) : ? Dialog;
 
     public function onActivate(Activate $activate) : Dialog;
 
     public function onRetain(Retain $retain) : Dialog;
 
-    public function onEscape(Escaper $escaper) : Dialog;
 
 }

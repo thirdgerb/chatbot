@@ -9,15 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Routes\React;
+namespace Commune\Blueprint\Ghost\Dialogue\Finale;
 
-use Commune\Blueprint\Ghost\Routes\React;
 
 /**
- * 从 GC 的状态重新拦截到对话.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Restore extends React
+interface CloseSession
 {
+
 }

@@ -9,15 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Routes\React;
+namespace Commune\Blueprint\Ghost\Exceptions;
 
-use Commune\Blueprint\Ghost\Routes\React;
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 
 /**
- * 从 Sleep 状态下拦截到对话.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Wake extends React
+class TooManyRedirectsException extends BrokenSessionException
 {
+
 }
