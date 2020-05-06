@@ -9,15 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialogue;
-
-use Commune\Blueprint\Ghost\Dialog;
+namespace Commune\Blueprint\Ghost\Dialogue\Receive;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Escape extends Dialog
+interface Wake
 {
 
 }

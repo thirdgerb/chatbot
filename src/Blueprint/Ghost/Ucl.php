@@ -10,20 +10,20 @@
  */
 
 namespace Commune\Blueprint\Ghost;
+
 use Commune\Blueprint\Ghost\Definition\ContextDef;
 use Commune\Blueprint\Ghost\Definition\StageDef;
+use Commune\Ghost\Support\ContextTypeUtils;
 use Commune\Support\Utils\StringUtils;
 
 /**
  * Uniform Context Locator
  * 类似 url 的语境定位对象. 用一个 ucl 字符串可以定位一个语境.
  *
- * 格式为:
- * json_encode([
- *  string $contextName,
- *  string $stageName,
- *  array $query
- * ]);
+ *
+ * 格式为: contextName#stageName?{query}
+ * 正则 @see ContextTypeUtils::isValidUcl()
+ * 正确的调用方式是 : Cloner::getUcl(contextName, array $query = null);
  *
  * 其中:
  * contextName + query 决定唯一的 contextId
@@ -36,7 +36,7 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string $stageName
  * @property-read string[] $query
  */
-class Ucl implements \Serializable
+class Ucl
 {
     /**
      * @var string
@@ -53,6 +53,18 @@ class Ucl implements \Serializable
      */
     protected $query;
 
+    /*---- cached ---*/
+
+    /**
+     * @var string|null
+     */
+    protected $encoded;
+
+    /**
+     * @var string|null
+     */
+    protected $contextId;
+
     /**
      * Ucl constructor.
      * @param string $contextName
@@ -64,83 +76,83 @@ class Ucl implements \Serializable
         string $stageName = '',
         array $query = [])
     {
-        $this->contextName = $contextName;
-        $this->stageName = $stageName;
+
+        // 允许使用类名作为 contextName
+        $this->contextName = ContextTypeUtils::normalizeContextName($contextName);
+        // 真正的 contextName 和 stageName 必须全小写, 用 . 分割.
+        $this->stageName = StringUtils::normalizeString($stageName);
         $this->query = $query;
+    }
+
+    /*------- next -------*/
+
+    public function toStage(string $stageName) : ucl
+    {
+        return new self($this->contextName, $stageName, $this->query);
+    }
+
+    /*------- create -------*/
+
+    public static function isValid(string $ucl) : bool
+    {
+        return ContextTypeUtils::isValidUcl($ucl);
     }
 
     public static function decodeUcl(string $string) : ? Ucl
     {
-        $arr = static::decodeUclArr($string);
-        if (empty($arr)) {
+        if (!self::isValid($string)) {
             return null;
         }
 
-        list($contextName, $stageName, $query) = $arr;
-        return new static($contextName, $stageName, $query);
+        $ex = explode('?', $string, 2);
+        $prefix = $ex[0];
+        $queryStr = $ex[1] ?? '{}';
+
+        $query = json_decode($queryStr, true);
+        $ex = explode('#', $prefix, 2);
+
+        $contextName = $ex[0];
+        $stageName = $ex[1] ?? '';
+        $query = is_array($query) ? $query : [];
+
+        return new self($contextName, $stageName, $query);
     }
 
-    public static function decodeUclArr(string $string) : ? array
+
+    public function toEncodedUcl() : string
     {
-        $data = json_decode($string, true);
-        if (empty($data) || !is_array($data)) {
-            return null;
+        if (isset($this->encoded)) {
+            return $this->encoded;
         }
 
-        $contextName = $data[0] ?? null;
-        $stageName = $data[1] ?? null;
-        $query = $data[2] ?? null;
-
-        if (
-            is_string($contextName)
-            && !empty($contextName)
-            && is_string($stageName)
-            && is_array($query)
-        ) {
-            return [$contextName, $stageName, $query];
-        }
-
-        return null;
-    }
-
-    public function toEncodeArr() : array
-    {
-        return [
+        $prefix = StringUtils::gluePrefixAndName(
             $this->contextName,
             $this->stageName,
-            $this->query
-        ];
+            '#'
+        );
+
+        $ucl = StringUtils::gluePrefixAndName(
+            $prefix,
+            empty($this->query) ? '' : json_encode($this->query),
+            '?'
+        );
+
+        return $ucl;
     }
 
-    public function encodeUcl() : string
+    /*------- property -------*/
+
+    public function asIntentName() : string
     {
-        return json_encode($this->toEncodeArr());
+        return StringUtils::gluePrefixAndName(
+            $this->contextName,
+            $this->stageName,
+            Context::NAMESPACE_SEPARATOR
+        );
     }
 
-    public function getContextName() : string
-    {
-        return $this->contextName;
-    }
 
-    public function getStageName() : string
-    {
-        return $this->stageName;
-    }
-
-    public function getContextId() : string
-    {
-        return sha1(json_encode([
-           'contextName' => $this->contextName,
-           'query' => $this->query,
-        ]));
-    }
-
-    public function getQuery() : array
-    {
-        return $this->query;
-    }
-
-    public function fullStageName(string $stage = null) : string
+    public function parseFullStageName(string $stage = null) : string
     {
         $stage = $stage ?? $this->stageName;
         return StringUtils::gluePrefixAndName(
@@ -150,9 +162,22 @@ class Ucl implements \Serializable
         );
     }
 
+
+    public function getContextId() : string
+    {
+        return $this->contextId
+            ?? $this->contextId == sha1(json_encode([
+               'contextName' => $this->contextName,
+               'query' => $this->query,
+            ]));
+    }
+
+
+    /*------- def -------*/
+
     public function findStageDef(Cloner $cloner) : StageDef
     {
-        $fullname = $this->fullStageName();
+        $fullname = $this->parseFullStageName();
         return $cloner
             ->mind
             ->stageReg()
@@ -179,22 +204,17 @@ class Ucl implements \Serializable
 
     public function __toString() : string
     {
-        return $this->encodeUcl();
+        return $this->toEncodedUcl();
     }
 
-    public function serialize()
+    public function __sleep()
     {
-        return $this->encodeUcl();
-    }
+        return [
+            'contextName',
+            'stageName',
+            'query'
+        ];
 
-    public function unserialize($serialized)
-    {
-        $arr = static::decodeUclArr($serialized);
-        list($contextName, $stageName, $query) = $arr;
-        $this->contextName = $contextName;
-        $this->stageName = $stageName;
-        $this->query = $query;
     }
-
 
 }

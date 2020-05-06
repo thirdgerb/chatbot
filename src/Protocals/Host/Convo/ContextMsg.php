@@ -21,6 +21,8 @@ use Commune\Protocals\Host\Convo\ConvoMsg;
  *
  * @property-read string $contextName       语境名称
  * @property-read string $contextId         语境Id
+ * @property-read int $status
+ * @property-read array $query
  * @property-read array $data               语境的数据.
  */
 interface ContextMsg extends ConvoMsg

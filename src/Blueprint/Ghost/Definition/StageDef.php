@@ -12,9 +12,11 @@
 namespace Commune\Blueprint\Ghost\Definition;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialogue\Escape;
-use Commune\Blueprint\Ghost\Dialogue\Retain;
+use Commune\Blueprint\Ghost\Dialogue\Receive;
+use Commune\Blueprint\Ghost\Dialogue\Withdraw;
+use Commune\Blueprint\Ghost\Dialogue\Fulfill;
 use Commune\Blueprint\Ghost\Dialogue\Activate;
 
 
@@ -32,13 +34,13 @@ interface StageDef
      * Stage 在 Context 内部的唯一ID
      * @return string
      */
-    public function getName() : string;
+    public function getStageName() : string;
 
     /**
      * stage 的全名, 通常对应 IntentName
      * @return string
      */
-    public function getFullname() : string;
+    public function getFullStageName() : string;
 
     /**
      * 所属 Context 的名称.
@@ -59,13 +61,37 @@ interface StageDef
 
     /*------- intend to stage -------*/
 
-    public function onRedirect(Dialog $from, Dialog $to) : ? Dialog;
+    /**
+     * 激活当前的 Stage, 然后等待回调.
+     * @param Activate $dialog
+     * @return Dialog
+     */
+    public function onActivate(Activate $dialog) : Dialog;
 
-    public function onEscape(Escape $escape) : ? Dialog;
+    /**
+     * 接收到一个用户消息时.
+     *
+     * @param Receive $dialog
+     * @return Dialog|null
+     */
+    public function onReceive(Receive $dialog) : Dialog;
 
-    public function onActivate(Activate $activate) : Dialog;
+    /**
+     * 依赖一个 Context, 而目标 Context 语境完成后回调.
+     * @param Fulfill $dialog
+     * @param Context $fulfilled
+     * @return Dialog
+     */
+    public function onFulfill(Fulfill $dialog, Context $fulfilled) : Dialog;
 
-    public function onRetain(Retain $retain) : Dialog;
+    /**
+     * 当 A Context 依赖 B Context 时, B Context 退出会导致这个流程.
+     * 一层层地退出.
+     *
+     * @param Withdraw $dialog
+     * @return Dialog|null
+     */
+    public function onWithdraw(Withdraw $dialog) : ? Dialog;
 
 
 }

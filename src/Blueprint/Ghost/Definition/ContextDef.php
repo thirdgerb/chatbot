@@ -13,13 +13,12 @@ namespace Commune\Blueprint\Ghost\Definition;
 
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Snapshot\Task;
-use Illuminate\Support\Collection;
+use Commune\Blueprint\Ghost\Ucl;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ContextDef extends Def
+interface ContextDef extends Def, StageDef
 {
 
     /*------- definition -------*/
@@ -48,123 +47,21 @@ interface ContextDef extends Def
      */
     public function getScopes() : array ;
 
-
-    /*------- parameters -------*/
-
     /**
-     * @param string $name
-     * @return bool
+     * @return ContextParamsManager
      */
-    public function hasParameter(string $name) : bool;
-
-    /**
-     * @param string $name
-     * @return ContextParameter
-     */
-    public function getParameter(string $name) : ContextParameter;
-
-    /**
-     * @return ContextParameter[]
-     */
-    public function getParameters() : array;
-
-    /**
-     * @return Collection of ContextParameter[]
-     */
-    public function getQueryParams() : Collection;
-
-    /**
-     * @return Collection of ContextParameter[]
-     */
-    public function getLongTermParams() : Collection;
-
-    /**
-     * @return Collection of ContextParameter[]
-     */
-    public function getShortTermParams() : Collection;
-
-    /**
-     * 过滤 Entity 的值. Entity 默认的每一项都是数组.
-     * @param array $entities
-     * @return array
-     */
-    public function parseIntentEntities(array $entities) : array;
-
-    /**
-     * 所有需要填满的属性, 不填满时, 要么拒绝对话, 要么启动一个多轮对话去检查.
-     * @return string[]
-     */
-    public function getQueryNames() : array;
-
-    /**
-     * Context 的默认值.
-     * @return array
-     */
-    public function getDefaultValues() : array;
-
-    /**
-     * 根据当前作用域生成一个全局唯一的 ID.
-     *
-     * @param Cloner $cloner
-     * @param array $queries
-     * @return string
-     */
-    public function makeId(Cloner $cloner, array $queries) : string;
-
-    /*------- methods -------*/
+    public function getParamsManager() : ContextParamsManager;
 
     /**
      * 将 Context 封装成对象.
      *
      * @param Cloner $cloner
-     * @param Task $frame
+     * @param Ucl $ucl
      * @return Context
      */
-    public function wrapContext(Cloner $cloner, Task $frame) : Context;
-
-    /*------- routing -------*/
-
-    /**
-     * Context 语境下公共的 contextRoutes
-     * 理论上每一个 Stage 都默认继承, 也可以选择不继承.
-     *
-     * 在 wait 状态下, 可以跳转直达的 Context 名称.
-     * 允许用 * 作为通配符.
-     *
-     * @param Cloner $cloner
-     * @return string[]
-     */
-    public function contextRoutes(Cloner $cloner) : array;
-
-    /**
-     * Context 语境下公共的 stageRoutes
-     * 理论上每一个 Stage 都默认继承, 也可以选择不继承.
-     *
-     * 在 wait 状态下, 可以跳转直达的 Context 内部 Stage 的名称.
-     * 允许用 * 作为通配符.
-     *
-     * @param Cloner $cloner
-     * @return string[]
-     */
-    public function stageRoutes(Cloner $cloner) : array;
-
-    /**
-     * Context 语境下公共的 Pipes 管道.
-     * 理论上每一个 Stage 都默认继承, 也可以选择不继承.
-     *
-     * @param Cloner $cloner
-     * @return string[]
-     */
-    public function comprehendPipes(Cloner $cloner) : array;
-
+    public function wrapContext(Cloner $cloner, Ucl $ucl) : Context;
 
     /*------- stage -------*/
-
-    /**
-     * 获取 Context 的初始 Stage. 所有 Context 至少有这一个 Stage.
-     * @return StageDef
-     */
-    public function getInitialStageDef() : StageDef;
 
     /**
      * @param string $stageName

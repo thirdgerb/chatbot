@@ -11,6 +11,10 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Ghost\Routing\Matcher;
+use Commune\Blueprint\Ghost\Routing\Redirector;
+use Commune\Blueprint\Ghost\Runtime\Task;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -18,17 +22,59 @@ namespace Commune\Blueprint\Ghost;
  *
  * @property-read Cloner $cloner
  * @property-read Context $context
- * @property-read Ucl $ucl
- * @property-read Dialog|null $prev
+ * @property-read Ucl $ucl              当前 Dialog 的 Context 地址.
+ * @property-read Dialog|null $prev     前一个 Dialog
+ * @property-read int $depth            当前 Dialog 的深度. 过深意味着循环重定向.
  */
 interface Dialog
 {
 
     /**
-     * 尝试退出当前多轮对话, 可能被拦截.
-     * @return Dialog
+     * 发送消息给用户
+     * @return Typer
      */
-    public function quit() : Dialog;
+    public function send() : Typer;
+
+    /**
+     * 匹配工具.
+     * @return Matcher
+     */
+    public function matcher() : Matcher;
+
+    /**
+     * 重定向当前的会话.
+     *
+     * @return Redirector
+     */
+    public function then() : Redirector;
+
+
+    /*----- 上下文相关 Context -----*/
+
+    /**
+     * 在当前的上下文中创建一个 Context
+     *
+     * @param Ucl $ucl
+     * @return Context
+     */
+    public function getContext(Ucl $ucl) : Context;
+
+    /**
+     * 创建一个指定的 Context
+     *
+     * @param string $contextName
+     * @param array|null $query
+     * @return Ucl
+     */
+    public function getUcl(string $contextName, array $query = null) : Ucl;
+
+    /**
+     * 强制生成一个新的 Context 任务对象.
+     * @param Ucl $ucl
+     * @return Task
+     */
+    public function newTask(Ucl $ucl) : Task;
+
 
     /**
      * Dialog 逻辑运行一帧.

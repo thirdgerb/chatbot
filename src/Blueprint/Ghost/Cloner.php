@@ -18,6 +18,9 @@ use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Auth\Authority;
 use Commune\Protocals\Intercom\GhostInput;
+use Commune\Protocals\Intercom\GhostMsg;
+use Commune\Protocals\Intercom\GhostOutput;
+use Commune\Support\Message\Message;
 use Commune\Support\Option\OptRegistry;
 use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Runtime\Task;
@@ -34,7 +37,7 @@ use Commune\Blueprint\Ghost\Runtime\Task;
  *
  *
  * # 对话模块
- * @property-read Convo $convo                      对话模块
+ * @property-read Typer $convo                      对话模块
  *
  * # 作用域
  * @property-read GhostConfig $config               机器人配置
@@ -77,25 +80,44 @@ interface Cloner extends Session
     /*----- 运行对话管理逻辑 -----*/
 
     /**
-     * 运行机器人的多轮对话逻辑.
-     *
-     * @param Operator|null $operator       指定一个启动算子.
-     * @return bool                         表示对话是否成功响应了输入消息.
+     * 获取一个 ucl
+     * @param string $contextName
+     * @param array|null $query
+     * @return Ucl
      */
-    public function runDialogManager(Operator $operator = null) : bool;
-
-    /*----- 获取 Context -----*/
-
-    /**
-     * 在当前的上下文中创建一个 Context
-     *
-     * @param Ucl $ucl
-     * @return Context
-     */
-    public function getContext(Ucl $ucl) : Context;
-
     public function getUcl(string $contextName, array $query = null) : Ucl;
 
-    public function newTask(Ucl $ucl) : Task;
+    /**
+     * @param Dialog|null $dialog
+     * @return bool
+     */
+    public function runDialogManager(Dialog $dialog = null) : bool;
+
+    /*----- 手动输出 -----*/
+
+    /**
+     * 同步输出一个消息.
+     * @param GhostMsg $ghostMsg
+     */
+    public function output(GhostMsg $ghostMsg) : void;
+
+    /**
+     * 获得所有的输出消息.
+     * @return GhostMsg[]
+     */
+    public function getOutputs() : array;
+
+    /**
+     * 提交一个异步输入消息.
+     * @param GhostInput $ghostInput
+     */
+    public function asyncInput(GhostInput $ghostInput) : void;
+
+    /**
+     * 获取异步的输入消息
+     * @return GhostInput[]
+     */
+    public function getAsyncInput() : array;
+
 
 }

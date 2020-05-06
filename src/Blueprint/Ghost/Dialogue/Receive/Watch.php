@@ -9,14 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialogue\Retain;
+namespace Commune\Blueprint\Ghost\Dialogue\Receive;
 
-use Commune\Blueprint\Ghost\Dialogue\Retain;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Fulfill extends Retain
+interface Watch
 {
 
 }

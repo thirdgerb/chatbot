@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialogue\Retain;
+namespace Commune\Blueprint\Ghost\Dialogue\Withdraw;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Fallback
+interface Quit
 {
 
 }

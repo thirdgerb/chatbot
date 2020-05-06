@@ -44,7 +44,7 @@ abstract class AbsDialogue implements Dialog, Injectable
 
     ];
 
-    /*------ cached -------*/
+    /*------ params -------*/
 
     /**
      * @var Cloner
@@ -66,6 +66,9 @@ abstract class AbsDialogue implements Dialog, Injectable
      */
     protected $prev;
 
+
+    /*------ cached -------*/
+
     /**
      * @var Process|null
      */
@@ -76,6 +79,10 @@ abstract class AbsDialogue implements Dialog, Injectable
      */
     protected $ticked = false;
 
+    /**
+     * @var bool
+     */
+    protected $ticking = false;
 
 
     /**
@@ -104,12 +111,21 @@ abstract class AbsDialogue implements Dialog, Injectable
             );
         }
 
+        if ($this->ticking) {
+            throw new HostLogicException(
+                __METHOD__
+                . ' try to tick dialog that ticking'
+            );
+        }
+
+        $this->ticking = true;
+
         // 正式运行的时候, 必须把当前 Task 设置成为 alive 的对象.
         $this->selfActivate();
+        $next = $this->runTillNext();
 
-        $next = $this->buildNext();
+        $this->ticking = false;
         $this->ticked = true;
-
         return $next;
     }
 
@@ -118,9 +134,9 @@ abstract class AbsDialogue implements Dialog, Injectable
     /**
      * @param Ucl $ucl
      * @param string $dialogInterface
-     * @return Dialogue\Escape|static
+     * @return Dialogue\Withdraw|static
      */
-    protected function buildEscaper(Ucl $ucl, string $dialogInterface) : Dialogue\Escape
+    protected function buildEscaper(Ucl $ucl, string $dialogInterface) : Dialogue\Withdraw
     {
         $class = static::ESCAPER[$dialogInterface];
         return new $class($this->cloner, $ucl, $this);
@@ -156,7 +172,7 @@ abstract class AbsDialogue implements Dialog, Injectable
      * 寻找到下一个 Intend 的对象.
      * @return static
      */
-    abstract protected function buildNext() : Dialog;
+    abstract protected function runTillNext() : Dialog;
 
 
     /**
@@ -164,6 +180,9 @@ abstract class AbsDialogue implements Dialog, Injectable
      */
     abstract protected function selfActivate() : void;
 
+    /**
+     * @return Process
+     */
     protected function getProcess() : Process
     {
         return $this->process
@@ -179,13 +198,15 @@ abstract class AbsDialogue implements Dialog, Injectable
     public function quit(): Dialog
     {
             // 退出依赖
-        return $this->escapeDepended(Dialogue\Escape\Quit::class)
+        return $this->cancelCurrent()
+            // 递归地退出依赖关系.
+            ?? $this->iterateCanceling(Dialogue\Withdraw\Quit::class)
             // 退出阻塞
-            ?? $this->escapeBlocking(Dialogue\Escape\Quit::class)
+            ?? $this->escapeBlocking(Dialogue\Withdraw\Quit::class)
             // 退出睡眠
-            ?? $this->escapeSleeping(Dialogue\Escape\Quit::class)
+            ?? $this->escapeSleeping(Dialogue\Withdraw\Quit::class)
             // 退出监视
-            ?? $this->escapeWatching(Dialogue\Escape\Quit::class)
+            ?? $this->escapeWatching(Dialogue\Withdraw\Quit::class)
             // 退出全部
             ?? $this->closeSession($this->ucl);
     }

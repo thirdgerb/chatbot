@@ -30,6 +30,6 @@ namespace Commune\Blueprint\Ghost\Runtime;
  * @property-read string[] $rebirth             复活路由, 会触发 Rebirth 事件.
  *
  */
-interface Router
+interface Routing
 {
 }

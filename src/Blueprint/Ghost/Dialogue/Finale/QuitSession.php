@@ -9,14 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialogue\Escape;
+namespace Commune\Blueprint\Ghost\Dialogue\Finale;
 
-use Commune\Blueprint\Ghost\Dialogue\Escape;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Confuse extends Escape
+interface QuitSession
 {
 
 }

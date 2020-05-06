@@ -17,13 +17,13 @@ use Commune\Support\Message\MessageTestCase;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class MessagesTest extends MessageTestCase
+class MessagesTestt extends MessageTestCase
 {
     protected $messages = [
         // 默认文本消息
-        Message\Host\Convo\IText::class,
-        Message\Host\Convo\IUnsupportedMsg::class,
-        Message\Host\Convo\IContextMsg::class,
+//        Message\Host\Convo\IText::class,
+//        Message\Host\Convo\IUnsupportedMsg::class,
+//        Message\Host\Convo\IContextMsg::class,
     ];
 
 

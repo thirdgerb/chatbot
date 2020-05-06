@@ -22,33 +22,39 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @property-read string $sessionId             进程所属的 Session
  * @property-read string $id                    进程的唯一 ID.
- * @property-read Process|null $prev            上一轮对话的进程实例.
  *
- * @property-read string[][] $watching          观察中的任务. 可以最先被触发.
- *  [ string $id => $watchingStageName[] ]
+
+ * # waiting
+ * @property-read string|null $await            等待用户回复的任务.
  *
- * @property-read string $aliveTaskId        正在运行中的任务.
+ * @property-read string[][] $watching          观察中的任务. 可以最先被触发 (watch)
+ *  [ string $ucl => $watchingStageName[] ]
  *
- * @property-read Waiter|null $waiter           当前对话的终态.
- * @property-read Waiter[] $backtrace           历史记录. 记录的是 waiter
+ * @property-read int[] $blocking               阻塞中的任务. 有机会就抢占 (preempt)
+ *  [ string $ucl => int $priority]
  *
- * @property-read int[] $blocking               阻塞中的任务. 有机会就抢占.
- *  [ string $id => int $priority]
+ * @property-read string[][] $sleeping          睡眠中的任务. 可以fallback, 可以被指定Stage 唤醒(wake).
+ *  [ string $ucl => $wakenStageName[] ]
  *
- * @property-read string[][] $sleeping          睡眠中的任务. 可以被指定Stage 唤醒.
- *  [ string $id => $wakenStageName[] ]
- *
- * @property-read int[] $dying                  垃圾回收中的任务. 仍然可以被唤醒.
+ * @property-read int[] $dying                  垃圾回收中的任务. 仍然可以被唤醒 (restore)
  *  [ string $id => int $gcTurns ]
  *
- * @property-read string[][] $yielding          等待中的任务. 只能被指定语境唤醒.
- *  [ string $id => string $dependingId ]
+ * @property-read string[][] $yielding          等待中的任务. 只能被指定语境唤醒 (preempt)
+ *  [ string $ucl  => string $Id ]
  *
  * @property-read string[] $depending           依赖中的任务. 被依赖对象唤醒.
- *  [ string $id => string $id]
+ *  [ string $ucl => string $id]
  *
- * @property-read Task[] $tasks                 进行中的 Task 实例.
- *  [ string $id => Task $task]
+ *
+ * ## history
+ *
+ * @property-read Process|null $prev            上一轮对话的进程实例.
+ * @property-read string[] $backtrace           历史记录. 记录的是 await ucl
+ * @property-read Ucl[] $forward                调用 "next" 时前进的方向. 如果没有, 则会fallback
+ *
+ * ## task
+ *
+ * @property-read Task[] $tasks                 缓存的 task
  *
  */
 interface Process extends ArrayAndJsonAble
@@ -56,9 +62,9 @@ interface Process extends ArrayAndJsonAble
 
     /**
      * 构建 Router
-     * @return Router
+     * @return Routing
      */
-    public function buildRouter() : Router;
+    public function buildRouter() : Routing;
 
     /*-------- alive ---------*/
 
@@ -66,6 +72,11 @@ interface Process extends ArrayAndJsonAble
      * @return Task
      */
     public function aliveTask() : Task;
+
+    /**
+     * @return Task
+     */
+    public function popAliveTask() : ? Task;
 
     /**
      * @param Task $task
@@ -82,11 +93,16 @@ interface Process extends ArrayAndJsonAble
      */
     public function popTask(string $contextId) : ? Task;
 
-    public function getTask(string $contextId) : Task;
+    /**
+     * 获取或者创建一个 Task
+     * @param Ucl $ucl
+     * @return Task
+     */
+    public function getTask(Ucl $ucl) : Task;
 
     /*-------- block ---------*/
 
-    public function blockTask(Task $task) : void;
+    public function block(Ucl $ucl) : void;
 
     public function popBlocking(string $id = null) : ? Task;
 
@@ -99,6 +115,17 @@ interface Process extends ArrayAndJsonAble
     /*-------- watch ---------*/
 
     public function popWatching(string $id = null) : ? Task;
+
+    /*-------- canceling ---------*/
+
+    /**
+     * @param string[] $ucl
+     */
+    public function addCanceling(array $ucl) : void;
+
+    public function popCanceling() : ? string;
+
+    public function flushCanceling() : void;
 
     /*-------- gc ---------*/
 

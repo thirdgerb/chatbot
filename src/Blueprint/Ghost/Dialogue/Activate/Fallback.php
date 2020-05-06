@@ -15,7 +15,7 @@ namespace Commune\Blueprint\Ghost\Dialogue\Activate;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Wake
+interface Fallback
 {
 
 }

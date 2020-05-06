@@ -12,6 +12,8 @@
 namespace Commune\Blueprint\Ghost\Dialogue;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Dialogue\Finale\Dumb;
+use Commune\Blueprint\Ghost\Dialogue\Finale\Rewind;
 
 
 /**
@@ -19,7 +21,5 @@ use Commune\Blueprint\Ghost\Dialog;
  */
 interface Receive extends Dialog
 {
-
-    public function quit();
 
 }

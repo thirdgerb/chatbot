@@ -9,14 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialogue\Retain;
+namespace Commune\Blueprint\Ghost\Dialogue;
 
-use Commune\Blueprint\Ghost\Dialogue\Retain;
+use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Dialogue\Routing\MoveOn;
+use Commune\Blueprint\Ghost\Dialogue\Routing\Withdrawing;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Heed extends Callback
+interface Withdraw extends
+    Dialog,
+    MoveOn,
+    Withdrawing
 {
 
 }

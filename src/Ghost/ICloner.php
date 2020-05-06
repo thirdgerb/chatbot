@@ -36,7 +36,7 @@ class ICloner extends ASession implements Cloner
     const SINGLETONS =  [
         'scope' => Ghost\ClonerScope::class,
         'config' => GhostConfig::class,
-        'convo' => Ghost\Convo::class,
+        'convo' => Ghost\Typer::class,
         'cache' => Cache::class,
         'auth' => Ghost\Auth\Authority::class,
         'mind' => Ghost\Mind\Mindset::class,

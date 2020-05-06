@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Dialog;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialogue\Escape;
+use Commune\Blueprint\Ghost\Dialogue\Withdraw;
 use Commune\Blueprint\Ghost\Dialogue\Retain;
 use Commune\Blueprint\Ghost\Dialogue\Activate;
 
@@ -31,13 +31,13 @@ class DialogHelper
         return $stageDef->onRedirect($from, $to);
     }
 
-    public static function onEscaper(Escape $escaper) : Dialog
+    public static function onEscaper(Retrace $escaper) : ? Dialog
     {
         $stageDef = $escaper->ucl->findStageDef($escaper->cloner);
-        return $stageDef->onEscape($escaper);
+        return $stageDef->onWithdraw($escaper);
     }
 
-    public static function onActivate(Activate $activate) : Dialog
+    public static function onActivate(OnActivate $activate) : Dialog
     {
         $stageDef = $activate->ucl->findStageDef($activate->cloner);
         return $stageDef->onActivate($activate);
@@ -46,7 +46,7 @@ class DialogHelper
     public static function onRetain(Retain $retain) : Dialog
     {
         $stageDef = $retain->ucl->findStageDef($retain->cloner);
-        return $stageDef->onRetain($retain);
+        return $stageDef->onReceive($retain);
     }
 
 
