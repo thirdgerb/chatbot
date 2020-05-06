@@ -156,6 +156,7 @@ interface Intention extends Abstracted
 
     /**
      * 获取某个意图的所有实体.
+     * 意图必须是 highly possible intent
      *
      * @param string $intentName
      * @return array[]

@@ -22,26 +22,35 @@ use Commune\Blueprint\Ghost\Ucl;
  */
 interface Redirector
 {
-    /*-------- stage --------*/
+
+    /*-------- 链式调用 --------*/
+
+    /**
+     * 将自己变成 Watch 状态, 然后进入 $to 语境.
+     *
+     * @param Ucl $watcher
+     * @return Redirector
+     */
+    public function watch(Ucl $watcher) : Redirector;
+
+    /**
+     * 清空路径.
+     */
+    public function resetPath() : Redirector;
+
+    /*-------- redirect --------*/
 
     /**
      * 进入到相同 Context 下的另一个 stage
+     *
      * @param string $stageName
+     * @param string ...$pipes
      * @return Dialog
      */
-    public function goStage(string $stageName) : Dialog;
+    public function goStage(string $stageName, string ...$pipes) : Dialog;
 
     /**
-     * 穿过一系列的 Stage
-     * @param string[] $stages
-     * @param bool $reset
-     * @return Dialog
-     */
-    public function goStagePipes(array $stages, bool $reset = false) : Dialog;
-
-
-    /**
-     * 重定向到另一个组 Ucl. 会依次前进.
+     * 重定向到另一组 Ucl,
      *
      * @param Ucl $to
      * @param Ucl ...$pipes
@@ -50,29 +59,38 @@ interface Redirector
     public function redirectTo(Ucl $to, Ucl ...$pipes) : Dialog;
 
     /**
-     * 清空路径.
-     */
-    public function resetPath() : void;
-
-    /**
      * 按预订路线执行下一步, 如果没有下一步则执行 fulfill
      * @return Dialog
      */
     public function next() : Dialog;
+
+    /**
+     * 返回到指定的 ucl (或默认的ucl), 然后清空所有的 waiting 关系.
+     *
+     * @param Ucl|null $home
+     * @param bool $restartProcess      重新运行 process, 并再次接受输入消息.
+     * @param bool $quiet               不记录任何消息.
+     * @return Dialog
+     */
+    public function home(
+        Ucl $home = null,
+        bool $restartProcess = false,
+        bool $quiet = false
+    ) : Dialog;
 
     /*-------- wait --------*/
 
     /**
      * 等待用户的回复.
      *
-     * @param array $stageRoutes
-     * @param array $contextRoutes
+     * @param string[] $stageInterceptors
+     * @param array $contextInterceptors
      * @param int|null $expire
      * @return Await
      */
     public function await(
-        array $stageRoutes = [],
-        array $contextRoutes = [],
+        array $stageInterceptors = [],
+        array $contextInterceptors = [],
         int $expire = null
     ) : Await;
 
@@ -86,14 +104,6 @@ interface Redirector
      * @return Dialog
      */
     public function dependOn(Ucl $depend, string $fieldName) : Dialog;
-
-    /**
-     * 将自己变成 Watch 状态, 然后进入 $to 语境.
-     *
-     * @param Ucl $to
-     * @return Dialog
-     */
-    public function watchTo(Ucl $to) : Dialog;
 
     /**
      * 将自己压入 block 状态, 然后进入 $to 语境.
@@ -134,8 +144,22 @@ interface Redirector
         Ucl $to = null
     ) : Dialog;
 
-    /*-------- finale --------*/
 
+    /*-------- restart --------*/
+
+    /**
+     * 重新启动并运行当前进程.
+     * 会再次理解一次输入信息.
+     * @return Dialog
+     */
+    public function restartProcess() : Dialog;
+
+    public function restartContext() : Dialog;
+
+    public function restartStage() : Dialog;
+
+
+    /*-------- finale --------*/
 
     /**
      * 重置到上一轮的对话.
@@ -163,14 +187,6 @@ interface Redirector
      * @return Dialog
      */
     public function confuse() : Dialog;
-
-    /*-------- hearing --------*/
-
-    /**
-     * 进行连贯的响应逻辑.
-     * @return Hearing
-     */
-    public function reaction() : Hearing;
 
 
     /*-------- retrace --------*/

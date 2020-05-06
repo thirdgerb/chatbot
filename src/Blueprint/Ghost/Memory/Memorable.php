@@ -30,9 +30,9 @@ interface Memorable extends ArrayAndJsonAble
 
     /**
      * 重置数据.
-     * @param array|null $data
+     * @param array $data
      */
-    public function resetData(array $data = null): void;
+    public function resetData(array $data): void;
 
 
     /**

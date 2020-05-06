@@ -14,10 +14,10 @@ namespace Commune\Blueprint\Ghost\Definition;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialogue\Receive;
-use Commune\Blueprint\Ghost\Dialogue\Withdraw;
-use Commune\Blueprint\Ghost\Dialogue\Fulfill;
-use Commune\Blueprint\Ghost\Dialogue\Activate;
+use Commune\Blueprint\Ghost\Dialog\Receive;
+use Commune\Blueprint\Ghost\Dialog\Withdraw;
+use Commune\Blueprint\Ghost\Dialog\Fulfill;
+use Commune\Blueprint\Ghost\Dialog\Activate;
 
 
 /**
@@ -60,6 +60,9 @@ interface StageDef
     public function comprehendPipes(Cloner $cloner) : ? array;
 
     /*------- intend to stage -------*/
+
+
+    public function onIntercept(Dialog $current, Dialog $prev = null) : ? Dialog;
 
     /**
      * 激活当前的 Stage, 然后等待回调.

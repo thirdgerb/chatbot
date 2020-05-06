@@ -12,9 +12,11 @@
 namespace Commune\Ghost\Dialog;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialogue\Withdraw;
-use Commune\Blueprint\Ghost\Dialogue\Retain;
-use Commune\Blueprint\Ghost\Dialogue\Activate;
+use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Blueprint\Ghost\Dialog\Receive;
+use Commune\Blueprint\Ghost\Ucl;
+use Commune\Ghost\Dialog\IActivate;
+use Commune\Ghost\Dialog\IFinale;
 
 
 /**
@@ -22,32 +24,36 @@ use Commune\Blueprint\Ghost\Dialogue\Activate;
  */
 class DialogHelper
 {
+    const IMPLEMENTS = [
+        Receive\Heed::class => '',
+        Activate\Staging::class => IActivate\IStaging::class,
+        Activate\Intend::class => IActivate\IIntend::class,
+        Dialog\Finale\Dumb::class => IFinale\IDumb::class,
 
-    /*-------- redirect --------*/
+    ];
 
-    public static function onRedirect(Dialog $from, Dialog $to) : ? Dialog
+    public static function newDialog(Dialog $prev, Ucl $ucl, string $type) : Dialog
     {
-        $stageDef = $to->ucl->findStageDef($to->cloner);
-        return $stageDef->onRedirect($from, $to);
-    }
+        $implements = self::IMPLEMENTS[$type];
 
-    public static function onEscaper(Retrace $escaper) : ? Dialog
-    {
-        $stageDef = $escaper->ucl->findStageDef($escaper->cloner);
-        return $stageDef->onWithdraw($escaper);
-    }
-
-    public static function onActivate(OnActivate $activate) : Dialog
-    {
-        $stageDef = $activate->ucl->findStageDef($activate->cloner);
-        return $stageDef->onActivate($activate);
-    }
-
-    public static function onRetain(Retain $retain) : Dialog
-    {
-        $stageDef = $retain->ucl->findStageDef($retain->cloner);
-        return $stageDef->onReceive($retain);
+        /**
+         * @var AbsDialogue $newDialog
+         */
+        $newDialog = new $implements($prev->cloner, $ucl);
+        $newDialog->withPrev($prev);
+        return $newDialog;
     }
 
 
+    public static function intercept(Dialog $dialog) : ? Dialog
+    {
+        $stageDef = $dialog->ucl->findStageDef($dialog->cloner);
+        return $stageDef->onIntercept($dialog, $dialog->prev);
+    }
+
+    public static function activate(Activate $dialog, Ucl $ucl) : Dialog
+    {
+        $stageDef = $ucl->findStageDef($dialog->cloner);
+        return $stageDef->onActivate($dialog);
+    }
 }

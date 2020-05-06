@@ -13,17 +13,15 @@ namespace Commune\Ghost;
 
 use Commune\Blueprint\Ghost\GhostConfig;
 use Commune\Blueprint\Framework\ReqContainer;
-use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Framework\Session\Storage;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Cache;
 use Commune\Framework\ASession;
-use Commune\Ghost\OperatorsBack\DialogManager;
-use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\GhostInput;
+use Commune\Protocals\Intercom\GhostMsg;
 use Commune\Support\Option\OptRegistry;
 use Psr\Log\LoggerInterface;
 
@@ -34,7 +32,7 @@ class ICloner extends ASession implements Cloner
 {
 
     const SINGLETONS =  [
-        'scope' => Ghost\ClonerScope::class,
+        'scope' => Cloner\ClonerScope::class,
         'config' => GhostConfig::class,
         'convo' => Ghost\Typer::class,
         'cache' => Cache::class,
@@ -69,14 +67,29 @@ class ICloner extends ASession implements Cloner
     protected $clonerId;
 
     /**
-     * @var string
-     */
-    protected $hostName;
-
-    /**
      * @var int
      */
     protected $expire;
+
+    /**
+     * @var Context[]
+     */
+    protected $contexts = [];
+
+    /**
+     * @var GhostMsg[]
+     */
+    protected $outputs = [];
+
+    /**
+     * @var GhostInput[]
+     */
+    protected $asyncInputs = [];
+
+    /**
+     * @var bool
+     */
+    protected $silent = false;
 
     public function __construct(Ghost $ghost, ReqContainer $container, GhostInput $input)
     {
@@ -86,12 +99,11 @@ class ICloner extends ASession implements Cloner
 
         // id
         $this->clonerId = $input->getCloneId();
-        $this->hostName = $input->hostName;
 
         // expire
         $this->expire = $this->ghostConfig->sessionExpire;
 
-        parent::__construct($container, $input->sessionId);
+        parent::__construct($container, $input->getSessionId());
     }
 
 
@@ -100,58 +112,55 @@ class ICloner extends ASession implements Cloner
         return $this->clonerId;
     }
 
+    /*-------- contextual ---------*/
 
-    public function runDialogManager(Operator $operator = null): bool
-    {
-        $manager = new DialogManager($this);
-        return $manager->runDialogManage($operator);
-    }
-
-    public function getContext(string $contextId, string $contextName): Context
+    public function getContextualQuery(string $contextName, array $query = null): array
     {
         $contextDef = $this->mind->contextReg()->getDef($contextName);
-        $recollection = $this->runtime->findRecollection($contextId);
+        $scopes = $contextDef->getScopes();
+        $map = $this->scope->getLongTermDimensionsDict($scopes);
 
-        if (isset($recollection)) {
-            return $contextDef->wrapContext($recollection, $this);
+        $query = $query ?? [];
+        $query = $contextDef->getParamsManager()->parseQuery($query);
+
+        return $query + $map;
+    }
+
+    public function getContextualEntities(string $contextName): array
+    {
+        $contextDef = $this->mind->contextReg()->getDef($contextName);
+
+        $entities = $this->ghostInput->comprehension->intention->getIntentEntities($contextName);
+
+        if (empty($entities)) {
+            return [];
         }
 
-        return $this->newContext($contextName);
+       return $contextDef->getParamsManager()->parseIntentEntities($entities);
     }
 
-    public function newContext(string $contextName, array $queries = null): Context
+    public function getContext(Ucl $ucl): Context
     {
-        $queries = $queries ?? $this
-                ->ghostInput
-                ->comprehension
-                ->intention
-                ->getIntentEntities($contextName);
+        $contextId = $ucl->getContextId();
+        if (isset($this->contexts[$contextId])) {
+            return $this->contexts[$contextId];
+        }
 
-        // Def
+        $contextName = $ucl->contextName;
         $contextDef = $this->mind->contextReg()->getDef($contextName);
 
-        // 生成新的 Id
-        $id = $contextDef->makeId($this);
+        $context = $contextDef->wrapContext($this, $ucl);
+        $entities = $this->getContextualEntities($contextName);
 
-        // 获得 Recollection 的默认值.
-        $values = $contextDef->getDefaultValues();
-        $queries = empty($queries)
-            ? []
-            : $contextDef->parseIntentEntities($queries);
-        $values = $queries + $values;
+        if (!empty($entities)) {
+            $context->mergeData($entities);
+        }
 
-        // 创建新的记忆体.
-        $recollection = $this->runtime->createRecollection(
-            $id,
-            $contextDef->getName(),
-            $contextDef->isLongTerm(),
-            $values
-        );
-
-        // 生成 Context 对象
-        return $contextDef->wrapContext($recollection, $this);
+        return $this->contexts[$contextId] = $context;
     }
 
+
+    /*-------- properties ---------*/
 
     protected function getProtocalOptions(): array
     {
@@ -249,12 +258,47 @@ class ICloner extends ASession implements Cloner
         $this->expire = $seconds;
     }
 
+    /*------- output -------*/
+    public function silence(bool $silent = true): void
+    {
+        $this->silent = $silent;
+    }
+
+    public function output(GhostMsg $ghostMsg): void
+    {
+        if (!$this->silent) {
+            $this->outputs[] = $ghostMsg;
+        }
+    }
+
+    public function getOutputs(): array
+    {
+        return $this->outputs;
+    }
+
+    public function asyncInput(GhostInput $ghostInput): void
+    {
+        if (!$this->silent) {
+            $this->asyncInputs[] = $ghostInput;
+        }
+    }
+
+    public function getAsyncInput(): array
+    {
+        return $this->asyncInputs;
+    }
+
+
+    /*------- flush -------*/
 
     protected function flushInstances(): void
     {
         $this->ghost = null;
         $this->ghostConfig = null;
         $this->ghostInput = null;
+        $this->contexts = [];
+        $this->outputs = [];
+        $this->asyncInputs = [];
     }
 
     protected function saveSession(): void

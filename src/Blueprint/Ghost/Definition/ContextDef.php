@@ -13,6 +13,7 @@ namespace Commune\Blueprint\Ghost\Definition;
 
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Ucl;
 
 /**
@@ -53,7 +54,7 @@ interface ContextDef extends Def, StageDef
     public function getParamsManager() : ContextParamsManager;
 
     /**
-     * 将 Context 封装成对象.
+     * 封装 Context 对象.
      *
      * @param Cloner $cloner
      * @param Ucl $ucl

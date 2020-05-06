@@ -259,7 +259,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         $this->finished = true;
 
         // container
-        $this->container->destroy();
         $this->container = null;
     }
 

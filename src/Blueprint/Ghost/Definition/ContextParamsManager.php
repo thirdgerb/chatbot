@@ -19,6 +19,10 @@ use Illuminate\Support\Collection;
  */
 interface ContextParamsManager
 {
+    /*------- parser -------*/
+
+    public function parseQuery(array $query) : array;
+
     /*------- parameters -------*/
 
     /**

@@ -27,6 +27,8 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * # waiting
  * @property-read string|null $await            等待用户回复的任务.
  *
+ * @property-read Waiter|null $waiter
+ *
  * @property-read string[][] $watching          观察中的任务. 可以最先被触发 (watch)
  *  [ string $ucl => $watchingStageName[] ]
  *
@@ -48,8 +50,9 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * ## history
  *
+ * @property-read string $root
  * @property-read Process|null $prev            上一轮对话的进程实例.
- * @property-read string[] $backtrace           历史记录. 记录的是 await ucl
+ * @property-read Waiter[] $backtrace           历史记录. 记录的是 await ucl
  * @property-read Ucl[] $forward                调用 "next" 时前进的方向. 如果没有, 则会fallback
  *
  * ## task
@@ -60,39 +63,54 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 interface Process extends ArrayAndJsonAble
 {
 
-    /**
-     * 构建 Router
-     * @return Routing
-     */
-    public function buildRouter() : Routing;
+    public function buildRoutes() : RoutesMap;
 
-    /*-------- alive ---------*/
+    public function setAwait(Waiter $waiter) : void;
 
-    /**
-     * @return Task
-     */
-    public function aliveTask() : Task;
+//    /*-------- alive ---------*/
+//
+//    /**
+//     * @return Task
+//     */
+//    public function aliveTask() : Task;
+//
+//    /**
+//     * @return Task
+//     */
+//    public function popAliveTask() : ? Task;
+//
+//    /**
+//     * @param Task $task
+//     * @param bool $force
+//     * @return Task|null    如果挑战不成功, 或者两个 task 是相同的, 就返回 null
+//     */
+//    public function challengeTask(Task $task, bool $force = false) : ? Task;
 
-    /**
-     * @return Task
-     */
-    public function popAliveTask() : ? Task;
+    /*-------- ucl ---------*/
 
-    /**
-     * @param Task $task
-     * @param bool $force
-     * @return Task|null    如果挑战不成功, 或者两个 task 是相同的, 就返回 null
-     */
-    public function challengeTask(Task $task, bool $force = false) : ? Task;
+    public function decodeUcl(string $ucl) : ? Ucl;
+
+    /*-------- watch ---------*/
+
+    public function addWatcher(Ucl $watcher) : void;
+
+    /*-------- path ---------*/
+
+    public function addPath(Ucl ...$ucl) : void;
+
+    public function popPath() : ? string;
+
+    public function resetPath() : void;
 
     /*-------- task ---------*/
 
-    /**
-     * @param string $contextId
-     * @return Task|null
-     */
-    public function popTask(string $contextId) : ? Task;
-
+//
+//    /**
+//     * @param string $contextId
+//     * @return Task|null
+//     */
+//    public function popTask(string $contextId) : ? Task;
+//
     /**
      * 获取或者创建一个 Task
      * @param Ucl $ucl
@@ -100,39 +118,47 @@ interface Process extends ArrayAndJsonAble
      */
     public function getTask(Ucl $ucl) : Task;
 
-    /*-------- block ---------*/
+//    /*-------- block ---------*/
+//
+    public function block(Ucl $ucl, int $priority) : void;
 
-    public function block(Ucl $ucl) : void;
-
-    public function popBlocking(string $id = null) : ? Task;
-
-    /*-------- sleep ---------*/
-
-    public function sleepTask(Task $task) : void;
-
-    public function popSleeping(string $id = null) : ? Task;
-
-    /*-------- watch ---------*/
-
-    public function popWatching(string $id = null) : ? Task;
+    public function popBlocking(string $ucl = null) : ? string;
+//
+//    /*-------- sleep ---------*/
+//
+//    public function sleepTask(Task $task) : void;
+//
+//    public function popSleeping(string $id = null) : ? Task;
+//
+//    /*-------- watch ---------*/
+//
+//    public function popWatching(string $id = null) : ? Task;
+//
+//    /*-------- canceling ---------*/
+//
+//    /**
+//     * @param string[] $ucl
+//     */
+//    public function addCanceling(array $ucl) : void;
+//
+//    public function popCanceling() : ? string;
+//
+//    public function flushCanceling() : void;
+//
+//    /*-------- gc ---------*/
+//
+//    public function addGc(Task $task) : void;
+//
+//    /**
+//     * 清空掉需要 gc 的 Task
+//     */
+//    public function gc() : void;
 
     /*-------- canceling ---------*/
 
-    /**
-     * @param string[] $ucl
-     */
-    public function addCanceling(array $ucl) : void;
+    public function unsetWaiting(string $ucl) : void;
 
-    public function popCanceling() : ? string;
+    /*-------- backStep ---------*/
 
-    public function flushCanceling() : void;
-
-    /*-------- gc ---------*/
-
-    public function addGc(Task $task) : void;
-
-    /**
-     * 清空掉需要 gc 的 Task
-     */
-    public function gc() : void;
+    public function backStep(int $step) : void;
 }

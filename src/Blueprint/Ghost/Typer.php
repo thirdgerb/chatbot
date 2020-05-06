@@ -21,6 +21,8 @@ interface Typer
 
     /*------- 设定额外的参数 -------*/
 
+    public function withSlots(array $slots) : Typer;
+
     /**
      * 指定消息发送的用户. 默认是 空字符串.
      * @param string $guestId

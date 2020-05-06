@@ -80,12 +80,28 @@ interface Cloner extends Session
     /*----- 运行对话管理逻辑 -----*/
 
     /**
-     * 获取一个 ucl
+     * 获取上下文相关的 Query 变量.
      * @param string $contextName
      * @param array|null $query
-     * @return Ucl
+     * @return array
+     * @throws Ghost\Exceptions\DefNotDefinedException
      */
-    public function getUcl(string $contextName, array $query = null) : Ucl;
+    public function getContextualQuery(string $contextName, array $query = null) : array;
+
+    /**
+     * 获取 Context 上下文相关的 entity 值.
+     * @param string $contextName
+     * @return array
+     * @throws Ghost\Exceptions\DefNotDefinedException
+     */
+    public function getContextualEntities(string $contextName) : array;
+
+    /**
+     * @param Ucl $ucl
+     * @return Context
+     * @throws Ghost\Exceptions\DefNotDefinedException
+     */
+    public function getContext(Ucl $ucl) : Context;
 
     /**
      * @param Dialog|null $dialog
@@ -94,6 +110,12 @@ interface Cloner extends Session
     public function runDialogManager(Dialog $dialog = null) : bool;
 
     /*----- 手动输出 -----*/
+
+    /**
+     * 静音开关, 打开静音开关, 接下来的 output 都不会真正接收.
+     * @param bool $silent
+     */
+    public function silence(bool $silent = true) : void;
 
     /**
      * 同步输出一个消息.

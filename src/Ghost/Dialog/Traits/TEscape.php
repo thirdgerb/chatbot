@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Dialog\Traits;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialogue\Finale\QuitSession;
+use Commune\Blueprint\Ghost\Dialog\Finale\QuitSession;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Ucl;

@@ -11,7 +11,7 @@
 
 namespace Commune\Test\Ghost\Support;
 
-use Commune\Ghost\Support\ContextTypeUtils;
+use Commune\Ghost\Support\ContextUtils;
 use PHPUnit\Framework\TestCase;
 
 
@@ -35,7 +35,7 @@ class ContextTypeUtilsTest extends TestCase
         ];
 
         foreach($cases as $case) {
-            $this->assertTrue(ContextTypeUtils::isValidUcl($case));
+            $this->assertTrue(ContextUtils::isValidUcl($case));
         }
 
         $falseCases = [
@@ -51,7 +51,7 @@ class ContextTypeUtilsTest extends TestCase
         ];
 
         foreach($falseCases as $case) {
-            $this->assertFalse(ContextTypeUtils::isValidUcl($case));
+            $this->assertFalse(ContextUtils::isValidUcl($case));
         }
 
     }

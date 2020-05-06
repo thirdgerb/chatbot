@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Ghost\Routing\Hearing;
 use Commune\Blueprint\Ghost\Routing\Matcher;
 use Commune\Blueprint\Ghost\Routing\Redirector;
 use Commune\Blueprint\Ghost\Runtime\Task;
@@ -48,6 +49,8 @@ interface Dialog
      */
     public function then() : Redirector;
 
+    public function hearing() : Hearing;
+
 
     /*----- 上下文相关 Context -----*/
 
@@ -60,21 +63,11 @@ interface Dialog
     public function getContext(Ucl $ucl) : Context;
 
     /**
-     * 创建一个指定的 Context
-     *
-     * @param string $contextName
+     * @param string $contextOrUclStr
      * @param array|null $query
      * @return Ucl
      */
-    public function getUcl(string $contextName, array $query = null) : Ucl;
-
-    /**
-     * 强制生成一个新的 Context 任务对象.
-     * @param Ucl $ucl
-     * @return Task
-     */
-    public function newTask(Ucl $ucl) : Task;
-
+    public function getUcl(string $contextOrUclStr, array $query = []) : Ucl;
 
     /**
      * Dialog 逻辑运行一帧.

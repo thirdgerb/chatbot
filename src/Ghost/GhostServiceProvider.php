@@ -51,6 +51,8 @@ class GhostServiceProvider extends ServiceProvider
         $this->registerMindset($app);
         $this->registerRuntime($app);
 
+        $this->registerMatcher($app);
+
         $this->registerStorage($app);
     }
 

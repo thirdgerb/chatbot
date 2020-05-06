@@ -12,6 +12,7 @@
 namespace Commune\Protocals\Intercom;
 
 use Commune\Protocals\Comprehension;
+use Commune\Protocals\HostMsg;
 
 /**
  * Ghost 的输入消息.
@@ -29,5 +30,9 @@ interface GhostInput extends GhostMsg
     public function getSceneId() : string;
 
     public function getEnv() : array;
+
+    /*----- 生成回复 -----*/
+
+    public function output(HostMsg $message) : GhostOutput;
 
 }

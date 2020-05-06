@@ -15,10 +15,13 @@ use Commune\Blueprint\Exceptions\HostLogicException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialogue;
+use Commune\Blueprint\Ghost\Routing\Matcher;
+use Commune\Blueprint\Ghost\Routing\Redirector;
 use Commune\Blueprint\Ghost\Runtime\Process;
+use Commune\Blueprint\Ghost\Runtime\Task;
+use Commune\Blueprint\Ghost\Typer;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\Traits\TEscape;
+use Commune\Ghost\Dialog\Traits\TRedirector;
 use Commune\Support\DI\Injectable;
 use Commune\Support\DI\TInjectable;
 
@@ -28,21 +31,9 @@ use Commune\Support\DI\TInjectable;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbsDialogue implements Dialog, Injectable
+abstract class AbsDialogue implements Dialog, Injectable, Redirector
 {
-    use TEscape, TInjectable;
-
-    const ACTIVATOR = [
-
-    ];
-
-    const ESCAPER = [
-
-    ];
-
-    const RETAINER = [
-
-    ];
+    use TInjectable, TRedirector;
 
     /*------ params -------*/
 
@@ -89,14 +80,58 @@ abstract class AbsDialogue implements Dialog, Injectable
      * AbsDialogue constructor.
      * @param Cloner $cloner
      * @param Ucl $ucl
-     * @param Dialog|null $prev
      */
-    public function __construct(Cloner $cloner, Ucl $ucl, Dialog $prev = null)
+    public function __construct(Cloner $cloner, Ucl $ucl)
     {
         $this->cloner = $cloner;
         $this->ucl = $ucl;
-        $this->prev = $prev;
     }
+
+    /**
+     * @param Dialog $dialog
+     * @return static
+     */
+    public function withPrev(Dialog $dialog) : Dialog
+    {
+        $this->prev = $dialog;
+        return $this;
+    }
+
+    /*-------- implements --------*/
+
+    public function send(): Typer
+    {
+        // TODO: Implement send() method.
+    }
+
+    public function matcher(): Matcher
+    {
+        return $this->cloner->container->make(Matcher::class);
+    }
+
+    public function then(): Redirector
+    {
+        return $this;
+    }
+
+    public function getContext(Ucl $ucl): Context
+    {
+        return $this->cloner->getContext($ucl);
+    }
+
+    public function getUcl(string $contextOrUclStr, array $query = []): Ucl
+    {
+        $ucl = Ucl::decodeUcl($contextOrUclStr);
+
+        return Ucl::create(
+            $this->cloner,
+            $ucl->contextName,
+            $ucl->stageName,
+            $query + $ucl->query
+        );
+    }
+
+
 
     /*-------- tick --------*/
 
@@ -120,53 +155,28 @@ abstract class AbsDialogue implements Dialog, Injectable
 
         $this->ticking = true;
 
-        // 正式运行的时候, 必须把当前 Task 设置成为 alive 的对象.
-        $this->selfActivate();
-        $next = $this->runTillNext();
+        $next = $this->runInterception();
+
+        // 未被拦截的时候.
+        if (!isset($next)) {
+            // 下一次 tick 关闭上一次tick
+            $prev = $this->prev;
+            if (isset($prev) && $prev instanceof self) {
+                $prev->ticked = true;
+            }
+
+            $this->selfActivate();
+            $next = $this->runTillNext();
+        }
 
         $this->ticking = false;
-        $this->ticked = true;
         return $next;
     }
 
-    /*-------- buildDialog --------*/
-
-    /**
-     * @param Ucl $ucl
-     * @param string $dialogInterface
-     * @return Dialogue\Withdraw|static
-     */
-    protected function buildEscaper(Ucl $ucl, string $dialogInterface) : Dialogue\Withdraw
-    {
-        $class = static::ESCAPER[$dialogInterface];
-        return new $class($this->cloner, $ucl, $this);
-    }
-
-    /**
-     * @param Ucl $ucl
-     * @param string $dialogInterface
-     * @return Dialogue\Activate|static
-     */
-    protected function buildActivator(Ucl $ucl, string $dialogInterface) : Dialogue\Activate
-    {
-        $class = static::ACTIVATOR[$dialogInterface];
-        return new $class($this->cloner, $ucl, $this);
-    }
-
-    /**
-     * @param Ucl $ucl
-     * @param string $dialogInterface
-     * @return Dialogue\Retain|static
-     */
-    protected function buildRetainer(Ucl $ucl, string $dialogInterface) : Dialogue\Retain
-    {
-        $class = static::RETAINER[$dialogInterface];
-        return new $class($this->cloner, $ucl, $this);
-    }
-
-
 
     /*-------- inner --------*/
+
+    abstract protected function runInterception() : ? Dialog;
 
     /**
      * 寻找到下一个 Intend 的对象.
@@ -187,28 +197,6 @@ abstract class AbsDialogue implements Dialog, Injectable
     {
         return $this->process
             ?? $this->process = $this->cloner->runtime->getCurrentProcess();
-    }
-
-    /*-------- quit --------*/
-
-    /**
-     * 尝试退出整个会话.
-     * @return Dialog
-     */
-    public function quit(): Dialog
-    {
-            // 退出依赖
-        return $this->cancelCurrent()
-            // 递归地退出依赖关系.
-            ?? $this->iterateCanceling(Dialogue\Withdraw\Quit::class)
-            // 退出阻塞
-            ?? $this->escapeBlocking(Dialogue\Withdraw\Quit::class)
-            // 退出睡眠
-            ?? $this->escapeSleeping(Dialogue\Withdraw\Quit::class)
-            // 退出监视
-            ?? $this->escapeWatching(Dialogue\Withdraw\Quit::class)
-            // 退出全部
-            ?? $this->closeSession($this->ucl);
     }
 
 
@@ -234,7 +222,7 @@ abstract class AbsDialogue implements Dialog, Injectable
                 return $this->prev;
             case 'context' :
                 return $this->curContext
-                    ?? $this->curContext = $this->cloner->getContext($this->ucl);
+                    ?? $this->curContext = $this->getContext($this->ucl);
             default:
                 return null;
         }
