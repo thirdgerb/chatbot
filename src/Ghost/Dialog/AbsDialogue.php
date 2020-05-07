@@ -15,6 +15,7 @@ use Commune\Blueprint\Exceptions\HostLogicException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Routing\Hearing;
 use Commune\Blueprint\Ghost\Routing\Matcher;
 use Commune\Blueprint\Ghost\Routing\Redirector;
 use Commune\Blueprint\Ghost\Runtime\Process;
@@ -22,6 +23,7 @@ use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Typer;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\Traits\TRedirector;
+use Commune\Ghost\Dialog\Traits\TRetrace;
 use Commune\Support\DI\Injectable;
 use Commune\Support\DI\TInjectable;
 
@@ -33,7 +35,7 @@ use Commune\Support\DI\TInjectable;
  */
 abstract class AbsDialogue implements Dialog, Injectable, Redirector
 {
-    use TInjectable, TRedirector;
+    use TInjectable, TRedirector, TRetrace;
 
     /*------ params -------*/
 
@@ -114,6 +116,11 @@ abstract class AbsDialogue implements Dialog, Injectable, Redirector
         return $this;
     }
 
+    public function hearing(): Hearing
+    {
+        // TODO: Implement hearing() method.
+    }
+
     public function getContext(Ucl $ucl): Context
     {
         return $this->cloner->getContext($ucl);
@@ -170,8 +177,11 @@ abstract class AbsDialogue implements Dialog, Injectable, Redirector
         }
 
         $this->ticking = false;
+        $next->prev = $this;
+
         return $next;
     }
+
 
 
     /*-------- inner --------*/

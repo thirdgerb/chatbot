@@ -9,13 +9,28 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog;
+namespace Commune\Ghost\Dialog\IRedirect;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Dialog\Activate\Fallback;
+use Commune\Ghost\Dialog\AbsDialogue;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Activate extends Dialog
+class IFallback extends AbsDialogue implements Fallback
 {
+    protected function runInterception(): ? Dialog
+    {
+    }
+
+    protected function runTillNext(): Dialog
+    {
+    }
+
+    protected function selfActivate(): void
+    {
+    }
+
+
 }

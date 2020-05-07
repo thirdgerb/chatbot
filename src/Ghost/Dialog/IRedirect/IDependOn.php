@@ -9,11 +9,9 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IActivate;
+namespace Commune\Ghost\Dialog\IRedirect;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Activate\Intend;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
 use Commune\Ghost\Dialog\DialogHelper;
@@ -22,23 +20,18 @@ use Commune\Ghost\Dialog\DialogHelper;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IIntend extends AbsDialogue implements Intend
+class IDependOn extends AbsDialogue implements Dialog\Activate\DependOn
 {
     /**
-     * @var Ucl[]
+     * @var string
      */
-    protected $paths = [];
+    protected $fieldName;
 
-    /**
-     * IIntend constructor.
-     * @param Cloner $cloner
-     * @param Ucl $ucl
-     * @param Ucl[] $path
-     */
-    public function __construct(Cloner $cloner, Ucl $ucl, array $path = [])
+    public function __construct(Dialog $by, Ucl $on, string $field)
     {
-        $this->paths = $path;
-        parent::__construct($cloner, $ucl);
+        $this->prev = $by;
+        $this->fieldName = $field;
+        parent::__construct($by->cloner, $on);
     }
 
     protected function runInterception(): ? Dialog
@@ -53,11 +46,14 @@ class IIntend extends AbsDialogue implements Intend
 
     protected function selfActivate(): void
     {
+        // 先赋值.
+        $prev = $this->prev;
+        $context = $prev->context;
+        $context[$this->fieldName] = $self = $this->context;
+
+        // 添加回调
         $process = $this->getProcess();
-        $process->unsetWaiting($this->ucl->toEncodedUcl());
-        if (!empty($this->paths)) {
-            $process->addPath(...$this->paths);
-        }
+        $process->addDepending($prev->ucl, $self->getId());
     }
 
 

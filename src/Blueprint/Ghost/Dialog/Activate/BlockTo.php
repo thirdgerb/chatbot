@@ -9,14 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog;
+namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
-use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Dialog\Activate;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Retain extends Dialog
+interface BlockTo extends Activate
 {
+
 }

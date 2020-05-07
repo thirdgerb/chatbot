@@ -9,14 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog\Withdraw;
+namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
-use Commune\Blueprint\Ghost\Dialog\Withdraw;
+use Commune\Blueprint\Ghost\Dialog\Activate;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Cancel extends Withdraw
+interface DependOn extends Activate
 {
 
 }

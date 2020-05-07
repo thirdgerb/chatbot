@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog;
+namespace Commune\Blueprint\Ghost\Dialog\Receive;
 
+use Commune\Blueprint\Ghost\Dialog\Receive;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Fulfill
+interface Fulfill extends Receive
 {
-
 }

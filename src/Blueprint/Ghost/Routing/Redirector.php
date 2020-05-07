@@ -12,8 +12,8 @@
 namespace Commune\Blueprint\Ghost\Routing;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Operator\Await;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Blueprint\Ghost\Dialog\Finale\Await;
 
 
 
@@ -68,15 +68,9 @@ interface Redirector
      * 返回到指定的 ucl (或默认的ucl), 然后清空所有的 waiting 关系.
      *
      * @param Ucl|null $home
-     * @param bool $restartProcess      重新运行 process, 并再次接受输入消息.
-     * @param bool $quiet               不记录任何消息.
      * @return Dialog
      */
-    public function home(
-        Ucl $home = null,
-        bool $restartProcess = false,
-        bool $quiet = false
-    ) : Dialog;
+    public function home(Ucl $home = null) : Dialog;
 
     /*-------- wait --------*/
 
@@ -146,16 +140,14 @@ interface Redirector
 
 
     /*-------- restart --------*/
-
     /**
-     * 重新启动并运行当前进程.
-     * 会再次理解一次输入信息.
      * @return Dialog
      */
-    public function restartProcess() : Dialog;
-
     public function restartContext() : Dialog;
 
+    /**
+     * @return Dialog
+     */
     public function restartStage() : Dialog;
 
 
@@ -196,11 +188,12 @@ interface Redirector
      * 完成当前语境, 并将当前语境回调.
      * 同时指定一个可能的下阶段语境.
      *
-     * @param int $gcTurns
      * @param Ucl|null $to
+     * @param array $restoreStages
+     * @param int $gcTurns
      * @return Dialog
      */
-    public function fulfillTo(Ucl $to = null, int $gcTurns = 0) : Dialog;
+    public function fulfillTo(Ucl $to = null, array $restoreStages = [], int $gcTurns = 1) : Dialog;
 
     /**
      * 终止当前语境, 会触发 withdraw 流程.

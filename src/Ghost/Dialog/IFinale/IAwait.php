@@ -13,12 +13,12 @@ namespace Commune\Ghost\Dialog\IFinale;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Operator\Await;
-use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\IStartProcess;
 use Commune\Ghost\Runtime\IWaiter;
 use Commune\Protocals\Host\Convo\QuestionMsg;
+use Commune\Blueprint\Ghost\Dialog\Finale\Await;
 
 
 /**
@@ -46,6 +46,11 @@ class IAwait extends AbsDialogue implements Await
      */
     protected $question;
 
+    /**
+     * @var bool
+     */
+    protected $restartProcess = false;
+
     public function __construct(
         Cloner $cloner,
         Ucl $ucl,
@@ -67,6 +72,9 @@ class IAwait extends AbsDialogue implements Await
 
     protected function runTillNext(): Dialog
     {
+        if ($this->restartProcess) {
+            return new IStartProcess($this->cloner);
+        }
         return $this;
     }
 
@@ -93,12 +101,12 @@ class IAwait extends AbsDialogue implements Await
         array $suggestions,
         $defaultChoice = null,
         bool $withRoutes = true
-    ): Operator
+    ): Await
     {
         // TODO: Implement askChoose() method.
     }
 
-    public function askConfirm(string $query, bool $default = true): Operator
+    public function askConfirm(string $query, bool $default = true): Await
     {
         // TODO: Implement askConfirm() method.
     }
@@ -106,7 +114,7 @@ class IAwait extends AbsDialogue implements Await
     public function askEntity(
         string $query,
         string $entityName
-    ): Operator
+    ): Await
     {
         // TODO: Implement askEntity() method.
     }
@@ -114,12 +122,12 @@ class IAwait extends AbsDialogue implements Await
     public function askAny(
         string $query,
         array $suggestions = []
-    ): Operator
+    ): Await
     {
         // TODO: Implement askAny() method.
     }
 
-    public function askMessage(string $protocal): Operator
+    public function askMessage(string $protocal): Await
     {
         // TODO: Implement askMessage() method.
     }
@@ -127,9 +135,15 @@ class IAwait extends AbsDialogue implements Await
     public function askLoop(
         string $query,
         int $maxTurn
-    ): Operator
+    ): Await
     {
         // TODO: Implement askLoop() method.
+    }
+
+
+    public function restartProcess(): Await
+    {
+        $this->restartProcess = true;
     }
 
 

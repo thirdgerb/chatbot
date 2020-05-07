@@ -11,11 +11,12 @@
 
 namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
+use Commune\Blueprint\Ghost\Dialog\Activate;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Home
+interface Home extends Activate
 {
 
 }

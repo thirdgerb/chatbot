@@ -39,7 +39,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *  [ string $ucl => $wakenStageName[] ]
  *
  * @property-read int[] $dying                  垃圾回收中的任务. 仍然可以被唤醒 (restore)
- *  [ string $id => int $gcTurns ]
+ *  [ string $id => [int $gcTurns, $stages[]  ]
  *
  * @property-read string[][] $yielding          等待中的任务. 只能被指定语境唤醒 (preempt)
  *  [ string $ucl  => string $Id ]
@@ -62,6 +62,9 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  */
 interface Process extends ArrayAndJsonAble
 {
+
+
+    /*-------- alive ---------*/
 
     public function buildRoutes() : RoutesMap;
 
@@ -94,6 +97,9 @@ interface Process extends ArrayAndJsonAble
 
     public function addWatcher(Ucl $watcher) : void;
 
+    public function popWatcher() : ? string;
+
+
     /*-------- path ---------*/
 
     public function addPath(Ucl ...$ucl) : void;
@@ -118,30 +124,33 @@ interface Process extends ArrayAndJsonAble
      */
     public function getTask(Ucl $ucl) : Task;
 
-//    /*-------- block ---------*/
-//
-    public function block(Ucl $ucl, int $priority) : void;
+    /*-------- block ---------*/
+
+    public function addBlocking(Ucl $ucl, int $priority) : void;
 
     public function popBlocking(string $ucl = null) : ? string;
 //
-//    /*-------- sleep ---------*/
-//
+    /*-------- sleep ---------*/
+
+    public function addSleeping(Ucl $ucl, array $wakenStages) : void;
+
 //    public function sleepTask(Task $task) : void;
 //
-//    public function popSleeping(string $id = null) : ? Task;
+    public function popSleeping(string $id = null) : ? string;
 //
 //    /*-------- watch ---------*/
 //
 //    public function popWatching(string $id = null) : ? Task;
 //
-//    /*-------- canceling ---------*/
-//
-//    /**
-//     * @param string[] $ucl
-//     */
-//    public function addCanceling(array $ucl) : void;
-//
-//    public function popCanceling() : ? string;
+    /*-------- canceling ---------*/
+
+    /**
+     * @param string[] $ucl
+     */
+    public function addCanceling(array $ucl) : void;
+
+    public function popCanceling() : ? string;
+
 //
 //    public function flushCanceling() : void;
 //
@@ -154,9 +163,25 @@ interface Process extends ArrayAndJsonAble
 //     */
 //    public function gc() : void;
 
-    /*-------- canceling ---------*/
+    /*-------- dying ---------*/
+
+    public function addDying(Ucl $ucl, int $turns, array $restoreStages);
+
+    /*-------- root ---------*/
+
+    public function replaceRoot(Ucl $ucl) : void;
+
+    /*-------- depending ---------*/
+
+    public function addDepending(string $ucl, string $contextId) : void;
+
+    public function popDepending(string $contextId) : array;
+
+    /*-------- waiting ---------*/
 
     public function unsetWaiting(string $ucl) : void;
+
+    public function flushWaiting();
 
     /*-------- backStep ---------*/
 

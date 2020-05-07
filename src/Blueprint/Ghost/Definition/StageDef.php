@@ -80,14 +80,6 @@ interface StageDef
     public function onReceive(Receive $dialog) : Dialog;
 
     /**
-     * 依赖一个 Context, 而目标 Context 语境完成后回调.
-     * @param Fulfill $dialog
-     * @param Context $fulfilled
-     * @return Dialog
-     */
-    public function onFulfill(Fulfill $dialog, Context $fulfilled) : Dialog;
-
-    /**
      * 当 A Context 依赖 B Context 时, B Context 退出会导致这个流程.
      * 一层层地退出.
      *

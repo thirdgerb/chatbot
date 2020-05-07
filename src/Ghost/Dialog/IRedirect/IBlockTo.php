@@ -9,36 +9,23 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IActivate;
+namespace Commune\Ghost\Dialog\IRedirect;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Activate\Intend;
+use Commune\Blueprint\Ghost\Dialog\Activate\BlockTo;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
 use Commune\Ghost\Dialog\DialogHelper;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IIntend extends AbsDialogue implements Intend
+class IBlockTo extends AbsDialogue implements BlockTo
 {
-    /**
-     * @var Ucl[]
-     */
-    protected $paths = [];
-
-    /**
-     * IIntend constructor.
-     * @param Cloner $cloner
-     * @param Ucl $ucl
-     * @param Ucl[] $path
-     */
-    public function __construct(Cloner $cloner, Ucl $ucl, array $path = [])
+    public function __construct(Dialog $prev, Ucl $to)
     {
-        $this->paths = $path;
-        parent::__construct($cloner, $ucl);
+        $this->prev = $prev;
+        parent::__construct($prev->cloner, $to);
     }
 
     protected function runInterception(): ? Dialog
@@ -53,11 +40,12 @@ class IIntend extends AbsDialogue implements Intend
 
     protected function selfActivate(): void
     {
+        $prev = $this->prev;
+        $prevContext = $prev->context;
+
+        // block
         $process = $this->getProcess();
-        $process->unsetWaiting($this->ucl->toEncodedUcl());
-        if (!empty($this->paths)) {
-            $process->addPath(...$this->paths);
-        }
+        $process->addBlocking($prevContext->getUcl(), $prevContext->getPriority());
     }
 
 

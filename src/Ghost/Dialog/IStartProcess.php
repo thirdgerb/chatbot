@@ -89,7 +89,11 @@ class IStartProcess extends AbsDialogue implements StartProcess
 
         // 没有 await, 说明是 session 初始化
         if (empty($awaitUclStr)) {
-            return $this->then()->home(null, true);
+            return DialogHelper::newDialog(
+                $this,
+                $process->decodeUcl($process->root),
+                Dialog\Activate\StartSession::class
+            );
         }
 
         return null;
@@ -107,7 +111,7 @@ class IStartProcess extends AbsDialogue implements StartProcess
         }
 
         $context = $message->toContext($this->cloner);
-        return $this->then()->home($context->getUcl(), false);
+        return $this->then()->home($context->getUcl());
     }
 
     protected function isNotConvoMsgCall(GhostInput $input) : ? Dialog
@@ -381,7 +385,7 @@ class IStartProcess extends AbsDialogue implements StartProcess
             return DialogHelper::newDialog(
                 $this,
                 $challengerUcl,
-                Dialog\Activate\Preempt::class
+                Dialog\Receive\Preempt::class
             );
         }
 
@@ -395,12 +399,12 @@ class IStartProcess extends AbsDialogue implements StartProcess
             return DialogHelper::newDialog(
                 $this,
                 $challengerUcl,
-                Dialog\Activate\Preempt::class
+                Dialog\Receive\Preempt::class
             );
         }
 
         // 否则将 yielding 对象加入 blocking 栈. 并继续.
-        $process->block($challengerUcl, $challengerPriority);
+        $process->addBlocking($challengerUcl, $challengerPriority);
         return null;
 
     }

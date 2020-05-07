@@ -59,7 +59,7 @@ class IStaging extends AbsDialogue implements Dialog\Activate\Staging
 
     protected function runTillNext(): Dialog
     {
-        return DialogHelper::activate($this, $this->ucl);
+        return DialogHelper::activate($this);
     }
 
 

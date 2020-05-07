@@ -9,17 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Operator;
+namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
-use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Dialog\Activate;
 
 /**
- * 运行多轮对话逻辑时的算子.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Operator
+interface SleepTo extends Activate
 {
 
-    public function invoke(Cloner $cloner) : Operator;
 }

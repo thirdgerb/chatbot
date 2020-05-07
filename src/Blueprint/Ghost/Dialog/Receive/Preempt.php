@@ -9,12 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Operator;
+namespace Commune\Blueprint\Ghost\Dialog\Receive;
+
+use Commune\Blueprint\Ghost\Dialog\Receive;
 
 /**
- * 退出循环的算子.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Ending extends Operator
+interface Preempt extends Receive
 {
+
 }

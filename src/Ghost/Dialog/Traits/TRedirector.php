@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Dialog\Traits;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Operator\Await;
+use Commune\Blueprint\Ghost\Dialog\Finale\Await;
 use Commune\Blueprint\Ghost\Routing\Redirector;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
@@ -21,6 +21,11 @@ use Commune\Ghost\Dialog\IActivate\IIntend;
 use Commune\Ghost\Dialog\IActivate\IStaging;
 use Commune\Ghost\Dialog\IFinale\IAwait;
 use Commune\Ghost\Dialog\IFinale\IRewind;
+use Commune\Ghost\Dialog\IReceive\IFulfill;
+use Commune\Ghost\Dialog\IRedirect\IBlockTo;
+use Commune\Ghost\Dialog\IRedirect\IDependOn;
+use Commune\Ghost\Dialog\IRedirect\IHome;
+use Commune\Ghost\Dialog\IRedirect\ISleepTo;
 use Commune\Ghost\Dialog\IStartProcess;
 
 
@@ -68,7 +73,7 @@ trait TRedirector
             $next = new IIntend($this->cloner, $to, $pipes);
         }
 
-        return $next->withPrev($this);
+        return $next;
     }
 
     public function next(): Dialog
@@ -99,41 +104,35 @@ trait TRedirector
         int $expire = null
     ): Await
     {
-        $dialog = new IAwait(
+        return  new IAwait(
             $this->cloner,
             $this->ucl,
             $stageInterceptors,
             $contextInterceptors,
             $expire
         );
-
-        return $dialog->withPrev($this);
     }
 
     /*------- redirect -------*/
 
-    public function home(
-        Ucl $home = null,
-        bool $restartProcess = false,
-        bool $quiet = false
-    ): Dialog
+    public function home(Ucl $home = null): Dialog
     {
-        // TODO: Implement home() method.
+        return new IHome($this->cloner, $home);
     }
 
     public function dependOn(Ucl $depend, string $fieldName): Dialog
     {
-        // TODO: Implement dependOn() method.
+        return new IDependOn($this, $depend, $fieldName);
     }
 
     public function blockTo(Ucl $to): Dialog
     {
-        // TODO: Implement blockTo() method.
+        return new IBlockTo($this, $to);
     }
 
     public function sleepTo(Ucl $to = null, array $wakenStages = []): Dialog
     {
-        // TODO: Implement sleepTo() method.
+        return new ISleepTo($this, $wakenStages, $to);
     }
 
     public function yieldTo(
@@ -146,15 +145,14 @@ trait TRedirector
         // TODO: Implement yieldTo() method.
     }
 
-    public function restartProcess(): Dialog
-    {
-        return new IStartProcess($this->cloner);
-    }
-
     public function restartContext(): Dialog
     {
         $ucl = $this->ucl->gotoStage('');
-        return DialogHelper::newDialog($this, $ucl, Dialog\Activate\Staging::class);
+        return DialogHelper::newDialog(
+            $this,
+            $ucl,
+            Dialog\Activate\Staging::class
+        );
     }
 
     public function restartStage(): Dialog
@@ -168,14 +166,19 @@ trait TRedirector
 
     /*------- withdraw -------*/
 
-    public function fulfillTo(Ucl $to = null, int $gcTurns = 0): Dialog
+    public function fulfillTo(Ucl $to = null, array $restoreStages = [], int $gcTurns = 1) : Dialog
     {
-        // TODO: Implement fulfillTo() method.
+        return new IFulfill(
+            $this->cloner,
+            $this->ucl,
+            $to,
+            $restoreStages,
+            $gcTurns
+        );
     }
 
     public function cancelTo(Ucl $to = null): Dialog
     {
-        // TODO: Implement cancelTo() method.
     }
 
     public function reject(): Dialog
