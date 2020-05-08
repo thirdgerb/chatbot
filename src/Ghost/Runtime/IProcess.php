@@ -11,9 +11,10 @@
 
 namespace Commune\Ghost\Runtime;
 
-use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Blueprint\Ghost\Runtime\Thread;
+use Commune\Blueprint\Ghost\Runtime\RoutesMap;
+use Commune\Blueprint\Ghost\Runtime\Waiter;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
@@ -21,397 +22,390 @@ use Commune\Support\Uuid\IdGeneratorHelper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- * @property-read string $belongsTo         进程所属的父 ID. 默认是 SessionId
- * @property-read string $id                进程的唯一 ID. 每一轮请求的 ID 都不一样.
- * @property-read string $prevId            上一个 Process 进程的 ID
- * @property-read string[] $sleeping        sleeping Thread 的 id
- * @property-read string[] $blocking        blocking Thread 的 id
- * @property-read string[] $gc              gc 中的 thread 的 id
- * @property-read string[] $backtrace
- * @property-read Node $root                root Node
  */
 class IProcess implements Process, HasIdGenerator
 {
-    use IdGeneratorHelper, ArrayAbleToJson;
+    use ArrayAbleToJson, IdGeneratorHelper;
 
-    /*----- 外部属性 -----*/
-
-    /**
-     * 通常是 cloneId
-     * @var string
-     */
-    protected $belongsToId;
-
-    /**
-     * 进程 ID
-     * @var string
-     */
-    protected $processId;
-
-
-    /*----- 内部节点 -----*/
-
-    /**
-     * @var Node
-     */
-    protected $rootNode;
+    /*------ saving ------*/
 
     /**
      * @var string
      */
-    protected $aliveThreadId;
+    protected $_sessionId;
 
     /**
-     * @var Thread[]    [threadId => Thread]
+     * @var string
      */
-    protected $threads = [];
+    protected $_id;
 
     /**
-     * @var int[]       [threadId => gcTurn]
+     * @var string
      */
-    protected $gcStack = [];
+    protected $_root;
 
     /**
-     * @var string[]    [threadId => 0]
+     * @var Waiter|null
      */
-    protected $sleepingStack = [];
+    protected $_waiter;
 
     /**
-     * @var int[]       [threadId => priority]
+     * @var Waiter[]
      */
-    protected $blockingStack = [];
+    protected $_backtrace = [];
 
-    /*-------- prev ---------*/
+    /**
+     * @var array
+     */
+    protected $_watching = [];
+
+    /**
+     * @var array
+     */
+    protected $_blocking = [];
+
+    /**
+     * @var array
+     */
+    protected $_sleeping = [];
+
+    /**
+     * @var array
+     */
+    protected $_depending = [];
+
+    /**
+     * @var array
+     */
+    protected $_yielding = [];
+
+    /**
+     * @var array
+     */
+    protected $_dying = [];
+
+    /*------ temporary ------*/
 
     /**
      * @var Process|null
      */
-    protected $prev;
+    protected $_prev;
 
     /**
-     * @var string|null
+     * @var Ucl[]
      */
-    protected $prevProcessId;
+    protected $decodedUcl = [];
 
     /**
-     * @var string[]    processIds
+     * @var array
      */
-    protected $backtraceIds = [];
-
-
-    /*-------- expire ---------*/
+    protected $canceling = [];
 
     /**
-     * @var bool
+     * IProcess constructor.
+     * @param string $_sessionId
+     * @param string $_root
+     * @param string|null $_id
      */
-    protected $shouldSave = false;
-
-    public function __construct(
-        string $belongsTo,
-        Node $root,
-        string $processId = null
-    )
+    public function __construct(string $_sessionId,string  $_root, string $_id = null)
     {
-        $this->belongsToId = $belongsTo;
-
-        // 根节点
-        $this->rootNode = $root;
-
-        $this->processId = $processId ?? $this->createUuId();
-        // 新的 Thread
-        $rootThread = $root->toThread();
-        $rootThreadId = $rootThread->id;
-        $this->threads[$rootThreadId] = $rootThread;
-
-        $this->aliveThreadId = $rootThreadId;
-
-        $this->shouldSave = true;
+        $this->_sessionId = $_sessionId;
+        $this->_id = $_id ?? $this->createUuId();
+        $this->_root = $_root;
     }
 
-    /*-------- home --------*/
-
-    public function home(Node $node = null): void
+    public function toArray(): array
     {
-        if (isset($node)) {
-            $this->rootNode = $node;
-        }
-
-        // 清空 sleeping 和 gc, 但保留 blocking
-        foreach ($this->sleepingStack as $id => $val) {
-            unset($this->threads[$id]);
-        }
-        $this->sleepingStack = [];
-
-        foreach ($this->gcStack as $id => $val) {
-            unset($this->threads[$id]);
-        }
-        $this->gcStack = [];
-
-        // 从 root 节点生成一个新的 Thread.
-        $thread = $this->rootNode->toThread();
-        $id = $thread->id;
-        $this->threads[$id] = $thread;
-        $this->aliveThreadId = $id;
-    }
-
-
-    /*-------- snapshot --------*/
-
-    public function nextSnapshot(string $processId = null): Process
-    {
-        $processId = $processId ?? $this->createUuId();
-
-        /**
-         * @var IProcess $process
-         */
-        $process = clone $this;
-        $process->processId = $processId;
-        $process->prev = $this;
-        $process->prevProcessId = $this->id;
-        $process->shouldSave = true;
-        array_unshift($process->backtraceIds, $this->prevProcessId);
-        return $process;
-
-    }
-
-    /*-------- sleeping --------*/
-
-    /**
-     * @param Thread $thread
-     * @param bool $top             放在栈顶, 还是栈尾
-     */
-    public function addSleepingThread(Thread $thread, bool $top = true) : void
-    {
-        $id = $thread->id;
-        $this->threads[$id] = $thread;
-
-        if ($top) {
-            array_unshift($this->sleepingStack, $id);
-        } else {
-            $this->sleepingStack[] = $id;
-        }
-    }
-
-    public function popSleeping(string $threadId = null) : ? Thread
-    {
-        if (!isset($threadId)) {
-            foreach($this->sleepingStack as $key => $val) {
-                $threadId = $key;
-                break;
+        $fields = $this->__sleep();
+        $data = [];
+        foreach ($fields as $field) {
+            if ($field !== '_prev' || $field !== '_waiter') {
+                $data[$field] = $this->{$field};
             }
         }
 
-        if (is_null($threadId)) {
+        $data['await'] = $this->awaiting;
+        return $data;
+    }
+
+    /*------ build ------*/
+
+    public function buildRoutes(): RoutesMap
+    {
+        return new IRoutesMap($this);
+    }
+
+    /*------ await ------*/
+
+    public function setAwait(Waiter $waiter): void
+    {
+        if (isset($this->_waiter)) {
+            array_unshift($this->_backtrace, $this->_waiter);
+        }
+        $this->_waiter = $waiter;
+    }
+
+
+    /*------ history ------*/
+
+    public function nextSnapshot(string $id): Process
+    {
+        $next = clone $this;
+        $next->_id = $id ?? $this->createUuId();
+        $next->_prev = $this;
+        return $next;
+    }
+
+
+    public function backStep(int $step): bool
+    {
+        $waiter = null;
+
+        do {
+            $now = $waiter;
+            $waiter = array_shift($this->_backtrace);
+            $step --;
+        } while($step > 0 && $waiter);
+
+        if (isset($now)) {
+            $this->_waiter = $now;
+            return true;
+        }
+
+        return false;
+    }
+
+    /*------ root ------*/
+
+    public function replaceRoot(Ucl $ucl): void
+    {
+        $this->_root = $ucl->toEncodedUcl();
+    }
+
+    /*------ dying ------*/
+
+    public function addDying(Ucl $ucl, int $turns, array $restoreStages)
+    {
+        $str = $ucl->toEncodedUcl();
+        $this->unsetWaiting($str);
+        $this->_dying[$str] = [$turns, $restoreStages];
+    }
+
+    public function gc(): void
+    {
+        $dying = [];
+        foreach ($this->_dying as $key => list($turns, $restoreStages)) {
+            $turns--;
+            if ($turns > 0) {
+                $dying[$key] = [$turns, $restoreStages];
+            }
+        }
+
+        $this->_dying = $dying;
+    }
+
+
+    /*------ blocking ------*/
+
+    public function addBlocking(Ucl $ucl, int $priority): void
+    {
+        $str = $ucl->toEncodedUcl();
+        $this->_blocking[$str] = $priority;
+        sort($this->_blocking);
+    }
+
+    public function popBlocking(string $ucl = null): ? string
+    {
+        if (empty($this->_blocking)) {
             return null;
         }
 
-        // 如果 thread 是存在的.
-        $thread = $this->threads[$threadId] ?? null;
-        if (isset($thread)) {
-            unset($this->sleepingStack[$threadId]);
-            unset($this->threads[$threadId]);
-            return $thread;
+        $popped = null;
+        foreach ($this->_blocking as $key => $val) {
+            $popped = $key;
+        }
+        unset($this->_blocking[$popped]);
+        return $popped;
+    }
+
+
+    /*------ watching ------*/
+
+    public function addWatcher(Ucl $watcher): void
+    {
+        $str = $watcher->toEncodedUcl();
+        $this->unsetWaiting($str);
+        $this->_watching[$str] = '';
+    }
+
+    public function popWatcher(): ? string
+    {
+        if (empty($this->_watching)) {
+            return null;
+        }
+        $popped = null;
+        foreach ($this->_watching as $key => $str) {
+            $popped = $key;
+            break;
+        }
+        unset($this->_watching[$popped]);
+        return $popped;
+    }
+
+
+    /*------ sleeping ------*/
+
+    public function addSleeping(Ucl $ucl, array $wakenStages): void
+    {
+        $str = $ucl->toEncodedUcl();
+        $this->unsetWaiting($str);
+        $this->_sleeping[$str] = $wakenStages;
+    }
+
+    public function popSleeping(string $id = null): ? string
+    {
+        if (empty($this->_sleeping)) {
+            return null;
+        }
+
+        $pop = null;
+        foreach ($this->_sleeping as $key => $stages) {
+            $pop = $key;
+            break;
+        }
+
+        unset($this->_sleeping[$pop]);
+        return $pop;
+    }
+
+
+    /*------ depending ------*/
+
+    public function addDepending(string $ucl, string $contextId): void
+    {
+        $this->unsetWaiting($ucl);
+        $this->_depending[$ucl] = $contextId;
+    }
+
+    public function getDepending(string $contextId): array
+    {
+        $depending = array_reverse($this->_depending);
+        return $depending[$contextId] ?? [];
+    }
+
+
+    /*------ unset ------*/
+
+    public function unsetWaiting(string $ucl): void
+    {
+        unset($this->_depending[$ucl]);
+        unset($this->_blocking[$ucl]);
+        unset($this->_sleeping[$ucl]);
+        unset($this->_watching[$ucl]);
+        unset($this->_dying[$ucl]);
+        unset($this->canceling[$ucl]);
+    }
+
+    public function flushWaiting()
+    {
+        $this->_depending = [];
+        $this->_sleeping = [];
+        $this->_watching = [];
+        $this->_dying = [];
+        $this->canceling = [];
+
+        // yielding blocking 要保留.
+    }
+
+    /*------ canceling ------*/
+
+    public function addCanceling(array $canceling): void
+    {
+        foreach ($canceling as $cancelingId) {
+            $contextId = $this->_depending[$cancelingId];
+            unset($this->_depending[$cancelingId]);
+            $this->canceling[$cancelingId] = $contextId;
+        }
+    }
+
+    public function popCanceling(): ? string
+    {
+        if (empty($this->canceling)) {
+            return null;
+        }
+
+        $popped = null;
+        foreach ($this->canceling as $ucl => $contextId) {
+            $popped = $ucl;
+            break;
+        }
+        unset($this->canceling[$popped]);
+        return $popped;
+    }
+
+
+    /*------ tools ------*/
+
+    public function decodeUcl(string $ucl): ? Ucl
+    {
+        return $this->decodedUcl[$ucl]
+            ?? $this->decodedUcl[$ucl] = Ucl::decodeUcl($ucl);
+    }
+
+
+    /*------ magic ------*/
+
+
+    public function __get($name)
+    {
+        if ($name === 'await') {
+            return isset($this->_waiter)
+                ? $this->_waiter->await
+                : null;
+        }
+
+        if (property_exists($this, $p = "_$name")) {
+            return $this->{$p};
         }
 
         return null;
     }
 
-    /*-------- blocking --------*/
-
-    public function blockThread(Thread $thread): void
-    {
-        $id = $thread->id;
-        $this->threads[$id] = $thread;
-        $this->blockingStack[$id] = $thread->priority;
-        rsort($this->blockingStack);
-    }
-
-    public function hasBlocking(): bool
-    {
-        return !empty($this->blockingStack);
-    }
-
-    public function popBlocking(): ? Thread
-    {
-        $threadId = array_shift($this->blockingStack);
-        if (empty($threadId)) {
-            return null;
-        }
-        $thread = $this->threads[$threadId];
-        unset($this->threads[$threadId]);
-        return $thread;
-    }
-
-
-    /*-------- alive --------*/
-
-    public function aliveThread(): Thread
-    {
-        return $this->getThread($this->aliveThreadId);
-    }
-
-    public function aliveStageFullname(): string
-    {
-        return $this->aliveThread()->currentNode()->getStageFullname();
-    }
-
-    public function replaceAliveThread(Thread $thread): Thread
-    {
-        $aliveThread = $this->aliveThread();
-        unset($this->threads[$this->aliveThreadId]);
-        $newId = $thread->id;
-        $this->threads[$newId] = $thread;
-        $this->aliveThreadId = $newId;
-        return $aliveThread;
-    }
-
-    public function challengeAliveThread(): ? Thread
-    {
-        $challenger = $this->popBlocking();
-        if (empty($challenger)) {
-            return null;
-        }
-        $aliveThread = $this->aliveThread();
-
-        if ($challenger->priority > $aliveThread->priority) {
-            $loser = $this->replaceAliveThread($challenger);
-            return $loser;
-        } else {
-            $this->blockThread($challenger);
-            return null;
-        }
-    }
-
-
-    /*-------- thread --------*/
-
-    public function hasThread(string $threadId): bool
-    {
-        return array_key_exists($threadId, $this->threads);
-    }
-
-    public function getThread(string $threadId): ? Thread
-    {
-        return $this->threads[$threadId] ?? null;
-    }
-
-
-    /*-------- gc thread --------*/
-
-    public function addGcThread(Thread $thread, int $gcTurn): void
-    {
-        $id = $thread->id;
-        $this->threads[$id] = $thread;
-        $this->gcStack[$id] = $gcTurn;
-        unset($this->blockingStack[$id]);
-        unset($this->sleepingStack[$id]);
-    }
-
-    public function gcThreads(): void
-    {
-        $gcStack = [];
-        foreach ($this->gcStack as $id => $turns) {
-            $turns--;
-            if ($turns > 0) {
-                $gcStack[$id] = $turns;
-            } else {
-                unset($this->threads[$id]);
-            }
-        }
-
-        $this->gcStack = $gcStack;
-    }
-
-
-    /*-------- getter --------*/
-
-    public function __get($name)
-    {
-        switch ($name) {
-            case 'belongsTo' :
-                return $this->belongsToId;
-            case 'id' :
-                return $this->processId;
-            case 'root' :
-                return $this->rootNode;
-            case 'sleeping':
-                return array_keys($this->sleepingStack);
-            case 'blocking':
-                return array_keys($this->blockingStack);
-            case 'gc' :
-                return array_keys($this->gcStack);
-            case 'prevId':
-                return $this->prevProcessId;
-            case 'backtrace':
-                return $this->backtraceIds;
-            default:
-                return null;
-        }
-    }
-
-    /*-------- cachable --------*/
-
-    public function isCaching(): bool
-    {
-        // TODO: Implement isCaching() method.
-    }
-
-    public function expire(): void
-    {
-        // TODO: Implement expire() method.
-    }
-
-    public function getCachableId(): string
-    {
-        return $this->processId;
-    }
-
-
-    /*-------- clone --------*/
-
-    public function __clone()
-    {
-        $this->rootNode = clone $this->rootNode;
-
-        $threads = [];
-        foreach ($this->threads as $id => $thread) {
-            $threads[$id] = clone $thread;
-        }
-
-        $this->threads = $threads;
-    }
-
     public function __sleep()
     {
+        // canceling
+        $this->_depending = $this->_depending + $this->canceling;
+
         return [
-            'belongsTo',
-            'processId',
-            'rootNode',
-            'aliveThreadId',
-            'threads',
-            'gcThreads',
-            'sleepingStack',
-            'blockingStack',
-            'gcStack',
-            'prevProcessId',
-            'backtraceIds',
+            '_id',
+            '_sessionId',
+            '_root',
+            '_waiter',
+            '_backtrace',
+            '_watching',
+            '_blocking',
+            '_sleeping',
+            '_depending',
+            '_dying',
         ];
     }
 
-    public function __wakeup()
+    public function __clone()
     {
-        $this->shouldSave = false;
+        $this->_waiter = clone $this->_waiter;
     }
+
 
     public function __destruct()
     {
-        $this->threads = [];
-        $this->gcStack = [];
-        $this->sleepingStack = [];
-        $this->blockingStack = [];
-        $this->rootNode = null;
-        $this->aliveThreadId = null;
+
+        $this->_prev = null;
+
+        // decoded
+        $this->decodedUcl = null;
+
+        // backtrace
+        $this->_backtrace = [];
+
     }
 }

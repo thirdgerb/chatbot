@@ -62,7 +62,7 @@ class IFulfill extends AbsDialogue
     {
         $process = $this->getProcess();
 
-        $depending = $process->popDepending($this->ucl->getContextId());
+        $depending = $process->getDepending($this->ucl->getContextId());
 
         if (!empty($depending)) {
             foreach ($depending as $dependingUclStr) {

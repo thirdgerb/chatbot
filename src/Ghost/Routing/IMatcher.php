@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Routing;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Routing\Matcher;
+use Commune\Blueprint\Ghost\Tools\Matcher;
 
 
 /**

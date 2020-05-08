@@ -11,11 +11,11 @@
 
 namespace Commune\Blueprint\Ghost;
 
-use Commune\Blueprint\Ghost\Routing\Hearing;
-use Commune\Blueprint\Ghost\Routing\Matcher;
-use Commune\Blueprint\Ghost\Routing\DialogManager;
-use Illuminate\Contracts\Container\BindingResolutionException;
-
+use Commune\Blueprint\Ghost\Tools\Hearing;
+use Commune\Blueprint\Ghost\Tools\Matcher;
+use Commune\Blueprint\Ghost\Tools\Navigator;
+use Commune\Blueprint\Ghost\Tools\DialogIoC;
+use Commune\Blueprint\Ghost\Tools\Typer;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -28,31 +28,6 @@ use Illuminate\Contracts\Container\BindingResolutionException;
  */
 interface Dialog
 {
-    /*----- call -----*/
-
-
-    /**
-     * @param  string  $abstract
-     * @param  array  $parameters
-     * @return mixed
-     *
-     * @throws
-     * 实际上是 throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    public function make(string $abstract, array $parameters = []);
-
-    /**
-     * @param callable $caller
-     * @param array $parameters
-     * @return mixed
-     * @throws \ReflectionException
-     * @throws BindingResolutionException
-     */
-    public function call(callable $caller, array $parameters = []);
-
-    public function predict(callable $caller) : bool;
-
-    public function action(callable $caller) : ? Dialog;
 
     /*----- conversation -----*/
 
@@ -71,9 +46,9 @@ interface Dialog
     /**
      * 重定向当前的会话.
      *
-     * @return DialogManager
+     * @return Navigator
      */
-    public function then() : DialogManager;
+    public function then() : Navigator;
 
     /**
      * @return Hearing
@@ -97,6 +72,14 @@ interface Dialog
      */
     public function getUcl(string $contextOrUclStr, array $query = []) : Ucl;
 
+    /*----- call -----*/
+
+    /**
+     * 上下文相关的 IoC 容器.
+     * @return DialogIoC
+     */
+    public function ioc() : DialogIoC;
+
     /*----- 下一帧 -----*/
 
     /**
@@ -110,4 +93,10 @@ interface Dialog
      * @return int
      */
     public function depth() : int;
+
+    /**
+     * @param Dialog $prev
+     * @return static
+     */
+    public function withPrev(Dialog $prev) : Dialog;
 }

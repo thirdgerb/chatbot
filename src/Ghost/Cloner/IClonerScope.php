@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost;
+namespace Commune\Ghost\Cloner;
 
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Protocals\Intercom\GhostInput;
@@ -59,11 +59,11 @@ class IClonerScope implements ClonerScope
     public function __construct(GhostInput $input)
     {
         $this->clonerId = $input->getCloneId();
-        $this->senderId = $input->senderId;
+        $this->senderId = $input->getSenderId();
         $this->guestId = $input->getGuestId();
-        $this->shellName = $input->shellName;
-        $this->shellId = $input->shellId;
-        $this->sceneId = $input->sceneId;
+        $this->shellName = $input->getShellName();
+        $this->shellId = $input->getShellId();
+        $this->sceneId = $input->getSceneId();
         $this->time = time();
     }
 

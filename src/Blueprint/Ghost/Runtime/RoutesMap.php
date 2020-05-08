@@ -29,7 +29,7 @@ namespace Commune\Blueprint\Ghost\Runtime;
  *
  * @property-read string[] $wake                唤醒路由, 会触发 Wake 事件
  *
- * @property-read string[] $rebirth             复活路由, 会触发 Rebirth 事件.
+ * @property-read string[] $restore             复活路由, 会触发 Rebirth 事件.
  *
  */
 interface RoutesMap

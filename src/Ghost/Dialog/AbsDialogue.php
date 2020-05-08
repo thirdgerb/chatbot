@@ -17,11 +17,12 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Exceptions\TooManyRedirectsException;
-use Commune\Blueprint\Ghost\Routing\Hearing;
-use Commune\Blueprint\Ghost\Routing\Matcher;
-use Commune\Blueprint\Ghost\Routing\DialogManager;
+use Commune\Blueprint\Ghost\Tools\Hearing;
+use Commune\Blueprint\Ghost\Tools\Matcher;
+use Commune\Blueprint\Ghost\Tools\Navigator;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Blueprint\Ghost\Typer;
+use Commune\Blueprint\Ghost\Tools\DialogIoC;
+use Commune\Blueprint\Ghost\Tools\Typer;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\Traits\TRedirector;
 use Commune\Ghost\Dialog\Traits\TWithdraw;
@@ -35,7 +36,11 @@ use Commune\Support\DI\TInjectable;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbsDialogue implements Dialog, Injectable, DialogManager
+abstract class AbsDialogue implements
+    Dialog,
+    Injectable,
+    Navigator,
+    DialogIoC
 {
     use TInjectable, TRedirector, TWithdraw;
 
@@ -113,7 +118,7 @@ abstract class AbsDialogue implements Dialog, Injectable, DialogManager
         return $this->cloner->container->make(Matcher::class);
     }
 
-    public function then(): DialogManager
+    public function then(): Navigator
     {
         return $this;
     }
@@ -162,6 +167,12 @@ abstract class AbsDialogue implements Dialog, Injectable, DialogManager
 
 
     /*-------- app --------*/
+
+    public function ioc(): DialogIoC
+    {
+        return $this;
+    }
+
 
     public function make(string $abstract, array $parameters = [])
     {

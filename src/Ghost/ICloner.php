@@ -34,7 +34,7 @@ class ICloner extends ASession implements Cloner
     const SINGLETONS =  [
         'scope' => Cloner\ClonerScope::class,
         'config' => GhostConfig::class,
-        'convo' => Ghost\Typer::class,
+        'convo' => Ghost\Tools\Typer::class,
         'cache' => Cache::class,
         'auth' => Ghost\Auth\Authority::class,
         'mind' => Ghost\Mind\Mindset::class,
@@ -264,10 +264,11 @@ class ICloner extends ASession implements Cloner
         $this->silent = $silent;
     }
 
-    public function output(GhostMsg $output): void
+    public function output(GhostMsg $output, GhostMsg ...$outputs): void
     {
+        array_unshift($outputs, $output);
         if (!$this->silent) {
-            $this->outputs[] = $output;
+            $this->outputs = array_merge($this->outputs, $outputs);
         }
     }
 

@@ -41,9 +41,6 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read int[] $dying                  垃圾回收中的任务. 仍然可以被唤醒 (restore)
  *  [ string $id => [int $gcTurns, $stages[]  ]
  *
- * @property-read string[][] $yielding          等待中的任务. 只能被指定语境唤醒 (preempt)
- *  [ string $ucl  => string $Id ]
- *
  * @property-read string[] $depending           依赖中的任务. 被依赖对象唤醒.
  *  [ string $ucl => string $id]
  *
@@ -53,41 +50,18 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read string $root
  * @property-read Process|null $prev            上一轮对话的进程实例.
  * @property-read Waiter[] $backtrace           历史记录. 记录的是 await ucl
- * @property-read Ucl[] $forward                调用 "next" 时前进的方向. 如果没有, 则会fallback
- *
- * ## task
- *
- * @property-read Task[] $tasks                 缓存的 task
  *
  */
 interface Process extends ArrayAndJsonAble
 {
 
+    public function nextSnapshot(string $id) : Process;
 
     /*-------- alive ---------*/
 
     public function buildRoutes() : RoutesMap;
 
     public function setAwait(Waiter $waiter) : void;
-
-//    /*-------- alive ---------*/
-//
-//    /**
-//     * @return Task
-//     */
-//    public function aliveTask() : Task;
-//
-//    /**
-//     * @return Task
-//     */
-//    public function popAliveTask() : ? Task;
-//
-//    /**
-//     * @param Task $task
-//     * @param bool $force
-//     * @return Task|null    如果挑战不成功, 或者两个 task 是相同的, 就返回 null
-//     */
-//    public function challengeTask(Task $task, bool $force = false) : ? Task;
 
     /*-------- ucl ---------*/
 
@@ -99,73 +73,29 @@ interface Process extends ArrayAndJsonAble
 
     public function popWatcher() : ? string;
 
-
-    /*-------- path ---------*/
-
-    public function addPath(Ucl ...$ucl) : void;
-
-    public function popPath() : ? string;
-
-    public function resetPath() : void;
-
-    /*-------- task ---------*/
-
-//
-//    /**
-//     * @param string $contextId
-//     * @return Task|null
-//     */
-//    public function popTask(string $contextId) : ? Task;
-//
-    /**
-     * 获取或者创建一个 Task
-     * @param Ucl $ucl
-     * @return Task
-     */
-    public function getTask(Ucl $ucl) : Task;
-
     /*-------- block ---------*/
 
     public function addBlocking(Ucl $ucl, int $priority) : void;
 
     public function popBlocking(string $ucl = null) : ? string;
-//
+
     /*-------- sleep ---------*/
 
     public function addSleeping(Ucl $ucl, array $wakenStages) : void;
 
-//    public function sleepTask(Task $task) : void;
-//
     public function popSleeping(string $id = null) : ? string;
-//
-//    /*-------- watch ---------*/
-//
-//    public function popWatching(string $id = null) : ? Task;
-//
+
     /*-------- canceling ---------*/
 
     /**
-     * @param string[] $ucl
+     * @param string[] $canceling
      */
-    public function addCanceling(array $ucl) : void;
+    public function addCanceling(array $canceling) : void;
 
+    /**
+     * @return null|string
+     */
     public function popCanceling() : ? string;
-
-//
-//    public function flushCanceling() : void;
-//
-//    /*-------- gc ---------*/
-//
-//    public function addGc(Task $task) : void;
-//
-//    /**
-//     * 清空掉需要 gc 的 Task
-//     */
-//    public function gc() : void;
-
-    /*-------- yielding ---------*/
-
-    public function addYielding(Ucl $ucl, string $depended) : void;
 
     /*-------- dying ---------*/
 
@@ -179,7 +109,7 @@ interface Process extends ArrayAndJsonAble
 
     public function addDepending(string $ucl, string $contextId) : void;
 
-    public function popDepending(string $contextId) : array;
+    public function getDepending(string $contextId) : array;
 
     /*-------- waiting ---------*/
 
@@ -189,5 +119,7 @@ interface Process extends ArrayAndJsonAble
 
     /*-------- backStep ---------*/
 
-    public function backStep(int $step) : void;
+    public function backStep(int $step) : bool;
+
+    public function gc() : void;
 }

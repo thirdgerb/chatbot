@@ -59,7 +59,11 @@ class ISleepTo extends AbsDialogue implements Dialog\Activate\SleepTo
             return $this->fallbackFlow($from, $process);
         }
 
-        return DialogHelper::activate($this);
+        /**
+         * @var Dialog
+         */
+        $dialog = DialogHelper::activate($this);
+        return $dialog->withPrev($this->prev);
     }
 
     protected function selfActivate(): void

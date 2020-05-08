@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Routing;
+namespace Commune\Blueprint\Ghost\Tools;
 
 use Commune\Blueprint\Ghost\Operator\Ending;
 use Commune\Blueprint\Ghost\Operator\Operator;

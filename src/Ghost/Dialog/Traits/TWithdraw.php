@@ -77,7 +77,7 @@ trait TWithdraw
 
             $cancelingUcl = $process->decodeUcl($canceling);
 
-            $depending = $process->popDepending($cancelingUcl);
+            $depending = $process->getDepending($cancelingUcl);
             if (!empty($depending)) {
                 $process->addCanceling(array_map(
                     function(string $depending) use ($process) {

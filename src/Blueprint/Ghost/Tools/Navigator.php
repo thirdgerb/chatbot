@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Routing;
+namespace Commune\Blueprint\Ghost\Tools;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
@@ -20,7 +20,7 @@ use Commune\Blueprint\Ghost\Dialog\Finale\Await;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DialogManager
+interface Navigator
 {
 
     /*-------- 链式调用 --------*/
@@ -29,14 +29,14 @@ interface DialogManager
      * 将自己变成 Watch 状态, 然后进入 $to 语境.
      *
      * @param Ucl $watcher
-     * @return DialogManager
+     * @return Navigator
      */
-    public function watch(Ucl $watcher) : DialogManager;
+    public function watch(Ucl $watcher) : Navigator;
 
     /**
      * 清空路径.
      */
-    public function resetPath() : DialogManager;
+    public function resetPath() : Navigator;
 
     /*-------- redirect --------*/
 
@@ -127,15 +127,15 @@ interface DialogManager
      *
      * @param string $shellName
      * @param string $guestId
-     * @param Ucl $depend
-     * @param Ucl|null $to
+     * @param Ucl $dependOn
+     * @param Ucl|null $fallbackTo
      * @return Dialog
      */
     public function yieldTo(
         string $shellName,
         string $guestId,
-        Ucl $depend,
-        Ucl $to = null
+        Ucl $dependOn,
+        Ucl $fallbackTo = null
     ) : Dialog;
 
 

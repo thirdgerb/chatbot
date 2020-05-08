@@ -9,29 +9,23 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IRedirect;
+namespace Commune\Ghost\Dialog\IActivate;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Dialog\Activate\BlockTo;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
 use Commune\Ghost\Dialog\DialogHelper;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IDependOn extends AbsDialogue implements Dialog\Activate\DependOn
+class IBlockTo extends AbsDialogue implements BlockTo
 {
-    /**
-     * @var string
-     */
-    protected $fieldName;
-
-    public function __construct(Dialog $by, Ucl $on, string $field)
+    public function __construct(Dialog $prev, Ucl $to)
     {
-        $this->prev = $by;
-        $this->fieldName = $field;
-        parent::__construct($by->cloner, $on);
+        $this->prev = $prev;
+        parent::__construct($prev->cloner, $to);
     }
 
     protected function runInterception(): ? Dialog
@@ -46,14 +40,12 @@ class IDependOn extends AbsDialogue implements Dialog\Activate\DependOn
 
     protected function selfActivate(): void
     {
-        // 先赋值.
         $prev = $this->prev;
-        $context = $prev->context;
-        $context[$this->fieldName] = $self = $this->context;
+        $prevContext = $prev->context;
 
-        // 添加回调
+        // block
         $process = $this->getProcess();
-        $process->addDepending($prev->ucl, $self->getId());
+        $process->addBlocking($prevContext->getUcl(), $prevContext->getPriority());
     }
 
 
