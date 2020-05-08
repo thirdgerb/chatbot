@@ -9,17 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog;
+namespace Commune\Blueprint\Ghost\Dialog\Retain;
 
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Finale\Dumb;
-use Commune\Blueprint\Ghost\Dialog\Finale\Rewind;
-
+use Commune\Blueprint\Ghost\Dialog\Retain;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Receive extends Dialog
+interface Preempt extends Retain
 {
 
 }

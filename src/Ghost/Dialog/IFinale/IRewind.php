@@ -41,6 +41,7 @@ class IRewind extends AbsDialogue implements Rewind
 
     protected function runTillNext(): Dialog
     {
+        $this->ticked = true;
         return $this;
     }
 

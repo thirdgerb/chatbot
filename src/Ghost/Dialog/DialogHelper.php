@@ -13,11 +13,13 @@ namespace Commune\Ghost\Dialog;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate;
-use Commune\Blueprint\Ghost\Dialog\Receive;
+use Commune\Blueprint\Ghost\Dialog\Retain;
 use Commune\Blueprint\Ghost\Dialog\Withdraw;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\IActivate;
 use Commune\Ghost\Dialog\IFinale;
+use Commune\Ghost\Dialog\IRetain;
+use Commune\Ghost\Dialog\IWithdraw;
 
 
 /**
@@ -26,12 +28,15 @@ use Commune\Ghost\Dialog\IFinale;
 class DialogHelper
 {
     const IMPLEMENTS = [
-        Receive\Heed::class => '',
-        Activate\Staging::class => IActivate\IStaging::class,
-        Activate\Intend::class => IActivate\IIntend::class,
-        Receive\Preempt::class => '',
-        Activate\Fallback::class => '',
-        Activate\StartSession::class => '',
+        Activate\Intend::class => IActivate\IRedirectTo::class,
+        Activate\StartSession::class => IActivate\IStartSession::class,
+        Retain\Heed::class => IRetain\IHeed::class,
+        Retain\Preempt::class => IRetain\IPreempt::class,
+        Retain\Fallback::class => IRetain\IFallback::class,
+        Retain\Wake::class => IRetain\IWake::class,
+        Retain\Restore::class => IRetain\IRestore::class,
+        Withdraw\Reject::class => IWithdraw\IReject::class,
+        Withdraw\Quit::class => IWithdraw\IQuit::class,
         Dialog\Finale\Dumb::class => IFinale\IDumb::class,
         Dialog\Finale\CloseSession::class => '',
     ];
@@ -66,5 +71,12 @@ class DialogHelper
         $ucl = $dialog->ucl;
         $stageDef = $ucl->findStageDef($dialog->cloner);
         return $stageDef->onActivate($dialog);
+    }
+
+    public static function retain(Retain $dialog) : Dialog
+    {
+        $ucl = $dialog->ucl;
+        $stageDef = $ucl->findStageDef($dialog->cloner);
+        return $stageDef->onRetain($dialog);
     }
 }

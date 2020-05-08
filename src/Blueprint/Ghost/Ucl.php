@@ -192,9 +192,9 @@ class Ucl
 
     /*------- property -------*/
 
-    public function asIntentName() : string
+    public function parseIntentName(string $stage = null) : string
     {
-        return $this->parseFullStageName();
+        return $this->parseFullStageName($stage);
     }
 
 
@@ -223,7 +223,7 @@ class Ucl
 
     public function findIntentDef(Cloner $cloner) : ? IntentDef
     {
-        $intentName = $this->asIntentName();
+        $intentName = $this->parseIntentName();
 
         if ($this->intentDef === false) {
             return null;

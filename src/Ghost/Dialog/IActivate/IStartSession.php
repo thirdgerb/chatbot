@@ -9,16 +9,18 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IFinale;
+namespace Commune\Ghost\Dialog\IActivate;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Finale\Dumb;
 use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Blueprint\Ghost\Dialog\Activate\StartSession;
+use Commune\Ghost\Dialog\DialogHelper;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IDumb extends AbsDialogue implements Dumb
+class IStartSession extends AbsDialogue implements StartSession
 {
     protected function runInterception(): ? Dialog
     {
@@ -27,13 +29,11 @@ class IDumb extends AbsDialogue implements Dumb
 
     protected function runTillNext(): Dialog
     {
-        $this->ticked = true;
-        return $this;
+        return DialogHelper::activate($this);
     }
 
     protected function selfActivate(): void
     {
-        $this->cloner->noState();
     }
 
 

@@ -11,11 +11,12 @@
 
 namespace Commune\Blueprint\Ghost\Dialog\Withdraw;
 
+use Commune\Blueprint\Ghost\Dialog\Withdraw;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Quit
+interface Quit extends Withdraw
 {
 
 }

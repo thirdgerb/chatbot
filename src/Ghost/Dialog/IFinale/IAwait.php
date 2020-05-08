@@ -75,6 +75,7 @@ class IAwait extends AbsDialogue implements Await
         if ($this->restartProcess) {
             return new IStartProcess($this->cloner);
         }
+        $this->ticked = true;
         return $this;
     }
 

@@ -9,27 +9,32 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IRedirect;
+namespace Commune\Ghost\Dialog\IRetain;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Activate\Fallback;
 use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Blueprint\Ghost\Dialog\Retain\Heed;
+use Commune\Ghost\Dialog\DialogHelper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IFallback extends AbsDialogue implements Fallback
+class IHeed extends AbsDialogue implements Heed
 {
     protected function runInterception(): ? Dialog
     {
+        return null;
     }
 
     protected function runTillNext(): Dialog
     {
+        return DialogHelper::retain($this);
     }
 
     protected function selfActivate(): void
     {
+        $process = $this->getProcess();
+        $process->unsetWaiting($this->ucl);
     }
 
 

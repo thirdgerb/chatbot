@@ -9,19 +9,18 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IReceive;
+namespace Commune\Ghost\Dialog\IRedirect;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
-use Commune\Blueprint\Ghost\Dialog\Receive\Fulfill;
-use Commune\Ghost\Dialog\IActivate\IIntend;
+use Commune\Ghost\Dialog\IActivate\IRedirectTo;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IFulfill extends AbsDialogue implements Fulfill
+class IFulfill extends AbsDialogue
 {
     /**
      * @var Ucl|null
@@ -80,7 +79,7 @@ class IFulfill extends AbsDialogue implements Fulfill
 
         // 拦截回调的过程.
         if (isset($this->to)) {
-            return new IIntend($this->cloner, $this->to);
+            return new IRedirectTo($this->cloner, $this->to);
         }
 
         return $this->fallbackFlow($this, $process);

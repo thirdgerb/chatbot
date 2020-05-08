@@ -11,24 +11,17 @@
 
 namespace Commune\Ghost\Dialog\IWithdraw;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
-use Commune\Blueprint\Ghost\Dialog\Withdraw\Cancel;
+use Commune\Blueprint\Ghost\Dialog\Withdraw\Quit;
+use Commune\Ghost\Dialog\DialogHelper;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ICancel extends AbsDialogue implements Cancel
+class IQuit extends AbsDialogue implements Quit
 {
-    protected $to;
-
-    public function __construct(Cloner $cloner, Ucl $ucl, Ucl $to = null)
-    {
-        $this->to = $to;
-        parent::__construct($cloner, $ucl);
-    }
 
     protected function runInterception(): ? Dialog
     {
@@ -39,24 +32,22 @@ class ICancel extends AbsDialogue implements Cancel
     {
         $process = $this->getProcess();
 
-        return $this->withdrawCanceling($this, $process)
-            ?? $this->maybeRedirect()
-            ?? $this->fallbackFlow($this, $process);
+        return $this->withdrawCanceling($this, $process, Quit::class)
+            ?? $this->withdrawBlocking($this, $process, Quit::class)
+            ?? $this->withdrawSleeping($this, $process, Quit::class)
+            ?? $this->withdrawWatching($this, $process, Quit::class)
+            ?? DialogHelper::newDialog(
+                $this,
+                $this->ucl,
+                Dialog\Finale\CloseSession::class
+            );
     }
 
-    protected function maybeRedirect() : ? Dialog
-    {
-        if (isset($this->to)) {
-            return $this->redirectTo($this->to);
-        }
-
-        return null;
-    }
 
     protected function selfActivate(): void
     {
         $process = $this->getProcess();
-        $process->addCanceling([$this->ucl]);
+        $process->unsetWaiting($this->ucl);
     }
 
 

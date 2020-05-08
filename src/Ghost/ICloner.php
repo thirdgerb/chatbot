@@ -264,10 +264,10 @@ class ICloner extends ASession implements Cloner
         $this->silent = $silent;
     }
 
-    public function output(GhostMsg $ghostMsg): void
+    public function output(GhostMsg $output): void
     {
         if (!$this->silent) {
-            $this->outputs[] = $ghostMsg;
+            $this->outputs[] = $output;
         }
     }
 

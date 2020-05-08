@@ -21,7 +21,7 @@ use Commune\Ghost\Dialog\DialogHelper;
  *
  * @mixin AbsDialogue
  */
-trait TRetrace
+trait TWithdraw
 {
     protected function fallbackFlow(Dialog $from, Process $process) : Dialog
     {
@@ -46,7 +46,7 @@ trait TRetrace
         return DialogHelper::newDialog(
             $prev,
             $blockingUcl,
-            Dialog\Receive\Preempt::class
+            Dialog\Retain\Preempt::class
         );
     }
     
@@ -62,12 +62,16 @@ trait TRetrace
         return DialogHelper::newDialog(
             $prev,
             $sleepingUcl,
-            Dialog\Activate\Fallback::class
+            Dialog\Retain\Fallback::class
         );
     }
 
 
-    protected function withdrawCanceling(Dialog $prev, Process $process) : ? Dialog
+    protected function withdrawCanceling(
+        Dialog $prev,
+        Process $process,
+        string $type = Dialog\Withdraw\Cancel::class
+    ) : ? Dialog
     {
         while ($canceling = $process->popCanceling()) {
 
@@ -89,7 +93,7 @@ trait TRetrace
             $next = DialogHelper::newDialog(
                 $prev,
                 $cancelingUcl,
-                Dialog\Withdraw\Cancel::class
+                $type
             );
 
             $next = DialogHelper::withdraw($next);
@@ -99,6 +103,46 @@ trait TRetrace
             }
         }
 
+        return null;
+    }
+
+    protected function withdrawSleeping(Dialog $prev, Process $process, string $type) : ? Dialog
+    {
+        while($watching = $process->popSleeping()) {
+            /**
+             * @var Dialog\Withdraw $next
+             */
+            $next = DialogHelper::newDialog(
+                $prev,
+                $process->decodeUcl($watching),
+                $type
+            );
+
+            $next = DialogHelper::withdraw($next);
+            if (isset($next)) {
+                return $next;
+            }
+        }
+        return null;
+    }
+
+    protected function withdrawBlocking(Dialog $prev, Process $process, string $type) : ? Dialog
+    {
+        while($watching = $process->popBlocking()) {
+            /**
+             * @var Dialog\Withdraw $next
+             */
+            $next = DialogHelper::newDialog(
+                $prev,
+                $process->decodeUcl($watching),
+                $type
+            );
+
+            $next = DialogHelper::withdraw($next);
+            if (isset($next)) {
+                return $next;
+            }
+        }
         return null;
     }
 

@@ -21,7 +21,7 @@ use Commune\Protocals\Host\Convo\QuestionMsg;
  * @property-read null|QuestionMsg $question
  * @property-read string[] $stageRoutes
  * @property-read string[] $contextRoutes
- * @property-read string $ucl
+ * @property-read string $await
  */
 interface Waiter
 {

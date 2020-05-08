@@ -13,20 +13,20 @@ namespace Commune\Ghost\Dialog\Traits;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Finale\Await;
-use Commune\Blueprint\Ghost\Routing\Redirector;
+use Commune\Blueprint\Ghost\Routing\DialogManager;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
 use Commune\Ghost\Dialog\DialogHelper;
-use Commune\Ghost\Dialog\IActivate\IIntend;
+use Commune\Ghost\Dialog\IActivate\IRedirectTo;
 use Commune\Ghost\Dialog\IActivate\IStaging;
 use Commune\Ghost\Dialog\IFinale\IAwait;
 use Commune\Ghost\Dialog\IFinale\IRewind;
-use Commune\Ghost\Dialog\IReceive\IFulfill;
 use Commune\Ghost\Dialog\IRedirect\IBlockTo;
 use Commune\Ghost\Dialog\IRedirect\IDependOn;
+use Commune\Ghost\Dialog\IRedirect\IFulfill;
 use Commune\Ghost\Dialog\IRedirect\IHome;
 use Commune\Ghost\Dialog\IRedirect\ISleepTo;
-use Commune\Ghost\Dialog\IStartProcess;
+use Commune\Ghost\Dialog\IWithdraw\ICancel;
 
 
 /**
@@ -37,14 +37,14 @@ trait TRedirector
 {
     /*------- 链式调用 -------*/
 
-    public function watch(Ucl $watcher): Redirector
+    public function watch(Ucl $watcher): DialogManager
     {
         $process = $this->getProcess();
         $process->addWatcher($watcher);
         return $this;
     }
 
-    public function resetPath(): Redirector
+    public function resetPath(): DialogManager
     {
         $process = $this->getProcess();
         $process->resetPath();
@@ -70,7 +70,7 @@ trait TRedirector
         if ($to->getContextId() === $this->ucl->getContextId()) {
             $next = new IStaging($this->cloner, $to, $pipes);
         } else {
-            $next = new IIntend($this->cloner, $to, $pipes);
+            $next = new IRedirectTo($this->cloner, $to, $pipes);
         }
 
         return $next;
@@ -90,7 +90,7 @@ trait TRedirector
         if ($this->ucl->getContextId() === $to->getContextId()) {
             $next = new IStaging($this->cloner, $to, []);
         } else {
-            $next = new IIntend($this->cloner, $to, []);
+            $next = new IRedirectTo($this->cloner, $to, []);
         }
 
         return $next->withPrev($this);
@@ -179,16 +179,25 @@ trait TRedirector
 
     public function cancelTo(Ucl $to = null): Dialog
     {
+        return new ICancel($this->cloner, $this->ucl, $to);
     }
 
     public function reject(): Dialog
     {
-        // TODO: Implement reject() method.
+        return DialogHelper::newDialog(
+            $this,
+            $this->ucl,
+            Dialog\Withdraw\Reject::class
+        );
     }
 
     public function quit(): Dialog
     {
-        // TODO: Implement quit() method.
+        return DialogHelper::newDialog(
+            $this,
+            $this->ucl,
+            Dialog\Withdraw\Quit::class
+        );
     }
 
 
@@ -216,7 +225,11 @@ trait TRedirector
 
     public function confuse(): Dialog
     {
-        // TODO: Implement confuse() method.
+        return DialogHelper::newDialog(
+            $this,
+            $this->ucl,
+            Dialog\Withdraw\Confuse::class
+        );
     }
 
 

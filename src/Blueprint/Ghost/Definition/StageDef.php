@@ -12,11 +12,9 @@
 namespace Commune\Blueprint\Ghost\Definition;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Receive;
+use Commune\Blueprint\Ghost\Dialog\Retain;
 use Commune\Blueprint\Ghost\Dialog\Withdraw;
-use Commune\Blueprint\Ghost\Dialog\Fulfill;
 use Commune\Blueprint\Ghost\Dialog\Activate;
 
 
@@ -74,10 +72,10 @@ interface StageDef
     /**
      * 接收到一个用户消息时.
      *
-     * @param Receive $dialog
+     * @param Retain $dialog
      * @return Dialog|null
      */
-    public function onReceive(Receive $dialog) : Dialog;
+    public function onRetain(Retain $dialog) : Dialog;
 
     /**
      * 当 A Context 依赖 B Context 时, B Context 退出会导致这个流程.

@@ -25,12 +25,12 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
 
  * # waiting
- * @property-read string|null $await            等待用户回复的任务.
+ * @property-read string|null $awaiting         等待用户回复的任务.
  *
  * @property-read Waiter|null $waiter
  *
  * @property-read string[][] $watching          观察中的任务. 可以最先被触发 (watch)
- *  [ string $ucl => $watchingStageName[] ]
+ *  [ string $ucl => '' ]
  *
  * @property-read int[] $blocking               阻塞中的任务. 有机会就抢占 (preempt)
  *  [ string $ucl => int $priority]
@@ -162,6 +162,10 @@ interface Process extends ArrayAndJsonAble
 //     * 清空掉需要 gc 的 Task
 //     */
 //    public function gc() : void;
+
+    /*-------- yielding ---------*/
+
+    public function addYielding(Ucl $ucl, string $depended) : void;
 
     /*-------- dying ---------*/
 

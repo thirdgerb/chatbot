@@ -20,7 +20,7 @@ use Commune\Blueprint\Ghost\Dialog\Finale\Await;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Redirector
+interface DialogManager
 {
 
     /*-------- 链式调用 --------*/
@@ -29,14 +29,14 @@ interface Redirector
      * 将自己变成 Watch 状态, 然后进入 $to 语境.
      *
      * @param Ucl $watcher
-     * @return Redirector
+     * @return DialogManager
      */
-    public function watch(Ucl $watcher) : Redirector;
+    public function watch(Ucl $watcher) : DialogManager;
 
     /**
      * 清空路径.
      */
-    public function resetPath() : Redirector;
+    public function resetPath() : DialogManager;
 
     /*-------- redirect --------*/
 

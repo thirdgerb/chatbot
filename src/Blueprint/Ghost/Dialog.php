@@ -13,8 +13,8 @@ namespace Commune\Blueprint\Ghost;
 
 use Commune\Blueprint\Ghost\Routing\Hearing;
 use Commune\Blueprint\Ghost\Routing\Matcher;
-use Commune\Blueprint\Ghost\Routing\Redirector;
-use Commune\Blueprint\Ghost\Runtime\Task;
+use Commune\Blueprint\Ghost\Routing\DialogManager;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 
 /**
@@ -25,10 +25,36 @@ use Commune\Blueprint\Ghost\Runtime\Task;
  * @property-read Context $context
  * @property-read Ucl $ucl              当前 Dialog 的 Context 地址.
  * @property-read Dialog|null $prev     前一个 Dialog
- * @property-read int $depth            当前 Dialog 的深度. 过深意味着循环重定向.
  */
 interface Dialog
 {
+    /*----- call -----*/
+
+
+    /**
+     * @param  string  $abstract
+     * @param  array  $parameters
+     * @return mixed
+     *
+     * @throws
+     * 实际上是 throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function make(string $abstract, array $parameters = []);
+
+    /**
+     * @param callable $caller
+     * @param array $parameters
+     * @return mixed
+     * @throws \ReflectionException
+     * @throws BindingResolutionException
+     */
+    public function call(callable $caller, array $parameters = []);
+
+    public function predict(callable $caller) : bool;
+
+    public function action(callable $caller) : ? Dialog;
+
+    /*----- conversation -----*/
 
     /**
      * 发送消息给用户
@@ -45,12 +71,14 @@ interface Dialog
     /**
      * 重定向当前的会话.
      *
-     * @return Redirector
+     * @return DialogManager
      */
-    public function then() : Redirector;
+    public function then() : DialogManager;
 
+    /**
+     * @return Hearing
+     */
     public function hearing() : Hearing;
-
 
     /*----- 上下文相关 Context -----*/
 
@@ -69,10 +97,17 @@ interface Dialog
      */
     public function getUcl(string $contextOrUclStr, array $query = []) : Ucl;
 
+    /*----- 下一帧 -----*/
+
     /**
      * Dialog 逻辑运行一帧.
      * @return Dialog
      */
     public function tick() : Dialog;
 
+    /**
+     * Dialog 链当前的深度.
+     * @return int
+     */
+    public function depth() : int;
 }

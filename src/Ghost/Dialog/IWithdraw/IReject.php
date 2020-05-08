@@ -9,16 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IFinale;
+namespace Commune\Ghost\Dialog\IWithdraw;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Finale\Dumb;
+use Commune\Blueprint\Ghost\Dialog\Withdraw\Reject;
 use Commune\Ghost\Dialog\AbsDialogue;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IDumb extends AbsDialogue implements Dumb
+class IReject extends AbsDialogue implements Reject
 {
     protected function runInterception(): ? Dialog
     {
@@ -27,13 +27,16 @@ class IDumb extends AbsDialogue implements Dumb
 
     protected function runTillNext(): Dialog
     {
-        $this->ticked = true;
-        return $this;
+        $process = $this->getProcess();
+
+        return $this->withdrawCanceling($this, $process, Reject::class)
+            ?? $this->fallbackFlow($this, $process);
     }
 
     protected function selfActivate(): void
     {
-        $this->cloner->noState();
+        $process = $this->getProcess();
+        $process->addCanceling([$this->ucl]);
     }
 
 

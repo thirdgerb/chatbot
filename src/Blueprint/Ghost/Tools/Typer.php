@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost;
+namespace Commune\Blueprint\Ghost\Tools;
 
 /**
  * 对话模块
@@ -46,17 +46,17 @@ interface Typer
 
     /**
      * 指定发送的时间.
-     * @param float $sections
+     * @param int $timestamp
      * @return Typer
      */
-    public function deliverAt(float $sections) : Typer;
+    public function deliverAt(int $timestamp) : Typer;
 
     /**
      * 指定发送的时间在若干秒后.
-     * @param float $sections
+     * @param int $sections
      * @return Typer
      */
-    public function deliverAfter(float $sections) : Typer;
+    public function deliverAfter(int $sections) : Typer;
 
 
     /*------- 发送一个 ReactionMsg -------*/

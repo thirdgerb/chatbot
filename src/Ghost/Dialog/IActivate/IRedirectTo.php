@@ -16,34 +16,33 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
 use Commune\Ghost\Dialog\DialogHelper;
-use Commune\Blueprint\Ghost\Dialog\Activate\Staging;
+use Commune\Blueprint\Ghost\Dialog\Activate\RedirectTo;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IStaging extends AbsDialogue implements Staging
+class IRedirectTo extends AbsDialogue implements RedirectTo
 {
     /**
      * @var Ucl[]
      */
-    protected $stages = [];
+    protected $paths = [];
 
     /**
-     * IStaging constructor.
+     * IIntend constructor.
      * @param Cloner $cloner
      * @param Ucl $ucl
-     * @param Ucl[] $stages
+     * @param Ucl[] $path
      */
-    public function __construct(Cloner $cloner, Ucl $ucl, array $stages = [])
+    public function __construct(Cloner $cloner, Ucl $ucl, array $path = [])
     {
-        $this->stages = $stages;
+        $this->paths = $path;
         parent::__construct($cloner, $ucl);
     }
 
     protected function runInterception(): ? Dialog
     {
-        // 不相同的 stage, 也会调用 onIntercept 方法.
         return DialogHelper::intercept($this);
     }
 
@@ -52,17 +51,14 @@ class IStaging extends AbsDialogue implements Staging
         return DialogHelper::activate($this);
     }
 
-
     protected function selfActivate(): void
     {
         $process = $this->getProcess();
         $process->unsetWaiting($this->ucl->toEncodedUcl());
-
-        if (!empty($this->stages)) {
-            $process->addPath(...$this->stages);
+        if (!empty($this->paths)) {
+            $process->addPath(...$this->paths);
         }
     }
-
 
 
 }

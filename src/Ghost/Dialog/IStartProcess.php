@@ -18,6 +18,8 @@ use Commune\Blueprint\Ghost\Dialog\StartProcess;
 use Commune\Blueprint\Ghost\Pipe\ComprehendPipe;
 use Commune\Blueprint\Ghost\Runtime\RoutesMap;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Ghost\Dialog\IActivate\IStaging;
+use Commune\Ghost\Dialog\Traits\TIntentMatcher;
 use Commune\Protocals\Host\Convo\ContextMsg;
 use Commune\Protocals\Host\ConvoMsg;
 use Commune\Protocals\Intercom\GhostInput;
@@ -31,11 +33,12 @@ use Commune\Support\Utils\StringUtils;
  */
 class IStartProcess extends AbsDialogue implements StartProcess
 {
+    use TIntentMatcher;
 
     public function __construct(Cloner $cloner)
     {
         $this->process = $cloner->runtime->getCurrentProcess();
-        $ucl = $this->process->await ?? $this->process->root;
+        $ucl = $this->process->awaiting ?? $this->process->root;
         parent::__construct($cloner, Ucl::decodeUcl($ucl));
     }
 
@@ -85,7 +88,7 @@ class IStartProcess extends AbsDialogue implements StartProcess
     protected function shouldStartSession()
     {
         $process = $this->getProcess();
-        $awaitUclStr = $process->await;
+        $awaitUclStr = $process->awaiting;
 
         // 没有 await, 说明是 session 初始化
         if (empty($awaitUclStr)) {
@@ -130,13 +133,13 @@ class IStartProcess extends AbsDialogue implements StartProcess
     protected function heedByAwaitingUcl() : Dialog
     {
         $process = $this->getProcess();
-        $awaitUclStr = $process->await;
+        $awaitUclStr = $process->awaiting;
         $ucl = $process->decodeUcl($awaitUclStr);
 
         return DialogHelper::newDialog(
             $this,
             $ucl,
-            Dialog\Receive\Heed::class
+            Dialog\Retain\Heed::class
         );
     }
 
@@ -154,7 +157,7 @@ class IStartProcess extends AbsDialogue implements StartProcess
 
             if (StringUtils::isWildCardPattern($contextNameOrUcl)) {
                 $matched = $this->wildCardIntentNameMatch($contextNameOrUcl);
-                $matchedContextName = $this->checkMatchedStageNameExists($matched, true);
+                $matchedContextName = $this->checkMatchedStageNameExists($this->ucl, $matched, true);
 
                 if (isset($matchedContextName)) {
                     $target = Ucl::create($this->cloner, $matchedContextName, null);
@@ -191,62 +194,13 @@ class IStartProcess extends AbsDialogue implements StartProcess
         }
 
         $process = $this->getProcess();
-        $awaitUcl = $process->decodeUcl($process->await);
+        $awaitUcl = $process->decodeUcl($process->awaiting);
 
         // 设置重定向的目标.
-        $staging = null;
-        foreach ($stageRoutes as $stageName) {
-
-            // 使用了通配符. 模糊匹配.
-            if (StringUtils::isWildCardPattern($stageName)) {
-                $wildCardStageIntentName = $awaitUcl->parseFullStageName($stageName);
-
-                // 只检查意图名是否正确.
-                $matched = $this->wildCardIntentNameMatch($wildCardStageIntentName);
-                if (!isset($matched)) {
-                    continue;
-                }
-
-                $matchedStage = $this->checkMatchedStageNameExists($matched);
-                if (isset($matchedStage)) {
-                    $staging = $awaitUcl->gotoFullnameStage($matchedStage);
-                    break;
-                }
-
-
-            // 精确匹配.
-            } else {
-                $ucl = $awaitUcl->gotoStage($stageName);
-                if ($this->exactStageIntentMatch($ucl)) {
-                    $staging = $ucl;
-                    break;
-                }
-            }
-        }
-
-        if (isset($staging) && $staging->exists($this->cloner)) {
+        $staging = $this->stageRoutesMatch($awaitUcl, $stageRoutes);
+        if (isset($staging)) {
             // 触发 staging 事件. 重定向到另一个 stage.
-            return DialogHelper::newDialog(
-                $this,
-                $staging,
-                Dialog\Activate\Staging::class
-            );
-        }
-
-        return null;
-    }
-
-    protected function checkMatchedStageNameExists(
-        array $matched,
-        bool $sameContext =false
-    ) : ? string
-    {
-        $reg = $this->cloner->mind->stageReg();
-        foreach ($matched as $stageName) {
-            $ifSameContext = !$sameContext || $this->ucl->isSameContext($stageName);
-            if ($ifSameContext && $reg->hasDef($stageName)) {
-                return $stageName;
-            }
+            return new IStaging($this->cloner, $staging);
         }
 
         return null;
@@ -269,27 +223,12 @@ class IStartProcess extends AbsDialogue implements StartProcess
                 return DialogHelper::newDialog(
                     $this,
                     $watchingUcl,
-                    Dialog\Receive\Watch::class
+                    Dialog\Retain\Watch::class
                 );
             }
         }
 
         return null;
-    }
-
-    protected function exactStageIntentMatch(Ucl $ucl) : bool
-    {
-        $intentDef = $ucl->findIntentDef($this->cloner);
-
-        return !empty($intentDef)
-            ? $intentDef->validate($this->cloner)
-            : false;
-    }
-
-    protected function wildCardIntentNameMatch(string $name) : ? array
-    {
-        $intention = $this->cloner->ghostInput->comprehension->intention;
-        return $intention->wildcardIntentMatch($name);
     }
 
 
@@ -298,7 +237,7 @@ class IStartProcess extends AbsDialogue implements StartProcess
     protected function runComprehendPipes() : ? Dialog
     {
         $process = $this->getProcess();
-        $awaitUclStr = $process->await;
+        $awaitUclStr = $process->awaiting;
 
         if (empty($awaitUclStr)) {
             return $this->runGhostComprehendPipes();
@@ -378,14 +317,14 @@ class IStartProcess extends AbsDialogue implements StartProcess
         $challengerUcl = $challenger->getUcl();
 
         $process = $this->getProcess();
-        $awaitUclStr = $process->await;
+        $awaitUclStr = $process->awaiting;
 
         // 当前等待的 Context 为空, 则直接占领.
         if (empty($awaitUclStr)) {
             return DialogHelper::newDialog(
                 $this,
                 $challengerUcl,
-                Dialog\Receive\Preempt::class
+                Dialog\Retain\Preempt::class
             );
         }
 
@@ -399,7 +338,7 @@ class IStartProcess extends AbsDialogue implements StartProcess
             return DialogHelper::newDialog(
                 $this,
                 $challengerUcl,
-                Dialog\Receive\Preempt::class
+                Dialog\Retain\Preempt::class
             );
         }
 

@@ -12,13 +12,13 @@
 namespace Commune\Ghost\Dialog\IFinale;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Finale\Dumb;
 use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Blueprint\Ghost\Dialog\Finale\CloseSession;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IDumb extends AbsDialogue implements Dumb
+class ICloseSession extends AbsDialogue implements CloseSession
 {
     protected function runInterception(): ? Dialog
     {
@@ -33,7 +33,7 @@ class IDumb extends AbsDialogue implements Dumb
 
     protected function selfActivate(): void
     {
-        $this->cloner->noState();
+        //todo
     }
 
 

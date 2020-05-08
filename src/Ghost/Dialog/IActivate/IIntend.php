@@ -11,10 +11,8 @@
 
 namespace Commune\Ghost\Dialog\IActivate;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate\Intend;
-use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
 use Commune\Ghost\Dialog\DialogHelper;
 
@@ -24,23 +22,6 @@ use Commune\Ghost\Dialog\DialogHelper;
  */
 class IIntend extends AbsDialogue implements Intend
 {
-    /**
-     * @var Ucl[]
-     */
-    protected $paths = [];
-
-    /**
-     * IIntend constructor.
-     * @param Cloner $cloner
-     * @param Ucl $ucl
-     * @param Ucl[] $path
-     */
-    public function __construct(Cloner $cloner, Ucl $ucl, array $path = [])
-    {
-        $this->paths = $path;
-        parent::__construct($cloner, $ucl);
-    }
-
     protected function runInterception(): ? Dialog
     {
         return DialogHelper::intercept($this);
@@ -55,9 +36,6 @@ class IIntend extends AbsDialogue implements Intend
     {
         $process = $this->getProcess();
         $process->unsetWaiting($this->ucl->toEncodedUcl());
-        if (!empty($this->paths)) {
-            $process->addPath(...$this->paths);
-        }
     }
 
 

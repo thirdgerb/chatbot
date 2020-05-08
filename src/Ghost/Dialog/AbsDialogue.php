@@ -12,18 +12,20 @@
 namespace Commune\Ghost\Dialog;
 
 use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Exceptions\TooManyRedirectsException;
 use Commune\Blueprint\Ghost\Routing\Hearing;
 use Commune\Blueprint\Ghost\Routing\Matcher;
-use Commune\Blueprint\Ghost\Routing\Redirector;
+use Commune\Blueprint\Ghost\Routing\DialogManager;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Typer;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\Traits\TRedirector;
-use Commune\Ghost\Dialog\Traits\TRetrace;
+use Commune\Ghost\Dialog\Traits\TWithdraw;
+use Commune\Ghost\Tools\ITyper;
 use Commune\Support\DI\Injectable;
 use Commune\Support\DI\TInjectable;
 
@@ -33,9 +35,9 @@ use Commune\Support\DI\TInjectable;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbsDialogue implements Dialog, Injectable, Redirector
+abstract class AbsDialogue implements Dialog, Injectable, DialogManager
 {
-    use TInjectable, TRedirector, TRetrace;
+    use TInjectable, TRedirector, TWithdraw;
 
     /*------ params -------*/
 
@@ -103,7 +105,7 @@ abstract class AbsDialogue implements Dialog, Injectable, Redirector
 
     public function send(): Typer
     {
-        // TODO: Implement send() method.
+        return new ITyper($this);
     }
 
     public function matcher(): Matcher
@@ -111,7 +113,7 @@ abstract class AbsDialogue implements Dialog, Injectable, Redirector
         return $this->cloner->container->make(Matcher::class);
     }
 
-    public function then(): Redirector
+    public function then(): DialogManager
     {
         return $this;
     }
@@ -138,6 +140,84 @@ abstract class AbsDialogue implements Dialog, Injectable, Redirector
         );
     }
 
+    /*-------- history --------*/
+
+    public function depth(): int
+    {
+        $current = $this;
+        $depth = 1;
+        $max = $this->cloner->ghost->getConfig()->maxRedirectTimes;
+
+        while($depth < $max && isset($current)) {
+            $current = $current->prev;
+            $depth++;
+        }
+
+        if ($depth >= $max) {
+            throw new TooManyRedirectsException($max);
+        }
+
+        return $depth;
+    }
+
+
+    /*-------- app --------*/
+
+    public function make(string $abstract, array $parameters = [])
+    {
+        $parameters = $this->getContextualInjections($parameters);
+        return $this->cloner->container->make($abstract, $parameters);
+    }
+
+    public function call(callable $caller, array $parameters = [])
+    {
+        $parameters = $this->getContextualInjections($parameters);
+        return $this->cloner->container->call($caller, $parameters);
+    }
+
+    public function predict(callable $caller): bool
+    {
+        $result = $this->call($caller);
+        if (!is_bool($result)) {
+            throw new InvalidArgumentException(__METHOD__, 'caller', 'caller is not predict which return with bool');
+        }
+
+        return $result;
+    }
+
+    public function action(callable $caller): ? Dialog
+    {
+        $result = $this->call($caller);
+        if (is_null($result) || $result instanceof Dialog) {
+            return $result;
+        }
+
+        throw new InvalidArgumentException(__METHOD__, 'caller', 'caller is not predict which return with bool');
+    }
+
+    protected function getContextualInjections(array $parameters) : array
+    {
+        $injections = [
+            'context' => $this->context,
+            'prev' => $this->prev,
+            'dialog' => $this,
+        ];
+
+        foreach ($injections as $key => $value) {
+
+            $parameters[$key] = $value;
+
+            if (!$value instanceof Injectable) {
+                continue;
+            }
+
+            foreach ($value->getInterfaces() as $interface) {
+                $parameters[$interface] = $value;
+            }
+        }
+
+        return $parameters;
+    }
 
 
     /*-------- tick --------*/
@@ -177,7 +257,12 @@ abstract class AbsDialogue implements Dialog, Injectable, Redirector
         }
 
         $this->ticking = false;
-        $next->prev = $this;
+
+        // 填补关联关系.
+        $prev = $next->prev;
+        if (!isset($prev)) {
+            $next->prev = $this;
+        }
 
         return $next;
     }

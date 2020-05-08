@@ -9,15 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Async;
+namespace Commune\Blueprint\Ghost\Dialog\Retain;
 
-use Commune\Blueprint\Ghost\Context;
-use Commune\Protocals\Intercom\YieldMsg;
+use Commune\Blueprint\Ghost\Dialog\Retain;
 
 /**
+ * sleeping -> fallback
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface AsyncService
+interface Fallback extends Retain
 {
-    public function invoke(Context $currentContext) : YieldMsg;
 }

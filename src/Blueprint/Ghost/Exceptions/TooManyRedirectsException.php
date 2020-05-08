@@ -18,5 +18,10 @@ use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
  */
 class TooManyRedirectsException extends BrokenSessionException
 {
+    public function __construct(int $max)
+    {
+        $message = "too many dialog redirection, max is $max";
+        parent::__construct($message);
+    }
 
 }

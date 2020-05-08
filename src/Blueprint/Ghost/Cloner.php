@@ -119,9 +119,10 @@ interface Cloner extends Session
 
     /**
      * 同步输出一个消息.
-     * @param GhostMsg $ghostMsg
+     * @param GhostMsg $output
+     * @param GhostMsg[] $outputs
      */
-    public function output(GhostMsg $ghostMsg) : void;
+    public function output(GhostMsg $output, GhostMsg ...$outputs) : void;
 
     /**
      * 获得所有的输出消息.

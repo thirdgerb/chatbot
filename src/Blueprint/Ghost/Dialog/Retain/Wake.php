@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog\Receive;
+namespace Commune\Blueprint\Ghost\Dialog\Retain;
 
+use Commune\Blueprint\Ghost\Dialog\Retain;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Heed
+interface Wake extends Retain
 {
-
 }
