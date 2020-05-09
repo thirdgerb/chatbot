@@ -20,26 +20,30 @@ trait TArrayData
     /**
      * @var array
      */
-    protected $data = [];
+    protected $_data = [];
+
+    protected $_changed = false;
 
     public function offsetExists($offset)
     {
-        return isset($this->data[$offset]);
+        return isset($this->_data[$offset]);
     }
 
     public function offsetGet($offset)
     {
-        return $this->data[$offset] ?? null;
+        return $this->_data[$offset] ?? null;
     }
 
     public function offsetSet($offset, $value)
     {
-        $this->data[$offset] = $value;
+        $this->_changed = true;
+        $this->_data[$offset] = $value;
     }
 
     public function offsetUnset($offset)
     {
-        unset($this->data[$offset]);
+        $this->_changed = true;
+        unset($this->_data[$offset]);
     }
 
 

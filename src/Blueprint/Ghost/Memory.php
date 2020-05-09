@@ -9,20 +9,27 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Memory;
+namespace Commune\Blueprint\Ghost;
 
-use Commune\Blueprint\Ghost\Cloner;
+use ArrayAccess;
 use Commune\Support\Arr\ArrayAndJsonAble;
-use Commune\Support\Babel\BabelSerializable;
-
 
 /**
- * 可以作为参数存储到 Recollection 中的数据.
- * 是允许序列化的.
+ * 用于存储的记忆单元.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Stub extends BabelSerializable, ArrayAndJsonAble
+interface Memory extends
+    ArrayAccess, // 数组式的调用
+    ArrayAndJsonAble // 可转化为数组.
 {
-    public function toMemorable(Cloner $cloner) : ? Memorable;
+    /**
+     * 记忆的 Id
+     * @return string
+     */
+    public function getId() : string;
+
+    public function isChanged() : bool;
+
+    public function isLongTerm() : bool;
 }

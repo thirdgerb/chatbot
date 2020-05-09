@@ -9,24 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Memory;
+namespace Commune\Blueprint\Ghost\Cloner;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Memory\Memorable;
+use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read string $className
  */
-class MemStub extends AStub
+interface ClonerInstanceStub extends ArrayAndJsonAble
 {
-
-    public function toMemorable(Cloner $cloner): ? Memorable
-    {
-        $className = $this->className;
-        return call_user_func([$className, 'find'], $cloner);
-    }
-
+    public function toInstance(Cloner $cloner) : ClonerInstance;
 
 }

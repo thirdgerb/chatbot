@@ -11,17 +11,16 @@
 
 namespace Commune\Ghost\Runtime;
 
-use Commune\Blueprint\Exceptions\IO\SaveDataFailException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
-use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
-use Commune\Blueprint\Ghost\Runtime\Thread;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Ghost\RuntimeDriver;
-use Commune\Ghost\Memory\IRecollection;
+use Commune\Protocals\Host\Convo\ContextMsg;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
+use Commune\Blueprint\Exceptions\IO\SaveDataFailException;
 
 
 /**
@@ -46,29 +45,17 @@ class IRuntime implements Runtime, Spied
      */
     protected $traceId;
 
-    /*---- cached ----*/
-
     /**
      * @var string
      */
-    protected $currentProcessId = '';
+    protected $sessionId;
+
+    /*---- cached ----*/
 
     /**
-     * @var Process|null[]
+     * @var Process|null
      */
-    protected $processes = [];
-
-    /**
-     * @var Recollection[]
-     *
-     *  [string $id => Recollection $recollection, ]
-     */
-    protected $recollections = [];
-
-    /**
-     * @var Thread[]
-     */
-    protected $yielding = [];
+    protected $process;
 
     /**
      * IRuntime constructor.
@@ -82,6 +69,7 @@ class IRuntime implements Runtime, Spied
         }
 
         $this->traceId = $cloner->getTraceId();
+        $this->sessionId = $cloner->getSessionId();
 
         static::addRunningTrace($this->traceId, $this->traceId);
     }
@@ -91,140 +79,66 @@ class IRuntime implements Runtime, Spied
 
     public function getCurrentProcess(): Process
     {
-        // 已经缓存过.
-        if (!empty($this->currentProcessId)) {
-            return $this->processes[$this->currentProcessId];
+        if (isset($this->process)) {
+            return $this->process;
         }
+
 
         // 无状态下都是新生成.
         if (!$this->cloner->isStateless()) {
-            $pId = $cloner->storage[ClonerStorage::CURRENT_PROCESS_ID] ?? '';
-            $process = $this->findProcess($pId);
+            $process = $this->driver->fetchProcess($this->sessionId);
             if (isset($process)) {
                 // 生成一个新的 Snapshot
-                $process = $process->nextSnapshot($this->cloner->getTraceId());
-
-                // 新的 Id
-                $this->currentProcessId = $process->id;
-                $this->processes[$pId] = $process;
-
-                return $process;
+                return $this->process = $process->nextSnapshot($this->cloner->getTraceId());
             }
         }
 
         // 创建一个新的.
         $contextName = $this->cloner->scene->contextName;
-        $process = $this->createProcess($contextName);
-        $this->currentProcessId = $process->id;
-        return $process;
+        return $this->process = $this->createProcess($contextName);
     }
-
-    public function findRecollection(string $id): ? Recollection
-    {
-        if (isset($this->recollections[$id])) {
-            return $this->recollections[$id];
-        }
-
-        if (!isset($this->driver)) {
-            return null;
-        }
-
-        $cacheExists = $this->driver->cacheExists();
-
-        if (!$cacheExists) {
-            return null;
-        }
-
-        $obj = $this->driver->fetchCachable($id) ?? $this->driver->fetchSavable($id);
-        if ($obj instanceof Recollection) {
-            $this->recollections[$obj->getId()] = $obj;
-            return $this->recollections[$id] = $obj;
-        }
-        return null;
-    }
-
-    public function createRecollection(
-        string $id,
-        string $name,
-        bool $longTerm,
-        array $defaults
-    ): Recollection
-    {
-        $recollection = new IRecollection(
-            $id,
-            $name,
-            $longTerm,
-            $defaults
-        );
-        $this->recollections[$recollection->getId()] = $recollection;
-        return $recollection;
-    }
-
-    public function addRecollection(Recollection $recollection): void
-    {
-        $this->recollections[$recollection->getId()] = $recollection;
-    }
-
-    public function toContextMsg(): ? IContextMsg
-    {
-        $process = $this->getCurrentProcess();
-        $node = $process->changedNode();
-
-        if (!isset($node)) {
-           return null;
-        }
-        $context = $node->findContext($this->cloner);
-        return new IContextMsg([
-            'contextName' => $node->contextName,
-            'contextId' => $node->contextId,
-            'data' => $context->toArray()
-        ]);
-    }
-
-
-
-
 
     public function setCurrentProcess(Process $process): void
     {
-        $id = $process->id;
-        $this->processes[$id] = $process;
-        $this->currentProcessId = $id;
+        $this->process = $process;
     }
 
     public function createProcess(string $contextName): Process
     {
-        $context = $this->cloner->newContext($contextName);
-        $node = $context->toNewNode();
-
-        $process = new IProcess(
-            $this->cloner->getClonerId(),
-            $node,
-            null// self create new processId
-        );
-
-        $this->processes[$process->id] = $process;
-        return $process;
+        $root = Ucl::create($this->cloner, $contextName);
+        return new IProcess($this->sessionId, $root, $this->cloner->getTraceId());
     }
 
-    public function findProcess(string $processId): ? Process
-    {
-        http_build_query();
-        if (array_key_exists($processId, $this->processes)) {
-            return $this->processes[$processId];
-        }
+    /*------ contextMsg ------*/
 
-        if (!isset($this->driver)) {
+    public function toContextMsg(): ? ContextMsg
+    {
+        if (!isset($this->process)) {
             return null;
         }
 
-        $process = $this->driver->fetchCachable($processId);
-        if (!$process instanceof Process) {
-            $process = null;
+        $waiter = $this->process->waiter;
+        if (empty($waiter)) {
+            return null;
         }
 
-        return $this->processes[$processId] = $process;
+        // prev 不存在时.
+        $prev = $this->process->prev;
+        $prevWaiter =isset($prev) ? $prev->waiter : null;
+
+        $changed = !isset($prevWaiter) || ($prevWaiter->await !== $waiter->await);
+
+        if ($changed) {
+            $ucl = $this->process->decodeUcl($waiter->await);
+            $context = $this->cloner->getContext($ucl);
+            return $context->toContextMsg();
+        }
+
+        return null;
     }
+
+
+    /*------ save ------*/
 
     public function save(): void
     {
@@ -236,58 +150,22 @@ class IRuntime implements Runtime, Spied
             return;
         }
 
-        $storage = $this->cloner->storage;
-        $storage[ClonerStorage::CURRENT_PROCESS_ID] = $this->currentProcessId;
-
-        $cachable = [];
-        $recollectionIds = [];
-        $savable = [];
-
-        // 进程都存缓存.
-        foreach ($this->processes as $process) {
-            if ($process instanceof Process && $process->isCaching()) {
-                $cachable[$process->getCachableId()] = $process;
-            }
-        }
-
-        // yielding 目前也放在 cachable 里保存. session 相关.
-        foreach ($this->yielding as $thread) {
-            if ($thread->isCaching()) {
-                $cachable[$thread->getCachableId()] = $thread;
-            }
-        }
-
-        // 记忆看情况, 都缓存, 部分存数据库.
-        foreach ($this->recollections as $recollection) {
-            if ($recollection->isCaching()) {
-                $recollectionId = $recollection->getCachableId();
-                $recollectionIds[] = $recollectionId;
-
-                $cachable[$recollectionId] = $recollection;
-            }
-
-            if ($recollection->isSaving()) {
-                $savable[$recollection->getSavableId()] = $recollection;
-            }
-        }
-
-        // 缓存上一轮对话改变过的数据. 假设改变过的数据更有可能会改变.
-        $storage = $this->cloner->storage;
-        $storage[ClonerStorage::LAST_RECOLLECTION_IDS] = $recollectionIds;
-
-        // 异常.
-        $e = null;
         $success = false;
+        $e = null;
         try {
             $expire = $this->cloner->getSessionExpire();
-            $success = $this->driver->cacheCachable($cachable, $expire) && $this->driver->saveSavable($savable);
+            $success = isset($this->process)
+                ? $this->driver->cacheProcess($this->sessionId, $this->process, $expire)
+                : true;
+
         } catch (\Throwable $e) {
         }
 
         if (!$success || isset($e)) {
             throw new SaveDataFailException(
                 __METHOD__,
-                $this->traceId
+                $this->traceId,
+                $e
             );
         }
     }
@@ -295,10 +173,9 @@ class IRuntime implements Runtime, Spied
 
     public function __destruct()
     {
-        // 清空数组.
-        $this->processes = [];
-        $this->yielding = [];
-        $this->recollections = [];
+        // 清空数据
+        $this->driver = null;
+        $this->cloner = null;
 
         static::removeRunningTrace($this->traceId);
     }

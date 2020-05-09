@@ -9,13 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog\Activate;
+namespace Commune\Blueprint\Ghost\Cloner;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface BackStep
+interface ClonerInstance
 {
+
+    public function toInstanceStub() : ClonerInstanceStub;
 
 }

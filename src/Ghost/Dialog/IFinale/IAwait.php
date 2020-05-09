@@ -97,6 +97,14 @@ class IAwait extends AbsDialogue implements Await
         if (isset($this->expire)) {
             $this->cloner->setSessionExpire($this->expire);
         }
+
+        // 尝试同步状态变更.
+        $runtime = $this->cloner->runtime;
+        $contextMsg = $runtime->toContextMsg();
+        if (isset($contextMsg)) {
+            $ghostInput = $this->cloner->ghostInput;
+            $this->cloner->output($ghostInput->output($contextMsg));
+        }
     }
 
     public function askChoose(

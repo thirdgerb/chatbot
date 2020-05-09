@@ -81,11 +81,15 @@ class IRoutesMap implements RoutesMap
 
     public function toArray(): array
     {
-        $data = get_object_vars($this);
-        $result = [];
-        foreach($data as $key => $val) {
-            $result[substr($key,1)] = $val;
-        }
+        $result = [
+            'heed' => $this->_heed,
+            'watching' => $this->_watching,
+            'stageRoutes' => $this->_stageRoutes,
+            'contextRoutes' => $this->_contextRoutes,
+            'restore' => $this->_restore,
+            'wake' => $this->_wake,
+        ];
+
         return $result;
     }
 

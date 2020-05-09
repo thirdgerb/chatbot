@@ -104,14 +104,14 @@ class IProcess implements Process, HasIdGenerator
     /**
      * IProcess constructor.
      * @param string $sessionId
-     * @param string $root
+     * @param Ucl $root
      * @param string|null $id
      */
-    public function __construct(string $sessionId, string $root, string $id = null)
+    public function __construct(string $sessionId, Ucl $root, string $id = null)
     {
         $this->_sessionId = $sessionId;
         $this->_id = $id ?? $this->createUuId();
-        $this->_root = $root;
+        $this->_root = $root->toEncodedUcl();
     }
 
     public function toArray(): array

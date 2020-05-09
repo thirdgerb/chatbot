@@ -11,7 +11,9 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
+use Commune\Blueprint\Ghost\Memory;
 use Commune\Blueprint\Ghost\Memory\Recollection;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\Host\Convo\ContextMsg;
 
 /**
@@ -45,42 +47,6 @@ interface Runtime
      */
     public function createProcess(string $contextName) : Process;
 
-    /**
-     * 通过 processId 获得一个已有的 Process
-     * @param string $processId
-     * @return Process|null
-     */
-    public function findProcess(string $processId) : ? Process;
-
-    /*------ recollection -------*/
-
-    /**
-     * 通过唯一 Id 寻找记忆体
-     * @param string $id
-     * @return Recollection|null
-     */
-    public function findRecollection(string $id) : ? Recollection;
-
-    /**
-     * @param string $id
-     * @param string $name
-     * @param bool $longTerm
-     * @param array $defaults
-     * @return Recollection
-     */
-    public function createRecollection(
-        string $id,
-        string $name,
-        bool $longTerm,
-        array $defaults
-    ) : Recollection;
-
-    /**
-     * 添加一个.
-     * @param Recollection $recollection
-     */
-    public function addRecollection(Recollection $recollection) : void;
-
 
     /*------ context -------*/
 
@@ -91,22 +57,31 @@ interface Runtime
      */
     public function toContextMsg() : ? ContextMsg;
 
+    /*------ memory -------*/
+
+    /**
+     * 获取或创建一个长程记忆单元
+     *
+     * @param string $id
+     * @param bool $longTerm
+     * @param array $defaults
+     * @return Memory
+     */
+    public function findMemory(string $id, bool $longTerm, array $defaults) : Memory;
+
     /*------ yielding -------*/
 
     /**
-     * 缓存一个 yielding 状态的 Thread
-     * @param Thread $thread
-     * @param int|null $ttl
+     * @param Ucl $yieldingUcl
+     * @param string $contextId
      */
-    public function setYielding(Thread $thread, int $ttl = null) : void;
+    public function addYielding(Ucl $yieldingUcl, string $contextId) : void;
 
     /**
-     * 尝试寻找一个 Yielding 的 Thread
-     * @param string $threadId
-     * @return Thread|null
+     * @param string $contextId
+     * @return Ucl|null
      */
-    public function findYielding(string $threadId) : ? Thread;
-
+    public function findYielding(string $contextId) : ? Ucl;
 
     /*------ save -------*/
 

@@ -19,6 +19,7 @@ use Commune\Blueprint\Ghost\Memory\Stub;
 use Commune\Blueprint\Ghost\Runtime\Node;
 use Commune\Ghost\Memory\TMemorable;
 use Commune\Ghost\Runtime\INode;
+use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\DI\TInjectable;
 
 
@@ -38,7 +39,7 @@ use Commune\Support\DI\TInjectable;
  */
 class IContext implements Context
 {
-    use TInjectable, TMemorable;
+    use TInjectable, TMemorable, ArrayAbleToJson;
 
     /**
      * @var ContextDef

@@ -12,8 +12,9 @@
 namespace Commune\Blueprint\Ghost;
 
 use ArrayAccess;
-use Commune\Blueprint\Ghost\Memory\Memorable;
+use Commune\Blueprint\Ghost\Cloner\ClonerInstance;
 use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
+use Commune\Protocals\Host\Convo\ContextMsg;
 use Commune\Support\DI\Injectable;
 use Illuminate\Support\Collection;
 
@@ -24,13 +25,10 @@ use Illuminate\Support\Collection;
  */
 interface Context extends
         ArrayAccess, // 默认用数组方式来获取参数. 也可以用 getter setter
-        Memorable,
+        ClonerInstance,
         Injectable // Context 可以用各种方式依赖注入
 {
     const NAMESPACE_SEPARATOR = '.';
-
-
-
 
     /*----- properties -----*/
 
@@ -39,13 +37,6 @@ interface Context extends
      * @return string
      */
     public function getName() : string;
-
-    /**
-     * Context 的 Ucl 定位, 可以用字符串来表示.
-     * @return Ucl
-     */
-    public function getUcl() : Ucl;
-
 
     /**
      * @return Collection
@@ -87,6 +78,10 @@ interface Context extends
      */
     public function toArray(): array;
 
-    /*----- node -----*/
+    /**
+     * 转化为 ContextMsg
+     * @return ContextMsg
+     */
+    public function toContextMsg() : ContextMsg;
 
 }
