@@ -13,6 +13,7 @@ namespace Commune\Blueprint\Ghost;
 
 use ArrayAccess;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstance;
+use Commune\Blueprint\Ghost\Definition\ContextDef;
 use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
 use Commune\Protocals\Host\Convo\ContextMsg;
 use Commune\Support\DI\Injectable;
@@ -38,11 +39,6 @@ interface Context extends
      */
     public function getName() : string;
 
-    /**
-     * @return Collection
-     */
-    public function getQuery() : Collection;
-
 
     /**
      * @return string
@@ -55,6 +51,11 @@ interface Context extends
      */
     public function getPriority() : int;
 
+    /**
+     * @return ContextDef
+     */
+    public function getDef() : ContextDef;
+
 
     /*----- entity -----*/
 
@@ -63,6 +64,12 @@ interface Context extends
      * @return null|string
      */
     public function dependEntity() : ? string /* entityName */;
+
+    /**
+     * @return Collection
+     */
+    public function getQuery() : Collection;
+
 
     /*----- array -----*/
 

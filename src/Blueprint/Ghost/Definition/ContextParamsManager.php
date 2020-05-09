@@ -25,6 +25,10 @@ interface ContextParamsManager
 
     /*------- parameters -------*/
 
+    public function hasLongTermParameter() : bool;
+
+    public function hasSessionParameter() : bool;
+
     /**
      * @param string $name
      * @return bool
@@ -56,6 +60,11 @@ interface ContextParamsManager
      * @return Collection of ContextParameter[]
      */
     public function getShortTermParams() : Collection;
+
+    /**
+     * @return Collection of ContextParameters[]
+     */
+    public function getEntityParams() : Collection;
 
     /**
      * 过滤 Entity 的值. Entity 默认的每一项都是数组.

@@ -216,6 +216,8 @@ abstract class AbsDialogue implements
             'dialog' => $this,
         ];
 
+        $injections = $parameters + $injections;
+
         foreach ($injections as $key => $value) {
 
             $parameters[$key] = $value;

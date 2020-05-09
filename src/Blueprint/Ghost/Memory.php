@@ -32,4 +32,10 @@ interface Memory extends
     public function isChanged() : bool;
 
     public function isLongTerm() : bool;
+
+    /**
+     * 返回持有数据的原始值.
+     * @return array
+     */
+    public function toData() : array;
 }

@@ -12,22 +12,46 @@
 namespace Commune\Ghost\Context;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Memory\Memorable;
-use Commune\Blueprint\Ghost\Memory\Stub;
-use Commune\Ghost\Memory\AStub;
+use Commune\Blueprint\Ghost\Cloner\ClonerInstance;
+use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
+use Commune\Blueprint\Ghost\Ucl;
+use Commune\Support\Arr\ArrayAbleToJson;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- * @property-read string $contextId
- * @property-read string $contextName
  */
-class ContextStub extends AStub implements Stub
+class ContextStub implements ClonerInstanceStub
 {
-    public function toMemorable(Cloner $cloner): ? Memorable
+    use ArrayAbleToJson;
+
+    /**
+     * @var string
+     */
+    protected $ucl;
+
+    /**
+     * ContextStub constructor.
+     * @param string $ucl
+     */
+    public function __construct(string $ucl)
     {
-        return $cloner->getContext($this->contextId, $this->contextName);
+        $this->ucl = $ucl;
     }
+
+    public function toInstance(Cloner $cloner): ClonerInstance
+    {
+        $uclObj = Ucl::decodeUcl($this->ucl);
+        return $cloner->getContext($uclObj);
+    }
+
+
+    public function toArray(): array
+    {
+        return [
+            'type' => static::class,
+            'ucl' => $this->ucl
+        ];
+    }
+
 
 }

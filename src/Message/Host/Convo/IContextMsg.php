@@ -11,6 +11,8 @@
 
 namespace Commune\Message\Host\Convo;
 
+use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\Host\Convo\ContextMsg;
@@ -40,6 +42,23 @@ class IContextMsg extends AbsMessage implements ContextMsg
     {
         return [];
     }
+
+    public function toContext(Cloner $cloner): Context
+    {
+        // TODO: Implement toContext() method.
+    }
+
+
+    public function isBroadcasting(): bool
+    {
+        return true;
+    }
+
+    public function getLevel(): string
+    {
+        return $this->level;
+    }
+
 
     public function getNormalizedText(): string
     {

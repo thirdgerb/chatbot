@@ -73,6 +73,11 @@ class IMemory implements Memory
         }, $this->_data);
     }
 
+    public function toData(): array
+    {
+        return $this->_data;
+    }
+
 
     public function __sleep()
     {

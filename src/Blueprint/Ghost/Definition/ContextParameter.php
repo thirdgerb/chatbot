@@ -31,12 +31,6 @@ interface ContextParameter
     public function getTypeValidator() : callable ;
 
     /**
-     * 是否是数组
-     * @return bool
-     */
-    public function isList() : bool;
-
-    /**
      * @return bool
      */
     public function isQuery() : bool;
@@ -45,7 +39,15 @@ interface ContextParameter
      * 会长期保存的变量. 否则是只在 Session 生命周期中保存的变量.
      * @return bool
      */
-    public function isStatic() : bool;
+    public function isLongTerm() : bool;
+
+    public function isEntity() : bool;
+
+    /**
+     * 是否是数组
+     * @return bool
+     */
+    public function isList() : bool;
 
     /**
      * 默认值
