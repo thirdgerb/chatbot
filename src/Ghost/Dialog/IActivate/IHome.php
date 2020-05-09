@@ -24,6 +24,8 @@ use Commune\Ghost\Dialog\DialogHelper;
  */
 class IHome extends AbsDialogue implements Home
 {
+    const SELF_STATUS = self::HOME;
+
     protected $replace = false;
 
     public function __construct(Cloner $cloner, Ucl $homeUcl = null)

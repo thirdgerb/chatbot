@@ -20,6 +20,8 @@ use Commune\Blueprint\Ghost\Dialog\Finale\CloseSession;
  */
 class ICloseSession extends AbsDialogue implements CloseSession
 {
+    const SELF_STATUS = self::FINALE;
+
     protected function runInterception(): ? Dialog
     {
         return null;
@@ -33,7 +35,7 @@ class ICloseSession extends AbsDialogue implements CloseSession
 
     protected function selfActivate(): void
     {
-        //todo
+        $this->cloner->setSessionExpire(0);
     }
 
 

@@ -23,6 +23,8 @@ use Commune\Blueprint\Ghost\Dialog\Finale\Rewind;
  */
 class IRewind extends AbsDialogue implements Rewind
 {
+    const SELF_STATUS = self::FINALE;
+
     /**
      * @var bool
      */

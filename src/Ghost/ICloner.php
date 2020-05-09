@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost;
 
+use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\GhostConfig;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session\Storage;
@@ -20,6 +21,7 @@ use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Cache;
 use Commune\Framework\ASession;
+use Commune\Ghost\Dialog\IStartProcess;
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Protocals\Intercom\GhostMsg;
 use Commune\Support\Option\OptRegistry;
@@ -187,6 +189,36 @@ class ICloner extends ASession implements Cloner
     {
         return $this->sessionId;
     }
+
+    /*------- dialog manager -------*/
+
+    public function runDialogManager(Dialog $dialog = null): bool
+    {
+        $next = $dialog ?? new IStartProcess($this);
+
+        try {
+
+            //$tracer = $this->runtime->trace;
+
+            while(isset($next)) {
+
+                $next = $next->tick();
+
+                if ($next instanceof Dialog\Finale) {
+                    $next->tick();
+                    return true;
+                }
+            }
+
+        } catch (Ghost\Exceptions\TooManyRedirectsException $e) {
+
+        } catch (\Throwable $e) {
+
+        }
+
+        return false;
+    }
+
 
     /*------- getter -------*/
 

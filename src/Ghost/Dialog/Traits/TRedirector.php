@@ -106,7 +106,7 @@ trait TRedirector
 
     public function blockTo(Ucl $to): Dialog
     {
-        return new IActivate\IBlockTo($this, $to);
+        return new IRedirect\IBlockTo($this, $to);
     }
 
     public function sleepTo(Ucl $to = null, array $wakenStages = []): Dialog

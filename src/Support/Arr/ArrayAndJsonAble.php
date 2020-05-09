@@ -31,6 +31,9 @@ interface ArrayAndJsonAble extends \JsonSerializable
      */
     public function toJson($options = 0) : string;
 
+    /**
+     * @return string
+     */
     public function toPrettyJson() : string;
 
     /**

@@ -99,4 +99,39 @@ interface Dialog
      * @return static
      */
     public function withPrev(Dialog $prev) : Dialog;
+
+    /*----- dialog status -----*/
+
+    const ACTIVATE  = 1 << 1;
+    const RETAIN    = 1 << 2;
+    const WITHDRAW  = 1 << 3;
+    const FINALE    = 1 << 4;
+    const TEMPORARY = 1 << 5;
+
+    // activate
+    const REDIRECT_TO   = self::ACTIVATE | 1 << 8;
+    const BLOCK_TO      = self::ACTIVATE | 1 << 9;
+    const DEPEND_ON     = self::ACTIVATE | 1 << 10;
+    const SLEEP_TO      = self::ACTIVATE | 1 << 11;
+    const INTEND        = self::ACTIVATE | 1 << 12;
+    const STAGING       = self::ACTIVATE | 1 << 13;
+    const BACK_STEP     = self::ACTIVATE | 1 << 14;
+    const HOME          = self::ACTIVATE | 1 << 15;
+
+    // retain
+    const FALLBACK      = self::RETAIN | 1 << 17;
+    const HEED          = self::RETAIN | 1 << 18;
+    const PREEMPT       = self::RETAIN | 1 << 19;
+    const RESTORE       = self::RETAIN | 1 << 20;
+    const WAKE          = self::RETAIN | 1 << 21;
+    const WATCH         = self::RETAIN | 1 << 22;
+
+    // withdraw
+    const CONFUSE       = self::WITHDRAW | 1 << 25;
+    const CANCEL        = self::WITHDRAW | 1 << 26;
+    const REJECT        = self::WITHDRAW | 1 << 27;
+    const QUIT          = self::WITHDRAW | 1 << 28;
+
+    public function isStatus(int $statusType) : bool ;
+
 }

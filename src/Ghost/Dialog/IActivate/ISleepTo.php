@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IRedirect;
+namespace Commune\Ghost\Dialog\IActivate;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
@@ -44,26 +44,22 @@ class ISleepTo extends AbsDialogue implements Dialog\Activate\SleepTo
 
     protected function runInterception(): ? Dialog
     {
-        return $this->fallback
-            ? null
-            : DialogHelper::intercept($this);
+        return null;
     }
 
     protected function runTillNext(): Dialog
     {
+        // fallback
         if ($this->fallback) {
             $process = $this->getProcess();
             $process->unsetWaiting($this->ucl); // 先解决 current ucl.
             $from = $this;
 
-            return $this->fallbackFlow($from, $process);
+            $dialog = $this->fallbackFlow($from, $process);
+            return $dialog->withPrev($this->prev);
         }
 
-        /**
-         * @var Dialog
-         */
-        $dialog = DialogHelper::activate($this);
-        return $dialog->withPrev($this->prev);
+        return DialogHelper::activate($this);
     }
 
     protected function selfActivate(): void

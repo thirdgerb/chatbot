@@ -103,15 +103,15 @@ class IProcess implements Process, HasIdGenerator
 
     /**
      * IProcess constructor.
-     * @param string $_sessionId
-     * @param string $_root
-     * @param string|null $_id
+     * @param string $sessionId
+     * @param string $root
+     * @param string|null $id
      */
-    public function __construct(string $_sessionId,string  $_root, string $_id = null)
+    public function __construct(string $sessionId, string $root, string $id = null)
     {
-        $this->_sessionId = $_sessionId;
-        $this->_id = $_id ?? $this->createUuId();
-        $this->_root = $_root;
+        $this->_sessionId = $sessionId;
+        $this->_id = $id ?? $this->createUuId();
+        $this->_root = $root;
     }
 
     public function toArray(): array
@@ -395,10 +395,8 @@ class IProcess implements Process, HasIdGenerator
         $this->_waiter = clone $this->_waiter;
     }
 
-
     public function __destruct()
     {
-
         $this->_prev = null;
 
         // decoded

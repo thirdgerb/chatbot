@@ -20,6 +20,8 @@ use Commune\Ghost\Dialog\AbsDialogue;
  */
 class IDumb extends AbsDialogue implements Dumb
 {
+    const SELF_STATUS = self::FINALE;
+
     protected function runInterception(): ? Dialog
     {
         return null;

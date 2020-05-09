@@ -12,22 +12,16 @@
 namespace Commune\Blueprint\Ghost\Tools;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Illuminate\Contracts\Container\BindingResolutionException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface DialogIoC
 {
-
-
     /**
      * @param  string  $abstract
      * @param  array  $parameters
      * @return mixed
-     *
-     * @throws
-     * 实际上是 throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function make(string $abstract, array $parameters = []);
 
@@ -35,8 +29,6 @@ interface DialogIoC
      * @param callable $caller
      * @param array $parameters
      * @return mixed
-     * @throws \ReflectionException
-     * @throws BindingResolutionException
      */
     public function call(callable $caller, array $parameters = []);
 

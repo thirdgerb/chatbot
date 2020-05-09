@@ -22,6 +22,8 @@ use Commune\Ghost\Dialog\DialogHelper;
  */
 class IIntend extends AbsDialogue implements Intend
 {
+    const SELF_STATUS = self::INTEND;
+
     protected function runInterception(): ? Dialog
     {
         return DialogHelper::intercept($this);

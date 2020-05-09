@@ -26,6 +26,8 @@ use Commune\Blueprint\Ghost\Dialog\Finale\Await;
  */
 class IAwait extends AbsDialogue implements Await
 {
+    const SELF_STATUS = self::FINALE;
+
     /**
      * @var string[]
      */

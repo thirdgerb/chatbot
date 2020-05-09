@@ -22,6 +22,8 @@ use Commune\Ghost\Dialog\DialogHelper;
  */
 class IDependOn extends AbsDialogue implements Dialog\Activate\DependOn
 {
+    const SELF_STATUS = self::DEPEND_ON;
+
     /**
      * @var string
      */

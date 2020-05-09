@@ -22,6 +22,9 @@ use Commune\Ghost\Dialog\DialogHelper;
  */
 class IBlockTo extends AbsDialogue implements BlockTo
 {
+
+    const SELF_STATUS = self::BLOCK_TO;
+
     public function __construct(Dialog $prev, Ucl $to)
     {
         $this->prev = $prev;

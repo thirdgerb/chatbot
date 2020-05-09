@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Protocals\Host\Convo\QuestionMsg;
+use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * 由 Await 生成的等待者, 保留理解对话的现场.
@@ -23,7 +24,7 @@ use Commune\Protocals\Host\Convo\QuestionMsg;
  * @property-read string[] $contextRoutes
  * @property-read string $await
  */
-interface Waiter
+interface Waiter extends ArrayAndJsonAble
 {
 
 }

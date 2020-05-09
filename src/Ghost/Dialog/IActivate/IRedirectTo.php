@@ -24,6 +24,8 @@ use Commune\Blueprint\Ghost\Dialog\Activate\RedirectTo;
  */
 class IRedirectTo extends AbsDialogue implements RedirectTo
 {
+    const SELF_STATUS = self::REDIRECT_TO;
+
     /**
      * @var Ucl[]
      */

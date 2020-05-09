@@ -44,6 +44,8 @@ abstract class AbsDialogue implements
 {
     use TInjectable, TRedirector, TWithdraw;
 
+    const SELF_STATUS = self::TEMPORARY;
+
     /*------ params -------*/
 
     /**
@@ -303,6 +305,12 @@ abstract class AbsDialogue implements
     {
         return $this->process
             ?? $this->process = $this->cloner->runtime->getCurrentProcess();
+    }
+
+    /*-------- status --------*/
+    public function isStatus(int $statusType): bool
+    {
+        return ($statusType & self::SELF_STATUS) > 0;
     }
 
 

@@ -9,13 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog\Activate;
+namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Blueprint\Ghost\Dialog;
+use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface SleepTo extends Activate
+interface Trace extends ArrayAndJsonAble
 {
+    public function record(Dialog $dialog) : void;
 }

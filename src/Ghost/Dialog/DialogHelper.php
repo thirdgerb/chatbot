@@ -35,6 +35,7 @@ class DialogHelper
         Retain\Fallback::class => IRetain\IFallback::class,
         Retain\Wake::class => IRetain\IWake::class,
         Retain\Restore::class => IRetain\IRestore::class,
+        Retain\Watch::class => '',
         Withdraw\Reject::class => IWithdraw\IReject::class,
         Withdraw\Quit::class => IWithdraw\IQuit::class,
         Dialog\Finale\Dumb::class => IFinale\IDumb::class,

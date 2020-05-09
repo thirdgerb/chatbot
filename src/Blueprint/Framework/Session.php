@@ -159,7 +159,7 @@ interface Session
 
     /**
      * 设置当前 session 的过期时间, 可用来更改 session 默认的续期.
-     * @param int $seconds
+     * @param int $seconds     0 表示立刻 expire, -1 表示永久.
      */
     public function setSessionExpire(int $seconds) : void;
 

@@ -13,6 +13,7 @@ namespace Commune\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\RoutesMap;
+use Commune\Support\Arr\ArrayAbleToJson;
 
 /**
  * 单轮对话结束时, 对下一轮对话进行主动响应的路由图.
@@ -39,6 +40,8 @@ use Commune\Blueprint\Ghost\Runtime\RoutesMap;
  */
 class IRoutesMap implements RoutesMap
 {
+    use ArrayAbleToJson;
+
     protected $_watching = [];
 
     protected $_stageRoutes = [];
@@ -75,6 +78,17 @@ class IRoutesMap implements RoutesMap
         }
 
     }
+
+    public function toArray(): array
+    {
+        $data = get_object_vars($this);
+        $result = [];
+        foreach($data as $key => $val) {
+            $result[substr($key,1)] = $val;
+        }
+        return $result;
+    }
+
 
     public function __get($name)
     {

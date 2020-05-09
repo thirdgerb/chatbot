@@ -11,6 +11,8 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
+use Commune\Support\Arr\ArrayAndJsonAble;
+
 /**
  * 单轮对话结束时, 对下一轮对话进行主动响应的路由图.
  * 上下文会根据路由的情况, 选择进入指定的 ucl 进行响应.
@@ -32,6 +34,6 @@ namespace Commune\Blueprint\Ghost\Runtime;
  * @property-read string[] $restore             复活路由, 会触发 Rebirth 事件.
  *
  */
-interface RoutesMap
+interface RoutesMap extends ArrayAndJsonAble
 {
 }
