@@ -128,6 +128,13 @@ class IStructFieldReflector implements StructFieldReflector
             return $this->relationValidate($value);
         }
 
+        if (is_null($value)) {
+            if ($this->nullable) {
+                return null;
+            }
+            return $this->fieldName . 'is null which is not allowed';
+        }
+
         // 否则检查类型.
         foreach ($this->rules as $rule) {
             // 满足任意条件.

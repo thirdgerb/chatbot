@@ -27,8 +27,13 @@ use Commune\Support\Uuid\IdGeneratorHelper;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @property-read string $shellName
+ * @property-read string $shellId
+ * @property-read string $senderId
+ *
  * @property-read string $messageId
  * @property-read string $batchId
+ * @property-read string|null $sessionId
  *
  * @property-read HostMsg $message
  * @property-read Comprehension $comprehension
@@ -48,10 +53,14 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
 
     public function __construct(
         HostMsg $message,
+        string $shellName,
+        string $senderId,
         string $messageId = null,
-        array $data = [
+        string $shellId = null,
+        array $moreInfo = [
             //'batchId' => 'id',
             //'sceneId' => '',
+            //'sessionId' => '',
             //'env' => [],
             //'deliverAt' => 0,
             //'createdAt' => 0
@@ -59,19 +68,32 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
         $comprehension = null
     )
     {
-        $data['message'] = $message;
-        $data['messageId'] = empty($messageId) ? $this->createUuId() : $messageId;
-        $data['comprehension'] = $comprehension ?? [];
-        parent::__construct($data);
+        $moreInfo['message'] = $message;
+        $moreInfo['shellName'] = $shellName;
+        $moreInfo['senderId'] = $senderId;
+
+        $moreInfo['messageId'] = empty($messageId) ? $this->createUuId() : $messageId;
+        $moreInfo['shellId'] = empty($shellId)
+            ? sha1("shellName:$shellName:sender:$senderId")
+            : $shellId;
+
+        $moreInfo['comprehension'] = $comprehension ?? [];
+        parent::__construct($moreInfo);
     }
 
     public static function stub(): array
     {
         return [
+            'shellName' => '',
+            'senderId' => '',
+            'shellId' => '',
+
             'messageId' => '',
             'batchId' => '',
+
             'sceneId' => '',
             'env' => [],
+            'sessionId' => null,
 
             'message' => new IVerbalMsg(),
             'comprehension' => new IComprehension(),
@@ -85,7 +107,10 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
     {
         return new static(
             $data['message'] ?? null,
-            $data['messageId'] ?? null,
+            $data['shellName'] ?? '',
+            $data['senderId'] ?? '',
+            $data['messageId'] ?? '',
+            $data['shellId'] ?? '',
             $data,
             $data['comprehension'] ?? null
         );
@@ -155,12 +180,34 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
         return $this->comprehension;
     }
 
+    public function getShellName(): string
+    {
+        return $this->shellName;
+    }
+
+    public function getShellId(): string
+    {
+        return $this->shellId;
+    }
+
+    public function senderId(): string
+    {
+        return $this->senderId;
+    }
+
+    public function getSessionId(): ? string
+    {
+        return $this->sessionId;
+    }
+
+
     public function toGhostInput(
         string $cloneId = null,
         string $sessionId = null,
         string $guestId = null
     ): GhostInput
     {
+        // todo
     }
 
 

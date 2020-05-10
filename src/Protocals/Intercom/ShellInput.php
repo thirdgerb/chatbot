@@ -12,13 +12,12 @@
 namespace Commune\Protocals\Intercom;
 
 use Commune\Protocals\Comprehension;
-use Commune\Protocals\IntercomMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  */
-interface ShellInput extends IntercomMsg
+interface ShellInput extends ShellMsg
 {
 
     /*----- 额外的信息 -----*/

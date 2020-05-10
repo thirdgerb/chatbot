@@ -12,6 +12,7 @@
 namespace Commune\Support\Message;
 
 use Commune\Message\Intercom\IShellInput;
+use Commune\Protocals\Intercom\ShellInput;
 use Commune\Support\Babel\Babel;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\Struct\StructReflections;
@@ -109,6 +110,7 @@ class MessageTestCase extends TestCase
         $message = call_user_func([$name, 'create'], $stub);
         $str = Babel::serialize($message);
         $un = Babel::unserialize($str);
+
         $this->assertEquals($message->toArray(), $un->toArray(), $name);
     }
 }

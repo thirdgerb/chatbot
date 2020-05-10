@@ -26,6 +26,8 @@ interface ShellMsg extends IntercomMsg
 
     public function getShellId() : string;
 
+    public function senderId() : string;
+
     public function getSessionId() : ? string;
 
 }
