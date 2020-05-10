@@ -11,7 +11,7 @@
 
 namespace Commune\Message\Host;
 
-use Commune\Protocals\Host\ReactionMsg;
+use Commune\Protocals\Host\IntentMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Struct\Struct;
@@ -21,14 +21,14 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $id
+ * @property-read string $intentName
  * @property-read string $level
  */
-class IReaction extends AbsMessage implements ReactionMsg
+class IIntentMsg extends AbsMessage implements IntentMsg
 {
-    public function __construct(string $id, array $params, string $level = HostMsg::INFO)
+    public function __construct(string $intentName, array $params, string $level = HostMsg::INFO)
     {
-        $params['id'] = $id;
+        $params['intentName'] = $intentName;
         $params['level'] = $level;
 
         parent::__construct($params);
@@ -38,7 +38,7 @@ class IReaction extends AbsMessage implements ReactionMsg
     public static function stub(): array
     {
         return [
-            'id' => '',
+            'intentName' => '',
             'level' => HostMsg::INFO
         ];
     }
@@ -69,7 +69,7 @@ class IReaction extends AbsMessage implements ReactionMsg
 
     public function getNormalizedText(): string
     {
-        return StringUtils::normalizeString($this->id);
+        return StringUtils::normalizeString($this->intentNamed);
     }
 
     public function isEmpty(): bool
@@ -77,15 +77,15 @@ class IReaction extends AbsMessage implements ReactionMsg
         return false;
     }
 
-    public function getReactionId(): string
+    public function getIntentName(): string
     {
-        return $this->id;
+        return $this->intentName;
     }
 
-    public function getParams(): array
+    public function getSlots(): array
     {
         $arr = $this->toArray();
-        unset($arr['id']);
+        unset($arr['intentName']);
         unset($arr['level']);
         return $arr;
     }

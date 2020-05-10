@@ -10,6 +10,8 @@
  */
 
 namespace Commune\Blueprint\Ghost\Tools;
+use Commune\Blueprint\Ghost\Dialog;
+use Commune\Protocals\HostMsg;
 
 /**
  * 对话模块
@@ -60,6 +62,8 @@ interface Typer
 
 
     /*------- 发送一个 ReactionMsg -------*/
+
+    public function message(HostMsg $message) : Typer;
 
     /**
      * 异常类消息, 会有额外的提示效果.

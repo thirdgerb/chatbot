@@ -12,29 +12,35 @@
 namespace Commune\Message\Host\Convo;
 
 use Commune\Protocals\HostMsg;
-use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\Host\Convo\Media\AudioMsg;
 use Commune\Support\Struct\Struct;
-
+use Commune\Support\Message\AbsMessage;
+use Commune\Protocals\Host\Convo\UnsupportedMsg;
 
 /**
+ * 系统不支持的消息.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $resource
+ * @property-read string $type
  */
-class IAudio extends AbsMessage implements AudioMsg
+class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
 {
 
-    public function __construct(string $resource)
+    public function __construct(string $type = '')
     {
-        parent::__construct(['resource' => $resource]);
+        parent::__construct(['type' => $type]);
     }
 
     public static function stub(): array
     {
         return [
-            'resource' => '',
+            'type' => '',
         ];
+    }
+
+    public static function create(array $data = []): Struct
+    {
+        return new static($data['type'] ?? '');
     }
 
     public static function relations(): array
@@ -42,34 +48,33 @@ class IAudio extends AbsMessage implements AudioMsg
         return [];
     }
 
-    public static function create(array $data = []): Struct
+    // 不支持的消息不需要广播.
+    public function isBroadcasting(): bool
     {
-        return new static($data['resource'] ?? '');
+        return false;
     }
+
+
+    public function getMsgType(): string
+    {
+        return $this->type;
+    }
+
 
     public function getNormalizedText(): string
     {
-        return $this->resource;
+        return '';
     }
-
-    public function isBroadcasting(): bool
-    {
-        return true;
-    }
-
-    public function getResource(): string
-    {
-        return $this->resource;
-    }
-
 
     public function isEmpty(): bool
     {
-        return empty($this->_data['resource']);
+        return false;
     }
 
     public function getLevel(): string
     {
-        return HostMsg::INFO;
+        return HostMsg::NOTICE;
     }
+
+
 }

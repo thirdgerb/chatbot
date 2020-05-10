@@ -23,7 +23,7 @@ use Commune\Support\Utils\StringUtils;
  *
  * @property-read string $resource
  */
-class IImage extends AbsMessage implements ImageMsg
+class IImageMsg extends AbsMessage implements ImageMsg
 {
 
     public function __construct(string $resource)

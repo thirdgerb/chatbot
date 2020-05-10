@@ -13,7 +13,7 @@ namespace Commune\Blueprint\Framework\Render;
 
 use Commune\Blueprint\Configs\Render\RenderOption;
 use Commune\Protocals\Host\ConvoMsg;
-use Commune\Protocals\Host\ReactionMsg;
+use Commune\Protocals\Host\IntentMsg;
 
 /**
  * HostMsg 消息的渲染器.
@@ -23,12 +23,12 @@ use Commune\Protocals\Host\ReactionMsg;
  */
 interface Renderer
 {
-    public function matchTemplate(ReactionMsg $message, array $renderOptions) : ? Template;
+    public function matchTemplate(IntentMsg $message, array $renderOptions) : ? Template;
 
     /**
-     * @param ReactionMsg $message
+     * @param IntentMsg $message
      * @param RenderOption[] $renderOptions
      * @return ConvoMsg[]
      */
-    public function render(ReactionMsg $message, array $renderOptions) : array;
+    public function render(IntentMsg $message, array $renderOptions) : array;
 }

@@ -26,9 +26,16 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
 {
     use TInjectable;
 
+
+    /*------ config ------*/
+
+    protected $transferNoEmptyRelations = true;
+
+    protected $transferNoEmptyData = true;
+
+    /*------ inner ------*/
+
     private static $docComments = [];
-
-
 
     public function toTransferArr(): array
     {
@@ -37,9 +44,27 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
 
         // 去掉完全一致的数据, 不需要存储.
         foreach ($stub as $key => $val) {
-            if (isset($data[$key]) && $data[$key] === $val) {
+            if (!isset($data[$key])) {
+                continue;
+            }
+
+            $dataVal = $data[$key];
+            if (
+                (is_scalar($dataVal) || is_array($dataVal))
+                && $dataVal === $val
+            ) {
+                unset($data[$key]);
+                continue;
+            }
+
+            if (
+                $dataVal instanceof self
+                && $this->transferNoEmptyRelations
+                && $dataVal->isEmpty()
+            ) {
                 unset($data[$key]);
             }
+
         }
 
         // relations
@@ -52,7 +77,6 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
                     continue;
                 }
 
-
                 if (static::isListRelation($name)) {
                     $relations[$name] = array_map(function($each) {
                         return Babel::getResolver()->encodeToArray($each);
@@ -63,11 +87,16 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
                 unset($data[$name]);
             }
         }
+        $result = [];
+        if (!empty($data) && $this->transferNoEmptyData) {
+            $result['attrs'] = $data;
+        }
 
-        return [
-            'attrs' => $data,
-            'relations' => $relations,
-        ];
+        if (!empty($relations) && $this->transferNoEmptyData) {
+            $result['relations'] = $relations;
+        }
+
+        return $result;
     }
 
     /**

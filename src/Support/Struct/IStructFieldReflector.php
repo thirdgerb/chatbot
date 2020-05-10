@@ -190,6 +190,10 @@ class IStructFieldReflector implements StructFieldReflector
             return false;
         }
 
+        if (empty($value)) {
+            return true;
+        }
+
         $rule = substr($rule, 0 , -2);
         foreach ($value as $val) {
             if ($this->validateRule($rule, $val)) {

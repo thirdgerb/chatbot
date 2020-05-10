@@ -21,15 +21,19 @@ class MessagesTest extends MessageTestCase
 {
     protected $messages = [
         // convo
-        Message\Host\Convo\IVerbal::class,
-        Message\Host\Convo\IUnsupported::class,
-        Message\Host\Convo\IEvent::class,
-        Message\Host\Convo\IAudio::class,
-        Message\Host\Convo\IImage::class,
+        Message\Host\Convo\IVerbalMsg::class,
+        Message\Host\Convo\IUnsupportedMsg::class,
+        Message\Host\Convo\IEventMsg::class,
+        Message\Host\Convo\IAudioMsg::class,
+        Message\Host\Convo\IImageMsg::class,
         Message\Host\Convo\IContextMsg::class,
 
-        // reaction
-        Message\Host\IReaction::class,
+        // intent
+        Message\Host\IIntentMsg::class,
+
+
+        // intercom
+        Message\Intercom\IShellInput::class,
 
 
     ];

@@ -17,13 +17,6 @@ use Commune\Protocals\IntercomMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read Comprehension $comprehension  对输入消息的抽象理解.
- * @property-read string $sceneId               场景Id, 决定启动时的 Context
- * @property-read array $env                    允许传递的环境变量.
- *
- * # 更多
- * @see IntercomMsg
- * @see ShellMsg
  */
 interface ShellInput extends IntercomMsg
 {

@@ -48,24 +48,23 @@ interface Comprehension extends Message
     /**
      * 标记已经使用某种类型的理解工具进行操作.
      *
-     * @param string $type
      * @param string $comprehenderId
      * @param bool $succeed
      */
-    public function handledBy(string $type, string $comprehenderId, bool $succeed) : void;
+    public function handledBy(string $comprehenderId, bool $succeed) : void;
 
     /**
      * 是否被某个组件操作过了.
-     * @param string $type
+     * @param string $comprehenderId
      * @return bool
      */
-    public function isHandledBy(string $type) : bool;
+    public function isHandledBy(string $comprehenderId) : bool;
 
     /**
      * 是否被某个组件操作过, 而且还成功了.
      *
-     * @param string $type
+     * @param string $comprehenderId
      * @return bool
      */
-    public function isSucceedBy(string $type) : bool;
+    public function isSucceedBy(string $comprehenderId) : bool;
 }

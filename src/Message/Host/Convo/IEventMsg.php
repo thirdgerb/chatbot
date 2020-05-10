@@ -23,7 +23,7 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string $eventName
  * @property-read array $payload
  */
-class IEvent extends AbsMessage implements EventMsg
+class IEventMsg extends AbsMessage implements EventMsg
 {
     public static function stub(): array
     {

@@ -12,35 +12,29 @@
 namespace Commune\Message\Host\Convo;
 
 use Commune\Protocals\HostMsg;
-use Commune\Support\Struct\Struct;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\Host\Convo\UnsupportedMsg;
+use Commune\Protocals\Host\Convo\Media\AudioMsg;
+use Commune\Support\Struct\Struct;
+
 
 /**
- * 系统不支持的消息.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $type
+ * @property-read string $resource
  */
-class IUnsupported extends AbsMessage implements UnsupportedMsg
+class IAudioMsg extends AbsMessage implements AudioMsg
 {
 
-    public function __construct(string $type = '')
+    public function __construct(string $resource)
     {
-        parent::__construct(['type' => $type]);
+        parent::__construct(['resource' => $resource]);
     }
 
     public static function stub(): array
     {
         return [
-            'type' => '',
+            'resource' => '',
         ];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['type'] ?? '');
     }
 
     public static function relations(): array
@@ -48,33 +42,34 @@ class IUnsupported extends AbsMessage implements UnsupportedMsg
         return [];
     }
 
-    // 不支持的消息不需要广播.
-    public function isBroadcasting(): bool
+    public static function create(array $data = []): Struct
     {
-        return false;
+        return new static($data['resource'] ?? '');
     }
-
-
-    public function getMsgType(): string
-    {
-        return $this->type;
-    }
-
 
     public function getNormalizedText(): string
     {
-        return '';
+        return $this->resource;
     }
+
+    public function isBroadcasting(): bool
+    {
+        return true;
+    }
+
+    public function getResource(): string
+    {
+        return $this->resource;
+    }
+
 
     public function isEmpty(): bool
     {
-        return false;
+        return empty($this->_data['resource']);
     }
 
     public function getLevel(): string
     {
-        return HostMsg::NOTICE;
+        return HostMsg::INFO;
     }
-
-
 }

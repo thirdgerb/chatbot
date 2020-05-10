@@ -213,7 +213,8 @@ abstract class AbsStruct implements Struct, \Serializable
     public static function getRelationNames() : array
     {
         $names = [];
-        foreach(static::relations() as $relation) {
+        $relations = array_keys(static::relations());
+        foreach($relations as $relation) {
             $names[] = self::_isArrayFieldName($relation)
                 ? self::_fieldWithOutArrMark($relation)
                 : $relation;
