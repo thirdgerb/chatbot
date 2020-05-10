@@ -11,22 +11,13 @@
 
 namespace Commune\Protocals\Abstracted;
 
-use Commune\Protocals\Abstracted;
-
 
 /**
- * 将输入消息理解成为一种选择
- *
+ * 输入消息的向量表示.
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @property-read float[] $vectors      向量的值.
  */
-interface Choice extends Abstracted
+interface Vector
 {
-    public function getChoice();
-
-    public function hasChoice($choice) : bool;
-
-    public function getAnswer() : string;
-
-    public function addChoice($choice, string $answer) : void;
 }

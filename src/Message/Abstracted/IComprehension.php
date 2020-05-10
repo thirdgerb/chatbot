@@ -22,9 +22,14 @@ use Commune\Support\Message\AbsMessage;
  */
 class IComprehension extends AbsMessage implements Comprehension
 {
+    protected $transferNoEmptyRelations = true;
+
     public static function stub(): array
     {
         return [
+            'choice' => [],
+            'intention' => [],
+            'reply' => [],
             'handledBy' => [],
         ];
     }
@@ -32,6 +37,9 @@ class IComprehension extends AbsMessage implements Comprehension
     public static function relations(): array
     {
         return [
+            'choice' => IChoice::class,
+            'intention' => IIntention::class,
+            'reply' => IReply::class,
         ];
     }
 

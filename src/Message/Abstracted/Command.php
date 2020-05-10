@@ -15,18 +15,13 @@ use Commune\Protocals\Abstracted;
 
 
 /**
- * 将输入消息理解成为一种选择
- *
+ * 将消息理解成一个命令语句.
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ *
+ * @property-read string|null $cmdName       命令名
+ * @property-read string|null $cmdStr        命令字符串
  */
-interface Choice extends Abstracted
+interface Command extends Abstracted
 {
-    public function getChoice();
-
-    public function hasChoice($choice) : bool;
-
-    public function getAnswer() : string;
-
-    public function addChoice($choice, string $answer) : void;
 }

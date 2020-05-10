@@ -11,22 +11,13 @@
 
 namespace Commune\Protocals\Abstracted;
 
-use Commune\Protocals\Abstracted;
-
 
 /**
- * 将输入消息理解成为一种选择
- *
+ * 标签关键词. 可能来自于分词, 或者其它解析逻辑, 得到关键词.
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @property-read string[]      $tags       标签的值
  */
-interface Choice extends Abstracted
+interface Tags
 {
-    public function getChoice();
-
-    public function hasChoice($choice) : bool;
-
-    public function getAnswer() : string;
-
-    public function addChoice($choice, string $answer) : void;
 }

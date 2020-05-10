@@ -11,22 +11,16 @@
 
 namespace Commune\Protocals\Abstracted;
 
-use Commune\Protocals\Abstracted;
+use Commune\Support\Protocal\Protocal;
 
 
 /**
- * 将输入消息理解成为一种选择
- *
+ * 输入消息的情绪
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ *
+ * @property-read string[] $emotions        输入消息的情绪Id.
  */
-interface Choice extends Abstracted
+interface Emotion extends Protocal
 {
-    public function getChoice();
-
-    public function hasChoice($choice) : bool;
-
-    public function getAnswer() : string;
-
-    public function addChoice($choice, string $answer) : void;
 }

@@ -11,22 +11,19 @@
 
 namespace Commune\Protocals\Abstracted;
 
-use Commune\Protocals\Abstracted;
-
 
 /**
- * 将输入消息理解成为一种选择
+ * 语音的近似值, 用于解决部分语言的音调问题.
+ * 也可以用来做快速匹配, 不需要语义的一致性.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ *
+ * @property-read string[][] $sounds            发音
+ * [ 'lang' => [ 'sound', 'sound', 'sound'] ]
+ *
  */
-interface Choice extends Abstracted
+interface SoundLike
 {
-    public function getChoice();
 
-    public function hasChoice($choice) : bool;
-
-    public function getAnswer() : string;
-
-    public function addChoice($choice, string $answer) : void;
 }

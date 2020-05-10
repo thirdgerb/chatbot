@@ -12,15 +12,17 @@
 namespace Commune\Protocals\Abstracted;
 
 use Commune\Protocals\Abstracted;
-use Commune\Protocals\MessageProto;
-
+use Commune\Protocals\HostMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
- * @property-read MessageProto[]|null $replies      建议的回复.
  */
 interface Reply extends Abstracted
 {
+    public function addMessage(HostMsg $message) : void;
+    /**
+     * @return HostMsg[]
+     */
+    public function getMessages() : array;
 }
