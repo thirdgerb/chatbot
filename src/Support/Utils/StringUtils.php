@@ -228,7 +228,9 @@ class StringUtils
      */
     public static function normalizeString(string $str) : string
     {
-        return static::sbc2dbc(strtolower($str));
+        $str = self::trim($str);
+        $str = strtolower($str);
+        return static::sbc2dbc($str);
     }
 
     /**

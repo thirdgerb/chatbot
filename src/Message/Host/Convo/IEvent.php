@@ -11,24 +11,25 @@
 
 namespace Commune\Message\Host\Convo;
 
+use Commune\Protocals\Host\Convo\EventMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\Host\Convo\Media\AudioMsg;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $resource
- * @property-read string $level
+ * @property-read string $eventName
+ * @property-read array $payload
  */
-class IAudioMsg extends AbsMessage implements AudioMsg
+class IEvent extends AbsMessage implements EventMsg
 {
     public static function stub(): array
     {
         return [
-            'resource' => '',
-            'level' => HostMsg::INFO
+            'eventName' => '',
+            'payload' => [],
         ];
     }
 
@@ -37,14 +38,34 @@ class IAudioMsg extends AbsMessage implements AudioMsg
         return [];
     }
 
+    public function getEventName(): string
+    {
+        return $this->eventName;
+    }
+
+    public function getPayload(): array
+    {
+        return $this->payload;
+    }
+
+    public function isBroadcasting(): bool
+    {
+        return false;
+    }
+
+    public function getLevel(): string
+    {
+        return HostMsg::INFO;
+    }
+
     public function getNormalizedText(): string
     {
-        return '';
+        return StringUtils::normalizeString($this->eventName);
     }
 
     public function isEmpty(): bool
     {
-        return empty($this->_data['resource']);
+        return false;
     }
 
 

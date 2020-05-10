@@ -33,25 +33,35 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
     public function toTransferArr(): array
     {
         $data = $this->_data;
-        $result = [];
+        $stub = static::stub();
 
-        $relationNames = static::getRelationNames();
+        // 去掉完全一致的数据, 不需要存储.
+        foreach ($stub as $key => $val) {
+            if (isset($data[$key]) && $data[$key] === $val) {
+                unset($data[$key]);
+            }
+        }
+
+        // relations
         $relations = [];
-        foreach ($relationNames as $name) {
-            $relationVal = $data[$name] ?? null;
-            if (empty($relationVal)) {
-                continue;
-            }
+        $relationNames = static::getRelationNames();
+        if (!empty($relationNames)) {
+            foreach ($relationNames as $name) {
+                $relationVal = $data[$name] ?? null;
+                if (empty($relationVal)) {
+                    continue;
+                }
 
 
-            if (static::isListRelation($name)) {
-                $relations[$name] = array_map(function($each) {
-                    return Babel::getResolver()->encodeToArray($each);
-                }, $relationVal);
-            } else {
-                $relations[$name] = Babel::getResolver()->encodeToArray($relationVal);
+                if (static::isListRelation($name)) {
+                    $relations[$name] = array_map(function($each) {
+                        return Babel::getResolver()->encodeToArray($each);
+                    }, $relationVal);
+                } else {
+                    $relations[$name] = Babel::getResolver()->encodeToArray($relationVal);
+                }
+                unset($data[$name]);
             }
-            unset($data[$name]);
         }
 
         return [
@@ -109,7 +119,8 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
         return static::getInterfacesOf(
             Protocal::class,
             false,
-            true
+            true,
+            false
         );
     }
 

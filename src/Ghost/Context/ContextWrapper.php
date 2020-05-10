@@ -19,10 +19,12 @@ use Commune\Blueprint\Ghost\Definition\ContextDef;
 use Commune\Blueprint\Ghost\Definition\ContextParameter;
 use Commune\Blueprint\Ghost\Memory;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Message\Host\Convo\IContextMsg;
 use Commune\Protocals\Host\Convo\ContextMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\DI\TInjectable;
 use Illuminate\Support\Collection;
+use Traversable;
 
 
 /**
@@ -195,9 +197,9 @@ class ContextWrapper implements Context
         return $data;
     }
 
-    public function toData(): array
+    public function toMemorableData(): array
     {
-        $data = $this->getQuery()->toArray();
+        $data = [];
 
         $manager = $this->getDef()->getParamsManager();
 
@@ -209,12 +211,36 @@ class ContextWrapper implements Context
             $data = $data + $this->getSessionMemory()->toData();
         }
 
-        return $data;
+        // 不包含任何 object 对象.
+        return array_filter($data, function($value) {
+            return !is_object($value);
+        });
     }
+
+    public function merge(array $data): void
+    {
+        foreach ($data as $key => $val) {
+            $this->offsetSet($key, $val);
+        }
+    }
+
 
     public function toContextMsg(): ContextMsg
     {
-        // TODO: Implement toContextMsg() method.
+        return new IContextMsg([
+            'contextName' => $this->_ucl->contextName,
+            'contextId' => $this->_ucl->getContextId(),
+            'query' => $this->_ucl->query,
+            'data' => $this->toMemorableData(),
+        ]);
+    }
+
+    public function getIterator()
+    {
+        $manager = $this->getDef()->getParamsManager();
+        foreach ($manager->getParameters() as $name => $parameter) {
+            yield $this->offsetGet($name);
+        }
     }
 
 
@@ -294,10 +320,13 @@ class ContextWrapper implements Context
             $this->warningOrException($error);
         }
 
-        $value = $value instanceof Cloner\ClonerInstance
-            ? $value->toInstanceStub()
-            : $value;
+        if ($value instanceof Cloner\ClonerInstance) {
+            $value = $value->toInstanceStub();
+        }
 
+
+        // 进行 value 的过滤. 主要是数组和类型的切换.
+        $value = $parameter->parseSetVal($value);
         if ($parameter->isLongTerm()) {
             $this->getLongTermMemory()->offsetSet($offset, $value);
             return;

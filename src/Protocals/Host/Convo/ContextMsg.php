@@ -21,14 +21,17 @@ use Commune\Protocals\Host\ConvoMsg;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $contextName       语境名称
- * @property-read string $contextId         语境Id
- * @property-read int $status
  * @property-read array $query
- * @property-read array $data               语境的数据.
  */
 interface ContextMsg extends ConvoMsg
 {
+    public function getContextId() : string;
+
+    public function getContextName() : string;
+
+    public function getQuery() : array;
+
+    public function getMemorableData() : array;
 
     public function toContext(Cloner $cloner) : Context;
 }

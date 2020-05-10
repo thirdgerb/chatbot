@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost;
 
 use ArrayAccess;
+use IteratorAggregate;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstance;
 use Commune\Blueprint\Ghost\Definition\ContextDef;
 use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
@@ -26,6 +27,7 @@ use Illuminate\Support\Collection;
  */
 interface Context extends
         ArrayAccess, // 默认用数组方式来获取参数. 也可以用 getter setter
+        IteratorAggregate,
         ClonerInstance,
         Injectable // Context 可以用各种方式依赖注入
 {
@@ -70,14 +72,17 @@ interface Context extends
      */
     public function getQuery() : Collection;
 
+    /*----- assignment -----*/
+
+    public function merge(array $data) : void;
 
     /*----- array -----*/
 
     /**
-     * 获取所有的变量值.
+     * 获取上下文记忆的变量值.
      * @return array
      */
-    public function toData() : array;
+    public function toMemorableData() : array;
 
     /**
      * 递归地获取所有属性的值.

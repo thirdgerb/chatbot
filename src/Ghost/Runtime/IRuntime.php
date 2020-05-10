@@ -12,11 +12,12 @@
 namespace Commune\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
+use Commune\Blueprint\Ghost\Memory;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Ghost\RuntimeDriver;
+use Commune\Ghost\Memory\IMemory;
 use Commune\Protocals\Host\Convo\ContextMsg;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
@@ -36,7 +37,7 @@ class IRuntime implements Runtime, Spied
     protected $cloner;
 
     /**
-     * @var RuntimeDriver|null
+     * @var RuntimeDriver
      */
     protected $driver;
 
@@ -57,6 +58,10 @@ class IRuntime implements Runtime, Spied
      */
     protected $process;
 
+    protected $sessionMemories = [];
+
+    protected $longTermMemories = [];
+
     /**
      * IRuntime constructor.
      * @param Cloner $cloner
@@ -74,8 +79,42 @@ class IRuntime implements Runtime, Spied
         static::addRunningTrace($this->traceId, $this->traceId);
     }
 
+    /*---- memory ----*/
 
-    /*---- processes ----*/
+    public function findMemory(string $id, bool $longTerm, array $defaults): Memory
+    {
+        return $longTerm
+            ? $this->findLongTermMemory($id, $defaults)
+            : $this->findSessionMemory($id, $defaults);
+    }
+
+    protected function findSessionMemory(string $id, array $defaults) : Memory
+    {
+        if (!isset($this->sessionMemories)) {
+            $this->sessionMemories = $this->driver->fetchSessionMemories($this->sessionId);
+        }
+
+        return $this->sessionMemories[$id]
+            ?? $this->sessionMemories[$id] = new IMemory($id, false, $defaults);
+    }
+
+    protected function findLongTermMemory(string $id, array $defaults) : Memory
+    {
+        if (isset($this->longTermMemories[$id])) {
+            return $this->longTermMemories[$id];
+        }
+
+        $memory = isset($this->driver)
+            ? $this->driver->findLongTermMemories($id)
+            : null;
+
+        $memory = $memory ?? new IMemory($id, true, $defaults);
+
+        return $this->longTermMemories[$id] = $memory;
+    }
+
+
+    /*---- process ----*/
 
     public function getCurrentProcess(): Process
     {
@@ -84,7 +123,7 @@ class IRuntime implements Runtime, Spied
         }
 
 
-        // 无状态下都是新生成.
+        // 从历史记忆中寻找.
         if (!$this->cloner->isStateless()) {
             $process = $this->driver->fetchProcess($this->sessionId);
             if (isset($process)) {
@@ -150,13 +189,17 @@ class IRuntime implements Runtime, Spied
             return;
         }
 
+        if (!isset($this->process)) {
+            return;
+        }
+
         $success = false;
         $e = null;
         try {
             $expire = $this->cloner->getSessionExpire();
-            $success = isset($this->process)
-                ? $this->driver->cacheProcess($this->sessionId, $this->process, $expire)
-                : true;
+            $success = $this->saveLongTermMemories()
+                && $this->saveSessionMemories($expire)
+                && $this->cacheProcess($expire);
 
         } catch (\Throwable $e) {
         }
@@ -168,6 +211,38 @@ class IRuntime implements Runtime, Spied
                 $e
             );
         }
+    }
+
+    protected function cacheProcess(int $expire) : bool
+    {
+        return isset($this->process)
+            ? $this->driver->cacheProcess($this->sessionId, $this->process, $expire)
+            : false;
+    }
+
+    protected function saveSessionMemories(int $expire) : bool
+    {
+        $memories = array_filter($this->sessionMemories, function(Memory $memory){
+            return $memory->isChanged();
+        });
+
+        return empty($memories)
+            ? true
+            : $this->driver->cacheSessionMemories($this->sessionId, $memories, $expire);
+    }
+
+    protected function saveLongTermMemories() : bool
+    {
+        $memories = array_filter($this->longTermMemories, function(Memory $memory) {
+            return $memory->isChanged();
+        });
+
+        return empty($memories)
+            ? true
+            : $this->driver->saveLongTermMemories(
+                $this->cloner->scope,
+                $memories
+            );
     }
 
 

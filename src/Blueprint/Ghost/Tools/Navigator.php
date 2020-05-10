@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Tools;
 
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\Dialog\Finale\Await;
@@ -25,54 +26,12 @@ interface Navigator
 
     /*-------- 链式调用 --------*/
 
-    /**
-     * 将自己变成 Watch 状态, 然后进入 $to 语境.
-     *
-     * @param Ucl $watcher
-     * @return Navigator
-     */
-    public function watch(Ucl $watcher) : Navigator;
+    public function watch(Ucl $subject) : Navigator;
+    public function sleep(Ucl $subject, array $wakeStages = []) : Navigator;
+    public function block(Ucl $subject, int $priority = 1) : Navigator;
+    public function kill(Ucl $subject, int $gcTurns = 0, array $restoreStages = []) : Navigator;
 
-    /**
-     * 清空路径.
-     */
-    public function resetPath() : Navigator;
-
-    /*-------- redirect --------*/
-
-    /**
-     * 进入到相同 Context 下的另一个 stage
-     *
-     * @param string $stageName
-     * @param string ...$pipes
-     * @return Dialog
-     */
-    public function goStage(string $stageName, string ...$pipes) : Dialog;
-
-    /**
-     * 重定向到另一组 Ucl,
-     *
-     * @param Ucl $to
-     * @param Ucl ...$pipes
-     * @return Dialog
-     */
-    public function redirectTo(Ucl $to, Ucl ...$pipes) : Dialog;
-
-    /**
-     * 按预订路线执行下一步, 如果没有下一步则执行 fulfill
-     * @return Dialog
-     */
-    public function next() : Dialog;
-
-    /**
-     * 返回到指定的 ucl (或默认的ucl), 然后清空所有的 waiting 关系.
-     *
-     * @param Ucl|null $home
-     * @return Dialog
-     */
-    public function home(Ucl $home = null) : Dialog;
-
-    /*-------- wait --------*/
+    /*-------- finale --------*/
 
     /**
      * 等待用户的回复.
@@ -88,6 +47,104 @@ interface Navigator
         int $expire = null
     ) : Await;
 
+    /**
+     * 重置到上一轮的对话.
+     * @param bool $silent
+     * @return Dialog
+     */
+    public function rewind(bool $silent = false) : Dialog;
+
+    /**
+     * 什么也没听见, 当本轮对话没有发生.
+     * @return Dialog
+     */
+    public function dumb() : Dialog;
+
+    /**
+     * 退回到若干步之前.
+     * @param int $step
+     * @return Dialog
+     */
+    public function backStep(int $step = 1) : Dialog;
+
+    /**
+     * 主动强调无法理解当前对话.
+     * 不会继续尝试 Wake 其它对话.
+     * @return Dialog
+     */
+    public function confuse() : Dialog;
+
+
+    /*-------- retrace --------*/
+
+    /**
+     * 完成当前语境, 并将当前语境回调.
+     * 同时指定一个可能的下阶段语境.
+     *
+     * @param int $gcTurns
+     * @param array $restoreStages
+     * @return Dialog
+     */
+    public function fulfill(int $gcTurns = 0, array $restoreStages = []) : Dialog;
+
+    /**
+     * 终止当前语境, 会触发 withdraw 流程.
+     * @return Dialog
+     */
+    public function cancel() : Dialog;
+
+    /**
+     * 拒绝进入当前语境, 会触发 withdraw 流程.
+     * @return Dialog
+     */
+    public function reject() : Dialog;
+
+    /**
+     * @return Dialog
+     */
+    public function fail() : Dialog;
+
+    /**
+     * 尝试退出当前多轮对话, 会触发 withdraw 流程.
+     * @return Dialog
+     */
+    public function quit() : Dialog;
+
+
+
+
+    /*-------- redirect --------*/
+
+    /**
+     * 进入到相同 Context 下的另一个 stage
+     *
+     * @param string $stageName
+     * @return Dialog
+     */
+    public function toStage(string $stageName) : Dialog;
+
+    /**
+     * 重定向到另一个 Ucl,
+     * @param Ucl $target
+     * @return Dialog
+     */
+    public function redirectTo(Ucl $target) : Dialog;
+
+    /**
+     * 返回到指定的 ucl (或默认的ucl), 然后清空所有的 waiting 关系.
+     * @param Ucl|null $root
+     * @return Dialog
+     */
+    public function home(Ucl $root = null) : Dialog;
+
+    /*-------- self waiting --------*/
+
+
+    /**
+     * @param Ucl $on
+     * @return Dialog
+     */
+    public function watchOn(Ucl $on) : Dialog;
 
     /**
      * 依赖一个目标 Context. 当目标 Context fulfill 时,
@@ -127,92 +184,15 @@ interface Navigator
      *
      * @param string $shellName
      * @param string $guestId
-     * @param Ucl $dependOn
      * @param Ucl|null $fallbackTo
      * @return Dialog
      */
     public function yieldTo(
         string $shellName,
         string $guestId,
-        Ucl $dependOn,
         Ucl $fallbackTo = null
     ) : Dialog;
 
-
-    /*-------- restart --------*/
-    /**
-     * @return Dialog
-     */
-    public function restartContext() : Dialog;
-
-    /**
-     * @return Dialog
-     */
-    public function restartStage() : Dialog;
-
-
-    /*-------- finale --------*/
-
-    /**
-     * 重置到上一轮的对话.
-     * @param bool $silent
-     * @return Dialog
-     */
-    public function rewind(bool $silent = false) : Dialog;
-
-    /**
-     * 什么也没听见, 当本轮对话没有发生.
-     * @return Dialog
-     */
-    public function dumb() : Dialog;
-
-    /**
-     * 退回到若干步之前.
-     * @param int $step
-     * @return Dialog
-     */
-    public function backStep(int $step = 1) : Dialog;
-
-    /**
-     * 主动强调无法理解当前对话.
-     * 不会继续尝试 Wake 其它对话.
-     * @return Dialog
-     */
-    public function confuse() : Dialog;
-
-
-    /*-------- retrace --------*/
-
-
-    /**
-     * 完成当前语境, 并将当前语境回调.
-     * 同时指定一个可能的下阶段语境.
-     *
-     * @param Ucl|null $to
-     * @param array $restoreStages
-     * @param int $gcTurns
-     * @return Dialog
-     */
-    public function fulfillTo(Ucl $to = null, array $restoreStages = [], int $gcTurns = 1) : Dialog;
-
-    /**
-     * 终止当前语境, 会触发 withdraw 流程.
-     * @param Ucl|null $to
-     * @return Dialog
-     */
-    public function cancelTo(Ucl $to = null) : Dialog;
-
-    /**
-     * 拒绝进入当前语境, 会触发 withdraw 流程.
-     * @return Dialog
-     */
-    public function reject() : Dialog;
-
-    /**
-     * 尝试退出当前多轮对话, 会触发 withdraw 流程.
-     * @return Dialog
-     */
-    public function quit() : Dialog;
 
 
 }

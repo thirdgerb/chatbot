@@ -100,38 +100,36 @@ interface Dialog
      */
     public function withPrev(Dialog $prev) : Dialog;
 
-    /*----- dialog status -----*/
+    /*----- dialog event -----*/
 
-    const ACTIVATE  = 1 << 1;
-    const RETAIN    = 1 << 2;
-    const WITHDRAW  = 1 << 3;
-    const FINALE    = 1 << 4;
-    const TEMPORARY = 1 << 5;
+    const ACTIVATE      = Dialog\Activate::class;
+    const RETAIN        = Dialog\Retain::class;
+    const WITHDRAW      = Dialog\Withdraw::class;
+    const FINALE        = Dialog\Finale::class;
+    const INTERCEPT     = Dialog\Intercept::class;
 
     // activate
-    const REDIRECT_TO   = self::ACTIVATE | 1 << 8;
-    const BLOCK_TO      = self::ACTIVATE | 1 << 9;
-    const DEPEND_ON     = self::ACTIVATE | 1 << 10;
-    const SLEEP_TO      = self::ACTIVATE | 1 << 11;
-    const INTEND        = self::ACTIVATE | 1 << 12;
-    const STAGING       = self::ACTIVATE | 1 << 13;
-    const BACK_STEP     = self::ACTIVATE | 1 << 14;
-    const HOME          = self::ACTIVATE | 1 << 15;
+    const STAGING       = Dialog\Activate\Staging::class;
+    const REDIRECT      = Dialog\Activate\Redirect::class;
+    const DEPENDED      = Dialog\Activate\Depended::class;
+    const INTEND        = Dialog\Activate\Intend::class;
+    const HOME          = Dialog\Activate\Home::class;
 
     // retain
-    const FALLBACK      = self::RETAIN | 1 << 17;
-    const HEED          = self::RETAIN | 1 << 18;
-    const PREEMPT       = self::RETAIN | 1 << 19;
-    const RESTORE       = self::RETAIN | 1 << 20;
-    const WAKE          = self::RETAIN | 1 << 21;
-    const WATCH         = self::RETAIN | 1 << 22;
+    const FALLBACK      = Dialog\Retain\Fallback::class;
+    const HEED          = Dialog\Retain\Heed::class;
+    const PREEMPT       = Dialog\Retain\Preempt::class;
+    const RESTORE       = Dialog\Retain\Restore::class;
+    const WAKE          = Dialog\Retain\Wake::class;
+    const WATCH         = Dialog\Retain\Watch::class;
 
     // withdraw
-    const CONFUSE       = self::WITHDRAW | 1 << 25;
-    const CANCEL        = self::WITHDRAW | 1 << 26;
-    const REJECT        = self::WITHDRAW | 1 << 27;
-    const QUIT          = self::WITHDRAW | 1 << 28;
+    const CONFUSE       = Dialog\Withdraw\Confuse::class;
+    const CANCEL        = Dialog\Withdraw\Cancel::class;
+    const REJECT        = Dialog\Withdraw\Reject::class;
+    const FAIL          = Dialog\Withdraw\Fail::class;
+    const QUIT          = Dialog\Withdraw\Quit::class;
 
-    public function isStatus(int $statusType) : bool ;
+    public function isEvent(string $statusType) : bool ;
 
 }

@@ -16,7 +16,6 @@ use Commune\Support\Protocal\Protocal;
 
 /**
  * 机器人内部通信用的消息.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface IntercomMsg extends Message, Protocal

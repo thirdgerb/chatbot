@@ -12,7 +12,6 @@
 namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Memory;
-use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\Host\Convo\ContextMsg;
 
@@ -68,20 +67,6 @@ interface Runtime
      * @return Memory
      */
     public function findMemory(string $id, bool $longTerm, array $defaults) : Memory;
-
-    /*------ yielding -------*/
-
-    /**
-     * @param Ucl $yieldingUcl
-     * @param string $contextId
-     */
-    public function addYielding(Ucl $yieldingUcl, string $contextId) : void;
-
-    /**
-     * @param string $contextId
-     * @return Ucl|null
-     */
-    public function findYielding(string $contextId) : ? Ucl;
 
     /*------ save -------*/
 

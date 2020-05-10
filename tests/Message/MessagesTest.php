@@ -17,13 +17,21 @@ use Commune\Support\Message\MessageTestCase;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class MessagesTestt extends MessageTestCase
+class MessagesTest extends MessageTestCase
 {
     protected $messages = [
-        // 默认文本消息
-//        Message\Host\Convo\IText::class,
-//        Message\Host\Convo\IUnsupportedMsg::class,
-//        Message\Host\Convo\IContextMsg::class,
+        // convo
+        Message\Host\Convo\IVerbal::class,
+        Message\Host\Convo\IUnsupported::class,
+        Message\Host\Convo\IEvent::class,
+        Message\Host\Convo\IAudio::class,
+        Message\Host\Convo\IImage::class,
+        Message\Host\Convo\IContextMsg::class,
+
+        // reaction
+        Message\Host\IReaction::class,
+
+
     ];
 
 

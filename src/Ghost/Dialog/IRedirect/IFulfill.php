@@ -15,7 +15,7 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
-use Commune\Ghost\Dialog\IActivate\IRedirectTo;
+use Commune\Ghost\Dialog\IActivate\IRedirect;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -79,7 +79,7 @@ class IFulfill extends AbsDialogue
 
         // 拦截回调的过程.
         if (isset($this->to)) {
-            return new IRedirectTo($this->cloner, $this->to);
+            return new IRedirect($this->cloner, $this->to);
         }
 
         return $this->fallbackFlow($this, $process);

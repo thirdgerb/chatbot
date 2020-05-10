@@ -9,13 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog\Activate;
+namespace Commune\Protocals\Host\Convo;
 
-use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Protocals\Host\ConvoMsg;
+
 
 /**
+ * 事件类型的消息. 通常不用回复.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface RedirectTo extends Activate
+interface EventMsg extends ConvoMsg
 {
+    public function getEventName() : string;
+
+    public function getPayload() : array;
 }

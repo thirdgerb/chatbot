@@ -63,12 +63,12 @@ class IStartProcess extends AbsDialogue implements StartProcess
         return $this->checkYield($input)
             // 检查是否是异步 retain 消息
             ?? $this->checkRetain($input)
+            // 检查是否是强制同步状态的 contextMsg
+            ?? $this->isContextMsgCall($input)
             // 检查是否有阻塞中的任务.
             ?? $this->checkBlocking()
             // 检查是否是 session 第一次输入, 是的话要初始化 session
             ?? $this->shouldStartSession()
-            // 检查是否是强制同步状态的 contextMsg
-            ?? $this->isContextMsgCall($input)
             // 如果不是影响对话状态的 convo msg, 则全部由 await ucl 来处理. 不走任何理解和路由.
             ?? $this->isNotConvoMsgCall($input)
             // 通过管道试图理解消息, 将理解结果保留在 comprehension 中.

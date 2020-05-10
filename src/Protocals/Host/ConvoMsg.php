@@ -14,8 +14,7 @@ namespace Commune\Protocals\Host;
 use Commune\Protocals\HostMsg;
 
 /**
- * 对话类型的消息.
- * 对 Ghost 可能引起多轮对话状态的变动, 对 Client 则产生对话内容的展示等.
+ * Shell 与 Client 进行交互的消息体.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */

@@ -20,7 +20,7 @@ use Commune\Ghost\Dialog\DialogHelper;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IDependOn extends AbsDialogue implements Dialog\Activate\DependOn
+class IDepended extends AbsDialogue implements Dialog\Activate\Depended
 {
     const SELF_STATUS = self::DEPEND_ON;
 

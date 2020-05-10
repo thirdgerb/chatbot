@@ -22,13 +22,18 @@ trait TInjectable
     protected static function getInterfacesOf(
         string $baseType,
         bool $includeBasic = true,
-        bool $includeSelf = true
+        bool $includeSelf = true,
+        bool $includeAbstract = true
     ): array
     {
         $class = static::class;
+        $searchId = $class
+            . intval($includeBasic)
+            . intval($includeSelf)
+            . intval($includeAbstract);
 
-        if (isset(self::$_interfaces[$class][$baseType])) {
-            return self::$_interfaces[$class][$baseType];
+        if (isset(self::$_interfaces[$searchId][$baseType])) {
+            return self::$_interfaces[$searchId][$baseType];
         }
 
         $r = new \ReflectionClass($class);
@@ -48,7 +53,10 @@ trait TInjectable
 
         // 抽象父类.
         do  {
-            if ($r->isAbstract() && $r->isSubclassOf($baseType)) {
+            if (
+                $r->isSubclassOf($baseType)
+                && ($r->isInterface() || ($r->isAbstract() && $includeAbstract))
+            ) {
                 $names[] = $r->getName();
             }
 
@@ -59,7 +67,7 @@ trait TInjectable
             $names[] = $class;
         }
 
-        return self::$_interfaces[$class][$baseType] = $names;
+        return self::$_interfaces[$searchId][$baseType] = $names;
     }
 
 

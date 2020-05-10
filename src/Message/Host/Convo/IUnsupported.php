@@ -18,11 +18,12 @@ use Commune\Protocals\Host\Convo\UnsupportedMsg;
 
 /**
  * 系统不支持的消息.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property string $type      消息的类型.
+ * @property-read string $type
  */
-class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
+class IUnsupported extends AbsMessage implements UnsupportedMsg
 {
 
     public function __construct(string $type = '')
@@ -42,11 +43,23 @@ class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
         return new static($data['type'] ?? '');
     }
 
-
     public static function relations(): array
     {
         return [];
     }
+
+    // 不支持的消息不需要广播.
+    public function isBroadcasting(): bool
+    {
+        return false;
+    }
+
+
+    public function getMsgType(): string
+    {
+        return $this->type;
+    }
+
 
     public function getNormalizedText(): string
     {

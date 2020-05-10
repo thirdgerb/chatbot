@@ -13,7 +13,8 @@ namespace Commune\Message\Host\Convo;
 
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\Host\Convo\Media\ImageMsg;
+use Commune\Protocals\Host\Convo\Media\AudioMsg;
+use Commune\Support\Struct\Struct;
 
 
 /**
@@ -21,8 +22,14 @@ use Commune\Protocals\Host\Convo\Media\ImageMsg;
  *
  * @property-read string $resource
  */
-class IImageMsg extends AbsMessage implements ImageMsg
+class IAudio extends AbsMessage implements AudioMsg
 {
+
+    public function __construct(string $resource)
+    {
+        parent::__construct(['resource' => $resource]);
+    }
+
     public static function stub(): array
     {
         return [
@@ -35,10 +42,26 @@ class IImageMsg extends AbsMessage implements ImageMsg
         return [];
     }
 
+    public static function create(array $data = []): Struct
+    {
+        return new static($data['resource'] ?? '');
+    }
+
     public function getNormalizedText(): string
     {
-        return '';
+        return $this->resource;
     }
+
+    public function isBroadcasting(): bool
+    {
+        return true;
+    }
+
+    public function getResource(): string
+    {
+        return $this->resource;
+    }
+
 
     public function isEmpty(): bool
     {
@@ -49,6 +72,4 @@ class IImageMsg extends AbsMessage implements ImageMsg
     {
         return HostMsg::INFO;
     }
-
-
 }

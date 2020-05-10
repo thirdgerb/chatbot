@@ -9,14 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Host;
+namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
-use Commune\Protocals\HostMsg;
+use Commune\Blueprint\Ghost\Dialog\Activate;
 
 /**
- * Api 调用的消息. 通常是无状态的请求.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ApiMsg extends HostMsg
+interface Redirect extends Activate
 {
 }

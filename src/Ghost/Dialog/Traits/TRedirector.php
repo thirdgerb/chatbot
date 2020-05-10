@@ -64,7 +64,7 @@ trait TRedirector
         if ($to->getContextId() === $this->ucl->getContextId()) {
             $next = new IActivate\IStaging($this->cloner, $to, $pipes);
         } else {
-            $next = new IActivate\IRedirectTo($this->cloner, $to, $pipes);
+            $next = new IActivate\IRedirect($this->cloner, $to, $pipes);
         }
 
         return $next;
@@ -101,7 +101,7 @@ trait TRedirector
 
     public function dependOn(Ucl $depend, string $fieldName): Dialog
     {
-        return new IActivate\IDependOn($this, $depend, $fieldName);
+        return new IActivate\IDepended($this, $depend, $fieldName);
     }
 
     public function blockTo(Ucl $to): Dialog

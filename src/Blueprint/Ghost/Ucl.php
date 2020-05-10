@@ -175,15 +175,29 @@ class Ucl
             return $this->encoded;
         }
 
+        return $this->encoded
+            ?? $this->encoded = self::encodeUcl(
+                $this->contextName,
+                $this->stageName,
+                $this->query
+            );
+    }
+
+    public static function encodeUcl(
+        string $contextName,
+        string $stageName = '',
+        array $query = []
+    ) : string
+    {
         $prefix = StringUtils::gluePrefixAndName(
-            $this->contextName,
-            $this->stageName,
+            $contextName,
+            $stageName,
             '#'
         );
 
         $ucl = StringUtils::gluePrefixAndName(
             $prefix,
-            empty($this->query) ? '' : json_encode($this->query),
+            empty($query) ? '' : json_encode($query),
             '?'
         );
 

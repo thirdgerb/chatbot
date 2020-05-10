@@ -310,9 +310,9 @@ abstract class AbsDialogue implements
     }
 
     /*-------- status --------*/
-    public function isStatus(int $statusType): bool
+    public function isEvent(string $statusType): bool
     {
-        return ($statusType & self::SELF_STATUS) > 0;
+        return is_a($this, $statusType, TRUE);
     }
 
 

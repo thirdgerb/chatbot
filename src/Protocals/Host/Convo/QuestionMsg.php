@@ -16,10 +16,10 @@ use Commune\Protocals\Host\ConvoMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read string $query             问题
- * @property-read string[] $suggestions     建议
  */
 interface QuestionMsg extends ConvoMsg
 {
+    public function getQuery() : string;
+
+    public function getSuggestions() : array;
 }

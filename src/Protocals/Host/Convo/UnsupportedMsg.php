@@ -18,10 +18,8 @@ use Commune\Protocals\Host\ConvoMsg;
  * 客户端或服务端不支持的消息.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- * @property-read string $type      消息的类型.
  */
 interface UnsupportedMsg extends ConvoMsg
 {
+    public function getMsgType() : string;
 }

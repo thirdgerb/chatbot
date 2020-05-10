@@ -9,17 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Host\Ghost;
+namespace Commune\Blueprint\Ghost\Dialog\Withdraw;
 
-use Commune\Protocals\HostMsg;
-
+use Commune\Blueprint\Ghost\Dialog\Withdraw;
 
 /**
- * 指令类型的消息. 通常用于 Shell 与 Ghost 之间执行交互命令.
- * 是否广播完全看单个命令的设置.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DirectiveMsg extends HostMsg
+interface Fail extends Withdraw
 {
 }

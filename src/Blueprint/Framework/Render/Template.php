@@ -9,13 +9,22 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog\Finale;
+namespace Commune\Blueprint\Framework\Render;
+
+use Commune\Protocals\Host\ConvoMsg;
+use Commune\Protocals\Host\ReactionMsg;
 
 
 /**
+ * 渲染模板.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface QuitSession
+interface Template
 {
 
+    /**
+     * @param ReactionMsg $msg
+     * @return ConvoMsg[]
+     */
+    public function render(ReactionMsg $msg) : array;
 }

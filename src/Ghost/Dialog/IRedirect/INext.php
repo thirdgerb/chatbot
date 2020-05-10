@@ -13,7 +13,7 @@ namespace Commune\Ghost\Dialog\IRedirect;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Ghost\Dialog\AbsDialogue;
-use Commune\Ghost\Dialog\IActivate\IRedirectTo;
+use Commune\Ghost\Dialog\IActivate\IRedirect;
 use Commune\Ghost\Dialog\IActivate\IStaging;
 
 
@@ -41,7 +41,7 @@ class INext extends AbsDialogue
         if ($this->ucl->getContextId() === $to->getContextId()) {
             $next = new IStaging($this->cloner, $to, []);
         } else {
-            $next = new IRedirectTo($this->cloner, $to, []);
+            $next = new IRedirect($this->cloner, $to, []);
         }
 
         return $next->withPrev($this);

@@ -43,6 +43,7 @@ interface ContextParamsManager
 
     /**
      * @return ContextParameter[]
+     *  [name => ContextParameter]
      */
     public function getParameters() : array;
 

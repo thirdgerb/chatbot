@@ -51,6 +51,8 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read Process|null $prev            上一轮对话的进程实例.
  * @property-read Waiter[] $backtrace           历史记录. 记录的是 await ucl
  *
+ *
+ * @property-read int[] $holding                语境相关的 ContextId
  */
 interface Process extends ArrayAndJsonAble
 {

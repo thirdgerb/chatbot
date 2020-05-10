@@ -16,10 +16,8 @@ use Commune\Protocals\Host\ConvoMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- * @property-read string $resource      资源的标识符.
  */
 interface MediaMsg extends ConvoMsg
 {
+    public function getResource() : string;
 }

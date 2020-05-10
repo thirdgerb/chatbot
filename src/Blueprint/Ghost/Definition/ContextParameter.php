@@ -56,17 +56,10 @@ interface ContextParameter
     public function getDefault();
 
     /**
-     * @param Context $context
-     * @return mixed
-     */
-    public function getVal(Context $context);
-
-    /**
-     * @param Context $context
      * @param $value
      * @return mixed
      */
-    public function setVal(Context $context, $value);
+    public function parseSetVal($value);
 
     /**
      * 作为单轮对话. 只有 Entity 类型才可以作为一个单轮对话.

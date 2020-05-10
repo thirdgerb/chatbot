@@ -28,7 +28,7 @@ use Commune\Ghost\Dialog\IWithdraw;
 class DialogHelper
 {
     const IMPLEMENTS = [
-        Activate\Intend::class => IActivate\IRedirectTo::class,
+        Activate\Intend::class => IActivate\IRedirect::class,
         Activate\StartSession::class => IActivate\IStartSession::class,
         Retain\Heed::class => IRetain\IHeed::class,
         Retain\Preempt::class => IRetain\IPreempt::class,

@@ -16,13 +16,13 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
 use Commune\Ghost\Dialog\DialogHelper;
-use Commune\Blueprint\Ghost\Dialog\Activate\RedirectTo;
+use Commune\Blueprint\Ghost\Dialog\Activate\Redirect;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IRedirectTo extends AbsDialogue implements RedirectTo
+class IRedirect extends AbsDialogue implements Redirect
 {
     const SELF_STATUS = self::REDIRECT_TO;
 

@@ -17,7 +17,7 @@ use Commune\Ghost\Dialog\AbsDialogue;
 use Commune\Blueprint\Ghost\Dialog\Withdraw\Confuse;
 use Commune\Ghost\Dialog\DialogHelper;
 use Commune\Ghost\Dialog\Traits\TIntentMatcher;
-use Commune\Support\Utils\StringUtils;
+use Commune\Protocals\Host\Convo\EventMsg;
 
 
 /**
@@ -35,7 +35,8 @@ class IConfuse extends AbsDialogue implements Confuse
     protected function runTillNext(): Dialog
     {
         $process = $this->getProcess();
-        return $this->tryToWakeSleeping($process)
+        return $this->ifEventMsg()
+            ?? $this->tryToWakeSleeping($process)
             ?? $this->tryToRestoreDying($process)
             ?? $this->passConfuseToWatcher($process)
             ?? $this->reallyConfuse($process);
@@ -43,6 +44,15 @@ class IConfuse extends AbsDialogue implements Confuse
 
     protected function selfActivate(): void
     {
+    }
+
+    protected function ifEventMsg() : ? Dialog
+    {
+        $message = $this->cloner->ghostInput->getMessage();
+        if ($message instanceof EventMsg) {
+            return $this->then()->dumb();
+        }
+        return null;
     }
 
     protected function tryToWakeSleeping(Process $process) : ? Dialog

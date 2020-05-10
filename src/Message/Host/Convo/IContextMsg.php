@@ -13,6 +13,7 @@ namespace Commune\Message\Host\Convo;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\Host\Convo\ContextMsg;
@@ -23,8 +24,8 @@ use Commune\Protocals\Host\Convo\ContextMsg;
  *
  * @property string $contextName       语境名称
  * @property string $contextId         语境Id
+ * @property-read array $query
  * @property array $data               语境的数据.
- * @property string $level             语境的数据.
  */
 class IContextMsg extends AbsMessage implements ContextMsg
 {
@@ -33,8 +34,8 @@ class IContextMsg extends AbsMessage implements ContextMsg
         return [
             'contextName' => '',
             'contextId' => '',
+            'query' => [],
             'data' => [],
-            'level' => HostMsg::INFO
         ];
     }
 
@@ -45,7 +46,30 @@ class IContextMsg extends AbsMessage implements ContextMsg
 
     public function toContext(Cloner $cloner): Context
     {
-        // TODO: Implement toContext() method.
+        $ucl = Ucl::create($cloner, $this->contextName, $this->query);
+        $context = $cloner->getContext($ucl);
+        $context->merge($this->data);
+        return $context;
+    }
+
+    public function getContextId(): string
+    {
+        return $this->contextId;
+    }
+
+    public function getContextName(): string
+    {
+        return $this->contextName;
+    }
+
+    public function getQuery(): array
+    {
+        return $this->query;
+    }
+
+    public function getMemorableData(): array
+    {
+        return $this->data;
     }
 
 
@@ -56,13 +80,13 @@ class IContextMsg extends AbsMessage implements ContextMsg
 
     public function getLevel(): string
     {
-        return $this->level;
+        return HostMsg::INFO;
     }
 
 
     public function getNormalizedText(): string
     {
-        return $this->toJson();
+        return Ucl::encodeUcl($this->contextName, '', $this->query);
     }
 
     public function isEmpty(): bool

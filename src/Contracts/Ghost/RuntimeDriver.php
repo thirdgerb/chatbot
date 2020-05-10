@@ -11,6 +11,8 @@
 
 namespace Commune\Contracts\Ghost;
 
+use Commune\Blueprint\Ghost\Cloner\ClonerScope;
+use Commune\Blueprint\Ghost\Memory;
 use Commune\Blueprint\Ghost\Runtime\Process;
 
 /**
@@ -18,12 +20,23 @@ use Commune\Blueprint\Ghost\Runtime\Process;
  */
 interface RuntimeDriver
 {
-//    public function cacheProcess(string $sessionId, Process $process, int $expire) : bool;
-//
-//    public function fetchProcess(string $sessionId) : ? Process;
+    public function cacheProcess(string $sessionId, Process $process, int $expire) : bool;
 
+    public function fetchProcess(string $sessionId) : ? Process;
 
-    public function cacheCachable(string $sessionId, array $cachable, int $expire);
+    public function cacheSessionMemories(
+        string $sessionId,
+        array $memories,
+        int $expire
+    ) : bool;
 
+    public function fetchSessionMemories(string $sessionId) : array;
+
+    public function saveLongTermMemories(
+        ClonerScope $scope,
+        array $memories
+    ) : bool;
+
+    public function findLongTermMemories(string $memoryId) : ? Memory;
 
 }

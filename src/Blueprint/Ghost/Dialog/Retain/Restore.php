@@ -11,10 +11,11 @@
 
 namespace Commune\Blueprint\Ghost\Dialog\Retain;
 
+use Commune\Blueprint\Ghost\Dialog\Intercept;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Restore
+interface Restore extends Intercept
 {
 }

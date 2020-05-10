@@ -23,7 +23,7 @@ use Commune\Protocals\Host\Convo\VerbalMsg;
  * @property string $text          文本正文
  * @property string $level         消息的级别.
  */
-class IText extends AbsMessage implements VerbalMsg
+class IVerbal extends AbsMessage implements VerbalMsg
 {
 
     /**
@@ -39,6 +39,14 @@ class IText extends AbsMessage implements VerbalMsg
         ]);
     }
 
+    public static function stub(): array
+    {
+        return [
+            'text' => 'hello world!',
+            'level' => HostMsg::INFO,
+        ];
+    }
+
     public static function create(array $data = []): Struct
     {
         return new static(
@@ -47,13 +55,16 @@ class IText extends AbsMessage implements VerbalMsg
         );
     }
 
-    public static function stub(): array
+    public function isBroadcasting(): bool
     {
-        return [
-            'text' => 'hello world!',
-            'level' => HostMsg::INFO,
-        ];
+        return true;
     }
+
+    public function getText(): string
+    {
+        return $this->text;
+    }
+
 
     public function getLevel(): string
     {
@@ -68,8 +79,7 @@ class IText extends AbsMessage implements VerbalMsg
 
     public function getNormalizedText(): string
     {
-        $trimmed = StringUtils::trim($this->text);
-        return StringUtils::normalizeString($trimmed);
+        return StringUtils::normalizeString($this->text);
     }
 
     public static function relations(): array
