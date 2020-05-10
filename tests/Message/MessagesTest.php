@@ -34,6 +34,7 @@ class MessagesTest extends MessageTestCase
 
         // intercom
         Message\Intercom\IShellInput::class,
+        Message\Intercom\IShellOutput::class,
 
 
     ];
