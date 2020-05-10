@@ -11,32 +11,36 @@
 
 namespace Commune\Message\Intercom;
 
-use Commune\Message\Host\Convo\IVerbalMsg;
+use Commune\Message\Host\Convo\IText;
 use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\ShellOutput;
+use Commune\Protocals\Intercom\GhostOutput;
+use Commune\Protocals\Intercom\ShellMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Struct\Struct;
 use Commune\Support\Uuid\IdGeneratorHelper;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @property-read string $cloneId
+ * @property-read string $sessionId
+ *
  * @property-read string $shellName
  * @property-read string $shellId
+ *
  * @property-read string $senderId
+ * @property-read string $senderName
+ * @property-read string $guestId
  *
  * @property-read string $messageId
  * @property-read string $batchId
- * @property-read string|null $sessionId
  *
  * @property-read HostMsg $message
  *
  * @property-read float $deliverAt
  * @property-read float $createdAt
- *
  */
-class IShellOutput extends AbsMessage implements ShellOutput
+class IGhostOutput extends AbsMessage implements GhostOutput
 {
     use IdGeneratorHelper;
 
@@ -44,26 +48,32 @@ class IShellOutput extends AbsMessage implements ShellOutput
 
     public function __construct(
         HostMsg $message,
+        string $clonerId,
+        string $sessionId,
         string $shellName,
+        string $shellId,
         string $senderId,
+        string $batchId,
+        string $guestId = '',
         string $messageId = null,
-        string $shellId = null,
-        array $moreInfo = [
-            //'batchId' => 'id',
-            //'sessionId' => '',
-            //'deliverAt' => 0,
-            //'createdAt' => 0
-        ]
+        float $deliverAt = 0
     )
     {
         $moreInfo['message'] = $message;
+
+        $moreInfo['cloneId'] = $clonerId;
+        $moreInfo['sessionId'] = $sessionId;
+
         $moreInfo['shellName'] = $shellName;
+        $moreInfo['shellId'] = $shellId;
+
         $moreInfo['senderId'] = $senderId;
 
+        $moreInfo['batchId'] = $batchId;
+        $moreInfo['guestId'] = $guestId;
+
         $moreInfo['messageId'] = empty($messageId) ? $this->createUuId() : $messageId;
-        $moreInfo['shellId'] = empty($shellId)
-            ? sha1("shellName:$shellName:sender:$senderId")
-            : $shellId;
+        $moreInfo['deliverAt'] = $deliverAt;
 
         parent::__construct($moreInfo);
     }
@@ -71,14 +81,20 @@ class IShellOutput extends AbsMessage implements ShellOutput
     public static function stub(): array
     {
         return [
+            'clonerId' => '',
+            'sessionId' => null,
+
             'shellName' => '',
-            'senderId' => '',
             'shellId' => '',
+
+            'senderId' => '',
+            'senderName' => '',
+            'guestId' => '',
 
             'messageId' => '',
             'batchId' => '',
 
-            'message' => new IVerbalMsg(),
+            'message' => new IText(),
 
             'deliverAt' => $now = round(floatval(microtime(true)), 3),
             'createdAt' => $now,
@@ -89,11 +105,15 @@ class IShellOutput extends AbsMessage implements ShellOutput
     {
         return new static(
             $data['message'] ?? null,
+            $data['cloneId'] ?? '',
+            $data['sessionId'] ?? '',
             $data['shellName'] ?? '',
-            $data['senderId'] ?? '',
-            $data['messageId'] ?? '',
             $data['shellId'] ?? '',
-            $data
+            $data['senderId'] ?? '',
+            $data['batchId'] ?? '',
+            $data['guestId'] ?? '',
+            $data['messageId'] ?? null,
+            $data['comprehension'] ?? 0
         );
     }
 
@@ -111,8 +131,7 @@ class IShellOutput extends AbsMessage implements ShellOutput
 
     public function getBatchId(): string
     {
-        $batchId = $this->batchId;
-        return empty($batchId) ? $this->messageId : $this->batchId;
+        return $this->batchId;
     }
 
     public function getMessage(): HostMsg
@@ -130,9 +149,9 @@ class IShellOutput extends AbsMessage implements ShellOutput
         return $this->deliverAt;
     }
 
-    public function isEmpty(): bool
+    public function getShellName(): string
     {
-        return false;
+        return $this->shellName;
     }
 
     public function getShellId(): string
@@ -140,20 +159,51 @@ class IShellOutput extends AbsMessage implements ShellOutput
         return $this->shellId;
     }
 
-    public function senderId(): string
+    public function getSenderId(): string
     {
         return $this->senderId;
     }
 
-    public function getSessionId(): ? string
+    public function getSessionId(): string
     {
         return $this->sessionId;
     }
 
-    public function getShellName(): string
+    public function getCloneId(): string
     {
-        return $this->shellName;
+        $cloneId = $this->cloneId;
+        return empty($cloneId) ? $this->shellId : $cloneId;
     }
 
+    public function getGuestId(): string
+    {
+        $guestId = $this->guestId;
+        return empty($guestId) ? $this->senderId : $guestId;
+    }
 
+    public function isBroadcasting(): bool
+    {
+        return $this->message->isBroadcasting();
+    }
+
+    public function isEmpty(): bool
+    {
+        return false;
+    }
+
+    public function toShellMsg(): ShellMsg
+    {
+        return new IShellMsg(
+            $this->message,
+            $this->shellName,
+            $this->shellId,
+            $this->senderId,
+            $this->messageId,
+            $this->deliverAt,
+            [
+                'sessionId' => $this->sessionId,
+                'createdAt' => $this->createdAt,
+            ]
+        );
+    }
 }

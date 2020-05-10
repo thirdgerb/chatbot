@@ -11,7 +11,6 @@
 
 namespace Commune\Protocals\Intercom;
 
-use Commune\Protocals\HostMsg;
 use Commune\Protocals\IntercomMsg;
 
 /**
@@ -28,17 +27,11 @@ interface GhostMsg extends IntercomMsg
      */
     public function getCloneId() : string;
 
-    public function getSessionId() : string;
-
-    /*---- guest info ----*/
-
     /**
      * 用户的 身份Id, 默认是 SenderId
      * @return string
      */
     public function getGuestId() : string;
-
-    /*---- shell info ----*/
 
     public function getShellId() : string;
 
@@ -46,7 +39,9 @@ interface GhostMsg extends IntercomMsg
 
     public function getSenderId() : string;
 
-    public function getSenderName() : string;
+    public function getMessageId(): string;
+
+    public function getBatchId() : string;
 
     /*---- status ----*/
 
@@ -56,4 +51,5 @@ interface GhostMsg extends IntercomMsg
      */
     public function isBroadcasting() : bool;
 
+    public function toShellMsg() : ShellMsg;
 }

@@ -23,7 +23,7 @@ use Commune\Protocals\Host\Convo\VerbalMsg;
  * @property string $text          文本正文
  * @property string $level         消息的级别.
  */
-class IVerbalMsg extends AbsMessage implements VerbalMsg
+class IText extends AbsMessage implements VerbalMsg
 {
 
     /**

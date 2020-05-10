@@ -11,15 +11,11 @@
 
 namespace Commune\Message\Intercom;
 
-use Commune\Message\Abstracted\IComprehension;
 use Commune\Message\Host\Convo\IText;
-use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\GhostInput;
-use Commune\Protocals\Intercom\ShellInput;
+use Commune\Protocals\Intercom\ShellMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Struct\Struct;
-use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 
 
@@ -29,22 +25,18 @@ use Commune\Support\Uuid\IdGeneratorHelper;
  * @property-read string $shellName
  * @property-read string $shellId
  * @property-read string $senderId
- * @property-read string $senderName
  *
  * @property-read string $messageId
+ * @property-read string $batchId
  * @property-read string|null $sessionId
  *
  * @property-read HostMsg $message
- * @property-read Comprehension $comprehension
- *
  *
  * @property-read float $deliverAt
  * @property-read float $createdAt
  *
- * @property-read array $env
- * @property-read string $sceneId
  */
-class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
+class IShellMsg extends AbsMessage implements ShellMsg
 {
     use IdGeneratorHelper;
 
@@ -53,30 +45,23 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
     public function __construct(
         HostMsg $message,
         string $shellName,
+        string $shellId,
         string $senderId,
         string $messageId = null,
-        string $shellId = null,
+        float $deliverAt = 0,
         array $moreInfo = [
-            //'senderName' => '',
-            //'sceneId' => '',
             //'sessionId' => '',
-            //'env' => [],
-            //'deliverAt' => 0,
             //'createdAt' => 0
-        ],
-        $comprehension = null
+        ]
     )
     {
         $moreInfo['message'] = $message;
         $moreInfo['shellName'] = $shellName;
+        $moreInfo['shellId'] = $shellId;
         $moreInfo['senderId'] = $senderId;
+        $moreInfo['messageId'] = $messageId ?? $this->createUuId();
+        $moreInfo['deliverAt'] = $deliverAt;
 
-        $moreInfo['messageId'] = empty($messageId) ? $this->createUuId() : $messageId;
-        $moreInfo['shellId'] = empty($shellId)
-            ? sha1("shellName:$shellName:sender:$senderId")
-            : $shellId;
-
-        $moreInfo['comprehension'] = $comprehension ?? [];
         parent::__construct($moreInfo);
     }
 
@@ -84,21 +69,16 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
     {
         return [
             'shellName' => '',
-            'shellId' => '',
             'senderId' => '',
-            'senderName' => '',
+            'shellId' => '',
 
             'messageId' => '',
-
-            'sceneId' => '',
-            'env' => [],
-            'sessionId' => null,
+            'batchId' => '',
 
             'message' => new IText(),
-            'comprehension' => new IComprehension(),
 
-            'deliverAt' => $now = round(floatval(microtime(true)), 3),
-            'createdAt' => $now,
+            'deliverAt' => 0,
+            'createdAt' => round(floatval(microtime(true)), 3),
         ];
     }
 
@@ -107,11 +87,11 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
         return new static(
             $data['message'] ?? null,
             $data['shellName'] ?? '',
+            $data['shellId'] ?? '',
             $data['senderId'] ?? '',
             $data['messageId'] ?? '',
-            $data['shellId'] ?? '',
-            $data,
-            $data['comprehension'] ?? null
+            $data['deliverAt'] ?? 0,
+            $data
         );
     }
 
@@ -119,13 +99,18 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
     {
         return [
             'message' => HostMsg::class,
-            'comprehension' => IComprehension::class
         ];
     }
 
     public function getMessageId(): string
     {
         return $this->messageId;
+    }
+
+    public function getBatchId(): string
+    {
+        $batchId = $this->batchId;
+        return empty($batchId) ? $this->messageId : $this->batchId;
     }
 
     public function getMessage(): HostMsg
@@ -148,26 +133,6 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
         return false;
     }
 
-    public function getSceneId(): string
-    {
-        return $this->sceneId;
-    }
-
-    public function getEnv(): array
-    {
-        return $this->env;
-    }
-
-    public function getComprehension(): Comprehension
-    {
-        return $this->comprehension;
-    }
-
-    public function getShellName(): string
-    {
-        return $this->shellName;
-    }
-
     public function getShellId(): string
     {
         return $this->shellId;
@@ -178,38 +143,14 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
         return $this->senderId;
     }
 
-    public function getSenderName(): string
-    {
-        return $this->senderName;
-    }
-
     public function getSessionId(): ? string
     {
         return $this->sessionId;
     }
 
-    public function toGhostInput(
-        string $cloneId = null,
-        string $sessionId = null,
-        string $guestId = null
-    ): GhostInput
+    public function getShellName(): string
     {
-        return new IGhostInput(
-            $this->message,
-            $cloneId ?? '',
-            $sessionId,
-            $this->shellName,
-            $this->shellId,
-            $this->senderId,
-            $this->messageId,
-            [
-                'sceneId' => $this->sceneId,
-                'env' => $this->env,
-                'senderName' => $this->senderName,
-                'guestId' => $guestId ?? '',
-            ],
-            $this->comprehension
-        );
+        return $this->shellName;
     }
 
 

@@ -27,12 +27,6 @@ interface IntercomMsg extends Message, Protocal
     public function getMessageId() : string;
 
     /**
-     * 消息的批次 ID. 回复消息和输入消息是同一批.
-     * @return string
-     */
-    public function getBatchId() : string;
-
-    /**
      * 消息体
      * @return HostMsg
      */

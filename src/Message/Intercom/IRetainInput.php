@@ -9,12 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Intercom;
+namespace Commune\Message\Intercom;
 
+use Commune\Protocals\Intercom\RetainInput;
+use Commune\Support\Message\AbsMessage;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellOutput extends ShellMsg
+class IRetainInput extends AbsMessage implements RetainInput
 {
+
 }

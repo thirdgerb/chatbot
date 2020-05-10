@@ -26,6 +26,8 @@ interface ShellInput extends ShellMsg
 
     public function getEnv() : array;
 
+    public function getSenderName() : string;
+
     public function getComprehension() : Comprehension;
 
     /*----- 转换类方法 -----*/

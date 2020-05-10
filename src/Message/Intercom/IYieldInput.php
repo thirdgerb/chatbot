@@ -9,13 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Intercom;
+namespace Commune\Message\Intercom;
+
+use Commune\Protocals\Intercom\YieldInput;
+use Commune\Support\Message\AbsMessage;
 
 /**
- * Ghost 的输出消息.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhostOutput extends GhostMsg
+class IYieldInput extends AbsMessage implements YieldInput
 {
-    public function getSessionId() : string;
+
 }

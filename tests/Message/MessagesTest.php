@@ -21,7 +21,7 @@ class MessagesTest extends MessageTestCase
 {
     protected $messages = [
         // convo
-        Message\Host\Convo\IVerbalMsg::class,
+        Message\Host\Convo\IText::class,
         Message\Host\Convo\IUnsupportedMsg::class,
         Message\Host\Convo\IEventMsg::class,
         Message\Host\Convo\IAudioMsg::class,
@@ -34,7 +34,9 @@ class MessagesTest extends MessageTestCase
 
         // intercom
         Message\Intercom\IShellInput::class,
-        Message\Intercom\IShellOutput::class,
+        Message\Intercom\IShellMsg::class,
+        Message\Intercom\IGhostInput::class,
+        Message\Intercom\IGhostOutput::class,
 
 
     ];

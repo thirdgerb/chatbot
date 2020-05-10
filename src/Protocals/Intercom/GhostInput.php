@@ -27,12 +27,32 @@ interface GhostInput extends GhostMsg
 
     /*----- 额外的信息 -----*/
 
+    public function getSessionId() : ? string;
+
+    public function getSenderName() : string;
+
     public function getSceneId() : string;
 
     public function getEnv() : array;
 
-    /*----- 生成回复 -----*/
+    public function getComprehension() : Comprehension;
 
-    public function output(HostMsg $message) : GhostOutput;
+
+    /*----- methods -----*/
+
+    public function output(
+        HostMsg $message,
+        float $deliverAt = 0,
+        string $cloneId = null,
+        string $shellName = null,
+        string $guestId = null
+    ) : GhostOutput;
+
+    /**
+     * @param string $sessionId
+     * @return static
+     */
+    public function withSessionId(string $sessionId) : GhostInput;
+
 
 }

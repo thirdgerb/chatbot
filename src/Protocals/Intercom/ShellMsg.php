@@ -22,11 +22,11 @@ use Commune\Protocals\IntercomMsg;
 interface ShellMsg extends IntercomMsg
 {
 
-    public function getShellName() : string;
-
     public function getShellId() : string;
 
-    public function senderId() : string;
+    public function getShellName() : string;
+
+    public function getSenderId() : string;
 
     public function getSessionId() : ? string;
 
