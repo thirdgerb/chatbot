@@ -50,7 +50,8 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
 
             $dataVal = $data[$key];
             if (
-                (is_scalar($dataVal) || is_array($dataVal))
+                empty($dataVal)
+                && (is_scalar($dataVal) || is_array($dataVal))
                 && $dataVal === $val
             ) {
                 unset($data[$key]);

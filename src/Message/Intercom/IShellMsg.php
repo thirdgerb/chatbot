@@ -78,7 +78,7 @@ class IShellMsg extends AbsMessage implements ShellMsg
             'message' => new IText(),
 
             'deliverAt' => 0,
-            'createdAt' => round(floatval(microtime(true)), 3),
+            'createdAt' => time(),
         ];
     }
 
@@ -118,12 +118,12 @@ class IShellMsg extends AbsMessage implements ShellMsg
         return $this->message;
     }
 
-    public function getCreatedAt(): float
+    public function getCreatedAt(): int
     {
         return $this->createdAt;
     }
 
-    public function getDeliverAt(): float
+    public function getDeliverAt(): int
     {
         return $this->deliverAt;
     }

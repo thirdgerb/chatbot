@@ -96,8 +96,8 @@ class IGhostOutput extends AbsMessage implements GhostOutput
 
             'message' => new IText(),
 
-            'deliverAt' => $now = round(floatval(microtime(true)), 3),
-            'createdAt' => $now,
+            'deliverAt' => 0,
+            'createdAt' => time(),
         ];
     }
 
@@ -139,12 +139,12 @@ class IGhostOutput extends AbsMessage implements GhostOutput
         return $this->message;
     }
 
-    public function getCreatedAt(): float
+    public function getCreatedAt(): int
     {
-        return $this->createdAt;
+        return round($this->createdAt, 3);
     }
 
-    public function getDeliverAt(): float
+    public function getDeliverAt(): int
     {
         return $this->deliverAt;
     }

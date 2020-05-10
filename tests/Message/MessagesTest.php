@@ -37,6 +37,8 @@ class MessagesTest extends MessageTestCase
         Message\Intercom\IShellMsg::class,
         Message\Intercom\IGhostInput::class,
         Message\Intercom\IGhostOutput::class,
+        Message\Intercom\IYieldInput::class,
+        Message\Intercom\IRetainInput::class,
 
 
     ];

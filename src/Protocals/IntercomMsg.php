@@ -34,13 +34,13 @@ interface IntercomMsg extends Message, Protocal
 
     /**
      * 精确到毫秒
-     * @return float
+     * @return int
      */
-    public function getCreatedAt() : float;
+    public function getCreatedAt() : int;
 
     /**
      * 精确到毫秒
-     * @return float
+     * @return int
      */
-    public function getDeliverAt() : float;
+    public function getDeliverAt() : int;
 }

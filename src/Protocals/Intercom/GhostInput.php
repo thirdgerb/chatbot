@@ -42,7 +42,7 @@ interface GhostInput extends GhostMsg
 
     public function output(
         HostMsg $message,
-        float $deliverAt = 0,
+        int $deliverAt = 0,
         string $cloneId = null,
         string $shellName = null,
         string $guestId = null

@@ -43,8 +43,8 @@ use Commune\Support\Uuid\IdGeneratorHelper;
  * @property-read HostMsg $message
  * @property-read Comprehension $comprehension
  *
- * @property-read float $deliverAt
- * @property-read float $createdAt
+ * @property-read int $deliverAt
+ * @property-read int $createdAt
  *
  * @property-read string $sceneId
  * @property-read array $env
@@ -112,8 +112,8 @@ class IGhostInput extends AbsMessage implements GhostInput, HasIdGenerator
             'message' => new IText(),
             'comprehension' => new IComprehension(),
 
-            'deliverAt' => $now = round(floatval(microtime(true)), 3),
-            'createdAt' => $now,
+            'deliverAt' => 0,
+            'createdAt' => time(),
         ];
     }
 
@@ -122,7 +122,7 @@ class IGhostInput extends AbsMessage implements GhostInput, HasIdGenerator
         return new static(
             $data['message'] ?? null,
             $data['cloneId'] ?? '',
-            $data['senderId'] ?? '',
+            $data['sessionId'] ?? '',
             $data['shellName'] ?? '',
             $data['shellId'] ?? '',
             $data['senderId'] ?? '',
@@ -156,12 +156,12 @@ class IGhostInput extends AbsMessage implements GhostInput, HasIdGenerator
         return $this->message;
     }
 
-    public function getCreatedAt(): float
+    public function getCreatedAt(): int
     {
-        return $this->createdAt;
+        return round($this->createdAt, 3);
     }
 
-    public function getDeliverAt(): float
+    public function getDeliverAt(): int
     {
         return $this->deliverAt;
     }
@@ -236,7 +236,7 @@ class IGhostInput extends AbsMessage implements GhostInput, HasIdGenerator
 
     public function output(
         HostMsg $message,
-        float $deliverAt = 0,
+        int $deliverAt = 0,
         string $cloneId = null,
         string $shellName = null,
         string $guestId = null

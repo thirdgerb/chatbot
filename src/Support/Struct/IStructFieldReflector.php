@@ -228,9 +228,9 @@ class IStructFieldReflector implements StructFieldReflector
             case 'integer' :
                 return is_int($value);
             case 'float' :
-                return is_float($value);
+                return is_float($value) || is_int($value);
             case 'double' :
-                return is_double($value);
+                return is_double($value) || is_int($value);
             case 'array' :
                 return is_array($value);
             case 'callable' :

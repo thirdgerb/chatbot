@@ -97,8 +97,8 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
             'message' => new IText(),
             'comprehension' => new IComprehension(),
 
-            'deliverAt' => $now = round(floatval(microtime(true)), 3),
-            'createdAt' => $now,
+            'deliverAt' => 0,
+            'createdAt' => time(),
         ];
     }
 
@@ -133,12 +133,12 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
         return $this->message;
     }
 
-    public function getCreatedAt(): float
+    public function getCreatedAt(): int
     {
         return $this->createdAt;
     }
 
-    public function getDeliverAt(): float
+    public function getDeliverAt(): int
     {
         return $this->deliverAt;
     }
