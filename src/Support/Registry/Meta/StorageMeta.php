@@ -20,8 +20,7 @@ use Commune\Support\Option\Wrapper;
  *
  * @property-read string $name
  * @property-read string $wrapper
- * @property-read string $config
- *
+ * @property-read array $config
  *
  * @method StorageOption getWrapper()
  */

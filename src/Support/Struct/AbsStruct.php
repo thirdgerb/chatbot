@@ -134,7 +134,7 @@ abstract class AbsStruct implements Struct, \Serializable
         $error = static::validate($data);
 
         if (isset($error)) {
-            throw new InvalidStructException("struct validate data fail: $error");
+            throw new InvalidStructException(static::class . " struct validate data fail: $error");
         }
         $this->_data = $data;
     }

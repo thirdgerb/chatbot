@@ -144,7 +144,7 @@ abstract class AbsFileStorage implements Storage
         $path = $storageOption->path;
 
         // 获得资源的数据.
-        $data = $this->readFileArr($path);
+        $data = $this->readSingleFile($path);
         $this->resources[$cateId] = $storageOption->getId();
         if (empty($data)) {
             return;
@@ -153,7 +153,6 @@ abstract class AbsFileStorage implements Storage
         $className = $category->optionClass;
         foreach ($data as $optionArr) {
             $option = $this->newOption($className, $optionArr);
-
             $optionId = $option->getId();
             $this->optionCaches[$cateId][$optionId] = $option;
             $this->optionFromFile[$cateId][$optionId] = $path;
@@ -186,7 +185,7 @@ abstract class AbsFileStorage implements Storage
              * @var \SplFileInfo $file
              */
             $filePath = $file->getRealPath();
-            $optionArr = $this->readFileArr($filePath);
+            $optionArr = $this->readSingleFile($filePath);
             if (isset($optionArr)) {
                 $option = $this->newOption($optionClass, $optionArr);
                 $optionId = $option->getId();
@@ -197,7 +196,7 @@ abstract class AbsFileStorage implements Storage
     }
 
 
-    protected function readFileArr(string $path) : ? array
+    protected function readSingleFile(string $path) : ? array
     {
         $content = file_get_contents($path);
         if (empty($content)) {
@@ -337,14 +336,18 @@ abstract class AbsFileStorage implements Storage
     {
         $storageOption = $this->parseOption($storageOption);
         // 保证读取.
-        if (!$this->isLoaded($categoryOption)) {
-            $this->loadFile($categoryOption, $storageOption);
-        }
+        $this->boot($categoryOption, $storageOption);
+
+
 
         $cateId = $categoryOption->getId();
         $optionId = $option->getId();
-        $this->optionCaches[$cateId][$optionId] = $option;
 
+        if ($notExists && isset($this->optionCaches[$cateId][$optionId])) {
+            return false;
+        }
+
+        $this->optionCaches[$cateId][$optionId] = $option;
         // 存储到介质.
         if ($storageOption->isDir) {
             $this->saveToDir($categoryOption, $storageOption, $option);
@@ -364,6 +367,7 @@ abstract class AbsFileStorage implements Storage
     {
         $cateId = $categoryOption->getId();
         $storage = $this->parseOption($storageOption);
+        array_unshift($ids, $id);
 
         $unset = [];
         foreach ($ids as $id) {

@@ -30,7 +30,7 @@ abstract class AbsMeta extends AbsOption implements Meta
 
     public function getWrapper(): Wrapper
     {
-        $wrapperName = $data['wrapper'] ?? '';
+        $wrapperName = $this->wrapper;
         // 允许处理别名.
         $wrapperName = Aliases::alias($wrapperName);
 

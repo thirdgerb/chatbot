@@ -5,9 +5,8 @@ namespace Commune\Support\Registry\Demo;
 
 use Commune\Support\Option\AbsOption;
 
-
 /**
- * @property-read int $id
+ * @property-read string $id
  * @property-read string $a
  * @property-read string $b
  * @property-read TestSubOption[] $c
@@ -22,7 +21,7 @@ class TestOption extends AbsOption
             'id' => '1',
             'a' => 'A',
             'b' => 'B',
-            'c' => []
+            'c' => [TestSubOption::stub()],
         ];
     }
 
@@ -32,6 +31,5 @@ class TestOption extends AbsOption
             'c[]' => TestSubOption::class
         ];
     }
-
 
 }

@@ -71,12 +71,6 @@ abstract class FileStorageOption extends StorageOption
             return "resource file $path not exits";
         }
 
-        $driver = $data['driver'] ?? '';
-
-        if (!is_a($driver, $abs = AbsFileStorage::class, TRUE)) {
-            return "driver must be subclass of $abs, $driver given";
-        }
-
         return parent::validate($data);
     }
 

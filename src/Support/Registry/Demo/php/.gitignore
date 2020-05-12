@@ -1,3 +1,4 @@
 *
 !.gitignore
-!rootPhp.php
+!data.php
+!data/

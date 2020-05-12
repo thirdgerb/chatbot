@@ -1,3 +1,4 @@
 *
 !.gitignore
-!rootJson.json
+!data.json
+!data/

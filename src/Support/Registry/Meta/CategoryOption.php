@@ -38,6 +38,7 @@ class CategoryOption extends AbsOption
     {
         return [
             'name' => '',
+            'cacheExpire' => 600,
             'optionClass' => '',
             'storage' => [],
             'initialStorage' => null,

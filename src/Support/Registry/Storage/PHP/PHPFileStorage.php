@@ -35,7 +35,7 @@ return $arr;
 EOF;
     }
 
-    protected function readFileArr(string $path): array
+    protected function readSingleFile(string $path): array
     {
         return include $path;
     }

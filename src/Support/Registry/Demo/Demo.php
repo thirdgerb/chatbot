@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Support\OptionRepo\Demo;
+namespace Commune\Support\Registry\Demo;
 
 
 class Demo
@@ -11,5 +11,4 @@ class Demo
     const PHP = __DIR__ . '/php';
 
     const YAML = __DIR__ . '/yaml';
-
 }

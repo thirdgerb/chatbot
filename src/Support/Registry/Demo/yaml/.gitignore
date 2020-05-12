@@ -1,3 +1,4 @@
 *
 !.gitignore
-!rootYaml.yml
+!data.yml
+!data/

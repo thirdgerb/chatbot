@@ -122,7 +122,7 @@ class ICategory implements Category
     {
         $this->checkExpire();
         if (isset($this->cachedOptions[$optionId])) {
-            return $this->categoryOption[$optionId];
+            return $this->cachedOptions[$optionId];
         }
 
         $option = $this->getStorage()->find(
@@ -138,7 +138,7 @@ class ICategory implements Category
             );
         }
 
-        return $this->categoryOption[$optionId] = $option;
+        return $this->cachedOptions[$optionId] = $option;
     }
 
     public function save(Option $option, bool $notExists = false): bool
@@ -172,7 +172,7 @@ class ICategory implements Category
             ...$ids
         );
 
-        $ids = array_unshift($ids, $id);
+        array_unshift($ids, $id);
         foreach ($ids as $id) {
             unset($this->cachedOptions[$id]);
             unset($this->allIds[$id]);

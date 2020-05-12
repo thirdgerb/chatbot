@@ -41,7 +41,6 @@ class JsonStorageOption extends FileStorageOption
         ];
     }
 
-
     public function getDriver(): string
     {
         return JsonFileStorage::class;

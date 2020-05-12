@@ -20,7 +20,7 @@ use Commune\Support\Registry\Exceptions\CategoryNotFoundException;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Registry
+interface OptRegistry
 {
     /*---- meta ----*/
 

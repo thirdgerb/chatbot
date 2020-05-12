@@ -14,7 +14,7 @@ namespace Commune\Support\Registry\Impl;
 use Commune\Support\Registry\Category;
 use Commune\Support\Registry\Exceptions\CategoryNotFoundException;
 use Commune\Support\Registry\Meta\CategoryOption;
-use Commune\Support\Registry\Registry;
+use Commune\Support\Registry\OptRegistry;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -22,7 +22,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IRegistry implements Registry
+class IOptRegistry implements OptRegistry
 {
     /**
      * @var ContainerInterface
