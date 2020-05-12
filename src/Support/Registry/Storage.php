@@ -11,10 +11,9 @@
 
 namespace Commune\Support\Registry;
 
-use Commune\Support\Registry\Meta\CategoryMeta;
-use Commune\Support\Registry\Meta\StorageMeta;
+use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Option\Option;
-
+use Commune\Support\Registry\Meta\StorageOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -23,81 +22,98 @@ interface Storage
 {
 
     /**
-     * 彻底清空一组缓存.
+     * 初始化某个库.
      *
-     * @param CategoryMeta $category
-     * @param StorageMeta $storage
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
      */
-    public function flush(
-        CategoryMeta $category,
-        StorageMeta $storage
+    public function boot(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption
     ) : void;
 
     /**
-     * 保存一个数据. 更新或者存储.
-     *
-     * @param CategoryMeta $category
-     * @param StorageMeta $storage
-     * @param Option[] $options
-     */
-    public function save(
-        CategoryMeta $category,
-        StorageMeta $storage,
-        Option ...$options
-    ) : void;
-
-    /**
-     * @param CategoryMeta $category
-     * @param StorageMeta $storage
-     * @param string $id
-     * @return Option|null
-     */
-    public function get(
-        CategoryMeta $category,
-        StorageMeta $storage,
-        string $id
-    ) : ? Option;
-
-    /**
-     * 查看一个 option 是否定义过, 已经存在.
-     * 通常由 root storage 来进行 has 检查.
-     * 否则可能会导致管道层层向下.
-     * 所以 root Storage 的 has 方法必须做到高性能.
-     *
-     * @param CategoryMeta $category
-     * @param StorageMeta $storage
-     * @param string $id
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param string $optionId
      * @return bool
      */
     public function has(
-        CategoryMeta $category,
-        StorageMeta $storage,
-        string $id
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        string $optionId
     ) : bool;
 
     /**
-     * @param CategoryMeta $category
-     * @param StorageMeta $storage
-     * @param string[] $ids
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param string $optionId
+     * @return Option
      */
-    public function delete(
-        CategoryMeta $category,
-        StorageMeta $storage,
-        string ...$ids
-    ) : void;
+    public function find(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        string $optionId
+    ) : ? Option;
 
     /**
-     * 锁定一个要存储的id. 锁定成功了可以去存. 避免抢占.
+     * 更新, 或者保存一个 option.
      *
-     * @param CategoryMeta $category
-     * @param string $id
-     * @param StorageMeta $storage
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param Option $option
+     * @param bool $notExists
      * @return bool
      */
-    public function lockId(
-        CategoryMeta $category,
-        StorageMeta $storage,
-        string $id
+    public function save(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        Option $option,
+        bool $notExists = false
     ) : bool;
+
+
+    /**
+     * 通过 ID 删除掉若干个 Option
+     *
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param string $id
+     * @param string ...$ids
+     * @return int
+     */
+    public function delete(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        string $id,
+        string ...$ids
+    ) : int;
+
+
+    /**
+     * 使用 id 数组, 取出相关 Option 的 map
+     *
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param array $ids
+     * @return array
+     */
+    public function findByIds(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        array $ids
+    ) : array;
+
+    /**
+     * 取出所有 option 的ID
+     *
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @return array
+     */
+    public function getAllIds(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption
+    ) : array;
 
 }

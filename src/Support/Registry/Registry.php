@@ -11,7 +11,7 @@
 
 namespace Commune\Support\Registry;
 
-use Commune\Support\Registry\Meta\CategoryMeta;
+use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Exceptions\CategoryNotFoundException;
 
 
@@ -26,18 +26,18 @@ interface Registry
 
     /**
      * 注册一个 struct 分类的元数据.
-     * @param CategoryMeta $meta
+     * @param CategoryOption $meta
      */
-    public function registerCategory(CategoryMeta $meta) : void;
+    public function registerCategory(CategoryOption $meta) : void;
 
     /**
      * 获取一个 struct 分类的元数据. 不存在会抛出异常.
      *
      * @param string $categoryName
-     * @return CategoryMeta
+     * @return CategoryOption
      * @throws CategoryNotFoundException
      */
-    public function getCategoryMeta(string $categoryName) :  CategoryMeta;
+    public function getCategoryOption(string $categoryName) :  CategoryOption;
 
     /**
      * 检查分类是否存在.
@@ -54,5 +54,10 @@ interface Registry
      * @throws CategoryNotFoundException
      */
     public function getCategory(string $categoryName) : Category;
+
+    /**
+     * @return \Generator
+     */
+    public function eachCategory() : \Generator;
 
 }

@@ -11,9 +11,6 @@
 
 namespace Commune\Support\Message;
 
-use Commune\Message\Intercom\IShellInput;
-use Commune\Protocals\Intercom\GhostInput;
-use Commune\Protocals\Intercom\ShellInput;
 use Commune\Support\Babel\Babel;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\Struct\StructReflections;

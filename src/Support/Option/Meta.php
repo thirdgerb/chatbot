@@ -9,13 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Support\Meta;
+namespace Commune\Support\Option;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $name
+ * @property-read string $wrapper
+ * @property-read array $config
  */
-interface MetaRegistrar
+interface Meta extends Option
 {
+
+    public function getWrapper() : Wrapper;
 
 }

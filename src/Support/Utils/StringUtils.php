@@ -58,13 +58,15 @@ class StringUtils
     }
 
     /**
-     * 通配符专为正则. 通配符只能匹配 \w
+     * 通配符专为正则. 默认通配符只能匹配 \w
+     *
      * @param string $string
+     * @param string $replace
      * @return string
      */
-    public static function wildcardToRegex(string $string) : string
+    public static function wildcardToRegex(string $string, string $replace = '\w+') : string
     {
-        $string = str_replace('*', '\w+', $string);
+        $string = str_replace('*', $replace, $string);
         return "/^$string$/";
     }
 

@@ -37,12 +37,6 @@ interface Option extends Struct, Injectable
      */
     public function getId() : string;
 
-    /**
-     * ID 对应的字段名.
-     * @return string
-     */
-    public static function getIdentityName() : string;
-
 
     /**
      * 默认样板数据. 为真实数据提供默认值.

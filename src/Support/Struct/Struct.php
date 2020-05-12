@@ -25,6 +25,7 @@ interface Struct extends ArrayAndJsonAble, \IteratorAggregate
 {
     const GETTER_PREFIX = '__get_';
     const SETTER_PREFIX = '__set_';
+    const CREATE_FUNC = 'create';
 
     /*------- construct -------*/
 

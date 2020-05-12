@@ -11,11 +11,15 @@
 
 namespace Commune\Support\Registry\Exceptions;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StructNotFoundException extends \RuntimeException
+class OptionNotFoundException extends \RuntimeException
 {
+    public function __construct(string $method, string $optionId)
+    {
+        $message = "option not found that id is $optionId, called by $method";
+        parent::__construct($message);
+    }
 
 }

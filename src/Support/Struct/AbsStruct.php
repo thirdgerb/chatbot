@@ -312,12 +312,12 @@ abstract class AbsStruct implements Struct, \Serializable
 
     public function serialize()
     {
-        return $this->toJson();
+        return json_encode($this->_data);
     }
 
     public function unserialize($serialized)
     {
-        return static::create(json_decode($serialized, true));
+        $this->_constructData(json_decode($serialized, true));
     }
 
 

@@ -13,7 +13,7 @@ namespace Commune\Support\Registry\Impl;
 
 use Commune\Support\Registry\Category;
 use Commune\Support\Registry\Exceptions\CategoryNotFoundException;
-use Commune\Support\Registry\Meta\CategoryMeta;
+use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Registry;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -31,9 +31,9 @@ class IRegistry implements Registry
 
 
     /**
-     * @var CategoryMeta[]
+     * @var CategoryOption[]
      */
-    protected $categoryMetas = [];
+    protected $categoryOptions = [];
 
     /**
      * @var LoggerInterface
@@ -57,14 +57,14 @@ class IRegistry implements Registry
         $this->logger = $logger;
     }
 
-    public function registerCategory(CategoryMeta $meta): void
+    public function registerCategory(CategoryOption $meta): void
     {
-        $this->categoryMetas[$meta->name] = $meta;
+        $this->categoryOptions[$meta->getId()] = $meta;
     }
 
-    public function getCategoryMeta(string $categoryName): CategoryMeta
+    public function getCategoryOption(string $categoryName): CategoryOption
     {
-        $meta = $this->categoryMetas[$categoryName] ?? null;
+        $meta = $this->categoryOptions[$categoryName] ?? null;
 
         if (empty($meta)) {
             throw new CategoryNotFoundException($categoryName);
@@ -75,18 +75,28 @@ class IRegistry implements Registry
 
     public function hasCategory(string $categoryName): bool
     {
-        return array_key_exists($categoryName, $this->categoryMetas);
+        return array_key_exists($categoryName, $this->categoryOptions);
     }
 
     public function getCategory(string $categoryName): Category
     {
-        return $this->categories[$categoryName]
-            ?? $this->categories[$categoryName] = new ICategory(
-                $this->container,
-                $this->logger,
-                $this->categoryMetas[$categoryName]
-            );
+        if (isset($this->categories[$categoryName])) {
+            return $this->categories[$categoryName];
+        }
+
+        $option = $this->getCategoryOption($categoryName);
+        $category = new ICategory($this->container, $this->logger, $option);
+        $category->boot();
+        return $this->categories[$categoryName] = $category;
     }
+
+    public function eachCategory(): \Generator
+    {
+        foreach ($this->categoryOptions as $option) {
+            yield $this->getCategory($option->getId());
+        }
+    }
+
 
     public function __destruct()
     {
@@ -95,7 +105,7 @@ class IRegistry implements Registry
 
         // 否则不能垃圾回收.
         $this->categories = [];
-        $this->categoryMetas = [];
+        $this->categoryOptions = [];
     }
 
 }
