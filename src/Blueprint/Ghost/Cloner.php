@@ -19,11 +19,7 @@ use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Auth\Authority;
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Protocals\Intercom\GhostMsg;
-use Commune\Protocals\Intercom\GhostOutput;
-use Commune\Support\Message\Message;
-use Commune\Support\Option\OptRegistry;
-use Commune\Blueprint\Ghost\Operator\Operator;
-use Commune\Blueprint\Ghost\Runtime\Task;
+use Commune\Support\Registry\OptRegistry;
 
 
 /**
@@ -35,9 +31,6 @@ use Commune\Blueprint\Ghost\Runtime\Task;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
- * # 对话模块
- * @property-read Typer $convo                      对话模块
  *
  * # 作用域
  * @property-read GhostConfig $config               机器人配置
@@ -53,7 +46,7 @@ use Commune\Blueprint\Ghost\Runtime\Task;
  * @property-read GhostInput $ghostInput            输入
  * @property-read Cloner\ClonerScene $scene         场景信息
  * @property-read Cloner\ClonerScope $scope         当前分身的维度.
- * @property-read Ghost\Routing\Matcher
+ * @property-read Ghost\Tools\Matcher $matcher      全局的匹配单元
  *
  * # 功能组件
  * @property-read Cache $cache                      公共缓存
@@ -66,7 +59,7 @@ use Commune\Blueprint\Ghost\Runtime\Task;
  *
  * # Host 组件
  * @property-read Ghost $ghost                      Ghost 本体
- * @property-read OptRegistry $registry                注册表
+ * @property-read OptRegistry $registry             配置注册表
  *
  */
 interface Cloner extends Session

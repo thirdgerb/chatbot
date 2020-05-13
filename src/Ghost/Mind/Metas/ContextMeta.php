@@ -34,7 +34,6 @@ use Commune\Support\Utils\TypeUtils;
  */
 class ContextMeta extends AbsMeta
 {
-
     const IDENTITY = 'name';
 
     public static function stub(): array
@@ -43,8 +42,8 @@ class ContextMeta extends AbsMeta
             'name' => '',
             'title' => 'contextTitle',
             'desc' => 'contextDesc',
-            'wrapper' => IContextDef::class,
-            'config' => IContextDef::stub(),
+            'wrapper' => ContextDef::class,
+            'config' => ContextDef::stub(),
             'editorContext' => null,
         ];
     }

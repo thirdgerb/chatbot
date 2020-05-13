@@ -32,6 +32,8 @@ interface Intention extends Abstracted
 {
     /*----- do match -----*/
 
+    public function matchAnyIntent(array $intents) : ? string;
+
     /**
      * @param string $intent
      * @return bool

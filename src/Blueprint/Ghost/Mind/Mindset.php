@@ -12,6 +12,8 @@
 namespace Commune\Blueprint\Ghost\Mind;
 
 use Commune\Blueprint\Ghost\Mind\Registries\ContextReg;
+use Commune\Blueprint\Ghost\Mind\Registries\DefRegistry;
+use Commune\Blueprint\Ghost\Mind\Registries\EmotionReg;
 use Commune\Blueprint\Ghost\Mind\Registries\EntityReg;
 use Commune\Blueprint\Ghost\Mind\Registries\IntentReg;
 use Commune\Blueprint\Ghost\Mind\Registries\MemoryReg;
@@ -27,19 +29,51 @@ interface Mindset
 {
 
     /**
+     * 初始化所有的 Contexts
+     */
+    public function initContexts() : void;
+
+    /**
      * 清空所有的逻辑记忆.
      */
     public function reload() : void;
 
-    public function contextReg() : ContextReg;
+    /**
+     * 上下文语境注册表.
+     * @return ContextReg
+     */
+    public function contextReg() : DefRegistry;
 
-    public function intentReg() : IntentReg;
+    /**
+     * Stage 注册表
+     * @return StageReg
+     */
+    public function stageReg() : DefRegistry;
 
-    public function stageReg() : StageReg;
+    /**
+     * 意图注册表.
+     * @return IntentReg
+     */
+    public function intentReg() : DefRegistry;
 
-    public function memoryReg() : MemoryReg;
+    /**
+     * @return MemoryReg
+     */
+    public function memoryReg() : DefRegistry;
 
-    public function entityReg() : EntityReg;
+    /**
+     * @return EmotionReg
+     */
+    public function emotionReg() : DefRegistry;
 
-    public function synonymReg() : SynonymReg;
+    /**
+     * @return EntityReg
+     */
+    public function entityReg() : DefRegistry;
+
+    /**
+     * @return SynonymReg
+     */
+    public function synonymReg() : DefRegistry;
+
 }

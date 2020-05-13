@@ -58,6 +58,31 @@ class IIntention extends AbsMessage implements Intention
 
     /*----- do match -----*/
 
+    public function matchAnyIntent(array $intents): ? string
+    {
+        $possible = $this->getPossibleIntentNames();
+        if (empty($possible)) {
+            return null;
+        }
+
+        foreach ($intents as $intent) {
+            if (StringUtils::isWildCardPattern($intent)) {
+                $pattern = StringUtils::wildcardToRegex($intent);
+                foreach ($possible as $maybe) {
+                    if (preg_match($pattern, $maybe)) {
+                        return $maybe;
+                    }
+                }
+
+            } elseif($this->hasPossibleIntent($intent)) {
+                return $intent;
+            }
+        }
+
+        return null;
+    }
+
+
     public function isWildcardIntent(string $intent): bool
     {
         return StringUtils::isWildCardPattern($intent);

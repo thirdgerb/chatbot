@@ -27,7 +27,7 @@ use Commune\Support\Option\AbsOption;
  * @property-read string[] $emotionalIntents    符合该情感的各种意图名称.
  * @property-read string[] $matchers            自定义的匹配逻辑.
  */
-class EmotionMeta extends AbsOption
+class EmotionMeta extends AbsOption implements DefMeta
 {
     const IDENTITY = 'name';
 
@@ -37,7 +37,6 @@ class EmotionMeta extends AbsOption
             'name' => '',
             'title' => '',
             'desc' => '',
-            'implements' => [],
             'emotionalIntents' => [],
             'matchers' => [],
         ];

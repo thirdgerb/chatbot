@@ -34,7 +34,7 @@ class IClonerScene implements ClonerScene
 
     public function __construct(GhostInput $input, GhostConfig $config)
     {
-        $sceneId = $input->sceneId;
+        $sceneId = $input->getSceneId();
 
         if (!isset($config->sceneContextNames[$sceneId])) {
             $sceneId = $config->defaultScene;
@@ -47,7 +47,7 @@ class IClonerScene implements ClonerScene
                 'sceneId'
             );
         }
-        $this->env = $input->env;
+        $this->env = $input->getEnv();
     }
 
     public function __get($name)

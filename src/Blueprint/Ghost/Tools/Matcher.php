@@ -52,10 +52,10 @@ interface Matcher
      *
      * run action only if expecting prediction return true
      *
-     * @param Prediction|callable $prediction  return bool
+     * @param Prediction|callable|string $prediction  return bool
      * @return bool
      */
-    public function expect(callable $prediction) : bool;
+    public function expect($prediction) : bool;
 
 
     /**

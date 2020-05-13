@@ -47,6 +47,7 @@ use Commune\Support\Option\Option;
  * @property-read int $sessionExpire            Session 的过期时间, 秒
  * @property-read int $sessionLockerExpire      Session 锁的过期时间, 为0 则不锁
  * @property-read int $maxRedirectTimes
+ * @property-read int $mindsetCacheExpire       Mindset 的配置过期时间.
  *
  * @property-read ProtocalOption[] $protocals   Session 可以处理的协议.
  * [

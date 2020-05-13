@@ -16,20 +16,17 @@ use Commune\Support\Option\AbsOption;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name              分类的名称. 同一个名称下可以有多个分类.
- * @property-read string $title             分类的标题.
- * @property-read string $desc              分类的简介.
+ * @property-read string $name                  分类的名称. 同一个名称下可以有多个分类.
+ * @property-read string $title                 分类的标题.
+ * @property-read string $desc                  分类的简介.
  *
- * @property-read string $optionClass       storage 里存储的 option的类名
+ * @property string $optionClass                storage 里存储的 option的类名
  *
- * @property-read int $cacheExpire          Category 缓存对象过期时间. 是整点自动过期.
+ * @property int $cacheExpire                   Category 缓存对象过期时间. 是整点自动过期.
  *
- * @property-read StorageMeta $storage
- * 获取数据的 storage.
+ * @property StorageMeta $storage               获取数据的 storage.
  *
- * @property-read StorageMeta|null $initialStorage
- * 初始化时使用的 Storage
- *
+ * @property StorageMeta|null $initialStorage   初始化时使用的 Storage
  *
  */
 class CategoryOption extends AbsOption
@@ -40,10 +37,10 @@ class CategoryOption extends AbsOption
     {
         return [
             'name' => '',
+            'optionClass' => '',
             'title' => 'title',
             'desc' => 'desc',
             'cacheExpire' => 600,
-            'optionClass' => '',
             'storage' => [],
             'initialStorage' => null,
         ];

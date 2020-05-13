@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost;
+namespace Commune\Ghost\Providers;
 
 use Commune\Blueprint\Ghost\Auth\Authority;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Cloner\ClonerLogger;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
-use Commune\Blueprint\Ghost\Tools\Typer;
+use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Container\ContainerContract as Container;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Framework\Contracts\ServiceProvider;
@@ -26,15 +26,15 @@ use Commune\Ghost\Cloner\IClonerLogger;
 use Commune\Ghost\Cloner\IClonerScene;
 use Commune\Ghost\Cloner\IClonerScope;
 use Commune\Ghost\Cloner\IClonerStorage;
+use Commune\Ghost\Routing\IMatcher;
 use Commune\Ghost\Runtime\IRuntime;
-use Commune\Ghost\Tools\ITyper;
 use Psr\Log\LoggerInterface;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class GhostServiceProvider extends ServiceProvider
+class GhostReqServiceProvider extends ServiceProvider
 {
 
     public static function stub(): array
@@ -52,13 +52,9 @@ class GhostServiceProvider extends ServiceProvider
         $this->registerConvoScope($app);
         $this->registerConvoLogger($app);
         $this->registerConvoScene($app);
-
         $this->registerAuth($app);
-        $this->registerMindset($app);
         $this->registerRuntime($app);
-
         $this->registerMatcher($app);
-
         $this->registerStorage($app);
     }
 
@@ -113,5 +109,10 @@ class GhostServiceProvider extends ServiceProvider
     protected function registerStorage(Container $app) : void
     {
         $app->singleton(ClonerStorage::class, IClonerStorage::class);
+    }
+
+    protected function registerMatcher(Container $app) : void
+    {
+        $app->singleton(Matcher::class, IMatcher::class);
     }
 }

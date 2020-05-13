@@ -11,10 +11,11 @@
 
 namespace Commune\Ghost\Mind;
 
-use Commune\Ghost\Mind\Metas;
 use Commune\Ghost\Mind\IRegistries;
 use Commune\Blueprint\Ghost\Mind\Registries;
+use Commune\Blueprint\Ghost\Mind\Registries\DefRegistry;
 use Commune\Blueprint\Ghost\Mind\Mindset;
+use Commune\Ghost\Providers\MindCacheExpireOption;
 use Commune\Support\Registry\OptRegistry;
 
 /**
@@ -26,7 +27,11 @@ class IMindset implements Mindset
     const REGISTRY_IMPL = [
         Registries\ContextReg::class => IRegistries\IContextReg::class,
         Registries\EntityReg::class => IRegistries\IEntityReg::class,
-
+        Registries\SynonymReg::class => IRegistries\ISynonymReg::class,
+        Registries\MemoryReg::class => IRegistries\IMemoryReg::class,
+        Registries\IntentReg::class => IRegistries\IIntentReg::class,
+        Registries\StageReg::class => IRegistries\IStageReg::class,
+        Registries\EmotionReg::class => IRegistries\IEmotionReg::class,
     ];
 
     /**
@@ -35,7 +40,7 @@ class IMindset implements Mindset
     protected $optRegistry;
 
     /**
-     * @var int
+     * @var MindCacheExpireOption
      */
     protected $cacheExpire;
 
@@ -43,9 +48,40 @@ class IMindset implements Mindset
 
     protected $registries = [];
 
+    /**
+     * IMindset constructor.
+     * @param OptRegistry $optRegistry
+     * @param MindCacheExpireOption $option
+     */
+    public function __construct(OptRegistry $optRegistry, MindCacheExpireOption $option)
+    {
+        $this->optRegistry = $optRegistry;
+        $this->cacheExpire = $option;
+    }
+
+    public function reload(): void
+    {
+        $this->contextReg()->flushCache();
+        $this->intentReg()->flushCache();
+        $this->stageReg()->flushCache();
+        $this->memoryReg()->flushCache();
+        $this->entityReg()->flushCache();
+        $this->synonymReg()->flushCache();
+        $this->emotionReg()->flushCache();
+    }
+
+    public function initContexts(): void
+    {
+        $contextReg = $this->contextReg();
+        foreach($contextReg->each() as $def) {
+            $contextReg->registerDef($def);
+        }
+    }
+
+
     /*---- registries ----*/
 
-    protected function getReg(string $type) : Registries\DefRegistry
+    protected function getReg(string $type, int $cacheExpire) : DefRegistry
     {
         if (isset($this->registries[$type])) {
             return $this->registries[$type];
@@ -56,39 +92,65 @@ class IMindset implements Mindset
         return new $impl(
             $this,
             $this->optRegistry,
-            $this->cacheExpire
+            $cacheExpire
         );
     }
 
 
-    public function contextReg(): Registries\ContextReg
+    public function contextReg(): DefRegistry
     {
-        return $this->getReg(Registries\ContextReg::class);
+        return $this->getReg(
+            Registries\ContextReg::class,
+            $this->cacheExpire->context
+        );
     }
 
-    public function intentReg(): Registries\IntentReg
+    public function intentReg(): DefRegistry
     {
-        // TODO: Implement intentReg() method.
+        return $this->getReg(
+            Registries\IntentReg::class,
+            $this->cacheExpire->intent
+        );
     }
 
-    public function stageReg(): Registries\StageReg
+    public function stageReg(): DefRegistry
     {
-        // TODO: Implement stageReg() method.
+        return $this->getReg(
+            Registries\StageReg::class,
+            $this->cacheExpire->stage
+        );
     }
 
-    public function memoryReg(): Registries\MemoryReg
+    public function memoryReg(): DefRegistry
     {
-        // TODO: Implement memoryReg() method.
+        return $this->getReg(
+            Registries\MemoryReg::class,
+            $this->cacheExpire->memory
+        );
     }
 
-    public function entityReg(): Registries\EntityReg
+    public function entityReg(): DefRegistry
     {
-        return $this->getReg(Registries\EntityReg::class);
+        return $this->getReg(
+            Registries\EntityReg::class,
+            $this->cacheExpire->entity
+        );
     }
 
-    public function synonymReg(): Registries\SynonymReg
+    public function synonymReg(): DefRegistry
     {
-        return $this->getReg(Registries\SynonymReg::class);
+        return $this->getReg(
+            Registries\SynonymReg::class,
+            $this->cacheExpire->synonym
+        );
+    }
+
+    public function emotionReg(): DefRegistry
+    {
+        return $this->getReg(
+            Registries\EmotionReg::class,
+            $this->cacheExpire->emotion
+        );
     }
 
 

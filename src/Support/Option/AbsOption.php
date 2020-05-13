@@ -4,7 +4,6 @@ namespace Commune\Support\Option;
 
 use Commune\Support\DI\TInjectable;
 use Commune\Support\Struct\AStruct;
-use Commune\Support\Utils\StringUtils;
 
 /**
  * 基于Entry 实现的配置.
