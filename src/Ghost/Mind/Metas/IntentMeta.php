@@ -9,28 +9,27 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Metas;
+namespace Commune\Ghost\Mind\Metas;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\StageDef;
-use Commune\Ghost\MindDef\IStageDef;
+use Commune\Message\Host\IIntentMsg;
 use Commune\Support\Option\AbsMeta;
+use Commune\Blueprint\Ghost\Mind\Definitions\IntentDef;
 
 
 /**
- * Stage 的元数据.
+ * 意图的元数据. 用于定义标准的意图.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StageMeta extends AbsMeta
+class IntentMeta extends AbsMeta
 {
     public static function stub(): array
     {
         return [
             'name' => '',
-            'title' => 'contextTitle',
-            'desc' => 'contextDesc',
-            'wrapper' => IStageDef::class,
-            'config' => IStageDef::stub(),
+            'title' => 'intentTitle',
+            'desc' => 'intentDesc',
+            'intentWrapper' => IIntentMsg::class
         ];
     }
 
@@ -41,10 +40,9 @@ class StageMeta extends AbsMeta
 
     public static function validateWrapper(string $wrapper): ? string
     {
-        $defType = StageDef::class;
+        $defType = IntentDef::class;
         return is_a($wrapper, $defType, TRUE)
             ? null
             : static::class . " wrapper should be subclass of $defType, $wrapper given";
     }
-
 }

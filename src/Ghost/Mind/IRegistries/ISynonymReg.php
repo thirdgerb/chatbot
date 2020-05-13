@@ -9,16 +9,26 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Registries;
+namespace Commune\Ghost\Mind\IRegistries;
 
 use Commune\Blueprint\Ghost\Mind\Definitions\SynonymDef;
+use Commune\Blueprint\Ghost\Mind\Registries\SynonymReg;
+use Commune\Ghost\Mind\Metas\SynonymMeta;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @method SynonymDef getDef(string $defName) : Def
  */
-interface SynonymReg extends DefRegistry
+class ISynonymReg extends AbsDefRegistry implements SynonymReg
 {
+    protected function getDefType(): string
+    {
+        return SynonymDef::class;
+    }
+
+    public function getMetaId(): string
+    {
+        return SynonymMeta::class;
+    }
+
 
 }

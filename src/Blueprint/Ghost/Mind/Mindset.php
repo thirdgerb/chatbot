@@ -12,8 +12,11 @@
 namespace Commune\Blueprint\Ghost\Mind;
 
 use Commune\Blueprint\Ghost\Mind\Registries\ContextReg;
+use Commune\Blueprint\Ghost\Mind\Registries\EntityReg;
 use Commune\Blueprint\Ghost\Mind\Registries\IntentReg;
+use Commune\Blueprint\Ghost\Mind\Registries\MemoryReg;
 use Commune\Blueprint\Ghost\Mind\Registries\StageReg;
+use Commune\Blueprint\Ghost\Mind\Registries\SynonymReg;
 
 /**
  * 对话机器人的基础思维
@@ -33,4 +36,10 @@ interface Mindset
     public function intentReg() : IntentReg;
 
     public function stageReg() : StageReg;
+
+    public function memoryReg() : MemoryReg;
+
+    public function entityReg() : EntityReg;
+
+    public function synonymReg() : SynonymReg;
 }

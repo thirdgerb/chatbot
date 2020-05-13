@@ -9,12 +9,12 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Mind\Registries;
+namespace Commune\Ghost\Mind\IRegistries;
 
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Mind\Definitions\ContextDef;
 use Commune\Blueprint\Ghost\Mind\Definitions\Def;
-use Commune\Blueprint\Ghost\Mind\Metas\ContextMeta;
+use Commune\Ghost\Mind\Metas\ContextMeta;
 use Commune\Blueprint\Ghost\Mind\Registries\ContextReg;
 
 

@@ -9,9 +9,12 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Metas;
+namespace Commune\Ghost\Mind\Metas;
 
+use Commune\Ghost\Mind\Defs\IMemoryDef;
 use Commune\Support\Option\AbsOption;
+use Commune\Support\Option\Wrapper;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -22,7 +25,7 @@ use Commune\Support\Option\AbsOption;
  * @property-read string[] $scopes  记忆的作用域.
  * @property-read array $defaults   记忆的默认值.
  */
-class MemoryMeta extends AbsOption
+class MemoryMeta extends AbsOption implements DefMeta
 {
     public static function stub(): array
     {
@@ -39,5 +42,21 @@ class MemoryMeta extends AbsOption
     {
         return [];
     }
+
+    public static function validate(array $data): ? string /* errorMsg */
+    {
+        $name = $data['name'] ?? '';
+        if (TypeUtils::isValidMemoryName($name)) {
+            return "memory name $name is invalid";
+        }
+
+        return parent::validate($data);
+    }
+
+    public function getWrapper(): Wrapper
+    {
+        return IMemoryDef::wrap($this);
+    }
+
 
 }

@@ -6,6 +6,10 @@ namespace Commune\Support\Utils;
 
 class StringUtils
 {
+    public static function isNotEmptyStr($str) : bool
+    {
+        return is_string($str) && $str !== '';
+    }
 
     /**
      * @param string $string

@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Mind\Definitions;
 
+use Commune\Ghost\Mind\Metas\DefMeta;
 use Commune\Support\Option\Wrapper;
 
 /**
@@ -18,6 +19,7 @@ use Commune\Support\Option\Wrapper;
  * 系统对 Meta 数据的加载, 决定了自己会有哪些逻辑.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
+ * @method DefMeta getMeta() : Meta
  */
 interface Def extends Wrapper
 {
@@ -38,12 +40,5 @@ interface Def extends Wrapper
      * @return string
      */
     public function getDescription() : string;
-
-    /**
-     * 名称匹配 (考虑到 反斜杠/大小写 之类特殊规则的一致化)
-     * @param string $name
-     * @return bool
-     */
-    public function nameEquals(string $name) : bool;
 
 }

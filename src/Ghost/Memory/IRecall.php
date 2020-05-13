@@ -27,21 +27,11 @@ use Commune\Support\Arr\TArrayAccessToMutator;
  */
 abstract class IRecall implements Recall
 {
-    use ArrayAbleToJson, TArrayAccessToMutator;
+    use ArrayAbleToJson, TArrayAccessToMutator, TRecollection;
 
     const GETTER_PREFIX = '__get_';
 
     const SETTER_PREFIX = '__set_';
-
-    protected $_id;
-
-    protected $_name;
-
-    protected $_longTerm;
-
-    protected $_memory;
-
-    protected $_cloner;
 
 
     private function __construct(string $id, bool $longTerm, Memory $memory, Cloner $cloner)
@@ -52,15 +42,6 @@ abstract class IRecall implements Recall
         $this->_cloner = $cloner;
     }
 
-    public function getId() : string
-    {
-        return $this->_id;
-    }
-
-    public function isLongTerm(): bool
-    {
-        return $this->_longTerm;
-    }
 
     public function getName(): string
     {
@@ -102,45 +83,8 @@ abstract class IRecall implements Recall
     }
 
 
-    public function offsetExists($offset)
-    {
-        return $this->_memory->offsetExists($offset);
-    }
-
-    public function offsetGet($offset)
-    {
-        $value = $this->_memory->offsetGet($offset);
-        if ($value instanceof Cloner\ClonerInstanceStub) {
-            $value = $value->toInstance($this->_cloner);
-        }
-        return $value;
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        if ($value instanceof Cloner\ClonerInstance) {
-            $value = $value->toInstanceStub();
-        }
-        $this->_memory->offsetSet($offset, $value);
-    }
-
-    public function offsetUnset($offset)
-    {
-        $this->_memory->offsetUnset($offset);
-    }
-
-    public function toArray(): array
-    {
-        return $this->_memory->toArray();
-    }
-
     private function __clone()
     {
     }
 
-    public function __destruct()
-    {
-        $this->_cloner = null;
-        $this->_memory = null;
-    }
 }

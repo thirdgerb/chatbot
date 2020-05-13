@@ -9,12 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Mind\Registries;
+namespace Commune\Ghost\Mind\IRegistries;
 
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Mind\Definitions\Def;
 use Commune\Blueprint\Ghost\Mind\Definitions\StageDef;
-use Commune\Blueprint\Ghost\Mind\Metas\StageMeta;
+use Commune\Ghost\Mind\Metas\StageMeta;
 use Commune\Blueprint\Ghost\Mind\Registries\StageReg;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -34,19 +36,21 @@ class IStageReg extends AbsDefRegistry implements StageReg
 
     protected function hasRegisteredMeta(string $defName): bool
     {
-        $hasRegistered = parent::hasRegisteredMeta($defName);
-        if ($hasRegistered) {
+        if (isset($this->cachedDefs[$defName])) {
             return true;
         }
 
+        list($prefix, $suffix) = StringUtils::dividePrefixAndName($defName, Context::NAMESPACE_SEPARATOR);
+
+        // 先检查 Context 是否存在. 同时也会尝试重新注册 ContextDef
         $contextReg = $this->mindset->contextReg();
-        $hasContext = $contextReg->hasDef($defName);
-        if ($hasContext) {
-            $this->registerDef($contextReg->getDef($defName)->asStageDef(), false);
-            return true;
+        // ContextName 可能是前缀, 可能是全名.
+        $hasContext = $contextReg->hasDef($defName) || $contextReg->hasDef($prefix);
+        if (!$hasContext) {
+            return false;
         }
 
-        return false;
+        return parent::hasRegisteredMeta($defName);
     }
 
     protected function getRegisteredMetaIds(): array

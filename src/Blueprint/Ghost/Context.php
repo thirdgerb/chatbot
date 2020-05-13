@@ -32,6 +32,7 @@ interface Context extends
         Injectable // Context 可以用各种方式依赖注入
 {
     const NAMESPACE_SEPARATOR = '.';
+    const STAGE_SEPARATOR = '_';
 
     /*----- properties -----*/
 

@@ -9,14 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Metas;
+namespace Commune\Blueprint\Ghost\Mind\Registries;
 
-use Commune\Support\Option\AbsOption;
+use Commune\Blueprint\Ghost\Mind\Definitions\MemoryDef;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @method MemoryDef getDef(string $defName) : Def
  */
-class EntityMeta extends AbsOption
+interface MemoryReg extends DefRegistry
 {
 
 }

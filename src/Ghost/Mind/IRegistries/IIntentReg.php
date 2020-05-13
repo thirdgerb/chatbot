@@ -9,10 +9,10 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Mind\Registries;
+namespace Commune\Ghost\Mind\IRegistries;
 
 use Commune\Blueprint\Ghost\Mind\Definitions\IntentDef;
-use Commune\Blueprint\Ghost\Mind\Metas\IntentMeta;
+use Commune\Ghost\Mind\Metas\IntentMeta;
 use Commune\Blueprint\Ghost\Mind\Registries\IntentReg;
 
 
@@ -33,19 +33,14 @@ class IIntentReg extends AbsDefRegistry implements IntentReg
 
     protected function hasRegisteredMeta(string $defName): bool
     {
-        $hasRegistered = parent::hasRegisteredMeta($defName);
-        if ($hasRegistered) {
+        if (array_key_exists($defName, $this->cachedDefs)) {
             return true;
         }
 
+        // 先检查 Stage, 会尝试注册 Context
         $stageReg = $this->mindset->stageReg();
         $hasStage = $stageReg->hasDef($defName);
-        if ($hasStage) {
-            $this->registerDef($stageReg->getDef($defName)->asIntentDef(), false);
-            return true;
-        }
-
-        return false;
+        return $hasStage || parent::hasRegisteredMeta($defName);
     }
 
 

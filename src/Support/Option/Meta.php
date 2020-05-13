@@ -13,11 +13,12 @@ namespace Commune\Support\Option;
 
 
 /**
- * @author thirdgerb <thirdgerb@gmail.com>
+ * Option 实现的元数据, 通过 Meta 可以获得另一个 Wrapper 对象.
  *
- * @property-read string $name
- * @property-read string $wrapper
- * @property-read array $config
+ * 这样就避免了强类型的配置数组中, 同一个数组可能对应多种 Option, 导致无法预定义关联关系.
+ * 现在可以统一定义 Meta 对象, 通过 Meta 再获取 Wrapper 对象.
+ *
+ * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Meta extends Option
 {

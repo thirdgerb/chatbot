@@ -9,15 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Metas;
+namespace Commune\Blueprint\Ghost\Mind\Definitions;
 
 
 /**
- * 同义词的元数据.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface SynonymMeta
+interface SynonymDef extends Def
 {
+
+    public function getValues() : array;
 
 }

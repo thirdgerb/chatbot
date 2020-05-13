@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Metas;
+namespace Commune\Ghost\Mind\Metas;
 
 use Commune\Blueprint\Ghost\Mind\Definitions\Def;
 use Commune\Support\Option\Meta;
@@ -17,9 +17,8 @@ use Commune\Support\Option\Meta;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @method Def getWrapper()
+ * @method Def getWrapper() : Wrapper
  */
 interface DefMeta extends Meta
 {
-
 }

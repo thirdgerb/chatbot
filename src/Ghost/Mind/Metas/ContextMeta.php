@@ -9,11 +9,12 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Metas;
+namespace Commune\Ghost\Mind\Metas;
 
 use Commune\Blueprint\Ghost\Mind\Definitions\ContextDef;
 use Commune\Ghost\MindDef\IContextDef;
 use Commune\Support\Option\AbsMeta;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * Context 配置的元数据.
@@ -51,6 +52,16 @@ class ContextMeta extends AbsMeta
     public static function relations(): array
     {
         return [];
+    }
+
+    public static function validate(array $data): ? string /* errorMsg */
+    {
+        $contextName = $data['name'] ?? '';
+        if (!TypeUtils::isValidContextName($contextName)) {
+            return 'context name is invalid';
+        }
+
+        return parent::validate($data);
     }
 
     public static function validateWrapper(string $wrapper): ? string

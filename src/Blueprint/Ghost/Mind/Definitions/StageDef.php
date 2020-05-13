@@ -35,12 +35,6 @@ interface StageDef extends Def
     public function getStageName() : string;
 
     /**
-     * stage 的全名, 通常对应 IntentName
-     * @return string
-     */
-    public function getFullStageName() : string;
-
-    /**
      * 所属 Context 的名称.
      * @return string
      */

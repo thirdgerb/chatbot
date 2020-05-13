@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Support\Utils;
+use Commune\Blueprint\Ghost\Context;
 
 
 /**
@@ -30,4 +31,41 @@ class TypeUtils
         return is_object($value) ? get_class($value) : gettype($value);
     }
 
+    public static function parseContextClassToName(string $str) : string
+    {
+        $str = StringUtils::namespaceSlashToDot($str);
+        return strtolower($str);
+    }
+
+    public static function isValidContextName(string $str) : bool
+    {
+        $pattern = '/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]+)*$/';
+        return (bool) preg_match($pattern, $str);
+    }
+
+    public static function isValidMemoryName(string $str) : bool
+    {
+        return self::isValidContextName($str);
+    }
+
+    public static function normalizeMemoryName(string $str) : string
+    {
+        return strtolower(StringUtils::namespaceSlashToDot($str));
+    }
+
+    public static function isValidStageFullName(string $str) : bool
+    {
+        return self::isValidIntentName($str);
+    }
+
+    public static function isValidIntentName(string $str) : bool
+    {
+        $pattern = '/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]+)*(\.[a-z][a-z_0-9]+){0,1}$/';
+        return (bool) preg_match($pattern, $str);
+    }
+
+    public static function isValidEntityName(string $str) : bool
+    {
+        return self::isValidContextName($str);
+    }
 }

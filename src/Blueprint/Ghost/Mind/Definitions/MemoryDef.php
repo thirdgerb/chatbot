@@ -20,6 +20,9 @@ use Commune\Blueprint\Ghost\Memory\Recollection;
  */
 interface MemoryDef extends Def
 {
+
+    public function isLongTerm() : bool;
+
     /**
      * 记忆的上下文作用域.
      * @see Cloner\ClonerScope

@@ -9,27 +9,28 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Metas;
+namespace Commune\Ghost\Mind\Metas;
 
-use Commune\Message\Host\IIntentMsg;
+use Commune\Blueprint\Ghost\Mind\Definitions\StageDef;
 use Commune\Support\Option\AbsMeta;
-use Commune\Blueprint\Ghost\Mind\Definitions\IntentDef;
+use Commune\Support\Utils\TypeUtils;
 
 
 /**
- * 意图的元数据. 用于定义标准的意图.
+ * Stage 的元数据.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IntentMeta extends AbsMeta
+class StageMeta extends AbsMeta
 {
     public static function stub(): array
     {
         return [
             'name' => '',
-            'title' => 'intentTitle',
-            'desc' => 'intentDesc',
-            'intentWrapper' => IIntentMsg::class
+            'title' => 'contextTitle',
+            'desc' => 'contextDesc',
+            'wrapper' => IStageDef::class,
+            'config' => IStageDef::stub(),
         ];
     }
 
@@ -38,11 +39,22 @@ class IntentMeta extends AbsMeta
         return [];
     }
 
+    public static function validate(array $data): ? string /* errorMsg */
+    {
+        $name = $data['name'] ?? '';
+        if (TypeUtils::isValidStageFullName($name)) {
+            return "stage fullname $name is invalid";
+        }
+
+        return parent::validate($data);
+    }
+
     public static function validateWrapper(string $wrapper): ? string
     {
-        $defType = IntentDef::class;
+        $defType = StageDef::class;
         return is_a($wrapper, $defType, TRUE)
             ? null
             : static::class . " wrapper should be subclass of $defType, $wrapper given";
     }
+
 }

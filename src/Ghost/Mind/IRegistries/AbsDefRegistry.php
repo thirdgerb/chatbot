@@ -9,12 +9,12 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Mind\Registries;
+namespace Commune\Ghost\Mind\IRegistries;
 
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
 use Commune\Blueprint\Ghost\Mind\Definitions\Def;
-use Commune\Blueprint\Ghost\Mind\Metas\DefMeta;
+use Commune\Ghost\Mind\Metas\DefMeta;
 use Commune\Blueprint\Ghost\Mind\Mindset;
 use Commune\Blueprint\Ghost\Mind\Registries\DefRegistry;
 use Commune\Support\Registry\Category;
@@ -141,8 +141,20 @@ abstract class AbsDefRegistry implements DefRegistry
     public function hasDef(string $defName): bool
     {
         $this->checkExpire();
-        return array_key_exists($defName, $this->cachedDefs)
-            || $this->hasRegisteredMeta($defName);
+        if (array_key_exists($defName, $this->cachedDefs)) {
+            return true;
+        }
+
+        if ($this->hasRegisteredMeta($defName)) {
+            /**
+             * @var DefMeta $meta
+             */
+            $meta = $this->getMetaRegistry()->find($defName);
+            $this->registerDef($meta->getWrapper());
+            return true;
+        }
+
+        return false;
     }
 
     public function getDef(string $defName): Def
@@ -235,5 +247,12 @@ abstract class AbsDefRegistry implements DefRegistry
         }, $ids);
     }
 
+    public function __destruct()
+    {
+        $this->cachedDefs = [];
+        $this->registeredIds = null;
+        $this->mindset = null;
+        $this->optRegistry = null;
+    }
 
 }

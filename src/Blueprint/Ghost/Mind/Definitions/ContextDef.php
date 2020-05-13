@@ -61,6 +61,10 @@ interface ContextDef extends Def
      */
     public function wrapContext(Cloner $cloner, Ucl $ucl) : Context;
 
+    /**
+     * 所有的 Context 同时也是一个 StageDef
+     * @return StageDef
+     */
     public function asStageDef() : StageDef;
 
     /*------- stage -------*/
