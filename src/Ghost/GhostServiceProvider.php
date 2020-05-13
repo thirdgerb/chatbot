@@ -15,12 +15,19 @@ use Commune\Blueprint\Ghost\Auth\Authority;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Blueprint\Ghost\Cloner\ClonerLogger;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
+use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
+use Commune\Blueprint\Ghost\Runtime\Runtime;
+use Commune\Blueprint\Ghost\Tools\Typer;
 use Commune\Container\ContainerContract as Container;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Framework\Contracts\ServiceProvider;
 use Commune\Ghost\Auth\IAuthority;
 use Commune\Ghost\Cloner\IClonerLogger;
 use Commune\Ghost\Cloner\IClonerScene;
+use Commune\Ghost\Cloner\IClonerScope;
+use Commune\Ghost\Cloner\IClonerStorage;
+use Commune\Ghost\Runtime\IRuntime;
+use Commune\Ghost\Tools\ITyper;
 use Psr\Log\LoggerInterface;
 
 
@@ -42,7 +49,6 @@ class GhostServiceProvider extends ServiceProvider
 
     public function register(Container $app): void
     {
-        $this->registerConvo($app);
         $this->registerConvoScope($app);
         $this->registerConvoLogger($app);
         $this->registerConvoScene($app);
@@ -99,4 +105,13 @@ class GhostServiceProvider extends ServiceProvider
         $app->singleton(Authority::class, IAuthority::class);
     }
 
+    protected function registerRuntime(Container $app) : void
+    {
+        $app->singleton(Runtime::class, IRuntime::class);
+    }
+
+    protected function registerStorage(Container $app) : void
+    {
+        $app->singleton(ClonerStorage::class, IClonerStorage::class);
+    }
 }

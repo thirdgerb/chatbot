@@ -17,6 +17,8 @@ use Commune\Support\Option\AbsOption;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $name              分类的名称. 同一个名称下可以有多个分类.
+ * @property-read string $title             分类的标题.
+ * @property-read string $desc              分类的简介.
  *
  * @property-read string $optionClass       storage 里存储的 option的类名
  *
@@ -38,6 +40,8 @@ class CategoryOption extends AbsOption
     {
         return [
             'name' => '',
+            'title' => 'title',
+            'desc' => 'desc',
             'cacheExpire' => 600,
             'optionClass' => '',
             'storage' => [],

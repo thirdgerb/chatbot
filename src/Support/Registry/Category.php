@@ -60,7 +60,7 @@ interface Category
      * 通过 ID 删除掉若干个 Option
      *
      * @param string $id
-     * @param string ...$ids
+     * @param string[] $ids
      * @return int              删除数量.
      */
     public function delete(string $id, string ...$ids) : int;

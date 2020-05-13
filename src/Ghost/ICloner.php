@@ -132,7 +132,10 @@ class ICloner extends ASession implements Cloner
     {
         $contextDef = $this->mind->contextReg()->getDef($contextName);
 
-        $entities = $this->ghostInput->comprehension->intention->getIntentEntities($contextName);
+        $entities = $this->ghostInput
+            ->comprehension
+            ->intention
+            ->getIntentEntities($contextName);
 
         if (empty($entities)) {
             return [];

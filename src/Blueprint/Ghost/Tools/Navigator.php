@@ -11,7 +11,6 @@
 
 namespace Commune\Blueprint\Ghost\Tools;
 
-use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\Dialog\Finale\Await;

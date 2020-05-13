@@ -13,7 +13,10 @@ namespace Commune\Ghost\Tools;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Tools\Typer;
+use Commune\Message\Host\IIntentMsg;
+use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\GhostInput;
+use Commune\Protocals\Intercom\GhostMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -51,19 +54,19 @@ class ITyper implements Typer
     protected $shellName = null;
 
     /**
-     * @var null|int
+     * @var int
      */
-    protected $deliverAt = null;
+    protected $deliverAt = 0;
 
     /**
-     * @var array
+     * @var GhostMsg[]
      */
     protected $outputs = [];
 
     /**
      * @var bool
      */
-    protected $fin = false;
+    protected $finned = false;
 
     /**
      * ITyper constructor.
@@ -117,58 +120,75 @@ class ITyper implements Typer
         return $this;
     }
 
-    public function error($intent, array $slots = array()): Typer
+    public function error(string $intent, array $slots = array()): Typer
     {
-        $this->outputs[] = [__FUNCTION__, $intent, $slots];
+        return $this->log(__FUNCTION__, $intent, $slots);
+    }
+
+    public function notice(string $intent, array $slots = array()): Typer
+    {
+        return $this->log(__FUNCTION__, $intent, $slots);
+    }
+
+    public function info(string $intent, array $slots = array()): Typer
+    {
+        return $this->log(__FUNCTION__, $intent, $slots);
+    }
+
+    public function debug(string $intent, array $slots = array()): Typer
+    {
+        return $this->log(__FUNCTION__, $intent, $slots);
+    }
+
+    protected function log(string $level, string $intent, array $slots) : Typer
+    {
+        $intentMsg = new IIntentMsg($intent, $slots, $level);
+        return $this->message($intentMsg);
+    }
+
+    public function message(HostMsg $message): Typer
+    {
+        $ghostMsg = $this->input->output(
+            $message,
+            $this->deliverAt,
+            $this->clonerId,
+            $this->shellName,
+            $this->guestId
+        );
+
+        $this->outputs[] = $ghostMsg;
         return $this;
     }
 
-    public function notice($intent, array $slots = array()): Typer
-    {
-        $this->outputs[] = [__FUNCTION__, $intent, $slots];
-        return $this;
-    }
 
-    public function info($intent, array $slots = array()): Typer
+    public function done(): Dialog
     {
-        $this->outputs[] = [__FUNCTION__, $intent, $slots];
-        return $this;
-    }
-
-    public function debug($intent, array $slots = array()): Typer
-    {
-        $this->outputs[] = [__FUNCTION__, $intent, $slots];
-        return $this;
-    }
-
-    public function fin(): Dialog
-    {
-        if ($this->fin) {
+        if ($this->finned) {
             return $this->dialog;
         }
 
         if (empty($this->outputs)) {
-            $this->fin = true;
+            $this->finned = true;
             return $this->dialog;
         }
 
         $input = $this->input;
 
         $outputs = array_map(function(array $output) use ($input){
-            list($level, $reactionId, $slots) = $output;
+            list($level, $intentName, $slots) = $output;
+            return new IIntentMsg($intentName, $slots, $level);
 
-            //todo
         }, $this->outputs);
 
         $cloner = $this->dialog->cloner;
         $cloner->output(...$outputs);
-        $this->fin = true;
+        $this->finned = true;
         return $this->dialog;
     }
 
     public function __destruct()
     {
-        $this->fin();
+        $this->done();
         $this->outputs = [];
         $this->dialog = null;
     }

@@ -26,7 +26,7 @@ abstract class AbsMeta extends AbsOption implements Meta
 {
     const IDENTITY = 'name';
 
-    abstract static function validateWrapper(string $wrapper) : ? string;
+    abstract public static function validateWrapper(string $wrapper) : ? string;
 
     public function getWrapper(): Wrapper
     {
@@ -50,12 +50,5 @@ abstract class AbsMeta extends AbsOption implements Meta
 
         return static::validateWrapper($wrapper) ?? parent::validate($data);
     }
-
-
-    public static function relations(): array
-    {
-        return [];
-    }
-
 
 }

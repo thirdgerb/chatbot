@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Memory;
+use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Ucl;

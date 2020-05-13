@@ -45,7 +45,6 @@ class IOptRegistry implements OptRegistry
      */
     protected $categories = [];
 
-
     /**
      * OptionRepositoryImpl constructor.
      * @param ContainerInterface $container
@@ -57,9 +56,12 @@ class IOptRegistry implements OptRegistry
         $this->logger = $logger;
     }
 
-    public function registerCategory(CategoryOption $meta): void
+    public function registerCategory(CategoryOption $meta, bool $initialize = false): void
     {
-        $this->categoryOptions[$meta->getId()] = $meta;
+        $metaId = $meta->getId();
+        $this->categoryOptions[$metaId] = $meta;
+        // 初始化.
+        $this->getCategory($metaId)->boot($initialize);
     }
 
     public function getCategoryOption(string $categoryName): CategoryOption
@@ -85,9 +87,7 @@ class IOptRegistry implements OptRegistry
         }
 
         $option = $this->getCategoryOption($categoryName);
-        $category = new ICategory($this->container, $this->logger, $option);
-        $category->boot();
-        return $this->categories[$categoryName] = $category;
+        return $this->categories[$categoryName] = new ICategory($this->container, $this->logger, $option);
     }
 
     public function eachCategory(): \Generator

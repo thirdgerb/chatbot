@@ -42,5 +42,10 @@ class StorageMeta extends AbsMeta
             : 'wrapper must be subclass of ' . StorageOption::class;
     }
 
+    public static function relations(): array
+    {
+        return [];
+    }
+
 
 }

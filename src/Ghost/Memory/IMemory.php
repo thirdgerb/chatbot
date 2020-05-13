@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Memory;
 
-use Commune\Blueprint\Ghost\Memory;
+use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\Arr\TArrayData;

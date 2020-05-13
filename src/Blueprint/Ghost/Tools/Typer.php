@@ -73,7 +73,7 @@ interface Typer
      *
      * @return static
      */
-    public function error($intent, array $slots = array()) : Typer;
+    public function error(string $intent, array $slots = array()) : Typer;
 
     /**
      * 重要提示. 会被渲染
@@ -83,7 +83,7 @@ interface Typer
      *
      * @return static
      */
-    public function notice($intent, array $slots = array()) : Typer;
+    public function notice(string $intent, array $slots = array()) : Typer;
 
     /**
      * 普通的消息. 无论如何都会被渲染.
@@ -93,7 +93,7 @@ interface Typer
      *
      * @return static
      */
-    public function info($intent, array $slots = array()) : Typer;
+    public function info(string $intent, array $slots = array()) : Typer;
 
     /**
      * 这类消息如果无法渲染, 则不会发送.
@@ -103,11 +103,11 @@ interface Typer
      *
      * @return static
      */
-    public function debug($intent, array $slots = array()) : Typer;
+    public function debug(string $intent, array $slots = array()) : Typer;
 
     /**
      * 回到 Dialog
      * @return Dialog
      */
-    public function fin() : Dialog;
+    public function done() : Dialog;
 }

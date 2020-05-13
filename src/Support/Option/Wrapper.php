@@ -15,7 +15,7 @@ namespace Commune\Support\Option;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Wrapper extends Option
+interface Wrapper
 {
     const INIT_FUNC = 'wrap';
 

@@ -55,6 +55,15 @@ interface Dialog
      */
     public function hearing() : Hearing;
 
+    /*----- memory -----*/
+
+    /**
+     * 回忆.
+     * @param string $name
+     * @return Memory
+     */
+    public function recall(string $name) : Memory;
+
     /*----- 上下文相关 Context -----*/
 
     /**

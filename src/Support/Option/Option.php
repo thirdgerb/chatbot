@@ -56,24 +56,6 @@ interface Option extends Struct, Injectable
      */
     public static function createById($id, array $data = []) : Option;
 
-    /*------- 实例属性 -------*/
-
-    /**
-     * 当前 Option 对象的自我简介.
-     * 适合用于列表场景. 用 id => brief 的形式列出多个 option
-     * 也适合用于全文搜索.
-     *
-     * @return string
-     */
-    public function getBrief() : string;
-
-    /**
-     * 根据 @description 注解, 获取option 的说明.
-     *
-     * @return string
-     */
-    public static function getDescription() : string;
-
     /*------- methods -------*/
 
     /**

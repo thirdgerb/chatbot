@@ -57,19 +57,6 @@ abstract class AbsOption extends AStruct implements Option
     }
 
     /**
-     * 当前 Option 对象的自我简介.
-     * 适合用于列表场景. 用 id => brief 的形式列出多个 option
-     * 也适合用于全文搜索.
-     *
-     * @return string
-     */
-    public function getBrief() : string
-    {
-        return (string) $this->getId();
-    }
-
-
-    /**
      * 使用ID + stub, 创建一个 option对象.
      *
      * generate a option object by ID and stub data
@@ -97,19 +84,6 @@ abstract class AbsOption extends AStruct implements Option
     public function merge(array $data)
     {
         return static::create($data + $this->toArray());
-    }
-
-    /**
-     * 根据 @description 注解, 获取option 的说明.
-     *
-     * fetch description of the option from @description annotation
-     * @return string
-     * @throws
-     */
-    public static function getDescription() : string
-    {
-        $r = new \ReflectionClass(static::class);
-        return StringUtils::fetchDescAnnotation($r->getDocComment());
     }
 
     public function getInterfaces(): array

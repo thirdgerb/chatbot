@@ -26,9 +26,11 @@ interface OptRegistry
 
     /**
      * 注册一个 struct 分类的元数据.
+     *
      * @param CategoryOption $meta
+     * @param bool $initialize
      */
-    public function registerCategory(CategoryOption $meta) : void;
+    public function registerCategory(CategoryOption $meta, bool $initialize = false) : void;
 
     /**
      * 获取一个 struct 分类的元数据. 不存在会抛出异常.

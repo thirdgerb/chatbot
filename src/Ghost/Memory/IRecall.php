@@ -14,8 +14,8 @@ namespace Commune\Ghost\Memory;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
-use Commune\Blueprint\Ghost\Memory;
-use Commune\Blueprint\Ghost\Recall;
+use Commune\Blueprint\Ghost\Memory\Memory;
+use Commune\Blueprint\Ghost\Memory\Recall;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\TArrayAccessToMutator;
 
@@ -62,9 +62,13 @@ abstract class IRecall implements Recall
         return $this->_longTerm;
     }
 
+    public function getName(): string
+    {
+        return static::recallName();
+    }
 
 
-    abstract public static function getName() : string;
+    abstract public static function recallName() : string;
 
     /**
      * @see ClonerScope
@@ -83,7 +87,7 @@ abstract class IRecall implements Recall
 
 
         if (!isset($id)) {
-            $name = static::getName();
+            $name = static::recallName();
             $id = $scope->makeId($name, $dimensions);
         }
 

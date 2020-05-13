@@ -11,9 +11,9 @@
 
 namespace Commune\Blueprint\Ghost;
 
-use Commune\Blueprint\Ghost\Definition\ContextDef;
-use Commune\Blueprint\Ghost\Definition\IntentDef;
-use Commune\Blueprint\Ghost\Definition\StageDef;
+use Commune\Blueprint\Ghost\Mind\Definitions\ContextDef;
+use Commune\Blueprint\Ghost\Mind\Definitions\IntentDef;
+use Commune\Blueprint\Ghost\Mind\Definitions\StageDef;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Utils\StringUtils;
 

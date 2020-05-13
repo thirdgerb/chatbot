@@ -21,7 +21,7 @@ use Commune\Support\Message\Message;
  *
  * # 协议的部分.
  *
- * @property-read Abstracted\IIntention      $intention      意图理解模块
+ * @property-read Abstracted\Intention      $intention      意图理解模块
  * @property-read Abstracted\Entity         $entity         公共的实体识别
  *
  * @property-read Abstracted\Vector         $vector         向量模块, 可以本地计算近似度
