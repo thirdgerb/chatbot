@@ -12,8 +12,8 @@
 namespace Commune\Ghost\Mind\Defs;
 
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
-use Commune\Blueprint\Ghost\Mind\Definitions\EntityDef;
-use Commune\Blueprint\Ghost\Mind\Registries\SynonymReg;
+use Commune\Blueprint\Ghost\Mind\Defs\EntityDef;
+use Commune\Blueprint\Ghost\Mind\Regs\SynonymReg;
 use Commune\Ghost\Mind\Metas\EntityMeta;
 use Commune\Ghost\Mind\Metas\SynonymMeta;
 use Commune\Support\Option\Meta;

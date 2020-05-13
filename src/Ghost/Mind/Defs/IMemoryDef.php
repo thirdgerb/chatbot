@@ -14,7 +14,7 @@ namespace Commune\Ghost\Mind\Defs;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Memory\Recollection;
-use Commune\Blueprint\Ghost\Mind\Definitions\MemoryDef;
+use Commune\Blueprint\Ghost\Mind\Defs\MemoryDef;
 use Commune\Ghost\Memory\IRecollection;
 use Commune\Ghost\Mind\Metas\MemoryMeta;
 use Commune\Support\Option\Meta;

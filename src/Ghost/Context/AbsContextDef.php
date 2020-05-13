@@ -9,15 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Definitions;
+namespace Commune\Ghost\Context;
 
+use Commune\Support\Option\AbsMeta;
+use Commune\Blueprint\Ghost\Mind\Defs\ContextDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface SynonymDef extends Def
+class AbsContextDef extends AbsMeta implements ContextDef
 {
-
-    public function getValues() : array;
 
 }

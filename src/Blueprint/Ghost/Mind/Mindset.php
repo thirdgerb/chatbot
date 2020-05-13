@@ -11,14 +11,14 @@
 
 namespace Commune\Blueprint\Ghost\Mind;
 
-use Commune\Blueprint\Ghost\Mind\Registries\ContextReg;
-use Commune\Blueprint\Ghost\Mind\Registries\DefRegistry;
-use Commune\Blueprint\Ghost\Mind\Registries\EmotionReg;
-use Commune\Blueprint\Ghost\Mind\Registries\EntityReg;
-use Commune\Blueprint\Ghost\Mind\Registries\IntentReg;
-use Commune\Blueprint\Ghost\Mind\Registries\MemoryReg;
-use Commune\Blueprint\Ghost\Mind\Registries\StageReg;
-use Commune\Blueprint\Ghost\Mind\Registries\SynonymReg;
+use Commune\Blueprint\Ghost\Mind\Regs\ContextReg;
+use Commune\Blueprint\Ghost\Mind\Regs\DefRegistry;
+use Commune\Blueprint\Ghost\Mind\Regs\EmotionReg;
+use Commune\Blueprint\Ghost\Mind\Regs\EntityReg;
+use Commune\Blueprint\Ghost\Mind\Regs\IntentReg;
+use Commune\Blueprint\Ghost\Mind\Regs\MemoryReg;
+use Commune\Blueprint\Ghost\Mind\Regs\StageReg;
+use Commune\Blueprint\Ghost\Mind\Regs\SynonymReg;
 
 /**
  * 对话机器人的基础思维

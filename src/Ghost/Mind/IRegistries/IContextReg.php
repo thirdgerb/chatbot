@@ -12,10 +12,10 @@
 namespace Commune\Ghost\Mind\IRegistries;
 
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
-use Commune\Blueprint\Ghost\Mind\Definitions\ContextDef;
-use Commune\Blueprint\Ghost\Mind\Definitions\Def;
+use Commune\Blueprint\Ghost\Mind\Defs\ContextDef;
+use Commune\Blueprint\Ghost\Mind\Defs\Def;
 use Commune\Ghost\Mind\Metas\ContextMeta;
-use Commune\Blueprint\Ghost\Mind\Registries\ContextReg;
+use Commune\Blueprint\Ghost\Mind\Regs\ContextReg;
 
 
 /**

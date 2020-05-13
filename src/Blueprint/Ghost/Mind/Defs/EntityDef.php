@@ -9,9 +9,9 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Definitions;
+namespace Commune\Blueprint\Ghost\Mind\Defs;
 
-use Commune\Blueprint\Ghost\Mind\Registries\SynonymReg;
+use Commune\Blueprint\Ghost\Mind\Regs\SynonymReg;
 
 
 /**

@@ -12,11 +12,11 @@
 namespace Commune\Ghost\Mind;
 
 use Commune\Ghost\Mind\IRegistries;
-use Commune\Blueprint\Ghost\Mind\Registries;
-use Commune\Blueprint\Ghost\Mind\Registries\DefRegistry;
 use Commune\Blueprint\Ghost\Mind\Mindset;
-use Commune\Ghost\Providers\MindCacheExpireOption;
 use Commune\Support\Registry\OptRegistry;
+use Commune\Blueprint\Ghost\Mind\Regs;
+use Commune\Ghost\Providers\MindCacheExpireOption;
+use Commune\Blueprint\Ghost\Mind\Regs\DefRegistry;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -25,13 +25,13 @@ class IMindset implements Mindset
 {
 
     const REGISTRY_IMPL = [
-        Registries\ContextReg::class => IRegistries\IContextReg::class,
-        Registries\EntityReg::class => IRegistries\IEntityReg::class,
-        Registries\SynonymReg::class => IRegistries\ISynonymReg::class,
-        Registries\MemoryReg::class => IRegistries\IMemoryReg::class,
-        Registries\IntentReg::class => IRegistries\IIntentReg::class,
-        Registries\StageReg::class => IRegistries\IStageReg::class,
-        Registries\EmotionReg::class => IRegistries\IEmotionReg::class,
+        Regs\ContextReg::class => IRegistries\IContextReg::class,
+        Regs\StageReg::class => IRegistries\IStageReg::class,
+        Regs\IntentReg::class => IRegistries\IIntentReg::class,
+        Regs\MemoryReg::class => IRegistries\IMemoryReg::class,
+        Regs\EmotionReg::class => IRegistries\IEmotionReg::class,
+        Regs\EntityReg::class => IRegistries\IEntityReg::class,
+        Regs\SynonymReg::class => IRegistries\ISynonymReg::class,
     ];
 
     /**
@@ -100,7 +100,7 @@ class IMindset implements Mindset
     public function contextReg(): DefRegistry
     {
         return $this->getReg(
-            Registries\ContextReg::class,
+            Regs\ContextReg::class,
             $this->cacheExpire->context
         );
     }
@@ -108,7 +108,7 @@ class IMindset implements Mindset
     public function intentReg(): DefRegistry
     {
         return $this->getReg(
-            Registries\IntentReg::class,
+            Regs\IntentReg::class,
             $this->cacheExpire->intent
         );
     }
@@ -116,7 +116,7 @@ class IMindset implements Mindset
     public function stageReg(): DefRegistry
     {
         return $this->getReg(
-            Registries\StageReg::class,
+            Regs\StageReg::class,
             $this->cacheExpire->stage
         );
     }
@@ -124,7 +124,7 @@ class IMindset implements Mindset
     public function memoryReg(): DefRegistry
     {
         return $this->getReg(
-            Registries\MemoryReg::class,
+            Regs\MemoryReg::class,
             $this->cacheExpire->memory
         );
     }
@@ -132,7 +132,7 @@ class IMindset implements Mindset
     public function entityReg(): DefRegistry
     {
         return $this->getReg(
-            Registries\EntityReg::class,
+            Regs\EntityReg::class,
             $this->cacheExpire->entity
         );
     }
@@ -140,7 +140,7 @@ class IMindset implements Mindset
     public function synonymReg(): DefRegistry
     {
         return $this->getReg(
-            Registries\SynonymReg::class,
+            Regs\SynonymReg::class,
             $this->cacheExpire->synonym
         );
     }
@@ -148,7 +148,7 @@ class IMindset implements Mindset
     public function emotionReg(): DefRegistry
     {
         return $this->getReg(
-            Registries\EmotionReg::class,
+            Regs\EmotionReg::class,
             $this->cacheExpire->emotion
         );
     }

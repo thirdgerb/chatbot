@@ -12,10 +12,10 @@
 namespace Commune\Ghost\Mind\IRegistries;
 
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Mind\Definitions\Def;
-use Commune\Blueprint\Ghost\Mind\Definitions\StageDef;
+use Commune\Blueprint\Ghost\Mind\Defs\Def;
+use Commune\Blueprint\Ghost\Mind\Defs\StageDef;
 use Commune\Ghost\Mind\Metas\StageMeta;
-use Commune\Blueprint\Ghost\Mind\Registries\StageReg;
+use Commune\Blueprint\Ghost\Mind\Regs\StageReg;
 use Commune\Support\Utils\StringUtils;
 
 

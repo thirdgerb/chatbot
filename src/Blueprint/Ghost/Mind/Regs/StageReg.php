@@ -9,13 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Registries;
+namespace Commune\Blueprint\Ghost\Mind\Regs;
 
+use Commune\Blueprint\Ghost\Mind\Defs\StageDef;
 
 /**
+ *
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
+ * @method StageDef getDef(string $stageName)
  */
-interface EmotionReg extends DefRegistry
+interface StageReg extends DefRegistry
 {
 
 }

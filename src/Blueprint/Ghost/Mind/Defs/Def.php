@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Definitions;
+namespace Commune\Blueprint\Ghost\Mind\Defs;
 
 use Commune\Ghost\Mind\Metas\DefMeta;
 use Commune\Support\Option\Wrapper;

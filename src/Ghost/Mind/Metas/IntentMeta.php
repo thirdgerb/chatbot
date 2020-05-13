@@ -13,7 +13,7 @@ namespace Commune\Ghost\Mind\Metas;
 
 use Commune\Message\Host\IIntentMsg;
 use Commune\Support\Option\AbsMeta;
-use Commune\Blueprint\Ghost\Mind\Definitions\IntentDef;
+use Commune\Blueprint\Ghost\Mind\Defs\IntentDef;
 
 
 /**

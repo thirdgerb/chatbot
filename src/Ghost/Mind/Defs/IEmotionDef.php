@@ -13,7 +13,7 @@ namespace Commune\Ghost\Mind\Defs;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Ghost\Mind\Metas\EmotionMeta;
-use Commune\Blueprint\Ghost\Mind\Definitions\EmotionDef;
+use Commune\Blueprint\Ghost\Mind\Defs\EmotionDef;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
 

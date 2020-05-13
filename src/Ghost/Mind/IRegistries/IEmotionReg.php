@@ -11,8 +11,8 @@
 
 namespace Commune\Ghost\Mind\IRegistries;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\EmotionDef;
-use Commune\Blueprint\Ghost\Mind\Registries\EmotionReg;
+use Commune\Blueprint\Ghost\Mind\Defs\EmotionDef;
+use Commune\Blueprint\Ghost\Mind\Regs\EmotionReg;
 use Commune\Ghost\Mind\Metas\EmotionMeta;
 
 /**

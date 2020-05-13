@@ -9,16 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Registries;
+namespace Commune\Ghost\Context;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\SynonymDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @method SynonymDef getDef(string $defName) : Def
  */
-interface SynonymReg extends DefRegistry
+class AbsStageDef
 {
 
 }

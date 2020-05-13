@@ -11,8 +11,8 @@
 
 namespace Commune\Ghost\Mind\IRegistries;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\MemoryDef;
-use Commune\Blueprint\Ghost\Mind\Registries\MemoryReg;
+use Commune\Blueprint\Ghost\Mind\Defs\MemoryDef;
+use Commune\Blueprint\Ghost\Mind\Regs\MemoryReg;
 use Commune\Ghost\Mind\Metas\MemoryMeta;
 
 /**

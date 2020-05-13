@@ -9,9 +9,9 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Registries;
+namespace Commune\Blueprint\Ghost\Mind\Regs;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\Def;
+use Commune\Blueprint\Ghost\Mind\Defs\Def;
 use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
 use Commune\Support\Registry\Category;
 

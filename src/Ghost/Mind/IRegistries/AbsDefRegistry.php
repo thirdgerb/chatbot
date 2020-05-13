@@ -13,10 +13,10 @@ namespace Commune\Ghost\Mind\IRegistries;
 
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
-use Commune\Blueprint\Ghost\Mind\Definitions\Def;
+use Commune\Blueprint\Ghost\Mind\Defs\Def;
 use Commune\Ghost\Mind\Metas\DefMeta;
 use Commune\Blueprint\Ghost\Mind\Mindset;
-use Commune\Blueprint\Ghost\Mind\Registries\DefRegistry;
+use Commune\Blueprint\Ghost\Mind\Regs\DefRegistry;
 use Commune\Support\Registry\Category;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Support\Utils\StringUtils;

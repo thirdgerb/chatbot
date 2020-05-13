@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Mind\Metas;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\StageDef;
+use Commune\Blueprint\Ghost\Mind\Defs\StageDef;
 use Commune\Support\Option\AbsMeta;
 use Commune\Support\Utils\TypeUtils;
 

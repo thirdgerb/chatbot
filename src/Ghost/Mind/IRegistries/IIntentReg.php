@@ -11,9 +11,9 @@
 
 namespace Commune\Ghost\Mind\IRegistries;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\IntentDef;
+use Commune\Blueprint\Ghost\Mind\Defs\IntentDef;
 use Commune\Ghost\Mind\Metas\IntentMeta;
-use Commune\Blueprint\Ghost\Mind\Registries\IntentReg;
+use Commune\Blueprint\Ghost\Mind\Regs\IntentReg;
 
 
 /**

@@ -9,15 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Registries;
+namespace Commune\Blueprint\Ghost\Mind\Regs;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\IntentDef;
+use Commune\Blueprint\Ghost\Mind\Defs\SynonymDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- * @method IntentDef getDef(string $defName)
+ *
+ * @method SynonymDef getDef(string $defName) : Def
  */
-interface IntentReg extends DefRegistry
+interface SynonymReg extends DefRegistry
 {
 
 }

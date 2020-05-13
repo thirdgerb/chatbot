@@ -9,17 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Registries;
-
-use Commune\Blueprint\Ghost\Mind\Definitions\MemoryDef;
+namespace Commune\Blueprint\Ghost\Mind\Regs;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @method MemoryDef getDef(string $defName) : Def
  */
-interface MemoryReg extends DefRegistry
+interface EmotionReg extends DefRegistry
 {
 
 }

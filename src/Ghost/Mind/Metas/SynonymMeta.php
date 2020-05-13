@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Mind\Metas;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\SynonymDef;
+use Commune\Blueprint\Ghost\Mind\Defs\SynonymDef;
 use Commune\Ghost\Mind\Defs\ISynonymDef;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Wrapper;

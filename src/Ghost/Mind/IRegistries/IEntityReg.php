@@ -11,8 +11,8 @@
 
 namespace Commune\Ghost\Mind\IRegistries;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\EntityDef;
-use Commune\Blueprint\Ghost\Mind\Registries\EntityReg;
+use Commune\Blueprint\Ghost\Mind\Defs\EntityDef;
+use Commune\Blueprint\Ghost\Mind\Regs\EntityReg;
 use Commune\Ghost\Mind\Metas\EntityMeta;
 
 

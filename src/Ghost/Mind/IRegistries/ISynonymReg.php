@@ -11,8 +11,8 @@
 
 namespace Commune\Ghost\Mind\IRegistries;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\SynonymDef;
-use Commune\Blueprint\Ghost\Mind\Registries\SynonymReg;
+use Commune\Blueprint\Ghost\Mind\Defs\SynonymDef;
+use Commune\Blueprint\Ghost\Mind\Regs\SynonymReg;
 use Commune\Ghost\Mind\Metas\SynonymMeta;
 
 /**

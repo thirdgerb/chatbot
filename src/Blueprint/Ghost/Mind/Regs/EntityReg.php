@@ -9,16 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind\Registries;
+namespace Commune\Blueprint\Ghost\Mind\Regs;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\ContextDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @method ContextDef getDef(string $contextName)
  */
-interface ContextReg extends DefRegistry
+interface EntityReg extends DefRegistry
 {
 
 }

@@ -13,8 +13,6 @@ namespace Commune\Ghost;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\GhostConfig;
-use Commune\Blueprint\Framework\ReqContainer;
-use Commune\Blueprint\Framework\Session\Storage;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
@@ -26,6 +24,8 @@ use Commune\Ghost\Dialog\IStartProcess;
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Protocals\Intercom\GhostMsg;
 use Commune\Support\Registry\OptRegistry;
+use Commune\Blueprint\Framework\ReqContainer;
+use Commune\Blueprint\Framework\Session\Storage;
 
 
 /**
@@ -148,6 +148,7 @@ class ICloner extends ASession implements Cloner
     public function getContext(Ucl $ucl): Context
     {
         $contextId = $ucl->getContextId();
+
         if (isset($this->contexts[$contextId])) {
             return $this->contexts[$contextId];
         }
@@ -159,7 +160,7 @@ class ICloner extends ASession implements Cloner
         $entities = $this->getContextualEntities($contextName);
 
         if (!empty($entities)) {
-            $context->mergeData($entities);
+            $context->merge($entities);
         }
 
         return $this->contexts[$contextId] = $context;

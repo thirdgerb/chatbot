@@ -11,10 +11,9 @@
 
 namespace Commune\Ghost\Mind\Metas;
 
-use Commune\Blueprint\Ghost\Mind\Definitions\ContextDef;
-use Commune\Ghost\MindDef\IContextDef;
 use Commune\Support\Option\AbsMeta;
 use Commune\Support\Utils\TypeUtils;
+use Commune\Blueprint\Ghost\Mind\Defs\ContextDef;
 
 /**
  * Context 配置的元数据.

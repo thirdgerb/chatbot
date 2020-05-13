@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Mind\Defs;
 
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
-use Commune\Blueprint\Ghost\Mind\Definitions\SynonymDef;
+use Commune\Blueprint\Ghost\Mind\Defs\SynonymDef;
 use Commune\Ghost\Mind\Metas\SynonymMeta;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
