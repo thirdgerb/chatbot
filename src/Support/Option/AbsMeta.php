@@ -10,8 +10,8 @@
  */
 
 namespace Commune\Support\Option;
-use Commune\Support\Alias\Aliases;
 
+use Commune\Support\Alias\Aliases;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -27,6 +27,12 @@ abstract class AbsMeta extends AbsOption implements Meta
     const IDENTITY = 'name';
 
     abstract public static function validateWrapper(string $wrapper) : ? string;
+
+    public function _filter(array $data): array
+    {
+        $data['wrapper'] = Aliases::alias($data['wrapper'] ?? '');
+        return parent::_filter($data);
+    }
 
     public function getWrapper(): Wrapper
     {

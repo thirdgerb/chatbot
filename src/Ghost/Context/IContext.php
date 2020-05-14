@@ -15,8 +15,8 @@ use Commune\Blueprint\Exceptions\HostLogicException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Mind\Defs\ContextDef;
-use Commune\Blueprint\Ghost\Mind\Defs\ContextParameter;
+use Commune\Blueprint\Ghost\MindDef\ContextDef;
+use Commune\Blueprint\Ghost\MindDef\DefParam;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Message\Host\Convo\IContextMsg;
@@ -59,12 +59,7 @@ class IContext implements Context
     /**
      * @var Memory|null
      */
-    protected $_shortTermMemory;
-
-    /**
-     * @var Memory|null
-     */
-    protected $_longTermMemory;
+    protected $_memory;
 
     /**
      * @var ContextDef|null
@@ -155,19 +150,19 @@ class IContext implements Context
 
     protected function getSessionMemory() : Memory
     {
-        if (isset($this->_shortTermMemory)) {
-            return $this->_shortTermMemory;
+        if (isset($this->_memory)) {
+            return $this->_memory;
         }
 
         $manager = $this->getDef()->getParamsManager();
         $parameters = $manager->getShortTermParams();
-        return $this->_shortTermMemory = $this->findMemory($parameters);
+        return $this->_memory = $this->findMemory($parameters);
 
     }
 
     protected function findMemory(Collection $parameters) : Memory
     {
-        $stub = array_map(function(ContextParameter $parameter){
+        $stub = array_map(function(DefParam $parameter){
             return $parameter->getDefault();
         }, $parameters->all());
 

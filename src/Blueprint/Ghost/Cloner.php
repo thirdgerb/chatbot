@@ -54,7 +54,7 @@ use Commune\Support\Registry\OptRegistry;
  *
  * # 复杂对话逻辑组件
  *
- * @property-read Ghost\Mind\Mindset $mind          机器人的思维
+ * @property-read Ghost\Mindset $mind               机器人的思维
  * @property-read Runtime $runtime                  机器人的运行状态
  *
  * # Host 组件

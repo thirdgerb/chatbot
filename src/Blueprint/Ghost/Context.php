@@ -14,7 +14,7 @@ namespace Commune\Blueprint\Ghost;
 use ArrayAccess;
 use IteratorAggregate;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstance;
-use Commune\Blueprint\Ghost\Mind\Defs\ContextDef;
+use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
 use Commune\Protocals\Host\Convo\ContextMsg;
 use Commune\Support\DI\Injectable;

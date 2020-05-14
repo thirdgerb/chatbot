@@ -49,6 +49,12 @@ class TypeUtilsTest extends TestCase
         // 下划线开头, 不允许.
         $this->assertFalse(TypeUtils::isValidStageFullName('c._abc'));
 
+
+        $this->assertTrue(TypeUtils::isValidStageName('efg_hij'));
+        $this->assertTrue(TypeUtils::isValidStageName('tt_ef1g_h3ij'));
+        $this->assertFalse(TypeUtils::isValidStageName('tt_Ef1g_h3ij'));
+
+
     }
 
 }

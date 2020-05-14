@@ -26,11 +26,11 @@ interface DialogIoC
     public function make(string $abstract, array $parameters = []);
 
     /**
-     * @param callable $caller
+     * @param callable|string $caller
      * @param array $parameters
      * @return mixed
      */
-    public function call(callable $caller, array $parameters = []);
+    public function call($caller, array $parameters = []);
 
     public function predict(callable $caller) : bool;
 

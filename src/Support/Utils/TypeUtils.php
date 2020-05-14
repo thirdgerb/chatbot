@@ -10,7 +10,6 @@
  */
 
 namespace Commune\Support\Utils;
-use Commune\Blueprint\Ghost\Context;
 
 
 /**
@@ -20,6 +19,12 @@ use Commune\Blueprint\Ghost\Context;
  */
 class TypeUtils
 {
+    public static function isCallableClass($value) : bool
+    {
+        return is_string($value)
+            && class_exists($value)
+            && method_exists($value, '__invoke');
+    }
 
     /**
      * 获取目标的类型
@@ -56,6 +61,12 @@ class TypeUtils
     public static function isValidStageFullName(string $str) : bool
     {
         return self::isValidIntentName($str);
+    }
+
+    public static function isValidStageName(string $name) : bool
+    {
+        $pattern = '/^[a-z][a-z_0-9]+$/';
+        return (bool) preg_match($pattern, $name);
     }
 
     public static function isValidIntentName(string $str) : bool

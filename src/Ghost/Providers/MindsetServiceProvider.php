@@ -11,17 +11,17 @@
 
 namespace Commune\Ghost\Providers;
 
-use Commune\Blueprint\Ghost\Mind\Mindset;
+use Commune\Blueprint\Ghost\Mindset;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Contracts\ServiceProvider;
 use Commune\Ghost\Mind\IMindset;
-use Commune\Ghost\Mind\Metas\ContextMeta;
-use Commune\Ghost\Mind\Metas\EmotionMeta;
-use Commune\Ghost\Mind\Metas\EntityMeta;
-use Commune\Ghost\Mind\Metas\IntentMeta;
-use Commune\Ghost\Mind\Metas\MemoryMeta;
-use Commune\Ghost\Mind\Metas\StageMeta;
-use Commune\Ghost\Mind\Metas\SynonymMeta;
+use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
+use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
+use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
+use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
+use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
+use Commune\Blueprint\Ghost\MindMeta\StageMeta;
+use Commune\Blueprint\Ghost\MindMeta\SynonymMeta;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\OptRegistry;
 

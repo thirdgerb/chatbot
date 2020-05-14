@@ -182,8 +182,17 @@ abstract class AbsDialogue implements
         return $this->cloner->container->make($abstract, $parameters);
     }
 
-    public function call(callable $caller, array $parameters = [])
+    public function call($caller, array $parameters = [])
     {
+        // 允许 caller 传入 __invoke 类并进行依赖注入.
+        if (
+            is_string($caller)
+            && class_exists($caller)
+            && method_exists($caller, '__invoke')
+        ) {
+            $caller = [$caller, '__invoke'];
+        }
+
         $parameters = $this->getContextualInjections($parameters);
         return $this->cloner->container->call($caller, $parameters);
     }

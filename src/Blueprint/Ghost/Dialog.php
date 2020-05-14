@@ -11,6 +11,8 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Ghost\Memory\Recall;
+use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Blueprint\Ghost\Tools\Navigator;
@@ -28,6 +30,15 @@ use Commune\Blueprint\Ghost\Tools\Typer;
  */
 interface Dialog
 {
+
+    /*----- call -----*/
+
+    /**
+     * 上下文相关的 IoC 容器.
+     * @return DialogIoC
+     */
+    public function ioc() : DialogIoC;
+
 
     /*----- conversation -----*/
 
@@ -60,9 +71,9 @@ interface Dialog
     /**
      * 回忆.
      * @param string $name
-     * @return Memory
+     * @return Recollection
      */
-    public function recall(string $name) : Memory;
+    public function recall(string $name) : Recollection;
 
     /*----- 上下文相关 Context -----*/
 
@@ -80,14 +91,6 @@ interface Dialog
      * @return Ucl
      */
     public function getUcl(string $contextOrUclStr, array $query = []) : Ucl;
-
-    /*----- call -----*/
-
-    /**
-     * 上下文相关的 IoC 容器.
-     * @return DialogIoC
-     */
-    public function ioc() : DialogIoC;
 
     /*----- 下一帧 -----*/
 
