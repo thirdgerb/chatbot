@@ -13,6 +13,7 @@ namespace Commune\Ghost\IMindDef;
 
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\MindDef\DefParamsCollection;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
@@ -93,12 +94,13 @@ class IMemoryDef implements MemoryDef
     }
 
 
-    public function recall(Cloner $cloner): Recollection
+    public function recall(Cloner $cloner, string $id = null): Recollection
     {
-        $id = $cloner->scope->makeScopeId(
-            $name = $this->getName(),
-            $this->getScopes()
-        );
+        $name = $this->getName();
+        $id = $id ?? $cloner->scope->makeScopeId(
+                $name,
+                $this->getScopes()
+            );
 
         $memory = $cloner->runtime->findMemory(
             $id,
@@ -114,6 +116,27 @@ class IMemoryDef implements MemoryDef
             $cloner
         );
     }
+
+    public function makeScopeId(Cloner $cloner): string
+    {
+        return $cloner->scope->makeScopeId(
+            $this->getName(),
+            $this->getScopes()
+        );
+    }
+
+
+    public function fetchMemory(Cloner $cloner, string $id = null): Memory
+    {
+        $id = $id ?? $this->makeScopeId($cloner);
+
+        return $cloner->runtime->findMemory(
+            $id,
+            $longTerm = $this->isLongTerm(),
+            $this->getDefaults()
+        );
+    }
+
 
     public function getMeta(): Meta
     {

@@ -27,4 +27,6 @@ interface Recollection extends \ArrayAccess, ArrayAndJsonAble, ClonerInstance
     public function getName() : string;
 
     public function isLongTerm() : bool;
+
+    public function toData() : array;
 }

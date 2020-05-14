@@ -17,6 +17,11 @@ namespace Commune\Blueprint\Ghost\MindDef;
 interface DefParamsCollection
 {
     /**
+     * @return string[]
+     */
+    public function getParamNames() : array;
+
+    /**
      * @param string $name
      * @return bool
      */
@@ -32,7 +37,7 @@ interface DefParamsCollection
      * @return DefParam[]
      *  [name => DefParam]
      */
-    public function getParams() : array;
+    public function getAllParams() : array;
 
     /**
      * @param array $values

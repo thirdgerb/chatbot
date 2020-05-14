@@ -35,6 +35,11 @@ class IDefParamCollection extends Collection implements DefParamsCollection
         parent::__construct($items);
     }
 
+    public function getParamNames(): array
+    {
+        return array_keys($this->items);
+    }
+
 
     public function hasParam(string $name): bool
     {
@@ -49,7 +54,7 @@ class IDefParamCollection extends Collection implements DefParamsCollection
     /**
      * @return DefParam[]
      */
-    public function getParams(): array
+    public function getAllParams(): array
     {
         return $this->all();
     }
@@ -57,7 +62,7 @@ class IDefParamCollection extends Collection implements DefParamsCollection
     public function parseValues(array $values): array
     {
         $data = [];
-        foreach ($this->getParams() as $name => $param) {
+        foreach ($this->getAllParams() as $name => $param) {
             $value = null;
             if (isset($values[$name])) {
                 $parser = $param->getValParser();

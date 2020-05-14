@@ -14,8 +14,9 @@ namespace Commune\Ghost\Memory;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
-use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Memory\Recall;
+use Commune\Blueprint\Ghost\MindDef\MemoryDef;
+use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\TArrayAccessToMutator;
 
@@ -29,16 +30,10 @@ abstract class IRecall implements Recall
 {
     use ArrayAbleToJson, TArrayAccessToMutator, TRecollection;
 
-    const GETTER_PREFIX = '__get_';
-
-    const SETTER_PREFIX = '__set_';
-
-
-    private function __construct(string $id, bool $longTerm, Memory $memory, Cloner $cloner)
+    private function __construct(string $id, MemoryDef $def, Cloner $cloner)
     {
         $this->_id = $id;
-        $this->_longTerm = $longTerm;
-        $this->_memory = $memory;
+        $this->_def = $def;
         $this->_cloner = $cloner;
     }
 
@@ -57,24 +52,33 @@ abstract class IRecall implements Recall
      */
     abstract public static function getScopes() : array;
 
-    abstract public static function stub() : array;
+    abstract public static function getParamOptions() : array;
+
 
     public static function find(Cloner $cloner, string $id = null) : Recall
     {
-        $scope = $cloner->scope;
-        $scopes = static::getScopes();
-        $dimensions = $scope->getLongTermDimensionsDict($scopes);
-        $longTerm = !empty($dimensions);
+        $def = static::getMemoryDef($cloner);
+        return new static(
+            $id ?? $def->makeScopeId($cloner),
+            $def,
+            $cloner
+        );
+    }
 
+    protected static function getMemoryDef(Cloner $cloner) : MemoryDef
+    {
+        $name = static::recallName();
+        $memoryReg = $cloner->mind->memoryReg();
+        if (!$memoryReg->hasDef($name)) {
+            $memoryMeta = new MemoryMeta([
+                'name' => $name,
+                'scopes' => static::getScopes(),
+                'params' => static::getParamOptions(),
+            ]);
 
-        if (!isset($id)) {
-            $name = static::recallName();
-            $id = $scope->makeId($name, $dimensions);
+            $memoryReg->registerDef($memoryMeta->getWrapper());
         }
-
-        $stub = static::stub();
-        $memory = $cloner->runtime->findMemory($id, $longTerm, $stub);
-        return new static($id, $longTerm, $memory, $cloner);
+        return $memoryReg->getDef($name);
     }
 
     public function toInstanceStub(): ClonerInstanceStub

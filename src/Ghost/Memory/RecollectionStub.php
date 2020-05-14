@@ -34,39 +34,22 @@ class RecollectionStub implements ClonerInstanceStub
     protected $name;
 
     /**
-     * @var bool
-     */
-    protected $longTerm;
-
-    /**
      * RecollectionStub constructor.
      * @param string $id
      * @param string $name
-     * @param bool $longTerm
      */
-    public function __construct(string $id, string $name, bool $longTerm)
+    public function __construct(string $id, string $name)
     {
         $this->id = $id;
         $this->name = $name;
-        $this->longTerm = $longTerm;
     }
 
     public function toInstance(Cloner $cloner): ClonerInstance
     {
         $def = $cloner->mind->memoryReg()->getDef($this->name);
-
-        $defaults = $def->getDefaults();
-        $memory = $cloner->runtime->findMemory(
-            $this->id,
-            $this->longTerm,
-            $defaults
-        );
-
         return new IRecollection(
             $this->id,
-            $this->name,
-            $this->longTerm,
-            $memory,
+            $def,
             $cloner
         );
     }
@@ -76,7 +59,6 @@ class RecollectionStub implements ClonerInstanceStub
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'longTerm' => $this->longTerm
         ];
     }
 

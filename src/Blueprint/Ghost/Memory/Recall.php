@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
 
 /**
  * 静态的回忆工具, 用静态方法来定义和获取记忆体.
@@ -37,7 +38,7 @@ interface Recall extends Recollection
 
     /**
      * 初始值.
-     * @return array
+     * @return ParamOption[]|array
      */
-    public static function stub() : array;
+    public static function getParamOptions() : array;
 }

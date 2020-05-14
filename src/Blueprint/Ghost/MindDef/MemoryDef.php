@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\MindDef;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 
 
@@ -41,11 +42,27 @@ interface MemoryDef extends Def
      */
     public function getDefaults() : array;
 
+
+    /**
+     * @param Cloner $cloner
+     * @return string
+     */
+    public function makeScopeId(Cloner $cloner) : string;
+
     /**
      * 获取一个记忆体的实例.
+     *
      * @param Cloner $cloner
+     * @param string|null $id
      * @return Recollection
      */
-    public function recall(Cloner $cloner) : Recollection;
+    public function recall(Cloner $cloner, string $id = null) : Recollection;
+
+    /**
+     * @param Cloner $cloner
+     * @param string|null $id
+     * @return Memory
+     */
+    public function fetchMemory(Cloner $cloner, string $id = null) : Memory;
 
 }

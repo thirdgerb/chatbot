@@ -85,6 +85,15 @@ class IDefParam implements DefParam
             return $type;
         }
 
+
+        if (class_exists($type)) {
+            return $this->makeValidator(function($value) use ($type) : bool {
+                return is_object($value)
+                    && is_a($value, $type, TRUE);
+            }, $isList);
+        }
+
+
         if (TypeUtils::isCallableClass($type)) {
             return [$type, '__invoke'];
         }

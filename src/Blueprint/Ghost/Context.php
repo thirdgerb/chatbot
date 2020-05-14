@@ -83,7 +83,7 @@ interface Context extends
      * 获取上下文记忆的变量值.
      * @return array
      */
-    public function toMemorableData() : array;
+    public function toData() : array;
 
     /**
      * 递归地获取所有属性的值.

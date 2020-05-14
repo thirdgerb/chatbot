@@ -44,6 +44,13 @@ interface ContextDef extends Def
 
     public function getEntityParams() : DefParamsCollection;
 
+    public function getParams() : DefParamsCollection;
+
+    /**
+     * @return string[]
+     */
+    public function getEntityNames() : array;
+
     /*------- relation -------*/
 
     /**

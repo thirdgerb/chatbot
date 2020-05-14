@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Memory\Recollection;
+use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Support\Arr\ArrayAbleToJson;
 
 
@@ -30,16 +31,13 @@ class IRecollection implements Recollection
 
     public function __construct(
         string $id,
-        string $name,
-        bool $longTerm,
-        Memory $memory,
+        MemoryDef $def,
         Cloner $cloner
     )
     {
         $this->_id = $id;
-        $this->_name = $name;
-        $this->_longTerm = $longTerm;
-        $this->_memory = $memory;
+        $this->_def = $def;
+        $this->_memory = $def->fetchMemory($cloner, $id);
         $this->_cloner = $cloner;
     }
 
@@ -47,14 +45,13 @@ class IRecollection implements Recollection
     {
         return new RecollectionStub(
             $this->_id,
-            $this->_name,
-            $this->_longTerm
+            $this->getName()
         );
     }
 
     public function getName(): string
     {
-        return $this->_name;
+        return $this->_def->getName();
     }
 
 

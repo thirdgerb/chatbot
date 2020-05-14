@@ -11,17 +11,17 @@
 
 namespace Commune\Ghost\Context;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 use Commune\Blueprint\Ghost\Context;
+use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
-use Commune\Blueprint\Ghost\MindDef\DefParam;
-use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Message\Host\Convo\IContextMsg;
 use Commune\Protocals\Host\Convo\ContextMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
+use Commune\Support\Arr\TArrayAccessToMutator;
+use Commune\Blueprint\Exceptions\HostLogicException;
 use Commune\Support\DI\TInjectable;
 use Illuminate\Support\Collection;
 
@@ -41,10 +41,8 @@ use Illuminate\Support\Collection;
  */
 class IContext implements Context
 {
-    use TInjectable,  ArrayAbleToJson;
+    use TInjectable, ArrayAbleToJson, TArrayAccessToMutator;
 
-    protected $_getter_prefix = '__get_';
-    protected $_setter_prefix = '__set_';
 
     /**
      * @var Ucl
@@ -57,9 +55,9 @@ class IContext implements Context
     protected $_cloner;
 
     /**
-     * @var Memory|null
+     * @var Recollection|null
      */
-    protected $_memory;
+    protected $_recollection;
 
     /**
      * @var ContextDef|null
@@ -121,8 +119,7 @@ class IContext implements Context
 
     public function dependEntity(): ? string /* entityName */
     {
-        $manager = $this->getDef()->getParamsManager();
-        $entities = $manager->getEntityParams();
+        $entities = $this->getDef()->getEntityNames();
 
         foreach ($entities as $name) {
             if (!$this->offsetExists($name)) {
@@ -136,39 +133,14 @@ class IContext implements Context
 
     /*----- memory -----*/
 
-    protected function getLongTermMemory() : Memory
+    protected function getRecollection() : Recollection
     {
-        if (isset($this->_longTermMemory)) {
-            return $this->_longTermMemory;
-        }
+        return $this->_recollection
+            ?? $this->_recollection = $this
+                ->getDef()
+                ->asMemoryDef()
+                ->recall($this->_cloner, $this->_ucl->getContextId());
 
-        $manager = $this->getDef()->getParamsManager();
-        $parameters = $manager->getLongTermParams();
-        return $this->_longTermMemory = $this->findMemory($parameters);
-
-    }
-
-    protected function getSessionMemory() : Memory
-    {
-        if (isset($this->_memory)) {
-            return $this->_memory;
-        }
-
-        $manager = $this->getDef()->getParamsManager();
-        $parameters = $manager->getShortTermParams();
-        return $this->_memory = $this->findMemory($parameters);
-
-    }
-
-    protected function findMemory(Collection $parameters) : Memory
-    {
-        $stub = array_map(function(DefParam $parameter){
-            return $parameter->getDefault();
-        }, $parameters->all());
-
-        return $this->_cloner
-            ->runtime
-            ->findMemory($this->getId(), true, $stub);
     }
 
     /*----- ArrayAccess -----*/
@@ -176,38 +148,14 @@ class IContext implements Context
     public function toArray(): array
     {
         $data = $this->getQuery()->toArray();
-
-        $manager = $this->getDef()->getParamsManager();
-
-        if ($manager->hasLongTermParameter()) {
-            $data = $data + $this->getLongTermMemory()->toArray();
-        }
-
-        if ($manager->hasSessionParameter()) {
-            $data = $data + $this->getSessionMemory()->toArray();
-        }
+        $data = $data + $this->getRecollection()->toArray();
 
         return $data;
     }
 
-    public function toMemorableData(): array
+    public function toData(): array
     {
-        $data = [];
-
-        $manager = $this->getDef()->getParamsManager();
-
-        if ($manager->hasLongTermParameter()) {
-            $data = $data + $this->getLongTermMemory()->toData();
-        }
-
-        if ($manager->hasSessionParameter()) {
-            $data = $data + $this->getSessionMemory()->toData();
-        }
-
-        // 不包含任何 object 对象.
-        return array_filter($data, function($value) {
-            return !is_object($value);
-        });
+        return $this->getRecollection()->toData();
     }
 
     public function merge(array $data): void
@@ -224,14 +172,19 @@ class IContext implements Context
             'contextName' => $this->_ucl->contextName,
             'contextId' => $this->_ucl->getContextId(),
             'query' => $this->_ucl->query,
-            'data' => $this->toMemorableData(),
+            'data' => $this->toData(),
         ]);
     }
 
     public function getIterator()
     {
-        $manager = $this->getDef()->getParamsManager();
-        foreach ($manager->getParameters() as $name => $parameter) {
+        $def = $this->getDef();
+        $names = $def->getQueryParams()->getParamNames();
+        $memoryNames = $def->asMemoryDef()->getParams()->getParamNames();
+
+        $names = array_unique(array_merge($names, $memoryNames));
+
+        foreach ($names as $name) {
             yield $this->offsetGet($name);
         }
     }
@@ -241,108 +194,56 @@ class IContext implements Context
 
     public function offsetExists($offset)
     {
-        $manager = $this->getDef()->getParamsManager();
+        $manager = $this->getDef()->getParams();
 
-        if (!$manager->hasParameter($offset)) {
+        if (!$manager->hasParam($offset)) {
             return false;
         }
 
-        $parameter = $manager->getParameter($offset);
-
-        if ($parameter->isQuery()) {
-            return $this->getQuery()->offsetExists($offset);
-        }
-
-        if ($parameter->isLongTerm()) {
-            return $this->getLongTermMemory()->offsetExists($offset);
-        }
-
-        return $this->getSessionMemory()->offsetExists($offset);
+        $value = $this->offsetGet($offset);
+        return isset($value);
     }
 
     public function offsetGet($offset)
     {
-        // getter
-        $method = $this->_getter_prefix . $offset;
-        if (method_exists($this, $method)) {
-            return $this->{$method}();
+        $def = $this->getDef();
+        $queries = $def->getQueryParams();
+
+        if($queries->hasParam($offset)) {
+            return $this->getQuery()[$offset] ?? null;
         }
 
-        $manager = $this->getDef()->getParamsManager();
-        if (!$manager->hasParameter($offset)) {
-            return null;
-        }
-
-        $parameter = $manager->getParameter($offset);
-
-        if ($parameter->isLongTerm()) {
-            $value = $this->getLongTermMemory()->offsetGet($offset);
-        } else {
-            $value = $this->getSessionMemory()->offsetGet($offset);
-        }
-
-        if ($value instanceof Cloner\ClonerInstanceStub) {
-            $value = $value->toInstance($this->_cloner);
-        }
-
-        return $value ?? $parameter->getDefault();
+        return $this->getRecollection()->offsetGet($offset);
     }
 
     public function offsetSet($offset, $value)
     {
-        // setter
-        $method = $this->_setter_prefix . $offset;
-        if (method_exists($this, $method)) {
-            $this->{$method}($value);
-            return;
-        }
+        $def = $this->getDef();
+        $queries = $def->getQueryParams();
 
-        // set undefined
-        $manager = $this->getDef()->getParamsManager();
-        if (!$manager->hasParameter($offset)) {
-            $contextName = $this->getName();
-            $error = "context $contextName try to set value for undefined parameter $offset";
-            $this->warningOrException($error);
-            return;
-        }
-
-        $parameter = $manager->getParameter($offset);
-        if ($parameter->isQuery()) {
+        if ($queries->hasParam($offset)) {
             $contextName = $this->getName();
             $error = "context $contextName try to set value for query parameter $offset";
             $this->warningOrException($error);
-        }
-
-        if ($value instanceof Cloner\ClonerInstance) {
-            $value = $value->toInstanceStub();
-        }
-
-
-        // 进行 value 的过滤. 主要是数组和类型的切换.
-        $value = $parameter->parseSetVal($value);
-        if ($parameter->isLongTerm()) {
-            $this->getLongTermMemory()->offsetSet($offset, $value);
             return;
         }
 
-        $this->getSessionMemory()->offsetSet($offset, $value);
+        $this->getRecollection()->offsetSet($offset, $value);
     }
 
     public function offsetUnset($offset)
     {
-        $manager = $this->getDef()->getParamsManager();
-        if (!$manager->hasParameter($offset)) {
+        $queries = $this->getDef()->getQueryParams();
+
+        if ($queries->hasParam($offset)) {
+            $contextName = $this->getName();
+            $error = "context $contextName try to unset value for query parameter $offset";
+            $this->warningOrException($error);
             return;
         }
 
-        $parameter = $manager->getParameter($offset);
-
-        if ($parameter->isLongTerm()) {
-            $this->getLongTermMemory()->offsetUnset($offset);
-            return;
-        }
-
-        $this->getSessionMemory()->offsetUnset($offset);
+        $this->getRecollection()->offsetUnset($offset);
+        return;
     }
 
 

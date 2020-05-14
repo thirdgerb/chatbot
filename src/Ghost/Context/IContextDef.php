@@ -69,6 +69,11 @@ class IContextDef extends AbsOption implements ContextDef
     protected $_entities;
 
     /**
+     * @var DefParamsCollection
+     */
+    protected $_params;
+
+    /**
      * @var Collection
      */
     protected $_stageMap;
@@ -167,6 +172,25 @@ class IContextDef extends AbsOption implements ContextDef
                 return $params->getParam($name);
             }, $this->entities)
         );
+    }
+
+    public function getEntityNames(): array
+    {
+        return $this->entities;
+    }
+
+    public function getParams(): DefParamsCollection
+    {
+        if (isset($this->_params)) {
+            return $this->_params;
+        }
+        $params = $this->getQueryParams()->getAllParams();
+        $params = array_merge(
+            $params,
+            $this->asMemoryDef()->getParams()->getAllParams()
+        );
+
+        return $this->_params = $params;
     }
 
 
@@ -287,6 +311,7 @@ class IContextDef extends AbsOption implements ContextDef
         $this->_entities = null;
         $this->_queries = null;
         $this->_stageMap = null;
+        $this->_params = null;
         parent::__destruct();
     }
 
