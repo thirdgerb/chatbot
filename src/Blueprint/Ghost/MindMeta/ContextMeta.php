@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
+use Commune\Ghost\Context\IContextDef;
 use Commune\Support\Alias\Aliases;
 use Commune\Support\Option\AbsMeta;
 use Commune\Support\Utils\TypeUtils;
@@ -38,9 +39,9 @@ class ContextMeta extends AbsMeta
     {
         return [
             'name' => '',
-            'title' => 'contextTitle',
-            'desc' => 'contextDesc',
-            'wrapper' => '',
+            'title' => '',
+            'desc' => '',
+            'wrapper' => IContextDef::class,
             'config' => [],
         ];
     }
