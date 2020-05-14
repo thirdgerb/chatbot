@@ -19,6 +19,7 @@ use Commune\Protocals\Host\Convo\VerbalMsg;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\MockObject\Builder\Match;
 
 
 /**
@@ -26,6 +27,9 @@ use Illuminate\Support\Collection;
  */
 interface Matcher
 {
+    public function getMatchedParams() : array;
+
+    public function isMatched() : bool;
 
     /*------- 匹配事件 -------*/
 
@@ -62,9 +66,9 @@ interface Matcher
      * 检查 message 的 trimmedText 是否等于目标字符串. 不区分大小写, 精确匹配
      *
      * @param string $text
-     * @return bool
+     * @return static
      */
-    public function is(string $text) : bool;
+    public function is(string $text) : Matcher;
 
 
     /**
@@ -80,9 +84,9 @@ interface Matcher
      * 最好不要用这种方法. 而是依赖 NLU 去匹配.
      *
      * @param string $pattern  查询的正则
-     * @return bool
+     * @return static
      */
-    public function pregMatch(string $pattern): bool;
+    public function pregMatch(string $pattern): Matcher;
 
     /**
      * 判断输入信息是否是口头或文字的.
@@ -161,15 +165,23 @@ interface Matcher
      */
     public function isAnswer(string $answer) : bool;
 
+    /**
+     *
+     * $matches = [ string $answer]
+     *
+     * @return static
+     */
+    public function isAnyAnswer() : Matcher;
+
 
     /**
      * 之前提了一个问题, 答案命中了问题的一个建议的情况.
      * 可以与 answered 挑选使用.
      *
      * @param int|string $suggestionIndex
-     * @return bool
+     * @return static
      */
-    public function isChoice($suggestionIndex) : bool;
+    public function isChoice($suggestionIndex) : Matcher;
 
     /**
      * 有多个choice 中的一个
@@ -193,9 +205,9 @@ interface Matcher
      * 最好不要沦落到这一步.
      *
      * @param array $keyWords   [ 'word1', 'word2', ['synonym1', 'synonym2']]
-     * @return null|Collection
+     * @return static
      */
-    public function hasKeywords(array $keyWords) : ? Collection;
+    public function hasKeywords(array $keyWords) : Matcher;
 
 
     /*------- feelings -------*/
@@ -212,14 +224,14 @@ interface Matcher
     public function feels(string $emotionName) : bool;
 
     /**
-     * @return bool
+     * @return static
      */
-    public function isPositive() : bool;
+    public function isPositive() : Matcher;
 
     /**
-     * @return bool
+     * @return static
      */
-    public function isNegative() : bool;
+    public function isNegative() : Matcher;
 
     /*------- intents -------*/
 
@@ -227,9 +239,9 @@ interface Matcher
      * 匹配单个意图.
      *
      * @param string $intentName  可以是意图的 ContextName, 也可以是意图的类名
-     * @return bool
+     * @return static
      */
-    public function isIntent(string $intentName) : bool;
+    public function isIntent(string $intentName) : Matcher;
 
     /**
      * 在多个意图中匹配一个最近似的.

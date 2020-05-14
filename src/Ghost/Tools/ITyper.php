@@ -16,7 +16,6 @@ use Commune\Blueprint\Ghost\Tools\Typer;
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\GhostInput;
-use Commune\Protocals\Intercom\GhostMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -58,15 +57,6 @@ class ITyper implements Typer
      */
     protected $deliverAt = 0;
 
-    /**
-     * @var GhostMsg[]
-     */
-    protected $outputs = [];
-
-    /**
-     * @var bool
-     */
-    protected $finned = false;
 
     /**
      * ITyper constructor.
@@ -156,41 +146,15 @@ class ITyper implements Typer
             $this->guestId
         );
 
-        $this->outputs[] = $ghostMsg;
+        $this->dialog->cloner->output($ghostMsg);
         return $this;
-    }
-
-
-    public function done(): Dialog
-    {
-        if ($this->finned) {
-            return $this->dialog;
-        }
-
-        if (empty($this->outputs)) {
-            $this->finned = true;
-            return $this->dialog;
-        }
-
-        $input = $this->input;
-
-        $outputs = array_map(function(array $output) use ($input){
-            list($level, $intentName, $slots) = $output;
-            return new IIntentMsg($intentName, $slots, $level);
-
-        }, $this->outputs);
-
-        $cloner = $this->dialog->cloner;
-        $cloner->output(...$outputs);
-        $this->finned = true;
-        return $this->dialog;
     }
 
     public function __destruct()
     {
-        $this->done();
-        $this->outputs = [];
         $this->dialog = null;
+        $this->input = null;
+        $this->slots = [];
     }
 
 }

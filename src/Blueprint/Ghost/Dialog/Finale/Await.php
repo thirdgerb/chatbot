@@ -11,10 +11,13 @@
 
 namespace Commune\Blueprint\Ghost\Dialog\Finale;
 
+use Commune\Blueprint\Ghost\Dialog\Finale;
+use Commune\Protocals\Host\Convo\VerbalMsg;
+
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Await
+interface Await extends Finale
 {
 
     /**
@@ -32,8 +35,8 @@ interface Await
      */
     public function askChoose(
         string $query,
-        array $suggestions,
-        $defaultChoice = null,
+        array $suggestions = [],
+        $defaultChoice = 0,
         bool $withRoutes = true
     ) : Await;
 
@@ -62,11 +65,13 @@ interface Await
      *
      * @param string $query
      * @param array $suggestions
+     * @param string $messageType
      * @return Await
      */
     public function askAny(
         string $query,
-        array $suggestions = []
+        array $suggestions = [],
+        string $messageType = VerbalMsg::class
     ) : Await;
 
     /**

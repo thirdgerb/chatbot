@@ -50,7 +50,7 @@ class IConfuse extends AbsDialogue implements Confuse
     {
         $message = $this->cloner->ghostInput->getMessage();
         if ($message instanceof EventMsg) {
-            return $this->then()->dumb();
+            return $this->nav()->dumb();
         }
         return null;
     }

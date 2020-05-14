@@ -11,17 +11,13 @@
 
 namespace Commune\Ghost\Providers;
 
+use Commune\Ghost\IMindset;
 use Commune\Blueprint\Ghost\Mindset;
+use Commune\Blueprint\Ghost\MindMeta;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Contracts\ServiceProvider;
-use Commune\Ghost\Mind\IMindset;
-use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
-use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
-use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
-use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
-use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
-use Commune\Blueprint\Ghost\MindMeta\StageMeta;
-use Commune\Blueprint\Ghost\MindMeta\SynonymMeta;
+use Commune\Ghost\Providers\Option\MindCacheExpireOption;
+use Commune\Ghost\Providers\Option\MindStorageOption;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\OptRegistry;
 
@@ -85,13 +81,13 @@ class MindsetServiceProvider extends ServiceProvider
     protected function eachCategory() : \Generator
     {
         $metas = [
-            'context' => ContextMeta::class,
-            'stage' => StageMeta::class,
-            'intent' => IntentMeta::class,
-            'memory' => MemoryMeta::class,
-            'emotion' => EmotionMeta::class,
-            'entity' => EntityMeta::class,
-            'synonym' => SynonymMeta::class,
+            'context' => MindMeta\ContextMeta::class,
+            'stage' => MindMeta\StageMeta::class,
+            'intent' => MindMeta\IntentMeta::class,
+            'memory' => MindMeta\MemoryMeta::class,
+            'emotion' => MindMeta\EmotionMeta::class,
+            'entity' => MindMeta\EntityMeta::class,
+            'synonym' => MindMeta\SynonymMeta::class,
         ];
 
         // 遍历获取所有的 Category 配置.

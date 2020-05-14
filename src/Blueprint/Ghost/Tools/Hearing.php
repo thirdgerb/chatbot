@@ -11,46 +11,24 @@
 
 namespace Commune\Blueprint\Ghost\Tools;
 
-use Commune\Blueprint\Ghost\Operator\Ending;
-use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Dialog;
 
 /**
  * 用户视角对话状态的回归.
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ *
+ * @property-read Dialog $dialog
  */
-interface Hearing
+interface Hearing extends Matcher
 {
-    /**
-     * 回到上一轮对话的终态
-     *
-     * @param bool $quiet  不需要重复上一轮的最终消息.
-     * @return Ending
-     */
-    public function rewind(bool $quiet) : Ending;
+    public function nav() : Navigator;
 
-    /**
-     * 无法理解当前对话.
-     * @return Operator
-     */
-    public function confuse() : Operator;
+    public function todo(callable $caller) : Hearing;
 
-    /**
-     * 重新激活当前 Stage.
-     * @return Operator
-     */
-    public function reactivate() : Operator;
+    public function then(callable $caller = null) : Hearing;
 
-    /**
-     * 返回若干步之前. 并且发送消息.
-     *
-     * @param int $steps
-     * @return Ending
-     */
-    public function backStep(int $steps) : Ending;
+    public function component(callable $caller) : Hearing;
 
-    /**
-     * 发呆, 不保留任何状态. 当作没有接受到消息.
-     * @return Ending
-     */
-    public function dumb() : Ending;
+    public function end(callable $fallback = null) : Dialog;
 }

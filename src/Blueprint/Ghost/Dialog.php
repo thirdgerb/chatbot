@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost;
 
-use Commune\Blueprint\Ghost\Memory\Recall;
+use Commune\Blueprint\Ghost\Dialog\Finale\Await;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
@@ -59,7 +59,22 @@ interface Dialog
      *
      * @return Navigator
      */
-    public function then() : Navigator;
+    public function nav() : Navigator;
+
+    /**
+     * 等待用户的回复.
+     *
+     * @param array $allowContexts
+     * @param array $stageRoutes
+     * @param int|null $expire
+     * @return Await
+     */
+    public function await(
+        array $allowContexts = ['*'],
+        array $stageRoutes = [],
+        int $expire = null
+    ) : Await;
+
 
     /**
      * @return Hearing
@@ -144,4 +159,5 @@ interface Dialog
 
     public function isEvent(string $statusType) : bool ;
 
+    public function __invoke() : Dialog;
 }

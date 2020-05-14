@@ -14,6 +14,7 @@ namespace Commune\Ghost\Memory;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
+use Commune\Blueprint\Ghost\Context\ParamBuilder;
 use Commune\Blueprint\Ghost\Memory\Recall;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
@@ -26,7 +27,7 @@ use Commune\Support\Arr\TArrayAccessToMutator;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class IRecall implements Recall
+abstract class RecallPrototype implements Recall
 {
     use ArrayAbleToJson, TArrayAccessToMutator, TRecollection;
 
@@ -47,14 +48,10 @@ abstract class IRecall implements Recall
     abstract public static function recallName() : string;
 
     /**
-     * @see ClonerScope
-     * @return string[]
+     * @param Cloner $cloner
+     * @param string|null $id
+     * @return static
      */
-    abstract public static function getScopes() : array;
-
-    abstract public static function getParamOptions() : array;
-
-
     public static function find(Cloner $cloner, string $id = null) : Recall
     {
         $def = static::getMemoryDef($cloner);
@@ -70,10 +67,12 @@ abstract class IRecall implements Recall
         $name = static::recallName();
         $memoryReg = $cloner->mind->memoryReg();
         if (!$memoryReg->hasDef($name)) {
+
+            $builder = static::getParamOptions($builder);
             $memoryMeta = new MemoryMeta([
                 'name' => $name,
                 'scopes' => static::getScopes(),
-                'params' => static::getParamOptions(),
+                'params' => $builder->toParamOptions(),
             ]);
 
             $memoryReg->registerDef($memoryMeta->getWrapper());

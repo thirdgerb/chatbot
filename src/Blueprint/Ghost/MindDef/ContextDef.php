@@ -14,7 +14,6 @@ namespace Commune\Blueprint\Ghost\MindDef;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Ucl;
-use Illuminate\Support\Collection;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Exceptions\TooManyRedirectsException;
+use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Blueprint\Ghost\Tools\Navigator;
@@ -120,7 +121,7 @@ abstract class AbsDialogue implements
         return $this->cloner->container->make(Matcher::class);
     }
 
-    public function then(): Navigator
+    public function nav(): Navigator
     {
         return $this;
     }
@@ -319,9 +320,20 @@ abstract class AbsDialogue implements
     }
 
     /*-------- status --------*/
+
     public function isEvent(string $statusType): bool
     {
         return is_a($this, $statusType, TRUE);
+    }
+
+    public function recall(string $name): Recollection
+    {
+        return $this
+            ->cloner
+            ->mind
+            ->memoryReg()
+            ->getDef($name)
+            ->recall($this->cloner);
     }
 
 
@@ -372,6 +384,11 @@ abstract class AbsDialogue implements
     public function getInterfaces(): array
     {
         return static::getInterfacesOf(Dialog::class, false);
+    }
+
+    public function __invoke(): Dialog
+    {
+        return $this;
     }
 
 

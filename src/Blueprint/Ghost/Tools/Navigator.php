@@ -33,25 +33,13 @@ interface Navigator
     /*-------- finale --------*/
 
     /**
-     * 等待用户的回复.
-     *
-     * @param string[] $stageInterceptors
-     * @param array $contextInterceptors
-     * @param int|null $expire
-     * @return Await
-     */
-    public function await(
-        array $stageInterceptors = [],
-        array $contextInterceptors = [],
-        int $expire = null
-    ) : Await;
-
-    /**
      * 重置到上一轮的对话.
      * @param bool $silent
      * @return Dialog
      */
     public function rewind(bool $silent = false) : Dialog;
+
+    public function reactivate() : Dialog;
 
     /**
      * 什么也没听见, 当本轮对话没有发生.
@@ -113,6 +101,12 @@ interface Navigator
 
 
     /*-------- redirect --------*/
+
+    /**
+     * @param string ...$stageName
+     * @return Dialog
+     */
+    public function next(string ...$stageName) : Dialog;
 
     /**
      * 进入到相同 Context 下的另一个 stage
