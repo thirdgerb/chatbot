@@ -27,12 +27,14 @@ interface StageBuilder
      */
     public function onActivate($builder) : StageBuilder;
 
+    public function onHeed($builder) : StageBuilder;
+
     public function onRetain($builder) : StageBuilder;
 
     public function onWithdraw($builder) : StageBuilder;
 
     public function onEvent(string $event, $builder) : StageBuilder;
 
-    public function end() : StageDef;
+    public function end($fallback = null) : StageDef;
 
 }

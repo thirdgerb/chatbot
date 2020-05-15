@@ -113,6 +113,11 @@ class ContextPrototype implements Context
             ?? $this->_query = new Collection($this->_ucl->query);
     }
 
+    public function getCloner(): Cloner
+    {
+        return $this->_cloner;
+    }
+
 
     /*----- entities -----*/
 

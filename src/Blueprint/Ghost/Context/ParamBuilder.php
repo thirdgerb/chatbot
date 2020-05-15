@@ -30,9 +30,9 @@ interface ParamBuilder
     public function add(
         string $name,
         $default = null,
-        string $query = '',
-        $type = 'string',
-        $parser = null
+        $type = null,
+        $parser = null,
+        string $query = ''
     ) : ParamBuilder;
 
     public function dependOn(

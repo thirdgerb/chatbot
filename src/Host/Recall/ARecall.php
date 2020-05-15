@@ -25,10 +25,8 @@ abstract class ARecall extends RecallPrototype
         return TypeUtils::normalizeMemoryName(static::class);
     }
 
-    public static function getScopes(): array
-    {
-        return [];
-    }
+    abstract public static function getScopes(): array;
+
 
     abstract public static function getParamOptions(ParamBuilder $builder): ParamBuilder;
 

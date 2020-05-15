@@ -64,7 +64,7 @@ class DemoHome extends ACodeContext
                 function(Dialog $dialog) {
                     $dialog->send()
                         ->info('完成测试')
-                        ->done();
+                        ->over();
 
                     return $dialog->nav()->quit();
                 }

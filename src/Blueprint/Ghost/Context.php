@@ -59,6 +59,7 @@ interface Context extends
      */
     public function getDef() : ContextDef;
 
+    public function getCloner() : Cloner;
 
     /*----- entity -----*/
 

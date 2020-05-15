@@ -20,6 +20,8 @@ use Commune\Host\Contexts\CodeContext\HasEntity;
 
 
 /**
+ * 作为记忆体的多轮对话.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 abstract class AMemoryContext extends ACodeContext implements
@@ -29,11 +31,9 @@ abstract class AMemoryContext extends ACodeContext implements
 {
     public function __on_start(StageBuilder $stage): StageDef
     {
-        return $stage
-            ->onActivate(function(Dialog $dialog) {
-                return $dialog->nav()->fulfill();
-            })
-            ->end();
+        return $stage->end(function(Dialog $dialog) {
+            return $dialog->nav()->fulfill();
+        });
     }
 
 

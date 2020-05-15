@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Dialog\Retain;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Preempt extends Retain
+interface Fulfill extends Retain
 {
 
 }

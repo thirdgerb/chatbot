@@ -143,28 +143,28 @@ interface Navigator
      * 依赖一个目标 Context. 当目标 Context fulfill 时,
      * 会调用当前 Stage 的 onFulfill 方法.
      *
-     * @param Ucl $depend
-     * @param string $fieldName
+     * @param Ucl|string $dependUcl
+     * @param string|null $fieldName
      * @return Dialog
      */
-    public function dependOn(Ucl $depend, string $fieldName) : Dialog;
+    public function dependOn($dependUcl, string $fieldName = null) : Dialog;
 
     /**
      * 将自己压入 block 状态, 然后进入 $to 语境.
      *
-     * @param Ucl $to
+     * @param Ucl|string $toUcl
      * @return Dialog
      */
-    public function blockTo(Ucl $to) : Dialog;
+    public function blockTo($toUcl) : Dialog;
 
     /**
      * 让当前 Context 进入 sleep 状态
      *
      * @param string[] $wakenStages  指定这些 Stage, 可以在匹配意图后主动唤醒.
-     * @param Ucl|null $to
+     * @param Ucl|string|null $toUcl
      * @return Dialog
      */
-    public function sleepTo(Ucl $to = null, array $wakenStages = []) : Dialog;
+    public function sleepTo($toUcl = null, array $wakenStages = []) : Dialog;
 
     /**
      * 依赖一个目标 Context.

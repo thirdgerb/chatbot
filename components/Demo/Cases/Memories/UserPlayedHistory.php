@@ -9,29 +9,30 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Demo\Recall;
+namespace Commune\Components\Demo\Cases\Memories;
 
+use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Blueprint\Ghost\Context\ParamBuilder;
 use Commune\Host\Recall\ARecall;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property int $test
- * @property int $test1
+ * @property int $total
+ * @property int $highestScore
  */
-class Sandbox extends ARecall
+class UserPlayedHistory extends ARecall
 {
     public static function getScopes(): array
     {
-        return [];
+        return [ClonerScope::GUEST_ID];
     }
-
 
     public static function getParamOptions(ParamBuilder $builder): ParamBuilder
     {
-        return $builder->add('test', 0);
+        return $builder
+            ->add('total', 0)
+            ->add('highestScore', 0);
     }
 
 

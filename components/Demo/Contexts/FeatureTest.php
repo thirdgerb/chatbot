@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Components\Demo\Recall\Sandbox;
 use Commune\Host\Contexts\ACodeContext;
-use Commune\Host\Contexts\CodeContext\OnHearing;
+use Commune\Host\Contexts\CodeContext\BuildHearing;
 use Commune\Host\Contexts\CodeContext\OnWithdraw;
 use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
 use Commune\Protocals\HostMsg;
@@ -27,7 +27,7 @@ use Commune\Protocals\HostMsg;
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class FeatureTest extends ACodeContext implements
-    OnHearing,
+    BuildHearing,
     OnWithdraw
 {
 
@@ -292,7 +292,7 @@ EOF
      * @param Stage $stage
      * @return StageDef
      */
-    public function __onStagePipeTest(Stage $stage): StageDef
+    public function __on_stage_pipe_test(Stage $stage): StageDef
     {
         return $stage
             ->onActivate(function(Dialog $dialog) {

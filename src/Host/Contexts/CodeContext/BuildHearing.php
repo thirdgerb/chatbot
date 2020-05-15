@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Tools\Hearing;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface OnHearing
+interface BuildHearing
 {
     public function __hearing(Hearing $hearing) : Hearing;
 

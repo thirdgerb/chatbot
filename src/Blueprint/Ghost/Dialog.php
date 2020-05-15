@@ -70,7 +70,7 @@ interface Dialog
      * @return Await
      */
     public function await(
-        array $allowContexts = ['*'],
+        array $allowContexts = [],
         array $stageRoutes = [],
         int $expire = null
     ) : Await;
@@ -95,10 +95,10 @@ interface Dialog
     /**
      * 在当前的上下文中创建一个 Context
      *
-     * @param Ucl $ucl
+     * @param Ucl|string $ucl
      * @return Context
      */
-    public function getContext(Ucl $ucl) : Context;
+    public function getContext($ucl) : Context;
 
     /**
      * @param string $contextOrUclStr
@@ -129,6 +129,7 @@ interface Dialog
 
     /*----- dialog event -----*/
 
+    const ANY           = Dialog::class;
     const ACTIVATE      = Dialog\Activate::class;
     const RETAIN        = Dialog\Retain::class;
     const WITHDRAW      = Dialog\Withdraw::class;
@@ -141,14 +142,15 @@ interface Dialog
     const DEPENDED      = Dialog\Activate\Depended::class;
     const INTEND        = Dialog\Activate\Intend::class;
     const HOME          = Dialog\Activate\Home::class;
+    const PREEMPT       = Dialog\Activate\Preempt::class;
 
     // retain
     const FALLBACK      = Dialog\Retain\Fallback::class;
     const HEED          = Dialog\Retain\Heed::class;
-    const PREEMPT       = Dialog\Retain\Preempt::class;
     const RESTORE       = Dialog\Retain\Restore::class;
     const WAKE          = Dialog\Retain\Wake::class;
     const WATCH         = Dialog\Retain\Watch::class;
+    const FULFILL       = Dialog\Retain\Fulfill::class;
 
     // withdraw
     const CONFUSE       = Dialog\Withdraw\Confuse::class;

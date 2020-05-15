@@ -101,9 +101,9 @@ interface Matcher
      * 判断传入的 message 是否是某个 MessageSubClass 的实例.
      *
      * @param string $messageClazz
-     * @return HostMsg|null
+     * @return static
      */
-    public function isInstanceOf(string $messageClazz) : ? HostMsg;
+    public function isInstanceOf(string $messageClazz) : Matcher;
 
 
     /**
@@ -147,6 +147,8 @@ interface Matcher
      * @return null|Collection
      */
     public function matchEntity(string $entityName) : ? Collection;
+
+
 
 
     /*------- question matcher -------*/
@@ -232,6 +234,11 @@ interface Matcher
      * @return static
      */
     public function isNegative() : Matcher;
+
+    /**
+     * @return static
+     */
+    public function needHelp() : Matcher;
 
     /*------- intents -------*/
 

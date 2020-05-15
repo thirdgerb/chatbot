@@ -105,4 +105,5 @@ interface Typer
      */
     public function debug(string $intent, array $slots = array()) : Typer;
 
+    public function over() : Dialog;
 }
