@@ -17,7 +17,6 @@ use Commune\Blueprint\Ghost\Cloner\ClonerLogger;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
-use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Container\ContainerContract as Container;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Contracts\ServiceProvider;
@@ -26,7 +25,6 @@ use Commune\Ghost\Cloner\IClonerLogger;
 use Commune\Ghost\Cloner\IClonerScene;
 use Commune\Ghost\Cloner\IClonerScope;
 use Commune\Ghost\Cloner\IClonerStorage;
-use Commune\Ghost\Routing\IMatcher;
 use Commune\Ghost\Runtime\IRuntime;
 use Psr\Log\LoggerInterface;
 
@@ -54,7 +52,6 @@ class GhostReqServiceProvider extends ServiceProvider
         $this->registerConvoScene($app);
         $this->registerAuth($app);
         $this->registerRuntime($app);
-        $this->registerMatcher($app);
         $this->registerStorage($app);
     }
 
@@ -111,8 +108,4 @@ class GhostReqServiceProvider extends ServiceProvider
         $app->singleton(ClonerStorage::class, IClonerStorage::class);
     }
 
-    protected function registerMatcher(Container $app) : void
-    {
-        $app->singleton(Matcher::class, IMatcher::class);
-    }
 }

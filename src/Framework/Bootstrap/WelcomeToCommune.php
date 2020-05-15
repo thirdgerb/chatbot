@@ -23,17 +23,12 @@ class WelcomeToCommune implements Bootstrapper
         self::$booted = true;
 
         $logger = $app->getConsoleLogger();
-        $logger->info(<<<EOF
-        
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-             Initialize Commune Chatbot             
-                                                    
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-EOF
-        );
-
+        $logger->info('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+        $logger->info('');
+        $logger->info('             Initialize Commune Chatbot             ');
+        $logger->info('');
+        $logger->info('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+        $logger->info('');
     }
 
 

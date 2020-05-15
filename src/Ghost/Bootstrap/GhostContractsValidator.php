@@ -21,7 +21,11 @@ class GhostContractsValidator extends ContractsValidator
 {
     public function getProcBindings(): array
     {
-        return DependInjections::GHOST_PROC_BINDINGS;
+        return array_merge(
+            DependInjections::BASIC_APP_BINDINGS,
+            DependInjections::APP_PROC_BINDINGS,
+            DependInjections::GHOST_PROC_BINDINGS
+        );
     }
 
     public function getReqBindings(): array

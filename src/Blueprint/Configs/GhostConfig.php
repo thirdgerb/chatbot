@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Configs;
 
+use Commune\Blueprint\Configs\Nest\ProtocalOption;
 use Commune\Support\Option\AbsOption;
 use Commune\Framework\Providers as FrameworkProviders;
 use Commune\Ghost\Providers as GhostProviders;
@@ -87,6 +88,7 @@ class GhostConfig extends AbsOption
                 FrameworkProviders\MonologServiceProvider::class,
             ],
             'reqProviders' => [
+                FrameworkProviders\ArrCacheServiceProvider::class,
                 GhostProviders\GhostReqServiceProvider::class,
             ],
             'components' => [
@@ -116,7 +118,6 @@ class GhostConfig extends AbsOption
     public static function relations(): array
     {
         return [
-
             'protocals[]' => ProtocalOption::class,
         ];
     }

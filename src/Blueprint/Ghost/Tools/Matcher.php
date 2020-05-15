@@ -12,14 +12,12 @@
 namespace Commune\Blueprint\Ghost\Tools;
 
 use Commune\Blueprint\Ghost\Callables\Prediction;
-use Commune\Protocals\HostMsg;
 use Commune\Protocals\Host\Convo\EventMsg;
 use Commune\Protocals\Host\Convo\QuestionMsg;
 use Commune\Protocals\Host\Convo\VerbalMsg;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Illuminate\Support\Collection;
-use PHPUnit\Framework\MockObject\Builder\Match;
 
 
 /**
