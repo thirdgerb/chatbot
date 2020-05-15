@@ -42,6 +42,9 @@ abstract class AbsOption extends AStruct implements Option
     public function getId() :  string
     {
         $key = static::getIdentityName();
+        if (empty($key)) {
+            return static::class;
+        }
         return (string) $this->{$key};
     }
 

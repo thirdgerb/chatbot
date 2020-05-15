@@ -11,10 +11,12 @@
 
 namespace Commune\Blueprint\Framework;
 
+use Commune\Container\ContainerContract;
+
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Bootstrapper
+interface ProcContainer extends ContainerContract
 {
-    public function bootstrap(App $app) : void;
+
 }

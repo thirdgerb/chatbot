@@ -18,43 +18,46 @@ use Commune\Contracts\Log\LogInfo;
  */
 class ILogInfo implements LogInfo
 {
-    public function bootStartKeyStep(string $methodName): string
+    public function bootingStartKeyStep(string $methodName): string
     {
-        return "boot $methodName start";
+        return "key step start: $methodName";
     }
 
-    public function bootEndKeyStep(string $methodName): string
+    public function bootingEndKeyStep(string $methodName): string
     {
-        return "boot $methodName end";
+        return "key step end: $methodName";
     }
 
-    public function bootRegisterExistsProvider(string $id): string
+    public function bootingStartBootstrapper(string $bootstrapper): string
+    {
+        return "bootstrapper start: $bootstrapper";
+    }
+
+    public function bootingEndBootstrapper(string $bootstrapper): string
+    {
+        return "bootstrapper end: $bootstrapper";
+    }
+
+
+    public function bootingRegisterExistsProvider(string $id): string
     {
         return "registering service provider $id already exists";
     }
 
-    public function bootRegisterInvalidProvider(string $providerClass, string $validation = ''): string
+//    public function bootRegisterInvalidProvider(string $providerClass, string $validation = ''): string
+//    {
+//        return "register service provider $providerClass fail: $validation";
+//    }
+//
+    public function bootingBootProvider(string $id): string
     {
-        return "register service provider $providerClass fail: $validation";
+        return "boot service provider: $id";
     }
 
-    public function bootDoBootProvider(string $id): string
-    {
-        return "boot service provider $id";
-    }
 
-
-    public function bootRegisterProvider(string $id): string
+    public function bootingRegisterProvider(string $id): string
     {
-        return "register service provider $id";
-    }
-
-    public function bootInvalidProviderConfiguration($index, $value): string
-    {
-        return "registering service provider invalid. index: "
-            . var_export($index, true)
-            . ', value: '
-            . var_export($value, true);
+        return "register service provider : $id";
     }
 
     public function bootContractNotBound(string $abstract): string
@@ -62,20 +65,43 @@ class ILogInfo implements LogInfo
         return "core contract $abstract not bound";
     }
 
-    public function bootShellNotDefined(string $shell): string
+    public function bootingRegisterConfigOption(string $optionName): string
     {
-        return "shell $shell not defined";
+        return "register config option, name $optionName";
     }
 
-    public function appReceiveInvalidRequest(string $message): string
+    public function bootingRegisterComponent(string $id, string $by = null): string
     {
-        return "invalid request: $message";
+        $by = isset($by) ? ", by $by" : '';
+        return "register component: $id$by";
     }
 
-    public function sessionPipelineLog(): string
+
+    public function bootingBootComponent(string $appType, string $componentId): string
     {
-        return 'end session pipe';
+        return "boot component: $componentId for $appType";
     }
 
+
+
+//    public function bootShellNotDefined(string $shell): string
+//    {
+//        return "shell $shell not defined";
+//    }
+
+//    public function appReceiveInvalidRequest(string $message): string
+//    {
+//        return "invalid request: $message";
+//    }
+
+//    public function sessionPipelineLog(): string
+//    {
+//        return 'end session pipe';
+//    }
+
+    public function bootingUnInstancedReqContainer(): string
+    {
+        return 'request container is not instanced';
+    }
 
 }

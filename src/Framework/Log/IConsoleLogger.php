@@ -72,6 +72,7 @@ class IConsoleLogger implements ConsoleLogger
                 return "\033[37m$str\033[0m";
             case 'info' :
                 return "\033[32m$str\033[0m";
+            case 'notice':
             case 'warning' :
                 return "\033[33m$str\033[0m";
             default :

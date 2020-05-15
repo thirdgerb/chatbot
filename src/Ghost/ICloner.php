@@ -12,7 +12,7 @@
 namespace Commune\Ghost;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\GhostConfig;
+use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;

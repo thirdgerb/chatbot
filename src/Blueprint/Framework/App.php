@@ -99,4 +99,5 @@ interface App
      * @return LogInfo
      */
     public function getLogInfo() : LogInfo;
+
 }

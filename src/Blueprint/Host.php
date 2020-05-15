@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint;
 
-use Commune\Blueprint\Ghost\GhostConfig;
+use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Configs\ShellConfig;
 use Commune\Blueprint\Exceptions\Boot\AppNotBootException;

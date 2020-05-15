@@ -15,7 +15,7 @@ use Commune\Ghost\IMindset;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Blueprint\Ghost\MindMeta;
 use Commune\Container\ContainerContract;
-use Commune\Framework\Contracts\ServiceProvider;
+use Commune\Contracts\ServiceProvider;
 use Commune\Ghost\Providers\Option\MindCacheExpireOption;
 use Commune\Ghost\Providers\Option\MindStorageOption;
 use Commune\Support\Registry\Meta\CategoryOption;

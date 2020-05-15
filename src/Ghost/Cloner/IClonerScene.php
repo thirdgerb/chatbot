@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Cloner;
 
-use Commune\Blueprint\Ghost\GhostConfig;
+use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Exceptions\Logic\InvalidConfigException;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Protocals\Intercom\GhostInput;

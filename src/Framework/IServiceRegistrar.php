@@ -12,12 +12,14 @@
 namespace Commune\Framework;
 
 use Commune\Blueprint\Exceptions\HostBootingException;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Blueprint\Framework\ComponentOption;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\ServiceRegistrar;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
-use Commune\Framework\Contracts\ServiceProvider;
+use Commune\Contracts\ServiceProvider;
 
 
 /**
@@ -61,9 +63,17 @@ class IServiceRegistrar implements ServiceRegistrar
      */
     protected $reqProviders = [];
 
+
+    /**
+     * @var ComponentOption[][]
+     */
+    protected $components = [];
+
     protected $configBooted = false;
 
     protected $procBooted = false;
+
+    protected $componentBooted = false;
 
     /**
      * IServiceRegistrar constructor.
@@ -91,6 +101,7 @@ class IServiceRegistrar implements ServiceRegistrar
         bool $top
     ): void
     {
+        $provider->register($this->procC);
         $this->registerProvider($this->configProviders, $provider, $top);
     }
 
@@ -99,6 +110,7 @@ class IServiceRegistrar implements ServiceRegistrar
         bool $top
     ): void
     {
+        $provider->register($this->procC);
         $this->registerProvider($this->procProviders, $provider, $top);
     }
 
@@ -107,6 +119,7 @@ class IServiceRegistrar implements ServiceRegistrar
         bool $top
     ): void
     {
+        $provider->register($this->reqC);
         $this->registerProvider($this->reqProviders, $provider, $top);
     }
 
@@ -119,7 +132,7 @@ class IServiceRegistrar implements ServiceRegistrar
         $id = $provider->getId();
         if (isset($providers[$id])) {
             $this->consoleLogger->warning(
-                $this->logInfo->bootRegisterExistsProvider($id)
+                $this->logInfo->bootingRegisterExistsProvider($id)
             );
         }
 
@@ -132,7 +145,7 @@ class IServiceRegistrar implements ServiceRegistrar
 
         // 日志
         $this->consoleLogger->debug(
-            $this->logInfo->bootRegisterProvider($id)
+            $this->logInfo->bootingRegisterProvider($id)
         );
     }
 
@@ -161,7 +174,7 @@ class IServiceRegistrar implements ServiceRegistrar
             $provider->boot($this->procC);
             // 初始化服务
             $this->consoleLogger->debug(
-                $this->logInfo->bootRegisterProvider($id)
+                $this->logInfo->bootingBootProvider($id)
             );
         }
 
@@ -178,7 +191,7 @@ class IServiceRegistrar implements ServiceRegistrar
             $provider->boot($this->procC);
             // 初始化服务
             $this->consoleLogger->debug(
-                $this->logInfo->bootRegisterProvider($id)
+                $this->logInfo->bootingBootProvider($id)
             );
         }
 
@@ -189,7 +202,7 @@ class IServiceRegistrar implements ServiceRegistrar
     {
         if (!$container->isInstanced()) {
             throw new HostBootingException(
-                $this->logInfo->bootUnInstancedReqContainer()
+                $this->logInfo->bootingUnInstancedReqContainer()
             );
         }
 
@@ -214,6 +227,51 @@ class IServiceRegistrar implements ServiceRegistrar
     public function isProcServicesBooted(): bool
     {
         return $this->procBooted;
+    }
+
+    public function registerComponent(
+        string $appType,
+        ComponentOption $componentOption,
+        string $by = null,
+        bool $force = false
+    ) : bool
+    {
+        $id = $componentOption->getId();
+
+        if (
+            isset($this->components[$appType][$id])
+            && !$force
+        ) {
+           return false;
+        }
+
+        $this->components[$appType][$id] = $componentOption;
+        $this->consoleLogger->debug(
+            $this->logInfo->bootingRegisterComponent($id, $by)
+        );
+        return true;
+    }
+
+    public function bootstrapComponents(): void
+    {
+        if ($this->componentBooted) {
+            return;
+        }
+
+        foreach ($this->components as $appType => $components) {
+            $app = $this->procC->get($appType);
+            foreach ($components as $id => $component) {
+
+                $component->bootstrap($app);
+                $this->consoleLogger->debug(
+                    $this->logInfo->bootingBootComponent(
+                        $appType,
+                        $id
+                    )
+                );
+            }
+        }
+        $this->componentBooted = true;
     }
 
 

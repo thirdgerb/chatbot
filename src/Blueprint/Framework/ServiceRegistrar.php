@@ -12,7 +12,8 @@
 namespace Commune\Blueprint\Framework;
 
 use Commune\Blueprint\Exceptions\HostBootingException;
-use Commune\Framework\Contracts\ServiceProvider;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Contracts\ServiceProvider;
 
 
 /**
@@ -33,6 +34,7 @@ use Commune\Framework\Contracts\ServiceProvider;
  */
 interface ServiceRegistrar
 {
+
     /*----------- 服务注册 -----------*/
 
     /**
@@ -87,36 +89,24 @@ interface ServiceRegistrar
 
     /**
      * 注册一个组件.
-     * @param string $componentName
-     * @param array $options
-     */
-    public function registerComponent(
-        string $componentName,
-        array $options
-    ) : void;
-
-    /**
-     * 记录依赖一个组件
-     * @param string $componentName
-     * @param string $dependedBy
-     * @param array $options
-     */
-    public function dependComponent(
-        string $componentName,
-        string $dependedBy,
-        array $options = []
-    ) : void;
-
-    /**
-     * 初始化所有的组件.
-     */
-    public function bootComponents() : void;
-
-    /**
-     * 组件是否都已经加载.
+     *
+     * @param string $appType
+     * @param ComponentOption $component
+     * @param string $by
+     * @param bool $force
      * @return bool
      */
-    public function isComponentsBooted() : bool;
+    public function registerComponent(
+        string $appType,
+        ComponentOption $component,
+        string $by = null,
+        bool $force = false
+    ) : bool;
+
+    /**
+     * 启动所有组件.
+     */
+    public function bootstrapComponents(): void;
 
     /*----------- 初始化服务 -----------*/
 

@@ -9,10 +9,12 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost;
+namespace Commune\Blueprint\Configs;
 
-use Commune\Blueprint\Configs\Nest\ProtocalOption;
-use Commune\Support\Option\Option;
+use Commune\Support\Option\AbsOption;
+use Commune\Framework\Providers as FrameworkProviders;
+use Commune\Ghost\Providers as GhostProviders;
+use Commune\Components;
 
 /**
  * 机器人多轮对话内核的配置.
@@ -49,7 +51,7 @@ use Commune\Support\Option\Option;
  * @property-read int $maxRedirectTimes
  * @property-read int $mindsetCacheExpire       Mindset 的配置过期时间.
  *
- * @property-read ProtocalOption[] $protocals   Session 可以处理的协议.
+ * @property-read Nest\ProtocalOption[] $protocals   Session 可以处理的协议.
  * [
  *     [
  *         'group' => 'name',
@@ -67,6 +69,56 @@ use Commune\Support\Option\Option;
  * @property-read string $defaultScene          默认场景.
  * @property-read string[] $comprehensionPipes  理解管道.
  */
-interface GhostConfig extends Option
+class GhostConfig extends AbsOption
 {
+    const IDENTITY = 'id';
+
+    public static function stub(): array
+    {
+        return [
+            'id' => 'demo',
+            'name' => 'demo',
+
+            'configProviders' => [
+                FrameworkProviders\OptRegistryServiceProvider::class,
+            ],
+            'procProviders' => [
+                FrameworkProviders\SplExpReporterServiceProvider::class,
+                FrameworkProviders\MonologServiceProvider::class,
+            ],
+            'reqProviders' => [
+                GhostProviders\GhostReqServiceProvider::class,
+            ],
+            'components' => [
+                Components\Predefined\PredefinedComponent::class,
+                Components\Demo\DemoComponent::class,
+            ],
+            'options' => [
+            ],
+            // protocals
+            'protocals' => [
+
+            ],
+            // session
+            'sessionExpire' => 3600,
+            'sessionLockerExpire' => 3,
+            'maxRedirectTimes' => 255,
+            'mindsetCacheExpire' => 600,
+            'sceneContextNames' => [
+            ],
+            'defaultScene' => '',
+            'comprehensionPipes' => [
+
+            ],
+        ];
+    }
+
+    public static function relations(): array
+    {
+        return [
+
+            'protocals[]' => ProtocalOption::class,
+        ];
+    }
+
 }

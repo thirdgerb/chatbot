@@ -9,12 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Framework;
+namespace Commune\Framework\Component;
+
+use Commune\Support\Option\AbsOption;
+use Commune\Blueprint\Framework\ComponentOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Bootstrapper
+abstract class AComponentOption extends AbsOption implements ComponentOption
 {
-    public function bootstrap(App $app) : void;
+
 }

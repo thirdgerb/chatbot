@@ -9,17 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework;
+namespace Commune\Blueprint\Framework;
 
-use Commune\Container\ContainerContract;
-use Commune\Container\ContainerTrait;
-
+use Commune\Support\Option\Option;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class Container implements ContainerContract
+interface ComponentOption extends Option, Bootstrapper
 {
-    use ContainerTrait;
-
 }

@@ -9,12 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Framework;
+namespace Commune\Framework;
+
+use Commune\Container\ContainerTrait;
+use Commune\Blueprint\Framework\ProcContainer;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Bootstrapper
+class IProcContainer implements ProcContainer
 {
-    public function bootstrap(App $app) : void;
+    use ContainerTrait;
+
 }

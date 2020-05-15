@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\Contracts;
+namespace Commune\Contracts;
 
 use Commune\Container\ContainerContract;
 use Commune\Support\Option\AbsOption;

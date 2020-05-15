@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\Prototype;
+namespace Commune\Framework;
 
 use Commune\Container\ContainerContract;
 use Commune\Container\RecursiveContainer;
@@ -91,10 +91,6 @@ class IReqContainer implements ReqContainer
         $this->flushInstance();
     }
 
-    public function getId(): string
-    {
-        return $this->uuid;
-    }
 
     public function __destruct()
     {

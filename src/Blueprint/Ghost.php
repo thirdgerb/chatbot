@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint;
 
-use Commune\Blueprint\Ghost\GhostConfig;
+use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Protocals\Intercom\GhostInput;

@@ -23,37 +23,43 @@ interface LogInfo
     /*------ boot ------*/
 
 
-    public function bootStartKeyStep(string $methodName) : string;
+    public function bootingStartKeyStep(string $methodName) : string;
 
-    public function bootEndKeyStep(string $methodName) : string;
+    public function bootingEndKeyStep(string $methodName) : string;
 
-    public function bootRegisterExistsProvider(string $id) : string;
+    public function bootingStartBootstrapper(string $bootstrapper) : string;
 
-    public function bootRegisterInvalidProvider(string $providerClass, string $validation = '') : string;
+    public function bootingEndBootstrapper(string $bootstrapper) : string;
 
-    public function bootRegisterProvider(string $id) : string;
+    public function bootingRegisterExistsProvider(string $id) : string;
 
-    public function bootUnInstancedReqContainer() : string;
+    public function bootingRegisterProvider(string $id) : string;
 
-    public function bootDoBootProvider(string $id) : string;
+    public function bootingUnInstancedReqContainer() : string;
 
-    public function bootInvalidProviderConfiguration($index, $value) : string;
+    public function bootingRegisterConfigOption(string $optionName) : string;
+
+    public function bootingBootProvider(string $id) : string;
+
+//    public function bootInvalidProviderConfiguration($index, $value) : string;
 
     public function bootContractNotBound(string $abstract) : string;
 
-    public function bootShellNotDefined(string $shell) : string;
+    public function bootingBootComponent(string $appType, string $componentId) : string;
+
+    public function bootingRegisterComponent(string $id, string $by = null) : string;
+//    public function bootShellNotDefined(string $shell) : string;
 
     /*------ app info ------*/
 
-    public function appReceiveInvalidRequest(string $message) : string;
+//    public function appReceiveInvalidRequest(string $message) : string;
 
     /*------ session ------*/
 
-    public function sessionPipelineLog() : string;
+//    public function sessionPipelineLog() : string;
 
     /*------ shell ------*/
 
-    public function shellNotAllowScene(string $shellName, string $sceneId) : string;
 
     /*------ logic ------*/
 }

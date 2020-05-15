@@ -20,7 +20,7 @@ class InvalidArgumentException extends HostLogicException
 {
     public function __construct(string $method, string $argName, string $error)
     {
-        $message = "invalid argument for $method arg $argName, $error";
+        $message = "invalid argument for $method, arg: $argName, error: $error";
         parent::__construct($message);
     }
 
