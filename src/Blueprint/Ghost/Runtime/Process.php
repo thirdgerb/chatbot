@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
@@ -67,7 +68,12 @@ interface Process extends ArrayAndJsonAble
 
     /*-------- ucl ---------*/
 
-    public function decodeUcl(string $ucl) : ? Ucl;
+    /**
+     * @param string $ucl
+     * @return Ucl
+     * @throws InvalidArgumentException
+     */
+    public function decodeUcl(string $ucl) : Ucl;
 
     /*-------- watch ---------*/
 

@@ -99,17 +99,18 @@ class Ucl implements UclInterface
         array $query = []
     )
     {
-
         // 允许使用类名作为 contextName
-        $this->contextName = ContextUtils::normalizeContextName($contextName);
+        $this->contextName = $contextName;
         // 真正的 contextName 和 stageName 必须全小写, 用 . 分割.
-        $this->stageName = StringUtils::normalizeString($stageName);
+        $this->stageName = $stageName;
         $this->query = $query;
     }
 
 
     public static function create(Cloner $cloner, string $contextName, array $query = null, string $stageName = '')  : Ucl
     {
+        $contextName = ContextUtils::normalizeContextName($contextName);
+        $stageName = ContextUtils::normalizeStageName($stageName);
         $query = $cloner->getContextualQuery($contextName, $query);
         return new self($contextName, $stageName, $query);
     }
@@ -167,18 +168,11 @@ class Ucl implements UclInterface
 
     /*------- create -------*/
 
-    public static function isValid(string $ucl) : bool
+    public function isValid() : bool
     {
-        $obj = Ucl::decodeUcl($ucl);
-        $contextName = $obj->contextName;
-        $stageName = $obj->stageName;
-        $stageFullName = $obj->toFullStageName();
-        $query = $obj->query;
-
-        return ContextUtils::isValidContextName($contextName)
-            && ContextUtils::isValidStageName($stageName)
-            && ContextUtils::isValidStageFullName($stageFullName)
-            && is_array($query);
+        return ContextUtils::isValidContextName($this->contextName)
+            && ContextUtils::isValidStageName($this->stageName)
+            && is_array($this->query);
     }
 
     /**
@@ -329,10 +323,8 @@ class Ucl implements UclInterface
     public function stageExists(Cloner $cloner) : bool
     {
         return $this->exists
-            ?? $this->exists = $cloner
-                ->mind
-                ->stageReg()
-                ->hasDef($this->toFullStageName());
+            ?? $this->exists = $this->isValid()
+                && $cloner->mind->stageReg()->hasDef($this->toFullStageName());
     }
 
     public function findStageDef(Cloner $cloner) : StageDef

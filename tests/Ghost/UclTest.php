@@ -20,10 +20,28 @@ use PHPUnit\Framework\TestCase;
 class UclTest extends TestCase
 {
     protected $validCases = [
+        // full
         'abc.efg.ijk/stage_name?a=1&b=2',
+
+        // no query
+        'abc/stage_name',
+
+        // only query
+        'abc?a=1&b=2',
+
+        // list query
+        'abc?a=1&b[]=1&b[]=2',
+        'abc?a[1]=1&a[k]=10',
     ];
 
-    protected $invalidCases = [];
+
+    protected $invalidCases = [
+        // no context
+        'stage_name',
+
+        // upper case
+        'abc/stageName',
+    ];
 
     public function testUcl()
     {
@@ -32,16 +50,17 @@ class UclTest extends TestCase
         }
 
         foreach ($this->invalidCases as $case) {
-            $this->assertFalse(Ucl::isValid($case), $case);
+            $caseObj = Ucl::decodeUcl($case);
+            $this->assertFalse($caseObj->isValid(), $case);
         }
     }
 
     protected function doTestUcl(string $case)
     {
-        $this->assertTrue(Ucl::isValid($case), $case);
 
         // case1
         $caseObj = Ucl::decodeUcl($case);
+        $this->assertTrue($caseObj->isValid(), $case);
 
         // case2
         $case2 = $caseObj->toEncodedUcl();

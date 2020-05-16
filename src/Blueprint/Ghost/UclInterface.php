@@ -80,7 +80,7 @@ interface UclInterface
     /*------ validate ------*/
 
 
-    public static function isValid(string $ucl) : bool;
+    public function isValid() : bool;
 
 
     /*------ encode decode ------*/

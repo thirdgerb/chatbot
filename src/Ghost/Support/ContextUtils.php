@@ -22,8 +22,13 @@ class ContextUtils
 
     public static function normalizeContextName(string $contextName) : string
     {
-        $contextName = str_replace('\\', '/', $contextName);
-        return StringUtils::normalizeString($contextName);
+        $contextName = StringUtils::namespaceSlashToDot($contextName);
+        return strtolower($contextName);
+    }
+
+    public static function normalizeStageName(string $stageName) : string
+    {
+        return strtolower($stageName);
     }
 
     public static function parseContextClassToName(string $str) : string

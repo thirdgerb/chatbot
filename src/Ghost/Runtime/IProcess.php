@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Runtime;
 
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\RoutesMap;
 use Commune\Blueprint\Ghost\Runtime\Waiter;
@@ -346,10 +347,24 @@ class IProcess implements Process, HasIdGenerator
 
     /*------ tools ------*/
 
-    public function decodeUcl(string $ucl): ? Ucl
+    public function decodeUcl(string $ucl): Ucl
     {
+        if (isset($this->decodedUcl[$ucl])) {
+            return $this->decodedUcl[$ucl];
+        }
+
+        $decoded = Ucl::decodeUcl($ucl);
+
+        if (!$decoded->isValid()) {
+            throw new InvalidArgumentException(
+                __METHOD__,
+                'ucl',
+                "invalid ucl pattern of $ucl"
+            );
+        }
+
         return $this->decodedUcl[$ucl]
-            ?? $this->decodedUcl[$ucl] = Ucl::decodeUcl($ucl);
+            ?? $this->decodedUcl[$ucl] = $decoded;
     }
 
 
