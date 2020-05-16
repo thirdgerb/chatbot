@@ -22,12 +22,12 @@ use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
-use Commune\Support\Utils\TypeUtils;
 use Illuminate\Support\Collection;
 
 /**
@@ -161,7 +161,7 @@ class ContextDefPrototype extends AbsOption implements ContextDef
     public static function validate(array $data): ? string /* errorMsg */
     {
         $name = $data['name'] ?? '';
-        if (!TypeUtils::isValidContextName($name)) {
+        if (!ContextUtils::isValidContextName($name)) {
             return "contextName $name is invalid";
         }
 

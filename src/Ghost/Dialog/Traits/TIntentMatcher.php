@@ -46,7 +46,7 @@ trait TIntentMatcher
     {
         $reg = $this->cloner->mind->stageReg();
         foreach ($matched as $stageName) {
-            $ifSameContext = !$sameContext || $current->isSameContext($stageName);
+            $ifSameContext = !$sameContext || $current->atSameContext($stageName);
             if ($ifSameContext && $reg->hasDef($stageName)) {
                 return $stageName;
             }
@@ -65,7 +65,7 @@ trait TIntentMatcher
         foreach ($stages as $stageName) {
 
             if (StringUtils::isWildCardPattern($stageName)) {
-                $wildCardStageIntentName = $current->parseFullStageName($stageName);
+                $wildCardStageIntentName = $current->toFullStageName($stageName);
 
                 // 只检查意图名是否正确.
                 $matched = $this->wildCardIntentNameMatch($wildCardStageIntentName);
@@ -80,12 +80,12 @@ trait TIntentMatcher
                 );
 
                 if (isset($matchedStage)) {
-                    return $current->gotoFullnameStage($matchedStage);
+                    return $current->goFullnameStage($matchedStage);
                 }
 
             } else {
                 // fullname
-                $stageUcl = $current->gotoStage($stageName);
+                $stageUcl = $current->goStage($stageName);
                 if ($this->exactStageIntentMatch($stageUcl)) {
                     return $stageUcl;
                 }

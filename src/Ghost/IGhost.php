@@ -24,6 +24,7 @@ use Commune\Contracts\Log\LogInfo;
 use Commune\Ghost\Bootstrap;
 use Commune\Framework\AbsApp;
 use Commune\Protocals\Comprehension;
+use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\GhostInput;
 
 
@@ -33,9 +34,13 @@ use Commune\Protocals\Intercom\GhostInput;
 class IGhost extends AbsApp implements Ghost
 {
     protected $bootstrappers = [
+        // 注册配置 Option 单例到进程中.
         Bootstrap\GhostLoadConfigOption::class,
+        // 注册相关服务
         Bootstrap\GhostRegisterProviders::class,
+        // 注册相关组件
         Bootstrap\GhostLoadComponent::class,
+        // 检验默认的组件是否都实现了绑定
         Bootstrap\GhostContractsValidator::class,
     ];
 
@@ -96,6 +101,7 @@ class IGhost extends AbsApp implements Ghost
 
         $container->share(ReqContainer::class, $container);
         $container->share(GhostInput::class, $input);
+        $container->share(HostMsg::class, $input->getMessage());
         $container->share(Comprehension::class, $input->comprehension);
         $container->share(Cloner::class, $cloner);
         $container->share(Session::class, $cloner);

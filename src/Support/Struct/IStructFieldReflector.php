@@ -11,7 +11,9 @@
 
 namespace Commune\Support\Struct;
 
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Utils\TypeUtils;
+use MongoDB\BSON\Type;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -84,27 +86,9 @@ class IStructFieldReflector implements StructFieldReflector
 
     public function filterValue($value)
     {
-        if (is_scalar($value) && $this->ruleCounts === 1) {
+        if ($this->ruleCounts === 1) {
             $rule = $this->rules[0];
-
-            switch($rule) {
-                case 'mixed' :
-                    return $value;
-                case 'string' :
-                    return strval($value);
-                case 'bool' :
-                case 'boolean' :
-                    return boolval($value);
-                case 'int' :
-                case 'integer' :
-                    return intval($value);
-                case 'float' :
-                    return floatval($value);
-                case 'double' :
-                    return doubleval($value);
-                default:
-                    return $value;
-            }
+            return TypeUtils::scalarValueParseByType($rule, $value);
         }
 
         return $value;
@@ -176,7 +160,7 @@ class IStructFieldReflector implements StructFieldReflector
 
     protected function isRelationObj($value) : bool
     {
-        return is_object($value) && is_a($value, $this->relationClass, TRUE);
+        return TypeUtils::isA($value, $this->relationClass);
     }
 
     /**
@@ -187,57 +171,19 @@ class IStructFieldReflector implements StructFieldReflector
      */
     protected function validateRule(string $rule, $value) : bool
     {
-        $isList = substr($rule, -2, 2) === '[]';
+        $isList = TypeUtils::isListTypeHint($rule);
 
         if (!$isList) {
             return $this->validateSingleRule($rule, $value);
         }
 
-        if (!is_array($value)) {
-            return false;
-        }
-
-        if (empty($value)) {
-            return true;
-        }
-
-        $rule = substr($rule, 0 , -2);
-        foreach ($value as $val) {
-            if ($this->validateRule($rule, $val)) {
-                return true;
-            }
-        }
-        return false;
+        $rule = TypeUtils::pureListTypeHint($rule);
+        return TypeUtils::listTypeHintValidate($rule, $value);
     }
 
     protected function validateSingleRule(string $rule, $value) : bool
     {
-        if (class_exists($rule)) {
-            return is_object($value) && is_a($value, $rule, TRUE);
-        }
-
-        switch($rule) {
-            case 'mixed' :
-                return true;
-            case 'string' :
-                return is_string($value);
-            case 'bool' :
-            case 'boolean' :
-                return is_bool($value);
-            case 'int' :
-            case 'integer' :
-                return is_int($value);
-            case 'float' :
-                return is_float($value) || is_int($value);
-            case 'double' :
-                return is_double($value) || is_int($value);
-            case 'array' :
-                return is_array($value);
-            case 'callable' :
-                return is_callable($value);
-            default:
-                return false;
-        }
+        return TypeUtils::typeHintValidate($rule, $value);
     }
 
     public function getRules(): array
@@ -247,7 +193,9 @@ class IStructFieldReflector implements StructFieldReflector
             $rules[] = 'null';
         }
         if ($this->relationClass) {
-            $rules[] = $this->isListRelation ? $this->relationClass . '[]' : $this->relationClass;
+            $rules[] = $this->isListRelation
+                ? $this->relationClass . '[]'
+                : $this->relationClass;
         }
 
         return $rules;

@@ -49,9 +49,9 @@ trait TRedirector
 
     public function goStage(string $stageName, string ...$pipes): Dialog
     {
-        $ucl = $this->ucl->gotoStage($stageName);
+        $ucl = $this->ucl->goStage($stageName);
         $paths = array_map(function($stage) use ($ucl){
-            return $ucl->gotoStage($stage);
+            return $ucl->goStage($stage);
         }, $pipes);
 
         $staging = new IActivate\IStaging($this->cloner, $ucl, $paths);
@@ -133,7 +133,7 @@ trait TRedirector
 
     public function restartContext(): Dialog
     {
-        $ucl = $this->ucl->gotoStage('');
+        $ucl = $this->ucl->goStage('');
         return DialogHelper::newDialog(
             $this,
             $ucl,

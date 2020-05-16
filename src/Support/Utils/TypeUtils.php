@@ -19,11 +19,24 @@ namespace Commune\Support\Utils;
  */
 class TypeUtils
 {
-    public static function isCallableClass($value) : bool
+
+    public static function isListTypeHint(string $type) : bool
     {
-        return is_string($value)
-            && class_exists($value)
-            && method_exists($value, '__invoke');
+        return substr($type, -2, 2) === '[]';
+    }
+
+    public static function pureListTypeHint(string $type) : string
+    {
+        return self::isListTypeHint($type)
+            ? substr($type, 0 , -2)
+            : $type;
+
+    }
+
+    public static function isA($value, string $className) : bool
+    {
+        return (is_object($value) || is_string($value))
+            && is_a($value, $className, TRUE);
     }
 
     /**
@@ -36,47 +49,91 @@ class TypeUtils
         return is_object($value) ? get_class($value) : gettype($value);
     }
 
-    public static function parseContextClassToName(string $str) : string
+    /**
+     * @param string $type
+     * @param mixed $value
+     * @return mixed $value
+     */
+    public static function scalarValueParseByType(string $type, $value)
     {
-        $str = StringUtils::namespaceSlashToDot($str);
-        return strtolower($str);
+        if (!is_scalar($value)) {
+            return $value;
+        }
+
+        switch($type) {
+            case 'mixed' :
+                return $value;
+            case 'string' :
+                return strval($value);
+            case 'bool' :
+            case 'boolean' :
+                return boolval($value);
+            case 'int' :
+            case 'integer' :
+                return intval($value);
+            case 'float' :
+                return floatval($value);
+            case 'double' :
+                return doubleval($value);
+            default:
+                return $value;
+        }
     }
 
-    public static function isValidContextName(string $str) : bool
+    public static function listTypeHintValidate(string $type, $value) : bool
     {
-        $pattern = '/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]+)*$/';
-        return (bool) preg_match($pattern, $str);
+        if (!is_array($value)) {
+            return false;
+        }
+
+        if (empty($value)) {
+            return true;
+        }
+
+        foreach ($value as $val) {
+            if (self::typeHintValidate($type, $val)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public static function isValidMemoryName(string $str) : bool
+    /**
+     * 注解中常用类型的参数校验.
+     *
+     * @param string $type
+     * @param $value
+     * @return bool
+     */
+    public static function typeHintValidate(string $type, $value) : bool
     {
-        return self::isValidContextName($str);
+        if (class_exists($type)) {
+            return is_object($value) && is_a($value, $type, TRUE);
+        }
+
+        switch($type) {
+            case 'mixed' :
+                return true;
+            case 'string' :
+                return is_string($value);
+            case 'bool' :
+            case 'boolean' :
+                return is_bool($value);
+            case 'int' :
+            case 'integer' :
+                return is_int($value);
+            case 'float' :
+                return is_float($value) || is_int($value);
+            case 'double' :
+                return is_double($value) || is_int($value);
+            case 'array' :
+                return is_array($value);
+            case 'callable' :
+                return is_callable($value);
+            default:
+                return false;
+        }
+
     }
 
-    public static function normalizeMemoryName(string $str) : string
-    {
-        return strtolower(StringUtils::namespaceSlashToDot($str));
-    }
-
-    public static function isValidStageFullName(string $str) : bool
-    {
-        return self::isValidIntentName($str);
-    }
-
-    public static function isValidStageName(string $name) : bool
-    {
-        $pattern = '/^[a-z][a-z_0-9]+$/';
-        return (bool) preg_match($pattern, $name);
-    }
-
-    public static function isValidIntentName(string $str) : bool
-    {
-        $pattern = '/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]+)*(\.[a-z][a-z_0-9]+){0,1}$/';
-        return (bool) preg_match($pattern, $str);
-    }
-
-    public static function isValidEntityName(string $str) : bool
-    {
-        return self::isValidContextName($str);
-    }
 }

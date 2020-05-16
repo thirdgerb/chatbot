@@ -13,11 +13,11 @@ namespace Commune\Blueprint\Ghost\MindMeta;
 
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\AbsMeta;
 use Commune\Support\Option\Option;
 use Commune\Support\Option\Wrapper;
 use Commune\Support\Utils\StringUtils;
-use Commune\Support\Utils\TypeUtils;
 
 
 /**
@@ -85,7 +85,7 @@ class StageMeta extends AbsMeta
     public static function validate(array $data): ? string /* errorMsg */
     {
         $name = $data['name'] ?? '';
-        if (TypeUtils::isValidStageName($name)) {
+        if (ContextUtils::isValidStageName($name)) {
             return "stage name $name is invalid";
         }
 

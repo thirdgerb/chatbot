@@ -13,7 +13,7 @@ namespace Commune\Host\Recall;
 
 use Commune\Blueprint\Ghost\Context\ParamBuilder;
 use Commune\Ghost\Memory\RecallPrototype;
-use Commune\Support\Utils\TypeUtils;
+use Commune\Ghost\Support\ContextUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -22,7 +22,7 @@ abstract class ARecall extends RecallPrototype
 {
     public static function recallName(): string
     {
-        return TypeUtils::normalizeMemoryName(static::class);
+        return ContextUtils::normalizeMemoryName(static::class);
     }
 
     abstract public static function getScopes(): array;

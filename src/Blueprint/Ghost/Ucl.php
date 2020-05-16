@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
@@ -21,24 +22,24 @@ use Commune\Support\Utils\StringUtils;
  * Uniform Context Locator
  * 类似 url 的语境定位对象. 用一个 ucl 字符串可以定位一个语境.
  *
- *
- * 格式为: contextName#stageName?{query}
- * 正则 @see ContextUtils::isValidUcl()
- * 正确的调用方式是 : Cloner::getUcl(contextName, array $query = null);
- *
- * 其中:
- * contextName + query 决定唯一的 contextId
- *
+ * commune.context.test.demo/stage_abc?a=1&b=2
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @property-read string $contextName       语境名. 相当于 url 的域名
+ * @property-read string $stageName         stage名. 相当于 url 的路径
+ * @property-read string[] $query           query参数, 相当于 url 的query
  *
- * @property-read string $contextName
- * @property-read string $stageName
- * @property-read string[] $query
+ *
+ * 相关 API 文档:
+ * @see UclInterface
  */
-class Ucl
+class Ucl implements UclInterface
 {
+
+    const STAGE_SEPARATOR = '/';
+    const QUERY_SEPARATOR = '?';
+
     /**
      * @var string
      */
@@ -113,53 +114,99 @@ class Ucl
         return new self($contextName, $stageName, $query);
     }
 
+    /*------- compare -------*/
+
+    public function atSameContext(string $ucl) : bool
+    {
+        return strpos($ucl, $this->contextName) === 0;
+    }
+
+    public function isSameContext(string $ucl): bool
+    {
+        return $this->getContextId() === Ucl::decodeUcl($ucl)->getContextId();
+    }
+
+
+    public function equals(string $ucl)
+    {
+        $decoded = Ucl::decodeUcl($ucl);
+        return $this->getContextId() === $decoded->getContextId()
+            && $this->stageName === $decoded->stageName;
+    }
+
+
     /*------- redirect -------*/
 
-    public function gotoStage(string $stageName) : Ucl
+    public function goStage(string $stageName) : Ucl
     {
+        if (!ContextUtils::isValidStageName($stageName)) {
+            throw new InvalidArgumentException(
+                __METHOD__,
+                'stageName',
+                "invalid stage pattern of $stageName"
+            );
+        }
         return new self($this->contextName, $stageName, $this->query);
     }
 
-    public function isSameContext(string $fullStageName) : bool
-    {
-        return strpos($fullStageName, $this->contextName) === 0;
-    }
 
-    public function gotoFullnameStage(string $fullStageName) : Ucl
+    public function goFullnameStage(string $fullStageName) : Ucl
     {
+        if (!ContextUtils::isValidStageFullName($fullStageName)) {
+            throw new InvalidArgumentException(
+                __METHOD__,
+                'fullStageName',
+                "invalid stage fullname pattern of $fullStageName"
+            );
+        }
+
         $stageName = str_replace($this->contextName, '', $fullStageName);
         $stageName = trim($stageName, Context::NAMESPACE_SEPARATOR);
-        return $this->gotoStage($stageName);
+        return $this->goStage($stageName);
     }
 
     /*------- create -------*/
 
     public static function isValid(string $ucl) : bool
     {
-        return ContextUtils::isValidUcl($ucl);
+        $obj = Ucl::decodeUcl($ucl);
+        $contextName = $obj->contextName;
+        $stageName = $obj->stageName;
+        $stageFullName = $obj->toFullStageName();
+        $query = $obj->query;
+
+        return ContextUtils::isValidContextName($contextName)
+            && ContextUtils::isValidStageName($stageName)
+            && ContextUtils::isValidStageFullName($stageFullName)
+            && is_array($query);
     }
 
     /**
      * @param string|Ucl $string
-     * @return Ucl|null
+     * @return Ucl
+     * @throws InvalidArgumentException
      */
-    public static function decodeUcl($string) : ? Ucl
+    public static function decodeUcl($string) : Ucl
     {
         if ($string instanceof Ucl) {
             return $string;
         }
 
-        $string = strval($string);
-        if (!self::isValid($string)) {
-            return null;
+        if (!is_string($string)) {
+            throw new InvalidArgumentException(
+                __METHOD__,
+                'string',
+                'should be Ucl instance or Ucl string'
+            );
         }
 
-        $ex = explode('?', $string, 2);
+        $string = strval($string);
+        $ex = explode(Ucl::QUERY_SEPARATOR, $string, 2);
         $prefix = $ex[0];
-        $queryStr = $ex[1] ?? '{}';
+        $queryStr = $ex[1] ?? '';
 
-        $query = json_decode($queryStr, true);
-        $ex = explode('#', $prefix, 2);
+        $query = static::decodeQueryStr($queryStr);
+        $ex = explode(Ucl::STAGE_SEPARATOR, $prefix, 2);
 
         $contextName = $ex[0];
         $stageName = $ex[1] ?? '';
@@ -167,6 +214,18 @@ class Ucl
 
         return new self($contextName, $stageName, $query);
     }
+
+    public static function decodeQueryStr(string $str) : array
+    {
+        if (empty($str)) {
+            return [];
+        }
+
+        $query = [];
+        parse_str($str, $query);
+        return $query;
+    }
+
 
 
     public function toEncodedUcl() : string
@@ -192,27 +251,32 @@ class Ucl
         $prefix = StringUtils::gluePrefixAndName(
             $contextName,
             $stageName,
-            '#'
+            Ucl::STAGE_SEPARATOR
         );
 
         $ucl = StringUtils::gluePrefixAndName(
             $prefix,
-            empty($query) ? '' : json_encode($query),
-            '?'
+            empty($query) ? '' : static::encodeQueryStr($query),
+            Ucl::QUERY_SEPARATOR
         );
 
         return $ucl;
     }
 
+    public static function encodeQueryStr(array $query) : string
+    {
+        return http_build_query($query);
+    }
+
     /*------- property -------*/
 
-    public function parseIntentName(string $stage = null) : string
+    public function toIntentName(string $stage = null) : string
     {
-        return $this->parseFullStageName($stage);
+        return $this->toFullStageName($stage);
     }
 
 
-    public function parseFullStageName(string $stage = null) : string
+    public function toFullStageName(string $stage = null) : string
     {
         $stage = $stage ?? $this->stageName;
         return StringUtils::gluePrefixAndName(
@@ -237,7 +301,7 @@ class Ucl
 
     public function findIntentDef(Cloner $cloner) : ? IntentDef
     {
-        $intentName = $this->parseIntentName();
+        $intentName = $this->toIntentName();
 
         if ($this->intentDef === false) {
             return null;
@@ -262,13 +326,13 @@ class Ucl
 
     }
 
-    public function exists(Cloner $cloner) : bool
+    public function stageExists(Cloner $cloner) : bool
     {
         return $this->exists
             ?? $this->exists = $cloner
                 ->mind
                 ->stageReg()
-                ->hasDef($this->parseFullStageName());
+                ->hasDef($this->toFullStageName());
     }
 
     public function findStageDef(Cloner $cloner) : StageDef
@@ -277,7 +341,7 @@ class Ucl
             ?? $this->stageDef = $cloner
                 ->mind
                 ->stageReg()
-                ->getDef($this->parseFullStageName());
+                ->getDef($this->toFullStageName());
     }
 
     public function findContextDef(Cloner $cloner) : ContextDef

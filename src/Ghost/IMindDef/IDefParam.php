@@ -14,7 +14,7 @@ namespace Commune\Ghost\IMindDef;
 use Commune\Blueprint\Ghost\MindDef\DefParam;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
-use Commune\Support\Utils\TypeUtils;
+use Commune\Ghost\Support\ContextUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -94,7 +94,7 @@ class IDefParam implements DefParam
         }
 
 
-        if (TypeUtils::isCallableClass($type)) {
+        if (ContextUtils::isCallableClass($type)) {
             return [$type, '__invoke'];
         }
 
@@ -132,7 +132,7 @@ class IDefParam implements DefParam
             return $parser;
         }
 
-        if (TypeUtils::isCallableClass($parser)) {
+        if (ContextUtils::isCallableClass($parser)) {
             return [$parser, '__invoke'];
         }
 

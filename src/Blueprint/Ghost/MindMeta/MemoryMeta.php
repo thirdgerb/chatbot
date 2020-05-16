@@ -14,9 +14,9 @@ namespace Commune\Blueprint\Ghost\MindMeta;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
 use Commune\Ghost\IMindDef\IMemoryDef;
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Wrapper;
-use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -54,7 +54,7 @@ class MemoryMeta extends AbsOption implements DefMeta
     public static function validate(array $data): ? string /* errorMsg */
     {
         $name = $data['name'] ?? '';
-        if (TypeUtils::isValidMemoryName($name)) {
+        if (ContextUtils::isValidMemoryName($name)) {
             return "memory name $name is invalid";
         }
 

@@ -12,9 +12,9 @@
 namespace Commune\Blueprint\Ghost\MindMeta;
 
 use Commune\Ghost\Context\IContextDef;
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Alias\Aliases;
 use Commune\Support\Option\AbsMeta;
-use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 
 /**
@@ -54,7 +54,7 @@ class ContextMeta extends AbsMeta
     public static function validate(array $data): ? string /* errorMsg */
     {
         $contextName = $data['name'] ?? '';
-        if (!TypeUtils::isValidContextName($contextName)) {
+        if (!ContextUtils::isValidContextName($contextName)) {
             return 'context name is invalid';
         }
 

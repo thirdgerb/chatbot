@@ -11,8 +11,9 @@
 
 namespace Commune\Blueprint;
 
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Contracts;
-use Commune\Blueprint\Ghost;
+use Commune\Protocals;
 use Commune\Blueprint\Framework;
 use Commune\Blueprint\Configs;
 use Commune\Support\Registry\OptRegistry;
@@ -39,6 +40,8 @@ interface DependInjections
         LoggerInterface::class,
     ];
 
+    /*------- ghost -------*/
+
     const GHOST_PROC_BINDINGS = [
         Ghost::class,
         Configs\GhostConfig::class,
@@ -53,7 +56,15 @@ interface DependInjections
         Ghost\Cloner\ClonerStorage::class,
         Ghost\Runtime\Runtime::class,
         Ghost\Auth\Authority::class,
+    ];
 
+    const GHOST_REQ_INSTANCES = [
+        Cloner::class,
+        Framework\Session::class,
+        Framework\ReqContainer::class,
+        Protocals\Intercom\GhostInput::class,
+        Protocals\HostMsg::class,
+        Protocals\Comprehension::class,
 
     ];
 }

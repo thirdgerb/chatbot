@@ -45,8 +45,6 @@ abstract class AbsDialogue implements
 {
     use TInjectable, TRedirector, TWithdraw;
 
-    const SELF_STATUS = self::TEMPORARY;
-
     /*------ params -------*/
 
     /**
@@ -131,8 +129,9 @@ abstract class AbsDialogue implements
         // TODO: Implement hearing() method.
     }
 
-    public function getContext(Ucl $ucl): Context
+    public function getContext($ucl): Context
     {
+        $ucl = $this->getUcl($ucl);
         return $this->cloner->getContext($ucl);
     }
 

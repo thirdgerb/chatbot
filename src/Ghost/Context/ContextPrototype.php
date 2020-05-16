@@ -74,7 +74,7 @@ class ContextPrototype implements Context
         Cloner $cloner
     )
     {
-        $this->_ucl = $ucl->gotoStage('');
+        $this->_ucl = $ucl->goStage('');
         $this->_cloner = $cloner;
     }
 

@@ -11,10 +11,10 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Wrapper;
 use Commune\Support\Utils\StringUtils;
-use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -55,7 +55,7 @@ class EntityMeta extends AbsOption implements DefMeta
 
         $name = $data['name'] ?? '';
 
-        if (!TypeUtils::isValidEntityName($name)) {
+        if (!ContextUtils::isValidEntityName($name)) {
             return "entity name $name is invalid";
         }
 
