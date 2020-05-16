@@ -17,7 +17,8 @@ use Commune\Contracts\ServiceProvider;
 use Commune\Framework\ExpReporter\ConsoleExceptionReporter;
 
 /**
- * 简单的异常报告模块实现.
+ * 简单的异常报告模块. 用控制台日志来替代报告.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class SplExpReporterServiceProvider extends ServiceProvider

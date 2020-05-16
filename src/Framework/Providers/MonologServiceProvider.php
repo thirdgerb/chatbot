@@ -22,6 +22,8 @@ use Commune\Contracts\ServiceProvider;
 use Monolog\Logger as Monolog;
 
 /**
+ * 基于 Monolog 实现的日志模块
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $name 日志的名称

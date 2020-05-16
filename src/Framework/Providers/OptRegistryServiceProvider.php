@@ -22,6 +22,8 @@ use Commune\Support\Registry\Storage\Yaml\YmlFileStorage;
 use Psr\Log\LoggerInterface;
 
 /**
+ * 配置注册表模块. 能够从指定的存储介质中获得配置.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read CategoryOption[] $categories 系统默认的配置.

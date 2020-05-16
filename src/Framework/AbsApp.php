@@ -13,7 +13,6 @@ namespace Commune\Framework;
 
 use Commune\Blueprint\Framework\ProcContainer;
 use Commune\Framework\Bootstrap;
-use Commune\Blueprint\Exceptions\HostBootingException;
 use Commune\Blueprint\Exceptions\Logic\InvalidConfigException;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\Bootstrapper;
@@ -160,13 +159,8 @@ abstract class AbsApp implements App
      */
     public function activate(): App
     {
-        if (!$this->ranBootstrap) {
-            throw new HostBootingException(
-                "app should run bootstrap() before activate()"
-            );
-        }
-
         try {
+            $this->bootstrap();
             $this->doActivate();
 
         } catch (\Throwable $e) {
