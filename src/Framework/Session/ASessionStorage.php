@@ -13,7 +13,7 @@ namespace Commune\Framework\Session;
 
 use Commune\Blueprint\Exceptions\IO\SaveDataFailException;
 use Commune\Blueprint\Framework\Session;
-use Commune\Blueprint\Framework\Session\Storage;
+use Commune\Blueprint\Framework\Session\SessionStorage;
 use Commune\Contracts\Cache;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
@@ -22,7 +22,7 @@ use Commune\Support\RunningSpy\SpyTrait;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AStorage implements Storage, Spied
+abstract class ASessionStorage implements SessionStorage, Spied
 {
     use SpyTrait;
 

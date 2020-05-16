@@ -84,13 +84,6 @@ interface Category
     public function count() : int;
 
     /**
-     * 取出所有 option 的ID
-     * @return string[]
-     */
-    public function getAllIds() : array;
-
-
-    /**
      * 分页列举 options, 自然排序
      *
      * @param int $offset
@@ -98,6 +91,14 @@ interface Category
      * @return Option[]
      */
     public function paginate(int $offset = 0, int $limit = 20) : array;
+
+
+    /**
+     * @param int $offset
+     * @param int $limit
+     * @return string[]
+     */
+    public function paginateId(int $offset = 0, int $limit = 20) : array;
 
     /**
      * 用通配符查找可能的 id
@@ -116,9 +117,14 @@ interface Category
     /**
      * 遍历一个 category 下所有的 Option 实例.
      *
-     * @return \Generator
+     * @return \Generator|Option
      */
     public function each() : \Generator;
+
+    /**
+     * @return \Generator|string
+     */
+    public function eachId() : \Generator;
 
     /*---- storage ----*/
 

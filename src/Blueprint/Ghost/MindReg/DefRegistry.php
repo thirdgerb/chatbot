@@ -59,12 +59,6 @@ interface DefRegistry
      */
     public function registerDef(Def $def, bool $notExists = true) : bool;
 
-
-    /**
-     * @return string[]
-     */
-    public function getAllDefIds() : array;
-
     /**
      * 用通配符查找可能的 id
      * @param string $wildcardId

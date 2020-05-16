@@ -16,8 +16,10 @@ use Commune\Contracts\ServiceProvider;
 use Commune\Support\Registry\Impl\IOptRegistry;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\OptRegistry;
+use Commune\Support\Registry\Storage\Json\JsonFileStorage;
+use Commune\Support\Registry\Storage\PHP\PHPFileStorage;
+use Commune\Support\Registry\Storage\Yaml\YmlFileStorage;
 use Psr\Log\LoggerInterface;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -59,6 +61,10 @@ class OptRegistryServiceProvider extends ServiceProvider
             );
 
         });
+
+        $app->singleton(JsonFileStorage::class);
+        $app->singleton(PHPFileStorage::class);
+        $app->singleton(YmlFileStorage::class);
     }
 
 

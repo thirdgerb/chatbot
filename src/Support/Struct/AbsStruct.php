@@ -174,6 +174,12 @@ abstract class AbsStruct implements Struct, \Serializable
                 );
             } else {
                 foreach ($data[$field] as $key => $value) {
+                    // null
+                    if (is_null($value)) {
+                        continue;
+                    }
+
+                    // build
                     $data[$field][$key] = $this->_buildRelatedStruct(
                         $structType,
                         $value
@@ -253,8 +259,10 @@ abstract class AbsStruct implements Struct, \Serializable
         }
 
         if (!is_array($data)) {
+            var_dump($data, $type); exit;
             throw new InvalidStructException("relation value for type $type must be array");
         }
+
         return call_user_func(
             [$type, 'create'],
             $data

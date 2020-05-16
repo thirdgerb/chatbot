@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Framework;
 
 use Commune\Blueprint\Framework\Session\SessionEvent;
-use Commune\Blueprint\Framework\Session\Storage;
+use Commune\Blueprint\Framework\Session\SessionStorage;
 use Commune\Support\Protocal\ProtocalInstance;
 use Psr\Log\LoggerInterface;
 
@@ -53,9 +53,9 @@ interface Session
 
 
     /**
-     * @return Storage
+     * @return SessionStorage
      */
-    public function getStorage() : Storage;
+    public function getStorage() : SessionStorage;
 
     /*----- component -----*/
 

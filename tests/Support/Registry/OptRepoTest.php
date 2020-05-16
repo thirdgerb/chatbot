@@ -154,11 +154,12 @@ class OptRepoTest extends TestCase
         $t = $category->find('test1');
         $this->assertEquals('B', $t->a);
 
-        $ids = $category->getAllIds();
+        $ids = $category->searchIds('*');
         $this->assertEquals(['test1', 'test2'], $ids);
 
         $category->delete(...$ids);
-        $ids = $category->getAllIds();
+        $ids = $category->searchIds('*');
+
         $this->assertEmpty($ids);
 
         $category->save($t1);

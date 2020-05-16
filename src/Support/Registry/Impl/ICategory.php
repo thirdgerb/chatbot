@@ -17,7 +17,6 @@ use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Option\Option;
 use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\Storage;
-use Commune\Support\Utils\StringUtils;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -44,27 +43,6 @@ class ICategory implements Category
     /*------- cached -------*/
 
     protected $booted = false;
-
-    /**
-     * @var Option[]
-     */
-    protected $cachedOptions = [];
-
-    /**
-     * @var bool[]|null
-     */
-    protected $allIds;
-
-    /**
-     * @var int
-     */
-    protected $expireAt = 0;
-
-
-    /**
-     * @var int
-     */
-    protected $cacheExpireAfter;
 
     /**
      * @var Storage
@@ -97,34 +75,19 @@ class ICategory implements Category
         $this->logger = $logger;
         $this->categoryOption = $categoryOption;
         $this->storageOption = $categoryOption->storage->getWrapper();
-        $this->cacheExpireAfter = $categoryOption->cacheExpire;
-    }
-
-    protected function checkExpire() : void
-    {
-        $now = time();
-        // 清空所有缓存.
-        if ($now >= $this->expireAt) {
-            $this->cachedOptions = [];
-            $this->allIds = null;
-        }
-
-        $this->expireAt = ($now + $this->cacheExpireAfter) - ($now  % $this->cacheExpireAfter);
     }
 
     public function has(string $optionId): bool
     {
-        $ids = $this->getAllIds();
-        return array_key_exists($optionId, $ids);
+        return $this->getStorage()->has(
+            $this->categoryOption,
+            $this->storageOption,
+            $optionId
+        );
     }
 
     public function find(string $optionId): Option
     {
-        $this->checkExpire();
-        if (isset($this->cachedOptions[$optionId])) {
-            return $this->cachedOptions[$optionId];
-        }
-
         $option = $this->getStorage()->find(
             $this->categoryOption,
             $this->storageOption,
@@ -138,106 +101,67 @@ class ICategory implements Category
             );
         }
 
-        return $this->cachedOptions[$optionId] = $option;
+        return $option;
     }
 
     public function save(Option $option, bool $notExists = false): bool
     {
-        $this->checkExpire();
-        $saved = $this->getStorage()->save(
+        return $this->getStorage()->save(
             $this->categoryOption,
             $this->storageOption,
             $option,
             $notExists
         );
-
-        if ($saved) {
-            $id = $option->getId();
-            $this->cachedOptions[$id] = $option;
-            $this->allIds[$id] = true;
-        }
-
-        return $saved;
     }
 
 
     public function delete(string $id, string ...$ids): int
     {
-        $this->checkExpire();
-
-        $deleted = $this->getStorage()->delete(
+        return $this->getStorage()->delete(
             $this->categoryOption,
             $this->storageOption,
             $id,
             ...$ids
         );
-
-        array_unshift($ids, $id);
-        foreach ($ids as $id) {
-            unset($this->cachedOptions[$id]);
-            unset($this->allIds[$id]);
-        }
-        return $deleted;
     }
 
     public function findByIds(array $ids): array
     {
-        $this->checkExpire();
-
-        $outputs = [];
-        $toFind = [];
-        foreach ($ids as $id) {
-            if (isset($this->cachedOptions[$id])) {
-                $outputs[$id] = $this->cachedOptions[$id];
-            } else {
-                $toFind[] = $id;
-            }
-        }
-
-        if (empty($toFind)) {
-            return $outputs;
-        }
-
         $options = $this->getStorage()->findByIds(
             $this->categoryOption,
             $this->storageOption,
-            $toFind
+            $ids
         );
 
         $options = array_filter($options, function($option) {
             return !is_null($option);
         });
 
-        $outputs = $options + $outputs;
-        $this->cachedOptions = $options + $this->cachedOptions;
-
-        return $outputs;
+        return $options;
     }
 
     public function count(): int
     {
-        $ids = $this->getAllIds();
-        return count($ids);
-    }
-
-    public function getAllIds(): array
-    {
-        $this->checkExpire();
-        return isset($this->allIds)
-            ? array_keys($this->allIds)
-            : $this->allIds = array_fill_keys(
-                $this->getStorage()->getAllIds(
-                    $this->categoryOption,
-                    $this->storageOption
-                ),
-                true
+        return $this
+            ->getStorage()
+            ->count(
+                $this->categoryOption,
+                $this->storageOption
             );
     }
 
+
     public function paginate(int $offset = 0, int $limit = 20): array
     {
-        $ids = $this->getAllIds();
-        $ids = array_slice($ids, $offset, $limit);
+        $ids = $this
+            ->getStorage()
+            ->paginateIds(
+                $this->categoryOption,
+                $this->storageOption,
+                $offset,
+                $limit
+            );
+
         return array_map(function($id){
             return $this->find($id);
         }, $ids);
@@ -246,19 +170,13 @@ class ICategory implements Category
 
     public function searchIds(string $wildcardId): array
     {
-        $ids = $this->getAllIds();
-
-        if (!StringUtils::isWildCardPattern($wildcardId)) {
-            return in_array($wildcardId, $ids)
-                ? [$wildcardId]
-                : [];
-        }
-
-        $pattern = StringUtils::wildcardToRegex($wildcardId);
-
-        return array_filter($ids, function($id) use ($pattern) {
-            return (bool) preg_match($pattern, $id);
-        });
+        return $this
+            ->getStorage()
+            ->searchIds(
+                $this->categoryOption,
+                $this->storageOption,
+                $wildcardId
+            );
     }
 
     public function searchIdExists(string $wildcardId): int
@@ -269,8 +187,12 @@ class ICategory implements Category
 
     public function each(): \Generator
     {
-        $ids = $this->getAllIds();
-        foreach ($ids as $id) {
+        $each = $this->getStorage()->eachId(
+            $this->categoryOption,
+            $this->storageOption
+        );
+
+        foreach ($each as $id) {
             yield $this->find($id);
         }
     }
@@ -302,6 +224,28 @@ class ICategory implements Category
         return $this->initialStorage = $this->container->get($driver);
     }
 
+    public function paginateId(int $offset = 0, int $limit = 20): array
+    {
+        return $this->getStorage()->paginateIds(
+            $this->categoryOption,
+            $this->storageOption,
+            $offset,
+            $limit
+        );
+    }
+
+    public function eachId(): \Generator
+    {
+        $each =  $this->getStorage()->eachId(
+            $this->categoryOption,
+            $this->storageOption
+        );
+
+        foreach($each as $id) {
+            yield $id;
+        }
+    }
+
     public function boot(bool $initialize = false): void
     {
         if ($this->booted) {
@@ -317,7 +261,7 @@ class ICategory implements Category
         }
     }
 
-    public function initialize() : void
+    protected function initialize() : void
     {
         $storage = $this->getStorage();
         $storage->boot($this->categoryOption, $this->storageOption);
@@ -359,7 +303,5 @@ class ICategory implements Category
         $this->initialStorage = null;
         $this->storage = null;
         $this->categoryOption = null;
-        $this->cachedOptions = [];
-        $this->allIds = null;
     }
 }

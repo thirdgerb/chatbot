@@ -37,6 +37,10 @@ abstract class StorageOption extends AbsOption implements Wrapper
         ]);
     }
 
+    /**
+     * @param StorageMeta $meta
+     * @return Wrapper
+     */
     public static function wrap(Meta $meta): Wrapper
     {
         $name = $meta->name;

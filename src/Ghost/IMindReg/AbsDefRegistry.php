@@ -19,7 +19,6 @@ use Commune\Blueprint\Ghost\Mindset;
 use Commune\Blueprint\Ghost\MindReg\DefRegistry;
 use Commune\Support\Registry\Category;
 use Commune\Support\Registry\OptRegistry;
-use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -54,11 +53,6 @@ abstract class AbsDefRegistry implements DefRegistry
      * @var Def[]
      */
     protected $cachedDefs = [];
-
-    /**
-     * @var bool[]|null
-     */
-    protected $registeredIds = [];
 
     /**
      * AbsDefRegistry constructor.
@@ -109,11 +103,6 @@ abstract class AbsDefRegistry implements DefRegistry
         return $this->getMetaRegistry()->save($meta, $notExists);
     }
 
-    protected function getRegisteredMetaIds() : array
-    {
-        return $this->getMetaRegistry()->getAllIds();
-    }
-
     /*------- implements -------*/
 
     public function getMetaRegistry(): Category
@@ -126,7 +115,6 @@ abstract class AbsDefRegistry implements DefRegistry
     public function flushCache(): void
     {
         $this->cachedDefs = [];
-        $this->registeredIds = null;
     }
 
     protected function checkExpire() : void
@@ -160,11 +148,12 @@ abstract class AbsDefRegistry implements DefRegistry
     public function getDef(string $defName): Def
     {
         $this->checkExpire();
-        if (isset($this->cachedDefs[$defName])) {
-            return $this->cachedDefs[$defName];
-        }
 
-        if (!$this->hasRegisteredMeta($defName)) {
+        // 没有缓存又没有注册
+        if (
+            !array_key_exists($defName, $this->cachedDefs)
+            && !$this->hasRegisteredMeta($defName)
+        ) {
             throw new DefNotDefinedException(
                 __METHOD__,
                 $this->getMetaId(),
@@ -172,47 +161,27 @@ abstract class AbsDefRegistry implements DefRegistry
             );
         }
 
+        // 有缓存
+        if (isset($this->cachedDefs[$defName])) {
+            return $this->cachedDefs[$defName];
+        }
+
         $meta = $this->getRegisteredMeta($defName);
         $def = $meta->getWrapper();
-        return $this->cachedDefs[$defName] = $def;
-    }
 
-    public function getAllDefIds(): array
-    {
-        $this->prepareAllDefIds();
-        return array_keys($this->registeredIds);
-    }
-
-    protected function prepareAllDefIds() : void
-    {
-        $this->checkExpire();
-        if (!isset($this->registeredIds)) {
-            $this->registeredIds = array_fill_keys($this->getRegisteredMetaIds(), true);
-        }
+        // 用 null 表示存在, 但不缓存.
+        $this->setDefCache($defName, $def);
+        return $def;
     }
 
     public function searchIds(string $wildcardId): array
     {
-        if (StringUtils::isWildCardPattern($wildcardId)) {
-            $ids = $this->getAllDefIds();
-            $pattern = StringUtils::wildcardToRegex($wildcardId);
-            return empty($ids)
-                ? []
-                : array_filter($ids, function($id) use ($pattern){
-                    return (bool) preg_match($pattern, $id);
-                });
-        }
-
-        $this->prepareAllDefIds();
-        return array_key_exists($wildcardId, $this->registeredIds)
-            ? [$wildcardId]
-            : [];
+        return $this->getMetaRegistry()->searchIds($wildcardId);
     }
 
     public function searchIdExists(string $wildcardId): int
     {
-        $ids = $this->searchIds($wildcardId);
-        return count($ids);
+        return $this->getMetaRegistry()->searchIdExists($wildcardId);
     }
 
 
@@ -226,22 +195,29 @@ abstract class AbsDefRegistry implements DefRegistry
             return false;
         }
 
-        $this->cachedDefs[$name] = $def;
+        // 用 null 表示存在, 但不缓存.
+        $this->setDefCache($name, $def);
+
         return $this->doRegisterDef($def, $notExists);
+    }
+
+    protected function setDefCache(string $name, Def $def) : void
+    {
+        $this->cachedDefs[$name] = $this->cacheExpire > 0
+            ? $def
+            : null;
     }
 
     public function each(): \Generator
     {
-        $ids = $this->getAllDefIds();
-        foreach ($ids as $id) {
+        foreach($this->getMetaRegistry()->eachId() as $id ) {
             yield $this->getDef($id);
         }
     }
 
     public function paginate(int $offset = 0, int $limit = 20): array
     {
-        $ids = $this->getAllDefIds();
-        $ids = array_slice($ids, $offset, $limit);
+        $ids = $this->getMetaRegistry()->paginateId($offset, $limit);
         return array_map(function($id){
             return $this->getDef($id);
         }, $ids);
@@ -250,7 +226,6 @@ abstract class AbsDefRegistry implements DefRegistry
     public function __destruct()
     {
         $this->cachedDefs = [];
-        $this->registeredIds = null;
         $this->mindset = null;
         $this->optRegistry = null;
     }

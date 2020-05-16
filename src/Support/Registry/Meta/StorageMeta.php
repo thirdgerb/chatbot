@@ -13,7 +13,6 @@ namespace Commune\Support\Registry\Meta;
 
 use Commune\Support\Alias\Aliases;
 use Commune\Support\Option\AbsMeta;
-use Commune\Support\Option\Wrapper;
 
 
 /**
@@ -27,6 +26,8 @@ use Commune\Support\Option\Wrapper;
  */
 class StorageMeta extends AbsMeta
 {
+    const IDENTITY = 'wrapper';
+
     public static function stub(): array
     {
         return [

@@ -82,10 +82,12 @@ class GhostConfig extends AbsOption
 
             'configProviders' => [
                 FrameworkProviders\OptRegistryServiceProvider::class,
+                GhostProviders\MindsetStorageConfigProvider::class,
             ],
             'procProviders' => [
                 FrameworkProviders\SplExpReporterServiceProvider::class,
                 FrameworkProviders\MonologServiceProvider::class,
+                GhostProviders\MindsetServiceProvider::class,
             ],
             'reqProviders' => [
                 FrameworkProviders\ArrCacheServiceProvider::class,

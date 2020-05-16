@@ -150,6 +150,12 @@ class ITyper implements Typer
         return $this;
     }
 
+    public function over(): Dialog
+    {
+        return $this->dialog;
+    }
+
+
     public function __destruct()
     {
         $this->dialog = null;

@@ -12,12 +12,12 @@
 namespace Commune\Ghost\Cloner;
 
 use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
-use Commune\Framework\Session\AStorage;
+use Commune\Framework\Session\ASessionStorage;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IClonerStorage extends AStorage implements ClonerStorage
+class IClonerStorage extends ASessionStorage implements ClonerStorage
 {
     public function getSessionKey(string $sessionName, string $sessionId): string
     {

@@ -20,22 +20,21 @@ use Symfony\Component\Finder\Finder;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name  storage 名
- *
  * @property-read string $path  文件存储路径. 一个文件里只应该有一种option
  *
  * @property-read bool $isDir   path是文件名, 还是路径名. 如果是路径名, 会把文件的相对路径作为 option Id
  *
  * @property-read mixed $depth  目录搜索的深度.
  *
+ *
  * @see Finder::depth()
  */
 abstract class FileStorageOption extends StorageOption
 {
+
     public static function stub(): array
     {
         return [
-            'name' => static::class,
             'path' => '',
             'isDir' => true,
             'depth' => 0,
@@ -49,10 +48,6 @@ abstract class FileStorageOption extends StorageOption
 
     public static function validate(array $data): ? string
     {
-        if (empty($data['name'])) {
-            return 'name field is required';
-        }
-
         if (empty($data['path'])) {
             return 'path field is required';
         }

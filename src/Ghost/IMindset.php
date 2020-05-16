@@ -11,12 +11,11 @@
 
 namespace Commune\Ghost;
 
-use Commune\Ghost\IMindRegistries;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Blueprint\Ghost\MindReg;
-use Commune\Ghost\Providers\MindCacheExpireOption;
 use Commune\Blueprint\Ghost\MindReg\DefRegistry;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -25,13 +24,13 @@ class IMindset implements Mindset
 {
 
     const REGISTRY_IMPL = [
-        MindReg\ContextReg::class => IRegistries\IContextReg::class,
-        MindReg\StageReg::class => IRegistries\IStageReg::class,
-        MindReg\IntentReg::class => IRegistries\IIntentReg::class,
-        MindReg\MemoryReg::class => IRegistries\IMemoryReg::class,
-        MindReg\EmotionReg::class => IRegistries\IEmotionReg::class,
-        MindReg\EntityReg::class => IRegistries\IEntityReg::class,
-        MindReg\SynonymReg::class => IRegistries\ISynonymReg::class,
+        MindReg\ContextReg::class => IMindReg\IContextReg::class,
+        MindReg\StageReg::class => IMindReg\IStageReg::class,
+        MindReg\IntentReg::class => IMindReg\IIntentReg::class,
+        MindReg\MemoryReg::class => IMindReg\IMemoryReg::class,
+        MindReg\EmotionReg::class => IMindReg\IEmotionReg::class,
+        MindReg\EntityReg::class => IMindReg\IEntityReg::class,
+        MindReg\SynonymReg::class => IMindReg\ISynonymReg::class,
     ];
 
     /**
@@ -40,7 +39,7 @@ class IMindset implements Mindset
     protected $optRegistry;
 
     /**
-     * @var MindCacheExpireOption
+     * @var int
      */
     protected $cacheExpire;
 
@@ -51,12 +50,12 @@ class IMindset implements Mindset
     /**
      * IMindset constructor.
      * @param OptRegistry $optRegistry
-     * @param MindCacheExpireOption $option
+     * @param int $cacheExpire
      */
-    public function __construct(OptRegistry $optRegistry, MindCacheExpireOption $option)
+    public function __construct(OptRegistry $optRegistry, int $cacheExpire)
     {
         $this->optRegistry = $optRegistry;
-        $this->cacheExpire = $option;
+        $this->cacheExpire = $cacheExpire;
     }
 
     public function reload(): void
@@ -70,11 +69,14 @@ class IMindset implements Mindset
         $this->emotionReg()->flushCache();
     }
 
-    public function initContexts(): void
+    public function initContexts(LoggerInterface $logger): void
     {
         $contextReg = $this->contextReg();
         foreach($contextReg->each() as $def) {
-            $contextReg->registerDef($def);
+            if ($contextReg->registerDef($def)) {
+                $name = $def->getName();
+                $logger->debug("register context def: $name");
+            }
         }
     }
 
@@ -101,7 +103,7 @@ class IMindset implements Mindset
     {
         return $this->getReg(
            MindReg\ContextReg::class,
-            $this->cacheExpire->context
+            $this->cacheExpire
         );
     }
 
@@ -109,7 +111,7 @@ class IMindset implements Mindset
     {
         return $this->getReg(
            MindReg\IntentReg::class,
-            $this->cacheExpire->intent
+            $this->cacheExpire
         );
     }
 
@@ -117,7 +119,7 @@ class IMindset implements Mindset
     {
         return $this->getReg(
            MindReg\StageReg::class,
-            $this->cacheExpire->stage
+            $this->cacheExpire
         );
     }
 
@@ -125,7 +127,7 @@ class IMindset implements Mindset
     {
         return $this->getReg(
            MindReg\MemoryReg::class,
-            $this->cacheExpire->memory
+            $this->cacheExpire
         );
     }
 
@@ -133,7 +135,7 @@ class IMindset implements Mindset
     {
         return $this->getReg(
            MindReg\EntityReg::class,
-            $this->cacheExpire->entity
+            $this->cacheExpire
         );
     }
 
@@ -141,7 +143,7 @@ class IMindset implements Mindset
     {
         return $this->getReg(
            MindReg\SynonymReg::class,
-            $this->cacheExpire->synonym
+            $this->cacheExpire
         );
     }
 
@@ -149,7 +151,7 @@ class IMindset implements Mindset
     {
         return $this->getReg(
            MindReg\EmotionReg::class,
-            $this->cacheExpire->emotion
+            $this->cacheExpire
         );
     }
 

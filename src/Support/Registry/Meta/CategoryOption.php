@@ -22,8 +22,6 @@ use Commune\Support\Option\AbsOption;
  *
  * @property string $optionClass                storage 里存储的 option的类名
  *
- * @property int $cacheExpire                   Category 缓存对象过期时间. 是整点自动过期.
- *
  * @property StorageMeta $storage               获取数据的 storage.
  *
  * @property StorageMeta|null $initialStorage   初始化时使用的 Storage
@@ -40,7 +38,6 @@ class CategoryOption extends AbsOption
             'optionClass' => '',
             'title' => 'title',
             'desc' => 'desc',
-            'cacheExpire' => 600,
             'storage' => [],
             'initialStorage' => null,
         ];

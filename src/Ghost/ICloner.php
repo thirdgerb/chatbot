@@ -25,7 +25,7 @@ use Commune\Protocals\Intercom\GhostInput;
 use Commune\Protocals\Intercom\GhostMsg;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Blueprint\Framework\ReqContainer;
-use Commune\Blueprint\Framework\Session\Storage;
+use Commune\Blueprint\Framework\Session\SessionStorage;
 
 
 /**
@@ -179,7 +179,7 @@ class ICloner extends ASession implements Cloner
         return $this->config->name;
     }
 
-    public function getStorage(): Storage
+    public function getStorage(): SessionStorage
     {
         return $this->storage;
     }

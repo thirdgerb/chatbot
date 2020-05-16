@@ -74,6 +74,22 @@ class StringUtils
         return "/^$string$/";
     }
 
+    public static function wildcardSearch(string $wildcardId, array $ids) : array
+    {
+        if ($wildcardId === '*') {
+            return $ids;
+        }
+
+        if (self::isWildCardPattern($wildcardId)) {
+            $pattern = self::wildcardToRegex($wildcardId);
+            return array_filter($ids, function($id) use ($pattern) {
+                return (bool) preg_match($pattern, $id);
+            });
+        }
+
+        return in_array($wildcardId, $ids) ? [$wildcardId] : [];
+    }
+
     /**
      * 字符串去掉默认的符号
      *

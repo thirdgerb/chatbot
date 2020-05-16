@@ -12,6 +12,7 @@
 namespace Commune\Blueprint;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Mindset;
 use Commune\Contracts;
 use Commune\Protocals;
 use Commune\Blueprint\Framework;
@@ -45,6 +46,7 @@ interface DependInjections
     const GHOST_PROC_BINDINGS = [
         Ghost::class,
         Configs\GhostConfig::class,
+        Mindset::class,
     ];
 
     const GHOST_REQ_BINDINGS = [

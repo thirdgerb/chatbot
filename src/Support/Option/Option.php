@@ -24,6 +24,8 @@ use Commune\Support\Struct\Struct;
  */
 interface Option extends Struct, Injectable
 {
+    const TITLE_FUNC = 'getTitle';
+    const DESC_FUNC = 'getDescription';
 
     /**
      * 当option 作为列表元素被使用的时候
@@ -74,6 +76,18 @@ interface Option extends Struct, Injectable
      * @return string
      */
     public function getHash() : string;
+
+    /*------- 参数配置 -------*/
+
+    /**
+     * @return string
+     */
+    public static function getTitle() : string;
+
+    /**
+     * @return string
+     */
+    public static function getDescription() : string;
 
 
 }

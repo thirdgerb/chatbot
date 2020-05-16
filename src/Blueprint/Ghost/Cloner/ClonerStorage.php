@@ -11,12 +11,12 @@
 
 namespace Commune\Blueprint\Ghost\Cloner;
 
-use Commune\Blueprint\Framework\Session\Storage;
+use Commune\Blueprint\Framework\Session\SessionStorage;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ClonerStorage extends Storage
+interface ClonerStorage extends SessionStorage
 {
     // 当前进程的存储
     const CURRENT_PROCESS_ID = 'currentProcessId';

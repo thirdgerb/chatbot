@@ -56,6 +56,11 @@ interface Storage
         string $optionId
     ) : ? Option;
 
+    public function count(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption
+    ) : int;
+
     /**
      * 更新, 或者保存一个 option.
      *
@@ -79,7 +84,7 @@ interface Storage
      * @param CategoryOption $categoryOption
      * @param StorageOption $storageOption
      * @param string $id
-     * @param string ...$ids
+     * @param string[] $ids
      * @return int
      */
     public function delete(
@@ -116,4 +121,39 @@ interface Storage
         StorageOption $storageOption
     ) : array;
 
+    /**
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param string $wildCardId
+     * @return array
+     */
+    public function searchIds(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        string $wildCardId
+    ) : array;
+
+    /**
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @return \Generator |string[]
+     */
+    public function eachId(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption
+    ) : \Generator;
+
+    /**
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param int $offset
+     * @param int $limit
+     * @return array
+     */
+    public function paginateIds(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        int $offset = 0,
+        int $limit = 20
+    ) : array;
 }

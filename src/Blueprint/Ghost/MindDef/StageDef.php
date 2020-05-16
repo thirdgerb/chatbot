@@ -11,7 +11,6 @@
 
 namespace Commune\Blueprint\Ghost\MindDef;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Retain;
 use Commune\Blueprint\Ghost\Dialog\Withdraw;
@@ -43,7 +42,7 @@ interface StageDef extends Def
     /**
      * @return IntentDef|null
      */
-    public function asIntentDef() : IntentDef;
+    public function asIntentDef() : ? IntentDef;
 
     /**
      * @param Dialog $current

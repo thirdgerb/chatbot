@@ -19,7 +19,7 @@ namespace Commune\Blueprint\Framework\Session;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Storage extends \ArrayAccess
+interface SessionStorage extends \ArrayAccess
 {
 
     public function save() : void;

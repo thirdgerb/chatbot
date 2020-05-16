@@ -15,6 +15,7 @@ use Commune\Support\Option\Option;
 use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Storage;
+use Commune\Support\Utils\StringUtils;
 use Symfony\Component\Finder\Finder;
 
 
@@ -46,6 +47,10 @@ abstract class AbsFileStorage implements Storage
      */
     protected $optionFromFile = [];
 
+    /**
+     * @var string[][]
+     */
+    protected $allIds = [];
     /*------ methods ------*/
 
 
@@ -338,8 +343,6 @@ abstract class AbsFileStorage implements Storage
         // 保证读取.
         $this->boot($categoryOption, $storageOption);
 
-
-
         $cateId = $categoryOption->getId();
         $optionId = $option->getId();
 
@@ -365,9 +368,13 @@ abstract class AbsFileStorage implements Storage
         string ...$ids
     ): int
     {
+        array_unshift($ids, $id);
+
         $cateId = $categoryOption->getId();
         $storage = $this->parseOption($storageOption);
-        array_unshift($ids, $id);
+
+        // 先清空 allId 配置
+        unset($this->allIds[$cateId]);
 
         $unset = [];
         foreach ($ids as $id) {
@@ -408,20 +415,72 @@ abstract class AbsFileStorage implements Storage
         StorageOption $storageOption
     ): array
     {
+        $cateId = $categoryOption->getId();
+        if (isset($this->allIds[$cateId])) {
+            return $this->allIds[$cateId];
+        }
         $storageOption = $this->parseOption($storageOption);
         $this->loadFile($categoryOption, $storageOption);
 
-        $cateId = $categoryOption->getId();
         $options = $this->optionCaches[$cateId] ?? [];
 
-        return array_keys($options);
+        return $this->allIds[$cateId] = array_keys($options);
     }
+
+    public function count(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption
+    ): int
+    {
+        $storageOption = $this->parseOption($storageOption);
+        $this->loadFile($categoryOption, $storageOption);
+        $cateId = $categoryOption->getId();
+        return count($this->optionCaches[$cateId]);
+    }
+
+    public function searchIds(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        string $wildCardId
+    ): array
+    {
+        $ids = $this->getAllIds($categoryOption, $storageOption);
+        return StringUtils::wildcardSearch($wildCardId, $ids);
+    }
+
+    public function eachId(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption
+    ): \Generator
+    {
+        $ids = $this->getAllIds($categoryOption, $storageOption);
+        foreach ($ids as $id) {
+            yield $id;
+        }
+    }
+
+    public function paginateIds(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        int $offset = 0,
+        int $limit = 20
+    ): array
+    {
+        $ids = $this->getAllIds($categoryOption, $storageOption);
+        if (empty($ids)) {
+            return [];
+        }
+
+        return array_slice($ids, $offset, $limit);
+    }
+
 
     public function __destruct()
     {
         $this->optionCaches = [];
         $this->resources = [];
         $this->optionFromFile = [];
+        $this->allIds = [];
     }
 
 }
