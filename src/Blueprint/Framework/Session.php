@@ -13,7 +13,7 @@ namespace Commune\Blueprint\Framework;
 
 use Commune\Blueprint\Framework\Session\SessionEvent;
 use Commune\Blueprint\Framework\Session\SessionStorage;
-use Commune\Support\Protocal\ProtocalInstance;
+use Commune\Support\Protocal\Protocal;
 use Psr\Log\LoggerInterface;
 
 
@@ -85,12 +85,12 @@ interface Session
      * 用这种策略避免去开发复杂的通用 Kernel, 而可以适用于各种情况.
      *
      * @param string $group         假设协议处理器是分组的.
-     * @param ProtocalInstance $protocal
+     * @param Protocal $protocalInstance
      * @return callable|null
      */
     public function getProtocalHandler(
         string $group,
-        ProtocalInstance $protocal
+        Protocal $protocalInstance
     ) : ? callable ;
 
 

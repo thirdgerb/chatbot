@@ -17,6 +17,7 @@ use Commune\Protocals\Abstracted;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
+use Illuminate\Support\Arr;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -25,7 +26,7 @@ class IComprehension extends AbsMessage implements
     Comprehension,
     Abstracted\Emotion,
     Abstracted\Replies,
-    Abstracted\Tokens,
+    Abstracted\Tokenize,
     Abstracted\Cmd,
     Abstracted\Query,
     Abstracted\Vector,
@@ -209,11 +210,59 @@ class IComprehension extends AbsMessage implements
 
     /*------- handled by -------*/
 
-    public function handledBy(string $comprehenderId, bool $succeed): void
+    public function handled(
+        string $type,
+        string $comprehenderId,
+        bool $success
+    ): void
     {
         $handledBy = $this->_data['handledBy'];
-        $handledBy[$comprehenderId] = $succeed;
+        $handledBy[$type][$comprehenderId] = $success;
         $this->_data['handledBy'] = $handledBy;
+    }
+
+    public function isHandedBy(
+        string $comprehenderId,
+        string $type = null
+    ): bool
+    {
+
+        if (isset($type)) {
+            return isset($this->_data['handledBy'][$type][$comprehenderId]);
+        }
+
+        $handledBy = $this->_data['handledBy'];
+        foreach ($handledBy as $type => $results) {
+            if (isset($results[$comprehenderId])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function isSucceed(
+        string $type,
+        string $comprehenderId = null
+    ): bool
+    {
+        $results = $this->_data['handledBy'][$type] ?? [];
+
+        if (isset($comprehenderId)) {
+            return $results[$comprehenderId];
+        }
+
+        foreach ($results as $val) {
+            if ($val) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public function handledBy(string $comprehenderId, bool $succeed): void
+    {
+
     }
 
     public function isHandledBy(string $comprehenderId): bool

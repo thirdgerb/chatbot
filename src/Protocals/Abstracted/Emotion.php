@@ -18,7 +18,7 @@ use Commune\Support\Protocal\Protocal;
  * 输入消息的情绪
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Emotion extends Protocal
+interface Emotion
 {
     /**
      * @param string ...$emotion

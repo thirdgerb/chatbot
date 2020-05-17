@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\MindDef\DefParam;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
 use Commune\Ghost\Support\ContextUtils;
+use Illuminate\Support\Arr;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -171,9 +172,8 @@ class IDefParam implements DefParam
         }
 
         return function($value) use ($parser) : array {
-            if (!is_array($value)) {
-                $value = [$value];
-            }
+
+            $value = Arr::wrap($value);
 
             return array_map(function($val) use ($parser) {
                 return call_user_func($parser, $val);

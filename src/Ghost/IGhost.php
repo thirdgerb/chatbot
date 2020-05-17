@@ -139,6 +139,10 @@ class IGhost extends AbsApp implements Ghost
                 $request
             );
 
+            if (!isset($handler)) {
+                return $request->fail(AppResponse::HANDLER_NOT_FOUND);
+            }
+
             // 使用 Handler 来响应.
             return $handler($request);
 

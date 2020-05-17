@@ -12,12 +12,12 @@
 namespace Commune\Blueprint\Framework\Request;
 
 use Commune\Protocals\IntercomMsg;
-use Commune\Support\Protocal\ProtocalInstance;
+use Commune\Support\Protocal\Protocal;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface AppRequest extends ProtocalInstance
+interface AppRequest extends Protocal
 {
 
     /**

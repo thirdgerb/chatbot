@@ -17,6 +17,7 @@ use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
 use Commune\Framework\Exceptions\SerializeForbiddenException;
 use Commune\Support\Pipeline\OnionPipeline;
+use Commune\Support\Protocal\Protocal;
 use Commune\Support\Protocal\ProtocalInstance;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
@@ -142,7 +143,7 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         return $pipeline->buildPipeline($destination);
     }
 
-    public function getProtocalHandler(string $group, ProtocalInstance $protocal): ? callable
+    public function getProtocalHandler(string $group, Protocal $protocalInstance): ? callable
     {
         if (!isset($this->protocalMap)) {
             $options = $this->getProtocalOptions();
@@ -158,7 +159,8 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         }
 
         foreach ($options as $name => $option) {
-            if ($protocal->isProtocal($name)) {
+            $protocal = $option->protocal;
+            if (is_a($protocalInstance, $protocal, TRUE)) {
                 $abstract = $option->handler;
                 $params = $option->params;
                 $handlerIns = $this->getContainer()->make($abstract, $params);

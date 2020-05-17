@@ -23,7 +23,7 @@ interface AppResponse
     const BAD_REQUEST = 400;
     const UNAUTHORIZED = 401;
     const FORBIDDEN = 403;
-    const NOT_FOUND = 404;
+    const HANDLER_NOT_FOUND = 404;
     const HOST_RUNTIME_ERROR = 500;
     const HOST_LOGIC_ERROR = 501;
 
@@ -33,7 +33,7 @@ interface AppResponse
         400 => 'BAD_REQUEST',
         401 => 'UNAUTHORIZED',
         403 => 'FORBIDDEN',
-        404 => 'NOT_FOUND',
+        404 => 'HANDLER_NOT_FOUND',
         500 => 'HOST_RUNTIME_ERROR',
         501 => 'HOST_LOGIC_ERROR',
     ];

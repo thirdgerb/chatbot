@@ -15,7 +15,7 @@ namespace Commune\Protocals\Abstracted;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Tokens
+interface Tokenize
 {
     /**
      * @param string[] $tokens

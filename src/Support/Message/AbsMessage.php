@@ -135,21 +135,6 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
         return StringUtils::namespaceSlashToDot(static::class);
     }
 
-    public function isProtocal(string $protocalName): bool
-    {
-       return class_exists($protocalName)
-           && is_a($protocalName, Protocal::class, TRUE)
-           && is_a($this, $protocalName, TRUE);
-    }
-
-    public function toProtocal(string $protocalName): ? Protocal
-    {
-        if ($this instanceof Protocal && $this->isProtocal($protocalName)) {
-            return $this;
-        }
-        return null;
-    }
-
     final public static function getProtocals(): array
     {
         return static::getInterfacesOf(
