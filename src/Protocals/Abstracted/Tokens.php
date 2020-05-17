@@ -11,17 +11,24 @@
 
 namespace Commune\Protocals\Abstracted;
 
-use Commune\Protocals\Abstracted;
-
 
 /**
- * 将消息理解成一个命令语句.
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- * @property-read string|null $cmdName       命令名
- * @property-read string|null $cmdStr        命令字符串
  */
-interface Command extends Abstracted
+interface Tokens
 {
+    /**
+     * @param string[] $tokens
+     */
+    public function addTokens(array $tokens) : void;
+
+    /**
+     * @return string[]
+     */
+    public function getTokens() : ? array;
+
+    /**
+     * @return bool
+     */
+    public function hasTokens() : bool;
 }

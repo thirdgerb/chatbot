@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost;
 use Commune\Contracts\Cache;
 use Commune\Blueprint\Framework\Session;

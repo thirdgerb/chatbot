@@ -11,16 +11,13 @@
 
 namespace Commune\Protocals\Abstracted;
 
-use Commune\Protocals\Abstracted;
-
-
 /**
  * 将输入消息理解成为一种选择
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  */
-interface Choice extends Abstracted
+interface Choice
 {
     public function getChoice();
 

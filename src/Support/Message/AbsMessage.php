@@ -44,14 +44,19 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
 
         // 去掉完全一致的数据, 不需要存储.
         foreach ($stub as $key => $val) {
-            if (!isset($data[$key])) {
+
+            if (!array_key_exists($key, $data)) {
                 continue;
             }
 
             $dataVal = $data[$key];
+
             if (
+                // 条件1 : 空值
                 empty($dataVal)
-                && (is_scalar($dataVal) || is_array($dataVal))
+                // 条件2 : 简单值
+                && (is_scalar($dataVal) || is_array($dataVal) || is_null($dataVal))
+                // 条件3 : 必须和原来的值相等.
                 && $dataVal === $val
             ) {
                 unset($data[$key]);
@@ -89,7 +94,8 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
             }
         }
         $result = [];
-        if (!empty($data) && $this->transferNoEmptyData) {
+
+        if (!empty($data) || !$this->transferNoEmptyData) {
             $result['attrs'] = $data;
         }
 

@@ -11,18 +11,19 @@
 
 namespace Commune\Protocals\Abstracted;
 
-use Commune\Protocals\Abstracted;
 use Commune\Protocals\HostMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
  */
-interface Reply extends Abstracted
+interface Replies
 {
-    public function addMessage(HostMsg $message) : void;
+    public function addReplies(HostMsg ...$message) : void;
+
+    public function hasReplies() : bool;
+
     /**
      * @return HostMsg[]
      */
-    public function getMessages() : array;
+    public function getReplies() : ? array;
 }

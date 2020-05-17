@@ -9,19 +9,22 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Abstracted;
+namespace Commune\Ghost\Support;
 
-use Commune\Protocals\Abstracted;
 
 /**
- * 将输入消息理解成为多种选择.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- * @property-read string[] $choices     多个选项
- * @property-read string[] $answers     多个值
  */
-interface Selection extends Abstracted
+class MathUtils
 {
+
+    public static function cosineSimilarity(array $vector, array $base) : float
+    {
+        // todo , 回头写一个实现.
+        if ($vector === $base) {
+            return 1;
+        }
+        return 0;
+    }
+
 }

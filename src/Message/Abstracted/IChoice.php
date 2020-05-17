@@ -40,8 +40,8 @@ class IChoice extends AbsMessage implements Choice
 
     public function isEmpty(): bool
     {
-        return !isset($this->_data['choice'])
-            && empty($this->_data['answer']);
+        return is_null($this->_data['choice'] ?? null)
+            && ($this->_data['answer'] ?? '') === '';
     }
 
     public function getChoice()

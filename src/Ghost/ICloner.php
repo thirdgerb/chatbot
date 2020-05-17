@@ -40,7 +40,7 @@ class ICloner extends ASession implements Cloner
         'convo' => Ghost\Tools\Typer::class,
         'cache' => Cache::class,
         'auth' => Ghost\Auth\Authority::class,
-        'mind' => Ghost\Mind\Mindset::class,
+        'mind' => Ghost\Mindset::class,
         'runtime' => Ghost\Runtime\Runtime::class,
         'registry' => OptRegistry::class,
     ];
@@ -105,7 +105,6 @@ class ICloner extends ASession implements Cloner
 
         // expire
         $this->expire = $this->ghostConfig->sessionExpire;
-
         parent::__construct($container, $input->getSessionId());
     }
 

@@ -40,7 +40,7 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     protected $container;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $sessionId;
 
@@ -92,10 +92,11 @@ abstract class ASession implements Session, Spied, HasIdGenerator
      * @param ReqContainer $container
      * @param string $sessionId
      */
-    public function __construct(ReqContainer $container, string $sessionId)
+    public function __construct(ReqContainer $container, string $sessionId = null)
     {
         $this->container = $container;
         $this->traceId = $container->getId();
+        // 允许为 null
         $this->sessionId = $sessionId;
         static::addRunningTrace($this->traceId, $this->traceId);
     }
@@ -104,7 +105,27 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
     public function getSessionId(): string
     {
-        return $this->sessionId;
+        if (isset($this->sessionId)) {
+            return $this->sessionId;
+        }
+
+        if ($this->isStateless()) {
+            return $this->sessionId = $this->createUuId();
+        }
+
+        $id = $this
+            ->getStorage()
+            ->offsetGet(Session\SessionStorage::SESSION_ID_KEY);
+
+        if (isset($id)) {
+            return $this->sessionId = $id;
+        }
+
+        $id = $this->createUuId();
+        $this->getStorage()
+            ->offsetSet(Session\SessionStorage::SESSION_ID_KEY, $id);
+
+        return $this->sessionId = $id;
     }
 
 

@@ -11,17 +11,29 @@
 
 namespace Commune\Protocals\Abstracted;
 
-use Commune\Protocals\Abstracted;
-
 /**
  * 将输入消息理解成为多种选择.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
- * @property-read string[] $choices     多个选项
- * @property-read string[] $answers     多个值
  */
-interface Selection extends Abstracted
+interface Selection
 {
+    /**
+     * @param string[] $selections
+     * @return void
+     */
+    public function setSelections(array $selections) : void;
+
+    /**
+     * @return string[]
+     */
+    public function getSelections() : array;
+
+    /**
+     * @param string $choice
+     * @return bool
+     */
+    public function isSelected(string $choice) : bool;
+
 }

@@ -11,12 +11,8 @@
 
 namespace Commune\Protocals\Abstracted;
 
-use Commune\Protocals\Abstracted;
-
-
 /**
  * 将用户的消息理解成为一个问题
- *
  * 问题和意图有所区别, 主要有以下原因:
  *
  * 1. 问题的确可以做成一种意图.
@@ -26,12 +22,12 @@ use Commune\Protocals\Abstracted;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string|null $query            问题描述
- * @property-read string|null $queryId          问题的 ID
- * @property-read array       $entities         问题的实体
- * @property-read string[]    $suggestions      用户给的答案建议. 通常会有吗?
  */
-interface Question extends Abstracted
+interface Question
 {
+    public function setQuery(string $queryId): void;
 
+    public function hasQueryId() : bool;
+
+    public function getQueryId() : ? string;
 }

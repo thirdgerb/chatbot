@@ -11,24 +11,12 @@
 
 namespace Commune\Protocals\Abstracted;
 
-use Commune\Protocals\Abstracted;
-
-
 /**
  * 意图的理解. 可以来自 NLU 或者其它的解析策略.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- *
- * @property-read string|null $matchedIntent              已经命中的意图
- * @property-read array $intents                          可能的意图
- * [string $intentName, float $odd, bool $highlyPossible]
- *
- * @property-read array[] $publicEntities                 公共的实体
- * [ string $entityName => string[] ] $entityValues
- *
- * @property-read array[][] $intentEntities               意图对应的实体
  */
-interface Intention extends Abstracted
+interface Intention
 {
     /*----- do match -----*/
 

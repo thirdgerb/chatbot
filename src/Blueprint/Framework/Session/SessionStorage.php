@@ -21,6 +21,7 @@ namespace Commune\Blueprint\Framework\Session;
  */
 interface SessionStorage extends \ArrayAccess
 {
+    const SESSION_ID_KEY = 'sessionId';
 
     public function save() : void;
 }
