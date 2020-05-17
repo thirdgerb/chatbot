@@ -28,4 +28,17 @@ class ArrayUtils
 
         return $data;
     }
+
+
+    public static function fieldsAreRequired(array $fields, array $data) : ? string
+    {
+        foreach ($fields as $field) {
+            $val = $data[$field] ?? null;
+            if (is_null($val) || $val === '') {
+                return $field;
+            }
+        }
+
+        return null;
+    }
 }

@@ -24,26 +24,24 @@ use Commune\Support\Struct\Struct;
 class IYieldInput extends IGhostInput implements YieldInput
 {
 
-    public function __construct(ContextMsg $contextMsg, string $clonerId, string $shellName, string $shellId, string $senderId, string $messageId = null, array $moreInfo = [
-        //'batchId' => 'id',
-        //'sceneId' => '',
-        //'env' => [],
-        //'senderName' => '',
-        //'guestId' => '',
-        //'deliverAt' => 0,
-        //'createdAt' => 0
-    ], $comprehension = null)
+    public function __construct(
+        ContextMsg $contextMsg,
+        string $clonerId,
+        ? string $sessionId,
+        string $shellName,
+        string $shellId,
+        string $senderId,
+        string $messageId = null
+    )
     {
         parent::__construct(
             $contextMsg,
             $clonerId,
-            null,
+            $sessionId,
             $shellName,
             $shellId,
             $senderId,
-            $messageId,
-            $moreInfo,
-            $comprehension
+            $messageId
         );
     }
 
@@ -60,12 +58,11 @@ class IYieldInput extends IGhostInput implements YieldInput
         return new static(
             $data['message'] ?? null,
             $data['cloneId'] ?? '',
+            $data['sessionId'] ?? null,
             $data['shellName'] ?? '',
             $data['shellId'] ?? '',
             $data['senderId'] ?? '',
-            $data['messageId'] ?? '',
-            $data,
-            $data['comprehension'] ?? null
+            $data['messageId'] ?? null
         );
     }
 

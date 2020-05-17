@@ -99,8 +99,6 @@ class ICloner extends ASession implements Cloner
         $this->ghost = $ghost;
         $this->ghostConfig = $ghost->getConfig();
         $this->ghostInput = $input;
-        $this->sessionId = $input->getSessionId();
-
         // id
         $this->clonerId = $input->getCloneId();
 
@@ -115,9 +113,66 @@ class ICloner extends ASession implements Cloner
         return $this->clonerId;
     }
 
+    /*-------- sessionId ---------*/
+
     public function getSessionId() : string
     {
-        return $this->sessionId;
+        if (isset($this->sessionId)) {
+            return $this->sessionId;
+        }
+
+        if ($this->isStateless()) {
+            $sessionId = $this->ghostInput->getSessionId()
+                ?? $this->makeSessionId();
+            return $this->sessionId = $sessionId;
+        }
+
+        $inputSid = $this->ghostInput->getSessionId();
+        $cachedSid = $this->getSessionIdFromCache();
+
+        $changed = false;
+        if (empty($cachedSid)) {
+            $changed = true;
+            $sessionId = $inputSid ?? $this->makeSessionId();
+
+        } elseif(empty($inputSid)) {
+            $sessionId = $cachedSid;
+            $this->ghostInput->withSessionId($sessionId);
+        } else {
+            $changed = true;
+            $sessionId = $inputSid;
+        }
+
+        if ($changed) {
+            $this->cacheSessionId($sessionId);
+        }
+
+        return $this->sessionId = $sessionId;
+    }
+
+    protected function makeSessionId() : string
+    {
+        $clonerId = $this->getClonerId();
+        $messageId = $this->ghostInput->getMessageId();
+        return sha1("cloner:$clonerId:message:$messageId");
+    }
+
+    protected function getSessionIdFromCache() : ? string
+    {
+        $key = $this->getSessionCacheKey();
+        return $this->cache->get($key);
+    }
+
+    protected function cacheSessionId(string $sessionId) : void
+    {
+        $key = $this->getSessionCacheKey();
+        $this->cache->set($key, $sessionId, $this->getSessionExpire());
+    }
+
+    protected function getSessionCacheKey() : string
+    {
+        $cloneId = $this->getClonerId();
+        return "clone:$cloneId:sessionId";
     }
 
     /*-------- contextual ---------*/
@@ -296,6 +351,7 @@ class ICloner extends ASession implements Cloner
     }
 
     /*------- output -------*/
+
     public function silence(bool $silent = true): void
     {
         $this->silent = $silent;
@@ -305,7 +361,14 @@ class ICloner extends ASession implements Cloner
     {
         array_unshift($outputs, $output);
         if (!$this->silent) {
-            $this->outputs = array_merge($this->outputs, $outputs);
+            $this->outputs = array_reduce(
+                $outputs,
+                function($outputs, GhostMsg $output){
+                    $outputs[] = $output->withSessionId($this->getSessionId());
+                    return $outputs;
+                },
+                $this->outputs
+            );
         }
     }
 

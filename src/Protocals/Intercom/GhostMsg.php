@@ -52,4 +52,6 @@ interface GhostMsg extends IntercomMsg
     public function isBroadcasting() : bool;
 
     public function toShellMsg() : ShellMsg;
+
+    public function withSessionId(string $sessionId) : GhostMsg;
 }

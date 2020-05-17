@@ -24,15 +24,22 @@ use Commune\Support\Struct\Struct;
 class IRetainInput extends IGhostInput implements YieldInput
 {
 
-    public function __construct(ContextMsg $contextMsg, string $clonerId, string $shellName, string $shellId, string $senderId, string $messageId = null, array $moreInfo = [
-        //'batchId' => 'id',
-        //'sceneId' => '',
-        //'env' => [],
-        //'senderName' => '',
-        //'guestId' => '',
-        //'deliverAt' => 0,
-        //'createdAt' => 0
-    ], $comprehension = null)
+    public function __construct(
+        ContextMsg $contextMsg,
+        string $clonerId,
+        string $shellName,
+        string $shellId,
+        string $senderId,
+        string $messageId = null,
+        array $moreInfo = [
+            //'batchId' => 'id',
+            //'sceneId' => '',
+            //'env' => [],
+            //'senderName' => '',
+            //'guestId' => '',
+            //'deliverAt' => 0,
+            //'createdAt' => 0
+        ])
     {
         parent::__construct(
             $contextMsg,
@@ -42,8 +49,7 @@ class IRetainInput extends IGhostInput implements YieldInput
             $shellId,
             $senderId,
             $messageId,
-            $moreInfo,
-            $comprehension
+            $moreInfo
         );
     }
 
@@ -64,8 +70,7 @@ class IRetainInput extends IGhostInput implements YieldInput
             $data['shellId'] ?? '',
             $data['senderId'] ?? '',
             $data['messageId'] ?? '',
-            $data,
-            $data['comprehension'] ?? null
+            $data
         );
     }
 

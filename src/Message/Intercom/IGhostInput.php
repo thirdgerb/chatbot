@@ -16,6 +16,7 @@ use Commune\Message\Host\Convo\IText;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\GhostInput;
+use Commune\Protocals\Intercom\GhostMsg;
 use Commune\Protocals\Intercom\GhostOutput;
 use Commune\Protocals\Intercom\ShellMsg;
 use Commune\Support\Message\AbsMessage;
@@ -58,7 +59,7 @@ class IGhostInput extends AbsMessage implements GhostInput, HasIdGenerator
     public function __construct(
         HostMsg $message,
         string $clonerId,
-        string $sessionId,
+        ? string $sessionId,
         string $shellName,
         string $shellId,
         string $senderId,
@@ -196,7 +197,7 @@ class IGhostInput extends AbsMessage implements GhostInput, HasIdGenerator
         return $this->senderId;
     }
 
-    public function getSessionId(): string
+    public function getSessionId(): ? string
     {
         return $this->sessionId;
     }
@@ -272,5 +273,10 @@ class IGhostInput extends AbsMessage implements GhostInput, HasIdGenerator
         );
     }
 
+    public function withSessionId(string $sessionId): GhostMsg
+    {
+        $this->sessionId = $sessionId;
+        return $this;
+    }
 
 }

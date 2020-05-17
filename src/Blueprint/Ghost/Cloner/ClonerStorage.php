@@ -18,6 +18,4 @@ use Commune\Blueprint\Framework\Session\SessionStorage;
  */
 interface ClonerStorage extends SessionStorage
 {
-    const SESSION_ID_KEY = 'sessionId';
-
 }
