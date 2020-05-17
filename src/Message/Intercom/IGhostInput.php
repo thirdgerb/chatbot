@@ -58,7 +58,7 @@ class IGhostInput extends AbsMessage implements GhostInput, HasIdGenerator
     public function __construct(
         HostMsg $message,
         string $clonerId,
-        ? string $sessionId,
+        string $sessionId,
         string $shellName,
         string $shellId,
         string $senderId,
@@ -196,7 +196,7 @@ class IGhostInput extends AbsMessage implements GhostInput, HasIdGenerator
         return $this->senderId;
     }
 
-    public function getSessionId(): ? string
+    public function getSessionId(): string
     {
         return $this->sessionId;
     }
@@ -254,12 +254,6 @@ class IGhostInput extends AbsMessage implements GhostInput, HasIdGenerator
             null,
             $deliverAt
         );
-    }
-
-    public function withSessionId(string $sessionId): GhostInput
-    {
-        $this->sessionId = $sessionId;
-        return $this;
     }
 
     public function toShellMsg(): ShellMsg

@@ -99,6 +99,7 @@ class ICloner extends ASession implements Cloner
         $this->ghost = $ghost;
         $this->ghostConfig = $ghost->getConfig();
         $this->ghostInput = $input;
+        $this->sessionId = $input->getSessionId();
 
         // id
         $this->clonerId = $input->getCloneId();
@@ -112,6 +113,11 @@ class ICloner extends ASession implements Cloner
     public function getClonerId(): string
     {
         return $this->clonerId;
+    }
+
+    public function getSessionId() : string
+    {
+        return $this->sessionId;
     }
 
     /*-------- contextual ---------*/
@@ -188,11 +194,6 @@ class ICloner extends ASession implements Cloner
         return $this->logger;
     }
 
-
-    public function getSessionId(): string
-    {
-        return $this->sessionId;
-    }
 
     /*------- dialog manager -------*/
 

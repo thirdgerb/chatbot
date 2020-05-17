@@ -27,7 +27,7 @@ interface GhostInput extends GhostMsg
 
     /*----- 额外的信息 -----*/
 
-    public function getSessionId() : ? string;
+    public function getSessionId() : string;
 
     public function getSenderName() : string;
 
@@ -47,12 +47,6 @@ interface GhostInput extends GhostMsg
         string $shellName = null,
         string $guestId = null
     ) : GhostOutput;
-
-    /**
-     * @param string $sessionId
-     * @return static
-     */
-    public function withSessionId(string $sessionId) : GhostInput;
 
 
 }

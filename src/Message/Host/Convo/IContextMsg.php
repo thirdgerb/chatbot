@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\Host\Convo\ContextMsg;
+use Commune\Protocals\HostMsg\Convo\ContextMsg;
 
 
 /**

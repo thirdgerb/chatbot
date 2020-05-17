@@ -9,14 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Host\Convo\Media;
+namespace Commune\Protocals\HostMsg\Convo;
 
-use Commune\Protocals\Host\Convo\MediaMsg;
+use Commune\Protocals\HostMsg\ConvoMsg;
+
 
 /**
- * 图片类消息
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ImageMsg extends MediaMsg
+interface MediaMsg extends ConvoMsg
 {
+    public function getResource() : string;
 }

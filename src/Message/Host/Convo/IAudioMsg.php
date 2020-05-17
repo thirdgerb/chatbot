@@ -13,7 +13,7 @@ namespace Commune\Message\Host\Convo;
 
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\Host\Convo\Media\AudioMsg;
+use Commune\Protocals\HostMsg\Convo\Media\AudioMsg;
 use Commune\Support\Struct\Struct;
 
 

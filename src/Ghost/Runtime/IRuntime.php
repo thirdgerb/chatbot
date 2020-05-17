@@ -18,7 +18,7 @@ use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Ghost\RuntimeDriver;
 use Commune\Ghost\Memory\IMemory;
-use Commune\Protocals\Host\Convo\ContextMsg;
+use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
 use Commune\Blueprint\Exceptions\IO\SaveDataFailException;

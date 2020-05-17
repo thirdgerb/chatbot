@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialogue;
 use Commune\Ghost\Dialog\IStartProcess;
 use Commune\Ghost\Runtime\IWaiter;
-use Commune\Protocals\Host\Convo\QuestionMsg;
+use Commune\Protocals\HostMsg\Convo\QuestionMsg;
 use Commune\Blueprint\Ghost\Dialog\Finale\Await;
 
 

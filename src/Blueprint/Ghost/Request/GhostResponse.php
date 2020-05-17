@@ -9,12 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Platform\Shell;
+namespace Commune\Blueprint\Ghost\Request;
 
+use Commune\Blueprint\Framework\Request\AppResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface OutputRes
+interface GhostResponse extends AppResponse
 {
+
 }

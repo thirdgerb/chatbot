@@ -16,7 +16,7 @@ use IteratorAggregate;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstance;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
-use Commune\Protocals\Host\Convo\ContextMsg;
+use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Support\DI\Injectable;
 use Illuminate\Support\Collection;
 

@@ -13,13 +13,19 @@ namespace Commune\Ghost;
 
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Exceptions\HostBootingException;
+use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\HostRuntimeException;
 use Commune\Blueprint\Framework\ReqContainer;
+use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Framework\ServiceRegistrar;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Request\GhostRequest;
+use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
+use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Contracts\Log\LogInfo;
 use Commune\Ghost\Bootstrap;
 use Commune\Framework\AbsApp;
@@ -112,7 +118,48 @@ class IGhost extends AbsApp implements Ghost
         return $cloner;
     }
 
+    public function handle(GhostRequest $request): GhostResponse
+    {
+        try {
+
+            if (!$request->isValid()) {
+                return $request->fail(AppResponse::BAD_REQUEST);
+            }
+
+            $ghostInput = $request->getInput();
+            $cloner = $this->newCloner($ghostInput);
+
+            // 如果是无状态请求.
+            if ($request->isStateless()) {
+                $cloner->noState();
+            }
+
+            $handler = $cloner->getProtocalHandler(
+                Session::PROTOCAL_GROUP_REQUEST,
+                $request
+            );
+
+            // 使用 Handler 来响应.
+            return $handler($request);
 
 
+        } catch (HostRuntimeException $e) {
+            $this->getExceptionReporter()->report($e);
+            return $request->fail(AppResponse::HOST_RUNTIME_ERROR);
+
+        } catch (HostLogicException $e) {
+            $this->getExceptionReporter()->report($e);
+            return $request->fail(AppResponse::HOST_LOGIC_ERROR);
+
+        } catch (\Throwable $e) {
+            $this->getExceptionReporter()->report($e);
+            return $request->fail(AppResponse::HOST_LOGIC_ERROR);
+        }
+    }
+
+    protected function getExceptionReporter() : ExceptionReporter
+    {
+        return $this->getProcContainer()->get(ExceptionReporter::class);
+    }
 
 }

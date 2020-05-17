@@ -13,7 +13,7 @@ namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Protocals\Host\Convo\ContextMsg;
+use Commune\Protocals\HostMsg\Convo\ContextMsg;
 
 /**
  * 多轮对话的运行状态

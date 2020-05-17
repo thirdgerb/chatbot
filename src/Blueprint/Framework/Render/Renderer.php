@@ -12,8 +12,8 @@
 namespace Commune\Blueprint\Framework\Render;
 
 use Commune\Blueprint\Configs\Render\RenderOption;
-use Commune\Protocals\Host\ConvoMsg;
-use Commune\Protocals\Host\IntentMsg;
+use Commune\Protocals\HostMsg\ConvoMsg;
+use Commune\Protocals\HostMsg\IntentMsg;
 
 /**
  * HostMsg 消息的渲染器.

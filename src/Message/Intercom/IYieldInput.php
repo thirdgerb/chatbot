@@ -14,7 +14,7 @@ namespace Commune\Message\Intercom;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Message\Host\Convo\IContextMsg;
-use Commune\Protocals\Host\Convo\ContextMsg;
+use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\Intercom\YieldInput;
 use Commune\Support\Struct\Struct;
 

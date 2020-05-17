@@ -103,30 +103,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
     /*------ id ------*/
 
-    public function getSessionId(): string
-    {
-        if (isset($this->sessionId)) {
-            return $this->sessionId;
-        }
-
-        if ($this->isStateless()) {
-            return $this->sessionId = $this->createUuId();
-        }
-
-        $id = $this
-            ->getStorage()
-            ->offsetGet(Session\SessionStorage::SESSION_ID_KEY);
-
-        if (isset($id)) {
-            return $this->sessionId = $id;
-        }
-
-        $id = $this->createUuId();
-        $this->getStorage()
-            ->offsetSet(Session\SessionStorage::SESSION_ID_KEY, $id);
-
-        return $this->sessionId = $id;
-    }
 
 
     /*------ abstract ------*/

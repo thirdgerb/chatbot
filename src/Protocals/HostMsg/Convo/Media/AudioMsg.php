@@ -9,13 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Platform\Shell;
+namespace Commune\Protocals\HostMsg\Convo\Media;
 
+use Commune\Protocals\HostMsg\Convo\MediaMsg;
 
 /**
+ * 音频类消息
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface OutputReq
+interface AudioMsg extends MediaMsg
 {
-
 }

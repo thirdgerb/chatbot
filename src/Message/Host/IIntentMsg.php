@@ -11,7 +11,7 @@
 
 namespace Commune\Message\Host;
 
-use Commune\Protocals\Host\IntentMsg;
+use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Struct\Struct;

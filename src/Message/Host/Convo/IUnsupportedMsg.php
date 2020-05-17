@@ -14,7 +14,7 @@ namespace Commune\Message\Host\Convo;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Struct\Struct;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\Host\Convo\UnsupportedMsg;
+use Commune\Protocals\HostMsg\Convo\UnsupportedMsg;
 
 /**
  * 系统不支持的消息.

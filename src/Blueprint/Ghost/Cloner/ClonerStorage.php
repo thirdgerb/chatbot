@@ -18,9 +18,6 @@ use Commune\Blueprint\Framework\Session\SessionStorage;
  */
 interface ClonerStorage extends SessionStorage
 {
-    // 当前进程的存储
-    const CURRENT_PROCESS_ID = 'currentProcessId';
-    // 当前可以要读取的缓存 id
-    const LAST_RECOLLECTION_IDS = 'lastRecollectionIds';
+    const SESSION_ID_KEY = 'sessionId';
 
 }

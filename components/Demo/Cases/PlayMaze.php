@@ -23,7 +23,7 @@ use Commune\Host\Contexts\CodeContext\BuildHearing;
 use Commune\Host\Contexts\CodeContext\DefineParam;
 use Commune\Host\Contexts\CodeContext\OnWithdraw;
 use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
-use Commune\Protocals\Host\Convo\VerbalMsg;
+use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\HostMsg;
 
 

@@ -17,7 +17,7 @@ use Commune\Ghost\Dialog\AbsDialogue;
 use Commune\Blueprint\Ghost\Dialog\Withdraw\Confuse;
 use Commune\Ghost\Dialog\DialogHelper;
 use Commune\Ghost\Dialog\Traits\TIntentMatcher;
-use Commune\Protocals\Host\Convo\EventMsg;
+use Commune\Protocals\HostMsg\Convo\EventMsg;
 
 
 /**

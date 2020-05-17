@@ -259,7 +259,6 @@ abstract class AbsStruct implements Struct, \Serializable
         }
 
         if (!is_array($data)) {
-            var_dump($data, $type); exit;
             throw new InvalidStructException("relation value for type $type must be array");
         }
 

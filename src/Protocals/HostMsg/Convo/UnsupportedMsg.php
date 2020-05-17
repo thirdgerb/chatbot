@@ -9,19 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Platform\Pipeline;
+namespace Commune\Protocals\HostMsg\Convo;
 
-use Commune\Blueprint\Platform\Shell\OutputReq;
-use Commune\Blueprint\Platform\Shell\OutputRes;
+use Commune\Protocals\HostMsg\ConvoMsg;
 
 
 /**
+ * 客户端或服务端不支持的消息.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellOutputPipe
+interface UnsupportedMsg extends ConvoMsg
 {
-    const VIA = 'handle';
-
-    public function handle(OutputReq $req, callable $next) : OutputRes;
-
+    public function getMsgType() : string;
 }

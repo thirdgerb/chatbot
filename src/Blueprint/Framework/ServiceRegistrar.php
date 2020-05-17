@@ -103,12 +103,13 @@ interface ServiceRegistrar
         bool $force = false
     ) : bool;
 
+    /*----------- 初始化服务 -----------*/
+
     /**
      * 启动所有组件.
      */
-    public function bootstrapComponents(): void;
+    public function bootComponents(): void;
 
-    /*----------- 初始化服务 -----------*/
 
     /**
      * 启动配置类服务.
@@ -146,4 +147,8 @@ interface ServiceRegistrar
      */
     public function isProcServicesBooted() : bool;
 
+    /**
+     * @return bool
+     */
+    public function isComponentsBooted() : bool;
 }

@@ -9,16 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Host\Convo;
+namespace Commune\Protocals\HostMsg\Convo\Media;
 
-use Commune\Protocals\Host\ConvoMsg;
+use Commune\Protocals\HostMsg\Convo\MediaMsg;
 
 /**
- * 文字类型的消息.
- *
+ * 图片类消息
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface VerbalMsg extends ConvoMsg
+interface ImageMsg extends MediaMsg
 {
-    public function getText() : string;
 }

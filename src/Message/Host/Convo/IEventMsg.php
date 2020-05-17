@@ -11,7 +11,7 @@
 
 namespace Commune\Message\Host\Convo;
 
-use Commune\Protocals\Host\Convo\EventMsg;
+use Commune\Protocals\HostMsg\Convo\EventMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Utils\StringUtils;

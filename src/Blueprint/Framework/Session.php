@@ -24,6 +24,11 @@ use Psr\Log\LoggerInterface;
  */
 interface Session
 {
+    // 协议分组.
+    const PROTOCAL_GROUP_REQUEST = 'request';
+    const PROTOCAL_GROUP_INPUT = 'input';
+    const PROTOCAL_GROUP_RENDER = 'render';
+
     /*----- properties -----*/
 
     /**

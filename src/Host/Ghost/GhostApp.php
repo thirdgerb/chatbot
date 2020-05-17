@@ -40,6 +40,7 @@ class GhostApp extends IGhost
         $set = isset($app);
 
         parent::__construct(
+            $config,
             $set ? $app->isDebugging() : $debug,
             $set ? $app->getProcContainer() : $procC,
             $set ? $app->getReqContainer() : null,

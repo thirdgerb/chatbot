@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Ghost\Dialog\Finale;
 
 use Commune\Blueprint\Ghost\Dialog\Finale;
-use Commune\Protocals\Host\Convo\VerbalMsg;
+use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

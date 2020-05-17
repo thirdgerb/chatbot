@@ -89,7 +89,7 @@ abstract class AbsApp implements App
         $this->debug = $debug;
         $this->procC = $procC ?? new Container();
         $this->reqC = $reqC ?? new IReqContainer($this->procC);
-        $this->console = $consoleLogger ?? new IConsoleLogger($debug);
+        $this->console = $consoleLogger ?? new IConsoleLogger();
         $this->logInfo = $logInfo ?? new ILogInfo();
         $this->registrar = $registrar ?? new IServiceRegistrar(
             $this->procC,
@@ -173,11 +173,15 @@ abstract class AbsApp implements App
 
     protected function doActivate() : void
     {
+        if ($this->activated) {
+            return;
+        }
+
         $registrar = $this->getServiceRegistrar();
 
         // 检查是否已经激活过了.
         $activated = $this->activated
-            ?? $this->activated = true
+            ?? $this->activated = $registrar->isComponentsBooted()
                 // 配置相关的服务已注册
                 && $registrar->isConfigServicesBooted()
                 // 进程相关的服务已注册
@@ -194,7 +198,7 @@ abstract class AbsApp implements App
         );
 
         $this->console->debug($this->logInfo->bootingStartKeyStep('boot components'));
-        $registrar->bootstrapComponents();
+        $registrar->bootComponents();
 
         // 初始化所有的进程级服务.
         $this->console->debug($this->logInfo->bootingStartKeyStep('boot config service'));
@@ -208,7 +212,7 @@ abstract class AbsApp implements App
         $this->console->info(
             $this->logInfo->bootingEndKeyStep(static::class . '::activate')
         );
-
+        $this->activated = true;
     }
 
     public function bootstrap(): App

@@ -11,8 +11,8 @@
 
 namespace Commune\Blueprint\Framework\Render;
 
-use Commune\Protocals\Host\ConvoMsg;
-use Commune\Protocals\Host\IntentMsg;
+use Commune\Protocals\HostMsg\ConvoMsg;
+use Commune\Protocals\HostMsg\IntentMsg;
 
 
 /**

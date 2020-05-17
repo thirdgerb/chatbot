@@ -9,15 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Host\Convo;
+namespace Commune\Protocals\HostMsg;
 
-use Commune\Protocals\Host\ConvoMsg;
-
+use Commune\Protocals\HostMsg;
 
 /**
+ * Ghost 对外发表的响应意图.
+ * 通常会被 Renderer 解析成多个其它类型的 HostMsg
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface MediaMsg extends ConvoMsg
+interface IntentMsg extends HostMsg
 {
-    public function getResource() : string;
+    public function getIntentName() : string;
+
+    public function getSlots() : array;
 }

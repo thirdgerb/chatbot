@@ -12,6 +12,9 @@
 namespace Commune\Blueprint\Configs;
 
 use Commune\Blueprint\Configs\Nest\ProtocalOption;
+use Commune\Blueprint\Framework\Session;
+use Commune\Blueprint\Ghost\Request\GhostRequest;
+use Commune\Ghost\ProtocalHandlers\GhostRequestHandler;
 use Commune\Support\Option\AbsOption;
 use Commune\Framework\Providers as FrameworkProviders;
 use Commune\Ghost\Providers as GhostProviders;
@@ -101,7 +104,11 @@ class GhostConfig extends AbsOption
             ],
             // protocals
             'protocals' => [
-
+                [
+                    'group' => Session::PROTOCAL_GROUP_REQUEST,
+                    'protocal' => GhostRequest::class,
+                    'handler' => GhostRequestHandler::class,
+                ]
             ],
             // session
             'sessionExpire' => 3600,

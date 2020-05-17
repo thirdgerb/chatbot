@@ -14,6 +14,8 @@ namespace Commune\Blueprint;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Request\GhostRequest;
+use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Protocals\Intercom\GhostInput;
 
 /**
@@ -29,10 +31,7 @@ interface Ghost extends App
      */
     public function getConfig() : GhostConfig;
 
-    /**
-     * 创建 Cloner
-     * @param GhostInput $input
-     * @return Cloner
-     */
     public function newCloner(GhostInput $input) : Cloner;
+
+    public function handle(GhostRequest $request) : GhostResponse;
 }

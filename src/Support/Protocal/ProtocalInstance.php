@@ -18,7 +18,7 @@ namespace Commune\Support\Protocal;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ProtocalInstance
+interface ProtocalInstance extends Protocal
 {
 
     /**

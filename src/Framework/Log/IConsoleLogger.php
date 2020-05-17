@@ -23,28 +23,50 @@ class IConsoleLogger implements ConsoleLogger
 {
     use LoggerTrait;
 
+    const LEVEL_ORDER = [
+        LogLevel::EMERGENCY => 7,
+        LogLevel::ALERT     => 6,
+        LogLevel::CRITICAL  => 5,
+        LogLevel::ERROR     => 4,
+        LogLevel::WARNING   => 3,
+        LogLevel::NOTICE    => 2,
+        LogLevel::INFO      => 1,
+        LogLevel::DEBUG     => 0,
+    ];
+
     /**
      * @var bool
      */
-    protected $debug;
+    protected $showLevel;
+
+    /**
+     * @var int
+     */
+    protected $startLevel;
 
     /**
      * IConsoleLogger constructor.
-     * @param bool $debug
+     * @param bool $showLevel
+     * @param string $startLevel
      */
-    public function __construct(bool $debug)
+    public function __construct(
+        bool $showLevel = true,
+        string $startLevel = LogLevel::DEBUG
+    )
     {
-        $this->debug = $debug;
+        $this->showLevel = $showLevel;
+        $this->startLevel = self::LEVEL_ORDER[$startLevel] ?? 0;
     }
 
 
     public function log($level, $message, array $context = array())
     {
-        if (!$this->debug && $level == LogLevel::DEBUG) {
+        $order = self::LEVEL_ORDER[$level] ?? 0;
+        if ($order < $this->startLevel) {
             return;
         }
 
-        $start = "[$level] ";
+        $start = $this->showLevel ? "[$level] " : '';
         // 打印日志message
         $this->write( $start . $this->wrapMessage($level, $message) . PHP_EOL);
 

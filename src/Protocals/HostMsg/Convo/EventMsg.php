@@ -9,15 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Host;
+namespace Commune\Protocals\HostMsg\Convo;
 
-use Commune\Protocals\HostMsg;
+use Commune\Protocals\HostMsg\ConvoMsg;
+
 
 /**
- * Shell 与 Client 进行交互的消息体.
+ * 事件类型的消息. 通常不用回复.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ConvoMsg extends HostMsg
+interface EventMsg extends ConvoMsg
 {
+    public function getEventName() : string;
+
+    public function getPayload() : array;
 }

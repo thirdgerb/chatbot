@@ -9,13 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\Host\Constants;
+namespace Commune\Host\Ghost\Stdio;
+
+use Commune\Blueprint\Configs\GhostConfig;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface SystemDefaultIntents
+class SGConfig extends GhostConfig
 {
+    public static function stub(): array
+    {
+        return parent::stub();
+    }
 
 }

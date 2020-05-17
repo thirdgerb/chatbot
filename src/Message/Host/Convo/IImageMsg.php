@@ -13,7 +13,7 @@ namespace Commune\Message\Host\Convo;
 
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\Host\Convo\Media\ImageMsg;
+use Commune\Protocals\HostMsg\Convo\Media\ImageMsg;
 use Commune\Support\Struct\Struct;
 use Commune\Support\Utils\StringUtils;
 

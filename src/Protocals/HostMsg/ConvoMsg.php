@@ -9,19 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Platform\Pipeline;
+namespace Commune\Protocals\HostMsg;
 
-use Commune\Blueprint\Platform\Shell\InputReq;
-use Commune\Blueprint\Platform\Shell\InputRes;
-
+use Commune\Protocals\HostMsg;
 
 /**
+ * Shell 与 Client 进行交互的消息体.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellInputPipe
+interface ConvoMsg extends HostMsg
 {
-    const VIA = 'handle';
-
-    public function handle(InputReq $req, callable $next) : InputRes;
-
 }
