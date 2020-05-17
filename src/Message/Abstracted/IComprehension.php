@@ -27,7 +27,7 @@ class IComprehension extends AbsMessage implements
     Abstracted\Replies,
     Abstracted\Tokens,
     Abstracted\Cmd,
-    Abstracted\Question,
+    Abstracted\Query,
     Abstracted\Vector,
     Abstracted\Selection
 {

@@ -23,7 +23,7 @@ namespace Commune\Protocals\Abstracted;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  */
-interface Question
+interface Query
 {
     public function setQuery(string $queryId): void;
 

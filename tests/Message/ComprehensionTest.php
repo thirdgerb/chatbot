@@ -27,6 +27,11 @@ class ComprehensionTest extends TestCase
         $com = new IComprehension();
         $this->checkBabelSerialize($com);
 
+        // choice
+        // selection
+        // query
+        // intention
+        // replies
 
         // vector
         $vector = [0.11, 0.22, 0.33];

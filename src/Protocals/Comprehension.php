@@ -26,7 +26,7 @@ use Commune\Protocals\Abstracted;
  * @property-read Abstracted\Emotion        $emotion        情绪模块, 从各种模块中得到的综合抽象, 可以代表多种模块
  *
  * @property-read Abstracted\Intention      $intention      意图理解模块
- * @property-read Abstracted\Question       $question       认为输入是个问题
+ * @property-read Abstracted\Query          $query       认为输入是个问题
  *
  *
  * @property-read Abstracted\Replies        $replies        回复模块, 如果第三方 API 能给出答案.
