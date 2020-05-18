@@ -16,7 +16,6 @@ use Commune\Support\Alias\Aliases;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name      当前配置的 ID
  * @property-read string $wrapper   目标 Option 的类名. 允许用别名.
  * @see Aliases
  *
@@ -24,7 +23,6 @@ use Commune\Support\Alias\Aliases;
  */
 abstract class AbsMeta extends AbsOption implements Meta
 {
-    const IDENTITY = 'name';
 
     abstract public static function validateWrapper(string $wrapper) : ? string;
 
@@ -45,13 +43,10 @@ abstract class AbsMeta extends AbsOption implements Meta
 
     public static function validate(array $data): ? string /* errorMsg */
     {
-        $name = $data['name'] ?? null;
-        $wrapper = $data['wrapper'] ?? null;
-        if (empty($name)) {
-            return "name field is required";
-        }
+        $wrapper = $data['wrapper'] ?? '';
         if (empty($wrapper) || !is_a($wrapper, Wrapper::class, TRUE)) {
-            return "wrapper is invalid";
+            $wrapper = $wrapper ?? '';
+            return "wrapper $wrapper is invalid";
         }
 
         return static::validateWrapper($wrapper) ?? parent::validate($data);

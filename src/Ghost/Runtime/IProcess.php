@@ -33,7 +33,7 @@ class IProcess implements Process, HasIdGenerator
     /**
      * @var string
      */
-    protected $_sessionId;
+    protected $_belongsTo;
 
     /**
      * @var string
@@ -104,13 +104,13 @@ class IProcess implements Process, HasIdGenerator
 
     /**
      * IProcess constructor.
-     * @param string $sessionId
+     * @param string $belongsTo
      * @param Ucl $root
      * @param string|null $id
      */
-    public function __construct(string $sessionId, Ucl $root, string $id = null)
+    public function __construct(string $belongsTo, Ucl $root, string $id = null)
     {
-        $this->_sessionId = $sessionId;
+        $this->_belongsTo = $belongsTo;
         $this->_id = $id ?? $this->createUuId();
         $this->_root = $root->toEncodedUcl();
     }
@@ -386,6 +386,12 @@ class IProcess implements Process, HasIdGenerator
         return null;
     }
 
+    public function __isset($name)
+    {
+        $value = $this->{$name};
+        return isset($value);
+    }
+
     public function __sleep()
     {
         // canceling
@@ -393,7 +399,7 @@ class IProcess implements Process, HasIdGenerator
 
         return [
             '_id',
-            '_sessionId',
+            '_belongsTo',
             '_root',
             '_waiter',
             '_backtrace',

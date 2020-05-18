@@ -17,8 +17,6 @@ use Commune\Support\Registry\Storage\FileStorageOption;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name      storage 名
- *
  * @property-read string $path      文件存储路径. 一个文件里只应该有一种option
  *
  * @property-read bool $isDir       path是文件名, 还是路径名. 如果是路径名, 会把文件的相对路径作为 option Id
@@ -33,7 +31,6 @@ class JsonStorageOption extends FileStorageOption
     public static function stub(): array
     {
         return [
-            'name' => static::class,
             'path' => '',
             'isDir' => true,
             'depth' => 0,

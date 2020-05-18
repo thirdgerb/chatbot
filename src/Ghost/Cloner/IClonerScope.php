@@ -14,12 +14,14 @@ namespace Commune\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Support\Arr\ArrayAbleToJson;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class IClonerScope implements ClonerScope
 {
+    use ArrayAbleToJson;
 
     /**
      * @var string
@@ -66,6 +68,19 @@ class IClonerScope implements ClonerScope
         $this->sceneId = $input->getSceneId();
         $this->time = time();
     }
+
+    public function toArray(): array
+    {
+        return [
+            'clone' => $this->clonerId,
+            'guest' => $this->guestId,
+            'sender' => $this->senderId,
+            'shlId' => $this->shellId,
+            'shlName' => $this->shellName,
+            'scene' => $this->sceneId,
+        ];
+    }
+
 
     public function makeScopeId(string $name, array $longTermDimensions): string
     {

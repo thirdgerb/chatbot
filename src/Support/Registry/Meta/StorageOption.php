@@ -17,21 +17,14 @@ use Commune\Support\Option\Wrapper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read string $name
  */
 abstract class StorageOption extends AbsOption implements Wrapper
 {
-    const IDENTITY = 'name';
 
     public function getMeta(): Meta
     {
         $data = $this->toArray();
-        $name = $data['name'];
-        unset($data['name']);
-
         return new StorageMeta([
-            'name' => $name,
             'wrapper' => static::class,
             'config' => $data,
         ]);
@@ -43,10 +36,7 @@ abstract class StorageOption extends AbsOption implements Wrapper
      */
     public static function wrap(Meta $meta): Wrapper
     {
-        $name = $meta->name;
         $config = $meta->config;
-        $config['name'] = $name;
-
         return new static($config);
     }
 

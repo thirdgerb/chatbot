@@ -132,10 +132,7 @@ abstract class ASessionStorage implements SessionStorage, Spied
 
         // Storage 是 Session 的关键数据, 不能丢失.
         if (!$success) {
-            throw new SaveDataFailException(
-                __METHOD__,
-                $this->traceId
-            );
+            throw new SaveDataFailException('storage data');
         }
     }
 

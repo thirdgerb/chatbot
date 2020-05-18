@@ -18,7 +18,6 @@ use Commune\Blueprint\Framework\Session;
 use Commune\Framework\Exceptions\SerializeForbiddenException;
 use Commune\Support\Pipeline\OnionPipeline;
 use Commune\Support\Protocal\Protocal;
-use Commune\Support\Protocal\ProtocalInstance;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
 use Commune\Support\Uuid\HasIdGenerator;
@@ -241,6 +240,20 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         }
 
         return null;
+    }
+
+    protected function isSingletonInstanced($name) : bool
+    {
+        $injectable = static::SINGLETONS[$name] ?? null;
+
+        return isset($injectable)
+            ? isset($this->singletons[$name])
+            : false;
+    }
+
+    public function __isset($name)
+    {
+        return isset(static::SINGLETONS[$name]);
     }
 
     /*------ finish ------*/

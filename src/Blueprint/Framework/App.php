@@ -44,6 +44,13 @@ interface App
     /*------ run ------*/
 
     /**
+     * 指定启动错误时的响应逻辑. 默认是 exit(1)
+     * @param callable $fail
+     * @return App
+     */
+    public function onFail(callable $fail) : App;
+
+    /**
      * 应用初始化. 主要是注册各种服务.
      * @return static
      */

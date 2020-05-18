@@ -28,7 +28,7 @@ use Psr\Log\LoggerInterface;
  *
  * @property-read CategoryOption[] $categories 系统默认的配置.
  */
-class OptRegistryServiceProvider extends ServiceProvider
+class OptRegistryProvider extends ServiceProvider
 {
     public static function stub(): array
     {

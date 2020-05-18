@@ -12,16 +12,15 @@
 namespace Commune\Framework\Providers;
 
 use Commune\Container\ContainerContract;
-use Commune\Contracts\Cache;
+use Commune\Contracts\Ghost\RuntimeDriver;
 use Commune\Contracts\ServiceProvider;
-use Commune\Framework\Cache\ArrayCache;
+use Commune\Framework\RuntimeDriver\DemoRuntimeDriver;
 
 
 /**
- * 用数组模拟缓存的模块. 也可以用于单体机器人中. 但不存在过期功能.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ArrCacheServiceProvider extends ServiceProvider
+class RuntimeDriverDemoProvider extends ServiceProvider
 {
     public static function stub(): array
     {
@@ -35,8 +34,8 @@ class ArrCacheServiceProvider extends ServiceProvider
     public function register(ContainerContract $app): void
     {
         $app->singleton(
-            Cache::class,
-            ArrayCache::class
+            RuntimeDriver::class,
+            DemoRuntimeDriver::class
         );
     }
 

@@ -11,21 +11,20 @@
 
 namespace Commune\Blueprint\Exceptions\IO;
 
-use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 use Throwable;
 
 /**
- * 保存关键数据异常, 会干扰当前对话逻辑.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SaveDataFailException extends BrokenRequestException
+class InvalidSavedDataException extends BrokenSessionException
 {
     public function __construct(
-        string $dataDesc,
-        Throwable $e = null
-    )
+        string $error,
+        Throwable $previous = null)
     {
-        $message = "save data $dataDesc fail";
-        parent::__construct($message, 0, $e);
+        $message = "saved data invalid, error: $error";
+        parent::__construct($message, 0, $previous);
     }
+
 }

@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Framework\Request;
 
+use Commune\Protocals\HostMsg;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\Protocal\Protocal;
 
@@ -40,6 +41,13 @@ interface AppRequest extends Protocal
      * @return IntercomMsg
      */
     public function getInput() : IntercomMsg;
+
+    /**
+     * @param HostMsg $message
+     * @param HostMsg ...$messages
+     * @return AppResponse
+     */
+    public function output(HostMsg $message, HostMsg ...$messages) : AppResponse;
 
     /**
      * @param $output

@@ -34,7 +34,7 @@ use Monolog\Logger as Monolog;
  * @property-read bool|null $permission 文件的权限设置
  * @property-read bool $locking 是否文件锁
  */
-class MonologServiceProvider extends ServiceProvider
+class LoggerByMonologProvider extends ServiceProvider
 {
     public static function stub(): array
     {

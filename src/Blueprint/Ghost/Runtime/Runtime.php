@@ -41,10 +41,10 @@ interface Runtime
 
     /**
      * 使用 ContextName 生成一个新的 Process
-     * @param string $contextName
+     * @param string $contextUcl
      * @return Process
      */
-    public function createProcess(string $contextName) : Process;
+    public function createProcess(string $contextUcl) : Process;
 
 
     /*------ context -------*/

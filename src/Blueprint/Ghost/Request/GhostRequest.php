@@ -14,6 +14,7 @@ namespace Commune\Blueprint\Ghost\Request;
 use Commune\Blueprint\Framework\Request\AppRequest;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Protocals\IntercomMsg;
 
@@ -28,6 +29,13 @@ interface GhostRequest extends AppRequest
      * @return GhostInput
      */
     public function getInput() : IntercomMsg;
+
+    /**
+     * @param HostMsg $message
+     * @param HostMsg ...$messages
+     * @return GhostResponse
+     */
+    public function output(HostMsg $message, HostMsg ...$messages): AppResponse;
 
     /**
      * @param Cloner $output

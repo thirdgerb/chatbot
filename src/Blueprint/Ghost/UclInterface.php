@@ -41,6 +41,11 @@ interface UclInterface
         string $stageName = ''
     )  : Ucl;
 
+    public static function createFromUcl(
+        Cloner $cloner,
+        string $ucl
+    ) : Ucl;
+
     /*------ property ------*/
 
     public function getContextId() : string;

@@ -27,15 +27,24 @@ $app = new IGhost(
     null,
     new SGConsoleLogger($stdio)
 );
-$app->bootstrap()->activate();
+$app->onFail(function() use ($stdio){
+        $stdio->end();
+    })
+    ->bootstrap()
+    ->activate();
 
 $stdio->on('data', function($line) use ($app, $stdio) {
 
     $line = rtrim($line, "\r\n");
-    $request = new SGRequest($line, $stdio, $app->getConsoleLogger());
+    $a = microtime(true);
 
+    $request = new SGRequest($line, $stdio, $app->getConsoleLogger());
     $response = $app->handle($request);
+
     $response->send();
+    $b = microtime(true);
+
+    $stdio->write('gap:'. round(($b - $a) * 1000000) . "\n");
 
 });
 

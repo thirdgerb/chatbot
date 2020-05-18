@@ -14,6 +14,7 @@ namespace Commune\Ghost\Cloner;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Exceptions\Logic\InvalidConfigException;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Protocals\Intercom\GhostInput;
 
 /**
@@ -47,6 +48,7 @@ class IClonerScene implements ClonerScene
                 'sceneId'
             );
         }
+        $this->contextName = ContextUtils::normalizeContextName($contextName);
         $this->env = $input->getEnv();
     }
 

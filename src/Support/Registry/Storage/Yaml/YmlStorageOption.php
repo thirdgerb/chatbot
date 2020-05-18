@@ -18,7 +18,6 @@ use Symfony\Component\Finder\Finder;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name storage 名
  * @property-read string $path 当前配置存储的文件. 一个文件里只应该有一种option
  * @property-read bool $isDir path是文件名, 还是路径名. 如果是路径名, 会用option id 做文件名.
  * @property-read int|int[]|string|string[] $depth 目录搜索的深度.
@@ -32,7 +31,6 @@ class YmlStorageOption extends FileStorageOption
     public static function stub(): array
     {
         return [
-            'name' => static::class,
             'path' => '',
             'isDir' => true,
             'depth' => 0,

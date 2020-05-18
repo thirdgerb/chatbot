@@ -21,7 +21,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $sessionId             进程所属的 Session
+ * @property-read string $belongsTo             进程所属的 Session
  * @property-read string $id                    进程的唯一 ID.
  *
 

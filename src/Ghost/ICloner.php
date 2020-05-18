@@ -43,6 +43,7 @@ class ICloner extends ASession implements Cloner
         'mind' => Ghost\Mindset::class,
         'runtime' => Ghost\Runtime\Runtime::class,
         'registry' => OptRegistry::class,
+        'logger' => Cloner\ClonerLogger::class,
     ];
 
     /*------- components -------*/
@@ -405,9 +406,13 @@ class ICloner extends ASession implements Cloner
     protected function saveSession(): void
     {
         // runtime 更新.
-        $this->runtime->save();
+        if (!$this->isSingletonInstanced('runtime')) {
+            $this->runtime->save();
+        }
         // storage 更新.
-        $this->storage->save();
+        if ($this->isSingletonInstanced('storage')) {
+            $this->storage->save();
+        }
     }
 
 }

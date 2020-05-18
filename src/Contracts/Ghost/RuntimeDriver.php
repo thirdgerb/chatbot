@@ -11,7 +11,6 @@
 
 namespace Commune\Contracts\Ghost;
 
-use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Runtime\Process;
 
@@ -20,23 +19,57 @@ use Commune\Blueprint\Ghost\Runtime\Process;
  */
 interface RuntimeDriver
 {
-    public function cacheProcess(string $sessionId, Process $process, int $expire) : bool;
+    /**
+     * @param string $clonerId
+     * @param Process $process
+     * @param int $expire
+     * @return bool
+     */
+    public function cacheProcess(string $clonerId, Process $process, int $expire) : bool;
 
-    public function fetchProcess(string $sessionId) : ? Process;
+    /**
+     * @param string $clonerId
+     * @param string $belongsTo
+     * @return Process|null
+     */
+    public function fetchProcess(string $clonerId, string $belongsTo) : ? Process;
 
+    /**
+     * @param string $clonerId
+     * @param string $sessionId
+     * @param Memory[] $memories
+     * @param int $expire
+     * @return bool
+     */
     public function cacheSessionMemories(
+        string $clonerId,
         string $sessionId,
         array $memories,
         int $expire
     ) : bool;
 
-    public function fetchSessionMemories(string $sessionId) : array;
+    /**
+     * @param string $clonerId
+     * @param string $sessionId
+     * @return Memory[]
+     */
+    public function fetchSessionMemories(string $clonerId, string $sessionId) : array;
 
+    /**
+     * @param string $clonerId
+     * @param Memory[] $memories
+     * @return bool
+     */
     public function saveLongTermMemories(
-        ClonerScope $scope,
+        string $clonerId,
         array $memories
     ) : bool;
 
-    public function findLongTermMemories(string $memoryId) : ? Memory;
+    /**
+     * @param string $clonerId
+     * @param string $memoryId
+     * @return Memory|null
+     */
+    public function findLongTermMemories(string $clonerId, string $memoryId) : ? Memory;
 
 }

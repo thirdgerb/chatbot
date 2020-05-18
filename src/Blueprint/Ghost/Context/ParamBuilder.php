@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Blueprint\Ghost\Context;
+
 use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
 
 

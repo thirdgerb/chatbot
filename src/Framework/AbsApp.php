@@ -76,6 +76,10 @@ abstract class AbsApp implements App
      */
     protected $ranBootstrap = false;
 
+    /**
+     * @var callable|null
+     */
+    protected $fail;
 
     public function __construct(
         bool $debug,
@@ -152,6 +156,13 @@ abstract class AbsApp implements App
     {
         return $this->logInfo;
     }
+
+    public function onFail(callable $fail): App
+    {
+        $this->fail = $fail;
+        return $this;
+    }
+
 
     /**
      * 项目总启动.
@@ -275,8 +286,13 @@ abstract class AbsApp implements App
 
     protected function fail(): void
     {
-        $this->console->info("exit\n");
-        exit(1);
+        $this->console->info('exit');
+        if (isset($this->fail)) {
+            $caller = $this->fail;
+            $caller();
+        } else {
+            exit(1);
+        }
     }
 
 }

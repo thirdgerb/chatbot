@@ -18,6 +18,7 @@ use Commune\Blueprint\Ghost\MindDef\StageDef;
  */
 interface StageBuilder
 {
+    /*----- basic -----*/
 
     public function onIntercept($builder) : StageBuilder;
 
@@ -27,13 +28,15 @@ interface StageBuilder
      */
     public function onActivate($builder) : StageBuilder;
 
-    public function onHeed($builder) : StageBuilder;
-
     public function onRetain($builder) : StageBuilder;
 
     public function onWithdraw($builder) : StageBuilder;
 
+    /*----- event -----*/
+
     public function onEvent(string $event, $builder) : StageBuilder;
+
+    public function onHeed($builder) : StageBuilder;
 
     public function end($fallback = null) : StageDef;
 

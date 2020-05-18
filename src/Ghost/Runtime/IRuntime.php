@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Runtime;
 
+use Commune\Blueprint\Exceptions\IO\LoadDataFailException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Runtime\Process;
@@ -58,7 +59,10 @@ class IRuntime implements Runtime, Spied
      */
     protected $process;
 
-    protected $sessionMemories = [];
+    /**
+     * @var array|null
+     */
+    protected $sessionMemories;
 
     protected $longTermMemories = [];
 
@@ -69,8 +73,12 @@ class IRuntime implements Runtime, Spied
     public function __construct(Cloner $cloner)
     {
         $this->cloner = $cloner;
+
+        // 无状态请求, 不生成 runtime driver
         if (! $this->cloner->isStateless()) {
-            $this->driver = $cloner->getContainer()->make(RuntimeDriver::class);
+            $this->driver = $cloner
+                ->getContainer()
+                ->make(RuntimeDriver::class);
         }
 
         $this->traceId = $cloner->getTraceId();
@@ -90,10 +98,12 @@ class IRuntime implements Runtime, Spied
 
     protected function findSessionMemory(string $id, array $defaults) : Memory
     {
+        // 一次性读取所有缓存
         if (!isset($this->sessionMemories)) {
-            $this->sessionMemories = $this->driver->fetchSessionMemories($this->sessionId);
+            $this->sessionMemories = $this->ioFindSessionMemories();
         }
 
+        // 不存在则生成
         return $this->sessionMemories[$id]
             ?? $this->sessionMemories[$id] = new IMemory($id, false, $defaults);
     }
@@ -104,10 +114,8 @@ class IRuntime implements Runtime, Spied
             return $this->longTermMemories[$id];
         }
 
-        $memory = isset($this->driver)
-            ? $this->driver->findLongTermMemories($id)
-            : null;
-
+        // 一个一个读取
+        $memory = $this->ioFindLongTermMemory($id);
         $memory = $memory ?? new IMemory($id, true, $defaults);
 
         return $this->longTermMemories[$id] = $memory;
@@ -122,13 +130,14 @@ class IRuntime implements Runtime, Spied
             return $this->process;
         }
 
-
         // 从历史记忆中寻找.
         if (!$this->cloner->isStateless()) {
-            $process = $this->driver->fetchProcess($this->sessionId);
+            $process = $this->ioFetchCurrentProcess();
+
             if (isset($process)) {
                 // 生成一个新的 Snapshot
-                return $this->process = $process->nextSnapshot($this->cloner->getTraceId());
+                return $this->process = $process
+                    ->nextSnapshot($this->cloner->getTraceId());
             }
         }
 
@@ -142,11 +151,12 @@ class IRuntime implements Runtime, Spied
         $this->process = $process;
     }
 
-    public function createProcess(string $contextName): Process
+    public function createProcess(string $contextUcl): Process
     {
-        $root = Ucl::create($this->cloner, $contextName);
+        $root = Ucl::createFromUcl($this->cloner, $contextUcl);
         return new IProcess($this->sessionId, $root, $this->cloner->getTraceId());
     }
+
 
     /*------ contextMsg ------*/
 
@@ -193,56 +203,145 @@ class IRuntime implements Runtime, Spied
             return;
         }
 
-        $success = false;
-        $e = null;
+        $expire = $this->cloner->getSessionExpire();
+        $success = $this->ioSaveLongTermMemories()
+            && $this->ioSaveSessionMemories($expire)
+            && $this->ioCacheProcess($expire);
+
+        if (empty($success)) {
+            throw new SaveDataFailException('cloner status');
+        }
+
+    }
+
+    /*------ io ------*/
+
+    protected function ioFetchCurrentProcess() : ? Process
+    {
         try {
-            $expire = $this->cloner->getSessionExpire();
-            $success = $this->saveLongTermMemories()
-                && $this->saveSessionMemories($expire)
-                && $this->cacheProcess($expire);
+            if (!isset($this->driver)) {
+                return null;
+            }
 
-        } catch (\Throwable $e) {
-        }
-
-        if (!$success || isset($e)) {
-            throw new SaveDataFailException(
-                __METHOD__,
-                $this->traceId,
-                $e
+            return $this->driver->fetchProcess(
+                $this->cloner,
+                $this->cloner->getSessionId()
             );
+
+        } catch (\Exception $e) {
+            throw new LoadDataFailException('current process', $e);
         }
     }
 
-    protected function cacheProcess(int $expire) : bool
+    protected function ioCacheProcess(int $expire) : bool
     {
-        return isset($this->process)
-            ? $this->driver->cacheProcess($this->sessionId, $this->process, $expire)
-            : false;
+        if (!isset($this->process)) {
+            return true;
+        }
+
+        if (!isset($this->driver)) {
+            return true;
+        }
+
+        try {
+
+            return $this->driver->cacheProcess($this->cloner, $this->process, $expire);
+        } catch (\Exception $e) {
+            throw new SaveDataFailException('process', $e);
+        }
+
     }
 
-    protected function saveSessionMemories(int $expire) : bool
+    protected function ioSaveSessionMemories(int $expire) : bool
     {
+
+        if (!isset($this->driver)) {
+            return true;
+        }
+
         $memories = array_filter($this->sessionMemories, function(Memory $memory){
             return $memory->isChanged();
         });
 
-        return empty($memories)
-            ? true
-            : $this->driver->cacheSessionMemories($this->sessionId, $memories, $expire);
+        if (empty($memories)) {
+            return true;
+        }
+
+        try {
+            return $this->driver->cacheSessionMemories(
+                $this->cloner->getClonerId(),
+                $this->cloner->getSessionId(),
+                $memories,
+                $expire
+            );
+
+        } catch (\Exception $e) {
+            throw new SaveDataFailException('session memories', $e);
+        }
     }
 
-    protected function saveLongTermMemories() : bool
+    protected function ioFindSessionMemories() : array
     {
+        if (!isset($this->driver)) {
+            return [];
+        }
+
+        try {
+
+            return $this->driver
+                ->fetchSessionMemories(
+                    $this->cloner->getClonerId(),
+                    $this->cloner->getSessionId()
+                );
+        } catch (\Exception $e) {
+            throw new LoadDataFailException('session memories', $e);
+        }
+    }
+
+    protected function ioSaveLongTermMemories() : bool
+    {
+
+        if (!isset($this->driver)) {
+            return true;
+        }
+
         $memories = array_filter($this->longTermMemories, function(Memory $memory) {
             return $memory->isChanged();
         });
 
-        return empty($memories)
-            ? true
-            : $this->driver->saveLongTermMemories(
-                $this->cloner->scope,
+        if (empty($memories)) {
+            return true;
+        }
+
+        try {
+
+            return $this->driver->saveLongTermMemories(
+                $this->cloner->getClonerId(),
                 $memories
             );
+
+        } catch (\Exception $e) {
+            throw new SaveDataFailException('long term memory', $e);
+        }
+
+    }
+
+    protected function ioFindLongTermMemory(string $id) : ? Memory
+    {
+        if (!isset($this->driver)) {
+            return null;
+        }
+
+        try {
+            return $this->driver->findLongTermMemories(
+                $this->cloner->getClonerId(),
+                $id
+            );
+
+        // 请求级别的影响.
+        } catch (\Exception $e) {
+            throw new LoadDataFailException('long term memory', $e);
+        }
     }
 
 
@@ -251,6 +350,9 @@ class IRuntime implements Runtime, Spied
         // 清空数据
         $this->driver = null;
         $this->cloner = null;
+        $this->process = null;
+        $this->longTermMemories = [];
+        $this->sessionMemories = null;
 
         static::removeRunningTrace($this->traceId);
     }

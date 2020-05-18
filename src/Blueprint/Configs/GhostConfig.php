@@ -11,12 +11,12 @@
 
 namespace Commune\Blueprint\Configs;
 
+use Commune\Framework;
 use Commune\Blueprint\Configs\Nest\ProtocalOption;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Ghost\ProtocalHandlers\GhostRequestHandler;
 use Commune\Support\Option\AbsOption;
-use Commune\Framework\Providers as FrameworkProviders;
 use Commune\Ghost\Providers as GhostProviders;
 use Commune\Components;
 
@@ -48,6 +48,10 @@ use Commune\Components;
  *  [   OptionClass::class,
  *      OptionClass1::class => [ configs ] ]
  *
+ * ## 管道配置
+ * @property-read string[] $clonerPipes         对输入请求进行处理的管道.
+ * @property-read string[] $comprehensionPipes  对输入信息进行抽象理解的管道.
+ *
  * ## Session 配置
  *
  * @property-read int $sessionExpire            Session 的过期时间, 秒
@@ -71,7 +75,6 @@ use Commune\Components;
  *
  * @property-read string[] $sceneContextNames   场景对应的根路径.
  * @property-read string $defaultScene          默认场景.
- * @property-read string[] $comprehensionPipes  理解管道.
  */
 class GhostConfig extends AbsOption
 {
@@ -84,16 +87,18 @@ class GhostConfig extends AbsOption
             'name' => 'demo',
 
             'configProviders' => [
-                FrameworkProviders\OptRegistryServiceProvider::class,
+                Framework\Providers\OptRegistryProvider::class,
+                Framework\FileCache\FileCacheServiceProvider::class,
                 GhostProviders\MindsetStorageConfigProvider::class,
             ],
             'procProviders' => [
-                FrameworkProviders\SplExpReporterServiceProvider::class,
-                FrameworkProviders\MonologServiceProvider::class,
+                Framework\Providers\ExpReporterByConsoleProvider::class,
+                Framework\Providers\LoggerByMonologProvider::class,
                 GhostProviders\MindsetServiceProvider::class,
             ],
             'reqProviders' => [
-                FrameworkProviders\ArrCacheServiceProvider::class,
+                Framework\Providers\CacheByArrProvider::class,
+                Framework\Providers\RuntimeDriverDemoProvider::class,
                 GhostProviders\GhostReqServiceProvider::class,
             ],
             'components' => [
@@ -110,6 +115,13 @@ class GhostConfig extends AbsOption
                     'handler' => GhostRequestHandler::class,
                 ]
             ],
+            // pipeline
+            'clonerPipes' => [
+
+            ],
+            'comprehensionPipes' => [
+
+            ],
             // session
             'sessionExpire' => 3600,
             'sessionLockerExpire' => 3,
@@ -118,9 +130,7 @@ class GhostConfig extends AbsOption
             'sceneContextNames' => [
             ],
             'defaultScene' => '',
-            'comprehensionPipes' => [
 
-            ],
         ];
     }
 

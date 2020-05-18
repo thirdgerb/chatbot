@@ -9,17 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\NLU;
+namespace Commune\Ghost\Comprehends;
 
-use Commune\Framework\Blueprint\Comprehension;
 
 /**
+ * 全文搜索单元.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface NLUService
+class FulltextSearchPipe
 {
 
-    public function shouldComprehend(string $text) : bool;
-
-    public function comprehend(Comprehension $comprehension, string $text) : Comprehension;
 }

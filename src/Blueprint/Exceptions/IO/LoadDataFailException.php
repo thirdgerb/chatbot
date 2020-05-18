@@ -9,12 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\NLU;
+namespace Commune\Blueprint\Exceptions\IO;
 
+use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Corpus
+class LoadDataFailException extends BrokenRequestException
 {
+
 }

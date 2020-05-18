@@ -9,12 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\NLU;
+namespace Commune\Ghost\ClonerPipes;
 
 
 /**
+ * 事件类消息的管道.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Synonym
+class ClonerEventMsgPipe
 {
+
 }

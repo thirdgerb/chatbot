@@ -12,16 +12,16 @@
 namespace Commune\Framework\Providers;
 
 use Commune\Container\ContainerContract;
-use Commune\Contracts\Log\ExceptionReporter;
+use Commune\Contracts\Cache;
 use Commune\Contracts\ServiceProvider;
-use Commune\Framework\ExpReporter\ConsoleExceptionReporter;
+use Commune\Framework\Cache\ArrayCache;
+
 
 /**
- * 简单的异常报告模块. 用控制台日志来替代报告.
- *
+ * 用数组模拟缓存的模块. 也可以用于单体机器人中. 但不存在过期功能.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SplExpReporterServiceProvider extends ServiceProvider
+class CacheByArrProvider extends ServiceProvider
 {
     public static function stub(): array
     {
@@ -35,8 +35,8 @@ class SplExpReporterServiceProvider extends ServiceProvider
     public function register(ContainerContract $app): void
     {
         $app->singleton(
-            ExceptionReporter::class,
-            ConsoleExceptionReporter::class
+            Cache::class,
+            ArrayCache::class
         );
     }
 

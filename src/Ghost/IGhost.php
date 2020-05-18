@@ -27,6 +27,8 @@ use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Contracts\Log\LogInfo;
+use Commune\Framework\Event\EndSession;
+use Commune\Framework\Event\StartSession;
 use Commune\Ghost\Bootstrap;
 use Commune\Framework\AbsApp;
 use Commune\Protocals\Comprehension;
@@ -55,7 +57,6 @@ class IGhost extends AbsApp implements Ghost
      */
     protected $config;
 
-
     public function __construct(
         GhostConfig $config,
         bool $debug,
@@ -69,8 +70,6 @@ class IGhost extends AbsApp implements Ghost
         $this->config = $config;
         parent::__construct($debug, $procC, $reqC, $registrar, $consoleLogger, $logInfo);
     }
-
-
 
     public function getName(): string
     {
@@ -123,11 +122,12 @@ class IGhost extends AbsApp implements Ghost
         try {
 
             if (!$request->isValid()) {
-                return $request->fail(AppResponse::BAD_REQUEST);
+                return $response = $request->fail(AppResponse::BAD_REQUEST);
             }
 
             $ghostInput = $request->getInput();
             $cloner = $this->newCloner($ghostInput);
+            $cloner->fire(new StartSession($cloner));
 
             // 如果是无状态请求.
             if ($request->isStateless()) {
@@ -140,24 +140,30 @@ class IGhost extends AbsApp implements Ghost
             );
 
             if (!isset($handler)) {
-                return $request->fail(AppResponse::HANDLER_NOT_FOUND);
+                return $response = $request->fail(AppResponse::HANDLER_NOT_FOUND);
             }
 
             // 使用 Handler 来响应.
-            return $handler($request);
-
+            $response = $handler($request);
 
         } catch (HostRuntimeException $e) {
             $this->getExceptionReporter()->report($e);
-            return $request->fail(AppResponse::HOST_RUNTIME_ERROR);
+            $response = $request->fail(AppResponse::HOST_RUNTIME_ERROR);
 
         } catch (HostLogicException $e) {
             $this->getExceptionReporter()->report($e);
-            return $request->fail(AppResponse::HOST_LOGIC_ERROR);
+            $response = $request->fail(AppResponse::HOST_LOGIC_ERROR);
 
         } catch (\Throwable $e) {
             $this->getExceptionReporter()->report($e);
-            return $request->fail(AppResponse::HOST_LOGIC_ERROR);
+            $response = $request->fail(AppResponse::HOST_LOGIC_ERROR);
+
+        } finally {
+            if (isset($cloner)) {
+                $cloner->fire(new EndSession($cloner));
+                $cloner->finish();
+            }
+            return $response ?? $request->fail(AppResponse::HOST_LOGIC_ERROR);
         }
     }
 

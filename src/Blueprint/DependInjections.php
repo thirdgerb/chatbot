@@ -43,12 +43,14 @@ interface DependInjections
 
     /*------- ghost -------*/
 
+    // ghost 的进程级绑定
     const GHOST_PROC_BINDINGS = [
         Ghost::class,
         Configs\GhostConfig::class,
         Mindset::class,
     ];
 
+    // ghost 的请求级绑定.
     const GHOST_REQ_BINDINGS = [
         Contracts\Cache::class,
         Ghost\Cloner\ClonerScene::class,
@@ -57,9 +59,11 @@ interface DependInjections
 
         Ghost\Cloner\ClonerStorage::class,
         Ghost\Runtime\Runtime::class,
+        Contracts\Ghost\RuntimeDriver::class,
         Ghost\Auth\Authority::class,
     ];
 
+    // ghost 请求创建时绑定的实例.
     const GHOST_REQ_INSTANCES = [
         Cloner::class,
         Framework\Session::class,

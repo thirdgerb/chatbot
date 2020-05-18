@@ -9,13 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\NLU;
+namespace Commune\Ghost\Comprehends;
 
 
 /**
+ * 问答响应模块
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Entity
+class QuestionPipe
 {
 
 }

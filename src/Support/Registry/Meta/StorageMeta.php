@@ -18,7 +18,6 @@ use Commune\Support\Option\AbsMeta;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name
  * @property-read string $wrapper
  * @property-read array $config
  *
@@ -31,7 +30,6 @@ class StorageMeta extends AbsMeta
     public static function stub(): array
     {
         return [
-            'name' => '',
             'wrapper' => '',
             'config' => [],
         ];

@@ -11,6 +11,8 @@
 
 namespace Commune\Blueprint\Ghost\Cloner;
 
+use Commune\Support\Arr\ArrayAndJsonAble;
+
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
@@ -36,7 +38,7 @@ namespace Commune\Blueprint\Ghost\Cloner;
  * @property-read string $minute
  *
  */
-interface ClonerScope
+interface ClonerScope extends ArrayAndJsonAble
 {
     // 长程维度.
     const CLONE_ID = 'cloneId';

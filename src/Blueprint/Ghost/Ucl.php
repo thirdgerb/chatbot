@@ -115,6 +115,19 @@ class Ucl implements UclInterface
         return new self($contextName, $stageName, $query);
     }
 
+    public static function createFromUcl(
+        Cloner $cloner,
+        string $ucl
+    ): Ucl
+    {
+        $ucl = static::decodeUcl($ucl);
+        $contextName = $ucl->contextName;
+        $stageName = $ucl->stageName;
+        $query = $ucl->query;
+        return static::create($cloner, $contextName, $stageName, $query);
+    }
+
+
     /*------- compare -------*/
 
     public function atSameContext(string $ucl) : bool
