@@ -23,9 +23,14 @@ interface IntentMsg extends HostMsg
 {
     /*----- system intents -----*/
 
-    const SYSTEM_SESSION_BUSY = 'intents.system.session.busy';
-    const SYSTEM_SESSION_QUIT = 'intents.system.session.quit';
-    const SYSTEM_REQUEST_FAILURE = 'intents.system.request.fail';
+    const SYSTEM_SESSION_BUSY = 'intent.system.session.busy';
+    const SYSTEM_SESSION_QUIT = 'intent.system.session.quit';
+    const SYSTEM_REQUEST_FAILURE = 'intent.system.request.fail';
+    
+    const SYSTEM_COMMAND_ERROR = 'intent.system.command.error';
+    const SYSTEM_COMMAND_LIST = 'intent.system.command.list';
+    const SYSTEM_COMMAND_MISS = 'intent.system.command.miss';
+    const SYSTEM_COMMAND_DESC = 'intent.system.command.desc';
 
 
     /*----- guest intents -----*/

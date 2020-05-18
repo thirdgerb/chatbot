@@ -69,7 +69,7 @@ class IIntentMsg extends AbsMessage implements IntentMsg
 
     public function getNormalizedText(): string
     {
-        return StringUtils::normalizeString($this->intentNamed);
+        return StringUtils::normalizeString($this->intentName);
     }
 
     public function isEmpty(): bool

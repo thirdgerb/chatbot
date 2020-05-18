@@ -29,11 +29,13 @@ class GhostRequestHandler
      */
     protected $middleware = [
         // 检查消息类型
-        ClonePipes\CloneMessagerPipe::class,
+        ClonePipes\CloneMessengerPipe::class,
         // api 响应
         ClonePipes\CloneApiHandlePipe::class,
         // locker
         ClonePipes\CloneLockerPipe::class,
+        // command
+        ClonePipes\CloneUserCmdPipe::class,
 
     ];
 

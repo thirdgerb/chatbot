@@ -13,6 +13,7 @@ namespace Commune\Blueprint\Framework;
 
 use Commune\Blueprint\Framework\Session\SessionEvent;
 use Commune\Blueprint\Framework\Session\SessionStorage;
+use Commune\Protocals\HostMsg;
 use Commune\Support\Protocal\Protocal;
 use Psr\Log\LoggerInterface;
 

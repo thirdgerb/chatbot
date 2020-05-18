@@ -24,7 +24,7 @@ use Commune\Blueprint\Framework\Request\AppResponse;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class CloneMessagerPipe extends AClonePipe
+class CloneMessengerPipe extends AClonePipe
 {
 
     protected function doHandle(GhostRequest $request, Closure $next) : GhostResponse

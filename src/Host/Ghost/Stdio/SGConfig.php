@@ -13,10 +13,11 @@ namespace Commune\Host\Ghost\Stdio;
 
 use Commune\Framework;
 use Commune\Components;
+use Commune\Ghost\Commands;
+use Commune\Ghost\Cmd\GhostHelpCmd;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
-use Commune\Ghost\ClonePipes;
 use Commune\Ghost\Handlers\GhostRequestHandler;
 use Commune\Ghost\Providers as GhostProviders;
 
@@ -62,9 +63,13 @@ class SGConfig extends GhostConfig
                     'handler' => GhostRequestHandler::class,
                 ]
             ],
-            // pipeline
-            'clonePipes' => [
-                ClonePipes\CloneMessagerPipe::class,
+
+            'apiHandler' => [
+
+            ],
+            'userCommands' => [
+                'hello' => Commands\HelloCmd::class,
+                'help' => GhostHelpCmd::class,
 
             ],
             'comprehensionPipes' => [

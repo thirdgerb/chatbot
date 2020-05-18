@@ -9,15 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\ClonePipes;
+namespace Commune\Ghost\Cmd;
 
+use Commune\Framework\Command\AbsHelpCmd;
 
 /**
- * 用户命令管道.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ClonerUserCmdPipe
+class GhostHelpCmd extends AbsHelpCmd
 {
-
+    use TGhostCmd;
 }

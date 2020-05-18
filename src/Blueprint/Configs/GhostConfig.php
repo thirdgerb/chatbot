@@ -51,6 +51,7 @@ use Commune\Components;
  * ## 管道配置
  *
  * @property-read string[] $apiHandlers         api消息的处理器.
+ * @property-read string[] $userCommands
  * @property-read string[] $comprehensionPipes  对输入信息进行抽象理解的管道.
  *
  * ## Session 配置
@@ -122,6 +123,10 @@ class GhostConfig extends AbsOption
             'comprehensionPipes' => [
 
             ],
+            'userCommands' => [
+
+            ],
+
             // session
             'sessionExpire' => 3600,
             'sessionLockerExpire' => 3,

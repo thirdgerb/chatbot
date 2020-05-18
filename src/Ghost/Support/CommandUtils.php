@@ -31,6 +31,8 @@ class CommandUtils
 
     protected static $validCommandLen = 30;
 
+
+
     /**
      * @param string $mark
      */
