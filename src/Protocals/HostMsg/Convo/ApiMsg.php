@@ -9,13 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\HostMsg\Constants;
+namespace Commune\Protocals\HostMsg\Convo;
+
+use Commune\Protocals\HostMsg\ConvoMsg;
 
 
 /**
+ * API 请求使用的消息. 这类消息不需要多轮对话响应, 而是用类似 mvc 框架的方式响应.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface SystemDefaultIntents
+interface ApiMsg extends ConvoMsg
 {
+    public function getApiName() : string;
+
+    public function getParams() : array;
 
 }

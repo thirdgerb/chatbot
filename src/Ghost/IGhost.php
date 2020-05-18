@@ -146,14 +146,6 @@ class IGhost extends AbsApp implements Ghost
             // 使用 Handler 来响应.
             $response = $handler($request);
 
-        } catch (HostRuntimeException $e) {
-            $this->getExceptionReporter()->report($e);
-            $response = $request->fail(AppResponse::HOST_RUNTIME_ERROR);
-
-        } catch (HostLogicException $e) {
-            $this->getExceptionReporter()->report($e);
-            $response = $request->fail(AppResponse::HOST_LOGIC_ERROR);
-
         } catch (\Throwable $e) {
             $this->getExceptionReporter()->report($e);
             $response = $request->fail(AppResponse::HOST_LOGIC_ERROR);

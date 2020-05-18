@@ -9,19 +9,25 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Exceptions\Logic;
+namespace Commune\Message\Host\SystemInt;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Message\Host\IIntentMsg;
+use Commune\Protocals\HostMsg;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class InvalidArgumentException extends HostLogicException
+class RequestFailInt extends IIntentMsg
 {
-    public function __construct(string $error)
+    public function __construct()
     {
-        $message = "invalid argument, $error";
-        parent::__construct($message);
+        parent::__construct(
+            HostMsg\IntentMsg::SYSTEM_REQUEST_FAILURE,
+            [],
+            HostMsg::INFO
+        );
     }
+
 
 }

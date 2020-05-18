@@ -9,15 +9,24 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\ClonePipes;
+namespace Commune\Message\Host\SystemInt;
+
+use Commune\Message\Host\IIntentMsg;
+use Commune\Protocals\HostMsg;
 
 
 /**
- * 事件类消息的管道.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ClonerEventMsgPipe
+class SessionBusyInt extends IIntentMsg
 {
+    public function __construct()
+    {
+        parent::__construct(
+            HostMsg\IntentMsg::SYSTEM_SESSION_BUSY,
+            [],
+            HostMsg::INFO
+        );
+    }
 
 }

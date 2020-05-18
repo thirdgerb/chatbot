@@ -9,15 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\ClonePipes;
+namespace Commune\Protocals\HostMsg\Convo;
 
+use Commune\Protocals\HostMsg\ConvoMsg;
 
 /**
- * Api 请求的管道. 将 Ghost 作为 API Server 来响应.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ClonerApiMsgPipe
+interface ArrayMsg extends ConvoMsg
 {
 
+    public function getArray() : array;
 }

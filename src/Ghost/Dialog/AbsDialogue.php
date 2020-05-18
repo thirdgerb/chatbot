@@ -201,7 +201,7 @@ abstract class AbsDialogue implements
     {
         $result = $this->call($caller);
         if (!is_bool($result)) {
-            throw new InvalidArgumentException(__METHOD__, 'caller', 'caller is not predict which return with bool');
+            throw new InvalidArgumentException('caller is not predict which return with bool');
         }
 
         return $result;
@@ -214,7 +214,7 @@ abstract class AbsDialogue implements
             return $result;
         }
 
-        throw new InvalidArgumentException(__METHOD__, 'caller', 'caller is not predict which return with bool');
+        throw new InvalidArgumentException('caller is not predict which return with bool');
     }
 
     protected function getContextualInjections(array $parameters) : array

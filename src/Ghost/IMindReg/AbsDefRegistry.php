@@ -75,11 +75,7 @@ abstract class AbsDefRegistry implements DefRegistry
     {
         $type = $this->getDefType();
         if (!is_a($def, $type, TRUE)) {
-            throw new InvalidArgumentException(
-                $method,
-                'def',
-                'def should be subclass of ' . $type
-            );
+            throw new InvalidArgumentException('def should be subclass of ' . $type);
         }
     }
 

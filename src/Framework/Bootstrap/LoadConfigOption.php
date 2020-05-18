@@ -78,11 +78,7 @@ abstract class LoadConfigOption implements Bootstrapper
 
         // 判断chatbotName 是否合法.
         if (!is_string($name) || !is_a($name, Option::class, TRUE)) {
-            throw new InvalidArgumentException(
-                static::class . '::' . __FUNCTION__,
-                 'optionName',
-                 ' config name ' . $name . ' must be instanceof ' . Option::class
-            );
+            throw new InvalidArgumentException(' config name ' . $name . ' must be instanceof ' . Option::class);
         }
 
         if (is_array($value)) {
@@ -106,12 +102,7 @@ abstract class LoadConfigOption implements Bootstrapper
             $container->singleton($name, $value);
 
         } else {
-            throw new InvalidArgumentException(
-
-                static::class . '::' . __FUNCTION__,
-                'option value',
-                ' config value of ' . $name . ' is not valid : ' . var_export($value, true)
-            );
+            throw new InvalidArgumentException(' config value of ' . $name . ' is not valid : ' . var_export($value, true));
         }
 
         $logger->debug($logInfo->bootingRegisterConfigOption($name));

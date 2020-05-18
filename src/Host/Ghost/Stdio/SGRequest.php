@@ -15,7 +15,6 @@ use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
-use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IGhostInput;
@@ -23,7 +22,6 @@ use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\GhostInput;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\DI\TInjectable;
-use Commune\Support\Protocal\Protocal;
 
 
 /**
@@ -143,7 +141,7 @@ class SGRequest implements GhostRequest
 
     public function isStateless(): bool
     {
-        return false;
+        return $this->getInput()->getMessage() instanceof HostMsg\Convo\ApiMsg;
     }
 
     public function noOutputs(): bool

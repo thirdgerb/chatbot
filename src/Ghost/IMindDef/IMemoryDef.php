@@ -146,11 +146,7 @@ class IMemoryDef implements MemoryDef
     public static function wrap(Meta $meta): Wrapper
     {
         if (!$meta instanceof MemoryMeta) {
-            throw new InvalidArgumentException(
-                __METHOD__,
-                'meta',
-                'meta should be subclass of ' . MemoryMeta::class
-            );
+            throw new InvalidArgumentException('meta should be subclass of ' . MemoryMeta::class);
         }
 
         return new static($meta);

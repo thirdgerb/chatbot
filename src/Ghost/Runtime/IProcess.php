@@ -356,11 +356,7 @@ class IProcess implements Process, HasIdGenerator
         $decoded = Ucl::decodeUcl($ucl);
 
         if (!$decoded->isValid()) {
-            throw new InvalidArgumentException(
-                __METHOD__,
-                'ucl',
-                "invalid ucl pattern of $ucl"
-            );
+            throw new InvalidArgumentException("invalid ucl pattern of $ucl");
         }
 
         return $this->decodedUcl[$ucl]

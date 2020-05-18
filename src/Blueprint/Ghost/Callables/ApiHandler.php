@@ -9,15 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\ClonePipes;
+namespace Commune\Blueprint\Ghost\Callables;
 
+use Commune\Blueprint\Ghost\Request\GhostRequest;
+use Commune\Blueprint\Ghost\Request\GhostResponse;
 
 /**
- * 请求锁的管道. 防止高并发裂脑.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ClonerLockerPipe
+interface ApiHandler
 {
 
+    public function __invoke(GhostRequest $request) : GhostResponse;
 }

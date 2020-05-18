@@ -49,7 +49,8 @@ use Commune\Components;
  *      OptionClass1::class => [ configs ] ]
  *
  * ## 管道配置
- * @property-read string[] $clonePipes         对输入请求进行处理的管道.
+ *
+ * @property-read string[] $apiHandlers         api消息的处理器.
  * @property-read string[] $comprehensionPipes  对输入信息进行抽象理解的管道.
  *
  * ## Session 配置
@@ -115,8 +116,7 @@ class GhostConfig extends AbsOption
                     'handler' => GhostRequestHandler::class,
                 ]
             ],
-            // pipeline
-            'clonePipes' => [
+            'apiHandler' => [
 
             ],
             'comprehensionPipes' => [

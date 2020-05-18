@@ -65,11 +65,7 @@ class ISynonymDef implements SynonymDef
     public static function wrap(Meta $meta): Wrapper
     {
         if (!$meta instanceof SynonymMeta) {
-            throw new InvalidArgumentException(
-                __METHOD__,
-                'meta',
-                "meta should be subclass of ". SynonymMeta::class
-            );
+            throw new InvalidArgumentException("meta should be subclass of ". SynonymMeta::class);
         }
         return new static($meta);
     }

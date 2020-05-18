@@ -92,11 +92,7 @@ class IClonerScope implements ClonerScope
     {
         $map = array_map(function($dimension){
             if (!is_string($dimension)) {
-                throw new InvalidArgumentException(
-                    __METHOD__,
-                    'longTermDimensions',
-                    'dimension must be string'
-                );
+                throw new InvalidArgumentException('long term dimension must be string');
             }
 
             return $this->{$dimension};

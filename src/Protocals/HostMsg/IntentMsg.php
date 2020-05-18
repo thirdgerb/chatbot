@@ -21,7 +21,18 @@ use Commune\Protocals\HostMsg;
  */
 interface IntentMsg extends HostMsg
 {
+    /*----- system intents -----*/
+
+    const SYSTEM_SESSION_BUSY = 'intents.system.session.busy';
+    const SYSTEM_SESSION_QUIT = 'intents.system.session.quit';
+    const SYSTEM_REQUEST_FAILURE = 'intents.system.request.fail';
+
+
+    /*----- guest intents -----*/
+
+
     public function getIntentName() : string;
 
     public function getSlots() : array;
+
 }

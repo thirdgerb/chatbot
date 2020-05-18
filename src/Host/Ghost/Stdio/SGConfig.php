@@ -64,7 +64,7 @@ class SGConfig extends GhostConfig
             ],
             // pipeline
             'clonePipes' => [
-                ClonePipes\CloneInputPipe::class,
+                ClonePipes\CloneMessagerPipe::class,
 
             ],
             'comprehensionPipes' => [

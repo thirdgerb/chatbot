@@ -53,11 +53,7 @@ abstract class LoadComponents implements Bootstrapper
             return call_user_func([$name, Struct::CREATE_FUNC], $value);
         }
 
-        throw new InvalidArgumentException(
-            __METHOD__,
-            'component',
-            'invalid component config'
-        );
+        throw new InvalidArgumentException('invalid component config');
     }
 
     abstract public function getComponentConfigs(App $app) : array;

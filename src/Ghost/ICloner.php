@@ -131,21 +131,14 @@ class ICloner extends ASession implements Cloner
         $inputSid = $this->ghostInput->getSessionId();
         $cachedSid = $this->getSessionIdFromCache();
 
-        $changed = false;
         if (empty($cachedSid)) {
-            $changed = true;
             $sessionId = $inputSid ?? $this->makeSessionId();
 
         } elseif(empty($inputSid)) {
             $sessionId = $cachedSid;
             $this->ghostInput->withSessionId($sessionId);
         } else {
-            $changed = true;
             $sessionId = $inputSid;
-        }
-
-        if ($changed) {
-            $this->cacheSessionId($sessionId);
         }
 
         return $this->sessionId = $sessionId;
@@ -409,9 +402,15 @@ class ICloner extends ASession implements Cloner
         if (!$this->isSingletonInstanced('runtime')) {
             $this->runtime->save();
         }
+
         // storage 更新.
         if ($this->isSingletonInstanced('storage')) {
             $this->storage->save();
+        }
+
+        // 更新 sessionId 缓存.
+        if (isset($this->sessionId)) {
+            $this->cacheSessionId($this->sessionId);
         }
     }
 

@@ -52,11 +52,7 @@ class IEntityDef implements EntityDef
     public static function wrap(Meta $meta): Wrapper
     {
         if (!$meta instanceof EntityMeta) {
-            throw new InvalidArgumentException(
-                __METHOD__,
-                'meta',
-                'meta should be subclass of '. EntityMeta::class
-            );
+            throw new InvalidArgumentException('meta should be subclass of '. EntityMeta::class);
         }
 
         return new static($meta);

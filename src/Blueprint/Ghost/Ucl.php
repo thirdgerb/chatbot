@@ -154,11 +154,7 @@ class Ucl implements UclInterface
     public function goStage(string $stageName) : Ucl
     {
         if (!ContextUtils::isValidStageName($stageName)) {
-            throw new InvalidArgumentException(
-                __METHOD__,
-                'stageName',
-                "invalid stage pattern of $stageName"
-            );
+            throw new InvalidArgumentException("invalid stage pattern of $stageName");
         }
         return new self($this->contextName, $stageName, $this->query);
     }
@@ -167,11 +163,7 @@ class Ucl implements UclInterface
     public function goFullnameStage(string $fullStageName) : Ucl
     {
         if (!ContextUtils::isValidStageFullName($fullStageName)) {
-            throw new InvalidArgumentException(
-                __METHOD__,
-                'fullStageName',
-                "invalid stage fullname pattern of $fullStageName"
-            );
+            throw new InvalidArgumentException("invalid stage fullname pattern of $fullStageName");
         }
 
         $stageName = str_replace($this->contextName, '', $fullStageName);
@@ -200,11 +192,7 @@ class Ucl implements UclInterface
         }
 
         if (!is_string($string)) {
-            throw new InvalidArgumentException(
-                __METHOD__,
-                'string',
-                'should be Ucl instance or Ucl string'
-            );
+            throw new InvalidArgumentException('should be Ucl instance or Ucl string');
         }
 
         $string = strval($string);

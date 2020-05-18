@@ -11,11 +11,12 @@
 
 namespace Commune\Ghost\Handlers;
 
+use Commune\Ghost\ClonePipes;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Message\Host\Convo\IText;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
+use Commune\Blueprint\Framework\Request\AppResponse;
 
 
 /**
@@ -26,7 +27,15 @@ class GhostRequestHandler
     /**
      * @var string[]
      */
-    protected $middleware;
+    protected $middleware = [
+        // 检查消息类型
+        ClonePipes\CloneMessagerPipe::class,
+        // api 响应
+        ClonePipes\CloneApiHandlePipe::class,
+        // locker
+        ClonePipes\CloneLockerPipe::class,
+
+    ];
 
     /**
      * @var Cloner
@@ -40,16 +49,17 @@ class GhostRequestHandler
     public function __construct(Cloner $cloner)
     {
         $this->cloner = $cloner;
-        $this->middleware = $cloner->config->clonePipes;
     }
 
 
     public function __invoke(GhostRequest $request) : GhostResponse
     {
+        if ($request->isStateless()) {
+            $this->cloner->noState();
+        }
 
         $end = function(GhostRequest $request) : GhostResponse {
-            return $request->output(new IText('hello world'));
-//            return $request->fail(AppResponse::NO_CONTENT);
+            return $request->fail(AppResponse::NO_CONTENT);
         };
 
         if (empty($this->middleware)) {
