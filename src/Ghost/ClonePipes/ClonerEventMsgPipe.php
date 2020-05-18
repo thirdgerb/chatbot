@@ -9,15 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\ClonerPipes;
+namespace Commune\Ghost\ClonePipes;
 
 
 /**
- * Api 请求的管道. 将 Ghost 作为 API Server 来响应.
+ * 事件类消息的管道.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ClonerApiMsgPipe
+class ClonerEventMsgPipe
 {
 
 }

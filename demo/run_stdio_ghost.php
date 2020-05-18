@@ -1,13 +1,12 @@
 <?php
 
+use Commune\Message;
 use Commune\Ghost\IGhost;
-use Commune\Blueprint\Configs\GhostConfig;
+use Clue\React\Stdio\Stdio;
+use React\EventLoop\Factory;
+use Commune\Host\Ghost\Stdio\SGConfig;
 use Commune\Host\Ghost\Stdio\SGRequest;
 use Commune\Host\Ghost\Stdio\SGConsoleLogger;
-use Commune\Blueprint\Framework\Request\AppResponse;
-use React\EventLoop\Factory;
-use Clue\React\Stdio\Stdio;
-use Commune\Message;
 
 require __DIR__ .'/../vendor/autoload.php';
 
@@ -20,16 +19,14 @@ $stdio->setPrompt('> ');
 
 $config = [];
 $app = new IGhost(
-    new GhostConfig(),
+    new SGConfig(),
     true,
     null,
     null,
     null,
     new SGConsoleLogger($stdio)
 );
-$app->onFail(function() use ($stdio){
-        $stdio->end();
-    })
+$app->onFail([$stdio, 'end'])
     ->bootstrap()
     ->activate();
 

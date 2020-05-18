@@ -9,12 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\ProtocalHandlers;
+namespace Commune\Ghost\Handlers;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Message\Host\Convo\IText;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
-use Commune\Message\Host\Convo\IText;
+use Commune\Blueprint\Framework\Pipes\RequestPipe;
 
 
 /**
@@ -22,10 +23,10 @@ use Commune\Message\Host\Convo\IText;
  */
 class GhostRequestHandler
 {
-
-    protected $middleware = [
-
-    ];
+    /**
+     * @var string[]
+     */
+    protected $middleware;
 
     /**
      * @var Cloner
@@ -35,21 +36,33 @@ class GhostRequestHandler
     /**
      * RequestHandler constructor.
      * @param Cloner $cloner
-     * @param array|null $middleware
      */
-    public function __construct(Cloner $cloner, array $middleware = null)
+    public function __construct(Cloner $cloner)
     {
         $this->cloner = $cloner;
-        $this->middleware = $middleware ?? $this->middleware;
+        $this->middleware = $cloner->config->clonePipes;
     }
 
 
     public function __invoke(GhostRequest $request) : GhostResponse
     {
-        $output = $this->cloner->ghostInput->output(new IText('hello world'));
-        $this->cloner->output($output);
-        return $request->response($this->cloner);
 
+        $end = function(GhostRequest $request) : GhostResponse {
+            return $request->output(new IText('hello world'));
+//            return $request->fail(AppResponse::NO_CONTENT);
+        };
+
+        if (empty($this->middleware)) {
+            return $end($request);
+        }
+
+        $pipeline = $this->cloner->buildPipeline(
+            $this->middleware,
+            RequestPipe::HANDLER_FUNC,
+            $end
+        );
+
+        return $pipeline($request);
     }
 
 }

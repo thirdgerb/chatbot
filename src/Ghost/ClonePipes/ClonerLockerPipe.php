@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\ClonerPipes;
+namespace Commune\Ghost\ClonePipes;
 
 
 /**

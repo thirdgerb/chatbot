@@ -9,15 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\ClonerPipes;
+namespace Commune\Blueprint\Framework\Pipes;
 
+use Closure;
+use Commune\Blueprint\Framework\Request\AppRequest;
+use Commune\Blueprint\Framework\Request\AppResponse;
 
 /**
- * 管理员命令的管道.
- *
+ * App 处理请求的管道.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ClonerSuperviseCmdPipe
+interface RequestPipe
 {
+    const HANDLER_FUNC = 'handle';
+
+    public function handle(AppRequest $request, Closure $next) : AppResponse;
 
 }

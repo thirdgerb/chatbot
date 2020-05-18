@@ -15,7 +15,7 @@ use Commune\Framework;
 use Commune\Blueprint\Configs\Nest\ProtocalOption;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
-use Commune\Ghost\ProtocalHandlers\GhostRequestHandler;
+use Commune\Ghost\Handlers\GhostRequestHandler;
 use Commune\Support\Option\AbsOption;
 use Commune\Ghost\Providers as GhostProviders;
 use Commune\Components;
@@ -49,7 +49,7 @@ use Commune\Components;
  *      OptionClass1::class => [ configs ] ]
  *
  * ## 管道配置
- * @property-read string[] $clonerPipes         对输入请求进行处理的管道.
+ * @property-read string[] $clonePipes         对输入请求进行处理的管道.
  * @property-read string[] $comprehensionPipes  对输入信息进行抽象理解的管道.
  *
  * ## Session 配置
@@ -116,7 +116,7 @@ class GhostConfig extends AbsOption
                 ]
             ],
             // pipeline
-            'clonerPipes' => [
+            'clonePipes' => [
 
             ],
             'comprehensionPipes' => [

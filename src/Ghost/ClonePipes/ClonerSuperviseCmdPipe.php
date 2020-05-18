@@ -9,15 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\ClonerPipes;
+namespace Commune\Ghost\ClonePipes;
 
 
 /**
- * 用户命令管道.
+ * 管理员命令的管道.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ClonerUserCmdPipe
+class ClonerSuperviseCmdPipe
 {
 
 }
