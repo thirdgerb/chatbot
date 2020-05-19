@@ -153,5 +153,10 @@ class IShellMsg extends AbsMessage implements ShellMsg
         return $this->shellName;
     }
 
+    public function getText(): string
+    {
+        return $this->toPrettyJson();
+    }
+
 
 }

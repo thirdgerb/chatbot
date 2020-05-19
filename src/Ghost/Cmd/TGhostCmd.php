@@ -31,6 +31,11 @@ trait TGhostCmd
     protected $cloner;
 
     /**
+     * @var bool
+     */
+    protected $goNext = false;
+
+    /**
      * TGhostCmd constructor.
      * @param Cloner $cloner
      */
@@ -66,7 +71,18 @@ trait TGhostCmd
             $this->cloner->output($input->output($message));
         }
 
-        return $request->response($this->cloner);
+        if ($this->goNext) {
+            $this->cloner->noState();
+            return null;
+
+        } else {
+            return $request->response($this->cloner);
+        }
+    }
+
+    public function goNext() : void
+    {
+        $this->goNext = true;
     }
 
     public function getContainer(): ContainerContract

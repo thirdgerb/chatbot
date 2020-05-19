@@ -22,6 +22,6 @@ interface Authority
      * @param array $payload
      * @return bool
      */
-    public function allow(string $policy, array $payload) : bool;
+    public function allow(string $policy, array $payload = []) : bool;
 
 }

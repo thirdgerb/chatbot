@@ -23,6 +23,7 @@ use Commune\Contracts\Log\LogInfo;
  */
 interface App
 {
+    const DEBUG_BINDING = 'appDebug';
     /**
      * 是否调试状态.
      * @return bool

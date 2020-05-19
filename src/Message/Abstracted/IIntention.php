@@ -222,4 +222,8 @@ class IIntention extends AbsMessage implements Intention
         return $entities + $this->_data['publicEntities'] ?? [];
     }
 
+    public function getText(): string
+    {
+        return $this->toPrettyJson();
+    }
 }

@@ -42,12 +42,14 @@ class SGConfig extends GhostConfig
             'procProviders' => [
                 Framework\Providers\ExpReporterByConsoleProvider::class,
                 Framework\Providers\LoggerByMonologProvider::class,
+                Framework\Providers\SpyAgencyServiceProvider::class,
                 GhostProviders\MindsetServiceProvider::class,
             ],
             'reqProviders' => [
                 Framework\Providers\CacheByArrProvider::class,
                 Framework\Providers\RuntimeDriverDemoProvider::class,
                 GhostProviders\GhostReqServiceProvider::class,
+                StdioReqServiceProvider::class,
             ],
             'components' => [
                 Components\Predefined\PredefinedComponent::class,
@@ -68,9 +70,15 @@ class SGConfig extends GhostConfig
 
             ],
             'userCommands' => [
-                'hello' => Commands\HelloCmd::class,
-                'help' => GhostHelpCmd::class,
-
+                GhostHelpCmd::class,
+                Commands\User\HelloCmd::class,
+                Commands\User\QuitCmd::class,
+                Commands\User\WhoCmd::class,
+            ],
+            'superCommands' => [
+                GhostHelpCmd::class,
+                Commands\Super\SpyCmd::class,
+                Commands\Super\ScopeCmd::class,
             ],
             'comprehensionPipes' => [
 

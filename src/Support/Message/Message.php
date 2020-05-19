@@ -38,4 +38,8 @@ interface Message extends
     BabelSerializable       // 可以通过 Babel 的约定进行格式化传输
 {
     public function isEmpty() : bool;
+
+    public function getText() : string;
+
+    public function getNormalizeText() : string;
 }

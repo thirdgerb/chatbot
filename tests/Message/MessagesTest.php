@@ -30,6 +30,14 @@ class MessagesTest extends MessageTestCase
 
         // intent
         Message\Host\IIntentMsg::class,
+        Message\Host\SystemInt\CommandDescInt::class,
+        Message\Host\SystemInt\CommandErrorInt::class,
+        Message\Host\SystemInt\CommandListInt::class,
+        Message\Host\SystemInt\CommandMissInt::class,
+        Message\Host\SystemInt\RequestFailInt::class,
+        Message\Host\SystemInt\SessionBusyInt::class,
+        Message\Host\SystemInt\SessionQuitInt::class,
+
 
 
         // intercom

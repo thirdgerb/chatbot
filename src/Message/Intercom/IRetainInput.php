@@ -84,4 +84,9 @@ class IRetainInput extends IGhostInput implements YieldInput
     }
 
 
+    public function getText(): string
+    {
+        return $this->toPrettyJson();
+    }
+
 }

@@ -129,13 +129,13 @@ abstract class ARequestCmd implements RequestCmd
         return static::DESCRIPTION;
     }
 
-    public function getCommandName(): string
+    public static function getCommandName(): string
     {
-        $definition = $this->getCommandDef();
+        $definition = static::getCommandDef();
         return $definition->getCommandName();
     }
 
-    public function getCommandDef(): CommandDef
+    public static function getCommandDef(): CommandDef
     {
         $name = static::class;
         if (isset(self::$definitions[$name])) {

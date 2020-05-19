@@ -58,7 +58,7 @@ class IEventMsg extends AbsMessage implements EventMsg
         return HostMsg::INFO;
     }
 
-    public function getNormalizedText(): string
+    public function getText(): string
     {
         return StringUtils::normalizeString($this->eventName);
     }

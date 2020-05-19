@@ -37,6 +37,12 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
 
     private static $docComments = [];
 
+    public function getNormalizeText(): string
+    {
+        return StringUtils::normalizeString($this->getText());
+    }
+
+
     public function toTransferArr(): array
     {
         $data = $this->_data;

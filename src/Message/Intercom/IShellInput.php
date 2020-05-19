@@ -212,5 +212,10 @@ class IShellInput extends AbsMessage implements ShellInput, HasIdGenerator
         );
     }
 
+    public function getText(): string
+    {
+        return $this->toPrettyJson();
+    }
+
 
 }

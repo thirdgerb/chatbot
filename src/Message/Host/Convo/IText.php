@@ -77,11 +77,6 @@ class IText extends AbsMessage implements VerbalMsg
         return empty($this->_data['text']);
     }
 
-    public function getNormalizedText(): string
-    {
-        return StringUtils::normalizeString($this->text);
-    }
-
     public static function relations(): array
     {
         return [];

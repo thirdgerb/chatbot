@@ -61,7 +61,7 @@ class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
     }
 
 
-    public function getNormalizedText(): string
+    public function getText(): string
     {
         return '';
     }

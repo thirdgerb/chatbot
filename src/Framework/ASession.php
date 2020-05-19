@@ -88,6 +88,11 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     protected $protocalMap;
 
     /**
+     * @var bool
+     */
+    protected $quit = false;
+
+    /**
      * ASession constructor.
      * @param ReqContainer $container
      * @param string $sessionId
@@ -110,6 +115,8 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     abstract protected function flushInstances() : void;
 
     abstract protected function saveSession() : void;
+
+    abstract protected function quitSession() : void;
 
 
     public function isDebugging(): bool
@@ -223,6 +230,17 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         return $this->stateless;
     }
 
+    public function quit(): void
+    {
+        $this->quit = true;
+        $this->quitSession();
+    }
+
+    public function isQuit(): bool
+    {
+        return $this->quit;
+    }
+
 
     /*------ getter ------*/
 
@@ -260,7 +278,7 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
     public function finish(): void
     {
-        if (!$this->isStateless()) {
+        if (!$this->isQuit() && !$this->isStateless()) {
             $this->saveSession();
         }
 
@@ -271,6 +289,7 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         $this->finished = true;
 
         // container
+        $this->container->destroy();
         $this->container = null;
     }
 
@@ -283,6 +302,10 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
     public function __destruct()
     {
+        $this->app = null;
+        $this->container = null;
+        $this->singletons = [];
+        $this->protocalMap = null;
         static::removeRunningTrace($this->traceId);
     }
 }

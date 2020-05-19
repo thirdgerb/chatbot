@@ -75,5 +75,10 @@ class IYieldInput extends IGhostInput implements YieldInput
         return $message->toContext($cloner);
     }
 
+    public function getText(): string
+    {
+        return $this->toPrettyJson();
+    }
+
 
 }

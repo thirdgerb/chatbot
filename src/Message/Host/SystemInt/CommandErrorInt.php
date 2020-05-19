@@ -14,6 +14,7 @@ namespace Commune\Message\Host\SystemInt;
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\HostMsg\IntentMsg;
+use Commune\Support\Struct\Struct;
 
 
 /**
@@ -40,7 +41,15 @@ class CommandErrorInt extends IIntentMsg
         );
     }
 
-    public function getNormalizedText(): string
+    public static function create(array $data = []): Struct
+    {
+        return new static(
+            $data['command'] ?? '',
+            $data['error'] ?? ''
+        );
+    }
+
+    public function getText(): string
     {
         return $this->error;
     }

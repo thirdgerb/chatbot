@@ -61,7 +61,7 @@ class IApiMsg extends AbsMessage implements ApiMsg
         return HostMsg::DEBUG;
     }
 
-    public function getNormalizedText(): string
+    public function getText(): string
     {
         return $this->toJson(ArrayAndJsonAble::PRETTY_JSON);
     }

@@ -13,6 +13,7 @@ namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
+use Commune\Support\Struct\Struct;
 
 
 /**
@@ -27,6 +28,11 @@ class SessionQuitInt extends IIntentMsg
             [],
             HostMsg::DEBUG
         );
+    }
+
+    public static function create(array $data = []): Struct
+    {
+        return new static();
     }
 
 }

@@ -33,12 +33,17 @@ interface RequestCmd extends LoggerInterface
 
     public function sendError(array $errorBag) : void;
 
+    /**
+     * 继续往后走. 默认会中断.
+     */
+    public function goNext() : void;
+
     public function output(HostMsg $message) : void;
 
     public function getDescription() : string;
 
-    public function getCommandName() : string;
+    public static function getCommandName() : string;
 
-    public function getCommandDef() : CommandDef;
+    public static function getCommandDef() : CommandDef;
 
 }

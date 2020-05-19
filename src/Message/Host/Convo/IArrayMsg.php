@@ -51,7 +51,7 @@ class IArrayMsg extends AbsMessage implements ArrayMsg
         return HostMsg::DEBUG;
     }
 
-    public function getNormalizedText(): string
+    public function getText(): string
     {
         return json_encode($this->array, ArrayAndJsonAble::PRETTY_JSON);
     }

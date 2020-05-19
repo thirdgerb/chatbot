@@ -13,6 +13,7 @@ namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
+use Commune\Support\Struct\Struct;
 
 
 /**
@@ -45,7 +46,17 @@ class CommandDescInt extends IIntentMsg
         );
     }
 
-    public function getNormalizedText(): string
+    public static function create(array $data = []): Struct
+    {
+        return new static(
+            $data['command'] ?? '',
+            $data['desc'] ?? '',
+            $data['arguments'] ?? '',
+            $data['options'] ?? ''
+        );
+    }
+
+    public function getText(): string
     {
         $command = $this->command;
         $desc = $this->desc;

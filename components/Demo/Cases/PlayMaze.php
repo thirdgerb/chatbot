@@ -394,7 +394,7 @@ class PlayMaze extends ACodeContext implements
                     ->todo(function(HostMsg $message, Dialog $dialog){
                         return $this->parseTowardAndGo(
                             $dialog,
-                            $message->getNormalizedText()
+                            $message->getText()
                         );
                     })
                         ->isInstanceOf(VerbalMsg::class)

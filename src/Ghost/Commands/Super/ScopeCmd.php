@@ -9,33 +9,26 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Commands;
+namespace Commune\Ghost\Commands\Super;
 
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
-use Commune\Ghost\Cmd\GhostCmd;
-
+use Commune\Ghost\Cmd\AGhostCmd;
+use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class HelloCmd extends GhostCmd
+class ScopeCmd extends AGhostCmd
 {
-    /**
-     * 命令的规则定义. 使用了 Laravel 的命令 parser
-     *
-     * 具体的定义方法 @see https://laravel.com/docs/6.x/artisan#defining-input-expectations
-     */
-    const SIGNATURE = 'hello';
+    const SIGNATURE = 'scope';
 
-    /**
-     * 命令的简介, 用于介绍命令的功能.
-     */
-    const DESCRIPTION = '测试命令';
+    const DESCRIPTION = '查看用户自己的数据';
 
     protected function handle(CommandMsg $command, RequestCmdPipe $pipe): void
     {
-        $this->info('hello world!');
+        $json = $this->cloner->scope->toJson(ArrayAndJsonAble::PRETTY_JSON);
+        $this->info($json);
     }
 
 

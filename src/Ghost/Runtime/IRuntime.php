@@ -64,6 +64,9 @@ class IRuntime implements Runtime, Spied
      */
     protected $sessionMemories;
 
+    /**
+     * @var array
+     */
     protected $longTermMemories = [];
 
     /**

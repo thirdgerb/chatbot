@@ -11,7 +11,6 @@
 
 namespace Commune\Ghost\Cmd;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Framework\Command\AbsHelpCmd;
 use Commune\Framework\Command\ARequestCmd;
 
@@ -19,7 +18,7 @@ use Commune\Framework\Command\ARequestCmd;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class GhostCmd extends ARequestCmd
+abstract class AGhostCmd extends ARequestCmd
 {
     use TGhostCmd;
 

@@ -47,7 +47,7 @@ class IAudioMsg extends AbsMessage implements AudioMsg
         return new static($data['resource'] ?? '');
     }
 
-    public function getNormalizedText(): string
+    public function getText(): string
     {
         return $this->resource;
     }

@@ -36,7 +36,7 @@ class IAuthority implements Authority
     }
 
 
-    public function allow(string $policy, array $payload): bool
+    public function allow(string $policy, array $payload = []): bool
     {
         if (!is_a($policy, Policy::class, TRUE)) {
             throw new InvalidClassException(

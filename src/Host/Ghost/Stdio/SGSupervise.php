@@ -9,15 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\ClonePipes;
+namespace Commune\Host\Ghost\Stdio;
 
+use Commune\Blueprint\Ghost\Auth\Supervise;
 
 /**
- * 管理员命令的管道.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ClonerSuperviseCmdPipe
+class SGSupervise implements Supervise
 {
+    public function invoke(array $payload = []): bool
+    {
+        return true;
+    }
+
 
 }

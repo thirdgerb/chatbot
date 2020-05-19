@@ -107,6 +107,7 @@ abstract class AbsApp implements App
         $this->instance(ConsoleLogger::class, $this->console);
         $this->instance(LogInfo::class, $this->logInfo);
         $this->instance(ServiceRegistrar::class, $this->registrar);
+        $this->instance(App::DEBUG_BINDING, $debug);
 
         // 默认绑定关系.
         $this->basicBindings();

@@ -77,7 +77,6 @@ class SGRequest implements GhostRequest
      * SGRequest constructor.
      * @param string $line
      * @param Stdio $stdio
-     * @param ConsoleLogger $console
      * @param string $shellName
      * @param string $shellId
      * @param string $sessionI
@@ -86,7 +85,6 @@ class SGRequest implements GhostRequest
     public function __construct(
         string $line,
         Stdio $stdio,
-        ConsoleLogger $console,
         string $shellName = 'stdioTestName',
         string $shellId = 'stdioTestId',
         string $sessionI = 'stdioSessionId',
@@ -95,7 +93,7 @@ class SGRequest implements GhostRequest
     {
         $this->line = $line;
         $this->stdio = $stdio;
-        $this->console = $console;
+        $this->console = new SGConsoleLogger($stdio, false);
         $this->shellName = $shellName;
         $this->shellId = $shellId;
         $this->sessionId = $senderId;
@@ -114,7 +112,11 @@ class SGRequest implements GhostRequest
                 $this->sessionId,
                 $this->shellName,
                 $this->shellId,
-                $this->senderId
+                $this->senderId,
+                null,
+                [
+                    'senderName' => 'testSenderName',
+                ]
             );
     }
 

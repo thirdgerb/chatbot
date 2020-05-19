@@ -52,6 +52,7 @@ use Commune\Components;
  *
  * @property-read string[] $apiHandlers         api消息的处理器.
  * @property-read string[] $userCommands
+ * @property-read string[] $superCommands
  * @property-read string[] $comprehensionPipes  对输入信息进行抽象理解的管道.
  *
  * ## Session 配置
@@ -96,6 +97,7 @@ class GhostConfig extends AbsOption
             'procProviders' => [
                 Framework\Providers\ExpReporterByConsoleProvider::class,
                 Framework\Providers\LoggerByMonologProvider::class,
+                Framework\Providers\SpyAgencyServiceProvider::class,
                 GhostProviders\MindsetServiceProvider::class,
             ],
             'reqProviders' => [

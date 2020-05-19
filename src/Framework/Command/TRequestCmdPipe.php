@@ -90,9 +90,6 @@ trait TRequestCmdPipe
         );
     }
 
-
-
-
     protected function init() : void
     {
         $name = static::class;
@@ -104,6 +101,13 @@ trait TRequestCmdPipe
         }
     }
 
+    protected function getCommandsMap() : array
+    {
+        $this->init();
+        $name = static::class;
+        return self::$commandNames[$name] ?? [];
+    }
+
     public function matchCommand(
         AppRequest $request,
         string $cmdStr,
@@ -111,11 +115,10 @@ trait TRequestCmdPipe
     ) : AppResponse
     {
         // 匹配原理很简单, 就看命令是否命中了.
-        $commands = $this->getCommands();
-
-        foreach ($commands as $cmdName => $clazz) {
+        foreach (self::getCommandsMap() as $cmdName => $clazz) {
             if (CommandUtils::matchCommandName($cmdStr, $cmdName)) {
-                return $this->runCommand($request, $cmdName, $cmdStr);
+                return $this->runCommand($request, $cmdName, $cmdStr)
+                    ?? $next($request);
             }
         }
 
@@ -146,7 +149,7 @@ trait TRequestCmdPipe
         AppRequest $request,
         string $commandName,
         string $cmdStr
-    ) : AppResponse
+    ) : ? AppResponse
     {
         if (empty($commandName)) {
             throw new \InvalidArgumentException(

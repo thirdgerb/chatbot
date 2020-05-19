@@ -279,4 +279,10 @@ class IGhostInput extends AbsMessage implements GhostInput, HasIdGenerator
         return $this;
     }
 
+    public function getText(): string
+    {
+        return $this->toPrettyJson();
+    }
+
+
 }

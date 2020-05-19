@@ -35,7 +35,7 @@ $stdio->on('data', function($line) use ($app, $stdio) {
     $line = rtrim($line, "\r\n");
     $a = microtime(true);
 
-    $request = new SGRequest($line, $stdio, $app->getConsoleLogger());
+    $request = new SGRequest($line, $stdio);
     $response = $app->handle($request);
 
     $response->send();

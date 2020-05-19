@@ -13,6 +13,7 @@ namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
+use Commune\Support\Struct\Struct;
 
 
 /**
@@ -33,8 +34,13 @@ class CommandListInt extends IIntentMsg
         );
     }
 
-    public function getNormalizedText(): string
+    public static function create(array $data = []): Struct
     {
-        return $this->cmdList;
+        return new static($data['cmdList'] ?? '');
+    }
+
+    public function getText(): string
+    {
+        return "当前可用命令:\n". $this->cmdList;
     }
 }

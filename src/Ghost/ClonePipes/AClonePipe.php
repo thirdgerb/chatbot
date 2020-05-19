@@ -55,6 +55,11 @@ abstract class AClonePipe implements RequestPipe
 
         $a = microtime(true);
 
+        // 如果已经 quit, 就不往后走了.
+        if ($this->cloner->isQuit()) {
+            return $request->response($this->cloner);
+        }
+
         $response = $this->doHandle($request, $next);
 
         $b = microtime(true);

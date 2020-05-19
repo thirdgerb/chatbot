@@ -215,4 +215,9 @@ class IGhostOutput extends AbsMessage implements GhostOutput
         return $this;
     }
 
+
+    public function getText(): string
+    {
+        return $this->toPrettyJson();
+    }
 }

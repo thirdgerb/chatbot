@@ -48,7 +48,7 @@ class IImageMsg extends AbsMessage implements ImageMsg
         return new static($data['resource'] ?? '');
     }
 
-    public function getNormalizedText(): string
+    public function getText(): string
     {
         return '';
     }

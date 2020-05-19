@@ -84,7 +84,7 @@ class IContextMsg extends AbsMessage implements ContextMsg
     }
 
 
-    public function getNormalizedText(): string
+    public function getText(): string
     {
         return Ucl::encodeUcl($this->contextName, '', $this->query);
     }

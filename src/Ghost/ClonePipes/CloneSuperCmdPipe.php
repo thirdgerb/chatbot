@@ -11,32 +11,35 @@
 
 namespace Commune\Ghost\ClonePipes;
 
-use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Blueprint\Ghost\Auth\Supervise;
 use Commune\Ghost\Cmd\AGhostCmdPipe;
-use Psr\Log\LoggerInterface;
-use Commune\Container\ContainerContract;
-use Commune\Blueprint\Framework\Request\AppRequest;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
-use Commune\Framework\Command\TRequestCmdPipe;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
-use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 
 /**
- * 用户命令管道.
+ * 管理员命令的管道.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class CloneUserCmdPipe extends AGhostCmdPipe
+class CloneSuperCmdPipe extends AGhostCmdPipe
 {
     public function getCommandMark(): string
     {
-        return '#';
+        return '/';
     }
 
     public function getCommands(): array
     {
-        return $this->cloner->config->userCommands;
+        return $this->cloner->config->superCommands;
+    }
+
+    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
+    {
+        if ($this->cloner->auth->allow(Supervise::class)) {
+            return parent::doHandle($request, $next);
+        }
+
+        return $next($request);
     }
 
 

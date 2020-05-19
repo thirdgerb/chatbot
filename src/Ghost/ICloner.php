@@ -11,6 +11,8 @@
 
 namespace Commune\Ghost;
 
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
+use Commune\Blueprint\Exceptions\Runtime\QuitSessionException;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost;
@@ -19,6 +21,7 @@ use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Cache;
 use Commune\Framework\ASession;
+use Commune\Message\Host\SystemInt\SessionQuitInt;
 use Psr\Log\LoggerInterface;
 use Commune\Ghost\Dialog\IStartProcess;
 use Commune\Protocals\Intercom\GhostInput;
@@ -33,7 +36,6 @@ use Commune\Blueprint\Framework\Session\SessionStorage;
  */
 class ICloner extends ASession implements Cloner
 {
-
     const SINGLETONS =  [
         'scope' => Cloner\ClonerScope::class,
         'config' => GhostConfig::class,
@@ -161,6 +163,12 @@ class ICloner extends ASession implements Cloner
     {
         $key = $this->getSessionCacheKey();
         $this->cache->set($key, $sessionId, $this->getSessionExpire());
+    }
+
+    protected function deleteSessionIdCache() : void
+    {
+        $key = $this->getSessionCacheKey();
+        $this->cache->forget($key);
     }
 
     protected function getSessionCacheKey() : string
@@ -394,6 +402,12 @@ class ICloner extends ASession implements Cloner
         $this->contexts = [];
         $this->outputs = [];
         $this->asyncInputs = [];
+    }
+
+    protected function quitSession(): void
+    {
+        $this->output($this->ghostInput->output(new SessionQuitInt()));
+        $this->deleteSessionIdCache();
     }
 
     protected function saveSession(): void

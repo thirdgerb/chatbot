@@ -14,6 +14,7 @@ namespace Commune\Host\Ghost\Stdio;
 use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Contracts\Log\ConsoleLogger;
+use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Protocals\Intercom\GhostMsg;
 
 /**
@@ -65,13 +66,22 @@ class SGResponse implements GhostResponse
 
     public function send(): void
     {
+        $quit = false;
         foreach ($this->outputs as $output) {
             $hostMsg = $output->getMessage();
             $level = $hostMsg->getLevel();
-            $this->console->log($level, $hostMsg->getNormalizedText());
+            $this->console->log($level, $hostMsg->getText());
+
+            if ($hostMsg->getText() === IntentMsg::SYSTEM_SESSION_QUIT ) {
+                $quit = true;
+            }
         }
 
-        if ($this->errcode > 0) {
+        if ($quit) {
+            $this->stdio->end('quit');
+        }
+
+        if ($this->errcode > 300) {
             $this->console->emergency($this->errmsg);
             $this->stdio->end($this->errcode);
         }

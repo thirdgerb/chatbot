@@ -14,6 +14,7 @@ namespace Commune\Ghost\ClonePipes;
 use Closure;
 use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
+use Commune\Blueprint\Exceptions\Runtime\QuitSessionException;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Message\Host\SystemInt\RequestFailInt;
@@ -40,11 +41,9 @@ class CloneMessengerPipe extends AClonePipe
             return $next($request);
 
         } catch (BrokenSessionException $e) {
-
-            // 会话立刻过期.
-            $this->cloner->setSessionExpire(0);
             // 退出会话.
-            return $request->output(new SessionQuitInt());
+            $this->cloner->quit();
+            return $request->response($this->cloner);
 
         } catch (BrokenRequestException $e) {
 

@@ -17,7 +17,6 @@ use Commune\Protocals\Abstracted;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Illuminate\Support\Arr;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -311,5 +310,9 @@ class IComprehension extends AbsMessage implements
         return parent::__get($name);
     }
 
+    public function getText(): string
+    {
+        return $this->toPrettyJson();
+    }
 
 }

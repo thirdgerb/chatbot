@@ -54,10 +54,4 @@ interface HostMsg extends Message, Protocal
      * @return string
      */
     public function getLevel() : string;
-
-    /**
-     * 所有消息都需要有字符串的表达形式.
-     * @return string
-     */
-    public function getNormalizedText() : string;
 }

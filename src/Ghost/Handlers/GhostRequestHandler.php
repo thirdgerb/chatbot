@@ -36,7 +36,8 @@ class GhostRequestHandler
         ClonePipes\CloneLockerPipe::class,
         // command
         ClonePipes\CloneUserCmdPipe::class,
-
+        // super
+        ClonePipes\CloneSuperCmdPipe::class,
     ];
 
     /**
@@ -45,12 +46,14 @@ class GhostRequestHandler
     protected $cloner;
 
     /**
-     * RequestHandler constructor.
+     * GhostRequestHandler constructor.
      * @param Cloner $cloner
+     * @param array|null $middleware
      */
-    public function __construct(Cloner $cloner)
+    public function __construct(Cloner $cloner, array $middleware = null)
     {
         $this->cloner = $cloner;
+        $this->middleware = $middleware ?? $this->middleware;
     }
 
 

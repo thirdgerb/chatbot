@@ -27,7 +27,7 @@ use Commune\Blueprint\Framework\ReqContainer;
  * @mixin ReqContainer
  * @mixin Spied
  */
-class IReqContainer implements ReqContainer
+class IReqContainer implements ReqContainer, Spied
 {
     use RecursiveContainer, SpyTrait;
 

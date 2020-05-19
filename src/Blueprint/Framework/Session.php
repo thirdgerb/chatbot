@@ -11,9 +11,9 @@
 
 namespace Commune\Blueprint\Framework;
 
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 use Commune\Blueprint\Framework\Session\SessionEvent;
 use Commune\Blueprint\Framework\Session\SessionStorage;
-use Commune\Protocals\HostMsg;
 use Commune\Support\Protocal\Protocal;
 use Psr\Log\LoggerInterface;
 
@@ -174,6 +174,10 @@ interface Session
     public function getLogger() : LoggerInterface;
 
     /*------ finish ------*/
+
+    public function quit() : void;
+
+    public function isQuit() : bool;
 
     /**
      * 结束 Session, 处理垃圾回收

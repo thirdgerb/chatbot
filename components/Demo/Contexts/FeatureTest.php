@@ -112,7 +112,7 @@ EOF
                         ->todo(function(Dialog $dialog, HostMsg $message) {
                             $dialog->send()->info(
                                 'hello.world',
-                                ['input' => $message->getNormalizedText()]
+                                ['input' => $message->getText()]
                             );
 
                             return $dialog->nav()->reactivate();
@@ -312,7 +312,7 @@ EOF
                         ->send()
                         ->info(
                             '您输入的是:'
-                            . $message->getNormalizedText()
+                            . $message->getText()
                         );
                     return $dialog->nav()->next();
                 }

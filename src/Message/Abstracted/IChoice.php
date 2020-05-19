@@ -65,5 +65,9 @@ class IChoice extends AbsMessage implements Choice
         $this->answer = $answer;
     }
 
+    public function getText(): string
+    {
+        return $this->toPrettyJson();
+    }
 
 }
