@@ -12,6 +12,7 @@
 namespace Commune\Ghost;
 
 use Commune\Blueprint\Configs\GhostConfig;
+use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
@@ -35,6 +36,7 @@ class ICloner extends ASession implements Cloner
         'scope' => Cloner\ClonerScope::class,
         'config' => GhostConfig::class,
         'convo' => Ghost\Tools\Deliver::class,
+        'storage' => Cloner\ClonerStorage::class,
         'cache' => Cache::class,
         'auth' => Ghost\Auth\Authority::class,
         'mind' => Ghost\Mindset::class,
@@ -110,6 +112,12 @@ class ICloner extends ASession implements Cloner
     {
         return $this->clonerId;
     }
+
+    public function getApp(): App
+    {
+        return $this->ghost;
+    }
+
 
     /*-------- conversation id ---------*/
 

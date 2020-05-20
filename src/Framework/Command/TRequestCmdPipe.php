@@ -117,8 +117,11 @@ trait TRequestCmdPipe
         // 匹配原理很简单, 就看命令是否命中了.
         foreach (self::getCommandsMap() as $cmdName => $clazz) {
             if (CommandUtils::matchCommandName($cmdStr, $cmdName)) {
-                return $this->runCommand($request, $cmdName, $cmdStr)
+
+                $res = $this->runCommand($request, $cmdName, $cmdStr)
                     ?? $next($request);
+
+                return $res;
             }
         }
 

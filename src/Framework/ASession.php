@@ -12,7 +12,6 @@
 namespace Commune\Framework;
 
 use Commune\Blueprint\Configs\Nest\ProtocalOption;
-use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
 use Commune\Framework\Exceptions\SerializeForbiddenException;
@@ -78,11 +77,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     protected $debug;
 
     /**
-     * @var App
-     */
-    protected $app;
-
-    /**
      * @var ProtocalOption[][]
      */
     protected $protocalMap;
@@ -132,11 +126,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         return $this->container;
     }
 
-    public function getApp(): App
-    {
-        return $this->app
-            ?? $this->app = $this->container->make(App::class);
-    }
 
     /*------ logic ------*/
 
@@ -190,10 +179,9 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         return $this->traceId;
     }
 
-
     public function getAppId(): string
     {
-        return $this->app->getId();
+        return $this->getApp()->getId();
     }
 
     public function isFinished(): bool
@@ -287,7 +275,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
             $this->saveSession();
         }
 
-        $this->app = null;
         $this->listened = [];
         $this->singletons = [];
         $this->flushInstances();
@@ -307,7 +294,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
     public function __destruct()
     {
-        $this->app = null;
         $this->container = null;
         $this->singletons = [];
         $this->protocalMap = null;

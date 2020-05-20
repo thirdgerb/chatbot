@@ -76,7 +76,7 @@ trait TGhostCmd
             return null;
 
         } else {
-            return $request->response($this->cloner);
+            return $request->success($this->cloner);
         }
     }
 

@@ -62,7 +62,7 @@ class IClonerScope implements ClonerScope
         return [
             'clone' => $this->clonerId,
             'guest' => $this->guestId,
-            'shlId' => $this->convoId,
+            'convo' => $this->convoId,
             'scene' => $this->sceneId,
             'time' => $this->time,
         ];

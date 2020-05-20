@@ -92,7 +92,6 @@ interface Session
      */
     public function getContainer() : ReqContainer;
 
-
     /**
      * 获取 App 自身.
      * @return App

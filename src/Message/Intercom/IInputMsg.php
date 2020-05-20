@@ -62,7 +62,7 @@ class IInputMsg extends AIntercomMsg implements InputMsg
             'createdAt' => time(),
             'sceneId' => $sceneId,
             'env' => $env,
-            'comprehension' => $comprehension
+            'comprehension' => $comprehension ?? new IComprehension()
 
         ];
         parent::__construct($data);

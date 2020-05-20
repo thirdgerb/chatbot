@@ -54,12 +54,12 @@ class SGRequest implements GhostRequest
     /**
      * @var string
      */
-    protected $shellId;
+    protected $guestId;
 
     /**
      * @var string
      */
-    protected $senderId;
+    protected $guestName;
 
     /**
      * @var string
@@ -73,31 +73,22 @@ class SGRequest implements GhostRequest
      */
     protected $input;
 
-    /**
-     * SGRequest constructor.
-     * @param string $line
-     * @param Stdio $stdio
-     * @param string $shellName
-     * @param string $shellId
-     * @param string $sessionI
-     * @param string $senderId
-     */
     public function __construct(
         string $line,
         Stdio $stdio,
         string $shellName = 'stdioTestName',
-        string $shellId = 'stdioTestId',
-        string $sessionI = 'stdioSessionId',
-        string $senderId = 'stdioTestSender'
+        string $sessionId = 'stdioSessionId',
+        string $guestId = 'stdioTestGuestId',
+        string $guestName = 'stdioTestGuestName'
     )
     {
         $this->line = $line;
         $this->stdio = $stdio;
         $this->console = new SGConsoleLogger($stdio, false);
         $this->shellName = $shellName;
-        $this->shellId = $shellId;
-        $this->sessionId = $senderId;
-        $this->senderId = $senderId;
+        $this->sessionId = $sessionId;
+        $this->guestId = $guestId;
+        $this->guestName = $guestName;
     }
 
     /**
@@ -107,16 +98,13 @@ class SGRequest implements GhostRequest
     {
         return $this->input
             ?? $this->input = new IInputMsg(
-                new IText($this->line),
-                $this->shellId,
-                $this->sessionId,
                 $this->shellName,
-                $this->shellId,
-                $this->senderId,
+                new IText($this->line),
+                $this->guestId,
                 null,
-                [
-                    'senderName' => 'testSenderName',
-                ]
+                null,
+                $this->sessionId,
+                $this->guestName
             );
     }
 
