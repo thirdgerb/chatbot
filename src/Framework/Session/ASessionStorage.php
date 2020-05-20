@@ -11,12 +11,12 @@
 
 namespace Commune\Framework\Session;
 
-use Commune\Blueprint\Exceptions\IO\SaveDataFailException;
-use Commune\Blueprint\Framework\Session;
-use Commune\Blueprint\Framework\Session\SessionStorage;
 use Commune\Contracts\Cache;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyTrait;
+use Commune\Blueprint\Framework\Session;
+use Commune\Blueprint\Framework\Session\SessionStorage;
+use Commune\Blueprint\Exceptions\IO\SaveDataFailException;
 
 
 /**
@@ -25,8 +25,6 @@ use Commune\Support\RunningSpy\SpyTrait;
 abstract class ASessionStorage implements SessionStorage, Spied
 {
     use SpyTrait;
-
-    const FIELD_LAST_ONCE_NAME = 'lastTimeOnceData';
 
     /**
      * @var string
@@ -88,7 +86,6 @@ abstract class ASessionStorage implements SessionStorage, Spied
 
         $data = unserialize($cached);
         if (is_array($data)) {
-            $data[self::FIELD_LAST_ONCE_NAME] = $data[self::FIELD_ONCE_NAME] ?? null;
             $this->data = $data;
         }
     }
@@ -113,19 +110,6 @@ abstract class ASessionStorage implements SessionStorage, Spied
         unset($this->data[$offset]);
     }
 
-    public function once(array $data): void
-    {
-        $this->data[self::FIELD_ONCE_NAME] = $data;
-    }
-
-    public function getOnce(): array
-    {
-        return $this->data[self::FIELD_ONCE_NAME]
-            ?? $this->data[self::FIELD_LAST_ONCE_NAME]
-            ?? [];
-    }
-
-
     public function save(): void
     {
         if ($this->session->isStateless()) {
@@ -138,7 +122,6 @@ abstract class ASessionStorage implements SessionStorage, Spied
 
         // 去掉上次请求的 once 数据.
         $data = $this->data;
-        unset($data[self::FIELD_LAST_ONCE_NAME]);
 
         $str = serialize($data);
         $key = $this->getSessionKey(

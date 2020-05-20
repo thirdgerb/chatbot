@@ -40,6 +40,7 @@ class CloneMessengerPipe extends AClonePipe
         try {
 
             $response = $next($request);
+            $this->resetFailureCount();
             return $response;
 
         } catch (BrokenSessionException $e) {
@@ -59,16 +60,13 @@ class CloneMessengerPipe extends AClonePipe
     {
 
         $storage = $this->cloner->storage;
-        $once = $storage->getOnce();
-        $times = $once[ClonerStorage::REQUEST_FAIL_TIME_KEY] ?? 0;
+        $times = $storage[ClonerStorage::REQUEST_FAIL_TIME_KEY] ?? 0;
         $times ++;
         if ($times >= $this->cloner->config->maxRequestFailTimes) {
             return $this->quitSession($request, $e);
         }
 
-        $once[ClonerStorage::REQUEST_FAIL_TIME_KEY] = $times;
-        $storage->once($once);
-
+        $storage[ClonerStorage::REQUEST_FAIL_TIME_KEY] = $times;
         $this->cloner->output(
             $this->cloner->input->output(new RequestFailInt($e->getMessage()))
         );
@@ -89,8 +87,14 @@ class CloneMessengerPipe extends AClonePipe
             $this->cloner->input->output($message)
         );
         $this->cloner->quit();
+        $this->resetFailureCount();
 
         return $request->success($this->cloner);
     }
 
+    protected function resetFailureCount() : void
+    {
+        $storage = $this->cloner->storage;
+        $storage->offsetUnset(ClonerStorage::REQUEST_FAIL_TIME_KEY);
+    }
 }
