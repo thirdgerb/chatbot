@@ -40,6 +40,11 @@ interface DefParamsCollection
     public function getAllParams() : array;
 
     /**
+     * @return int
+     */
+    public function countParams() : int;
+
+    /**
      * @param array $values
      * @return array
      */

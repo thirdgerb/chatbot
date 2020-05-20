@@ -62,7 +62,12 @@ class IDefParamCollection extends Collection implements DefParamsCollection
     public function parseValues(array $values): array
     {
         $data = [];
-        foreach ($this->getAllParams() as $name => $param) {
+        $params = $this->getAllParams();
+        if (empty($params)) {
+            return [];
+        }
+
+        foreach ($params as $name => $param) {
             $value = null;
             if (isset($values[$name])) {
                 $parser = $param->getValParser();
@@ -82,6 +87,12 @@ class IDefParamCollection extends Collection implements DefParamsCollection
             return $param->getDefault();
         })->all();
     }
+
+    public function countParams(): int
+    {
+        return $this->count();
+    }
+
 
     public function __destruct()
     {

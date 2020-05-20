@@ -19,7 +19,6 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Exceptions\InvalidQueryException;
-use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
 
 /**
  * Uniform Context Locator
@@ -401,11 +400,26 @@ class Ucl implements UclInterface
     public function findContext(Cloner $cloner): Context
     {
         if (!$this->instanced) {
-            throw new NotInstanceException($this->toJson());
+            $ucl = $this->toInstanced($cloner);
+            return $ucl->findContext($cloner);
         }
 
         $def = $this->findContextDef($cloner);
-        return $def->wrapContext($cloner, $this);
+        $context = $def->wrapContext($cloner, $this);
+
+        // 与 entity 合并
+        $manager = $def->getEntityParams();
+        if ($manager->countParams()) {
+            $entities = $cloner->input
+                ->comprehension
+                ->intention
+                ->getIntentEntities($def->getName());
+
+            $entities = $manager->parseValues($entities);
+            $context->merge($entities);
+        }
+
+        return $context;
     }
 
 
@@ -444,7 +458,8 @@ class Ucl implements UclInterface
         return [
             'contextName',
             'stageName',
-            'query'
+            'query',
+            'instanced',
         ];
     }
 
