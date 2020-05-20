@@ -13,8 +13,6 @@ namespace Commune\Ghost;
 
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Exceptions\HostBootingException;
-use Commune\Blueprint\Exceptions\HostLogicException;
-use Commune\Blueprint\Exceptions\HostRuntimeException;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Framework\ServiceRegistrar;
@@ -33,7 +31,7 @@ use Commune\Ghost\Bootstrap;
 use Commune\Framework\AbsApp;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\GhostInput;
+use Commune\Protocals\Intercom\InputMsg;
 
 
 /**
@@ -92,7 +90,7 @@ class IGhost extends AbsApp implements Ghost
         return $this->config;
     }
 
-    public function newCloner(GhostInput $input): Cloner
+    public function newCloner(InputMsg $input): Cloner
     {
         if (!$this->activated) {
             throw new HostBootingException(
@@ -105,7 +103,7 @@ class IGhost extends AbsApp implements Ghost
         $cloner = new ICloner($this, $container, $input);
 
         $container->share(ReqContainer::class, $container);
-        $container->share(GhostInput::class, $input);
+        $container->share(InputMsg::class, $input);
         $container->share(HostMsg::class, $input->getMessage());
         $container->share(Comprehension::class, $input->comprehension);
         $container->share(Cloner::class, $cloner);
@@ -125,8 +123,8 @@ class IGhost extends AbsApp implements Ghost
                 return $response = $request->fail(AppResponse::BAD_REQUEST);
             }
 
-            $ghostInput = $request->getInput();
-            $cloner = $this->newCloner($ghostInput);
+            $input = $request->getInput();
+            $cloner = $this->newCloner($input);
             $cloner->fire(new StartSession($cloner));
 
             // 如果是无状态请求.

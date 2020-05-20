@@ -42,7 +42,6 @@ interface Context extends
      */
     public function getName() : string;
 
-
     /**
      * @return string
      * @throws NotInstanceException
@@ -98,4 +97,5 @@ interface Context extends
      */
     public function toContextMsg() : ContextMsg;
 
+    public function toUcl() : Ucl;
 }

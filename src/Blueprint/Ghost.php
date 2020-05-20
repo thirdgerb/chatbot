@@ -16,7 +16,7 @@ use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
-use Commune\Protocals\Intercom\GhostInput;
+use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * Host 的灵魂. 对话机器人的内核.
@@ -31,7 +31,7 @@ interface Ghost extends App
      */
     public function getConfig() : GhostConfig;
 
-    public function newCloner(GhostInput $input) : Cloner;
+    public function newCloner(InputMsg $input) : Cloner;
 
     public function handle(GhostRequest $request) : GhostResponse;
 }

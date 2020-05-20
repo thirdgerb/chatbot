@@ -23,11 +23,11 @@ use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Blueprint\Ghost\Tools\Navigator;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Tools\DialogIoC;
-use Commune\Blueprint\Ghost\Tools\Typer;
+use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\Traits\TRedirector;
 use Commune\Ghost\Dialog\Traits\TWithdraw;
-use Commune\Ghost\Tools\ITyper;
+use Commune\Ghost\Tools\IDeliver;
 use Commune\Support\DI\Injectable;
 use Commune\Support\DI\TInjectable;
 
@@ -109,9 +109,9 @@ abstract class AbsDialogue implements
 
     /*-------- implements --------*/
 
-    public function send(): Typer
+    public function send(): Deliver
     {
-        return new ITyper($this);
+        return new IDeliver($this);
     }
 
     public function matcher(): Matcher

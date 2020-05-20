@@ -15,7 +15,7 @@ use Commune\Blueprint\Framework\Request\AppRequest;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\GhostInput;
+use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\IntercomMsg;
 
 
@@ -26,7 +26,7 @@ interface GhostRequest extends AppRequest
 {
 
     /**
-     * @return GhostInput
+     * @return InputMsg
      */
     public function getInput() : IntercomMsg;
 
@@ -43,7 +43,7 @@ interface GhostRequest extends AppRequest
      * @param string $errmsg
      * @return GhostResponse
      */
-    public function response(
+    public function success(
         $output,
         int $errcode = AppResponse::SUCCESS,
         string $errmsg = ''

@@ -51,7 +51,7 @@ class IRuntime implements Runtime, Spied
     /**
      * @var string
      */
-    protected $sessionId;
+    protected $convoId;
 
     /*---- cached ----*/
 
@@ -63,7 +63,7 @@ class IRuntime implements Runtime, Spied
     /**
      * @var array|null
      */
-    protected $sessionMemories;
+    protected $convoMemories;
 
     /**
      * @var array
@@ -91,7 +91,7 @@ class IRuntime implements Runtime, Spied
         }
 
         $this->traceId = $cloner->getTraceId();
-        $this->sessionId = $cloner->getSessionId();
+        $this->convoId = $cloner->getConversationId();
 
         static::addRunningTrace($this->traceId, $this->traceId);
     }
@@ -102,19 +102,19 @@ class IRuntime implements Runtime, Spied
     {
         return $longTerm
             ? $this->findLongTermMemory($id, $defaults)
-            : $this->findSessionMemory($id, $defaults);
+            : $this->findConvoMemory($id, $defaults);
     }
 
-    protected function findSessionMemory(string $id, array $defaults) : Memory
+    protected function findConvoMemory(string $id, array $defaults) : Memory
     {
         // 一次性读取所有缓存
-        if (!isset($this->sessionMemories)) {
-            $this->sessionMemories = $this->ioFindSessionMemories();
+        if (!isset($this->convoMemories)) {
+            $this->convoMemories = $this->ioFindSessionMemories();
         }
 
         // 不存在则生成
-        return $this->sessionMemories[$id]
-            ?? $this->sessionMemories[$id] = new IMemory($id, false, $defaults);
+        return $this->convoMemories[$id]
+            ?? $this->convoMemories[$id] = new IMemory($id, false, $defaults);
     }
 
     protected function findLongTermMemory(string $id, array $defaults) : Memory
@@ -163,7 +163,7 @@ class IRuntime implements Runtime, Spied
     public function createProcess(string $contextUcl): Process
     {
         $root = Ucl::createFromUcl($this->cloner, $contextUcl);
-        return new IProcess($this->sessionId, $root, $this->cloner->getTraceId());
+        return new IProcess($this->convoId, $root, $this->cloner->getTraceId());
     }
 
 
@@ -234,7 +234,7 @@ class IRuntime implements Runtime, Spied
 
             return $this->driver->fetchProcess(
                 $this->cloner,
-                $this->cloner->getSessionId()
+                $this->cloner->getConversationId()
             );
 
         } catch (\Exception $e) {
@@ -268,7 +268,7 @@ class IRuntime implements Runtime, Spied
             return true;
         }
 
-        $memories = array_filter($this->sessionMemories, function(Memory $memory){
+        $memories = array_filter($this->convoMemories, function(Memory $memory){
             return $memory->isChanged();
         });
 
@@ -278,8 +278,8 @@ class IRuntime implements Runtime, Spied
 
         try {
             return $this->driver->cacheSessionMemories(
-                $this->cloner->getClonerId(),
-                $this->cloner->getSessionId(),
+                $this->cloner->getId(),
+                $this->cloner->getConversationId(),
                 $memories,
                 $expire
             );
@@ -299,8 +299,8 @@ class IRuntime implements Runtime, Spied
 
             return $this->driver
                 ->fetchSessionMemories(
-                    $this->cloner->getClonerId(),
-                    $this->cloner->getSessionId()
+                    $this->cloner->getId(),
+                    $this->cloner->getConversationId()
                 );
         } catch (\Exception $e) {
             throw new LoadDataFailException('session memories', $e);
@@ -325,7 +325,7 @@ class IRuntime implements Runtime, Spied
         try {
 
             return $this->driver->saveLongTermMemories(
-                $this->cloner->getClonerId(),
+                $this->cloner->getId(),
                 $memories
             );
 
@@ -343,7 +343,7 @@ class IRuntime implements Runtime, Spied
 
         try {
             return $this->driver->findLongTermMemories(
-                $this->cloner->getClonerId(),
+                $this->cloner->getId(),
                 $id
             );
 
@@ -373,7 +373,7 @@ class IRuntime implements Runtime, Spied
         $this->cloner = null;
         $this->process = null;
         $this->longTermMemories = [];
-        $this->sessionMemories = null;
+        $this->convoMemories = null;
 
         static::removeRunningTrace($this->traceId);
     }

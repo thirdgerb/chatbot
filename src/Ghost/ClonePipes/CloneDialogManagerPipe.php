@@ -42,7 +42,7 @@ class CloneDialogManagerPipe extends AClonePipe
                     break;
                 }
             }
-            return $request->response($this->cloner);
+            return $request->success($this->cloner);
 
         } catch (HostRuntimeException $e) {
             throw $e;

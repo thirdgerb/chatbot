@@ -11,15 +11,15 @@
 
 namespace Commune\Blueprint\Ghost;
 
-use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost;
 use Commune\Contracts\Cache;
+use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Auth\Authority;
-use Commune\Protocals\Intercom\GhostInput;
-use Commune\Protocals\Intercom\GhostMsg;
+use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocals\IntercomMsg;
 use Commune\Support\Registry\OptRegistry;
 
 
@@ -44,7 +44,7 @@ use Commune\Support\Registry\OptRegistry;
  * @property-read ReqContainer $container           容器
  *
  * # 请求相关
- * @property-read GhostInput $ghostInput            输入
+ * @property-read InputMsg $input            输入
  * @property-read Cloner\ClonerScene $scene         场景信息
  * @property-read Cloner\ClonerScope $scope         当前分身的维度.
  * @property-read Ghost\Tools\Matcher $matcher      全局的匹配单元
@@ -65,43 +65,39 @@ use Commune\Support\Registry\OptRegistry;
  */
 interface Cloner extends Session
 {
-    /**
-     * @return string
-     */
-    public function getClonerId() : string;
 
+    public function getConversationId() : string;
 
     /*----- 运行对话管理逻辑 -----*/
+//
+//    /**
+//     * 获取上下文相关的 Query 变量.
+//     * @param string $contextName
+//     * @param array|null $query
+//     * @return array
+//     * @throws Ghost\Exceptions\DefNotDefinedException
+//     */
+//    public function getContextualQuery(string $contextName, array $query = null) : array;
+//
+//    /**
+//     * 获取 Context 上下文相关的 entity 值.
+//     * @param string $contextName
+//     * @return array
+//     * @throws Ghost\Exceptions\DefNotDefinedException
+//     */
+//    public function getContextualEntities(string $contextName) : array;
+//
+//    /**
+//     * @param Ucl $ucl
+//     * @return Context
+//     * @throws Ghost\Exceptions\DefNotDefinedException
+//     */
+//    public function getContext(Ucl $ucl) : Context;
+//
 
-    /**
-     * 获取上下文相关的 Query 变量.
-     * @param string $contextName
-     * @param array|null $query
-     * @return array
-     * @throws Ghost\Exceptions\DefNotDefinedException
-     */
-    public function getContextualQuery(string $contextName, array $query = null) : array;
+    public function quit() : void;
 
-    /**
-     * 获取 Context 上下文相关的 entity 值.
-     * @param string $contextName
-     * @return array
-     * @throws Ghost\Exceptions\DefNotDefinedException
-     */
-    public function getContextualEntities(string $contextName) : array;
-
-    /**
-     * @param Ucl $ucl
-     * @return Context
-     * @throws Ghost\Exceptions\DefNotDefinedException
-     */
-    public function getContext(Ucl $ucl) : Context;
-
-    /**
-     * @param Dialog|null $dialog
-     * @return Cloner
-     */
-    public function runDialogManager(Dialog $dialog = null) : Cloner;
+    public function isQuit() : bool;
 
     /*----- 手动输出 -----*/
 
@@ -113,26 +109,26 @@ interface Cloner extends Session
 
     /**
      * 同步输出一个消息.
-     * @param GhostMsg $output
-     * @param GhostMsg[] $outputs
+     * @param IntercomMsg $output
+     * @param IntercomMsg[] $outputs
      */
-    public function output(GhostMsg $output, GhostMsg ...$outputs) : void;
+    public function output(IntercomMsg $output, IntercomMsg ...$outputs) : void;
 
     /**
      * 获得所有的输出消息.
-     * @return GhostMsg[]
+     * @return IntercomMsg[]
      */
     public function getOutputs() : array;
 
     /**
      * 提交一个异步输入消息.
-     * @param GhostInput $ghostInput
+     * @param InputMsg $input
      */
-    public function asyncInput(GhostInput $ghostInput) : void;
+    public function asyncInput(InputMsg $input) : void;
 
     /**
      * 获取异步的输入消息
-     * @return GhostInput[]
+     * @return InputMsg[]
      */
     public function getAsyncInput() : array;
 

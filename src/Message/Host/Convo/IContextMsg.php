@@ -44,6 +44,12 @@ class IContextMsg extends AbsMessage implements ContextMsg
         return [];
     }
 
+    public function getRenderId(): string
+    {
+        return $this->contextName;
+    }
+
+
     public function toContext(Cloner $cloner): Context
     {
         $ucl = Ucl::create($cloner, $this->contextName, $this->query);
@@ -70,12 +76,6 @@ class IContextMsg extends AbsMessage implements ContextMsg
     public function getMemorableData(): array
     {
         return $this->data;
-    }
-
-
-    public function isBroadcasting(): bool
-    {
-        return true;
     }
 
     public function getLevel(): string

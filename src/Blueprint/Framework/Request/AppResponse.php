@@ -44,9 +44,9 @@ interface AppResponse
         600 => 'HOST_LOGIC_ERROR',
     ];
 
-    public function getCode() : int;
+    public function getErrcode() : int;
 
-    public function getMessage() : string;
+    public function getErrmsg() : string;
 
-    public function send() : void;
+    public function end() : void;
 }

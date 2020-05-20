@@ -15,7 +15,7 @@ use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Protocals\HostMsg\IntentMsg;
-use Commune\Protocals\Intercom\GhostMsg;
+use Commune\Protocals\IntercomMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -33,7 +33,7 @@ class SGResponse implements GhostResponse
     protected $console;
 
     /**
-     * @var GhostMsg[]
+     * @var IntercomMsg[]
      */
     protected $outputs = [];
 
@@ -64,7 +64,7 @@ class SGResponse implements GhostResponse
     }
 
 
-    public function send(): void
+    public function end(): void
     {
         $quit = false;
         foreach ($this->outputs as $output) {
@@ -87,12 +87,12 @@ class SGResponse implements GhostResponse
         }
     }
 
-    public function getCode(): int
+    public function getErrcode(): int
     {
         return $this->errcode;
     }
 
-    public function getMessage(): string
+    public function getErrmsg(): string
     {
         return $this->errmsg;
     }

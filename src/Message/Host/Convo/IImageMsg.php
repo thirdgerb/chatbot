@@ -53,10 +53,11 @@ class IImageMsg extends AbsMessage implements ImageMsg
         return '';
     }
 
-    public function isBroadcasting(): bool
+    public function getRenderId(): string
     {
-        return true;
+        return $this->resource;
     }
+
 
     public function getResource(): string
     {

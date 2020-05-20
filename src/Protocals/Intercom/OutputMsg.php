@@ -9,12 +9,23 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Platform;
+namespace Commune\Protocals\Intercom;
 
+use Commune\Protocals\HostMsg;
+use Commune\Protocals\IntercomMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellOutputRequest
+interface OutputMsg extends IntercomMsg
 {
+
+    /**
+     * @param HostMsg $message
+     * @param HostMsg ...$messages
+     * @return static[]
+     */
+    public function derive(HostMsg $message, HostMsg ...$messages) : array;
+
+
 }

@@ -59,7 +59,7 @@ class IEmotionDef implements EmotionDef
 
         // 检查是否有相关的 intents 命中了.
         if (!empty($intents)) {
-            $intention = $cloner->ghostInput->comprehension->intention;
+            $intention = $cloner->input->comprehension->intention;
             $matched = $intention->matchAnyIntent($intents);
             if (isset($matched)) {
                 return true;

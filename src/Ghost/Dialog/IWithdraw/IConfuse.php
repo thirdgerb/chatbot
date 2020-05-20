@@ -48,7 +48,7 @@ class IConfuse extends AbsDialogue implements Confuse
 
     protected function ifEventMsg() : ? Dialog
     {
-        $message = $this->cloner->ghostInput->getMessage();
+        $message = $this->cloner->input->getMessage();
         if ($message instanceof EventMsg) {
             return $this->nav()->dumb();
         }

@@ -42,7 +42,7 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     /**
      * @var string|null
      */
-    protected $sessionId;
+    protected $conversationId;
 
     /*------ cached ------*/
 
@@ -102,7 +102,7 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         $this->container = $container;
         $this->traceId = $container->getId();
         // 允许为 null
-        $this->sessionId = $sessionId;
+        $this->conversationId = $sessionId;
         static::addRunningTrace($this->traceId, $this->traceId);
     }
 
@@ -190,6 +190,11 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         return $this->traceId;
     }
 
+
+    public function getAppId(): string
+    {
+        return $this->app->getId();
+    }
 
     public function isFinished(): bool
     {

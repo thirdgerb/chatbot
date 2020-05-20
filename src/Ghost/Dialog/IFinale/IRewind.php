@@ -64,15 +64,15 @@ class IRewind extends AbsDialogue implements Rewind
 
         // 如果是 waiter, 重新输出 question
         $question = $waiter->question;
-        $ghostInput = $this->cloner->ghostInput;
+        $input = $this->cloner->input;
         if (isset($question)) {
-            $this->cloner->output($ghostInput->output($question));
+            $this->cloner->output($input->output($question));
         }
 
         // 尝试同步状态变更.
         $contextMsg = $runtime->toContextMsg();
         if (isset($contextMsg)) {
-            $this->cloner->output($ghostInput->output($contextMsg));
+            $this->cloner->output($input->output($contextMsg));
         }
     }
 

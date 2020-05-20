@@ -15,7 +15,7 @@ use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Exceptions\Logic\InvalidConfigException;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Ghost\Support\ContextUtils;
-use Commune\Protocals\Intercom\GhostInput;
+use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -33,7 +33,7 @@ class IClonerScene implements ClonerScene
 
     protected $env;
 
-    public function __construct(GhostInput $input, GhostConfig $config)
+    public function __construct(InputMsg $input, GhostConfig $config)
     {
         $sceneId = $input->getSceneId();
 

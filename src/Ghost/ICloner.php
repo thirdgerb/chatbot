@@ -11,22 +11,16 @@
 
 namespace Commune\Ghost;
 
-use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
-use Commune\Blueprint\Exceptions\Runtime\QuitSessionException;
-use Commune\Blueprint\Framework\Request\AppResponse;
-use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Cache;
 use Commune\Framework\ASession;
 use Commune\Message\Host\SystemInt\SessionQuitInt;
 use Psr\Log\LoggerInterface;
-use Commune\Ghost\Dialog\IStartProcess;
-use Commune\Protocals\Intercom\GhostInput;
-use Commune\Protocals\Intercom\GhostMsg;
+use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocals\IntercomMsg;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session\SessionStorage;
@@ -40,7 +34,7 @@ class ICloner extends ASession implements Cloner
     const SINGLETONS =  [
         'scope' => Cloner\ClonerScope::class,
         'config' => GhostConfig::class,
-        'convo' => Ghost\Tools\Typer::class,
+        'convo' => Ghost\Tools\Deliver::class,
         'cache' => Cache::class,
         'auth' => Ghost\Auth\Authority::class,
         'mind' => Ghost\Mindset::class,
@@ -62,9 +56,9 @@ class ICloner extends ASession implements Cloner
     protected $ghostConfig;
 
     /**
-     * @var GhostInput
+     * @var InputMsg
      */
-    protected $ghostInput;
+    protected $input;
 
     /*------- cached -------*/
 
@@ -84,12 +78,12 @@ class ICloner extends ASession implements Cloner
     protected $contexts = [];
 
     /**
-     * @var GhostMsg[]
+     * @var IntercomMsg[]
      */
     protected $outputs = [];
 
     /**
-     * @var GhostInput[]
+     * @var InputMsg[]
      */
     protected $asyncInputs = [];
 
@@ -98,137 +92,87 @@ class ICloner extends ASession implements Cloner
      */
     protected $silent = false;
 
-    public function __construct(Ghost $ghost, ReqContainer $container, GhostInput $input)
+    public function __construct(Ghost $ghost, ReqContainer $container, InputMsg $input)
     {
         $this->ghost = $ghost;
         $this->ghostConfig = $ghost->getConfig();
-        $this->ghostInput = $input;
+        $this->input = $input;
         // id
-        $this->clonerId = $input->getCloneId();
+        $this->clonerId = 'ght:' . $ghost->getId() .':'. $input->getSessionId();
 
         // expire
         $this->expire = $this->ghostConfig->sessionExpire;
-        parent::__construct($container, $input->getSessionId());
+        parent::__construct($container, $input->getConversationId());
     }
 
 
-    public function getClonerId(): string
+    public function getId(): string
     {
         return $this->clonerId;
     }
 
-    /*-------- sessionId ---------*/
+    /*-------- conversation id ---------*/
 
-    public function getSessionId() : string
+    public function getConversationId() : string
     {
-        if (isset($this->sessionId)) {
-            return $this->sessionId;
+        if (isset($this->conversationId)) {
+            return $this->conversationId;
         }
 
         if ($this->isStateless()) {
-            $sessionId = $this->ghostInput->getSessionId()
-                ?? $this->makeSessionId();
-            return $this->sessionId = $sessionId;
+            $convoId = $this->input->getConversationId();
+            $convoId = empty($convoId)
+                ? $this->makeConvoId()
+                : $convoId;
+
+            return $this->conversationId = $convoId;
         }
 
-        $inputSid = $this->ghostInput->getSessionId();
-        $cachedSid = $this->getSessionIdFromCache();
+        $inputSid = $this->input->getConversationId();
+        $cachedSid = $this->getConvoIdFromCache();
 
         if (empty($cachedSid)) {
-            $sessionId = $inputSid ?? $this->makeSessionId();
+            $convoId = $inputSid ?? $this->makeConvoId();
 
         } elseif(empty($inputSid)) {
-            $sessionId = $cachedSid;
-            $this->ghostInput->withSessionId($sessionId);
+            $convoId = $cachedSid;
         } else {
-            $sessionId = $inputSid;
+            $convoId = $inputSid;
         }
 
-        return $this->sessionId = $sessionId;
+        return $this->conversationId = $convoId;
     }
 
-    protected function makeSessionId() : string
+    protected function makeConvoId() : string
     {
-        $clonerId = $this->getClonerId();
-        $messageId = $this->ghostInput->getMessageId();
+        $clonerId = $this->getId();
+        $messageId = $this->input->getMessageId();
         return sha1("cloner:$clonerId:message:$messageId");
     }
 
-    protected function getSessionIdFromCache() : ? string
+    protected function getConvoIdFromCache() : ? string
     {
-        $key = $this->getSessionCacheKey();
+        $key = $this->getConvoCacheKey();
         return $this->cache->get($key);
     }
 
-    protected function cacheSessionId(string $sessionId) : void
+    protected function cacheConvoId(string $convoId) : void
     {
-        $key = $this->getSessionCacheKey();
-        $this->cache->set($key, $sessionId, $this->getSessionExpire());
+        $key = $this->getConvoCacheKey();
+        $this->cache->set($key, $convoId, $this->getSessionExpire());
     }
 
-    protected function deleteSessionIdCache() : void
+    protected function ioDeleteConvoIdCache() : void
     {
-        $key = $this->getSessionCacheKey();
+        $key = $this->getConvoCacheKey();
         $this->cache->forget($key);
     }
 
-    protected function getSessionCacheKey() : string
+    protected function getConvoCacheKey() : string
     {
-        $cloneId = $this->getClonerId();
-        return "clone:$cloneId:sessionId";
+        $cloneId = $this->getId();
+        return "clone:$cloneId:convo:id";
     }
-
-    /*-------- contextual ---------*/
-
-    public function getContextualQuery(string $contextName, array $query = null): array
-    {
-        $contextDef = $this->mind->contextReg()->getDef($contextName);
-        $scopes = $contextDef->getScopes();
-        $map = $this->scope->getLongTermDimensionsDict($scopes);
-
-        $query = $query ?? [];
-        $query = $contextDef->getParamsManager()->parseQuery($query);
-
-        return $query + $map;
-    }
-
-    public function getContextualEntities(string $contextName): array
-    {
-        $contextDef = $this->mind->contextReg()->getDef($contextName);
-
-        $entities = $this->ghostInput
-            ->comprehension
-            ->intention
-            ->getIntentEntities($contextName);
-
-        if (empty($entities)) {
-            return [];
-        }
-
-       return $contextDef->getParamsManager()->parseIntentEntities($entities);
-    }
-
-    public function getContext(Ucl $ucl): Context
-    {
-        $contextId = $ucl->getContextId();
-
-        if (isset($this->contexts[$contextId])) {
-            return $this->contexts[$contextId];
-        }
-
-        $contextName = $ucl->contextName;
-        $contextDef = $this->mind->contextReg()->getDef($contextName);
-
-        $context = $contextDef->wrapContext($this, $ucl);
-        $entities = $this->getContextualEntities($contextName);
-
-        if (!empty($entities)) {
-            $context->merge($entities);
-        }
-
-        return $this->contexts[$contextId] = $context;
-    }
-
 
     /*-------- properties ---------*/
 
@@ -237,10 +181,6 @@ class ICloner extends ASession implements Cloner
         return $this->ghostConfig->protocals;
     }
 
-    public function getName(): string
-    {
-        return $this->config->name;
-    }
 
     public function getStorage(): SessionStorage
     {
@@ -251,42 +191,6 @@ class ICloner extends ASession implements Cloner
     {
         return $this->logger;
     }
-
-
-    /*------- dialog manager -------*/
-
-    public function runDialogManager(Dialog $dialog = null): Cloner
-    {
-        $next = $dialog ?? new IStartProcess($this);
-
-        try {
-
-            //$tracer = $this->runtime->trace;
-
-            while(isset($next)) {
-
-                $next = $next->tick();
-
-                if ($next instanceof Dialog\Finale) {
-                    $next->tick();
-                    return $this;
-                }
-            }
-
-        } catch (Ghost\Exceptions\TooManyRedirectsException $e) {
-
-            throw new BrokenSessionException(
-                AppResponse::HOST_RUNTIME_ERROR,
-                $e
-            );
-
-        } catch (\Throwable $e) {
-
-        }
-
-        return false;
-    }
-
 
     /*------- getter -------*/
 
@@ -300,8 +204,8 @@ class ICloner extends ASession implements Cloner
             return $this->ghostConfig;
         }
 
-        if ($name === 'ghostInput') {
-            return $this->ghostInput;
+        if ($name === 'input') {
+            return $this->input;
         }
 
         return parent::__get($name);
@@ -312,7 +216,7 @@ class ICloner extends ASession implements Cloner
     protected function getGhostClonerLockerKey() : string
     {
         $ghostId = $this->ghostConfig->id;
-        $clonerId = $this->getClonerId();
+        $clonerId = $this->getId();
         return "ghost:$ghostId:clone:$clonerId:locker";
     }
 
@@ -365,14 +269,14 @@ class ICloner extends ASession implements Cloner
         $this->silent = $silent;
     }
 
-    public function output(GhostMsg $output, GhostMsg ...$outputs): void
+    public function output(IntercomMsg $output, IntercomMsg ...$outputs): void
     {
         array_unshift($outputs, $output);
         if (!$this->silent) {
             $this->outputs = array_reduce(
                 $outputs,
-                function($outputs, GhostMsg $output){
-                    $outputs[] = $output->withSessionId($this->getSessionId());
+                function($outputs, IntercomMsg $output){
+                    $outputs[] = $output;
                     return $outputs;
                 },
                 $this->outputs
@@ -385,10 +289,10 @@ class ICloner extends ASession implements Cloner
         return $this->outputs;
     }
 
-    public function asyncInput(GhostInput $ghostInput): void
+    public function asyncInput(InputMsg $input): void
     {
         if (!$this->silent) {
-            $this->asyncInputs[] = $ghostInput;
+            $this->asyncInputs[] = $input;
         }
     }
 
@@ -404,7 +308,7 @@ class ICloner extends ASession implements Cloner
     {
         $this->ghost = null;
         $this->ghostConfig = null;
-        $this->ghostInput = null;
+        $this->input = null;
         $this->contexts = [];
         $this->outputs = [];
         $this->asyncInputs = [];
@@ -412,8 +316,8 @@ class ICloner extends ASession implements Cloner
 
     protected function quitSession(): void
     {
-        $this->output($this->ghostInput->output(new SessionQuitInt()));
-        $this->deleteSessionIdCache();
+        $this->output($this->input->output(new SessionQuitInt()));
+        $this->ioDeleteConvoIdCache();
     }
 
     protected function saveSession(): void
@@ -429,8 +333,8 @@ class ICloner extends ASession implements Cloner
         }
 
         // 更新 sessionId 缓存.
-        if (isset($this->sessionId)) {
-            $this->cacheSessionId($this->sessionId);
+        if (isset($this->conversationId)) {
+            $this->cacheConvoId($this->conversationId);
         }
     }
 

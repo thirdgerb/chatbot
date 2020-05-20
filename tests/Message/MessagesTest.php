@@ -38,15 +38,9 @@ class MessagesTest extends MessageTestCase
         Message\Host\SystemInt\SessionBusyInt::class,
         Message\Host\SystemInt\SessionQuitInt::class,
 
-
-
         // intercom
-        Message\Intercom\IShellInput::class,
-        Message\Intercom\IShellMsg::class,
-        Message\Intercom\IGhostInput::class,
-        Message\Intercom\IGhostOutput::class,
-        Message\Intercom\IYieldInput::class,
-        Message\Intercom\IRetainInput::class,
+        Message\Intercom\IInputMsg::class,
+        Message\Intercom\IOutputMsg::class,
 
 
     ];

@@ -11,17 +11,23 @@
 
 namespace Commune\Blueprint\Host\Router;
 
+use Illuminate\Contracts\Pipeline\Hub;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * # 可以从收件箱中按以下维度查询消息.
  *
- * @property-read string $id            根据下面三者算出来的一个 ID
- *
- * @property-read string $cloneId
- * @property-read string $sessionId
  */
 interface GhostRoute
 {
+
+    public function getRouteId() : string;
+
+    public function getSessionId() : string;
+
+    public function getConversationId() : string;
+
+    public function newHub() : Hub;
+
 }

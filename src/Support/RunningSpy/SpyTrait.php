@@ -21,6 +21,11 @@ trait SpyTrait
             return;
         }
 
+        // 警告出现了重复的 spied 对象.
+        if (isset(self::$runningSpyTraces[$traceId])) {
+            throw new DuplicateSpyException($traceId, static::class);
+        }
+
         self::$runningSpyTraces[$traceId] = $id;
         SpyAgency::addSpy(static::class);
     }

@@ -39,6 +39,12 @@ class IApiMsg extends AbsMessage implements ApiMsg
         return [];
     }
 
+    public function getRenderId(): string
+    {
+        return $this->api;
+    }
+
+
     public function getApiName(): string
     {
         return $this->api;
@@ -47,12 +53,6 @@ class IApiMsg extends AbsMessage implements ApiMsg
     public function getParams(): array
     {
         return $this->params;
-    }
-
-    public function isBroadcasting(): bool
-    {
-        // api 消息不需要广播.
-        return false;
     }
 
     public function getLevel(): string

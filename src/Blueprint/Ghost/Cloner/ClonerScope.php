@@ -18,14 +18,10 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * 当前 Ghost 分身的作用域.
  *
- * @property-read string $cloneId       Clone 的 Id.
- * @property-read string $sessionId
+ * @property-read string $cloneId           Clone 的 Id.
+ * @property-read string $convoId
  *
- * @property-read string $senderId      消息发送者的 Id, 平台相关
- * @property-read string $guestId       消息发送者在 Clone 里的 GuestId, 平台无关.
- *
- * @property-read string $shellName     输入消息产生的 Shell 名
- * @property-read string $shellId       输入消息对应的 Shell Id
+ * @property-read string $guestId           消息发送者在 Clone 里的 GuestId, 平台无关.
  * @property-read string $sceneId
  *
  *
@@ -42,11 +38,9 @@ interface ClonerScope extends ArrayAndJsonAble
 {
     // 长程维度.
     const CLONE_ID = 'cloneId';
-    const SENDER_ID = 'senderId';
-    const GUEST_ID = 'guestId';
-    const SHELL_NAME = 'shellName';
-    const SHELL_ID = 'shellId';
     const SCENE_ID = 'sceneId';
+    const CONVO_ID = 'convoId';
+    const GUEST_ID = 'guestId';
 
     // 时间相关的长程维度
     const YEAR = 'year';
@@ -60,10 +54,9 @@ interface ClonerScope extends ArrayAndJsonAble
     // 预定义的长程维度.
     const LONG_TERM_DIMENSIONS = [
         self::CLONE_ID,
-        self::SENDER_ID,
         self::GUEST_ID,
-        self::SHELL_NAME,
-        self::SHELL_ID,
+        self::CONVO_ID,
+        self::SCENE_ID,
         self::YEAR,
         self::MONTH,
         self::MONTH_DAY,

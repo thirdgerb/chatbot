@@ -69,7 +69,7 @@ interface DependInjections
         Cloner::class,
         Framework\Session::class,
         Framework\ReqContainer::class,
-        Protocals\Intercom\GhostInput::class,
+        Protocals\Intercom\InputMsg::class,
         Protocals\HostMsg::class,
         Protocals\Comprehension::class,
 

@@ -19,6 +19,11 @@ namespace Commune\Support\Utils;
  */
 class TypeUtils
 {
+    public static function normalizeClassName(string $className) : string
+    {
+        $className = StringUtils::namespaceSlashToDot($className);
+        return strtolower($className);
+    }
 
     public static function isListTypeHint(string $type) : bool
     {

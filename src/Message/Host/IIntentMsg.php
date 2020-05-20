@@ -11,11 +11,10 @@
 
 namespace Commune\Message\Host;
 
-use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
+use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Support\Struct\Struct;
-use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -57,9 +56,9 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         );
     }
 
-    public function isBroadcasting(): bool
+    public function getRenderId(): string
     {
-        return true;
+        return $this->intentName;
     }
 
     public function getLevel(): string

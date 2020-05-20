@@ -11,7 +11,9 @@
 
 namespace Commune\Blueprint\Host;
 
-use Commune\Blueprint\Host\Router\IntercomRoute;
+use Commune\Blueprint\Host\Router\GhostRoute;
+use Commune\Blueprint\Host\Router\RouteHub;
+use Commune\Blueprint\Host\Router\ShellRoute;
 
 /**
  * 通信路由表.
@@ -45,49 +47,21 @@ use Commune\Blueprint\Host\Router\IntercomRoute;
  */
 interface Router
 {
-    /**
-     * 从 Shell 端主动找到路由.
-     *
-     * @param string $shellName
-     * @param string $shellId
-     * @param string $sessionId
-     * @param bool $stateless
-     * @return IntercomRoute|null    无状态请求不会消耗内存.
-     */
-    public function shellFindRoute(
-        string $shellName,
-        string $shellId,
-        string $sessionId,
-        bool $stateless = false
-    ) : ? IntercomRoute;
 
     /**
-     * 从 Shell 端主动找到路由, 否则生成一个并保存.
-     *
-     * @param string $shellName
-     * @param string $shellId
-     * @param string $sessionId
-     * @param bool $stateless
-     * @return IntercomRoute|null    无状态请求不会消耗内存.
+     * @param ShellRoute $route
+     * @return RouteHub|null
      */
-    public function shellFindOrCreateRoute(
-        string $shellName,
-        string $shellId,
-        string $sessionId,
-        bool $stateless = false
-    ) : IntercomRoute;
+    public function shellFindHub(ShellRoute $route) : ? RouteHub;
+
 
     /**
      * 用 Clone 主动找到路由.
      *
-     * @param string $cloneId
-     * @param string $sessionId
-     * @return IntercomRoute
+     * @param GhostRoute $route
+     * @return RouteHub
      */
-    public function ghostFindRoute(
-        string $cloneId,
-        string $sessionId
-    ) : IntercomRoute;
+    public function ghostFindHub(GhostRoute $route) : ? RouteHub;
 
     /**
      * 保存一个路由. 数据只存一份, 但 ID 存 1+n 个位置:
@@ -96,20 +70,20 @@ interface Router
      *
      * 每次保存时延期. 两端都可以操作. 通常是 Ghost 主动续期.
      *
-     * @param IntercomRoute $route
+     * @param RouteHub $hub
      * @param int $expire               通常和 Session 保持一致.
      */
-    public function saveRoute(IntercomRoute $route, int $expire) : void;
+    public function saveRoute(RouteHub $hub, int $expire) : void;
 
     /**
      * 去掉所有位置存储的路由.
-     * @param IntercomRoute $route
+     * @param RouteHub $hub
      */
-    public function forgetRoute(IntercomRoute $route) : void;
+    public function forgetRoute(RouteHub $hub) : void;
 
     /**
      * 检查现存的有状态对话数量.
      * @return int
      */
-    public function countRoutes() : int;
+    public function countHubs() : int;
 }

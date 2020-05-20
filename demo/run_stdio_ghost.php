@@ -38,7 +38,7 @@ $stdio->on('data', function($line) use ($app, $stdio) {
     $request = new SGRequest($line, $stdio);
     $response = $app->handle($request);
 
-    $response->send();
+    $response->end();
     $b = microtime(true);
 
     $stdio->write('gap:'. round(($b - $a) * 1000000) . "\n");

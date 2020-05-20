@@ -15,6 +15,7 @@ use Commune\Protocals\HostMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\Convo\ArrayMsg;
+use Commune\Support\Utils\TypeUtils;
 
 
 /**
@@ -26,9 +27,7 @@ class IArrayMsg extends AbsMessage implements ArrayMsg
 {
     public static function stub(): array
     {
-        return [
-            'array' => []
-        ];
+        return [];
     }
 
     public static function relations(): array
@@ -38,12 +37,12 @@ class IArrayMsg extends AbsMessage implements ArrayMsg
 
     public function getArray(): array
     {
-        return $this->array;
+        return $this->toArray();
     }
 
-    public function isBroadcasting(): bool
+    public function getRenderId(): string
     {
-        return false;
+        return TypeUtils::normalizeClassName(ArrayMsg::class);
     }
 
     public function getLevel(): string
@@ -53,12 +52,12 @@ class IArrayMsg extends AbsMessage implements ArrayMsg
 
     public function getText(): string
     {
-        return json_encode($this->array, ArrayAndJsonAble::PRETTY_JSON);
+        return $this->toPrettyJson();
     }
 
     public function isEmpty(): bool
     {
-        return false;
+        return empty($this->_data);
     }
 
 

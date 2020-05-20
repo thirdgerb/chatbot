@@ -11,8 +11,8 @@
 
 namespace Commune\Blueprint\Host\Messenger;
 
-use Commune\Protocals\Intercom\GhostInput;
-use Commune\Protocals\Intercom\GhostMsg;
+use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocals\IntercomMsg;
 
 
 /**
@@ -23,21 +23,21 @@ interface MessageDB
 
     /**
      * 记录一个 Input 消息.
-     * @param GhostInput $ghostInput
+     * @param InputMsg $input
      * @return bool
      */
-    public function recordInput(GhostInput $ghostInput) : bool;
+    public function recordInput(InputMsg $input) : bool;
 
     /**
      * 记录一个消息
-     * @param GhostMsg $message
+     * @param IntercomMsg $message
      * @return bool
      */
-    public function record(GhostMsg $message) : bool;
+    public function record(IntercomMsg $message) : bool;
 
     /**
      * @param callable $fetcher
-     * @return GhostMsg[]
+     * @return IntercomMsg[]
      */
     public function fetch(callable $fetcher) : array;
 
@@ -51,7 +51,7 @@ interface MessageDB
     /**
      * 获取消息.
      * @param string $messageId
-     * @return GhostMsg|null
+     * @return IntercomMsg|null
      */
-    public function find(string $messageId) : ? GhostMsg;
+    public function find(string $messageId) : ? IntercomMsg;
 }

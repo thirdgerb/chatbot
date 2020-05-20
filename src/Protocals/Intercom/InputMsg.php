@@ -12,36 +12,45 @@
 namespace Commune\Protocals\Intercom;
 
 use Commune\Protocals\Comprehension;
+use Commune\Protocals\HostMsg;
+use Commune\Protocals\IntercomMsg;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @property-read Comprehension $comprehension
  */
-interface ShellInput extends ShellMsg
+interface InputMsg extends IntercomMsg
 {
-
     /*----- 额外的信息 -----*/
+
+    public function getShellName() : string;
 
     public function getSceneId() : string;
 
     public function getEnv() : array;
 
-    public function getSenderName() : string;
-
     public function getComprehension() : Comprehension;
 
-    /*----- 转换类方法 -----*/
+    /*----- methods -----*/
+
 
     /**
-     *
-     * @param string|null $cloneId
-     * @param string|null $sessionId
+     * @param HostMsg $message
+     * @param int $deliverAt
      * @param string|null $guestId
-     * @return GhostInput
+     * @param string|null $sessionId
+     * @param string|null $messageId
+     * @return OutputMsg
      */
-    public function toGhostInput(
-        string $cloneId = null,
+    public function output(
+        HostMsg $message,
+        int $deliverAt = 0,
+        string $guestId = null,
         string $sessionId = null,
-        string $guestId = null
-    ) : GhostInput;
+        string $messageId = null
+    ) : OutputMsg;
+
+
 }

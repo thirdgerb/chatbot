@@ -33,35 +33,56 @@ interface Session
     /*----- properties -----*/
 
     /**
-     * 是否是调试模式.
-     * @return bool
-     */
-    public function isDebugging() : bool;
-
-
-    /**
+     * 每个 Session 实例都是在请求中生成的.
+     * 因此每个实例拥有一个 traceId, 应该是全局唯一的ID.
+     * 用来标记不同的实例.
+     *
      * @return string
      */
     public function getTraceId() : string;
+
+    /**
+     * session 的 id 是 session 的唯一标识
+     * 用于追踪交互的历史记录.
+     * 对于 1 对 1 会话, sessionId 对于用户是唯一的, 和用户相关
+     * 对于 1 对多 会话, sessionId 则相当于群的 ID.
+     *
+     * @return string
+     */
+    public function getId() : string;
 
 
     /**
      * Session 的名称. 如果一个应用有多个 Session, 考虑到缓存等, 可以做区别.
      * @return string
      */
-    public function getName() : string;
+    public function getAppId() : string;
+
+    /*----- status -----*/
 
     /**
-     * SessionId 并不是
-     * @return string
+     * 是否是调试模式.
+     * @return bool
      */
-    public function getSessionId() : string;
+    public function isDebugging() : bool;
+
+    /**
+     * 设置为无状态请求
+     */
+    public function noState() : void;
+
+    /**
+     * 是否是无状态的 session
+     * @return bool
+     */
+    public function isStateless() : bool;
 
 
     /**
-     * @return SessionStorage
+     * @return bool
      */
-    public function getStorage() : SessionStorage;
+    public function isFinished() : bool;
+
 
     /*----- component -----*/
 
@@ -77,6 +98,18 @@ interface Session
      * @return App
      */
     public function getApp() : App;
+
+
+    /**
+     * @return SessionStorage
+     */
+    public function getStorage() : SessionStorage;
+
+
+    /*------ logger ------*/
+
+    public function getLogger() : LoggerInterface;
+
 
     /*----- run 运行逻辑 -----*/
 
@@ -123,7 +156,7 @@ interface Session
     /*----- 锁 -----*/
 
     /**
-     * 锁定一个机器人的分身. 禁止通讯.
+     * 锁定一个 session 用于禁止通讯.
      *
      * @param int $second
      * @return bool
@@ -146,18 +179,6 @@ interface Session
 
 
     /**
-     * 设置为无状态请求
-     */
-    public function noState() : void;
-
-    /**
-     * 是否是无状态的 session
-     * @return bool
-     */
-    public function isStateless() : bool;
-
-
-    /**
      * Session 缓存的过期时间. 为 0 表示不限时间.
      * @return int
      */
@@ -169,24 +190,11 @@ interface Session
      */
     public function setSessionExpire(int $seconds) : void;
 
-    /*------ logger ------*/
-
-    public function getLogger() : LoggerInterface;
-
     /*------ finish ------*/
-
-    public function quit() : void;
-
-    public function isQuit() : bool;
 
     /**
      * 结束 Session, 处理垃圾回收
      */
     public function finish() : void;
-
-    /**
-     * @return bool
-     */
-    public function isFinished() : bool;
 
 }

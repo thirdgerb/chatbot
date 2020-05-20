@@ -12,18 +12,18 @@
 namespace Commune\Ghost\Tools;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Tools\Typer;
+use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\GhostInput;
+use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ITyper implements Typer
+class IDeliver implements Deliver
 {
     /**
-     * @var GhostInput
+     * @var InputMsg
      */
     protected $input;
 
@@ -48,11 +48,6 @@ class ITyper implements Typer
     protected $clonerId = null;
 
     /**
-     * @var null|string
-     */
-    protected $shellName = null;
-
-    /**
      * @var int
      */
     protected $deliverAt = 0;
@@ -65,85 +60,79 @@ class ITyper implements Typer
     public function __construct(Dialog $dialog)
     {
         $this->dialog = $dialog;
-        $this->input = $this->dialog->cloner->ghostInput;
+        $this->input = $this->dialog->cloner->input;
     }
 
 
-    public function withSlots(array $slots): Typer
+    public function withSlots(array $slots): Deliver
     {
         $this->slots = $slots;
         return $this;
     }
 
-    public function toGuest(string $guestId): Typer
+    public function toGuest(string $guestId): Deliver
     {
         $this->guestId = $guestId;
         return $this;
     }
 
-    public function toClone(string $cloneId): Typer
+    public function toClone(string $cloneId, string $guestId = ''): Deliver
     {
         $this->clonerId = $cloneId;
-        return $this;
-    }
-
-    public function toShell(string $shellName): Typer
-    {
-        $this->shellName = $shellName;
+        $this->guestId = $guestId;
         return $this;
     }
 
     /**
      * 指定发送的时间.
      * @param int $timestamp
-     * @return Typer
+     * @return Deliver
      */
-    public function deliverAt(int $timestamp) : Typer
+    public function deliverAt(int $timestamp) : Deliver
     {
         $this->deliverAt = $timestamp;
         return $this;
     }
 
-    public function deliverAfter(int $sections): Typer
+    public function deliverAfter(int $sections): Deliver
     {
         $this->deliverAt = time() + $sections;
         return $this;
     }
 
-    public function error(string $intent, array $slots = array()): Typer
+    public function error(string $intent, array $slots = array()): Deliver
     {
         return $this->log(__FUNCTION__, $intent, $slots);
     }
 
-    public function notice(string $intent, array $slots = array()): Typer
+    public function notice(string $intent, array $slots = array()): Deliver
     {
         return $this->log(__FUNCTION__, $intent, $slots);
     }
 
-    public function info(string $intent, array $slots = array()): Typer
+    public function info(string $intent, array $slots = array()): Deliver
     {
         return $this->log(__FUNCTION__, $intent, $slots);
     }
 
-    public function debug(string $intent, array $slots = array()): Typer
+    public function debug(string $intent, array $slots = array()): Deliver
     {
         return $this->log(__FUNCTION__, $intent, $slots);
     }
 
-    protected function log(string $level, string $intent, array $slots) : Typer
+    protected function log(string $level, string $intent, array $slots) : Deliver
     {
         $intentMsg = new IIntentMsg($intent, $slots, $level);
         return $this->message($intentMsg);
     }
 
-    public function message(HostMsg $message): Typer
+    public function message(HostMsg $message): Deliver
     {
         $ghostMsg = $this->input->output(
             $message,
             $this->deliverAt,
-            $this->clonerId,
-            $this->shellName,
-            $this->guestId
+            $this->guestId,
+            $this->clonerId
         );
 
         $this->dialog->cloner->output($ghostMsg);

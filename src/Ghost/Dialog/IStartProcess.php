@@ -22,9 +22,9 @@ use Commune\Ghost\Dialog\IActivate\IStaging;
 use Commune\Ghost\Dialog\Traits\TIntentMatcher;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\HostMsg\ConvoMsg;
-use Commune\Protocals\Intercom\GhostInput;
-use Commune\Protocals\Intercom\RetainInput;
-use Commune\Protocals\Intercom\YieldInput;
+use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocals\Intercom\AsyncRetain;
+use Commune\Protocals\Intercom\AsyncInput;
 use Commune\Support\Utils\StringUtils;
 
 
@@ -57,7 +57,7 @@ class IStartProcess extends AbsDialogue implements StartProcess
     {
         $process = $this->getProcess();
         $map = $process->buildRoutes();
-        $input = $this->cloner->ghostInput;
+        $input = $this->cloner->input;
 
         // 检查是否是异步 yielding 消息
         return $this->checkYield($input)
@@ -104,7 +104,7 @@ class IStartProcess extends AbsDialogue implements StartProcess
 
     /*--------- special handler ---------*/
 
-    protected function isContextMsgCall(GhostInput $input) : ? Dialog
+    protected function isContextMsgCall(InputMsg $input) : ? Dialog
     {
         $message = $input->getMessage();
 
@@ -114,10 +114,10 @@ class IStartProcess extends AbsDialogue implements StartProcess
         }
 
         $context = $message->toContext($this->cloner);
-        return $this->nav()->home($context->getUcl());
+        return $this->nav()->home($context->toUcl());
     }
 
-    protected function isNotConvoMsgCall(GhostInput $input) : ? Dialog
+    protected function isNotConvoMsgCall(InputMsg $input) : ? Dialog
     {
         $message = $input->getMessage();
         if ($message->isProtocal(ConvoMsg::class)) {
@@ -289,9 +289,9 @@ class IStartProcess extends AbsDialogue implements StartProcess
 
     /*--------- async inputs ---------*/
 
-    protected function checkRetain(GhostInput $input) : ? Dialog
+    protected function checkRetain(InputMsg $input) : ? Dialog
     {
-        if (!$input instanceof RetainInput) {
+        if (!$input instanceof AsyncRetain) {
             return null;
         }
 
@@ -300,9 +300,9 @@ class IStartProcess extends AbsDialogue implements StartProcess
     }
 
 
-    protected function checkYield(GhostInput $input) : ? Dialog
+    protected function checkYield(InputMsg $input) : ? Dialog
     {
-        if (!$input instanceof YieldInput) {
+        if (!$input instanceof AsyncInput) {
             return null;
         }
 

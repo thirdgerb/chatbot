@@ -11,10 +11,13 @@
 
 namespace Commune\Message\Host\Convo;
 
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Struct\Struct;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\Convo\UnsupportedMsg;
+use Commune\Support\Utils\StringUtils;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * 系统不支持的消息.
@@ -48,22 +51,20 @@ class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
         return [];
     }
 
-    // 不支持的消息不需要广播.
-    public function isBroadcasting(): bool
-    {
-        return false;
-    }
-
-
     public function getMsgType(): string
     {
         return $this->type;
     }
 
+    public function getRenderId(): string
+    {
+        return TypeUtils::normalizeClassName(UnsupportedMsg::class);
+    }
+
 
     public function getText(): string
     {
-        return '';
+        return TypeUtils::normalizeClassName(static::class);
     }
 
     public function isEmpty(): bool

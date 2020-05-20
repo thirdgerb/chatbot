@@ -44,7 +44,7 @@ interface AppRequest extends Protocal
 
     /**
      * @param HostMsg $message
-     * @param HostMsg ...$messages
+     * @param HostMsg[] $messages
      * @return AppResponse
      */
     public function output(HostMsg $message, HostMsg ...$messages) : AppResponse;
@@ -55,7 +55,7 @@ interface AppRequest extends Protocal
      * @param string $errmsg
      * @return AppResponse
      */
-    public function response(
+    public function success(
         $output,
         int $errcode = AppResponse::SUCCESS,
         string $errmsg = ''

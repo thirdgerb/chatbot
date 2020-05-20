@@ -11,8 +11,8 @@
 
 namespace Commune\Ghost\Support;
 
-use Commune\Blueprint\Ghost\Ucl;
 use Commune\Support\Utils\StringUtils;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -22,8 +22,7 @@ class ContextUtils
 
     public static function normalizeContextName(string $contextName) : string
     {
-        $contextName = StringUtils::namespaceSlashToDot($contextName);
-        return strtolower($contextName);
+        return TypeUtils::normalizeClassName($contextName);
     }
 
     public static function normalizeStageName(string $stageName) : string

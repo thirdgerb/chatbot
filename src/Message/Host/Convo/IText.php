@@ -14,7 +14,6 @@ namespace Commune\Message\Host\Convo;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Struct\Struct;
-use Commune\Support\Utils\StringUtils;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 
 /**
@@ -47,17 +46,18 @@ class IText extends AbsMessage implements VerbalMsg
         ];
     }
 
+    public function getRenderId(): string
+    {
+        return $this->text;
+    }
+
+
     public static function create(array $data = []): Struct
     {
         return new static(
             $data['text'] ?? '',
             $data['level'] ?? HostMsg::INFO
         );
-    }
-
-    public function isBroadcasting(): bool
-    {
-        return true;
     }
 
     public function getText(): string

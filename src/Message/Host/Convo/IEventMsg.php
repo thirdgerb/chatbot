@@ -38,6 +38,12 @@ class IEventMsg extends AbsMessage implements EventMsg
         return [];
     }
 
+    public function getRenderId(): string
+    {
+        return $this->eventName;
+    }
+
+
     public function getEventName(): string
     {
         return $this->eventName;

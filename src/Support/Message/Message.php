@@ -11,9 +11,8 @@
 
 namespace Commune\Support\Message;
 
-use Commune\Support\Babel\BabelSerializable;
-use Commune\Support\Protocal\ProtocalInstance;
 use Commune\Support\Struct\Struct;
+use Commune\Support\Babel\BabelSerializable;
 
 /**
  * PHP 通用传输消息的设计. 有以下几个特点:
@@ -39,7 +38,4 @@ interface Message extends
 {
     public function isEmpty() : bool;
 
-    public function getText() : string;
-
-    public function getNormalizeText() : string;
 }

@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Cloner;
 
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
-use Commune\Protocals\Intercom\GhostInput;
+use Commune\Protocals\Intercom\InputMsg;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Support\Arr\ArrayAbleToJson;
 
@@ -31,22 +31,12 @@ class IClonerScope implements ClonerScope
     /**
      * @var string
      */
-    protected $senderId;
-
-    /**
-     * @var string
-     */
     protected $guestId;
 
     /**
      * @var string
      */
-    protected $shellName;
-
-    /**
-     * @var string
-     */
-    protected $shellId;
+    protected $convoId;
 
     /**
      * @var int
@@ -58,13 +48,11 @@ class IClonerScope implements ClonerScope
      */
     protected $sceneId;
 
-    public function __construct(GhostInput $input)
+    public function __construct(InputMsg $input)
     {
-        $this->clonerId = $input->getCloneId();
-        $this->senderId = $input->getSenderId();
+        $this->clonerId = $input->getSessionId();
         $this->guestId = $input->getGuestId();
-        $this->shellName = $input->getShellName();
-        $this->shellId = $input->getShellId();
+        $this->convoId = $input->getConversationId();
         $this->sceneId = $input->getSceneId();
         $this->time = time();
     }
@@ -74,10 +62,9 @@ class IClonerScope implements ClonerScope
         return [
             'clone' => $this->clonerId,
             'guest' => $this->guestId,
-            'sender' => $this->senderId,
-            'shlId' => $this->shellId,
-            'shlName' => $this->shellName,
+            'shlId' => $this->convoId,
             'scene' => $this->sceneId,
+            'time' => $this->time,
         ];
     }
 
@@ -116,10 +103,8 @@ class IClonerScope implements ClonerScope
     {
         switch($name) {
             case ClonerScope::CLONE_ID :
-            case ClonerScope::SENDER_ID :
             case ClonerScope::GUEST_ID :
-            case ClonerScope::SHELL_NAME :
-            case ClonerScope::SHELL_ID :
+            case ClonerScope::CONVO_ID :
             case ClonerScope::SCENE_ID :
                 return $this->{$name};
             case ClonerScope::YEAR :

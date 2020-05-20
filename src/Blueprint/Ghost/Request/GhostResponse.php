@@ -18,5 +18,4 @@ use Commune\Blueprint\Framework\Request\AppResponse;
  */
 interface GhostResponse extends AppResponse
 {
-
 }

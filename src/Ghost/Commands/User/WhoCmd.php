@@ -29,8 +29,8 @@ class WhoCmd extends AGhostCmd
     protected function handle(CommandMsg $command, RequestCmdPipe $pipe): void
     {
         $this->info(json_encode([
-            'id' => $this->cloner->ghostInput->getGuestId(),
-            'name' => $this->cloner->ghostInput->getSenderName(),
+            'id' => $this->cloner->input->getGuestId(),
+            'name' => $this->cloner->input->getSenderName(),
         ], ArrayAndJsonAble::PRETTY_JSON));
     }
 

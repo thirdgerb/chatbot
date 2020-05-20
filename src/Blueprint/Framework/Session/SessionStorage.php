@@ -21,6 +21,19 @@ namespace Commune\Blueprint\Framework\Session;
  */
 interface SessionStorage extends \ArrayAccess
 {
+    const FIELD_ONCE_NAME = 'onceData';
 
     public function save() : void;
+
+    /**
+     * 设置一次性的数据, 有效期到下一次请求
+     * @param array $data
+     */
+    public function once(array $data) : void;
+
+    /**
+     * 获取本次, 或者上次所设置的一次性数据.
+     * @return array
+     */
+    public function getOnce() : array;
 }

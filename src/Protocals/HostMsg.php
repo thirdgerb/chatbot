@@ -39,17 +39,10 @@ interface HostMsg extends Message, Protocal
         self::ERROR,
     ];
 
-    /**
-     * 表示消息为空消息.
-     * @return bool
-     */
-    public function isEmpty() : bool;
 
-    /**
-     * 是否是可以广播的消息.
-     * @return bool
-     */
-    public function isBroadcasting() : bool;
+    public function getRenderId() : string;
+
+    public function getText() : string;
 
     /**
      * 获取消息等级.

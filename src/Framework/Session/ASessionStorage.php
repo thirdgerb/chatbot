@@ -26,6 +26,8 @@ abstract class ASessionStorage implements SessionStorage, Spied
 {
     use SpyTrait;
 
+    const FIELD_LAST_ONCE_NAME = 'lastTimeOnceData';
+
     /**
      * @var string
      */
@@ -74,8 +76,8 @@ abstract class ASessionStorage implements SessionStorage, Spied
         }
 
         $key = $this->getSessionKey(
-            $this->session->getName(),
-            $this->session->getSessionId()
+            $this->session->getAppId(),
+            $this->session->getId()
         );
 
         $cached = $this->cache->get($key);
@@ -86,6 +88,7 @@ abstract class ASessionStorage implements SessionStorage, Spied
 
         $data = unserialize($cached);
         if (is_array($data)) {
+            $data[self::FIELD_LAST_ONCE_NAME] = $data[self::FIELD_ONCE_NAME] ?? null;
             $this->data = $data;
         }
     }
@@ -110,6 +113,19 @@ abstract class ASessionStorage implements SessionStorage, Spied
         unset($this->data[$offset]);
     }
 
+    public function once(array $data): void
+    {
+        $this->data[self::FIELD_ONCE_NAME] = $data;
+    }
+
+    public function getOnce(): array
+    {
+        return $this->data[self::FIELD_ONCE_NAME]
+            ?? $this->data[self::FIELD_LAST_ONCE_NAME]
+            ?? [];
+    }
+
+
     public function save(): void
     {
         if ($this->session->isStateless()) {
@@ -120,10 +136,14 @@ abstract class ASessionStorage implements SessionStorage, Spied
             return;
         }
 
-        $str = serialize($this->data);
+        // 去掉上次请求的 once 数据.
+        $data = $this->data;
+        unset($data[self::FIELD_LAST_ONCE_NAME]);
+
+        $str = serialize($data);
         $key = $this->getSessionKey(
-            $this->session->getName(),
-            $this->session->getSessionId()
+            $this->session->getAppId(),
+            $this->session->getId()
         );
 
         $ttl = $this->session->getSessionExpire();

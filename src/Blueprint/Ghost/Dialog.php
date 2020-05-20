@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Blueprint\Ghost\Tools\Navigator;
 use Commune\Blueprint\Ghost\Tools\DialogIoC;
-use Commune\Blueprint\Ghost\Tools\Typer;
+use Commune\Blueprint\Ghost\Tools\Deliver;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -44,9 +44,9 @@ interface Dialog
 
     /**
      * 发送消息给用户
-     * @return Typer
+     * @return Deliver
      */
-    public function send() : Typer;
+    public function send() : Deliver;
 
     /**
      * 匹配工具.

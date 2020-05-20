@@ -17,9 +17,9 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Message\Host\Convo\IText;
-use Commune\Message\Intercom\IGhostInput;
+use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\GhostInput;
+use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\DI\TInjectable;
 
@@ -69,7 +69,7 @@ class SGRequest implements GhostRequest
     /*----- cached -----*/
 
     /**
-     * @var GhostInput|null
+     * @var InputMsg|null
      */
     protected $input;
 
@@ -101,12 +101,12 @@ class SGRequest implements GhostRequest
     }
 
     /**
-     * @return GhostInput
+     * @return InputMsg
      */
     public function getInput(): IntercomMsg
     {
         return $this->input
-            ?? $this->input = new IGhostInput(
+            ?? $this->input = new IInputMsg(
                 new IText($this->line),
                 $this->shellId,
                 $this->sessionId,
@@ -157,7 +157,7 @@ class SGRequest implements GhostRequest
      * @param string $errmsg
      * @return AppResponse
      */
-    public function response(
+    public function success(
         $output,
         int $errcode = AppResponse::SUCCESS,
         string $errmsg = ''

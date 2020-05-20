@@ -102,8 +102,8 @@ class IAwait extends AbsDialogue implements Await
         $runtime = $this->cloner->runtime;
         $contextMsg = $runtime->toContextMsg();
         if (isset($contextMsg)) {
-            $ghostInput = $this->cloner->ghostInput;
-            $this->cloner->output($ghostInput->output($contextMsg));
+            $input = $this->cloner->input;
+            $this->cloner->output($input->output($contextMsg));
         }
     }
 

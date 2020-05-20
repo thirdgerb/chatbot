@@ -33,7 +33,7 @@ trait TIntentMatcher
 
     protected function wildCardIntentNameMatch(string $name) : ? array
     {
-        $intention = $this->cloner->ghostInput->comprehension->intention;
+        $intention = $this->cloner->input->comprehension->intention;
         return $intention->wildcardIntentMatch($name);
     }
 
