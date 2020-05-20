@@ -80,7 +80,7 @@ class ContextPrototype implements Context
 
     public function toInstanceStub(): ClonerInstanceStub
     {
-        return new ContextStub($this->_ucl->toEncodedUcl());
+        return new ContextStub($this->_ucl->toEncodedStr());
     }
 
 

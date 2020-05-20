@@ -39,7 +39,7 @@ class IStartProcess extends AbsDialogue implements StartProcess
     {
         $this->process = $cloner->runtime->getCurrentProcess();
         $ucl = $this->process->awaiting ?? $this->process->root;
-        parent::__construct($cloner, Ucl::decodeUcl($ucl));
+        parent::__construct($cloner, Ucl::decodeUclStr($ucl));
     }
 
 

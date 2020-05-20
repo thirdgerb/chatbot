@@ -9,13 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog;
+namespace Commune\Blueprint\Ghost\Exceptions;
 
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class AbsEscaper
+class InvalidQueryException extends BrokenSessionException
 {
+
+    public function __construct(string $contextName )
+    {
+        $message = "invalid context query of $contextName";
+        parent::__construct($message);
+    }
 
 }

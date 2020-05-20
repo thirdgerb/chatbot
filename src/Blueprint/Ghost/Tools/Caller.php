@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Dialog;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DialogIoC
+interface Caller
 {
     /**
      * @param  string  $abstract
@@ -32,8 +32,16 @@ interface DialogIoC
      */
     public function call($caller, array $parameters = []);
 
+    /**
+     * @param callable $caller
+     * @return bool
+     */
     public function predict(callable $caller) : bool;
 
+    /**
+     * @param callable $caller
+     * @return Dialog|null
+     */
     public function action(callable $caller) : ? Dialog;
 
 

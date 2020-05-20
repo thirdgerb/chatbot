@@ -33,14 +33,15 @@ class CloneDialogManagerPipe extends AClonePipe
 
             while(isset($nextDialog)) {
 
-                $tracer->record($nextDialog);
-
-                $nextDialog = $nextDialog->tick();
-
-                if ($next instanceof Dialog\Finale) {
-                    $next->tick();
-                    break;
-                }
+//                $tracer->record($nextDialog);
+//
+//                dd(123);
+//                $nextDialog = $nextDialog->tick();
+//
+//                if ($next instanceof Dialog\Finale) {
+//                    $next->tick();
+//                    break;
+//                }
             }
             return $request->success($this->cloner);
 

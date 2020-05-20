@@ -13,6 +13,7 @@ namespace Commune\Ghost\Dialog;
 
 use Commune\Blueprint\Exceptions\HostLogicException;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
@@ -22,7 +23,7 @@ use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Blueprint\Ghost\Tools\Navigator;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Blueprint\Ghost\Tools\DialogIoC;
+use Commune\Blueprint\Ghost\Tools\Caller;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\Traits\TRedirector;
@@ -41,7 +42,7 @@ abstract class AbsDialogue implements
     Dialog,
     Injectable,
     Navigator,
-    DialogIoC
+    Caller
 {
     use TInjectable, TRedirector, TWithdraw;
 
@@ -97,6 +98,8 @@ abstract class AbsDialogue implements
         $this->ucl = $ucl;
     }
 
+
+
     /**
      * @param Dialog $dialog
      * @return static
@@ -129,24 +132,6 @@ abstract class AbsDialogue implements
         // TODO: Implement hearing() method.
     }
 
-    public function getContext($ucl): Context
-    {
-        $ucl = $this->getUcl($ucl);
-        return $this->cloner->getContext($ucl);
-    }
-
-    public function getUcl(string $contextOrUclStr, array $query = []): Ucl
-    {
-        $ucl = Ucl::decodeUcl($contextOrUclStr);
-
-        return Ucl::create(
-            $this->cloner,
-            $ucl->contextName,
-            $ucl->stageName,
-            $query + $ucl->query
-        );
-    }
-
     /*-------- history --------*/
 
     public function depth(): int
@@ -168,13 +153,12 @@ abstract class AbsDialogue implements
     }
 
 
-    /*-------- app --------*/
+    /*-------- caller --------*/
 
-    public function ioc(): DialogIoC
+    public function caller(): Caller
     {
         return $this;
     }
-
 
     public function make(string $abstract, array $parameters = [])
     {
@@ -184,7 +168,6 @@ abstract class AbsDialogue implements
 
     public function call($caller, array $parameters = [])
     {
-        // 允许 caller 传入 __invoke 类并进行依赖注入.
         if (
             is_string($caller)
             && class_exists($caller)
@@ -194,7 +177,12 @@ abstract class AbsDialogue implements
         }
 
         $parameters = $this->getContextualInjections($parameters);
-        return $this->cloner->container->call($caller, $parameters);
+
+        try {
+            return $this->cloner->container->call($caller, $parameters);
+        } catch (\Exception $e) {
+            throw new BrokenRequestException('', $e);
+        }
     }
 
     public function predict(callable $caller): bool

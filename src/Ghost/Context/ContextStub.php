@@ -40,7 +40,7 @@ class ContextStub implements ClonerInstanceStub
 
     public function toInstance(Cloner $cloner): ClonerInstance
     {
-        $uclObj = Ucl::decodeUcl($this->ucl);
+        $uclObj = Ucl::decodeUclStr($this->ucl);
         return $cloner->getContext($uclObj);
     }
 

@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Blueprint\Ghost\Tools\Navigator;
-use Commune\Blueprint\Ghost\Tools\DialogIoC;
+use Commune\Blueprint\Ghost\Tools\Caller;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 
 /**
@@ -35,9 +35,9 @@ interface Dialog
 
     /**
      * 上下文相关的 IoC 容器.
-     * @return DialogIoC
+     * @return Caller
      */
-    public function ioc() : DialogIoC;
+    public function caller() : Caller;
 
 
     /*----- conversation -----*/
@@ -89,23 +89,6 @@ interface Dialog
      * @return Recollection
      */
     public function recall(string $name) : Recollection;
-
-    /*----- 上下文相关 Context -----*/
-
-    /**
-     * 在当前的上下文中创建一个 Context
-     *
-     * @param Ucl|string $ucl
-     * @return Context
-     */
-    public function getContext($ucl) : Context;
-
-    /**
-     * @param string $contextOrUclStr
-     * @param array|null $query
-     * @return Ucl
-     */
-    public function getUcl(string $contextOrUclStr, array $query = []) : Ucl;
 
     /*----- 下一帧 -----*/
 

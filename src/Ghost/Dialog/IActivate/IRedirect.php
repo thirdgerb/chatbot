@@ -56,7 +56,7 @@ class IRedirect extends AbsDialogue implements Redirect
     protected function selfActivate(): void
     {
         $process = $this->getProcess();
-        $process->unsetWaiting($this->ucl->toEncodedUcl());
+        $process->unsetWaiting($this->ucl->toEncodedStr());
         if (!empty($this->paths)) {
             $process->addPath(...$this->paths);
         }

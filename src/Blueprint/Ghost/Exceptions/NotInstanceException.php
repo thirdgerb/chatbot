@@ -19,9 +19,9 @@ use Commune\Blueprint\Exceptions\HostLogicException;
  */
 class NotInstanceException extends HostLogicException
 {
-    public function __construct(string $class, string $method)
+    public function __construct(string $context)
     {
-        $message = "class should be instanced first, class: $class, method: $method";
+        $message = "class should be instanced first, context: $context";
 
         parent::__construct($message);
     }

@@ -38,6 +38,8 @@ class GhostRequestHandler
         ClonePipes\CloneUserCmdPipe::class,
         // super
         ClonePipes\CloneSuperCmdPipe::class,
+        // dialog manager
+        ClonePipes\CloneDialogManagerPipe::class,
     ];
 
     /**

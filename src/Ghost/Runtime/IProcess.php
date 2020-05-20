@@ -112,7 +112,7 @@ class IProcess implements Process, HasIdGenerator
     {
         $this->_belongsTo = $belongsTo;
         $this->_id = $id ?? $this->createUuId();
-        $this->_root = $root->toEncodedUcl();
+        $this->_root = $root->toEncodedStr();
     }
 
     public function toArray(): array
@@ -180,14 +180,14 @@ class IProcess implements Process, HasIdGenerator
 
     public function replaceRoot(Ucl $ucl): void
     {
-        $this->_root = $ucl->toEncodedUcl();
+        $this->_root = $ucl->toEncodedStr();
     }
 
     /*------ dying ------*/
 
     public function addDying(Ucl $ucl, int $turns, array $restoreStages)
     {
-        $str = $ucl->toEncodedUcl();
+        $str = $ucl->toEncodedStr();
         $this->unsetWaiting($str);
         $this->_dying[$str] = [$turns, $restoreStages];
     }
@@ -210,7 +210,7 @@ class IProcess implements Process, HasIdGenerator
 
     public function addBlocking(Ucl $ucl, int $priority): void
     {
-        $str = $ucl->toEncodedUcl();
+        $str = $ucl->toEncodedStr();
         $this->_blocking[$str] = $priority;
         sort($this->_blocking);
     }
@@ -234,7 +234,7 @@ class IProcess implements Process, HasIdGenerator
 
     public function addWatcher(Ucl $watcher): void
     {
-        $str = $watcher->toEncodedUcl();
+        $str = $watcher->toEncodedStr();
         $this->unsetWaiting($str);
         $this->_watching[$str] = '';
     }
@@ -258,7 +258,7 @@ class IProcess implements Process, HasIdGenerator
 
     public function addSleeping(Ucl $ucl, array $wakenStages): void
     {
-        $str = $ucl->toEncodedUcl();
+        $str = $ucl->toEncodedStr();
         $this->unsetWaiting($str);
         $this->_sleeping[$str] = $wakenStages;
     }
@@ -353,9 +353,9 @@ class IProcess implements Process, HasIdGenerator
             return $this->decodedUcl[$ucl];
         }
 
-        $decoded = Ucl::decodeUcl($ucl);
+        $decoded = Ucl::decodeUclStr($ucl);
 
-        if (!$decoded->isValid()) {
+        if (!$decoded->isValidPattern()) {
             throw new InvalidArgumentException("invalid ucl pattern of $ucl");
         }
 

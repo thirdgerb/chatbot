@@ -39,6 +39,8 @@ interface ContextDef extends Def
 
     /*------- properties -------*/
 
+    public function getScopes() : array;
+
     public function getQueryParams() : DefParamsCollection;
 
     public function getEntityParams() : DefParamsCollection;

@@ -70,7 +70,7 @@ class ITrace implements Trace
             throw new TooManyRedirectsException($this->times);
         }
 
-        $this->records[$dialog->ucl->toEncodedUcl()] = get_class($dialog);
+        $this->records[$dialog->ucl->toEncodedStr()] = get_class($dialog);
     }
 
     public function __destruct()

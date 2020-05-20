@@ -59,7 +59,7 @@ class IStaging extends AbsDialogue implements Staging
     protected function selfActivate(): void
     {
         $process = $this->getProcess();
-        $process->unsetWaiting($this->ucl->toEncodedUcl());
+        $process->unsetWaiting($this->ucl->toEncodedStr());
 
         if (!empty($this->stages)) {
             $process->addPath(...$this->stages);

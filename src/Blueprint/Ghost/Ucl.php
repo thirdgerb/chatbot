@@ -11,12 +11,15 @@
 
 namespace Commune\Blueprint\Ghost;
 
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Ghost\Support\ContextUtils;
+use Commune\Support\Arr\ArrayAbleToJson;
+use Commune\Support\Utils\StringUtils;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Ghost\Support\ContextUtils;
-use Commune\Support\Utils\StringUtils;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Blueprint\Ghost\Exceptions\InvalidQueryException;
+use Commune\Blueprint\Ghost\Exceptions\NotInstanceException;
 
 /**
  * Uniform Context Locator
@@ -36,6 +39,7 @@ use Commune\Support\Utils\StringUtils;
  */
 class Ucl implements UclInterface
 {
+    use ArrayAbleToJson;
 
     const STAGE_SEPARATOR = '/';
     const QUERY_SEPARATOR = '?';
@@ -54,6 +58,11 @@ class Ucl implements UclInterface
      * @var string[]
      */
     protected $query;
+
+    /**
+     * @var bool
+     */
+    protected $instanced = false;
 
     /*---- cached ---*/
 
@@ -106,27 +115,45 @@ class Ucl implements UclInterface
         $this->query = $query;
     }
 
+    public static function make(
+        string $contextName,
+        string $stageName,
+        array $query
+    ): Ucl
+    {
+        $contextName = ContextUtils::normalizeContextName($contextName);
+        $stageName = ContextUtils::normalizeStageName($stageName);
+        return new static($contextName, $stageName, $query);
+    }
+
+    public static function context(
+        string $contextName,
+        array $query
+    ): Ucl
+    {
+        $contextName = ContextUtils::normalizeContextName($contextName);
+        return new static($contextName, '', $query);
+    }
+
 
     public static function create(Cloner $cloner, string $contextName, array $query = null, string $stageName = '')  : Ucl
     {
         $contextName = ContextUtils::normalizeContextName($contextName);
         $stageName = ContextUtils::normalizeStageName($stageName);
-        $query = $cloner->getContextualQuery($contextName, $query);
-        return new self($contextName, $stageName, $query);
+
+        $ucl = new static($contextName, $stageName, $query);
+        return $ucl->toInstanced($cloner);
     }
 
-    public static function createFromUcl(
-        Cloner $cloner,
-        string $ucl
-    ): Ucl
+
+    public function getContextId() : string
     {
-        $ucl = static::decodeUcl($ucl);
-        $contextName = $ucl->contextName;
-        $stageName = $ucl->stageName;
-        $query = $ucl->query;
-        return static::create($cloner, $contextName, $stageName, $query);
+        return $this->contextId
+            ?? $this->contextId == sha1(json_encode([
+                'contextName' => $this->contextName,
+                'query' => $this->query,
+            ]));
     }
-
 
     /*------- compare -------*/
 
@@ -137,15 +164,34 @@ class Ucl implements UclInterface
 
     public function isSameContext(string $ucl): bool
     {
-        return $this->getContextId() === Ucl::decodeUcl($ucl)->getContextId();
+        return $this->getContextId() === Ucl::decodeUclStr($ucl)->getContextId();
+    }
+
+    public function equals(string $ucl) : bool
+    {
+        $decoded = Ucl::decodeUclStr($ucl);
+        return $this->getContextId() === $decoded->getContextId()
+            && $this->stageName === $decoded->stageName;
+    }
+
+    public function isInstanced(): bool
+    {
+        return $this->instanced;
+    }
+
+    public function isValid(Cloner $cloner): bool
+    {
+        return $this->isInstanced()
+            && $this->isValidPattern()
+            && $this->stageExists($cloner);
     }
 
 
-    public function equals(string $ucl)
+    public function isValidPattern() : bool
     {
-        $decoded = Ucl::decodeUcl($ucl);
-        return $this->getContextId() === $decoded->getContextId()
-            && $this->stageName === $decoded->stageName;
+        return ContextUtils::isValidContextName($this->contextName)
+            && ContextUtils::isValidStageName($this->stageName)
+            && is_array($this->query);
     }
 
 
@@ -173,19 +219,12 @@ class Ucl implements UclInterface
 
     /*------- create -------*/
 
-    public function isValid() : bool
-    {
-        return ContextUtils::isValidContextName($this->contextName)
-            && ContextUtils::isValidStageName($this->stageName)
-            && is_array($this->query);
-    }
-
     /**
      * @param string|Ucl $string
      * @return Ucl
      * @throws InvalidArgumentException
      */
-    public static function decodeUcl($string) : Ucl
+    public static function decodeUclStr($string) : Ucl
     {
         if ($string instanceof Ucl) {
             return $string;
@@ -223,7 +262,7 @@ class Ucl implements UclInterface
 
 
 
-    public function toEncodedUcl() : string
+    public function toEncodedStr() : string
     {
         if (isset($this->encoded)) {
             return $this->encoded;
@@ -270,7 +309,6 @@ class Ucl implements UclInterface
         return $this->toFullStageName($stage);
     }
 
-
     public function toFullStageName(string $stage = null) : string
     {
         $stage = $stage ?? $this->stageName;
@@ -281,18 +319,33 @@ class Ucl implements UclInterface
         );
     }
 
+    /*------- instance -------*/
 
-    public function getContextId() : string
+    public function toInstanced(Cloner $cloner): Ucl
     {
-        return $this->contextId
-            ?? $this->contextId == sha1(json_encode([
-               'contextName' => $this->contextName,
-               'query' => $this->query,
-            ]));
+        $contextDef = $this->findContextDef($cloner);
+
+        $params = $contextDef->getQueryParams();
+        $values = $params->parseValues($this->query);
+        $values = array_map(function($value) {
+            if (is_null($value)) {
+                throw new InvalidQueryException($this->contextName);
+            }
+            return $value;
+        }, $values);
+
+        $scopes = $contextDef->getScopes();
+        $map = $cloner->scope->getLongTermDimensionsDict($scopes);
+
+        $query = $values + $map;
+
+        $instance = new static($this->contextName, $this->stageName, $query);
+        $instance->instanced = true;
+        return $instance;
     }
 
 
-    /*------- def -------*/
+    /*------- find -------*/
 
     public function findIntentDef(Cloner $cloner) : ? IntentDef
     {
@@ -324,8 +377,7 @@ class Ucl implements UclInterface
     public function stageExists(Cloner $cloner) : bool
     {
         return $this->exists
-            ?? $this->exists = $this->isValid()
-                && $cloner->mind->stageReg()->hasDef($this->toFullStageName());
+            ?? $this->exists = $cloner->mind->stageReg()->hasDef($this->toFullStageName());
     }
 
     public function findStageDef(Cloner $cloner) : StageDef
@@ -346,6 +398,32 @@ class Ucl implements UclInterface
                 ->getDef($this->contextName);
     }
 
+    public function findContext(Cloner $cloner): Context
+    {
+        if (!$this->instanced) {
+            throw new NotInstanceException($this->toJson());
+        }
+
+        $def = $this->findContextDef($cloner);
+        return $def->wrapContext($cloner, $this);
+    }
+
+
+    /*------- to array -------*/
+
+    public function toArray(): array
+    {
+        return [
+            'contextName' => $this->contextName,
+            'contextId' => $this->getContextId(),
+            'stageName' => $this->stageName,
+            'query' => $this->query
+        ];
+    }
+
+
+    /*------- magic -------*/
+
     public function __isset($name)
     {
         return in_array($name, ['contextName', 'stageName', 'query']);
@@ -358,7 +436,7 @@ class Ucl implements UclInterface
 
     public function __toString() : string
     {
-        return $this->toEncodedUcl();
+        return $this->toEncodedStr();
     }
 
     public function __sleep()

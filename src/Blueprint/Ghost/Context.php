@@ -44,7 +44,6 @@ interface Context extends
 
     /**
      * @return string
-     * @throws NotInstanceException
      */
     public function getId() : string;
 

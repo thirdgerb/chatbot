@@ -37,7 +37,7 @@ class IIntend extends AbsDialogue implements Intend
     protected function selfActivate(): void
     {
         $process = $this->getProcess();
-        $process->unsetWaiting($this->ucl->toEncodedUcl());
+        $process->unsetWaiting($this->ucl->toEncodedStr());
     }
 
 
