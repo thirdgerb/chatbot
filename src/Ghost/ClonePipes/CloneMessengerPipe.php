@@ -12,15 +12,16 @@
 namespace Commune\Ghost\ClonePipes;
 
 use Closure;
-use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
-use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
-use Commune\Blueprint\Exceptions\Runtime\QuitSessionException;
+use Commune\Blueprint\Exceptions\HostRuntimeException;
+use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Message\Host\SystemInt\RequestFailInt;
-use Commune\Message\Host\SystemInt\SessionQuitInt;
+use Commune\Message\Host\SystemInt\SessionFailInt;
 use Commune\Protocals\HostMsg\Convo\UnsupportedMsg;
 use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -41,14 +42,49 @@ class CloneMessengerPipe extends AClonePipe
             return $next($request);
 
         } catch (BrokenSessionException $e) {
-            // 退出会话.
-            $this->cloner->quit();
-            return $request->response($this->cloner);
+
+            return $this->quitSession($request, $e);
 
         } catch (BrokenRequestException $e) {
 
-            return $request->output(new RequestFailInt());
+            return $this->requestFail($request, $e);
+        }
+    }
+
+    protected function requestFail(
+        GhostRequest $request,
+        HostRuntimeException $e
+    ) : GhostResponse
+    {
+
+        $storage = $this->cloner->storage;
+        $times = $storage[ClonerStorage::REQUEST_FAIL_TIME_KEY] ?? 0;
+        $times ++;
+        if ($times > $this->cloner->config->maxRequestFailTimes) {
+            return $this->quitSession($request, $e);
         }
 
+        $storage[ClonerStorage::REQUEST_FAIL_TIME_KEY] = $times;
+        $this->cloner->output(
+            $this->cloner->ghostInput->output(new RequestFailInt($e->getMessage()))
+        );
+        return $request->response($this->cloner);
+
+    }
+
+    protected function quitSession(
+        GhostRequest $request,
+        HostRuntimeException $e
+    ) : GhostResponse
+    {
+        $message = new SessionFailInt(
+            $e->getMessage()
+        );
+
+        $this->cloner->output(
+            $this->cloner->ghostInput->output($message)
+        );
+        $this->cloner->quit();
+        return $request->response($this->cloner);
     }
 }

@@ -11,6 +11,8 @@
 
 namespace Commune\Blueprint\Exceptions;
 
+use Throwable;
+use Commune\Blueprint\Framework\Request\AppResponse;
 
 /**
  * 机器人运行时异常.
@@ -18,5 +20,13 @@ namespace Commune\Blueprint\Exceptions;
  */
 class HostRuntimeException extends \RuntimeException
 {
+    public function __construct(
+        string $message = "",
+        int $code = AppResponse::HOST_RUNTIME_ERROR,
+        Throwable $previous = null
+    )
+    {
+        parent::__construct($message, $code, $previous);
+    }
 
 }

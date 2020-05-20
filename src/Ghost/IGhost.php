@@ -140,7 +140,8 @@ class IGhost extends AbsApp implements Ghost
             );
 
             if (!isset($handler)) {
-                return $response = $request->fail(AppResponse::HANDLER_NOT_FOUND);
+                return $response = $request
+                    ->fail(AppResponse::HANDLER_NOT_FOUND);
             }
 
             // 使用 Handler 来响应.
@@ -155,7 +156,9 @@ class IGhost extends AbsApp implements Ghost
                 $cloner->fire(new EndSession($cloner));
                 $cloner->finish();
             }
-            return $response ?? $request->fail(AppResponse::HOST_LOGIC_ERROR);
+
+            return $response
+                ?? $request->fail(AppResponse::HOST_LOGIC_ERROR);
         }
     }
 

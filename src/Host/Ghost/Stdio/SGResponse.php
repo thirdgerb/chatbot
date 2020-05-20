@@ -81,7 +81,7 @@ class SGResponse implements GhostResponse
             $this->stdio->end('quit');
         }
 
-        if ($this->errcode > 300) {
+        if ($this->errcode > 399) {
             $this->console->emergency($this->errmsg);
             $this->stdio->end($this->errcode);
         }

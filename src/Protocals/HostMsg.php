@@ -25,6 +25,7 @@ interface HostMsg extends Message, Protocal
     const DEBUG = 'debug';
     // 默认的消息级别.
     const INFO = 'info';
+    const WARNING = 'warning';
     // 客户端应该给出提示的消息.
     const NOTICE = 'notice';
     // 客户端应该用错误信号来提醒的消息.
@@ -33,6 +34,7 @@ interface HostMsg extends Message, Protocal
     const LEVELS = [
         self::DEBUG,
         self::INFO,
+        self::WARNING,
         self::NOTICE,
         self::ERROR,
     ];

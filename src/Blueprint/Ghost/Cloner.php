@@ -99,9 +99,9 @@ interface Cloner extends Session
 
     /**
      * @param Dialog|null $dialog
-     * @return bool
+     * @return Cloner
      */
-    public function runDialogManager(Dialog $dialog = null) : bool;
+    public function runDialogManager(Dialog $dialog = null) : Cloner;
 
     /*----- 手动输出 -----*/
 

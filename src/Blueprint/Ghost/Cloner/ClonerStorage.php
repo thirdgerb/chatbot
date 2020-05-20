@@ -18,4 +18,5 @@ use Commune\Blueprint\Framework\Session\SessionStorage;
  */
 interface ClonerStorage extends SessionStorage
 {
+    const REQUEST_FAIL_TIME_KEY = 'requestFailTimes';
 }

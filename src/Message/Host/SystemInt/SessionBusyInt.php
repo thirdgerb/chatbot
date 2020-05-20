@@ -26,7 +26,7 @@ class SessionBusyInt extends IIntentMsg
         parent::__construct(
             HostMsg\IntentMsg::SYSTEM_SESSION_BUSY,
             [],
-            HostMsg::INFO
+            HostMsg::WARNING
         );
     }
 

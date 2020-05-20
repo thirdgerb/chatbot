@@ -11,6 +11,9 @@
 
 namespace Commune\Blueprint\Exceptions;
 
+use Throwable;
+use Commune\Blueprint\Framework\Request\AppResponse;
+
 
 /**
  * 机器人的逻辑错误, 不应该发生.
@@ -18,4 +21,13 @@ namespace Commune\Blueprint\Exceptions;
  */
 class HostLogicException extends \LogicException
 {
+    public function __construct(
+        string $message = "",
+        int $code = AppResponse::HOST_LOGIC_ERROR,
+        Throwable $previous = null
+    )
+    {
+        parent::__construct($message, $code, $previous);
+    }
+
 }

@@ -13,6 +13,7 @@ namespace Commune\Ghost;
 
 use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 use Commune\Blueprint\Exceptions\Runtime\QuitSessionException;
+use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost;
@@ -254,7 +255,7 @@ class ICloner extends ASession implements Cloner
 
     /*------- dialog manager -------*/
 
-    public function runDialogManager(Dialog $dialog = null): bool
+    public function runDialogManager(Dialog $dialog = null): Cloner
     {
         $next = $dialog ?? new IStartProcess($this);
 
@@ -268,11 +269,16 @@ class ICloner extends ASession implements Cloner
 
                 if ($next instanceof Dialog\Finale) {
                     $next->tick();
-                    return true;
+                    return $this;
                 }
             }
 
         } catch (Ghost\Exceptions\TooManyRedirectsException $e) {
+
+            throw new BrokenSessionException(
+                AppResponse::HOST_RUNTIME_ERROR,
+                $e
+            );
 
         } catch (\Throwable $e) {
 

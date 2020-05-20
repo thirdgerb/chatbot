@@ -32,7 +32,7 @@ class SessionQuitInt extends IIntentMsg
 
     public static function create(array $data = []): Struct
     {
-        return new static();
+        return parent::create();
     }
 
 }

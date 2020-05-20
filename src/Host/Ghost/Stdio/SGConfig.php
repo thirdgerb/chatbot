@@ -86,6 +86,7 @@ class SGConfig extends GhostConfig
             // session
             'sessionExpire' => 3600,
             'sessionLockerExpire' => 3,
+            'maxRequestFailTimes' => 3,
             'maxRedirectTimes' => 255,
             'mindsetCacheExpire' => 600,
             'sceneContextNames' => [

@@ -16,6 +16,7 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
+use Commune\Blueprint\Ghost\Runtime\Trace;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Ghost\RuntimeDriver;
 use Commune\Ghost\Memory\IMemory;
@@ -68,6 +69,11 @@ class IRuntime implements Runtime, Spied
      * @var array
      */
     protected $longTermMemories = [];
+
+    /**
+     * @var Trace|null
+     */
+    protected $trace;
 
     /**
      * IRuntime constructor.
@@ -347,6 +353,18 @@ class IRuntime implements Runtime, Spied
         }
     }
 
+    public function __get($name)
+    {
+        if ($name === 'trace') {
+            return $this->trace
+                ?? $this->trace = new ITrace(
+                    $this->cloner->config->maxRedirectTimes,
+                    $this->cloner->logger,
+                    $this->cloner->isDebugging()
+                );
+        }
+        return null;
+    }
 
     public function __destruct()
     {

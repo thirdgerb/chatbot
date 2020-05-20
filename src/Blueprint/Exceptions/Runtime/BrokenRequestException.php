@@ -12,11 +12,21 @@
 namespace Commune\Blueprint\Exceptions\Runtime;
 
 use Commune\Blueprint\Exceptions\HostRuntimeException;
+use Commune\Blueprint\Framework\Request\AppResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class BrokenRequestException extends HostRuntimeException
 {
+    public function __construct(string $message = "",  \Throwable $previous = null)
+    {
+        $message = empty($message)
+            ? AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_REQUEST_FAIL]
+            : $message;
+
+        parent::__construct($message, AppResponse::HOST_REQUEST_FAIL, $previous);
+    }
+
 
 }

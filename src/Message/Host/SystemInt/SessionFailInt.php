@@ -23,12 +23,12 @@ use Commune\Support\Struct\Struct;
  * @property-read int $errcode
  * @property-read string $errmsg
  */
-class RequestFailInt extends IIntentMsg
+class SessionFailInt extends IIntentMsg
 {
     public function __construct(string $errmsg = null)
     {
         $errmsg = $errmsg
-            ?? AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_REQUEST_FAIL];
+            ?? AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_SESSION_FAIL];
 
         parent::__construct(
             HostMsg\IntentMsg::SYSTEM_SESSION_FAIL,
@@ -42,9 +42,9 @@ class RequestFailInt extends IIntentMsg
     public static function stub(): array
     {
         return [
-            'intentName' => HostMsg\IntentMsg::SYSTEM_REQUEST_FAILURE,
-            'errcode' => AppResponse::HOST_REQUEST_FAIL,
-            'errmsg' => AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_REQUEST_FAIL],
+            'intentName' => HostMsg\IntentMsg::SYSTEM_SESSION_FAIL,
+            'errcode' => AppResponse::HOST_SESSION_FAIL,
+            'errmsg' => AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_SESSION_FAIL],
             'level' => HostMsg::ERROR
         ];
     }
@@ -58,5 +58,4 @@ class RequestFailInt extends IIntentMsg
     {
         return $this->errmsg;
     }
-
 }
