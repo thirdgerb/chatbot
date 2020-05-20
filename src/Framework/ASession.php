@@ -211,8 +211,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     }
 
 
-    /*------ silence ------*/
-
     public function noState(): void
     {
         $this->stateless = true;

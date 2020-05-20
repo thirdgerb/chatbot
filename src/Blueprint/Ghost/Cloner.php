@@ -44,7 +44,7 @@ use Commune\Support\Registry\OptRegistry;
  * @property-read ReqContainer $container           容器
  *
  * # 请求相关
- * @property-read InputMsg $input            输入
+ * @property-read InputMsg $input                   输入
  * @property-read Cloner\ClonerScene $scene         场景信息
  * @property-read Cloner\ClonerScope $scope         当前分身的维度.
  * @property-read Ghost\Tools\Matcher $matcher      全局的匹配单元
@@ -100,12 +100,6 @@ interface Cloner extends Session
     public function isQuit() : bool;
 
     /*----- 手动输出 -----*/
-
-    /**
-     * 静音开关, 打开静音开关, 接下来的 output 都不会真正接收.
-     * @param bool $silent
-     */
-    public function silence(bool $silent = true) : void;
 
     /**
      * 同步输出一个消息.

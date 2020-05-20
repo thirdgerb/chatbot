@@ -33,16 +33,20 @@ use Commune\Blueprint\Framework\Session\SessionStorage;
 class ICloner extends ASession implements Cloner
 {
     const SINGLETONS =  [
-        'scope' => Cloner\ClonerScope::class,
-        'config' => GhostConfig::class,
-        'convo' => Ghost\Tools\Deliver::class,
+        'logger' => Cloner\ClonerLogger::class,
         'storage' => Cloner\ClonerStorage::class,
+
+        'scene' => Cloner\ClonerScene::class,
+        'scope' => Cloner\ClonerScope::class,
+        'matcher' => Ghost\Tools\Matcher::class,
+
         'cache' => Cache::class,
         'auth' => Ghost\Auth\Authority::class,
+
         'mind' => Ghost\Mindset::class,
         'runtime' => Ghost\Runtime\Runtime::class,
+
         'registry' => OptRegistry::class,
-        'logger' => Cloner\ClonerLogger::class,
     ];
 
     /*------- components -------*/
@@ -88,11 +92,6 @@ class ICloner extends ASession implements Cloner
      * @var InputMsg[]
      */
     protected $asyncInputs = [];
-
-    /**
-     * @var bool
-     */
-    protected $silent = false;
 
     public function __construct(Ghost $ghost, ReqContainer $container, InputMsg $input)
     {
@@ -208,7 +207,7 @@ class ICloner extends ASession implements Cloner
             return $this->ghost;
         }
 
-        if ($name === 'ghostConfig') {
+        if ($name === 'config') {
             return $this->ghostConfig;
         }
 
@@ -272,24 +271,18 @@ class ICloner extends ASession implements Cloner
 
     /*------- output -------*/
 
-    public function silence(bool $silent = true): void
-    {
-        $this->silent = $silent;
-    }
 
     public function output(IntercomMsg $output, IntercomMsg ...$outputs): void
     {
         array_unshift($outputs, $output);
-        if (!$this->silent) {
-            $this->outputs = array_reduce(
-                $outputs,
-                function($outputs, IntercomMsg $output){
-                    $outputs[] = $output;
-                    return $outputs;
-                },
-                $this->outputs
-            );
-        }
+        $this->outputs = array_reduce(
+            $outputs,
+            function($outputs, IntercomMsg $output){
+                $outputs[] = $output;
+                return $outputs;
+            },
+            $this->outputs
+        );
     }
 
     public function getOutputs(): array
