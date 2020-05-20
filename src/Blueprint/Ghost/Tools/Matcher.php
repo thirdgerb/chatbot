@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Tools;
 
+use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Ghost\Callables\Prediction;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
 use Commune\Protocals\HostMsg\Convo\QuestionMsg;
@@ -29,20 +30,27 @@ interface Matcher
 
     public function isMatched() : bool;
 
+    public function refresh() : Matcher;
+
     /*------- 匹配事件 -------*/
 
     /**
      * 如果不主动拦截, 则event 消息都会被忽视.
+     *
+     *
+     *
      * @param string $eventName
-     * @return EventMsg|null
+     * @return static
+     * @matched string $isEvent
      */
-    public function isEvent(string $eventName) : ?  EventMsg;
+    public function isEvent(string $eventName) : Matcher;
 
     /**
-     * @param string[] $eventName
-     * @return EventMsg|null
+     * @param string[] $eventNames
+     * @return static
+     * @matched string $isEventIn
      */
-    public function isEventIn(array $eventName) : ? EventMsg;
+    public function isEventIn(array $eventNames) : Matcher;
 
 
     /*------- php matcher -------*/
@@ -52,12 +60,10 @@ interface Matcher
      * 用一个 prediction callable 判断是否命中条件.
      * 命中后执行 interceptor
      *
-     * run action only if expecting prediction return true
-     *
-     * @param Prediction|callable|string $prediction  return bool
-     * @return bool
+     * @param Prediction|callable|string $prediction
+     * @return static
      */
-    public function expect($prediction) : bool;
+    public function expect($prediction) : Matcher;
 
 
     /**
@@ -65,6 +71,7 @@ interface Matcher
      *
      * @param string $text
      * @return static
+     * @matched string $is
      */
     public function is(string $text) : Matcher;
 
@@ -72,9 +79,9 @@ interface Matcher
     /**
      * Message->isEmpty() === true
      *
-     * @return bool
+     * @return static
      */
-    public function isEmpty() : bool;
+    public function isEmpty() : Matcher;
 
     /**
      * 通过正则匹配获取数据.
@@ -83,6 +90,7 @@ interface Matcher
      *
      * @param string $pattern  查询的正则
      * @return static
+     * @matched array $pregMatch
      */
     public function pregMatch(string $pattern): Matcher;
 
@@ -91,15 +99,17 @@ interface Matcher
      *
      * 相当于 instanceOf(Verbal::class)
      *
-     * @return VerbalMsg|null
+     * @return static
+     * @matched VerbalMsg $isVerbal
      */
-    public function isVerbal() : ? VerbalMsg;
+    public function isVerbal() : Matcher;
 
     /**
      * 判断传入的 message 是否是某个 MessageSubClass 的实例.
      *
      * @param string $messageClazz
      * @return static
+     * @matched object $isInstanceOf
      */
     public function isInstanceOf(string $messageClazz) : Matcher;
 
@@ -107,9 +117,10 @@ interface Matcher
     /**
      * 符合某个协议
      * @param string $protocalName
-     * @return Protocal|null
+     * @return static
+     * @matched Protocal $isProtocal
      */
-    public function isProtocal(string $protocalName) : ? Protocal;
+    public function isProtocal(string $protocalName) : Matcher;
 
     /**
      * 发音相似. 目前应该只支持中文.
@@ -117,24 +128,24 @@ interface Matcher
      *
      * @param string $text
      * @param string $lang
-     * @return bool
+     * @return static
      */
     public function soundLike(
         string $text,
         string $lang = SoundLikeInterface::ZH
-    ) : bool;
+    ) : Matcher;
 
     /**
      * @param string $text
      * @param int $type
      * @param string $lang
-     * @return bool
+     * @return static
      */
     public function soundLikePart(
         string $text,
-        int $type = SoundLikeInterface::COMPARE_ANY_PART,
-        string $lang = SoundLikeInterface::ZH
-    ) : bool;
+        string $lang = SoundLikeInterface::ZH,
+        int $type = SoundLikeInterface::COMPARE_ANY_PART
+    ) : Matcher;
 
 
     /**
@@ -142,9 +153,10 @@ interface Matcher
      * 通常就是关键词匹配算法.
      *
      * @param string $entityName
-     * @return null|Collection
+     * @return static
+     * @matched string[] $matchEntity
      */
-    public function matchEntity(string $entityName) : ? Collection;
+    public function matchEntity(string $entityName) : Matcher;
 
 
 
@@ -152,24 +164,20 @@ interface Matcher
     /*------- question matcher -------*/
 
     /**
-     * 输入是否是一个问题.
-     * @return QuestionMsg|null
-     */
-    public function isQuestion() : ? QuestionMsg;
-
-    /**
      * 只要有answer, 不管上文有没有命中过.
      *
      * @param string $answer
-     * @return bool
+     * @return static
+     * @matched string $isAnswer
      */
-    public function isAnswer(string $answer) : bool;
+    public function isAnswer(string $answer) : Matcher;
 
     /**
      *
      * $matches = [ string $answer]
      *
      * @return static
+     * @matched string $isAnyAnswer
      */
     public function isAnyAnswer() : Matcher;
 
@@ -186,18 +194,20 @@ interface Matcher
     /**
      * 有多个choice 中的一个
      * @param array $choices
-     * @return bool
+     * @return Matcher
+     * @matched mixed $hasChoiceIn
      */
-    public function hasChoiceIn(array $choices) : bool;
+    public function hasChoiceIn(array $choices) : Matcher;
 
     /**
      * 尝试匹配一个临时定义的命令
      * 并把匹配成功的 CommandMessage 传递给interceptor
      *
      * @param string $signature
-     * @return null|CommandMsg
+     * @return static
+     * @matched CommandMsg $isCommand
      */
-    public function isCommand(string $signature) : ? CommandMsg;
+    public function isCommand(string $signature) : Matcher;
 
 
     /**
@@ -219,9 +229,10 @@ interface Matcher
      * parser @see Feeling
      *
      * @param string $emotionName
-     * @return bool
+     * @return static
+     * @matched string $feels
      */
-    public function feels(string $emotionName) : bool;
+    public function feels(string $emotionName) : Matcher;
 
     /**
      * @return static

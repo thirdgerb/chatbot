@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\MindDef;
 
-use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Dialog;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -20,9 +20,8 @@ interface EmotionDef extends Def
 {
 
     /**
-     * 检查某种情绪是否匹配上了.
-     * @param Cloner $cloner
+     * @param Dialog $dialog
      * @return bool
      */
-    public function feels(Cloner $cloner) : bool;
+    public function feels(Dialog $dialog) : bool;
 }

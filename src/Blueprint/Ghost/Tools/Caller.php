@@ -19,13 +19,6 @@ use Commune\Blueprint\Ghost\Dialog;
 interface Caller
 {
     /**
-     * @param  string  $abstract
-     * @param  array  $parameters
-     * @return mixed
-     */
-    public function make(string $abstract, array $parameters = []);
-
-    /**
      * @param callable|string $caller
      * @param array $parameters
      * @return mixed

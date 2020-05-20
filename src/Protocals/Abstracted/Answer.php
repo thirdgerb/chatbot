@@ -9,16 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\MindReg;
+namespace Commune\Protocals\Abstracted;
 
-use Commune\Blueprint\Ghost\MindDef\EntityDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @method EntityDef getDef(string $defName) : Def
  */
-interface EntityReg extends DefRegistry
+interface Answer
 {
+
+    public function setAnswer(string $answer) : void;
+
+    public function getAnswer() : ? string;
 
 }

@@ -11,8 +11,6 @@
 
 namespace Commune\Protocals\Abstracted;
 
-use Commune\Support\Protocal\Protocal;
-
 
 /**
  * 输入消息的情绪
@@ -20,16 +18,14 @@ use Commune\Support\Protocal\Protocal;
  */
 interface Emotion
 {
-    /**
-     * @param string ...$emotion
-     */
-    public function addEmotion(string ...$emotion) : void;
+
+    public function setEmotion(string $emotion, bool $bool) : void;
 
     /**
      * @param string $emotionName
-     * @return bool
+     * @return null|bool
      */
-    public function hasEmotion(string $emotionName) : bool;
+    public function hasEmotion(string $emotionName) : ? bool;
 
     /**
      * @return string[]

@@ -11,11 +11,16 @@
 
 namespace Commune\Blueprint\Ghost\MindReg;
 
+use Commune\Blueprint\Ghost\MindDef\EmotionDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @method EmotionDef getDef(string $defName) : Def
  */
 interface EmotionReg extends DefRegistry
 {
+    const EMO_POSITIVE = 'emotion.positive';
+    const EMO_NEGATIVE = 'emotion.negative';
 
 }

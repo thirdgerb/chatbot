@@ -23,7 +23,5 @@ interface Choice
 
     public function hasChoice($choice) : bool;
 
-    public function getAnswer() : string;
-
-    public function addChoice($choice, string $answer) : void;
+    public function setChoice($choice) : void;
 }

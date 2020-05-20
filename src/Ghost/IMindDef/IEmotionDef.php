@@ -12,6 +12,7 @@
 namespace Commune\Ghost\IMindDef;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
 use Commune\Blueprint\Ghost\MindDef\EmotionDef;
 use Commune\Support\Option\Meta;
@@ -53,10 +54,10 @@ class IEmotionDef implements EmotionDef
         return $this->meta->desc;
     }
 
-    public function feels(Cloner $cloner): bool
+    public function feels(Dialog $dialog): bool
     {
         $intents = $this->meta->emotionalIntents;
-
+        $cloner = $dialog->cloner;
         // 检查是否有相关的 intents 命中了.
         if (!empty($intents)) {
             $intention = $cloner->input->comprehension->intention;
@@ -71,11 +72,10 @@ class IEmotionDef implements EmotionDef
             return false;
         }
 
-        $matcher = $cloner->matcher;
+        $caller = $dialog->caller();
         foreach ($matchers as $matcherName) {
-
             // 校验所有的 matcher.
-            if ($matcher->expect($matcherName)) {
+            if ($caller->predict($matcherName)) {
                 return true;
             }
         }

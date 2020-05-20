@@ -47,7 +47,6 @@ use Commune\Support\Registry\OptRegistry;
  * @property-read InputMsg $input                   输入
  * @property-read Cloner\ClonerScene $scene         场景信息
  * @property-read Cloner\ClonerScope $scope         当前分身的维度.
- * @property-read Ghost\Tools\Matcher $matcher      全局的匹配单元
  *
  * # 功能组件
  * @property-read Cache $cache                      公共缓存

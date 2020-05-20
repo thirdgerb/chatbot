@@ -22,6 +22,7 @@ use Commune\Protocals\Abstracted;
  * # 协议的部分.
  *
  * @property-read Abstracted\Choice         $choice         认为输入是个单向选择
+ * @property-read Abstracted\Answer         $answer         回答
  * @property-read Abstracted\Cmd            $command        命令模块, 检查是否是命令.
  * @property-read Abstracted\Emotion        $emotion        情绪模块, 从各种模块中得到的综合抽象, 可以代表多种模块
  *
@@ -55,6 +56,17 @@ interface Comprehension
         bool $success
     ) : void;
 
+    /**
+     * @param string $type
+     * @return bool
+     */
+    public function isHandled(string $type) : bool;
+
+    /**
+     * @param string $comprehenderId
+     * @param string|null $type
+     * @return bool
+     */
     public function isHandedBy(
         string $comprehenderId,
         string $type = null

@@ -54,7 +54,6 @@ class UserInfoMem extends AMemoryContext
         return $stage
             ->onActivate(function(Dialog $dialog){
                 return $dialog
-                    ->nav()
                     ->await()
                     ->askAny('请问我应该如何称呼您');
             })
@@ -66,8 +65,8 @@ class UserInfoMem extends AMemoryContext
                     return $dialog
                         ->hearing()
                         ->isAnyAnswer()
-                        ->then(function(Dialog $dialog, string $answer){
-                            if (mb_strlen($answer) > 10) {
+                        ->then(function(Dialog $dialog, string $isAnyAnswer){
+                            if (mb_strlen($isAnyAnswer) > 10) {
                                 $dialog
                                     ->send()
                                     ->notice("称呼请麻烦控制在10个字符之内");
@@ -75,6 +74,7 @@ class UserInfoMem extends AMemoryContext
                                 return $dialog->nav()->rewind();
                             }
 
+                            $this->name = $isAnyAnswer;
                             return $dialog->nav()->next();
                         })
                         ->end();

@@ -18,6 +18,7 @@ use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Exceptions\Logic\InvalidClassException;
 use Commune\Container\ContainerContract;
 use Commune\Ghost\Support\CommandUtils;
+use Commune\Protocals\Abstracted\Cmd;
 use Illuminate\Console\Parser;
 use Psr\Log\LoggerInterface;
 
@@ -54,21 +55,44 @@ trait TRequestCmdPipe
     public function tryHandleCommand(AppRequest $request, \Closure $next) : AppResponse
     {
         $this->init();
-        $text = $this->getInputText($request);
 
-        if (empty($text)) {
-            return $next($request);
+        $input = $request->getInput();
+        $comprehension = $input->comprehension;
+
+        // 处理过
+        $handled = $comprehension->isHandled(Cmd::class);
+        $command = $comprehension->command;
+
+        // 不存在的话, 尝试检查一下.
+        if (!$handled) {
+
+            $text = $this->getInputText($request);
+
+            $cmdStr = null;
+            if (!empty($text)) {
+                $mark = $this->getCommandMark();
+                $cmdStr = CommandUtils::getCommandStr($text, $mark);
+            }
+
+            $success = false;
+            // 不是命令的话, 跳走.
+            if (isset($cmdStr)) {
+                $command->setCmdStr($cmdStr);
+                $success = true;
+            }
+
+            $comprehension->handled(
+                Cmd::class,
+                static::class,
+                $success
+            );
         }
 
-        $mark = $this->getCommandMark();
-        $cmdStr = CommandUtils::getCommandStr($text, $mark);
+        $cmdStr = $command->getCmdStr();
 
-        // 不是命令的话, 跳走.
-        if (!isset($cmdStr)) {
-            return $next($request);
-        }
-
-        return $this->matchCommand($request, $cmdStr, $next);
+        return isset($cmdStr)
+            ? $this->matchCommand($request, $cmdStr, $next)
+            : $next($request);
     }
 
 

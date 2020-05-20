@@ -21,6 +21,8 @@ interface SoundLikeInterface
     // 任何位置重复
     const COMPARE_ANY_PART = 3;
 
+    public function register(string $lang, string $parserAbstract) : void;
+
     public function registerParser(string $lang, SoundLikeParser $parser) : void;
 
     public function soundLike(

@@ -36,6 +36,11 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
 {
     use IdGeneratorHelper;
 
+    /**
+     * @var string
+     */
+    protected $_normalizedText;
+
     public static function relations(): array
     {
         return [
@@ -142,6 +147,12 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
     public function getMsgText(): string
     {
         return $this->message->getText();
+    }
+
+    public function getNormalizedText(): string
+    {
+        return $this->_normalizedText
+            ?? $this->_normalizedText = StringUtils::normalizeString($this->getMsgText());
     }
 
 

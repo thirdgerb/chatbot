@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Framework\Request;
 
 use Commune\Protocals\HostMsg;
+use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\Protocal\Protocal;
 
@@ -38,9 +39,9 @@ interface AppRequest extends Protocal
     public function noOutputs() : bool;
 
     /**
-     * @return IntercomMsg
+     * @return InputMsg
      */
-    public function getInput() : IntercomMsg;
+    public function getInput() : InputMsg;
 
     /**
      * @param HostMsg $message

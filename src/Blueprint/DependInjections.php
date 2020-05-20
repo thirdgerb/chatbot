@@ -18,6 +18,7 @@ use Commune\Protocals;
 use Commune\Blueprint\Framework;
 use Commune\Blueprint\Configs;
 use Commune\Support\Registry\OptRegistry;
+use Commune\Support\SoundLike\SoundLikeInterface;
 use Psr\Log\LoggerInterface;
 
 
@@ -40,6 +41,7 @@ interface DependInjections
         Contracts\Log\ExceptionReporter::class,
         OptRegistry::class,
         LoggerInterface::class,
+        SoundLikeInterface::class,
     ];
 
     /*------- ghost -------*/

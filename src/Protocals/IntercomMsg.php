@@ -96,6 +96,10 @@ interface IntercomMsg extends Message, Protocal
      */
     public function getMsgRenderId(string $renderId) : string;
 
+    /**
+     * @return string
+     */
+    public function getNormalizedText() : string;
 
     /*------- methods -------*/
 

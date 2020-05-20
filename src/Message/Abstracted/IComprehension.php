@@ -29,7 +29,9 @@ class IComprehension extends AbsMessage implements
     Abstracted\Cmd,
     Abstracted\Query,
     Abstracted\Vector,
-    Abstracted\Selection
+    Abstracted\Selection,
+    Abstracted\Choice,
+    Abstracted\Answer
 {
     protected $transferNoEmptyRelations = true;
 
@@ -38,7 +40,8 @@ class IComprehension extends AbsMessage implements
     public static function stub(): array
     {
         return [
-            'choice' => [],
+            'choice' => null,
+            'answer' => null,
             'cmd' => null,
             'emotions' => [],
             'intention' => [],
@@ -54,7 +57,6 @@ class IComprehension extends AbsMessage implements
     public static function relations(): array
     {
         return [
-            'choice' => IChoice::class,
             'intention' => IIntention::class,
             'replies[]' => HostMsg::class,
         ];
@@ -108,7 +110,6 @@ class IComprehension extends AbsMessage implements
         return isset($this->_data['cmd']);
     }
 
-
     public function getCmdStr(): ? string
     {
         return $this->_data['cmd'] ?? null;
@@ -151,12 +152,9 @@ class IComprehension extends AbsMessage implements
 
     /*------- emotions -------*/
 
-    public function addEmotion(string ...$emotion): void
+    public function setEmotion(string $emotion, bool $bool): void
     {
-        $this->_data['emotions'] = array_merge(
-            $this->_data['emotions'] ?? [],
-            array_fill_keys($emotion, true)
-        );
+        $this->_data['emotions'][$emotion] = true;
     }
 
     public function getEmotions(): array
@@ -165,9 +163,9 @@ class IComprehension extends AbsMessage implements
         return array_keys($emotions);
     }
 
-    public function hasEmotion(string $emotionName): bool
+    public function hasEmotion(string $emotionName): ? bool
     {
-        return isset($this->_data['emotions'][$emotionName]);
+        return $this->_data['emotions'][$emotionName] ?? null;
     }
 
 
@@ -220,6 +218,12 @@ class IComprehension extends AbsMessage implements
         $this->_data['handledBy'] = $handledBy;
     }
 
+    public function isHandled(string $type): bool
+    {
+        return isset($this->_data['handledBy'][$type]);
+    }
+
+
     public function isHandedBy(
         string $comprehenderId,
         string $type = null
@@ -258,22 +262,36 @@ class IComprehension extends AbsMessage implements
         return false;
     }
 
+    /*------- answer -------*/
 
-    public function handledBy(string $comprehenderId, bool $succeed): void
+    public function setAnswer(string $answer): void
     {
-
+        $this->_data['answer'] = $answer;
     }
 
-    public function isHandledBy(string $comprehenderId): bool
+    public function getAnswer(): ? string
     {
-        $handledBy = $this->_data['handledBy'];
-        return array_key_exists($comprehenderId, $handledBy);
+        return $this->_data['answer'] ?? null;
     }
 
-    public function isSucceedBy(string $comprehenderId): bool
+
+    /*------- choice -------*/
+
+    public function getChoice()
     {
-        return $this->handledBy[$comprehenderId] ?? false;
+        return $this->_data['choice'] ?? null;
     }
+
+    public function hasChoice($choice): bool
+    {
+        return $this->_data['choice'] ?? false;
+    }
+
+    public function setChoice($choice): void
+    {
+        $this->_data['choice'] = $choice;
+    }
+
 
     /*------- methods -------*/
 

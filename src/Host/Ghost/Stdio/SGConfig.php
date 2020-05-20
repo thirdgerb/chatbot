@@ -43,6 +43,7 @@ class SGConfig extends GhostConfig
                 Framework\Providers\ExpReporterByConsoleProvider::class,
                 Framework\Providers\LoggerByMonologProvider::class,
                 Framework\Providers\SpyAgencyServiceProvider::class,
+                Framework\Providers\SoundLikeServiceProvider::class,
                 GhostProviders\MindsetServiceProvider::class,
             ],
             'reqProviders' => [

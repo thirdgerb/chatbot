@@ -56,6 +56,7 @@ abstract class AGhostCmdPipe extends AClonePipe implements RequestCmdPipe
 
         $message = $request->getInput()->getMessage();
         if ($message instanceof VerbalMsg) {
+            // 区分大小写
             return $message->getText();
         }
 

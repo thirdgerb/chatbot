@@ -94,7 +94,7 @@ class SGRequest implements GhostRequest
     /**
      * @return InputMsg
      */
-    public function getInput(): IntercomMsg
+    public function getInput(): InputMsg
     {
         return $this->input
             ?? $this->input = new IInputMsg(
