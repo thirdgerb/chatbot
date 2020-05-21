@@ -106,7 +106,11 @@ class IHearing extends IMatcher implements Hearing
             }
         }
 
-        return $this->refresh();
+        $this->refresh();
+
+        return isset($this->nextDialog)
+            ? $this->fakeHearing()
+            : $this;
     }
 
     public function component(callable $caller): Hearing

@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Tools;
 
+use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Ghost\Callables\Prediction;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
@@ -202,6 +203,13 @@ interface Matcher
      */
     public function isCommand(string $signature) : Matcher;
 
+
+    /**
+     * @param CommandDef $def
+     * @return static
+     * @matched CommandMsg $matchCommandDef
+     */
+    public function matchCommandDef(CommandDef $def) : Matcher;
 
     /**
      * 用php做比较脏的关键词检查.

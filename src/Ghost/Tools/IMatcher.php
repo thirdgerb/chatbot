@@ -11,6 +11,8 @@
 
 namespace Commune\Ghost\Tools;
 
+use Commune\Blueprint\Framework\Command\CommandDef;
+use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Ghost\Callables\Prediction;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindReg\EmotionReg;
@@ -323,23 +325,55 @@ class IMatcher implements Matcher
         $cmd = $this->input
             ->comprehension
             ->command;
+
+        $cmdStr = $cmd->getCmdStr();
+        if (!isset($cmdStr)) {
+            return $this;
+        }
+
         $cmdName = $cmd->getCmdName();
+        $def = ICommandDef::makeBySignature($signature);
+
+        $matched = $this->doMatchCommandDef($cmdName, $cmdStr, $def);
+        if (isset($matched)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $matched;
+        }
+
+        return $this;
+    }
+
+    public function matchCommandDef(CommandDef $def): Matcher
+    {
+        $cmd = $this->input
+            ->comprehension
+            ->command;
+
+        $cmdStr = $cmd->getCmdStr();
 
         if (!isset($cmdStr)) {
             return $this;
         }
 
-        $def = ICommandDef::makeBySignature($signature);
-        if ($cmdName === $def->getCommandName()) {
-            $cmdStr = $cmd->getCmdStr();
-            $cmdMessage = $def->parseCommandMessage($cmdStr);
+        $cmdName = $cmd->getCmdName();
+        $matched = $this->doMatchCommandDef($cmdName, $cmdStr, $def);
 
+        if (isset($matched)) {
             $this->matched = true;
-            $this->matchedParams[__FUNCTION__] = $cmdMessage;
+            $this->matchedParams[__FUNCTION__] = $matched;
         }
 
         return $this;
     }
+
+    protected function doMatchCommandDef(string $cmdName, string $cmdStr, CommandDef $def) : ? CommandMsg
+    {
+        return $cmdName === $def->getCommandName()
+            ? $def->parseCommandMessage($cmdStr)
+            : null;
+    }
+
+
 
     public function hasKeywords(array $keyWords, array $blacklist = [], bool $normalize = false): Matcher
     {

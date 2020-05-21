@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Tools;
 
+use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
@@ -171,6 +172,12 @@ class FakeHearing implements Hearing
     {
         return $this;
     }
+
+    public function matchCommandDef(CommandDef $def): Matcher
+    {
+        return $this;
+    }
+
 
     public function hasKeywords(
         array $keyWords,
