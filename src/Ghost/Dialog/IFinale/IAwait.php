@@ -14,7 +14,7 @@ namespace Commune\Ghost\Dialog\IFinale;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Ghost\Dialog\IStartProcess;
 use Commune\Ghost\Runtime\IWaiter;
 use Commune\Protocals\HostMsg\Convo\QuestionMsg;
@@ -24,7 +24,7 @@ use Commune\Blueprint\Ghost\Dialog\Finale\Await;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IAwait extends AbsDialogue implements Await
+class IAwait extends AbsBaseDialog implements Await
 {
     const SELF_STATUS = self::FINALE;
 

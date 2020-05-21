@@ -12,21 +12,13 @@
 namespace Commune\Ghost\Dialog\IFinale;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Finale\Dumb;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsDialog;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IDumb extends AbsDialogue implements Dumb
+class IDumb extends AbsDialog
 {
-    const SELF_STATUS = self::FINALE;
-
-    protected function runInterception(): ? Dialog
-    {
-        return null;
-    }
-
     protected function runTillNext(): Dialog
     {
         $this->ticked = true;

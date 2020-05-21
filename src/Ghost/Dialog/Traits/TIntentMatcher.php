@@ -12,12 +12,12 @@
 namespace Commune\Ghost\Dialog\Traits;
 
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- * @mixin AbsDialogue
+ * @mixin AbsBaseDialog
  */
 trait TIntentMatcher
 {

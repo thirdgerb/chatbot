@@ -149,11 +149,16 @@ class IProcess implements Process, HasIdGenerator
 
     /*------ history ------*/
 
-    public function nextSnapshot(string $id): Process
+    public function nextSnapshot(string $id, int $maxBacktrace): Process
     {
         $next = clone $this;
         $next->_id = $id ?? $this->createUuId();
         $next->_prev = $this;
+
+        while(count($this->_backtrace) > $maxBacktrace) {
+            array_pop($this->_backtrace);
+        }
+
         return $next;
     }
 

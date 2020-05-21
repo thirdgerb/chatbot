@@ -14,31 +14,26 @@ namespace Commune\Ghost\Dialog\IFinale;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\AbsDialogue;
-use Commune\Blueprint\Ghost\Dialog\Finale\Rewind;
+use Commune\Ghost\Dialog\AbsBaseDialog;
+use Commune\Ghost\Dialog\AbsDialog;
+use Commune\Blueprint\Ghost\Dialog\Finale;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IRewind extends AbsDialogue implements Rewind
+class IRewind extends AbsDialog implements Finale
 {
-    const SELF_STATUS = self::FINALE;
 
     /**
      * @var bool
      */
     protected $silent;
 
-    public function __construct(Cloner $cloner, Ucl $ucl, bool $silent = false)
+    public function __construct(Cloner $cloner, Ucl $ucl, bool $silent = false, array $stacks)
     {
         $this->silent = $silent;
         parent::__construct($cloner, $ucl);
-    }
-
-    protected function runInterception(): ? Dialog
-    {
-        return null;
     }
 
     protected function runTillNext(): Dialog
@@ -49,6 +44,8 @@ class IRewind extends AbsDialogue implements Rewind
 
     protected function selfActivate(): void
     {
+        $this->runStack();
+
         $process = $this->getProcess();
         $prev = $process->prev;
         $runtime = $this->cloner->runtime;
@@ -56,24 +53,7 @@ class IRewind extends AbsDialogue implements Rewind
             $runtime->setCurrentProcess($process);
         }
 
-        $process = $runtime->getCurrentProcess();
-        $waiter = $process->waiter;
-        if (!isset($waiter) || $this->silent) {
-            return;
-        }
-
-        // 如果是 waiter, 重新输出 question
-        $question = $waiter->question;
-        $input = $this->cloner->input;
-        if (isset($question)) {
-            $this->cloner->output($input->output($question));
-        }
-
-        // 尝试同步状态变更.
-        $contextMsg = $runtime->toContextMsg();
-        if (isset($contextMsg)) {
-            $this->cloner->output($input->output($contextMsg));
-        }
+        $this->runAwait($this->silent);
     }
 
 

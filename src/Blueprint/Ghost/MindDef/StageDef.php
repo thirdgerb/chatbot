@@ -52,8 +52,11 @@ interface StageDef extends Def
 
     /*------- intend to stage -------*/
 
-
-    public function onIntercept(Dialog $current, Dialog $prev = null) : ? Dialog;
+    /**
+     * @param Dialog $prev
+     * @return Dialog|null
+     */
+    public function onIntercept(Dialog $prev) : ? Dialog;
 
     /**
      * 激活当前的 Stage, 然后等待回调.

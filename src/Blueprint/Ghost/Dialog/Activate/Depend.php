@@ -9,13 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog\Finale;
+namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
+use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Blueprint\Ghost\Dialog\Intercept;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface CloseSession
+interface Depend extends Activate, Intercept
 {
 
 }

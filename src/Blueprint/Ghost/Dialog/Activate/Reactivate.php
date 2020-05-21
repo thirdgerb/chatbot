@@ -9,13 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog\Finale;
+namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
+use Commune\Blueprint\Ghost\Dialog\Activate;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Rewind
+interface Reactivate extends Activate
 {
 
 }

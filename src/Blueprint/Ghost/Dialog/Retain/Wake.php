@@ -11,12 +11,13 @@
 
 namespace Commune\Blueprint\Ghost\Dialog\Retain;
 
-use Commune\Blueprint\Ghost\Dialog\Intercept;
 use Commune\Blueprint\Ghost\Dialog\Retain;
 
 /**
+ * sleeping -> fallback
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Wake extends Retain, Intercept
+interface Wake extends Retain
 {
 }

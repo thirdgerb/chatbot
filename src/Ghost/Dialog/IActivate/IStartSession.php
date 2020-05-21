@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Dialog\IActivate;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Blueprint\Ghost\Dialog\Activate\StartSession;
 use Commune\Ghost\Dialog\DialogHelper;
 
@@ -20,7 +20,7 @@ use Commune\Ghost\Dialog\DialogHelper;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IStartSession extends AbsDialogue implements StartSession
+class IStartSession extends AbsBaseDialog implements StartSession
 {
     protected function runInterception(): ? Dialog
     {

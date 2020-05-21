@@ -31,7 +31,7 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IStartProcess extends AbsDialogue implements StartProcess
+class IStartProcess extends AbsBaseDialog implements StartProcess
 {
     use TIntentMatcher;
 

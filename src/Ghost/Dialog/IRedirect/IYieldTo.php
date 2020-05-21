@@ -14,14 +14,14 @@ namespace Commune\Ghost\Dialog\IRedirect;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Ghost\Dialog\IActivate\IRedirect;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IYieldTo extends AbsDialogue
+class IYieldTo extends AbsBaseDialog
 {
 
     /**

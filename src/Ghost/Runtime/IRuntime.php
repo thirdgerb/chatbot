@@ -146,7 +146,10 @@ class IRuntime implements Runtime, Spied
             if (isset($process)) {
                 // 生成一个新的 Snapshot
                 return $this->process = $process
-                    ->nextSnapshot($this->cloner->getTraceId());
+                    ->nextSnapshot(
+                        $this->cloner->getTraceId(),
+                        $this->cloner->config->maxBacktrace
+                    );
             }
         }
 
@@ -162,7 +165,8 @@ class IRuntime implements Runtime, Spied
 
     public function createProcess(string $contextUcl): Process
     {
-        $root = Ucl::createFromUcl($this->cloner, $contextUcl);
+        $ucl = Ucl::decodeUclStr($contextUcl);
+        $root = $ucl->toInstance($this->cloner);
         return new IProcess($this->convoId, $root, $this->cloner->getTraceId());
     }
 
@@ -188,7 +192,9 @@ class IRuntime implements Runtime, Spied
 
         if ($changed) {
             $ucl = $this->process->decodeUcl($waiter->await);
-            $context = $this->cloner->getContext($ucl);
+            $context = $ucl
+                ->toInstance($this->cloner)
+                ->findContext($this->cloner);
             return $context->toContextMsg();
         }
 

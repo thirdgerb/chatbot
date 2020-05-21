@@ -11,55 +11,25 @@
 
 namespace Commune\Ghost\Dialog\IActivate;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\AbsDialogue;
-use Commune\Ghost\Dialog\DialogHelper;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Blueprint\Ghost\Dialog\Activate\Redirect;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IRedirect extends AbsDialogue implements Redirect
+class IRedirect extends AbsBaseDialog implements Redirect
 {
-    const SELF_STATUS = self::REDIRECT_TO;
-
-    /**
-     * @var Ucl[]
-     */
-    protected $paths = [];
-
-    /**
-     * IIntend constructor.
-     * @param Cloner $cloner
-     * @param Ucl $ucl
-     * @param Ucl[] $path
-     */
-    public function __construct(Cloner $cloner, Ucl $ucl, array $path = [])
-    {
-        $this->paths = $path;
-        parent::__construct($cloner, $ucl);
-    }
-
-    protected function runInterception(): ? Dialog
-    {
-        return DialogHelper::intercept($this);
-    }
-
     protected function runTillNext(): Dialog
     {
-        return DialogHelper::activate($this);
+        $stageDef = $this->ucl->findStageDef($this->cloner);
+        return $stageDef->onActivate($this);
     }
 
     protected function selfActivate(): void
     {
-        $process = $this->getProcess();
-        $process->unsetWaiting($this->ucl->toEncodedStr());
-        if (!empty($this->paths)) {
-            $process->addPath(...$this->paths);
-        }
+        $this->runStack();
     }
 
 

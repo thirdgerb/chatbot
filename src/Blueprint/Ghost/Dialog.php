@@ -104,45 +104,71 @@ interface Dialog
      */
     public function depth() : int;
 
-    /**
-     * @param Dialog $prev
-     * @return static
-     */
-    public function withPrev(Dialog $prev) : Dialog;
-
     /*----- dialog event -----*/
 
+    // 任意 dialog
     const ANY           = Dialog::class;
+    // stage 启动时
     const ACTIVATE      = Dialog\Activate::class;
+    // stage 回调时
     const RETAIN        = Dialog\Retain::class;
+    // stage 退出时
     const WITHDRAW      = Dialog\Withdraw::class;
+    // session 结束时
     const FINALE        = Dialog\Finale::class;
+    // intercept
     const INTERCEPT     = Dialog\Intercept::class;
 
-    // activate
-    const STAGING       = Dialog\Activate\Staging::class;
-    const REDIRECT      = Dialog\Activate\Redirect::class;
-    const DEPENDED      = Dialog\Activate\Depended::class;
-    const INTEND        = Dialog\Activate\Intend::class;
-    const HOME          = Dialog\Activate\Home::class;
-    const PREEMPT       = Dialog\Activate\Preempt::class;
+    /* activate 启动一个 stage */
 
-    // retain
-    const FALLBACK      = Dialog\Retain\Fallback::class;
-    const HEED          = Dialog\Retain\Heed::class;
-    const RESTORE       = Dialog\Retain\Restore::class;
+    // 相同的 context 里一个 stage 进入另一个 stage
+    const STAGING       = Dialog\Activate\Staging::class;
+    // 一个 context 依赖到另一个 context 时
+    const DEPENDED      = Dialog\Activate\Depend::class;
+    // 从一个 context 因为意图进入到另一个 context 时
+    const INTEND        = Dialog\Activate\Intend::class;
+    // watch
+    const WATCH         = Dialog\Activate\Watch::class;
+    // 从一个 context 主动进入到另一个 context 里
+    const REDIRECT      = Dialog\Activate\Redirect::class;
+    // 返回到根路径.
+    const HOME          = Dialog\Activate\Home::class;
+    // 一个 blocking context 重新占据对话
+    const PREEMPT       = Dialog\Activate\Preempt::class;
+    // reactivate
+    const REACTIVATE    = Dialog\Activate\Reactivate::class;
+
+    /* retain 中断的 stage 得到回调 */
+
+    // sleep -> wake
     const WAKE          = Dialog\Retain\Wake::class;
-    const WATCH         = Dialog\Retain\Watch::class;
+    // await -> heed
+    const HEED          = Dialog\Retain\Heed::class;
+    // dying -> restore
+    const RESTORE       = Dialog\Retain\Restore::class;
+    // depending -> fulfill
     const FULFILL       = Dialog\Retain\Fulfill::class;
 
-    // withdraw
+    /* withdraw */
+
+    // confuse : fallback -> sleeping, watch
     const CONFUSE       = Dialog\Withdraw\Confuse::class;
+    // cancel : depending, blocking, fallback -> sleeping, watch
     const CANCEL        = Dialog\Withdraw\Cancel::class;
+    // reject : depending, blocking, fallback -> sleeping, watch
     const REJECT        = Dialog\Withdraw\Reject::class;
+    // fail : depending, blocking, fallback -> sleeping, watch
     const FAIL          = Dialog\Withdraw\Fail::class;
+    // quit : depending, blocking, fallback -> sleeping, watch
     const QUIT          = Dialog\Withdraw\Quit::class;
 
     public function isEvent(string $statusType) : bool ;
 
+    public function withPrev(Dialog $dialog) : Dialog;
+
+    /**
+     * 可以作为后续.
+     * @return Dialog
+     */
     public function __invoke() : Dialog;
 }

@@ -58,7 +58,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 interface Process extends ArrayAndJsonAble
 {
 
-    public function nextSnapshot(string $id) : Process;
+    public function nextSnapshot(string $id, int $maxBacktrace) : Process;
 
     /*-------- alive ---------*/
 
@@ -67,6 +67,8 @@ interface Process extends ArrayAndJsonAble
     public function setAwait(Waiter $waiter) : void;
 
     /*-------- ucl ---------*/
+
+    public function getRoot() : Ucl;
 
     /**
      * @param string $ucl
@@ -91,7 +93,7 @@ interface Process extends ArrayAndJsonAble
 
     public function addSleeping(Ucl $ucl, array $wakenStages) : void;
 
-    public function popSleeping(string $id = null) : ? string;
+    public function popSleeping(string $id = null) : ? Ucl;
 
     /*-------- canceling ---------*/
 
@@ -101,9 +103,9 @@ interface Process extends ArrayAndJsonAble
     public function addCanceling(array $canceling) : void;
 
     /**
-     * @return null|string
+     * @return Ucl
      */
-    public function popCanceling() : ? string;
+    public function popCanceling() : ? Ucl;
 
     /*-------- dying ---------*/
 
@@ -124,6 +126,16 @@ interface Process extends ArrayAndJsonAble
     public function unsetWaiting(string $ucl) : void;
 
     public function flushWaiting();
+
+    /*-------- path ---------*/
+
+    public function resetPath(string $contextId) : void;
+
+    public function insertPath(string $contextId, array $path) : void;
+
+    public function shiftPath(string $contextId) : ? string;
+
+    public function existsPath(string $contextId) : bool;
 
     /*-------- backStep ---------*/
 

@@ -325,11 +325,7 @@ class ContextDefPrototype extends AbsOption implements ContextDef
     {
         $map = $this->getStageMetaMap();
         if (!$map->has($stageName)) {
-            throw new DefNotDefinedException(
-                __METHOD__,
-                StageMeta::class,
-                $stageName
-            );
+            throw new DefNotDefinedException(StageMeta::class, $stageName);
         }
         return $map->get($stageName);
     }

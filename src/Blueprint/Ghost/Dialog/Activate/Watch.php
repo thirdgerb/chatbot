@@ -12,11 +12,12 @@
 namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
 use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Blueprint\Ghost\Dialog\Intercept;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Depended extends Activate
+interface Watch extends Activate, Intercept
 {
 
 }

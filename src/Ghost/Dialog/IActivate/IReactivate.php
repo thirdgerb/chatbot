@@ -9,33 +9,28 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IRetain;
+namespace Commune\Ghost\Dialog\IActivate;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialogue;
-use Commune\Blueprint\Ghost\Dialog\Retain\Fallback;
-use Commune\Ghost\Dialog\DialogHelper;
+use Commune\Ghost\Dialog\AbsDialog;
+use Commune\Blueprint\Ghost\Dialog\Activate\Reactivate;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IFallback extends AbsDialogue implements Fallback
+class IReactivate extends AbsDialog implements Reactivate
 {
-    protected function runInterception(): ? Dialog
-    {
-        return null;
-    }
 
     protected function runTillNext(): Dialog
     {
-        return DialogHelper::retain($this);
+        $stageDef = $this->ucl->findStageDef($this->cloner);
+        return $stageDef->onActivate($this);
     }
 
     protected function selfActivate(): void
     {
-        $process = $this->getProcess();
-        $process->unsetWaiting($this->ucl);
+        $this->runStack();
     }
 
 

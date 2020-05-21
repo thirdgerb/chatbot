@@ -13,7 +13,7 @@ namespace Commune\Ghost\Dialog\IWithdraw;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Blueprint\Ghost\Dialog\Withdraw\Confuse;
 use Commune\Ghost\Dialog\DialogHelper;
 use Commune\Ghost\Dialog\Traits\TIntentMatcher;
@@ -23,7 +23,7 @@ use Commune\Protocals\HostMsg\Convo\EventMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IConfuse extends AbsDialogue implements Confuse
+class IConfuse extends AbsBaseDialog implements Confuse
 {
     use TIntentMatcher;
 

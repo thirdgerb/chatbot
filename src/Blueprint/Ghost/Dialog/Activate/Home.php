@@ -12,11 +12,12 @@
 namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
 use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Blueprint\Ghost\Dialog\Intercept;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Home extends Activate
+interface Home extends Activate, Intercept
 {
 
 }

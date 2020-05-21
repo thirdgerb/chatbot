@@ -9,26 +9,30 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IActivate;
+namespace Commune\Ghost\Dialog\Temp;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Activate\Staging;
 use Commune\Ghost\Dialog\AbsDialog;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IStaging extends AbsDialog implements Staging
+class GoFulfill extends AbsDialog
 {
+    protected function runInterception(): ? Dialog
+    {
+        // TODO: Implement runInterception() method.
+    }
+
     protected function runTillNext(): Dialog
     {
-        $stageDef = $this->ucl->findStageDef($this->cloner);
-        return $stageDef->onActivate($this);
+        // TODO: Implement runTillNext() method.
     }
 
     protected function selfActivate(): void
     {
-        $this->runStack();
+        // TODO: Implement selfActivate() method.
     }
+
 
 }

@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Utils\StringUtils;
@@ -19,6 +20,7 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Exceptions\InvalidQueryException;
+use PharIo\Manifest\InvalidUrlException;
 
 /**
  * Uniform Context Locator
@@ -96,6 +98,11 @@ class Ucl implements UclInterface
     protected $exists;
 
     /**
+     * @var Context|null
+     */
+    protected $context;
+
+    /**
      * Ucl constructor.
      * @param string $contextName
      * @param string $stageName
@@ -141,7 +148,7 @@ class Ucl implements UclInterface
         $stageName = ContextUtils::normalizeStageName($stageName);
 
         $ucl = new static($contextName, $stageName, $query);
-        return $ucl->toInstanced($cloner);
+        return $ucl->toInstance($cloner);
     }
 
 
@@ -156,14 +163,19 @@ class Ucl implements UclInterface
 
     /*------- compare -------*/
 
-    public function atSameContext(string $ucl) : bool
+    public function atSameContext(Ucl $ucl) : bool
     {
-        return strpos($ucl, $this->contextName) === 0;
+        return $this->contextName === $ucl->contextName;
     }
 
-    public function isSameContext(string $ucl): bool
+    /**
+     * @param Ucl $ucl
+     * @return bool
+     */
+    public function isSameContext(Ucl $ucl): bool
     {
-        return $this->getContextId() === Ucl::decodeUclStr($ucl)->getContextId();
+        return $this->atSameContext($ucl)
+            && $this->getContextId() === $ucl->getContextId();
     }
 
     public function equals(string $ucl) : bool
@@ -185,7 +197,6 @@ class Ucl implements UclInterface
             && $this->stageExists($cloner);
     }
 
-
     public function isValidPattern() : bool
     {
         return ContextUtils::isValidContextName($this->contextName)
@@ -201,7 +212,12 @@ class Ucl implements UclInterface
         if (!ContextUtils::isValidStageName($stageName)) {
             throw new InvalidArgumentException("invalid stage pattern of $stageName");
         }
-        return new self($this->contextName, $stageName, $this->query);
+
+        $ucl = new self($this->contextName, $stageName, $this->query);
+        if ($this->instanced) {
+            $ucl->instanced = true;
+        }
+        return $ucl;
     }
 
 
@@ -320,8 +336,19 @@ class Ucl implements UclInterface
 
     /*------- instance -------*/
 
-    public function toInstanced(Cloner $cloner): Ucl
+    public function toInstance(Cloner $cloner): Ucl
     {
+        if (!$this->stageExists($cloner)) {
+            throw new DefNotDefinedException(
+                StageDef::class,
+                $this->toFullStageName()
+            );
+        }
+
+        if ($this->instanced) {
+            return $this;
+        }
+
         $contextDef = $this->findContextDef($cloner);
 
         $params = $contextDef->getQueryParams();
@@ -340,6 +367,7 @@ class Ucl implements UclInterface
 
         $instance = new static($this->contextName, $this->stageName, $query);
         $instance->instanced = true;
+
         return $instance;
     }
 
@@ -399,8 +427,12 @@ class Ucl implements UclInterface
 
     public function findContext(Cloner $cloner): Context
     {
+        if (isset($this->context)) {
+            return $this->context;
+        }
+
         if (!$this->instanced) {
-            $ucl = $this->toInstanced($cloner);
+            $ucl = $this->toInstance($cloner);
             return $ucl->findContext($cloner);
         }
 
@@ -419,7 +451,7 @@ class Ucl implements UclInterface
             $context->merge($entities);
         }
 
-        return $context;
+        return $this->context = $context;
     }
 
 
@@ -468,5 +500,6 @@ class Ucl implements UclInterface
         $this->stageDef = null;
         $this->intentDef = null;
         $this->contextDef = null;
+        $this->context = null;
     }
 }

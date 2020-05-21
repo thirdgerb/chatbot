@@ -9,26 +9,43 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IActivate;
+namespace Commune\Ghost\Dialog\IFinale;
 
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Activate\Staging;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialog;
+use Commune\Blueprint\Ghost\Dialog\Finale;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IStaging extends AbsDialog implements Staging
+class IBackStep extends AbsDialog implements Finale
 {
+    /**
+     * @var int
+     */
+    protected $step;
+
+    public function __construct(Cloner $cloner, Ucl $ucl, int $step, $stack = [])
+    {
+        $this->step = $step;
+        parent::__construct($cloner, $ucl, $stack);
+    }
+
     protected function runTillNext(): Dialog
     {
-        $stageDef = $this->ucl->findStageDef($this->cloner);
-        return $stageDef->onActivate($this);
+        $this->ticked = true;
+        return $this;
     }
+
 
     protected function selfActivate(): void
     {
         $this->runStack();
+        $this->runAwait(false);
     }
+
 
 }

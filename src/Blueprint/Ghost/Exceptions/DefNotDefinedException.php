@@ -20,9 +20,9 @@ use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
  */
 class DefNotDefinedException extends BrokenSessionException
 {
-    public function __construct(string $method, string $defType, string $defName)
+    public function __construct(string $defType, string $defName)
     {
-        $message = "definition not found, type $defType, name $defName, called by $method";
+        $message = "definition not found, type $defType, name $defName";
         parent::__construct($message);
     }
 }

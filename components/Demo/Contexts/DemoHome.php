@@ -60,7 +60,7 @@ class DemoHome extends ACodeContext
 
             })
             ->onEvent(
-                Dialog::FALLBACK,
+                Dialog::WAKE,
                 function(Dialog $dialog) {
                     $dialog->send()
                         ->info('完成测试')

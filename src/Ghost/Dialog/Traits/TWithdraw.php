@@ -13,13 +13,13 @@ namespace Commune\Ghost\Dialog\Traits;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Ghost\Dialog\DialogHelper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @mixin AbsDialogue
+ * @mixin AbsBaseDialog
  */
 trait TWithdraw
 {
@@ -62,7 +62,7 @@ trait TWithdraw
         return DialogHelper::newDialog(
             $prev,
             $sleepingUcl,
-            Dialog\Retain\Fallback::class
+            Dialog\Retain\Wake::class
         );
     }
 

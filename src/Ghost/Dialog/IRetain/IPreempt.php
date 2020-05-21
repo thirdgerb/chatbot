@@ -12,13 +12,13 @@
 namespace Commune\Ghost\Dialog\IRetain;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Ghost\Dialog\DialogHelper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IPreempt extends AbsDialogue implements Dialog\Retain\Preempt
+class IPreempt extends AbsBaseDialog implements Dialog\Retain\Preempt
 {
     protected function runInterception(): ? Dialog
     {

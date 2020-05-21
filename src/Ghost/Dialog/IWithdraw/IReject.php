@@ -13,12 +13,12 @@ namespace Commune\Ghost\Dialog\IWithdraw;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Withdraw\Reject;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IReject extends AbsDialogue implements Reject
+class IReject extends AbsBaseDialog implements Reject
 {
     protected function runInterception(): ? Dialog
     {

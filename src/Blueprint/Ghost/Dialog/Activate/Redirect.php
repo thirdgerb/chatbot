@@ -12,10 +12,12 @@
 namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
 use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Blueprint\Ghost\Dialog\Intercept;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Redirect extends Activate
+interface Redirect extends Activate, Intercept
 {
+
 }

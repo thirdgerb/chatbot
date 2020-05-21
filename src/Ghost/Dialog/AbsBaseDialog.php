@@ -11,13 +11,8 @@
 
 namespace Commune\Ghost\Dialog;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
-use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Exceptions\TooManyRedirectsException;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
@@ -26,11 +21,13 @@ use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Tools\Caller;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\Traits\TRedirector;
-use Commune\Ghost\Dialog\Traits\TWithdraw;
 use Commune\Ghost\Tools\IDeliver;
+use Commune\Ghost\Tools\IHearing;
 use Commune\Support\DI\Injectable;
 use Commune\Support\DI\TInjectable;
+use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 
 
 /**
@@ -38,13 +35,13 @@ use Commune\Support\DI\TInjectable;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbsDialogue implements
+abstract class AbsBaseDialog implements
     Dialog,
     Injectable,
     Navigator,
     Caller
 {
-    use TInjectable, TRedirector, TWithdraw;
+    use TInjectable;
 
     /*------ params -------*/
 
@@ -57,11 +54,6 @@ abstract class AbsDialogue implements
      * @var Ucl
      */
     protected $ucl;
-
-    /**
-     * @var Context|null
-     */
-    protected $curContext;
 
     /**
      * @var Dialog|null
@@ -86,28 +78,27 @@ abstract class AbsDialogue implements
      */
     protected $ticking = false;
 
+    /**
+     * @var callable[]
+     */
+    protected $stack = [];
+
+    /**
+     * @var callable[]
+     */
+    protected $nextStack = [];
 
     /**
      * AbsDialogue constructor.
      * @param Cloner $cloner
      * @param Ucl $ucl
+     * @param callable[] $stack
      */
-    public function __construct(Cloner $cloner, Ucl $ucl)
+    public function __construct(Cloner $cloner, Ucl $ucl, array $stack = [])
     {
         $this->cloner = $cloner;
-        $this->ucl = $ucl;
-    }
-
-
-
-    /**
-     * @param Dialog $dialog
-     * @return static
-     */
-    public function withPrev(Dialog $dialog) : Dialog
-    {
-        $this->prev = $dialog;
-        return $this;
+        $this->ucl = $ucl->toInstance($cloner);
+        $this->stack = $stack;
     }
 
     /*-------- implements --------*/
@@ -119,7 +110,7 @@ abstract class AbsDialogue implements
 
     public function matcher(): Matcher
     {
-        return $this->cloner->container->make(Matcher::class);
+        return $this->cloner->matcher->refresh();
     }
 
     public function nav(): Navigator
@@ -129,7 +120,7 @@ abstract class AbsDialogue implements
 
     public function hearing(): Hearing
     {
-        // TODO: Implement hearing() method.
+        return new IHearing($this);
     }
 
     /*-------- history --------*/
@@ -138,15 +129,10 @@ abstract class AbsDialogue implements
     {
         $current = $this;
         $depth = 1;
-        $max = $this->cloner->ghost->getConfig()->maxRedirectTimes;
 
-        while($depth < $max && isset($current)) {
+        while(isset($current)) {
             $current = $current->prev;
             $depth++;
-        }
-
-        if ($depth >= $max) {
-            throw new TooManyRedirectsException($max);
         }
 
         return $depth;
@@ -234,6 +220,20 @@ abstract class AbsDialogue implements
 
     /*-------- tick --------*/
 
+    protected function popNextStack() : array
+    {
+        $stack = $this->nextStack;
+        $this->nextStack = [];
+        return $stack;
+    }
+
+    protected function popStack() : array
+    {
+        $stack = $this->stack;
+        $this->stack = [];
+        return $stack;
+    }
+
 
     public function tick(): Dialog
     {
@@ -254,7 +254,10 @@ abstract class AbsDialogue implements
 
         $this->ticking = true;
 
-        $next = $this->runInterception();
+        if ($this instanceof Dialog\Intercept && isset($this->prev)) {
+            $stageDef = $this->ucl->findStageDef($this->cloner);
+            $next = $stageDef->onIntercept($this->prev);
+        }
 
         // 未被拦截的时候.
         if (!isset($next)) {
@@ -273,17 +276,23 @@ abstract class AbsDialogue implements
         // 填补关联关系.
         $prev = $next->prev;
         if (!isset($prev)) {
-            $next->prev = $this;
+            $next->withPrev($this);
         }
 
         return $next;
     }
 
+    protected function runStack() : void
+    {
+        $stack = $this->popStack();
+        while($caller = array_shift($stack)) {
+            $caller();
+        }
+    }
+
 
 
     /*-------- inner --------*/
-
-    abstract protected function runInterception() : ? Dialog;
 
     /**
      * 寻找到下一个 Intend 的对象.
@@ -323,6 +332,11 @@ abstract class AbsDialogue implements
             ->recall($this->cloner);
     }
 
+    public function withPrev(Dialog $dialog): Dialog
+    {
+        $this->prev = $dialog;
+    }
+
 
     /*-------- getter --------*/
 
@@ -345,8 +359,7 @@ abstract class AbsDialogue implements
             case 'prev' :
                 return $this->prev;
             case 'context' :
-                return $this->curContext
-                    ?? $this->curContext = $this->getContext($this->ucl);
+                return $this->ucl->findContext($this->cloner);
             default:
                 return null;
         }
@@ -364,8 +377,9 @@ abstract class AbsDialogue implements
 
         $this->cloner = null;
         $this->ucl = null;
-        $this->curContext = null;
         $this->process = null;
+        $this->nextStack = [];
+        $this->stack = [];
     }
 
     public function getInterfaces(): array

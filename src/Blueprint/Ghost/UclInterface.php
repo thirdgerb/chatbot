@@ -88,16 +88,16 @@ interface UclInterface extends ArrayAndJsonAble
     public function isInstanced() : bool;
 
     /**
-     * @param string $ucl
+     * @param Ucl $ucl
      * @return bool
      */
-    public function atSameContext(string $ucl) : bool;
+    public function atSameContext(Ucl $ucl) : bool;
 
     /**
-     * @param string $ucl
+     * @param Ucl $ucl
      * @return bool
      */
-    public function isSameContext(string $ucl) : bool;
+    public function isSameContext(Ucl $ucl) : bool;
 
     /**
      * @param string $ucl
@@ -113,7 +113,7 @@ interface UclInterface extends ArrayAndJsonAble
      * @throws InvalidQueryException
      * @throws DefNotDefinedException
      */
-    public function toInstanced(Cloner $cloner) : Ucl;
+    public function toInstance(Cloner $cloner) : Ucl;
 
     /**
      * @return string

@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Dialog\IWithdraw;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Blueprint\Ghost\Dialog\Withdraw\Quit;
 use Commune\Ghost\Dialog\DialogHelper;
 
@@ -20,7 +20,7 @@ use Commune\Ghost\Dialog\DialogHelper;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IQuit extends AbsDialogue implements Quit
+class IQuit extends AbsBaseDialog implements Quit
 {
 
     protected function runInterception(): ? Dialog

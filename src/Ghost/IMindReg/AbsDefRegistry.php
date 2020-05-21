@@ -150,11 +150,7 @@ abstract class AbsDefRegistry implements DefRegistry
             !array_key_exists($defName, $this->cachedDefs)
             && !$this->hasRegisteredMeta($defName)
         ) {
-            throw new DefNotDefinedException(
-                __METHOD__,
-                $this->getMetaId(),
-                $defName
-            );
+            throw new DefNotDefinedException($this->getMetaId(), $defName);
         }
 
         // 有缓存

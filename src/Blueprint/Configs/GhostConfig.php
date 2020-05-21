@@ -62,6 +62,7 @@ use Commune\Components;
  * @property-read int $maxRedirectTimes
  * @property-read int $maxRequestFailTimes
  * @property-read int $mindsetCacheExpire       Mindset 的配置过期时间.
+ * @property-read int $maxBacktrace
  *
  * @property-read Nest\ProtocalOption[] $protocals   Session 可以处理的协议.
  * [
@@ -135,6 +136,7 @@ class GhostConfig extends AbsOption
             'sessionLockerExpire' => 3,
             'maxRedirectTimes' => 255,
             'mindsetCacheExpire' => 600,
+            'maxBacktrace' => 10,
             'sceneContextNames' => [
             ],
             'defaultScene' => '',

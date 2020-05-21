@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 
@@ -51,6 +52,8 @@ interface Runtime
     /**
      * 状态变更的消息, 用于和客户端同步.
      * 如果状态没有变更, 就没有消息.
+     *
+     * @param Cloner $cloner
      * @return ContextMsg|null
      */
     public function toContextMsg() : ? ContextMsg;

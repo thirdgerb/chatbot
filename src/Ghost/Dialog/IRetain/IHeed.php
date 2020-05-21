@@ -12,14 +12,14 @@
 namespace Commune\Ghost\Dialog\IRetain;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Blueprint\Ghost\Dialog\Retain\Heed;
 use Commune\Ghost\Dialog\DialogHelper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IHeed extends AbsDialogue implements Heed
+class IHeed extends AbsBaseDialog implements Heed
 {
     protected function runInterception(): ? Dialog
     {

@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Dialog\IRedirect;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Ghost\Dialog\IActivate\IRedirect;
 use Commune\Ghost\Dialog\IActivate\IStaging;
 
@@ -20,7 +20,7 @@ use Commune\Ghost\Dialog\IActivate\IStaging;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class INext extends AbsDialogue
+class INext extends AbsBaseDialog
 {
     protected function runInterception(): ? Dialog
     {
@@ -30,7 +30,7 @@ class INext extends AbsDialogue
     protected function runTillNext(): Dialog
     {
         $process = $this->getProcess();
-        $nextStr = $process->popPath();
+        $nextStr = $process->shiftPath();
 
         // 没有下一步的话, 则等于 fulfill.
         if (empty($nextStr)) {

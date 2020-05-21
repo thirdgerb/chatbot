@@ -12,13 +12,13 @@
 namespace Commune\Ghost\Dialog\IFinale;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Blueprint\Ghost\Dialog\Finale\CloseSession;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ICloseSession extends AbsDialogue implements CloseSession
+class ICloseSession extends AbsBaseDialog implements CloseSession
 {
     const SELF_STATUS = self::FINALE;
 

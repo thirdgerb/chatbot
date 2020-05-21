@@ -12,14 +12,14 @@
 namespace Commune\Ghost\Dialog\IRetain;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialogue;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Blueprint\Ghost\Dialog\Retain\Wake;
 use Commune\Ghost\Dialog\DialogHelper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IRestore extends AbsDialogue implements Wake
+class IRestore extends AbsBaseDialog implements Wake
 {
     protected function runInterception(): ? Dialog
     {
