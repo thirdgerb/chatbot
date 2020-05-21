@@ -140,7 +140,7 @@ interface Intention
     /**
      * 获取 全局entities + 命中意图的 entities
      *
-     * @return array[]
+     * @return array[][]
      */
     public function getMatchedEntities() : array;
 
@@ -149,7 +149,7 @@ interface Intention
      * 意图必须是 highly possible intent
      *
      * @param string $intentName
-     * @return array[]
+     * @return array[][]
      */
     public function getIntentEntities(string $intentName) : array;
 

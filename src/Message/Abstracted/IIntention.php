@@ -14,6 +14,7 @@ namespace Commune\Message\Abstracted;
 use Commune\Protocals\Abstracted\Intention;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Utils\StringUtils;
+use Illuminate\Support\Arr;
 
 /**
  * 意图的理解. 可以来自 NLU 或者其它的解析策略.
@@ -203,6 +204,11 @@ class IIntention extends AbsMessage implements Intention
 
     public function setIntentEntities(string $intentName, array $entities): void
     {
+        // 所有 entity 值统一用数组的方式. 避免长期以来的混乱.
+        $entities = array_map(function($entity) {
+            return Arr::wrap($entity);
+        }, $entities);
+
         $this->_data['intentEntities'][$intentName] = $entities;
     }
 

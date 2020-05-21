@@ -28,8 +28,11 @@ interface Matcher
 {
     public function getMatchedParams() : array;
 
-    public function isMatched() : bool;
+    public function truly() : bool;
 
+    /**
+     * @return static
+     */
     public function refresh() : Matcher;
 
     /*------- 匹配事件 -------*/
@@ -148,16 +151,6 @@ interface Matcher
     ) : Matcher;
 
 
-    /**
-     * 如果nlu没匹配上, 就用系统自带的 entity extractor 去匹配.
-     * 通常就是关键词匹配算法.
-     *
-     * @param string $entityName
-     * @return static
-     * @matched string[] $matchEntity
-     */
-    public function matchEntity(string $entityName) : Matcher;
-
 
 
 
@@ -216,9 +209,14 @@ interface Matcher
      *
      * @param array $keyWords   [ 'word1', 'word2', ['synonym1', 'synonym2']]
      * @param array $blacklist
+     * @param bool $normalize
      * @return static
      */
-    public function hasKeywords(array $keyWords, array $blacklist = []) : Matcher;
+    public function hasKeywords(
+        array $keyWords,
+        array $blacklist = [],
+        bool $normalize = false
+    ) : Matcher;
 
 
     /*------- feelings -------*/
@@ -245,11 +243,6 @@ interface Matcher
      */
     public function isNegative() : Matcher;
 
-    /**
-     * @return static
-     */
-    public function needHelp() : Matcher;
-
     /*------- intents -------*/
 
     /**
@@ -264,44 +257,60 @@ interface Matcher
      * 在多个意图中匹配一个最近似的.
      *
      * @param string[] $intentNames (可以用 * 做通配符)
-     * @return string|null
+     * @return static
+     * @matched string $isIntentIn
      */
-    public function isIntentIn(array $intentNames) : ? string;
+    public function isIntentIn(array $intentNames) : Matcher;
 
     /**
      * 任何可能的意图名
      *
-     * @return string|null
+     * @return static
+     * @matched string $isAnyIntent
      */
-    public function isAnyIntent() : ? string;
+    public function isAnyIntent() : Matcher;
 
     /**
      * 仅仅从 Cloner::getNlu() 对象中判断意图是否存在
      * 不需要定义 IntentMessage 对象.
      *
      * @param string $intentName
-     * @return bool
+     * @return static
+     * @matched string $hasPossibleIntent
      */
-    public function hasPossibleIntent(string $intentName) : bool;
+    public function hasPossibleIntent(string $intentName) : Matcher;
 
     /**
      * 检查 Intention 内是否匹配到了 Entity
-     * 不会调用自己的检查机制.
      *
      * @param string $entityName
-     * @return bool
+     * @param bool $defExtractor 是否调用本地的检查机制, 关键词匹配.
+     *
+     * @return static
+     * @matched array $hasEntity
      */
-    public function hasEntity(string $entityName) : bool;
-
+    public function hasEntity(string $entityName, bool $defExtractor = false) : Matcher;
 
     /**
      * 存在entity, 并且值中包含有 $expect
      *
      * @param string $entityName
-     * @param mixed $expect
-     * @return bool
+     * @param string $expect
+     * @param bool $defExtractor
+     * @return static
      */
-    public function hasEntityValue(string $entityName, $expect) : bool;
+    public function hasEntityValue(string $entityName, string $expect, bool $defExtractor = false) : Matcher;
+
+
+    /**
+     * 如果nlu没匹配上, 就用系统自带的 entity extractor 去匹配.
+     * 通常就是关键词匹配算法.
+     *
+     * @param string $entityName
+     * @return static
+     * @matched string[] $matchEntity
+     */
+    public function matchEntity(string $entityName) : Matcher;
 
 
 }

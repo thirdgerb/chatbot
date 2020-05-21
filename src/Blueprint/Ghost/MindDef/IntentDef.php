@@ -39,7 +39,7 @@ use Commune\Protocals\HostMsg\IntentMsg;
  */
 interface IntentDef extends Def
 {
-    public function match(Cloner $cloner) : ? IntentMsg;
+    public function match(Cloner $cloner) : bool;
 
     public function getEntityNames() : array;
 

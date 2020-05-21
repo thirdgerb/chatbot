@@ -40,15 +40,15 @@ use Commune\Protocals\Abstracted;
  */
 interface Comprehension
 {
-    const CHOICE = 'choice';
-    const COMMAND = 'command';
-    const EMOTION = 'emotion';
-    const INTENTION = 'intent';
-    const QUERY = 'query';
-    const REPLIES = 'replies';
-    const SELECTION = 'selection';
-    const TOKENIZE = 'tokenize';
-    const VECTOR = 'vector';
+    const TYPE_CHOICE = 'choice';
+    const TYPE_COMMAND = 'command';
+    const TYPE_EMOTION = 'emotion';
+    const TYPE_INTENTION = 'intent';
+    const TYPE_QUERY = 'query';
+    const TYPE_REPLIES = 'replies';
+    const TYPE_SELECTION = 'selection';
+    const TYPE_TOKENIZE = 'tokenize';
+    const TYPE_VECTOR = 'vector';
 
     public function handled(
         string $type,

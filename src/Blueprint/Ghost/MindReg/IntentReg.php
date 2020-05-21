@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
  * @method IntentDef getDef(string $defName)
  */
 interface IntentReg extends DefRegistry

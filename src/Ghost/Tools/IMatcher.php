@@ -54,6 +54,18 @@ class IMatcher implements Matcher
      */
     protected $matched = false;
 
+    /**
+     * IMatcher constructor.
+     * @param Cloner $cloner
+     * @param array $injectionContext
+     */
+    public function __construct(Cloner $cloner, array $injectionContext)
+    {
+        $this->cloner = $cloner;
+        $this->input = $cloner->input;
+        $this->injectionContext = $injectionContext;
+    }
+
 
     /**
      * @param $caller
@@ -79,11 +91,14 @@ class IMatcher implements Matcher
         return $this->matchedParams;
     }
 
-    public function isMatched(): bool
+    public function truly(): bool
     {
         return $this->matched;
     }
 
+    /**
+     * @return static
+     */
     public function refresh(): Matcher
     {
         $this->matched = false;
@@ -256,35 +271,6 @@ class IMatcher implements Matcher
     }
 
 
-    public function matchEntity(string $entityName): Matcher
-    {
-        if (!$this->input->isMsgType(VerbalMsg::class)) {
-            return $this;
-        }
-
-        $mind = $this->cloner->mind;
-        $entityReg = $mind->entityReg();
-
-        if (!$entityReg->hasDef($entityName)) {
-            return $this;
-        }
-
-        $def = $entityReg->getDef($entityName);
-
-        $text = $this->input->getNormalizedText();
-
-        $synonymReg = $mind->synonymReg();
-        $entities = $def->match($text, $synonymReg);
-
-        if (!empty($entities)) {
-            $this->matched = true;
-            $this->matchedParams[__FUNCTION__] = $entities;
-        }
-
-        return $this;
-    }
-
-
     public function isAnswer(string $answer) : Matcher
     {
         $actual = $this->input->comprehension->answer->getAnswer();
@@ -355,7 +341,7 @@ class IMatcher implements Matcher
         return $this;
     }
 
-    public function hasKeywords(array $keyWords, array $blacklist = []): Matcher
+    public function hasKeywords(array $keyWords, array $blacklist = [], bool $normalize = false): Matcher
     {
         if (empty($keyWords)) {
             return $this;
@@ -363,6 +349,17 @@ class IMatcher implements Matcher
 
         if (!$this->input->isMsgType(VerbalMsg::class)) {
             return $this;
+        }
+
+        if ($normalize) {
+            $keyWords = ArrayUtils::recursiveArrayMap(
+                $keyWords,
+                $caller = [StringUtils::class, 'normalizeString']
+            );
+            $blacklist = ArrayUtils::recursiveArrayMap(
+                $blacklist,
+                $caller
+            );
         }
 
         // 先尝试用分词来做
@@ -373,25 +370,50 @@ class IMatcher implements Matcher
                 return $this;
             }
 
+            if ($normalize) {
+                $tokens = array_map(function($token){
+                    return StringUtils::normalizeString($token);
+                }, $tokens);
+            }
+
             if (
                 ArrayUtils::expectTokens($tokens, $keyWords, true)
                 && !ArrayUtils::expectTokens($tokens, $blacklist, false)
             ) {
                 $this->matched = true;
-                return $this;
             }
+
+            return $this;
         }
 
         // 然后用字符串来做
+        $text = $this->input->getMsgText();
+        if (
+            StringUtils::expectKeywords($text, $keyWords, true)
+            && !StringUtils::expectKeywords($text, $blacklist, false)
+        ) {
+            $this->matched = true;
+        }
 
+        return $this;
     }
 
     public function feels(string $emotionName) : Matcher
     {
+        if ($this->doFeels($emotionName)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $emotionName;
+        }
+
+        return $this;
+    }
+
+    protected function doFeels(string $emotionName) : bool
+    {
         $reg = $this->cloner->mind->emotionReg();
 
         if (!$reg->hasDef($emotionName)) {
-            return $this;
+            return false;
         }
 
         $emotion = $this
@@ -407,57 +429,178 @@ class IMatcher implements Matcher
             $emotion->setEmotion($emotionName, $has);
         }
 
-        if ($has) {
+        return $has;
+    }
+
+    public function isPositive(): Matcher
+    {
+        if ($this->doFeels($name = EmotionReg::EMO_POSITIVE)) {
             $this->matched = true;
-            $this->matchedParams[__FUNCTION__] = $emotionName;
+            $this->matchedParams[__FUNCTION__] = $name;
+        }
+        return $this;
+    }
+
+    public function isNegative(): Matcher
+    {
+        if ($this->doFeels($name = EmotionReg::EMO_NEGATIVE)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $name;
+        }
+        return $this;
+    }
+
+
+    public function isIntent(string $intentName): Matcher
+    {
+        $matched = $this->singleIntentMatch($intentName);
+        if (isset($matched)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $intentName;
         }
 
         return $this;
     }
 
-    public function isPositive(): Matcher
+    protected function singleIntentMatch(string $intentName) : ? string
     {
-        return $this->feels(EmotionReg::EMO_POSITIVE);
+        return StringUtils::isWildCardPattern($intentName)
+            ? $this->wildcardIntentMatch($intentName)
+            : $this->exactlyIntentMatch($intentName);
     }
 
-    public function isNegative(): Matcher
+    protected function exactlyIntentMatch(string $intent) : ? string
     {
-        return $this->feels(EmotionReg::EMO_NEGATIVE);
+        $reg = $this->cloner->mind->intentReg();
+        if (!$reg->hasDef($intent)) {
+            return false;
+        }
+
+        $def = $reg->getDef($intent);
+        return $def->match($this->cloner)
+            ? $intent
+            : null;
     }
 
-    public function needHelp(): Matcher
+    protected function wildcardIntentMatch(string $intent) : ? string
     {
-        // TODO: Implement needHelp() method.
+        $intention = $this->cloner->input->comprehension->intention;
+        $matched = $intention->wildcardIntentMatch($intent);
+        return $matched[0] ?? null;
     }
 
-    public function isIntent(string $intentName): Matcher
+
+    public function isIntentIn(array $intentNames): Matcher
     {
-        // TODO: Implement isIntent() method.
+        foreach ($intentNames as $intentName) {
+            $matched = $this->singleIntentMatch($intentName);
+            if (isset($matched)) {
+                $this->matched = true;
+                $this->matchedParams[__FUNCTION__] = $matched;
+                return $this;
+            }
+        }
+
+        return $this;
     }
 
-    public function isIntentIn(array $intentNames): ? string
+    public function isAnyIntent(): Matcher
     {
-        // TODO: Implement isIntentIn() method.
+        $intent = $this->cloner
+            ->input
+            ->comprehension
+            ->intention
+            ->getMatchedIntent();
+
+        if (isset($intent)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $intent;
+        }
+
+        return $this;
     }
 
-    public function isAnyIntent(): ? string
+    public function hasPossibleIntent(string $intentName): Matcher
     {
-        // TODO: Implement isAnyIntent() method.
+        $has = $this->input->comprehension->intention->hasPossibleIntent($intentName);
+        if ($has) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $intentName;
+        }
+
+        return $this;
     }
 
-    public function hasPossibleIntent(string $intentName): bool
+    public function hasEntity(string $entityName, bool $defExtractor = false): Matcher
     {
-        // TODO: Implement hasPossibleIntent() method.
+        $matched = $this->doCheckEntity($entityName);
+        if ($defExtractor) {
+            $matched = $matched ?? $this->doMatchEntity($entityName);
+        }
+
+        if (!empty($matched)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $matched;
+        }
+
+        return $this;
     }
 
-    public function hasEntity(string $entityName): bool
+    protected function doCheckEntity(string $entityName) : ? array
     {
-        // TODO: Implement hasEntity() method.
+        $intention = $this->input->comprehension->intention;
+
+        $entities = $intention->getMatchedEntities();
+        return empty($entities[$entityName]) ? null : $entities[$entityName];
     }
 
-    public function hasEntityValue(string $entityName, $expect): bool
+    protected function doMatchEntity(string $entityName) : ? array
     {
-        // TODO: Implement hasEntityValue() method.
+        if (!$this->input->isMsgType(VerbalMsg::class)) {
+            return null;
+        }
+
+        $mind = $this->cloner->mind;
+        $entityReg = $mind->entityReg();
+
+        if (!$entityReg->hasDef($entityName)) {
+            return null;
+        }
+
+        $def = $entityReg->getDef($entityName);
+        $text = $this->input->getNormalizedText();
+
+        $synonymReg = $mind->synonymReg();
+        $entities = $def->match($text, $synonymReg);
+        return empty($entities)
+            ? null
+            : $entities;
+    }
+
+    public function matchEntity(string $entityName): Matcher
+    {
+        $entities = $this->doMatchEntity($entityName);
+        if (!empty($entities)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $entities;
+        }
+
+        return $this;
+    }
+
+    public function hasEntityValue(string $entityName, string $expect, bool $defExtractor = false): Matcher
+    {
+        $matched = $this->doCheckEntity($entityName);
+        if ($defExtractor) {
+            $matched = $matched ?? $this->doMatchEntity($entityName);
+        }
+
+        if (!empty($matched) && in_array($expect, $matched)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $expect;
+        }
+
+        return $this;
     }
 
 

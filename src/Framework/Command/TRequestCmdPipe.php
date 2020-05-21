@@ -11,17 +11,15 @@
 
 namespace Commune\Framework\Command;
 
+use Psr\Log\LoggerInterface;
+use Illuminate\Console\Parser;
+use Commune\Protocals\Comprehension;
+use Commune\Ghost\Support\CommandUtils;
+use Commune\Container\ContainerContract;
 use Commune\Blueprint\Framework\Pipes\RequestCmd;
-use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Blueprint\Framework\Request\AppRequest;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Exceptions\Logic\InvalidClassException;
-use Commune\Container\ContainerContract;
-use Commune\Ghost\Support\CommandUtils;
-use Commune\Protocals\Abstracted\Cmd;
-use Illuminate\Console\Parser;
-use Psr\Log\LoggerInterface;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -60,7 +58,7 @@ trait TRequestCmdPipe
         $comprehension = $input->comprehension;
 
         // 处理过
-        $handled = $comprehension->isHandled(Cmd::class);
+        $handled = $comprehension->isHandled(Comprehension::TYPE_COMMAND);
         $command = $comprehension->command;
 
         // 不存在的话, 尝试检查一下.
@@ -82,7 +80,7 @@ trait TRequestCmdPipe
             }
 
             $comprehension->handled(
-                Cmd::class,
+                Comprehension::TYPE_COMMAND,
                 static::class,
                 $success
             );

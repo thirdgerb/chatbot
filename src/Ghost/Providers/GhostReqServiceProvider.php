@@ -12,11 +12,13 @@
 namespace Commune\Ghost\Providers;
 
 use Commune\Blueprint\Ghost\Auth\Authority;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Blueprint\Ghost\Cloner\ClonerLogger;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
+use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Container\ContainerContract as Container;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Contracts\ServiceProvider;
@@ -26,6 +28,7 @@ use Commune\Ghost\Cloner\IClonerScene;
 use Commune\Ghost\Cloner\IClonerScope;
 use Commune\Ghost\Cloner\IClonerStorage;
 use Commune\Ghost\Runtime\IRuntime;
+use Commune\Ghost\Tools\IMatcher;
 use Psr\Log\LoggerInterface;
 
 
@@ -50,6 +53,7 @@ class GhostReqServiceProvider extends ServiceProvider
         $this->registerConvoScope($app);
         $this->registerConvoLogger($app);
         $this->registerConvoScene($app);
+        $this->registerConvoMatcher($app);
         $this->registerAuth($app);
         $this->registerRuntime($app);
         $this->registerStorage($app);
@@ -58,6 +62,13 @@ class GhostReqServiceProvider extends ServiceProvider
 
     /*-------- register --------*/
 
+    protected function registerConvoMatcher(Container $app) : void
+    {
+        $app->singleton(Matcher::class, function(Container $app) {
+            $cloner = $app->get(Cloner::class);
+            return new IMatcher($cloner, []);
+        });
+    }
 
     /**
      * 场景信息.

@@ -87,4 +87,24 @@ class ArrayUtils
         // 全部
         return $all;
     }
+
+
+    public static function recursiveArrayMap(array $array, callable $parser) : array
+    {
+        if (empty($array)) {
+            return $array;
+        }
+
+        return array_map(function($value) use ($parser){
+
+            if (is_array($value)) {
+                $value = self::recursiveArrayMap($value, $parser);
+            } else {
+                $value = $parser($value);
+            }
+
+            return $value;
+
+        }, $array);
+    }
 }

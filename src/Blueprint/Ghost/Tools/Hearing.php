@@ -30,7 +30,7 @@ interface Hearing extends Matcher
 
     public function component(callable $caller) : Hearing;
 
-    public function defaultFallback(callable $caller) : Hearing;
+    public function fallback(callable $caller) : Hearing;
 
-    public function end(callable $fallback = null) : Dialog;
+    public function end() : Dialog;
 }
