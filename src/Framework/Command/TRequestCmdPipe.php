@@ -58,11 +58,10 @@ trait TRequestCmdPipe
         $comprehension = $input->comprehension;
 
         // 处理过
-        $handled = $comprehension->isHandled(Comprehension::TYPE_COMMAND);
         $command = $comprehension->command;
 
         // 不存在的话, 尝试检查一下.
-        if (!$handled) {
+        if (!$command->hasCmdStr()) {
 
             $text = $this->getInputText($request);
 
@@ -87,7 +86,6 @@ trait TRequestCmdPipe
         }
 
         $cmdStr = $command->getCmdStr();
-
         return isset($cmdStr)
             ? $this->matchCommand($request, $cmdStr, $next)
             : $next($request);
