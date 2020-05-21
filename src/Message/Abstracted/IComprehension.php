@@ -163,6 +163,15 @@ class IComprehension extends AbsMessage implements
         return array_keys($emotions);
     }
 
+    public function addEmotions(string $emotion, string ...$emotions): void
+    {
+        array_unshift($emotions, $emotion);
+        foreach ($emotions as $emotion) {
+            $this->setEmotion($emotion, true);
+        }
+    }
+
+
     public function hasEmotion(string $emotionName): ? bool
     {
         return $this->_data['emotions'][$emotionName] ?? null;

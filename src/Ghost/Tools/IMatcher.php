@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Tools;
 
 use Commune\Blueprint\Ghost\Callables\Prediction;
-use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindReg\EmotionReg;
 use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Framework\Command\ICommandDef;
@@ -21,6 +21,7 @@ use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\SoundLike\SoundLikeInterface;
+use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;
 
 /**
@@ -34,9 +35,14 @@ class IMatcher implements Matcher
     protected $input;
 
     /**
-     * @var Dialog
+     * @var Cloner
      */
-    protected $dialog;
+    protected $cloner;
+
+    /**
+     * @var array
+     */
+    protected $injectionContext;
 
     /**
      * @var array
@@ -47,6 +53,26 @@ class IMatcher implements Matcher
      * @var bool
      */
     protected $matched = false;
+
+
+    /**
+     * @param $caller
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \ReflectionException
+     */
+    protected function call($caller)
+    {
+        if (
+            is_string($caller)
+            && class_exists($caller)
+            && method_exists($caller, '__invoke')
+        ) {
+            $caller = [$caller, '__invoke'];
+        }
+
+        return $this->cloner->container->call($caller, $this->injectionContext);
+    }
 
     public function getMatchedParams(): array
     {
@@ -100,11 +126,14 @@ class IMatcher implements Matcher
 
     /**
      * @param callable|Prediction|string $prediction
-     * @return static
+     * @return Matcher
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \ReflectionException
      */
     public function expect($prediction): Matcher
     {
-        if ($this->dialog->caller()->predict($prediction)) {
+        $bool = $this->call($prediction);
+        if ($bool) {
             $this->matched = true;
         }
 
@@ -203,7 +232,7 @@ class IMatcher implements Matcher
         /**
          * @var SoundLikeInterface $soundLike
          */
-        $soundLike = $this->dialog
+        $soundLike = $this
             ->cloner
             ->container
             ->make(SoundLikeInterface::class);
@@ -233,7 +262,7 @@ class IMatcher implements Matcher
             return $this;
         }
 
-        $mind = $this->dialog->cloner->mind;
+        $mind = $this->cloner->mind;
         $entityReg = $mind->entityReg();
 
         if (!$entityReg->hasDef($entityName)) {
@@ -326,15 +355,40 @@ class IMatcher implements Matcher
         return $this;
     }
 
-    public function hasKeywords(array $keyWords): Matcher
+    public function hasKeywords(array $keyWords, array $blacklist = []): Matcher
     {
-        // TODO: Implement hasKeywords() method.
+        if (empty($keyWords)) {
+            return $this;
+        }
+
+        if (!$this->input->isMsgType(VerbalMsg::class)) {
+            return $this;
+        }
+
+        // 先尝试用分词来做
+        $tokenize = $this->input->comprehension->tokens;
+        if ($tokenize->hasTokens()) {
+            $tokens = $tokenize->getTokens();
+            if (empty($tokens)) {
+                return $this;
+            }
+
+            if (
+                ArrayUtils::expectTokens($tokens, $keyWords, true)
+                && !ArrayUtils::expectTokens($tokens, $blacklist, false)
+            ) {
+                $this->matched = true;
+                return $this;
+            }
+        }
+
+        // 然后用字符串来做
+
     }
 
     public function feels(string $emotionName) : Matcher
     {
-
-        $reg = $this->dialog->cloner->mind->emotionReg();
+        $reg = $this->cloner->mind->emotionReg();
 
         if (!$reg->hasDef($emotionName)) {
             return $this;
@@ -349,7 +403,7 @@ class IMatcher implements Matcher
 
         if (!isset($has)) {
             $def = $reg->getDef($emotionName);
-            $has = $def->feels($this->dialog);
+            $has = $def->feels($this->cloner, $this->injectionContext);
             $emotion->setEmotion($emotionName, $has);
         }
 

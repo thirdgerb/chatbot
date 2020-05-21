@@ -58,7 +58,7 @@ class StringUtils
      */
     public static function isWildCardPattern(string $string) : bool
     {
-        return strpos($string, '*') !== false;
+        return mb_strpos($string, '*') !== false;
     }
 
     /**
@@ -416,5 +416,38 @@ class StringUtils
         $middle = $middle ? "$middle." : '';
 
         return "$middle$lastPart";
+    }
+
+    public static function expectKeywords(string $text, array $keywords, bool $all = true) : bool
+    {
+        if (empty($keywords)) {
+            return false;
+        }
+
+        if (empty($text)) {
+            return false;
+        }
+
+        foreach ($keywords as $keyword) {
+
+            if (is_array($keyword)) {
+                // 只要存在一个. 同义词.
+                $matched = self::expectKeywords($text, $keyword, !$all);
+
+            } else {
+                // 判断关键字是否存在.
+                $matched = is_int(mb_strpos($text, $keyword));
+            }
+
+            if (!$all && $matched) {
+                return true;
+            }
+
+            if ($all && !$matched) {
+                return false;
+            }
+        }
+
+        return $all;
     }
 }

@@ -21,6 +21,8 @@ interface Emotion
 
     public function setEmotion(string $emotion, bool $bool) : void;
 
+    public function addEmotions(string $emotion, string ...$emotions) : void;
+
     /**
      * @param string $emotionName
      * @return null|bool

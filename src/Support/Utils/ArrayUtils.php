@@ -41,4 +41,50 @@ class ArrayUtils
 
         return null;
     }
+
+    public static function expectTokens(
+        array $tokens,
+        array $expects,
+        bool $all = true
+    ) : bool
+    {
+        $tokenMap = array_fill_keys($tokens, true);
+        return self::expectTokenMap($tokenMap, $expects, $all);
+    }
+
+    public static function expectTokenMap(
+        array $tokenMap,
+        array $expects,
+        bool $all
+    ) : bool
+    {
+        if (empty($expects)) {
+            return $all;
+        }
+
+        foreach($expects as $expect) {
+            $matched = false;
+
+            if (is_array($expect)) {
+                $matched = self::expectTokenMap($tokenMap, $expect, !$all);
+
+            } elseif (array_key_exists($expect, $tokenMap)) {
+                $matched = true;
+
+            }
+
+            // 任意一个为真
+            if (!$all && $matched) {
+                return true;
+            }
+
+            // 任意一个为假
+            if ($all && !$matched) {
+                return false;
+            }
+        }
+
+        // 全部
+        return $all;
+    }
 }

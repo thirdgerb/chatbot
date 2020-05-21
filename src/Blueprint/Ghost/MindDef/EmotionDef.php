@@ -11,17 +11,20 @@
 
 namespace Commune\Blueprint\Ghost\MindDef;
 
-use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Cloner;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface EmotionDef extends Def
 {
-
     /**
-     * @param Dialog $dialog
+     * @param Cloner $cloner
+     * @param array $injectionContext
      * @return bool
      */
-    public function feels(Dialog $dialog) : bool;
+    public function feels(
+        Cloner $cloner,
+        array $injectionContext = []
+    ): bool;
 }

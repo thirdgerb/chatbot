@@ -215,9 +215,10 @@ interface Matcher
      * 最好不要沦落到这一步.
      *
      * @param array $keyWords   [ 'word1', 'word2', ['synonym1', 'synonym2']]
+     * @param array $blacklist
      * @return static
      */
-    public function hasKeywords(array $keyWords) : Matcher;
+    public function hasKeywords(array $keyWords, array $blacklist = []) : Matcher;
 
 
     /*------- feelings -------*/

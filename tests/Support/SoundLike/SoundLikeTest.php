@@ -8,6 +8,7 @@
 namespace Commune\Test\Support\SoundLike;
 
 
+use Commune\Container\Container;
 use Commune\Support\SoundLike\PinyinParser;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Commune\Support\SoundLike\SoundLikeManager;
@@ -21,8 +22,9 @@ class SoundLikeTest extends TestCase
     public function testSoundLike()
     {
         $parser = new PinyinParser(new Pinyin(MemoryFileDictLoader::class));
+        $container = new Container();
 
-        $manager = new SoundLikeManager();
+        $manager = new SoundLikeManager($container);
         $manager->registerParser(SoundLikeManager::ZH, $parser);
         $result1 = $manager->soundLike(
             '测试 english 和数字1, 加符号;',

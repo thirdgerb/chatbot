@@ -15,6 +15,9 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
 use Commune\Blueprint\Ghost\MindDef\EmotionDef;
+use Commune\Blueprint\Ghost\Mindset;
+use Commune\Container\ContainerContract;
+use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
 
@@ -54,10 +57,19 @@ class IEmotionDef implements EmotionDef
         return $this->meta->desc;
     }
 
-    public function feels(Dialog $dialog): bool
+    /**
+     * @param Cloner $cloner
+     * @param array $injectionContext
+     * @return bool
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \ReflectionException
+     */
+    public function feels(
+        Cloner $cloner,
+        array $injectionContext = []
+    ): bool
     {
         $intents = $this->meta->emotionalIntents;
-        $cloner = $dialog->cloner;
         // 检查是否有相关的 intents 命中了.
         if (!empty($intents)) {
             $intention = $cloner->input->comprehension->intention;
@@ -72,10 +84,10 @@ class IEmotionDef implements EmotionDef
             return false;
         }
 
-        $caller = $dialog->caller();
         foreach ($matchers as $matcherName) {
             // 校验所有的 matcher.
-            if ($caller->predict($matcherName)) {
+            $matched = $cloner->container->call($matcherName, $injectionContext);
+            if ($matched === true) {
                 return true;
             }
         }

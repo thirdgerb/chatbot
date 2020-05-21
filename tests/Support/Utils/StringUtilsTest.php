@@ -235,4 +235,18 @@ EOF;
         );
 
     }
+
+
+    public function testMatchKeywords()
+    {
+        $text = "今天天气不错, 数字1234, I am so depressing";
+
+        $this->assertTrue(StringUtils::expectKeywords($text, ['天气', 'am', '123']));
+        $this->assertTrue(StringUtils::expectKeywords($text, ['天气', ['am', '567']]));
+
+        $this->assertFalse(StringUtils::expectKeywords($text, ['天气', 'am', '567']));
+        $this->assertTrue(StringUtils::expectKeywords($text, ['天气', 'am', '567'], false));
+
+        $this->assertFalse(StringUtils::expectKeywords($text, [['am', '567']], false));
+    }
 }
