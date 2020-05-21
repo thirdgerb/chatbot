@@ -12,21 +12,14 @@
 namespace Commune\Ghost\Dialog\IFinale;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsBaseDialog;
-use Commune\Blueprint\Ghost\Dialog\Finale\CloseSession;
+use Commune\Ghost\Dialog\AbsDialog;
+use Commune\Blueprint\Ghost\Dialog\Finale;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ICloseSession extends AbsBaseDialog implements CloseSession
+class ICloseSession extends AbsDialog implements Finale
 {
-    const SELF_STATUS = self::FINALE;
-
-    protected function runInterception(): ? Dialog
-    {
-        return null;
-    }
-
     protected function runTillNext(): Dialog
     {
         $this->ticked = true;
@@ -35,8 +28,8 @@ class ICloseSession extends AbsBaseDialog implements CloseSession
 
     protected function selfActivate(): void
     {
-        $this->cloner->setSessionExpire(0);
+        $this->runStack();
+        $this->cloner->quit();
     }
-
 
 }

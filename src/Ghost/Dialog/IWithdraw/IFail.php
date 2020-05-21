@@ -9,30 +9,30 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\Temp;
+namespace Commune\Ghost\Dialog\IWithdraw;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialog;
+use Commune\Ghost\Dialog\AbsWithdraw;
+use Commune\Blueprint\Ghost\Dialog\Withdraw\Fail;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class GoFulfill extends AbsDialog
+class IFail extends AbsWithdraw implements Fail
 {
-    protected function runInterception(): ? Dialog
-    {
-        // TODO: Implement runInterception() method.
-    }
-
     protected function runTillNext(): Dialog
     {
-        // TODO: Implement runTillNext() method.
+        $process = $this->getProcess();
+        $process->addCanceling([$this->ucl]);
+
+        return $this->withdrawCanceling($process)
+            ?? $this->fallbackFlow($process);
     }
 
     protected function selfActivate(): void
     {
-        // TODO: Implement selfActivate() method.
+        $this->runStack();
     }
-
 
 }

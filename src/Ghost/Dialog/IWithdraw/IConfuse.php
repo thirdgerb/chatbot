@@ -12,25 +12,19 @@
 namespace Commune\Ghost\Dialog\IWithdraw;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Ghost\Dialog\AbsWithdraw;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Ghost\Dialog\AbsBaseDialog;
-use Commune\Blueprint\Ghost\Dialog\Withdraw\Confuse;
-use Commune\Ghost\Dialog\DialogHelper;
-use Commune\Ghost\Dialog\Traits\TIntentMatcher;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
+use Commune\Ghost\Dialog\Traits\TIntentMatcher;
+use Commune\Blueprint\Ghost\Dialog\Withdraw\Confuse;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IConfuse extends AbsBaseDialog implements Confuse
+class IConfuse extends AbsWithdraw implements Confuse
 {
     use TIntentMatcher;
-
-    protected function runInterception(): ? Dialog
-    {
-        return null;
-    }
 
     protected function runTillNext(): Dialog
     {

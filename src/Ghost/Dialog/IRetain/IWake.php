@@ -12,30 +12,26 @@
 namespace Commune\Ghost\Dialog\IRetain;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsBaseDialog;
+use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Blueprint\Ghost\Dialog\Retain\Wake;
-use Commune\Ghost\Dialog\DialogHelper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IWake extends AbsBaseDialog implements Wake
+class IWake extends AbsDialog implements Wake
 {
-    protected function runInterception(): ? Dialog
-    {
-        return null;
-    }
 
-    protected function runTillNext(): Dialog
+    protected function runTillNext() : Dialog
     {
-        return DialogHelper::retain($this);
+        $stageDef = $this->ucl->findStageDef($this->cloner);
+        return $stageDef->onRetain($this);
     }
 
     protected function selfActivate(): void
     {
+        $this->runStack();
+
         $process = $this->getProcess();
         $process->unsetWaiting($this->ucl);
     }
-
-
 }

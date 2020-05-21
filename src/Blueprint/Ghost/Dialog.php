@@ -146,8 +146,8 @@ interface Dialog
     const HEED          = Dialog\Retain\Heed::class;
     // dying -> restore
     const RESTORE       = Dialog\Retain\Restore::class;
-    // depending -> fulfill
-    const FULFILL       = Dialog\Retain\Fulfill::class;
+    // depending -> callback
+    const CALLBACK      = Dialog\Retain\Callback::class;
 
     /* withdraw */
 
@@ -164,6 +164,10 @@ interface Dialog
 
     public function isEvent(string $statusType) : bool ;
 
+    /**
+     * @param Dialog $dialog
+     * @return static
+     */
     public function withPrev(Dialog $dialog) : Dialog;
 
     /**

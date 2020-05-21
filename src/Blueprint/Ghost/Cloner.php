@@ -68,33 +68,6 @@ interface Cloner extends Session
 
     public function getConversationId() : string;
 
-    /*----- 运行对话管理逻辑 -----*/
-//
-//    /**
-//     * 获取上下文相关的 Query 变量.
-//     * @param string $contextName
-//     * @param array|null $query
-//     * @return array
-//     * @throws Ghost\Exceptions\DefNotDefinedException
-//     */
-//    public function getContextualQuery(string $contextName, array $query = null) : array;
-//
-//    /**
-//     * 获取 Context 上下文相关的 entity 值.
-//     * @param string $contextName
-//     * @return array
-//     * @throws Ghost\Exceptions\DefNotDefinedException
-//     */
-//    public function getContextualEntities(string $contextName) : array;
-//
-//    /**
-//     * @param Ucl $ucl
-//     * @return Context
-//     * @throws Ghost\Exceptions\DefNotDefinedException
-//     */
-//    public function getContext(Ucl $ucl) : Context;
-//
-
     public function quit() : void;
 
     public function isQuit() : bool;

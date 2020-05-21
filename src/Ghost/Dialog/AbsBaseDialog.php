@@ -332,9 +332,14 @@ abstract class AbsBaseDialog implements
             ->recall($this->cloner);
     }
 
+    /**
+     * @param Dialog $dialog
+     * @return static
+     */
     public function withPrev(Dialog $dialog): Dialog
     {
         $this->prev = $dialog;
+        return $this;
     }
 
 

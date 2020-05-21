@@ -18,6 +18,7 @@ use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Blueprint\Ghost\MindReg\DefRegistry;
 use Commune\Support\Registry\Category;
+use Commune\Support\Registry\Exceptions\OptionNotFoundException;
 use Commune\Support\Registry\OptRegistry;
 
 
@@ -86,11 +87,21 @@ abstract class AbsDefRegistry implements DefRegistry
 
     protected function getRegisteredMeta(string $defName) : DefMeta
     {
-        /**
-         * @var DefMeta $meta
-         */
-        $meta = $this->getMetaRegistry()->find($defName);
-        return $meta;
+        try {
+
+            /**
+             * @var DefMeta $meta
+             */
+            $meta = $this->getMetaRegistry()->find($defName);
+            return $meta;
+
+        } catch (OptionNotFoundException $e) {
+            throw new DefNotDefinedException(
+                $this->getMetaId(),
+                $defName,
+                $e
+            );
+        }
     }
 
     protected function doRegisterDef(Def $def, bool $notExists) : bool
@@ -145,14 +156,6 @@ abstract class AbsDefRegistry implements DefRegistry
     {
         $this->checkExpire();
 
-        // 没有缓存又没有注册
-        if (
-            !array_key_exists($defName, $this->cachedDefs)
-            && !$this->hasRegisteredMeta($defName)
-        ) {
-            throw new DefNotDefinedException($this->getMetaId(), $defName);
-        }
-
         // 有缓存
         if (isset($this->cachedDefs[$defName])) {
             return $this->cachedDefs[$defName];
@@ -195,9 +198,9 @@ abstract class AbsDefRegistry implements DefRegistry
 
     protected function setDefCache(string $name, Def $def) : void
     {
-        $this->cachedDefs[$name] = $this->cacheExpire > 0
-            ? $def
-            : null;
+        if ($this->cacheExpire > 0) {
+            $this->cachedDefs[$name] = $def;
+        }
     }
 
     public function each(): \Generator

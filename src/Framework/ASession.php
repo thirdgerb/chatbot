@@ -82,11 +82,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
     protected $protocalMap;
 
     /**
-     * @var bool
-     */
-    protected $quit = false;
-
-    /**
      * ASession constructor.
      * @param ReqContainer $container
      * @param string $sessionId
@@ -221,17 +216,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         return $this->stateless;
     }
 
-    public function quit(): void
-    {
-        $this->quit = true;
-        $this->quitSession();
-    }
-
-    public function isQuit(): bool
-    {
-        return $this->quit;
-    }
-
 
     /*------ getter ------*/
 
@@ -269,7 +253,7 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
     public function finish(): void
     {
-        if (!$this->isQuit() && !$this->isStateless()) {
+        if (!$this->isStateless()) {
             $this->saveSession();
         }
 

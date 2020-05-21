@@ -11,46 +11,27 @@
 
 namespace Commune\Ghost\Dialog\IWithdraw;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Blueprint\Ghost\Dialog\Withdraw\Cancel;
+use Commune\Ghost\Dialog\AbsWithdraw;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ICancel extends AbsDialog implements Cancel
+class ICancel extends AbsWithdraw implements Cancel
 {
-
-
-    protected function runInterception(): ? Dialog
-    {
-        return null;
-    }
-
     protected function runTillNext(): Dialog
     {
         $process = $this->getProcess();
+        $process->addCanceling([$this->ucl]);
 
-        return $this->withdrawCanceling($this, $process)
-            ?? $this->maybeRedirect()
-            ?? $this->fallbackFlow($this, $process);
-    }
-
-    protected function maybeRedirect() : ? Dialog
-    {
-        if (isset($this->to)) {
-            return $this->redirectTo($this->to);
-        }
-
-        return null;
+        return $this->withdrawCanceling($process)
+            ?? $this->fallbackFlow($process);
     }
 
     protected function selfActivate(): void
     {
-        $process = $this->getProcess();
-        $process->addCanceling([$this->ucl]);
+        $this->runStack();
     }
 
 

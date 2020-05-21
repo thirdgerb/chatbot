@@ -81,13 +81,13 @@ interface Process extends ArrayAndJsonAble
 
     public function addWatcher(Ucl $watcher) : void;
 
-    public function popWatcher() : ? string;
+    public function popWatcher() : ? Ucl;
 
     /*-------- block ---------*/
 
     public function addBlocking(Ucl $ucl, int $priority) : void;
 
-    public function popBlocking(string $ucl = null) : ? string;
+    public function popBlocking(string $ucl = null) : ? Ucl;
 
     /*-------- sleep ---------*/
 
@@ -98,7 +98,7 @@ interface Process extends ArrayAndJsonAble
     /*-------- canceling ---------*/
 
     /**
-     * @param string[] $canceling
+     * @param Ucl[] $canceling
      */
     public function addCanceling(array $canceling) : void;
 
@@ -106,6 +106,11 @@ interface Process extends ArrayAndJsonAble
      * @return Ucl
      */
     public function popCanceling() : ? Ucl;
+
+    /**
+     * @return Ucl[]
+     */
+    public function dumpCanceling() : array;
 
     /*-------- dying ---------*/
 
@@ -119,6 +124,10 @@ interface Process extends ArrayAndJsonAble
 
     public function addDepending(string $ucl, string $contextId) : void;
 
+    /**
+     * @param string $contextId
+     * @return array
+     */
     public function getDepending(string $contextId) : array;
 
     /*-------- waiting ---------*/

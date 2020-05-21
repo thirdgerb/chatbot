@@ -14,7 +14,6 @@ namespace Commune\Ghost\Dialog\IFinale;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Blueprint\Ghost\Dialog\Finale;
 

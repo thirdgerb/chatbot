@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\Temp;
+namespace Commune\Ghost\Dialog\Operate;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Ghost\Dialog\AbsDialog;

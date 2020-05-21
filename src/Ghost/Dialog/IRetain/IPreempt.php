@@ -12,31 +12,33 @@
 namespace Commune\Ghost\Dialog\IRetain;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsBaseDialog;
-use Commune\Ghost\Dialog\DialogHelper;
+use Commune\Ghost\Dialog\AbsDialog;
+use Commune\Blueprint\Ghost\Dialog\Activate\Preempt;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IPreempt extends AbsBaseDialog implements Dialog\Retain\Preempt
+class IPreempt extends AbsDialog implements Preempt
 {
-    protected function runInterception(): ? Dialog
-    {
-        return null;
-    }
 
     protected function runTillNext(): Dialog
     {
-        return DialogHelper::retain($this);
+        $stageDef = $this->ucl->findStageDef($this->cloner);
+        return $stageDef->onActivate($this);
     }
 
     protected function selfActivate(): void
     {
+        $this->runStack();
+
         $process = $this->getProcess();
+        $process->unsetWaiting($this->ucl);
+
         $await = $process->awaiting;
         if (isset($await)) {
             $awaitUcl = $process->decodeUcl($await);
             $priority = $awaitUcl->findContextDef($this->cloner)->getPriority();
+
             $process->addBlocking($awaitUcl, $priority);
         }
     }

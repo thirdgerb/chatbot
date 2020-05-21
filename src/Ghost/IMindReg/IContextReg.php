@@ -11,7 +11,6 @@
 
 namespace Commune\Ghost\IMindReg;
 
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindDef\Def;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;

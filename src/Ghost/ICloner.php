@@ -93,6 +93,12 @@ class ICloner extends ASession implements Cloner
      */
     protected $asyncInputs = [];
 
+    /**
+     * @var bool
+     */
+    protected $quit = false;
+
+
     public function __construct(Ghost $ghost, ReqContainer $container, InputMsg $input)
     {
         $this->ghost = $ghost;
@@ -292,9 +298,7 @@ class ICloner extends ASession implements Cloner
 
     public function asyncInput(InputMsg $input): void
     {
-        if (!$this->silent) {
-            $this->asyncInputs[] = $input;
-        }
+        $this->asyncInputs[] = $input;
     }
 
     public function getAsyncInput(): array
@@ -302,6 +306,24 @@ class ICloner extends ASession implements Cloner
         return $this->asyncInputs;
     }
 
+    /*------- quit -------*/
+
+    public function quit(): void
+    {
+        $this->quit = true;
+        $this->quitSession();
+    }
+
+    public function isQuit(): bool
+    {
+        return $this->quit;
+    }
+
+
+    protected function quitSession(): void
+    {
+        $this->output($this->input->output(new SessionQuitInt()));
+    }
 
     /*------- flush -------*/
 
@@ -315,14 +337,15 @@ class ICloner extends ASession implements Cloner
         $this->asyncInputs = [];
     }
 
-    protected function quitSession(): void
-    {
-        $this->output($this->input->output(new SessionQuitInt()));
-        $this->ioDeleteConvoIdCache();
-    }
+
 
     protected function saveSession(): void
     {
+        if ($this->isQuit()) {
+            $this->ioDeleteConvoIdCache();
+            return;
+        }
+
         // runtime 更新.
         if (!$this->isSingletonInstanced('runtime')) {
             $this->runtime->save();
