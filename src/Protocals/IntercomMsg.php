@@ -77,6 +77,37 @@ interface IntercomMsg extends Message, Protocal
      */
     public function getDeliverAt() : int;
 
+    /*------- with -------*/
+
+    /**
+     * @param HostMsg $message
+     * @return static
+     */
+    public function withMessage(HostMsg $message) : IntercomMsg;
+
+    /*------- methods -------*/
+
+    /**
+     * 产生新的渠道消息.
+     *
+     * @param HostMsg|null $message
+     * @param string|null $sessionId
+     * @param string|null $convoId
+     * @param string|null $guestId
+     * @param string|null $guestName
+     * @param int|null $deliverAt
+     * @return IntercomMsg
+     */
+    public function divide(
+        HostMsg $message = null,
+        string $sessionId = null,
+        string $convoId = null,
+        string $guestId = null,
+        string $guestName = null,
+        int $deliverAt = null
+    ) : IntercomMsg;
+
+
     /*------- hostMsg -------*/
 
     /**
@@ -100,32 +131,5 @@ interface IntercomMsg extends Message, Protocal
      * @return string
      */
     public function getNormalizedText() : string;
-
-    /*------- methods -------*/
-
-    /**
-     * @param HostMsg $message
-     */
-    public function replaceMsg(HostMsg $message) : void;
-
-    /**
-     * 产生新的渠道消息.
-     *
-     * @param HostMsg|null $message
-     * @param string|null $sessionId
-     * @param string|null $convoId
-     * @param string|null $guestId
-     * @param string|null $guestName
-     * @param int|null $deliverAt
-     * @return IntercomMsg
-     */
-    public function divide(
-        HostMsg $message = null,
-        string $sessionId = null,
-        string $convoId = null,
-        string $guestId = null,
-        string $guestName = null,
-        int $deliverAt = null
-    ) : IntercomMsg;
 
 }

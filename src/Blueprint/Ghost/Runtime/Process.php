@@ -89,11 +89,38 @@ interface Process extends ArrayAndJsonAble
 
     public function popBlocking(string $ucl = null) : ? Ucl;
 
+
     /*-------- sleep ---------*/
 
     public function addSleeping(Ucl $ucl, array $wakenStages) : void;
 
-    public function popSleeping(string $id = null) : ? Ucl;
+    public function popSleeping(string $ucl = null) : ? Ucl;
+
+    /*-------- dying ---------*/
+
+    public function addDying(Ucl $ucl, int $turns, array $restoreStages);
+
+    /*-------- root ---------*/
+
+    public function replaceRoot(Ucl $ucl) : void;
+
+    /*-------- depending ---------*/
+
+    public function addDepending(Ucl $ucl, string $dependedContextId) : void;
+
+    public function hasDepending(string $dependedContextId) : bool;
+
+    /**
+     * @param string $contextId
+     * @return array
+     */
+    public function popDepending(string $contextId) : array;
+
+    /*-------- callback ---------*/
+
+    public function addCallback(Ucl ...$ucls) : void;
+
+    public function popCallback() : ? Ucl;
 
     /*-------- canceling ---------*/
 
@@ -112,27 +139,10 @@ interface Process extends ArrayAndJsonAble
      */
     public function dumpCanceling() : array;
 
-    /*-------- dying ---------*/
-
-    public function addDying(Ucl $ucl, int $turns, array $restoreStages);
-
-    /*-------- root ---------*/
-
-    public function replaceRoot(Ucl $ucl) : void;
-
-    /*-------- depending ---------*/
-
-    public function addDepending(string $ucl, string $contextId) : void;
-
-    /**
-     * @param string $contextId
-     * @return array
-     */
-    public function getDepending(string $contextId) : array;
 
     /*-------- waiting ---------*/
 
-    public function unsetWaiting(string $ucl) : void;
+    public function unsetWaiting(Ucl $ucl) : void;
 
     public function flushWaiting();
 
@@ -144,11 +154,13 @@ interface Process extends ArrayAndJsonAble
 
     public function shiftPath(string $contextId) : ? string;
 
-    public function existsPath(string $contextId) : bool;
+    public function pathExists(string $contextId) : bool;
 
     /*-------- backStep ---------*/
 
     public function backStep(int $step) : bool;
+
+    /*-------- gc ---------*/
 
     public function gc() : void;
 }

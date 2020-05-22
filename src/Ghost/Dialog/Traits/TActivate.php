@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\Operate;
+namespace Commune\Ghost\Dialog\Traits;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Ghost\Dialog\AbsDialog;
@@ -17,22 +17,8 @@ use Commune\Ghost\Dialog\AbsDialog;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class GoFulfill extends AbsDialog
+trait TActivate
 {
-    protected function runInterception(): ? Dialog
-    {
-        // TODO: Implement runInterception() method.
-    }
-
-    protected function runTillNext(): Dialog
-    {
-        // TODO: Implement runTillNext() method.
-    }
-
-    protected function selfActivate(): void
-    {
-        // TODO: Implement selfActivate() method.
-    }
 
 
 }

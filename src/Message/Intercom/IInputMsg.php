@@ -153,5 +153,10 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         return $this->shellName;
     }
 
+    public function setSceneId(string $sceneId): void
+    {
+        $this->sceneId = $sceneId;
+    }
+
 
 }

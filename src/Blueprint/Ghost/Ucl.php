@@ -123,22 +123,17 @@ class Ucl implements UclInterface
 
     public static function make(
         string $contextName,
-        string $stageName,
-        array $query
+        string $stageName = '',
+        array $query = []
     ): Ucl
     {
         $contextName = ContextUtils::normalizeContextName($contextName);
-        $stageName = ContextUtils::normalizeStageName($stageName);
-        return new static($contextName, $stageName, $query);
-    }
 
-    public static function context(
-        string $contextName,
-        array $query
-    ): Ucl
-    {
-        $contextName = ContextUtils::normalizeContextName($contextName);
-        return new static($contextName, '', $query);
+        $stageName = empty($stageName)
+                ? $stageName
+                : ContextUtils::normalizeStageName($stageName);
+
+        return new static($contextName, $stageName, $query);
     }
 
 

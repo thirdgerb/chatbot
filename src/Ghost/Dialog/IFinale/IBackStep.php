@@ -15,6 +15,7 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Blueprint\Ghost\Dialog\Finale;
 
@@ -29,30 +30,29 @@ class IBackStep extends AbsDialog implements Finale
      */
     protected $step;
 
-    public function __construct(Cloner $cloner, Ucl $ucl, int $step, $stack = [])
+    public function __construct(
+        Cloner $cloner,
+        Ucl $ucl,
+        AbsBaseDialog $dialog,
+        int $step
+    )
     {
         if ($step <= 0) {
             throw new InvalidArgumentException("back step should greater than 0, $step given");
         }
 
         $this->step = $step;
-        parent::__construct($cloner, $ucl, $stack);
+        parent::__construct($cloner, $ucl, $dialog);
     }
 
     protected function runTillNext(): Dialog
     {
-        $this->ticked = true;
-        return $this;
-    }
-
-
-    protected function selfActivate(): void
-    {
-        $this->runStack();
         $this->getProcess()->backStep($this->step);
 
         $this->runAwait(false);
-    }
 
+        $this->ticked = true;
+        return $this;
+    }
 
 }

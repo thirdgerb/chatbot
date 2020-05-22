@@ -14,6 +14,7 @@ namespace Commune\Ghost\Dialog\IFinale;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Blueprint\Ghost\Dialog\Finale;
 
@@ -29,21 +30,19 @@ class IRewind extends AbsDialog implements Finale
      */
     protected $silent;
 
-    public function __construct(Cloner $cloner, Ucl $ucl, bool $silent = false, array $stacks)
+    public function __construct(
+        Cloner $cloner,
+        Ucl $ucl,
+        AbsBaseDialog $prev,
+        bool $silent = false
+    )
     {
         $this->silent = $silent;
-        parent::__construct($cloner, $ucl);
+        parent::__construct($cloner, $ucl, $prev);
     }
 
     protected function runTillNext(): Dialog
     {
-        $this->ticked = true;
-        return $this;
-    }
-
-    protected function selfActivate(): void
-    {
-        $this->runStack();
 
         $process = $this->getProcess();
         $prev = $process->prev;
@@ -53,7 +52,9 @@ class IRewind extends AbsDialog implements Finale
         }
 
         $this->runAwait($this->silent);
-    }
 
+        $this->ticked = true;
+        return $this;
+    }
 
 }

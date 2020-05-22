@@ -27,18 +27,23 @@ class IQuit extends AbsWithdraw implements Quit
     {
         $process = $this->getProcess();
 
-        return $this->withdrawCanceling($process)
-            ?? $this->quitBlocking($process)
-            ?? $this->quitSleeping($process)
-            ?? $this->quitWatching($process)
-            ?? $this->closeSession();
+        $depending = $process->popDepending($this->ucl->getContextId());
+        if (!empty($depending)) {
+            $process->addCanceling($depending);
+        }
+
+
+
     }
 
 
     protected function selfActivate(): void
     {
+        $this->runStack();
+
         $process = $this->getProcess();
         $process->unsetWaiting($this->ucl);
+
     }
 
 

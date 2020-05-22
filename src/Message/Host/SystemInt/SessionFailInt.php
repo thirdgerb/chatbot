@@ -25,27 +25,26 @@ use Commune\Support\Struct\Struct;
  */
 class SessionFailInt extends IIntentMsg
 {
+    const DEFAULT_LEVEL = HostMsg::ERROR;
+    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_SESSION_FAIL;
+
     public function __construct(string $errmsg = null)
     {
-        $errmsg = $errmsg
-            ?? AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_SESSION_FAIL];
+        $slots = isset($errmsg)
+            ? ['errmsg' => $errmsg]
+            : [];
 
         parent::__construct(
-            HostMsg\IntentMsg::SYSTEM_SESSION_FAIL,
-            [
-                'errmsg' => $errmsg
-            ],
-            HostMsg::ERROR
+            '',
+            $slots
         );
     }
 
-    public static function stub(): array
+    public static function intentStub(): array
     {
         return [
-            'intentName' => HostMsg\IntentMsg::SYSTEM_SESSION_FAIL,
             'errcode' => AppResponse::HOST_SESSION_FAIL,
             'errmsg' => AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_SESSION_FAIL],
-            'level' => HostMsg::ERROR
         ];
     }
 

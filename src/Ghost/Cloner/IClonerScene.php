@@ -38,10 +38,15 @@ class IClonerScene implements ClonerScene
         $sceneId = $input->getSceneId();
 
         if (!isset($config->sceneContextNames[$sceneId])) {
-            $sceneId = $config->defaultScene;
+            $scenes = $config->sceneContextNames;
+            $sceneId = array_keys($scenes)[0];
         }
+
         $this->sceneId = $sceneId;
+        $input->setSceneId($sceneId);
+
         $contextName = $config->sceneContextNames[$sceneId] ?? null;
+
         if (empty($contextName)) {
             throw new InvalidConfigException(
                 GhostConfig::class,

@@ -114,7 +114,7 @@ class IStartProcess extends AbsBaseDialog implements StartProcess
         }
 
         $context = $message->toContext($this->cloner);
-        return $this->nav()->home($context->toUcl());
+        return $this->nav()->reset($context->toUcl());
     }
 
     protected function isNotConvoMsgCall(InputMsg $input) : ? Dialog

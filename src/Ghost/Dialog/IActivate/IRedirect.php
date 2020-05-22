@@ -11,26 +11,12 @@
 
 namespace Commune\Ghost\Dialog\IActivate;
 
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsBaseDialog;
+use Commune\Ghost\Dialog\IActivate;
 use Commune\Blueprint\Ghost\Dialog\Activate\Redirect;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IRedirect extends AbsBaseDialog implements Redirect
+class IRedirect extends IActivate implements Redirect
 {
-    protected function runTillNext(): Dialog
-    {
-        $stageDef = $this->ucl->findStageDef($this->cloner);
-        return $stageDef->onActivate($this);
-    }
-
-    protected function selfActivate(): void
-    {
-        $this->runStack();
-    }
-
-
 }

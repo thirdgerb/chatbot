@@ -25,22 +25,43 @@ use Commune\Support\Struct\Struct;
  */
 class IIntentMsg extends AbsMessage implements IntentMsg
 {
-    public function __construct(string $intentName, array $params, string $level = HostMsg::INFO)
-    {
-        $params['intentName'] = $intentName;
-        $params['level'] = $level;
 
-        parent::__construct($params);
+    const INTENT_NAME = '';
+    const DEFAULT_LEVEL = HostMsg::INFO;
+
+    public function __construct(
+        string $intentName,
+        array $slots = [],
+        string $level = null
+    )
+    {
+        if (!empty($intentName)) {
+            $slots['intentName'] = $intentName;
+        }
+
+        if (isset($level)) {
+            $slots['level'] = $level;
+        }
+
+        parent::__construct($slots);
     }
 
 
     public static function stub(): array
     {
-        return [
-            'intentName' => '',
-            'level' => HostMsg::INFO
+        $intentStub = static::intentStub();
+        $stub = [
+            'intentName' => static::INTENT_NAME,
+            'level' => static::DEFAULT_LEVEL
         ];
+        return $intentStub + $stub;
     }
+
+    public static function intentStub() : array
+    {
+        return [];
+    }
+
 
     public static function relations(): array
     {
@@ -52,7 +73,7 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         return new static(
             $data['id'] ?? '',
             $data,
-            $data['level'] ?? HostMsg::INFO
+            $data['level'] ?? null
         );
     }
 

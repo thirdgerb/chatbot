@@ -260,6 +260,9 @@ class IRuntime implements Runtime, Spied
 
         try {
 
+            // gc, 不过现在简单了, 只要删除掉 dying 就足够了.
+            $this->process->gc();
+
             return $this->driver->cacheProcess($this->cloner, $this->process, $expire);
         } catch (\Exception $e) {
             throw new SaveDataFailException('process', $e);

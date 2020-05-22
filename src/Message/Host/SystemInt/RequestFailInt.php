@@ -11,10 +11,9 @@
 
 namespace Commune\Message\Host\SystemInt;
 
-use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Message\Host\IIntentMsg;
-use Commune\Protocals\HostMsg;
 use Commune\Support\Struct\Struct;
+use Commune\Blueprint\Framework\Request\AppResponse;
 
 
 /**
@@ -27,31 +26,25 @@ class RequestFailInt extends IIntentMsg
 {
     public function __construct(string $errmsg = null)
     {
-        $errmsg = $errmsg
-            ?? AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_REQUEST_FAIL];
+        $slots = isset($errmsg)
+            ? ['errmsg' => $errmsg]
+            : [];
 
-        parent::__construct(
-            HostMsg\IntentMsg::SYSTEM_SESSION_FAIL,
-            [
-                'errmsg' => $errmsg
-            ],
-            HostMsg::ERROR
-        );
+
+        parent::__construct('', $slots);
     }
 
-    public static function stub(): array
+    public static function intentStub(): array
     {
         return [
-            'intentName' => HostMsg\IntentMsg::SYSTEM_REQUEST_FAILURE,
             'errcode' => AppResponse::HOST_REQUEST_FAIL,
             'errmsg' => AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_REQUEST_FAIL],
-            'level' => HostMsg::ERROR
         ];
     }
 
     public static function create(array $data = []): Struct
     {
-        return new static($data['errmsg']);
+        return new static($data['errmsg'] ?? null);
     }
 
     public function getText(): string

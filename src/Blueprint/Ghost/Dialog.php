@@ -132,7 +132,7 @@ interface Dialog
     // 从一个 context 主动进入到另一个 context 里
     const REDIRECT      = Dialog\Activate\Redirect::class;
     // 返回到根路径.
-    const HOME          = Dialog\Activate\Home::class;
+    const RESET         = Dialog\Activate\Reset::class;
     // 一个 blocking context 重新占据对话
     const PREEMPT       = Dialog\Activate\Preempt::class;
     // reactivate

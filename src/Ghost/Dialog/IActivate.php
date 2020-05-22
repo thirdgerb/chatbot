@@ -9,32 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IActivate;
+namespace Commune\Ghost\Dialog;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Activate\Home;
-use Commune\Ghost\Dialog\AbsBaseDialog;
-
+use Commune\Blueprint\Ghost\Dialog\Activate;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IHome extends AbsBaseDialog implements Home
+class IActivate extends AbsDialog implements Activate
 {
-
     protected function runTillNext(): Dialog
     {
+        $this->getProcess()->unsetWaiting($this->ucl);
         $stageDef = $this->ucl->findStageDef($this->cloner);
         return $stageDef->onActivate($this);
     }
-
-    protected function selfActivate(): void
-    {
-        $this->runStack();
-
-        $process = $this->getProcess();
-        $process->flushWaiting();
-    }
-
-
 }

@@ -9,14 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IActivate;
+namespace Commune\Ghost\Dialog\IOperates;
 
-use Commune\Ghost\Dialog\IActivate;
-use Commune\Blueprint\Ghost\Dialog\Activate\Staging;
+use Commune\Ghost\Dialog\AbsDialog;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IStaging extends IActivate implements Staging
+class IFulfill extends AbsDialog
 {
+
 }

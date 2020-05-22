@@ -165,7 +165,7 @@ interface Navigator
      * @param Ucl|null $root
      * @return Dialog
      */
-    public function home(Ucl $root = null) : Dialog;
+    public function reset(Ucl $root = null) : Dialog;
 
     /*-------- self waiting --------*/
 

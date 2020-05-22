@@ -9,15 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog\Activate;
+namespace Commune\Ghost\Dialog\Traits;
 
-use Commune\Blueprint\Ghost\Dialog\Activate;
-use Commune\Blueprint\Ghost\Dialog\Intercept;
 
 /**
+ * 允许当前语境执行 withdraw 流程.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Home extends Activate, Intercept
+class TWithdrawFlow
 {
 
 }

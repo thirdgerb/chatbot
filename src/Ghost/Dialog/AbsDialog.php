@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Dialog;
 
+use Commune\Ghost\Dialog\IOperates\IFulfill;
 use Commune\Ghost\Dialog\Operate;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\IFinale;
@@ -35,9 +36,10 @@ abstract class AbsDialog extends AbsBaseDialog
         $process = $this->getProcess();
 
         // 添加 watch
-        $this->nextStack[] = function() use ($process, $watcher){
+        $this->pushStack(function() use ($process, $watcher){
             $process->addWatcher($watcher);
-        };
+        });
+
         return $this;
     }
 
@@ -47,9 +49,9 @@ abstract class AbsDialog extends AbsBaseDialog
         $process = $this->getProcess();
 
         // 添加 watch
-        $this->nextStack[] = function() use ($subject, $process, $wakeStages){
+        $this->pushStack(function() use ($subject, $process, $wakeStages){
             $process->addSleeping($subject, $wakeStages);
-        };
+        });
         return $this;
     }
 
@@ -60,9 +62,9 @@ abstract class AbsDialog extends AbsBaseDialog
         $priority = $priority
             ?? $subject->findContextDef($this->cloner)->getPriority();
 
-        $this->nextStack[] = function() use ($subject, $process, $priority) {
+        $this->pushStack(function() use ($subject, $process, $priority) {
             $process->addBlocking($subject, $priority);
-        };
+        });
 
         return $this;
     }
@@ -71,9 +73,10 @@ abstract class AbsDialog extends AbsBaseDialog
     {
         $process = $this->getProcess();
         $ucl = $this->ucl;
-        $this->nextStack[] = function() use ($process, $ucl) {
+
+        $this->pushStack(function() use ($process, $ucl) {
             $process->resetPath($ucl->getContextId());
-        };
+        });
 
         return $this;
     }
@@ -82,18 +85,31 @@ abstract class AbsDialog extends AbsBaseDialog
 
     public function next(string ...$stageNames): Dialog
     {
+        $next = array_shift($stageNames);
         $process = $this->getProcess();
-        if (!empty($stageNames)) {
-            $id = $this->ucl->getContextId();
-            $this->nextStack[] = function() use ($process, $id, $stageNames) {
-                $process->insertPath($id, $stageNames);
-            };
+
+        $nextPathNotExists = empty($next)
+            && empty($stageNames)
+            && $process->pathExists($this->ucl->getContextId());
+
+
+        //  如果没有后路了.
+        if ($nextPathNotExists) {
+            return new IOperates\IFulfill($this->cloner, $this->ucl, $this);
         }
 
-        return new Operate\GoNext(
+        // 有后路则走 staging
+        if (!empty($stageNames)) {
+            $id = $this->ucl->getContextId();
+            $this->pushStack(function() use ($process, $id, $stageNames) {
+                $process->insertPath($id, $stageNames);
+            });
+        }
+
+        return new IActivate\IStaging(
             $this->cloner,
-            $this->ucl,
-            $this->popNextStack()
+            $this->ucl->goStage($next),
+            $this
         );
     }
 
@@ -108,10 +124,11 @@ abstract class AbsDialog extends AbsBaseDialog
     {
         $target = $target->toInstance($this->cloner);
         $this->redirectTargetShouldNotSame($target);
+
         return new IActivate\IRedirect(
             $this->cloner,
             $target,
-            $this->popNextStack()
+            $this
         );
     }
 
@@ -135,41 +152,41 @@ abstract class AbsDialog extends AbsBaseDialog
         $target = $target->toInstance($this->cloner);
         $this->redirectTargetShouldNotSame($target);
 
+        if (isset($fieldName)) {
+            $context = $this->ucl->findContext($this->cloner);
+            $depended = $target->findContext($this->cloner);
+
+            $this->pushStack(function() use ($context, $fieldName, $depended){
+                $context->offsetSet($fieldName, $depended);
+            });
+        }
+
         return new IActivate\IDepend(
             $this->cloner,
             $target,
             $this->ucl,
-            $fieldName,
-            $this->popNextStack()
+            $this
         );
     }
 
     public function blockTo(Ucl $target): Dialog
     {
-        $target = $target->toInstance($this->cloner);
-        $this->redirectTargetShouldNotSame($target);
         return $this->block($this->ucl)->redirectTo($target);
     }
 
     public function sleepTo(Ucl $target, array $wakenStages = []): Dialog
     {
-        $target = $target->toInstance($this->cloner);
-        $this->redirectTargetShouldNotSame($target);
         return $this->sleep($this->ucl, $wakenStages)->redirectTo($target);
     }
 
 
-    public function home(Ucl $root = null): Dialog
+    public function reset(Ucl $root = null): Dialog
     {
-        if (isset($root)) {
-            $root = $root->toInstance($this->cloner);
-        }
-
-        $root = $root ?? $this->getProcess()->getRoot()->toInstance($this->cloner);
-        return new IActivate\IHome(
+        $root = $root ?? Ucl::make($this->cloner->scene->contextName);
+        return new IActivate\IReset(
             $this->cloner,
             $root,
-            $this->popNextStack()
+            $this
         );
     }
 
@@ -180,12 +197,10 @@ abstract class AbsDialog extends AbsBaseDialog
     ): Dialog
     {
         $ucl = $target ?? $this->ucl;
-        $ucl = $ucl->toInstance($this->cloner);
-
         return new IWithdraw\ICancel(
             $this->cloner,
             $ucl,
-            $this->popNextStack()
+            $this
         );
     }
 
@@ -194,7 +209,7 @@ abstract class AbsDialog extends AbsBaseDialog
         return new IWithdraw\IConfuse(
             $this->cloner,
             $this->ucl,
-            $this->popNextStack()
+            $this
         );
     }
 
@@ -205,12 +220,11 @@ abstract class AbsDialog extends AbsBaseDialog
     ): Dialog
     {
         $ucl = $target ?? $this->ucl;
-        $ucl = $ucl->toInstance($this->cloner);
 
-        return new Operate\GoFulfill(
+        return new IFulfill(
             $this->cloner,
             $ucl,
-            $this->popNextStack()
+            $this
         );
     }
 
@@ -219,12 +233,10 @@ abstract class AbsDialog extends AbsBaseDialog
     ): Dialog
     {
         $ucl = $target ?? $this->ucl;
-        $ucl = $ucl->toInstance($this->cloner);
-
         return new IWithdraw\IReject(
             $this->cloner,
             $ucl,
-            $this->popNextStack()
+            $this
         );
     }
 
@@ -233,12 +245,11 @@ abstract class AbsDialog extends AbsBaseDialog
     ): Dialog
     {
         $ucl = $target ?? $this->ucl;
-        $ucl = $ucl->toInstance($this->cloner);
 
         return new IWithdraw\IFail(
             $this->cloner,
             $ucl,
-            $this->popNextStack()
+            $this
         );
     }
 
@@ -247,7 +258,7 @@ abstract class AbsDialog extends AbsBaseDialog
         return new IWithdraw\IQuit(
             $this->cloner,
             $this->ucl,
-            $this->popNextStack()
+            $this
         );
     }
 
@@ -258,9 +269,11 @@ abstract class AbsDialog extends AbsBaseDialog
         return new IActivate\IReactivate(
             $this->cloner,
             $this->ucl,
-            $this->popNextStack()
+            $this
         );
     }
+
+    /*------- await -------*/
 
     public function await(
         array $stageInterceptors = [],
@@ -268,7 +281,8 @@ abstract class AbsDialog extends AbsBaseDialog
         int $expire = null
     ): Await
     {
-        return  new IFinale\IAwait(
+        //todo
+        return new IFinale\IAwait(
             $this->cloner,
             $this->ucl,
             $stageInterceptors,
@@ -284,27 +298,33 @@ abstract class AbsDialog extends AbsBaseDialog
         return new IFinale\IRewind(
             $this->cloner,
             $this->ucl,
-            $silent,
-            $this->popStack()
+            $this,
+            $silent
         );
     }
 
     public function dumb(): Dialog
     {
-        return new IFinale\IDumb($this->cloner, $this->ucl, $this->popStack());
+        return new IFinale\IDumb(
+            $this->cloner,
+            $this->ucl,
+            $this
+        );
     }
 
     public function backStep(int $step = 1): Dialog
     {
-        return new IFinale\IBackStep($this->cloner, $this->ucl, $step, $this->popStack());
+        return new IFinale\IBackStep(
+            $this->cloner,
+            $this->ucl,
+            $this,
+            $step
+        );
     }
-
-
-
 
     /*------- inner  -------*/
 
-    protected function runAwait(bool $silent =false ) : void
+    protected function runAwait(bool $silent = false ) : void
     {
         $process = $this->getProcess();
         $waiter = $process->waiter;

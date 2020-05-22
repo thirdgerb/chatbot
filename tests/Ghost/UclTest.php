@@ -74,7 +74,7 @@ class UclTest extends TestCase
         $this->assertEquals($case2, $case3, $case);
 
         // 字符串校验
-        $this->assertTrue($case3Obj->atSameContext($case), $case);
+        $this->assertTrue($case3Obj->atSameContext($caseObj), $case);
 
         // at && equals
         $this->assertTrue($caseObj->equals($case2Obj), $case);

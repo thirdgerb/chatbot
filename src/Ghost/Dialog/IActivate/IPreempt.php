@@ -12,11 +12,11 @@
 namespace Commune\Ghost\Dialog\IActivate;
 
 use Commune\Ghost\Dialog\IActivate;
-use Commune\Blueprint\Ghost\Dialog\Activate\Staging;
+use Commune\Blueprint\Ghost\Dialog\Activate\Preempt;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IStaging extends IActivate implements Staging
+class IPreempt extends IActivate implements Preempt
 {
 }

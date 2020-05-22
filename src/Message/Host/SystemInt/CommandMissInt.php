@@ -23,15 +23,17 @@ use Commune\Support\Struct\Struct;
  */
 class CommandMissInt extends IIntentMsg
 {
+    const DEFAULT_LEVEL = HostMsg::ERROR;
+    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_COMMAND_MISS;
+
     public function __construct(string $command)
     {
-        parent::__construct(
-            HostMsg\IntentMsg::SYSTEM_COMMAND_MISS,
-            [
-                'command' => $command,
-            ],
-            HostMsg::ERROR
-        );
+        parent::__construct('', ['command' => $command]);
+    }
+
+    public static function intentStub(): array
+    {
+        return ['command' => ''];
     }
 
     public static function create(array $data = []): Struct

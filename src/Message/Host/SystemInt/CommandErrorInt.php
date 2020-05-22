@@ -13,7 +13,6 @@ namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
-use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Support\Struct\Struct;
 
 
@@ -25,6 +24,8 @@ use Commune\Support\Struct\Struct;
  */
 class CommandErrorInt extends IIntentMsg
 {
+    const DEFAULT_LEVEL = HostMsg::ERROR;
+    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_COMMAND_ERROR;
 
     public function __construct(
         string $commandName = '',
@@ -32,12 +33,11 @@ class CommandErrorInt extends IIntentMsg
     )
     {
         parent::__construct(
-            IntentMsg::SYSTEM_COMMAND_ERROR,
+            '',
             [
                 'command' => $commandName,
                 'error' => $errorMsg,
-            ],
-            HostMsg::ERROR
+            ]
         );
     }
 
@@ -47,6 +47,14 @@ class CommandErrorInt extends IIntentMsg
             $data['command'] ?? '',
             $data['error'] ?? ''
         );
+    }
+
+    public static function intentStub(): array
+    {
+        return [
+            'command' => '',
+            'error' => '',
+        ];
     }
 
     public function getText(): string

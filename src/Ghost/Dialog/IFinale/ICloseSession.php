@@ -14,6 +14,7 @@ namespace Commune\Ghost\Dialog\IFinale;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Blueprint\Ghost\Dialog\Finale;
+use Commune\Message\Host\SystemInt\SessionQuitInt;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -22,14 +23,11 @@ class ICloseSession extends AbsDialog implements Finale
 {
     protected function runTillNext(): Dialog
     {
+        $this->send()->message(new SessionQuitInt());
+
+        $this->cloner->quit();
+
         $this->ticked = true;
         return $this;
     }
-
-    protected function selfActivate(): void
-    {
-        $this->runStack();
-        $this->cloner->quit();
-    }
-
 }

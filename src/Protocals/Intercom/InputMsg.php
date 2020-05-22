@@ -33,8 +33,14 @@ interface InputMsg extends IntercomMsg
 
     public function getComprehension() : Comprehension;
 
-    /*----- methods -----*/
+    /*----- with -----*/
 
+    /**
+     * @param string $sceneId
+     */
+    public function setSceneId(string $sceneId) : void;
+
+    /*----- methods -----*/
 
     /**
      * @param HostMsg $message

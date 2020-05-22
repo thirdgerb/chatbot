@@ -35,7 +35,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class GhostReqServiceProvider extends ServiceProvider
+class ClonerServiceProvider extends ServiceProvider
 {
 
     public static function stub(): array

@@ -27,6 +27,9 @@ use Commune\Support\Struct\Struct;
  */
 class CommandDescInt extends IIntentMsg
 {
+    const DEFAULT_LEVEL = HostMsg::INFO;
+    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_COMMAND_DESC;
+
     public function __construct(
         string $command,
         string $desc,
@@ -35,15 +38,19 @@ class CommandDescInt extends IIntentMsg
     )
     {
         parent::__construct(
-            HostMsg\IntentMsg::SYSTEM_COMMAND_DESC,
-            [
-                'command' => $command,
-                'desc' => $desc,
-                'arguments' => $arguments,
-                'options' => $options
-            ],
-            HostMsg::INFO
+            '',
+            get_defined_vars()
         );
+    }
+
+    public static function intentStub(): array
+    {
+        return [
+            'command' => '',
+            'desc' => '',
+            'arguments' => '',
+            'options' => '',
+        ];
     }
 
     public static function create(array $data = []): Struct

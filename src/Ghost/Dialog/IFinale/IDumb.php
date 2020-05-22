@@ -21,14 +21,9 @@ class IDumb extends AbsDialog
 {
     protected function runTillNext(): Dialog
     {
+        $this->cloner->noState();
+
         $this->ticked = true;
         return $this;
     }
-
-    protected function selfActivate(): void
-    {
-        $this->cloner->noState();
-    }
-
-
 }

@@ -12,29 +12,24 @@
 namespace Commune\Ghost\Dialog\IActivate;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsBaseDialog;
-use Commune\Blueprint\Ghost\Dialog\Activate\StartSession;
-use Commune\Ghost\Dialog\DialogHelper;
+use Commune\Blueprint\Ghost\Dialog\Activate\Reset;
+use Commune\Ghost\Dialog\AbsDialog;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IStartSession extends AbsBaseDialog implements StartSession
+class IReset extends AbsDialog implements Reset
 {
-    protected function runInterception(): ? Dialog
-    {
-        return null;
-    }
 
     protected function runTillNext(): Dialog
     {
-        return DialogHelper::activate($this);
-    }
+        $process = $this->getProcess();
+        // 重置对话状态
+        $process->flushWaiting();
 
-    protected function selfActivate(): void
-    {
+        $stageDef = $this->ucl->findStageDef($this->cloner);
+        return $stageDef->onActivate($this);
     }
-
 
 }

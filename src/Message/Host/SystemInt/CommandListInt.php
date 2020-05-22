@@ -23,20 +23,22 @@ use Commune\Support\Struct\Struct;
  */
 class CommandListInt extends IIntentMsg
 {
+    const DEFAULT_LEVEL = HostMsg::INFO;
+    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_COMMAND_LIST;
+
     public function __construct(string $cmdList)
     {
-        parent::__construct(
-            HostMsg\IntentMsg::SYSTEM_COMMAND_LIST,
-            [
-              'cmdList' => $cmdList
-            ],
-            HostMsg::INFO
-        );
+        parent::__construct('', ['cmdList' => $cmdList]);
     }
 
     public static function create(array $data = []): Struct
     {
         return new static($data['cmdList'] ?? '');
+    }
+
+    public static function intentStub(): array
+    {
+        return ['cmdList' => ''];
     }
 
     public function getText(): string

@@ -84,21 +84,17 @@ abstract class AbsBaseDialog implements
     protected $stack = [];
 
     /**
-     * @var callable[]
-     */
-    protected $nextStack = [];
-
-    /**
-     * AbsDialogue constructor.
+     * AbsBaseDialog constructor.
      * @param Cloner $cloner
      * @param Ucl $ucl
-     * @param callable[] $stack
+     * @param AbsBaseDialog|null $prev
      */
-    public function __construct(Cloner $cloner, Ucl $ucl, array $stack = [])
+    public function __construct(Cloner $cloner, Ucl $ucl, AbsBaseDialog $prev = null)
     {
         $this->cloner = $cloner;
         $this->ucl = $ucl->toInstance($cloner);
-        $this->stack = $stack;
+        $this->prev = $prev;
+        $this->stack = isset($prev) ? $prev->dumpStack() : [];
     }
 
     /*-------- implements --------*/
@@ -220,18 +216,16 @@ abstract class AbsBaseDialog implements
 
     /*-------- tick --------*/
 
-    protected function popNextStack() : array
-    {
-        $stack = $this->nextStack;
-        $this->nextStack = [];
-        return $stack;
-    }
-
-    protected function popStack() : array
+    protected function dumpStack() : array
     {
         $stack = $this->stack;
         $this->stack = [];
         return $stack;
+    }
+
+    protected function pushStack(callable $caller) : void
+    {
+        $this->stack[] = $caller;
     }
 
 
@@ -254,6 +248,7 @@ abstract class AbsBaseDialog implements
 
         $this->ticking = true;
 
+        // 尝试拦截.
         if ($this instanceof Dialog\Intercept && isset($this->prev)) {
             $stageDef = $this->ucl->findStageDef($this->cloner);
             $next = $stageDef->onIntercept($this->prev);
@@ -263,30 +258,24 @@ abstract class AbsBaseDialog implements
         if (!isset($next)) {
             // 下一次 tick 关闭上一次tick
             $prev = $this->prev;
-            if (isset($prev) && $prev instanceof self) {
+            if (isset($prev)) {
                 $prev->ticked = true;
             }
 
-            $this->selfActivate();
+            $this->runStack();
+
             $next = $this->runTillNext();
         }
 
         $this->ticking = false;
-
-        // 填补关联关系.
-        $prev = $next->prev;
-        if (!isset($prev)) {
-            $next->withPrev($this);
-        }
-
         return $next;
     }
 
     protected function runStack() : void
     {
-        $stack = $this->popStack();
+        $stack = $this->dumpStack();
         while($caller = array_shift($stack)) {
-            $caller();
+            $caller($this);
         }
     }
 
@@ -299,12 +288,6 @@ abstract class AbsBaseDialog implements
      * @return static
      */
     abstract protected function runTillNext() : Dialog;
-
-
-    /**
-     * 将当前 Process 的状态变更.
-     */
-    abstract protected function selfActivate() : void;
 
     /**
      * @return Process
@@ -383,7 +366,6 @@ abstract class AbsBaseDialog implements
         $this->cloner = null;
         $this->ucl = null;
         $this->process = null;
-        $this->nextStack = [];
         $this->stack = [];
     }
 

@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Withdraw;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Ghost\Dialog\IFinale\ICloseSession;
-use Commune\Ghost\Dialog\IRetain\IPreempt;
+use Commune\Ghost\Dialog\IActivate\IPreempt;
 use Commune\Ghost\Dialog\IRetain\IWake;
 use Commune\Ghost\Dialog\IWithdraw\IQuit;
 
@@ -70,7 +70,7 @@ abstract class AbsWithdraw extends AbsDialog implements Withdraw
         array $poppedDepending
     ) : array
     {
-        $allDepending = $process->getDepending($cancelingId);
+        $allDepending = $process->popDepending($cancelingId);
 
         // 依赖的语境压入取消栈
         if (!empty($allDepending)) {
@@ -113,7 +113,7 @@ abstract class AbsWithdraw extends AbsDialog implements Withdraw
 
     protected function closeSession() : Dialog
     {
-        return new ICloseSession($this->cloner, $this->ucl, $this->popNextStack());
+        return new ICloseSession($this->cloner, $this->ucl, $this->dumpStack());
     }
 
     protected function fallbackBlocking(Process $process) : ? Dialog
@@ -125,7 +125,7 @@ abstract class AbsWithdraw extends AbsDialog implements Withdraw
             return null;
         }
 
-        return new IPreempt($this->cloner, $blocking, $this->popNextStack());
+        return new IPreempt($this->cloner, $blocking, $this->dumpStack());
     }
 
     protected function fallbackSleeping(Process $process) : ? Dialog
@@ -136,7 +136,7 @@ abstract class AbsWithdraw extends AbsDialog implements Withdraw
             return null;
         }
 
-        return new IWake($this->cloner, $sleeping, $this->popNextStack());
+        return new IWake($this->cloner, $sleeping, $this->dumpStack());
     }
 
 

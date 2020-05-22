@@ -11,26 +11,13 @@
 
 namespace Commune\Ghost\Dialog\IActivate;
 
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsBaseDialog;
+use Commune\Ghost\Dialog\IActivate;
 use Commune\Blueprint\Ghost\Dialog\Activate\Intend;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IIntend extends AbsBaseDialog implements Intend
+class IIntend extends IActivate implements Intend
 {
-    protected function runTillNext(): Dialog
-    {
-        $stageDef = $this->ucl->findStageDef($this->cloner);
-        return $stageDef->onActivate($this);
-    }
-
-    protected function selfActivate(): void
-    {
-        $this->runStack();
-    }
-
-
 }

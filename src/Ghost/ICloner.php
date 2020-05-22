@@ -311,18 +311,11 @@ class ICloner extends ASession implements Cloner
     public function quit(): void
     {
         $this->quit = true;
-        $this->quitSession();
     }
 
     public function isQuit(): bool
     {
         return $this->quit;
-    }
-
-
-    protected function quitSession(): void
-    {
-        $this->output($this->input->output(new SessionQuitInt()));
     }
 
     /*------- flush -------*/

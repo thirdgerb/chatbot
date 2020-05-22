@@ -9,14 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IActivate;
+namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
-use Commune\Ghost\Dialog\IActivate;
-use Commune\Blueprint\Ghost\Dialog\Activate\Staging;
+use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Blueprint\Ghost\Dialog\Intercept;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IStaging extends IActivate implements Staging
+interface Reset extends Activate, Intercept
 {
+
 }

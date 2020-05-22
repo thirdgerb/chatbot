@@ -48,16 +48,6 @@ interface UclInterface extends ArrayAndJsonAble
     ) : Ucl;
 
     /**
-     * @param string $contextName
-     * @param array $query
-     * @return Ucl
-     */
-    public static function context(
-        string $contextName,
-        array $query
-    ) : Ucl;
-
-    /**
      * @param Cloner $cloner
      * @param string $contextName
      * @param array|null $query

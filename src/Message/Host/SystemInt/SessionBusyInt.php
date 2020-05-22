@@ -21,13 +21,13 @@ use Commune\Support\Struct\Struct;
  */
 class SessionBusyInt extends IIntentMsg
 {
+    const DEFAULT_LEVEL = HostMsg::WARNING;
+    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_SESSION_BUSY;
+
+
     public function __construct()
     {
-        parent::__construct(
-            HostMsg\IntentMsg::SYSTEM_SESSION_BUSY,
-            [],
-            HostMsg::WARNING
-        );
+        parent::__construct('');
     }
 
     public static function create(array $data = []): Struct

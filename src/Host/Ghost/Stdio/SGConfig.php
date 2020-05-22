@@ -49,7 +49,7 @@ class SGConfig extends GhostConfig
             'reqProviders' => [
                 Framework\Providers\CacheByArrProvider::class,
                 Framework\Providers\RuntimeDriverDemoProvider::class,
-                GhostProviders\GhostReqServiceProvider::class,
+                GhostProviders\ClonerServiceProvider::class,
                 StdioReqServiceProvider::class,
             ],
             'components' => [

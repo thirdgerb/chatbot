@@ -79,7 +79,6 @@ use Commune\Components;
  * # 多轮对话相关逻辑.
  *
  * @property-read string[] $sceneContextNames   场景对应的根路径.
- * @property-read string $defaultScene          默认场景.
  */
 class GhostConfig extends AbsOption
 {
@@ -105,7 +104,7 @@ class GhostConfig extends AbsOption
             'reqProviders' => [
                 Framework\Providers\CacheByArrProvider::class,
                 Framework\Providers\RuntimeDriverDemoProvider::class,
-                GhostProviders\GhostReqServiceProvider::class,
+                GhostProviders\ClonerServiceProvider::class,
             ],
             'components' => [
                 Components\Predefined\PredefinedComponent::class,
@@ -139,8 +138,6 @@ class GhostConfig extends AbsOption
             'maxBacktrace' => 10,
             'sceneContextNames' => [
             ],
-            'defaultScene' => '',
-
         ];
     }
 
