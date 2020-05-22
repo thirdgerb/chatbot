@@ -11,28 +11,12 @@
 
 namespace Commune\Ghost\Dialog\IRetain;
 
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialog;
+use Commune\Ghost\Dialog\IRetain;
 use Commune\Blueprint\Ghost\Dialog\Retain\Restore;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IRestore extends AbsDialog implements Restore
+class IRestore extends IRetain implements Restore
 {
-
-    protected function runTillNext() : Dialog
-    {
-        $stageDef = $this->ucl->findStageDef($this->cloner);
-        return $stageDef->onRetain($this);
-    }
-
-    protected function selfActivate(): void
-    {
-        $this->runStack();
-        $process = $this->getProcess();
-        $process->unsetWaiting($this->ucl);
-    }
-
-
 }

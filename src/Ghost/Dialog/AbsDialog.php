@@ -192,6 +192,25 @@ abstract class AbsDialog extends AbsBaseDialog
 
     /*------- withdraw -------*/
 
+
+    public function fulfill(
+        Ucl $target = null,
+        int $gcTurns = 0,
+        array $restoreStages = []
+    ): Dialog
+    {
+        $ucl = $target ?? $this->ucl;
+
+        return new IFulfill(
+            $this->cloner,
+            $ucl,
+            $gcTurns,
+            $restoreStages,
+            $this
+        );
+    }
+
+
     public function cancel(
         Ucl $target = null
     ): Dialog
@@ -209,21 +228,6 @@ abstract class AbsDialog extends AbsBaseDialog
         return new IWithdraw\IConfuse(
             $this->cloner,
             $this->ucl,
-            $this
-        );
-    }
-
-    public function fulfill(
-        Ucl $target = null,
-        int $gcTurns = 0,
-        array $restoreStages = []
-    ): Dialog
-    {
-        $ucl = $target ?? $this->ucl;
-
-        return new IFulfill(
-            $this->cloner,
-            $ucl,
             $this
         );
     }

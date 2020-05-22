@@ -11,27 +11,12 @@
 
 namespace Commune\Ghost\Dialog\IRetain;
 
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialog;
+use Commune\Ghost\Dialog\IRetain;
 use Commune\Blueprint\Ghost\Dialog\Retain\Heed;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IHeed extends AbsDialog implements Heed
+class IHeed extends IRetain implements Heed
 {
-
-    protected function runTillNext(): Dialog
-    {
-        $stageDef = $this->ucl->findStageDef($this->cloner);
-        return $stageDef->onRetain($this);
-    }
-
-    protected function selfActivate(): void
-    {
-        $this->runStack();
-        $this->getProcess()->unsetWaiting($this->ucl);
-    }
-
-
 }

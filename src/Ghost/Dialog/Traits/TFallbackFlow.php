@@ -19,8 +19,12 @@ use Commune\Blueprint\Ghost\Runtime\Process;
 /**
  * 允许当前语境执行 fallback 流程.
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ *
+ * @mixin AbsDialog
+ *
  */
-class TFallbackFlow extends AbsDialog
+trait TFallbackFlow
 {
 
     protected function fallbackFlow(Process $process) : Dialog
