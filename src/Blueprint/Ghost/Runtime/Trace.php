@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
@@ -19,5 +19,5 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  */
 interface Trace extends ArrayAndJsonAble
 {
-    public function record(Dialog $dialog) : void;
+    public function record(Operator $operator) : void;
 }

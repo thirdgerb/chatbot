@@ -386,11 +386,11 @@ class IMatcher implements Matcher
         }
 
         if ($normalize) {
-            $keyWords = ArrayUtils::recursiveArrayMap(
+            $keyWords = ArrayUtils::recursiveArrayParse(
                 $keyWords,
                 $caller = [StringUtils::class, 'normalizeString']
             );
-            $blacklist = ArrayUtils::recursiveArrayMap(
+            $blacklist = ArrayUtils::recursiveArrayParse(
                 $blacklist,
                 $caller
             );
@@ -499,11 +499,11 @@ class IMatcher implements Matcher
     protected function singleIntentMatch(string $intentName) : ? string
     {
         return StringUtils::isWildCardPattern($intentName)
-            ? $this->wildcardIntentMatch($intentName)
-            : $this->exactlyIntentMatch($intentName);
+            ? $this->singleWildcardIntentMatch($intentName)
+            : $this->singleExactlyIntentMatch($intentName);
     }
 
-    protected function exactlyIntentMatch(string $intent) : ? string
+    protected function singleExactlyIntentMatch(string $intent) : ? string
     {
         $reg = $this->cloner->mind->intentReg();
         if (!$reg->hasDef($intent)) {
@@ -516,7 +516,7 @@ class IMatcher implements Matcher
             : null;
     }
 
-    protected function wildcardIntentMatch(string $intent) : ? string
+    protected function singleWildcardIntentMatch(string $intent) : ? string
     {
         $intention = $this->cloner->input->comprehension->intention;
         $matched = $intention->wildcardIntentMatch($intent);
@@ -526,16 +526,43 @@ class IMatcher implements Matcher
 
     public function isIntentIn(array $intentNames): Matcher
     {
-        foreach ($intentNames as $intentName) {
-            $matched = $this->singleIntentMatch($intentName);
-            if (isset($matched)) {
-                $this->matched = true;
-                $this->matchedParams[__FUNCTION__] = $matched;
-                return $this;
-            }
+        $matched = $this->doIntentsMatch($intentNames);
+
+        if (!empty($matched)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $matched;
         }
 
         return $this;
+    }
+
+    protected function doIntentsMatch(array $intents) : array
+    {
+        if (empty($intents)) {
+            return [];
+        }
+
+        $possibleIntents = $this->cloner
+            ->input
+            ->comprehension
+            ->intention
+            ->getPossibleIntentNames(true);
+
+        $matched = [];
+
+        // 进行批量匹配.
+        foreach ($intents as $intentName) {
+            if (StringUtils::isWildCardPattern($intentName)) {
+                $matched = array_merge(
+                    $matched,
+                    StringUtils::wildcardSearch($intentName, $possibleIntents)
+                );
+            } elseif ($this->singleExactlyIntentMatch($intentName)) {
+                $matched[] = $intentName;
+            }
+
+        }
+        return $matched;
     }
 
     public function isAnyIntent(): Matcher
@@ -637,5 +664,41 @@ class IMatcher implements Matcher
         return $this;
     }
 
+    public function matchStageOfIntent(string $intentName): Matcher
+    {
+        $matched = $this->singleIntentMatch($intentName);
+        $stageReg = $this->cloner->mind->stageReg();
+        if ($matched && $stageReg->hasDef($matched)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $stageReg->getDef($matched);
+        }
 
+        return $this;
+    }
+
+    public function matchStageInIntents(array $intents): Matcher
+    {
+        $matched = $this->doIntentsMatch($intents);
+
+        $stageReg = $this->cloner->mind->stageReg();
+        foreach ($matched as $intentName) {
+
+            if ($stageReg->hasDef($intentName)) {
+                $this->matched = true;
+                $this->matchedParams[__FUNCTION__] = $stageReg->getDef($intentName);
+                return $this;
+            }
+        }
+
+        return $this;
+    }
+
+
+    public function __destruct()
+    {
+        $this->cloner = null;
+        $this->input = null;
+        $this->matched = false;
+        $this->matchedParams = [];
+    }
 }

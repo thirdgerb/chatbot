@@ -84,19 +84,19 @@ interface Dialog
     /*----- memory -----*/
 
     /**
-     * 回忆.
+     * 获取一个记忆体.
      * @param string $name
      * @return Recollection
      */
     public function recall(string $name) : Recollection;
 
-    /*----- 下一帧 -----*/
-
     /**
-     * Dialog 逻辑运行一帧.
-     * @return Dialog
+     * @param string $name
+     * @return bool
      */
-    public function tick() : Dialog;
+    public function remember(string $name) : bool;
+
+    /*----- 下一帧 -----*/
 
     /**
      * Dialog 链当前的深度.
@@ -125,8 +125,6 @@ interface Dialog
     const STAGING       = Dialog\Activate\Staging::class;
     // 一个 context 依赖到另一个 context 时
     const DEPENDED      = Dialog\Activate\Depend::class;
-    // 从一个 context 因为意图进入到另一个 context 时
-    const INTEND        = Dialog\Activate\Intend::class;
     // watch
     const WATCH         = Dialog\Activate\Watch::class;
     // 从一个 context 主动进入到另一个 context 里
@@ -163,12 +161,6 @@ interface Dialog
     const QUIT          = Dialog\Withdraw\Quit::class;
 
     public function isEvent(string $statusType) : bool ;
-
-    /**
-     * @param Dialog $dialog
-     * @return static
-     */
-    public function withPrev(Dialog $dialog) : Dialog;
 
     /**
      * 可以作为后续.

@@ -123,17 +123,11 @@ class Ucl implements UclInterface
 
     public static function make(
         string $contextName,
-        string $stageName = '',
         array $query = []
     ): Ucl
     {
         $contextName = ContextUtils::normalizeContextName($contextName);
-
-        $stageName = empty($stageName)
-                ? $stageName
-                : ContextUtils::normalizeStageName($stageName);
-
-        return new static($contextName, $stageName, $query);
+        return new static($contextName, '', $query);
     }
 
 
@@ -216,13 +210,13 @@ class Ucl implements UclInterface
     }
 
 
-    public function goFullnameStage(string $fullStageName) : Ucl
+    public function goStageByIntentName(string $intentName) : Ucl
     {
-        if (!ContextUtils::isValidStageFullName($fullStageName)) {
-            throw new InvalidArgumentException("invalid stage fullname pattern of $fullStageName");
+        if (!ContextUtils::isValidStageFullName($intentName)) {
+            throw new InvalidArgumentException("invalid stage fullname pattern of $intentName");
         }
 
-        $stageName = str_replace($this->contextName, '', $fullStageName);
+        $stageName = str_replace($this->contextName, '', $intentName);
         $stageName = trim($stageName, Context::NAMESPACE_SEPARATOR);
         return $this->goStage($stageName);
     }
@@ -314,7 +308,7 @@ class Ucl implements UclInterface
 
     /*------- property -------*/
 
-    public function toIntentName(string $stage = null) : string
+    public function toStageIntentName(string $stage = null) : string
     {
         return $this->toFullStageName($stage);
     }
@@ -371,7 +365,7 @@ class Ucl implements UclInterface
 
     public function findIntentDef(Cloner $cloner) : ? IntentDef
     {
-        $intentName = $this->toIntentName();
+        $intentName = $this->toStageIntentName();
 
         if ($this->intentDef === false) {
             return null;

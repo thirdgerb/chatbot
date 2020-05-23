@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Dialog\IActivate;
 
+use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Ghost\Dialog\IActivate;
 use Commune\Blueprint\Ghost\Dialog\Activate\Preempt;
 
@@ -19,4 +20,21 @@ use Commune\Blueprint\Ghost\Dialog\Activate\Preempt;
  */
 class IPreempt extends IActivate implements Preempt
 {
+
+    protected function runTillNext(): Operator
+    {
+        $process = $this->getProcess();
+        $process->unsetWaiting($this->_ucl);
+
+        $awaiting = $process->getAwaiting();
+        if (isset($awaiting)) {
+            $priority = $awaiting->findContextDef($this->_cloner)->getPriority();
+            $process->addBlocking($awaiting, $priority);
+        }
+
+        $stageDef = $this->_ucl->findStageDef($this->_cloner);
+
+        return $stageDef->onActivate($this);
+
+    }
 }

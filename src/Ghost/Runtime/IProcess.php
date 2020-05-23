@@ -11,29 +11,26 @@
 
 namespace Commune\Ghost\Runtime;
 
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Blueprint\Ghost\Runtime\RoutesMap;
 use Commune\Blueprint\Ghost\Runtime\Waiter;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Protocals\HostMsg\Convo\QuestionMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
+use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $belongsTo             进程所属的 Session
+ * @property-read string $id                    进程的唯一 ID.
+ *
  */
 class IProcess implements Process, HasIdGenerator
 {
     use ArrayAbleToJson, IdGeneratorHelper;
-
-    /*------ saving ------*/
-
-    /**
-     * @var string
-     */
-    protected $_belongsTo;
 
     /**
      * @var string
@@ -43,12 +40,12 @@ class IProcess implements Process, HasIdGenerator
     /**
      * @var string
      */
-    protected $_root;
+    protected $_belongsTo;
 
     /**
-     * @var Waiter|null
+     * @var string
      */
-    protected $_waiter;
+    protected $_root;
 
     /**
      * @var Waiter[]
@@ -56,24 +53,37 @@ class IProcess implements Process, HasIdGenerator
     protected $_backtrace = [];
 
     /**
-     * @var array
+     * @var null|Waiter
      */
-    protected $_watching = [];
+    protected $_waiter;
 
     /**
-     * @var array
+     * @var array[]
+     * [ string $ucl, int $status, string[] $paths ]
+     */
+    protected $_contexts = [];
+
+    /*----- waiting -----*/
+
+    /**
+     * @var string[]
+     */
+    protected $_depending = [];
+
+    /**
+     * @var int[]
+     */
+    protected $_callbacks = [];
+
+    /**
+     * @var int[]
      */
     protected $_blocking = [];
 
     /**
-     * @var array
+     * @var string[][]
      */
     protected $_sleeping = [];
-
-    /**
-     * @var array
-     */
-    protected $_depending = [];
 
     /**
      * @var array
@@ -81,26 +91,37 @@ class IProcess implements Process, HasIdGenerator
     protected $_yielding = [];
 
     /**
-     * @var array
+     * @var array[]
+     */
+    protected $_watching = [];
+
+    /**
+     * @var array[]
      */
     protected $_dying = [];
 
-    /*------ temporary ------*/
+    /*----- cached -----*/
 
     /**
-     * @var Process|null
+     * @var null|Process
      */
     protected $_prev;
 
     /**
-     * @var Ucl[]
+     * @var string[]
      */
-    protected $decodedUcl = [];
+    protected $_canceling;
 
-    /**
-     * @var array
-     */
-    protected $canceling = [];
+
+    /*----- config -----*/
+
+    public static $maxBacktrace = 20;
+
+    public static $maxSleeping = 20;
+
+    public static $maxBlocking = 20;
+
+    public static $maxDying = 20;
 
     /**
      * IProcess constructor.
@@ -108,324 +129,95 @@ class IProcess implements Process, HasIdGenerator
      * @param Ucl $root
      * @param string|null $id
      */
-    public function __construct(string $belongsTo, Ucl $root, string $id = null)
+    public function __construct(
+        string $belongsTo,
+        Ucl $root,
+        string $id = null
+    )
     {
         $this->_belongsTo = $belongsTo;
         $this->_id = $id ?? $this->createUuId();
         $this->_root = $root->toEncodedStr();
     }
 
-    public function toArray(): array
-    {
-        $fields = $this->__sleep();
-        $data = [];
-        foreach ($fields as $field) {
-            if ($field !== '_prev' || $field !== '_waiter') {
-                $data[$field] = $this->{$field};
-            }
-        }
-
-        $data['await'] = $this->awaiting;
-        return $data;
-    }
-
-    /*------ build ------*/
-
-    public function buildRoutes(): RoutesMap
-    {
-        return new IRoutesMap($this);
-    }
-
-    /*------ await ------*/
-
-    public function setAwait(Waiter $waiter): void
-    {
-        if (isset($this->_waiter)) {
-            array_unshift($this->_backtrace, $this->_waiter);
-        }
-        $this->_waiter = $waiter;
-    }
-
-
-    /*------ history ------*/
-
     public function nextSnapshot(string $id, int $maxBacktrace): Process
     {
         $next = clone $this;
         $next->_id = $id ?? $this->createUuId();
         $next->_prev = $this;
-
-        while(count($this->_backtrace) > $maxBacktrace) {
-            array_pop($this->_backtrace);
-        }
-
         return $next;
     }
 
+    /*-------- to array --------*/
 
-    public function backStep(int $step): bool
+    public function toArray(): array
     {
-        $waiter = null;
+        // todo
+    }
 
-        do {
-            $now = $waiter;
-            $waiter = array_shift($this->_backtrace);
-            $step --;
-        } while($step > 0 && $waiter);
+    /*-------- wait --------*/
 
-        if (isset($now)) {
-            $this->_waiter = $now;
-            return true;
+    public function await(
+        Ucl $ucl,
+        ? QuestionMsg $question,
+        array $stageRoutes,
+        array $contextRoutes
+    ): void
+    {
+        $waiter = new IWaiter(
+            $ucl,
+            $stageRoutes,
+            $contextRoutes,
+            $question
+        );
+
+        if (!isset($this->_waiter)) {
+            $this->_waiter = $waiter;
+            return;
         }
 
-        return false;
+        // backtrace
+        $last = $this->_waiter;
+        $this->_waiter = $waiter;
+
+        array_unshift($this->_backtrace, $last);
+        ArrayUtils::slice($this->_backtrace, self::$maxBacktrace);
     }
 
-    /*------ root ------*/
-
-    public function replaceRoot(Ucl $ucl): void
-    {
-        $this->_root = $ucl->toEncodedStr();
-    }
-
-    /*------ dying ------*/
-
-    public function addDying(Ucl $ucl, int $turns, array $restoreStages)
-    {
-        $str = $ucl->toEncodedStr();
-        $this->unsetWaiting($str);
-        $this->_dying[$str] = [$turns, $restoreStages];
-    }
-
-    public function gc(): void
-    {
-        $dying = [];
-        foreach ($this->_dying as $key => list($turns, $restoreStages)) {
-            $turns--;
-            if ($turns > 0) {
-                $dying[$key] = [$turns, $restoreStages];
-            }
-        }
-
-        $this->_dying = $dying;
-    }
+    /*-------- wait --------*/
 
 
-    /*------ blocking ------*/
 
-    public function addBlocking(Ucl $ucl, int $priority): void
-    {
-        $str = $ucl->toEncodedStr();
-        $this->_blocking[$str] = $priority;
-        sort($this->_blocking);
-    }
-
-    public function popBlocking(string $ucl = null): ? string
-    {
-        if (empty($this->_blocking)) {
-            return null;
-        }
-
-        $popped = null;
-        foreach ($this->_blocking as $key => $val) {
-            $popped = $key;
-        }
-        unset($this->_blocking[$popped]);
-        return $popped;
-    }
-
-
-    /*------ watching ------*/
-
-    public function addWatcher(Ucl $watcher): void
-    {
-        $str = $watcher->toEncodedStr();
-        $this->unsetWaiting($str);
-        $this->_watching[$str] = '';
-    }
-
-    public function popWatcher(): ? string
-    {
-        if (empty($this->_watching)) {
-            return null;
-        }
-        $popped = null;
-        foreach ($this->_watching as $key => $str) {
-            $popped = $key;
-            break;
-        }
-        unset($this->_watching[$popped]);
-        return $popped;
-    }
-
-
-    /*------ sleeping ------*/
-
-    public function addSleeping(Ucl $ucl, array $wakenStages): void
-    {
-        $str = $ucl->toEncodedStr();
-        $this->unsetWaiting($str);
-        $this->_sleeping[$str] = $wakenStages;
-    }
-
-    public function popSleeping(string $id = null): ? string
-    {
-        if (empty($this->_sleeping)) {
-            return null;
-        }
-
-        $pop = null;
-        foreach ($this->_sleeping as $key => $stages) {
-            $pop = $key;
-            break;
-        }
-
-        unset($this->_sleeping[$pop]);
-        return $pop;
-    }
-
-
-    /*------ depending ------*/
-
-    public function addDepending(string $ucl, string $contextId): void
-    {
-        $this->unsetWaiting($ucl);
-        $this->_depending[$ucl] = $contextId;
-    }
-
-    public function popDepending(string $contextId): array
-    {
-        $depending = array_reverse($this->_depending);
-        return $depending[$contextId] ?? [];
-    }
-
-
-    /*------ unset ------*/
-
-    public function unsetWaiting(string $ucl): void
-    {
-        unset($this->_depending[$ucl]);
-        unset($this->_blocking[$ucl]);
-        unset($this->_sleeping[$ucl]);
-        unset($this->_watching[$ucl]);
-        unset($this->_dying[$ucl]);
-        unset($this->canceling[$ucl]);
-    }
-
-    public function flushWaiting()
-    {
-        $this->_depending = [];
-        $this->_sleeping = [];
-        $this->_watching = [];
-        $this->_dying = [];
-        $this->canceling = [];
-
-        // yielding blocking 要保留.
-    }
-
-    /*------ canceling ------*/
-
-    public function addCanceling(array $canceling): void
-    {
-        foreach ($canceling as $cancelingId) {
-            $contextId = $this->_depending[$cancelingId];
-            unset($this->_depending[$cancelingId]);
-            $this->canceling[$cancelingId] = $contextId;
-        }
-    }
-
-    public function popCanceling(): ? string
-    {
-        if (empty($this->canceling)) {
-            return null;
-        }
-
-        $popped = null;
-        foreach ($this->canceling as $ucl => $contextId) {
-            $popped = $ucl;
-            break;
-        }
-        unset($this->canceling[$popped]);
-        return $popped;
-    }
-
-
-    /*------ tools ------*/
-
-    public function decodeUcl(string $ucl): Ucl
-    {
-        if (isset($this->decodedUcl[$ucl])) {
-            return $this->decodedUcl[$ucl];
-        }
-
-        $decoded = Ucl::decodeUclStr($ucl);
-
-        if (!$decoded->isValidPattern()) {
-            throw new InvalidArgumentException("invalid ucl pattern of $ucl");
-        }
-
-        return $this->decodedUcl[$ucl]
-            ?? $this->decodedUcl[$ucl] = $decoded;
-    }
-
-
-    /*------ magic ------*/
-
+    /*-------- magic --------*/
 
     public function __get($name)
     {
-        if ($name === 'await') {
-            return isset($this->_waiter)
-                ? $this->_waiter->await
-                : null;
-        }
-
-        if (property_exists($this, $p = "_$name")) {
-            return $this->{$p};
-        }
-
-        return null;
+        // TODO: Implement __get() method.
     }
 
     public function __isset($name)
     {
-        $value = $this->{$name};
-        return isset($value);
+        // TODO: Implement __isset() method.
     }
 
     public function __sleep()
     {
-        // canceling
-        $this->_depending = $this->_depending + $this->canceling;
+        // TODO: Implement __sleep() method.
+    }
 
-        return [
-            '_id',
-            '_belongsTo',
-            '_root',
-            '_waiter',
-            '_backtrace',
-            '_watching',
-            '_blocking',
-            '_sleeping',
-            '_depending',
-            '_dying',
-        ];
+    public function __wakeup()
+    {
+        // TODO: Implement __wakeup() method.
     }
 
     public function __clone()
     {
-        $this->_waiter = clone $this->_waiter;
+        // TODO: Implement __clone() method.
     }
 
     public function __destruct()
     {
-        $this->_prev = null;
-
-        // decoded
-        $this->decodedUcl = null;
-
-        // backtrace
-        $this->_backtrace = [];
-
+        // TODO: Implement __destruct() method.
     }
+
 }

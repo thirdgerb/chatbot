@@ -12,12 +12,12 @@
 namespace Commune\Ghost\Dialog\Traits;
 
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\AbsBaseDialog;
+use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- * @mixin AbsBaseDialog
+ * @mixin AbsDialog
  */
 trait TIntentMatcher
 {
@@ -80,7 +80,7 @@ trait TIntentMatcher
                 );
 
                 if (isset($matchedStage)) {
-                    return $current->goFullnameStage($matchedStage);
+                    return $current->goStageByIntentName($matchedStage);
                 }
 
             } else {

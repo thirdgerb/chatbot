@@ -37,13 +37,11 @@ interface UclInterface extends ArrayAndJsonAble
 
     /**
      * @param string $contextName
-     * @param string $stageName
      * @param array $query
      * @return Ucl
      */
     public static function make(
         string $contextName,
-        string $stageName,
         array $query
     ) : Ucl;
 
@@ -114,7 +112,7 @@ interface UclInterface extends ArrayAndJsonAble
      * @param string|null $stage
      * @return string
      */
-    public function toIntentName(string $stage = null) : string;
+    public function toStageIntentName(string $stage = null) : string;
 
     /**
      * @param string|null $stage
@@ -133,10 +131,10 @@ interface UclInterface extends ArrayAndJsonAble
     public function goStage(string $stageName) : Ucl;
 
     /**
-     * @param string $fullStageName
+     * @param string $intentName
      * @return Ucl
      */
-    public function goFullnameStage(string $fullStageName) : Ucl;
+    public function goStageByIntentName(string $intentName) : Ucl;
 
     /*------ validate ------*/
 

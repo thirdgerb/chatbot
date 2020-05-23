@@ -33,6 +33,20 @@ interface Context extends
     const NAMESPACE_SEPARATOR = '.';
     const STAGE_SEPARATOR = '_';
 
+    /*----- status -----*/
+
+    const NONE      = 0;
+
+    const WAITING   = 1;
+
+    const AWAIT     = 1 << 1 | self::WAITING;
+    const DEPENDING = 1 << 2 | self::WAITING;
+    const BLOCKING  = 1 << 3 | self::WAITING;
+    const CALLBACK  = 1 << 4 | self::WAITING;
+    const SLEEPING  = 1 << 5 | self::WAITING;
+    const YIELDING  = 1 << 6 | self::WAITING;
+    const DYING     = 1 << 7 | self::WAITING;
+
     /*----- properties -----*/
 
     /**

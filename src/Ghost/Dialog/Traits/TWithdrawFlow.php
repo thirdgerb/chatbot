@@ -12,8 +12,10 @@
 namespace Commune\Ghost\Dialog\Traits;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Runtime\Process;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialog;
+use Commune\Blueprint\Ghost\Runtime\Process;
+use Commune\Blueprint\Ghost\Operator\Operator;
 
 
 /**
@@ -24,7 +26,7 @@ use Commune\Ghost\Dialog\AbsDialog;
  */
 trait TWithdrawFlow
 {
-    protected function runWithdrawFlow() : ? Dialog
+    protected function runWithdrawFlow() : ? Operator
     {
 
     }
@@ -32,11 +34,11 @@ trait TWithdrawFlow
 
 
 
-    protected function doWithdraw(Ucl $ucl, string $abstract = null) : ? Dialog
+    protected function doWithdraw(Ucl $ucl, string $abstract = null) : ? Operator
     {
         $abstract = $abstract ?? static::class;
         /**
-         * @var Withdraw $intercept
+         * @var Dialog\Withdraw $intercept
          */
         $intercept = new $abstract($this->cloner, $ucl);
         $intercept = $intercept->withPrev($this);
@@ -46,7 +48,7 @@ trait TWithdrawFlow
             ->onWithdraw($intercept);
     }
 
-    protected function withdrawCanceling(Process $process) : ? Dialog
+    protected function withdrawCanceling(Process $process) : ? Operator
     {
         $poppedDepends = [];
 
@@ -77,7 +79,7 @@ trait TWithdrawFlow
         array $poppedDepending
     ) : array
     {
-        $allDepending = $process->popDepending($cancelingId);
+        $allDepending = $process->dumpDepending($cancelingId);
 
         // 依赖的语境压入取消栈
         if (!empty($allDepending)) {
@@ -123,7 +125,7 @@ trait TWithdrawFlow
         return new ICloseSession($this->cloner, $this->ucl, $this->dumpStack());
     }
 
-    protected function fallbackBlocking(Process $process) : ? Dialog
+    protected function fallbackBlocking(Process $process) : ? Operator
     {
         // 检查 block
         $blocking = $process->popBlocking();
@@ -135,7 +137,7 @@ trait TWithdrawFlow
         return new IPreempt($this->cloner, $blocking, $this->dumpStack());
     }
 
-    protected function fallbackSleeping(Process $process) : ? Dialog
+    protected function fallbackSleeping(Process $process) : ? Operator
     {
         // 检查 sleeping
         $sleeping = $process->popSleeping();
@@ -147,7 +149,7 @@ trait TWithdrawFlow
     }
 
 
-    protected function quitBlocking(Process $process) : ? Dialog
+    protected function quitBlocking(Process $process) : ? Operator
     {
         while($ucl = $process->popBlocking()) {
 
@@ -160,7 +162,7 @@ trait TWithdrawFlow
 
     }
 
-    protected function quitSleeping(Process $process) : ? Dialog
+    protected function quitSleeping(Process $process) : ? Operator
     {
         while($ucl = $process->popSleeping()) {
             $next = $this->doWithdraw($ucl, IQuit::class);
@@ -174,7 +176,7 @@ trait TWithdrawFlow
     }
 
 
-    protected function quitWatching(Process $process) : ? Dialog
+    protected function quitWatching(Process $process) : ? Operator
     {
         while($watching = $process->popWatcher()) {
             $next = $this->doWithdraw($watching, IQuit::class);

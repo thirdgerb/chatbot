@@ -7,6 +7,16 @@ namespace Commune\Support\Utils;
 class ArrayUtils
 {
 
+    public static function slice(array &$arr, int $maxLength) : void
+    {
+        $size = count($arr);
+        $maxLength = $maxLength > 0 ? $maxLength : 0;
+
+        while ($size > $maxLength) {
+            array_pop($arr);
+        }
+    }
+
     /**
      * @param mixed $data
      * @return mixed|array
@@ -88,8 +98,10 @@ class ArrayUtils
         return $all;
     }
 
-
-    public static function recursiveArrayMap(array $array, callable $parser) : array
+    public static function recursiveArrayParse(
+        array $array,
+        callable $parser
+    ) : array
     {
         if (empty($array)) {
             return $array;
@@ -98,7 +110,7 @@ class ArrayUtils
         return array_map(function($value) use ($parser){
 
             if (is_array($value)) {
-                $value = self::recursiveArrayMap($value, $parser);
+                $value = self::recursiveArrayParse($value, $parser);
             } else {
                 $value = $parser($value);
             }

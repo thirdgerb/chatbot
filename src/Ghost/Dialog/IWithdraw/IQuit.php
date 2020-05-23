@@ -32,7 +32,7 @@ class IQuit extends AbsDialog implements Quit
         $process->unsetWaiting($this->ucl);
 
 
-        $depending = $process->popDepending($this->ucl->getContextId());
+        $depending = $process->dumpDepending($this->ucl->getContextId());
         if (!empty($depending)) {
             $process->addCanceling($depending);
         }

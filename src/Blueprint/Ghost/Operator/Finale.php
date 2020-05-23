@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog;
+namespace Commune\Blueprint\Ghost\Operator;
 
-use Commune\Blueprint\Ghost\Dialog;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Finale extends Dialog
+interface Finale extends Operator
 {
+
 }

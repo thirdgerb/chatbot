@@ -13,6 +13,7 @@ namespace Commune\Blueprint\Ghost\MindDef;
 
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
 
 /**
@@ -36,6 +37,13 @@ interface ContextDef extends Def
      * @return bool
      */
     public function isPublic() : bool;
+
+    /**
+     * @param Dialog $current
+     * @return array|null
+     */
+    public function comprehendPipes(Dialog $current) : ? array;
+
 
     /*------- properties -------*/
 

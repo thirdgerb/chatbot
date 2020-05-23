@@ -167,7 +167,7 @@ class IRuntime implements Runtime, Spied
     {
         $ucl = Ucl::decodeUclStr($contextUcl);
         $root = $ucl->toInstance($this->cloner);
-        return new IProcess($this->convoId, $root, $this->cloner->getTraceId());
+        return new IProcessBak2($this->convoId, $root, $this->cloner->getTraceId());
     }
 
 

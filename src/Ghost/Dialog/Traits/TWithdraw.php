@@ -13,13 +13,13 @@ namespace Commune\Ghost\Dialog\Traits;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Ghost\Dialog\AbsBaseDialog;
+use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Ghost\Dialog\DialogHelper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @mixin AbsBaseDialog
+ * @mixin AbsDialog
  */
 trait TWithdraw
 {
@@ -77,7 +77,7 @@ trait TWithdraw
 
             $cancelingUcl = $process->decodeUcl($canceling);
 
-            $depending = $process->popDepending($cancelingUcl);
+            $depending = $process->dumpDepending($cancelingUcl);
             if (!empty($depending)) {
                 $process->addCanceling(array_map(
                     function(string $depending) use ($process) {

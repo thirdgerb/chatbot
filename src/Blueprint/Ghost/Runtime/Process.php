@@ -11,8 +11,8 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Protocals\HostMsg\Convo\QuestionMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 
@@ -24,58 +24,61 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read string $belongsTo             进程所属的 Session
  * @property-read string $id                    进程的唯一 ID.
  *
-
- * # waiting
- * @property-read string|null $awaiting         等待用户回复的任务.
- *
+ * @property-read Process|null $prev
  * @property-read Waiter|null $waiter
  *
- * @property-read string[][] $watching          观察中的任务. 可以最先被触发 (watch)
- *  [ string $ucl => '' ]
  *
- * @property-read int[] $blocking               阻塞中的任务. 有机会就抢占 (preempt)
- *  [ string $ucl => int $priority]
- *
- * @property-read string[][] $sleeping          睡眠中的任务. 可以fallback, 可以被指定Stage 唤醒(wake).
- *  [ string $ucl => $wakenStageName[] ]
- *
- * @property-read int[] $dying                  垃圾回收中的任务. 仍然可以被唤醒 (restore)
- *  [ string $id => [int $gcTurns, $stages[]  ]
- *
- * @property-read string[] $depending           依赖中的任务. 被依赖对象唤醒.
- *  [ string $ucl => string $id]
- *
- *
- * ## history
- *
- * @property-read string $root
- * @property-read Process|null $prev            上一轮对话的进程实例.
- * @property-read Waiter[] $backtrace           历史记录. 记录的是 await ucl
- *
- *
- * @property-read int[] $holding                语境相关的 ContextId
  */
 interface Process extends ArrayAndJsonAble
 {
 
     public function nextSnapshot(string $id, int $maxBacktrace) : Process;
 
-    /*-------- alive ---------*/
+    /*-------- context ---------*/
+
+    public function isContextStatus(string $contextId, int $status) : bool;
+
+    public function getContextStatus(string $contextId) : int;
+
+    public function getContextUcl(string $contextId) : ? Ucl;
+
+    /*-------- status ---------*/
+
+    /**
+     * Process 本身是新创建的.
+     * @return bool
+     */
+    public function isFresh() : bool;
+
+    /*-------- await ---------*/
 
     public function buildRoutes() : RoutesMap;
 
-    public function setAwait(Waiter $waiter) : void;
+    public function await(
+        Ucl $ucl,
+        ? QuestionMsg $question,
+        array $stageRoutes,
+        array $contextRoutes
+    ) : void;
+
+
+    /**
+     * @return string[]
+     */
+    public function getAwaitStageNames() : array;
+
+    /**
+     * @return Ucl[]
+     */
+    public function getAwaitContexts() : array;
 
     /*-------- ucl ---------*/
 
     public function getRoot() : Ucl;
 
-    /**
-     * @param string $ucl
-     * @return Ucl
-     * @throws InvalidArgumentException
-     */
-    public function decodeUcl(string $ucl) : Ucl;
+    /*-------- wait ---------*/
+
+    public function getAwaiting() : ? Ucl;
 
     /*-------- watch ---------*/
 
@@ -83,12 +86,20 @@ interface Process extends ArrayAndJsonAble
 
     public function popWatcher() : ? Ucl;
 
+    /**
+     * @return Ucl[]
+     */
+    public function getWatchers() : array;
+
     /*-------- block ---------*/
 
     public function addBlocking(Ucl $ucl, int $priority) : void;
 
-    public function popBlocking(string $ucl = null) : ? Ucl;
+    public function popBlocking(string $contextId = null) : ? Ucl;
 
+    public function countBlocking() : int;
+
+    public function firstBlocking() : ? Ucl;
 
     /*-------- sleep ---------*/
 
@@ -96,29 +107,34 @@ interface Process extends ArrayAndJsonAble
 
     public function popSleeping(string $ucl = null) : ? Ucl;
 
+    /**
+     * @return Ucl[]
+     */
+    public function getSleeping() : array;
+
     /*-------- dying ---------*/
 
     public function addDying(Ucl $ucl, int $turns, array $restoreStages);
 
-    /*-------- root ---------*/
-
-    public function replaceRoot(Ucl $ucl) : void;
 
     /*-------- depending ---------*/
 
-    public function addDepending(Ucl $ucl, string $dependedContextId) : void;
+    public function getDependedBy(string $contextId) : ? Ucl;
 
-    public function hasDepending(string $dependedContextId) : bool;
+
+    public function addDepending(Ucl $ucl, string $dependedDependedContextId) : void;
 
     /**
-     * @param string $contextId
+     * @param string $dependedContextId
      * @return array
      */
-    public function popDepending(string $contextId) : array;
+    public function dumpDepending(string $dependedContextId) : array;
+
+    public function getDependingOn(string $dependedContextId) : array;
 
     /*-------- callback ---------*/
 
-    public function addCallback(Ucl ...$ucls) : void;
+    public function addCallback(Ucl ...$callbacks) : void;
 
     public function popCallback() : ? Ucl;
 
@@ -148,9 +164,9 @@ interface Process extends ArrayAndJsonAble
 
     /*-------- path ---------*/
 
-    public function resetPath(string $contextId) : void;
+    public function resetPath(Ucl $ucl, array $path) : void;
 
-    public function insertPath(string $contextId, array $path) : void;
+    public function insertPath(Ucl $ucl, array $path) : void;
 
     public function shiftPath(string $contextId) : ? string;
 

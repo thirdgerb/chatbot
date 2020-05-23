@@ -105,9 +105,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
     abstract protected function saveSession() : void;
 
-    abstract protected function quitSession() : void;
-
-
     public function isDebugging(): bool
     {
         return $this->debug ?? $this->debug = $this->getApp()->isDebugging();

@@ -9,15 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog\Activate;
+namespace Commune\Ghost\Dialog\IActivate;
 
-use Commune\Blueprint\Ghost\Dialog\Activate;
-use Commune\Blueprint\Ghost\Dialog\Intercept;
+use Commune\Ghost\Dialog\IActivate;
+use Commune\Blueprint\Ghost\Dialog\Activate\Watch;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Intend extends Activate, Intercept
+class IWatch extends IActivate implements Watch
 {
 
 }

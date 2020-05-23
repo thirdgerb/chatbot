@@ -11,8 +11,8 @@
 
 namespace Commune\Ghost\Dialog;
 
-use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Withdraw;
+use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Ghost\Dialog\Traits\TFallbackFlow;
 use Commune\Ghost\Dialog\Traits\TWithdrawFlow;
 
@@ -23,7 +23,7 @@ abstract class AbsWithdraw extends AbsDialog implements Withdraw
 {
     use TWithdrawFlow, TFallbackFlow;
 
-    protected function runTillNext(): Dialog
+    protected function runTillNext(): Operator
     {
         $process = $this->getProcess();
         $process->unsetWaiting($this->ucl);

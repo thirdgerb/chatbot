@@ -12,8 +12,8 @@
 namespace Commune\Blueprint\Ghost\Tools;
 
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Finale\Await;
+use Commune\Blueprint\Ghost\Operator\Operator;
 
 /**
  * 多轮对话导航逻辑.
@@ -46,35 +46,35 @@ interface Navigator
      * 可以发出消息, 或者不发出.
      *
      * @param bool $silent
-     * @return Dialog
+     * @return Operator
      */
-    public function rewind(bool $silent = false) : Dialog;
+    public function rewind(bool $silent = false) : Operator;
 
     /**
      * 重新启动当前 stage
-     * @return Dialog
+     * @return Operator
      */
-    public function reactivate() : Dialog;
+    public function reactivate() : Operator;
 
     /**
      * 什么也没听见, 当本轮对话没有发生.
-     * @return Dialog
+     * @return Operator
      */
-    public function dumb() : Dialog;
+    public function dumb() : Operator;
 
     /**
      * 退回到若干步之前.
      * @param int $step
-     * @return Dialog
+     * @return Operator
      */
-    public function backStep(int $step = 1) : Dialog;
+    public function backStep(int $step = 1) : Operator;
 
     /**
      * 主动强调无法理解当前对话.
      * 不会继续尝试 Wake 其它对话.
-     * @return Dialog
+     * @return Operator
      */
-    public function confuse() : Dialog;
+    public function confuse() : Operator;
 
 
     /*-------- retrace --------*/
@@ -86,47 +86,47 @@ interface Navigator
      * @param Ucl|null $target      如果为 null, 默认是当前 context
      * @param int $gcTurns
      * @param array $restoreStages
-     * @return Dialog
+     * @return Operator
      */
     public function fulfill(
         Ucl $target = null,
         int $gcTurns = 0,
         array $restoreStages = []
-    ) : Dialog;
+    ) : Operator;
 
     /**
      * 终止当前语境, 会触发 withdraw 流程.
      *
      * @param Ucl|null $target      如果为 null, 默认是当前 context
-     * @return Dialog
+     * @return Operator
      */
     public function cancel(
         Ucl $target = null
-    ) : Dialog;
+    ) : Operator;
 
     /**
      * 拒绝进入当前语境, 会触发 withdraw 流程.
      * @param Ucl|null $target      如果为 null, 默认是当前 context
-     * @return Dialog
+     * @return Operator
      */
     public function reject(
         Ucl $target = null
-    ) : Dialog;
+    ) : Operator;
 
     /**
      * 当前语境失败
      * @param Ucl|null $target      如果为 null, 默认是当前 context
-     * @return Dialog
+     * @return Operator
      */
     public function fail(
         Ucl $target = null
-    ) : Dialog;
+    ) : Operator;
 
     /**
      * 尝试退出当前多轮对话, 会触发 withdraw 流程.
-     * @return Dialog
+     * @return Operator
      */
-    public function quit() : Dialog;
+    public function quit() : Operator;
 
 
     /*-------- redirect --------*/
@@ -136,36 +136,36 @@ interface Navigator
      * 重置当前 context 的 stage 路径.
      * @return Navigator
      */
-    public function resetPath() : Navigator;
+    public function clearPath() : Navigator;
 
     /**
      * @param string ...$stageNames
-     * @return Dialog
+     * @return Operator
      */
-    public function next(string ...$stageNames) : Dialog;
+    public function next(string ...$stageNames) : Operator;
 
     /**
      * 经过若干 stage, 然后回到当前节点.
      *
      * @param string $stageName
      * @param string ...$stageNames
-     * @return Dialog
+     * @return Operator
      */
-    public function circle(string $stageName, string ...$stageNames) : Dialog;
+    public function circle(string $stageName, string ...$stageNames) : Operator;
 
     /**
      * 重定向到另一个 Ucl,
      * @param Ucl $target
-     * @return Dialog
+     * @return Operator
      */
-    public function redirectTo(Ucl $target) : Dialog;
+    public function redirectTo(Ucl $target) : Operator;
 
     /**
      * 返回到指定的 ucl (或默认的ucl), 然后清空所有的 waiting 关系.
      * @param Ucl|null $root
-     * @return Dialog
+     * @return Operator
      */
-    public function reset(Ucl $root = null) : Dialog;
+    public function reset(Ucl $root = null) : Operator;
 
     /*-------- self waiting --------*/
 
@@ -175,26 +175,26 @@ interface Navigator
      *
      * @param Ucl $dependUcl
      * @param string|null $fieldName
-     * @return Dialog
+     * @return Operator
      */
-    public function dependOn(Ucl $dependUcl, string $fieldName = null) : Dialog;
+    public function dependOn(Ucl $dependUcl, string $fieldName = null) : Operator;
 
     /**
      * 将自己压入 block 状态, 然后进入 $to 语境.
      *
      * @param Ucl $target
-     * @return Dialog
+     * @return Operator
      */
-    public function blockTo(Ucl $target) : Dialog;
+    public function blockTo(Ucl $target) : Operator;
 
     /**
      * 让当前 Context 进入 sleep 状态
      *
      * @param string[] $wakenStages  指定这些 Stage, 可以在匹配意图后主动唤醒.
      * @param Ucl|string|null $target
-     * @return Dialog
+     * @return Operator
      */
-    public function sleepTo(Ucl $target, array $wakenStages = []) : Dialog;
+    public function sleepTo(Ucl $target, array $wakenStages = []) : Operator;
 
 
     /*-------- 让语境进入 waiting 状态 --------*/

@@ -11,10 +11,9 @@
 
 namespace Commune\Ghost\Dialog\IActivate;
 
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Activate\Reset;
 use Commune\Ghost\Dialog\AbsDialog;
-
+use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Dialog\Activate\Reset;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -22,7 +21,7 @@ use Commune\Ghost\Dialog\AbsDialog;
 class IReset extends AbsDialog implements Reset
 {
 
-    protected function runTillNext(): Dialog
+    protected function runTillNext() : Operator
     {
         $process = $this->getProcess();
         // 重置对话状态

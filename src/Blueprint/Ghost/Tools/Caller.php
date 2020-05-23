@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\Tools;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Operator\Operator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -35,7 +36,7 @@ interface Caller
      * @param callable $caller
      * @return Dialog|null
      */
-    public function action(callable $caller) : ? Dialog;
+    public function operate(callable $caller) : ? Operator;
 
 
 }

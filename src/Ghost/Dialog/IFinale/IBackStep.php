@@ -11,13 +11,12 @@
 
 namespace Commune\Ghost\Dialog\IFinale;
 
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Ghost\Dialog\AbsDialog;
-use Commune\Blueprint\Ghost\Dialog\Finale;
+use Commune\Blueprint\Ghost\Operator\Finale;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 
 /**
@@ -33,7 +32,7 @@ class IBackStep extends AbsDialog implements Finale
     public function __construct(
         Cloner $cloner,
         Ucl $ucl,
-        AbsBaseDialog $dialog,
+        Dialog $dialog,
         int $step
     )
     {

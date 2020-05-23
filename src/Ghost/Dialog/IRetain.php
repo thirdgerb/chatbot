@@ -11,18 +11,18 @@
 
 namespace Commune\Ghost\Dialog;
 
-use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Retain;
-
+use Commune\Blueprint\Ghost\Operator\Operator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class IRetain extends AbsDialog implements Retain
 {
-    protected function runTillNext(): Dialog
+    protected function runTillNext() : Operator
     {
         $this->getProcess()->unsetWaiting($this->ucl);
+
         $stageDef = $this->ucl->findStageDef($this->cloner);
         return $stageDef->onRetain($this);
     }

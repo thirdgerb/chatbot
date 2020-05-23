@@ -12,14 +12,8 @@
 namespace Commune\Blueprint\Ghost\Tools;
 
 use Commune\Blueprint\Framework\Command\CommandDef;
-use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Ghost\Callables\Prediction;
-use Commune\Protocals\HostMsg\Convo\EventMsg;
-use Commune\Protocals\HostMsg\Convo\QuestionMsg;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
-use Commune\Support\Protocal\Protocal;
 use Commune\Support\SoundLike\SoundLikeInterface;
-use Illuminate\Support\Collection;
 
 
 /**
@@ -266,7 +260,7 @@ interface Matcher
      *
      * @param string[] $intentNames (可以用 * 做通配符)
      * @return static
-     * @matched string $isIntentIn
+     * @matched string[] $isIntentIn
      */
     public function isIntentIn(array $intentNames) : Matcher;
 
@@ -287,6 +281,8 @@ interface Matcher
      * @matched string $hasPossibleIntent
      */
     public function hasPossibleIntent(string $intentName) : Matcher;
+
+    /*------- entity -------*/
 
     /**
      * 检查 Intention 内是否匹配到了 Entity
@@ -320,5 +316,20 @@ interface Matcher
      */
     public function matchEntity(string $entityName) : Matcher;
 
+    /*------- stage -------*/
 
+    /**
+     * @param string $intentName
+     * @return static
+     * @matched StageDef $isIntentOfStage
+     */
+    public function matchStageOfIntent(string $intentName) : Matcher;
+
+
+    /**
+     * @param string[] $intents
+     * @return static
+     * @matched StageDef $matchStageInIntents
+     */
+    public function matchStageInIntents(array $intents) : Matcher;
 }

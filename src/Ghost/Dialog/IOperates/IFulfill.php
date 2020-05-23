@@ -13,8 +13,8 @@ namespace Commune\Ghost\Dialog\IOperates;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\AbsBaseDialog;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Ghost\Dialog\Traits\TFallbackFlow;
 
@@ -34,7 +34,7 @@ class IFulfill extends AbsDialog
         Ucl $ucl,
         int $gcTurns,
         array $restoreStages,
-        AbsBaseDialog $prev = null
+        AbsDialog $prev = null
     )
     {
         $this->gcTurns = $gcTurns;
@@ -43,7 +43,7 @@ class IFulfill extends AbsDialog
         parent::__construct($cloner, $ucl, $prev);
     }
 
-    protected function runTillNext(): Dialog
+    protected function runTillNext() : Operator
     {
         $process = $this->getProcess();
         $process->unsetWaiting($this->ucl);
@@ -53,7 +53,7 @@ class IFulfill extends AbsDialog
             $process->addDying($this->ucl, $this->gcTurns, $this->restoreStages);
         }
 
-        $depending = $process->popDepending($this->ucl->getContextId());
+        $depending = $process->dumpDepending($this->ucl->getContextId());
         if (!empty($depending)) {
             $process->addCallback(...$depending);
         }

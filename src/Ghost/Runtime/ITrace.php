@@ -13,6 +13,7 @@ namespace Commune\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Exceptions\TooManyRedirectsException;
+use Commune\Blueprint\Ghost\Operator\Operator;
 use Commune\Blueprint\Ghost\Runtime\Trace;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Psr\Log\LoggerInterface;
@@ -62,7 +63,7 @@ class ITrace implements Trace
         return $this->records;
     }
 
-    public function record(Dialog $dialog): void
+    public function record(Operator $operator): void
     {
         $this->times++;
 
@@ -70,7 +71,7 @@ class ITrace implements Trace
             throw new TooManyRedirectsException($this->times);
         }
 
-        $this->records[$dialog->ucl->toEncodedStr()] = get_class($dialog);
+        $this->records[] = $operator->getOperatorDesc();
     }
 
     public function __destruct()
