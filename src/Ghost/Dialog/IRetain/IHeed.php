@@ -174,13 +174,7 @@ class IHeed extends AbsDialog implements Heed
 
     protected function checkWatching(Process $process) : ? Operator
     {
-        $watchers = $process->getWatchers();
-
-        if (empty($watchers)) {
-            return null;
-        }
-
-        foreach ($watchers as $ucl) {
+        foreach ($process->eachWatchers() as $ucl) {
             $intentDef = $ucl->findIntentDef($this->_cloner);
             if ($intentDef->match($this->_cloner)) {
                 return new IActivate\IWatch($this->_cloner, $ucl, $this);

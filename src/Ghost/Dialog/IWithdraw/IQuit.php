@@ -12,45 +12,33 @@
 namespace Commune\Ghost\Dialog\IWithdraw;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Runtime\Operator;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Ghost\Dialog\AbsWithdraw;
 use Commune\Blueprint\Ghost\Dialog\Withdraw\Quit;
+use Commune\Ghost\Dialog\Traits\TFallbackFlow;
+use Commune\Ghost\Dialog\Traits\TQuitFlow;
 use Commune\Ghost\Dialog\Traits\TWithdrawFlow;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IQuit extends AbsDialog implements Quit
+class IQuit extends AbsWithdraw implements Quit
 {
-    use TWithdrawFlow;
-
-
-    protected function runTillNext(): Dialog
+    protected function runTillNext(): Operator
     {
         $process = $this->getProcess();
-        $process->unsetWaiting($this->ucl);
+        $process->unsetWaiting($this->_ucl);
 
-
-        $depending = $process->dumpDepending($this->ucl->getContextId());
-        if (!empty($depending)) {
-            $process->addCanceling($depending);
-        }
+        $process->addCanceling([$this->_ucl]);
 
         return $this->withdrawCanceling($process)
-
-
+            ?? $this->quitBatch($process, $process->eachCallbacks())
+            ?? $this->quitBatch($process, $process->eachBlocking())
+            ?? $this->quitBatch($process, $process->eachSleeping())
+            ?? $this->quitBatch($process, $process->eachYielding())
+            ?? $this->quitBatch($process, $process->eachWatchers())
+            ?? $this->quitSession();
     }
-
-
-    protected function selfActivate(): void
-    {
-        $this->runStack();
-
-        $process = $this->getProcess();
-        $process->unsetWaiting($this->ucl);
-
-    }
-
-
 }

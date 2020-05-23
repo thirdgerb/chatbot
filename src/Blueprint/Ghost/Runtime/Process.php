@@ -87,17 +87,17 @@ interface Process extends ArrayAndJsonAble
     public function popWatcher() : ? Ucl;
 
     /**
-     * @return Ucl[]
+     * @return \Generator|Ucl[]
      */
-    public function getWatchers() : array;
+    public function eachWatchers() : \Generator;
 
     /*-------- block ---------*/
 
     public function addBlocking(Ucl $ucl, int $priority) : void;
 
-    public function countBlocking() : int;
-
     public function firstBlocking() : ? Ucl;
+
+    public function eachBlocking() : \Generator;
 
     /*-------- sleep ---------*/
 
@@ -105,10 +105,13 @@ interface Process extends ArrayAndJsonAble
 
     public function firstSleeping() : ? Ucl;
 
-    /**
-     * @return Ucl[]
-     */
-    public function getSleeping() : array;
+    public function eachSleeping() : \Generator;
+
+    /*-------- yield ---------*/
+
+    public function addYielding(Ucl $ucl, string $id) : void;
+
+    public function eachYielding() : \Generator;
 
     /*-------- dying ---------*/
 
@@ -119,7 +122,6 @@ interface Process extends ArrayAndJsonAble
 
     public function getDependedBy(string $contextId) : ? Ucl;
 
-
     public function addDepending(Ucl $ucl, string $dependedDependedContextId) : void;
 
     /**
@@ -128,14 +130,13 @@ interface Process extends ArrayAndJsonAble
      */
     public function dumpDepending(string $dependedContextId) : array;
 
-    public function getDependingOn(string $dependedContextId) : array;
-
     /*-------- callback ---------*/
 
     public function addCallback(Ucl ...$callbacks) : void;
 
     public function firstCallback() : ? Ucl;
 
+    public function eachCallbacks() : \Generator;
 
     /*-------- canceling ---------*/
 

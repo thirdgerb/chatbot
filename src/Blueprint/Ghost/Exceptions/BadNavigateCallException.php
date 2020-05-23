@@ -9,19 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IWithdraw;
+namespace Commune\Blueprint\Ghost\Exceptions;
 
-use Commune\Blueprint\Ghost\Runtime\Operator;
-use Commune\Ghost\Dialog\AbsWithdraw;
-use Commune\Blueprint\Ghost\Dialog\Withdraw\Reject;
+use Commune\Blueprint\Exceptions\HostLogicException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IReject extends AbsWithdraw implements Reject
+class BadNavigateCallException extends HostLogicException
 {
-    protected function runTillNext(): Operator
+    public function __construct(string $ucl, string $error)
     {
-        return $this->withdrawCurrent();
+        $message = "bad navigate call by $ucl, $error";
+        parent::__construct($message);
     }
+
 }

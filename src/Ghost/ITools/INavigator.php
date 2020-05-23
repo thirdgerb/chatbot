@@ -11,6 +11,9 @@
 
 namespace Commune\Ghost\ITools;
 
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Blueprint\Ghost\Exceptions\BadNavigateCallException;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\IFinale;
 use Commune\Ghost\Dialog\IRetain;
@@ -77,10 +80,9 @@ class INavigator implements Navigator
     {
         $target = $target->toInstance($this->cloner);
 
+        // 如果重定向的目标是相同 context 内部.
         if ($this->ucl->isSameContext($target)) {
-            return $target->stageName === $this->ucl->stageName
-                ? $this->reactivate()
-                : $this->next($target->stageName);
+            return $this->next($target->stageName);
         }
 
         $contextId = $target->getContextId();
@@ -101,8 +103,11 @@ class INavigator implements Navigator
 
             // depending
             case Context::DEPENDING:
+
                 // 递归地前进到依赖的起点. 有可能产生死循环.
-                $dependedBy = $this->process->getDependedBy($target->getContextId());
+                $dependedBy = $this->process
+                    ->getDependedBy($target->getContextId());
+
                 return $this->redirectTo($dependedBy);
 
             // callback
@@ -180,6 +185,13 @@ class INavigator implements Navigator
 
     public function reactivate(): Operator
     {
+        if ($this instanceof Activate) {
+            throw new BadNavigateCallException(
+                $this->ucl->toEncodedStr(),
+                'reactivate should not called by Activate Dialog'
+            );
+        }
+
         return new IActivate\IReactivate(
             $this->cloner,
             $this->ucl,
@@ -210,6 +222,7 @@ class INavigator implements Navigator
         $next = array_shift($stageNames);
         $process = $this->getProcess();
 
+        // 没有下一步
         $nextPathNotExists = empty($next)
             && empty($stageNames)
             && $process->pathExists($this->ucl->getContextId());
@@ -217,13 +230,7 @@ class INavigator implements Navigator
 
         //  如果没有后路了.
         if ($nextPathNotExists) {
-            return new IOperates\IFulfill(
-                $this->cloner,
-                $this->ucl,
-                0,
-                [],
-                $this
-            );
+            return $this->fulfill();
         }
 
         // 有后路则走 staging
@@ -234,6 +241,12 @@ class INavigator implements Navigator
             });
         }
 
+        // 如果前进对象就是自己的话....
+        if ($next === $this->dialog->ucl->stageName) {
+            return $this->reactivate();
+        }
+
+        // 正常跳转.
         return new IActivate\IStaging(
             $this->cloner,
             $this->ucl->goStage($next),
@@ -262,7 +275,6 @@ class INavigator implements Navigator
 
 
     public function fulfill(
-        Ucl $target = null,
         int $gcTurns = 0,
         array $restoreStages = []
     ): Operator

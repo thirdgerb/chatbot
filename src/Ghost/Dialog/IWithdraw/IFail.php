@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Dialog\IWithdraw;
 
+use Commune\Blueprint\Ghost\Runtime\Operator;
 use Commune\Ghost\Dialog\AbsWithdraw;
 use Commune\Blueprint\Ghost\Dialog\Withdraw\Fail;
 
@@ -20,4 +21,8 @@ use Commune\Blueprint\Ghost\Dialog\Withdraw\Fail;
  */
 class IFail extends AbsWithdraw implements Fail
 {
+    protected function runTillNext(): Operator
+    {
+        return $this->withdrawCurrent();
+    }
 }

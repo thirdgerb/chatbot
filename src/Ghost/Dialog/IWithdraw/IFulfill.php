@@ -13,15 +13,24 @@ namespace Commune\Ghost\Dialog\IWithdraw;
 
 use Commune\Blueprint\Ghost\Runtime\Operator;
 use Commune\Ghost\Dialog\AbsWithdraw;
-use Commune\Blueprint\Ghost\Dialog\Withdraw\Reject;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IReject extends AbsWithdraw implements Reject
+class IFulfill extends AbsWithdraw
 {
     protected function runTillNext(): Operator
     {
-        return $this->withdrawCurrent();
+        $process = $this->getProcess();
+        $depending = $process->dumpDepending($this->_ucl->getContextId());
+
+        if (!empty($depending)) {
+            $process->addCallback(...$depending);
+        }
+
+        return $this->fallbackFlow($process);
     }
+
+
 }

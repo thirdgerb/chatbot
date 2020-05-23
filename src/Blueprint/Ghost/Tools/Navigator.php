@@ -83,13 +83,11 @@ interface Navigator
      * 完成当前语境, 并将当前语境回调.
      * 同时指定一个可能的下阶段语境.
      *
-     * @param Ucl|null $target      如果为 null, 默认是当前 context
      * @param int $gcTurns
      * @param array $restoreStages
      * @return Operator
      */
     public function fulfill(
-        Ucl $target = null,
         int $gcTurns = 0,
         array $restoreStages = []
     ) : Operator;

@@ -11,11 +11,14 @@
 
 namespace Commune\Ghost\Dialog\Traits;
 
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Ghost\Dialog\IActivate;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Operator;
 use Commune\Ghost\Dialog\IRetain;
+use Commune\Ghost\Dialog\IWithdraw\IQuit;
+use Commune\Ghost\Runtime\Operators\CloseSession;
 
 /**
  * 允许当前语境执行 fallback 流程.
@@ -32,7 +35,23 @@ trait TFallbackFlow
     {
         return $this->fallbackToCallbacks($process)
             ?? $this->fallbackToBlocking($process)
-            ?? $this->fallbackToSleeping($process);
+            ?? $this->fallbackToSleeping($process)
+            ?? $this->fallbackToRoot($process);
+    }
+
+    protected function fallbackToRoot(Process $process) : Operator
+    {
+        $root = $process->getRoot();
+
+        // 回到根节点.
+        if (! $root->isSameContext($this->_ucl)) {
+            return $this->nav()->redirectTo($root);
+        }
+
+        // 当前就是根节点, 就直接退出.
+        return $this->quitBatch($process, $process->eachYielding())
+            ?? $this->quitBatch($process, $process->eachWatchers())
+            ?? $this->quitSession();
     }
 
     protected function fallbackToCallbacks(Process $process) : ? Operator
@@ -79,4 +98,37 @@ trait TFallbackFlow
             $this
         );
     }
+
+    protected function quitBatch(Process $process, \Generator $generator) : ? Operator
+    {
+        foreach ($generator as $ucl) {
+            $next = $this->tryToQuitUcl($process, $ucl);
+            if (isset($next)) {
+                return $next;
+            }
+        }
+        return null;
+    }
+
+    protected function tryToQuitUcl(Process $process, Ucl $ucl) : ? Operator
+    {
+        $quit = new IQuit($this->_cloner, $ucl, $this);
+        $stageDef = $ucl->findStageDef($this->_cloner);
+
+        $next = $stageDef->onWithdraw($quit);
+
+        if (isset($next)) {
+            return $next;
+        }
+
+        $process->unsetWaiting($ucl);
+        $process->addCanceling([$ucl]);
+        return $this->withdrawCanceling($process);
+    }
+
+    protected function quitSession() : Operator
+    {
+        return new CloseSession($this);
+    }
+
 }
