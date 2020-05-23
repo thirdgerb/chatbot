@@ -16,20 +16,14 @@ use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Finale\Await;
 use Commune\Blueprint\Ghost\Memory\Recollection;
-use Commune\Blueprint\Ghost\Operator\Operator;
-use Commune\Blueprint\Ghost\Tools\Hearing;
-use Commune\Blueprint\Ghost\Tools\Matcher;
-use Commune\Blueprint\Ghost\Tools\Navigator;
+use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Tools;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Blueprint\Ghost\Tools\Caller;
-use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Tools\IDeliver;
-use Commune\Ghost\Tools\IHearing;
-use Commune\Ghost\Tools\INavigator;
+use Commune\Ghost\Runtime\Operators\AbsOperator;
+use Commune\Ghost\ITools;
 use Commune\Support\DI\Injectable;
 use Commune\Support\DI\TInjectable;
-use Commune\Blueprint\Exceptions\HostLogicException;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 use Commune\Support\Utils\TypeUtils;
@@ -45,10 +39,10 @@ use Commune\Support\Utils\TypeUtils;
  * @property-read Ucl $ucl              当前 Dialog 的 Context 地址.
  * @property-read Dialog|null $prev     前一个 Dialog
  */
-abstract class AbsDialog implements
+abstract class AbsDialog extends AbsOperator implements
     Dialog,
     Injectable,
-    Caller,
+    Tools\Caller,
     Operator
 {
     use TInjectable;
@@ -79,16 +73,6 @@ abstract class AbsDialog implements
     protected $process;
 
     /**
-     * @var bool
-     */
-    protected $ticked = false;
-
-    /**
-     * @var bool
-     */
-    protected $ticking = false;
-
-    /**
      * @var callable[]
      */
     protected $stack = [];
@@ -104,15 +88,36 @@ abstract class AbsDialog implements
         $this->_cloner = $cloner;
         $this->_ucl = $ucl->toInstance($cloner);
         $this->_prev = $prev;
-        $this->stack = isset($prev) ? $prev->dumpStack() : [];
     }
-
 
     /**
      * 寻找到下一个 Intend 的对象.
      * @return static
      */
     abstract protected function runTillNext() : Operator;
+
+    protected function runIntercept(): Operator
+    {
+        if ($this instanceof Dialog\Intercept) {
+            $stageDef = $this->_ucl->findStageDef($this->_cloner);
+            return $stageDef->onIntercept($this->prev, $this);
+        }
+
+        return null;
+    }
+
+    protected function toNext(): Operator
+    {
+        // 允许放弃当前节点的执行.
+        $next = $this->runIntercept();
+        if (isset($next)) {
+            return $next;
+        }
+
+        $this->runStack();
+
+        return $this->runTillNext();
+    }
 
     /**
      * @return Process
@@ -126,19 +131,19 @@ abstract class AbsDialog implements
 
     /*-------- implements --------*/
 
-    public function send(): Deliver
+    public function send(): Tools\Deliver
     {
-        return new IDeliver($this);
+        return new ITools\IDeliver($this);
     }
 
-    public function matcher(): Matcher
+    public function matcher(): Tools\Matcher
     {
         return $this->_cloner->matcher->refresh();
     }
 
-    public function nav(): Navigator
+    public function nav(): Tools\Navigator
     {
-        return new INavigator($this);
+        return new ITools\INavigator($this);
     }
 
     public function await(
@@ -151,9 +156,9 @@ abstract class AbsDialog implements
     }
 
 
-    public function hearing(): Hearing
+    public function hearing(): Tools\Hearing
     {
-        return new IHearing($this);
+        return new ITools\IHearing($this);
     }
 
     /*-------- history --------*/
@@ -174,15 +179,9 @@ abstract class AbsDialog implements
 
     /*-------- caller --------*/
 
-    public function caller(): Caller
+    public function caller(): Tools\Caller
     {
         return $this;
-    }
-
-    public function make(string $abstract, array $parameters = [])
-    {
-        $parameters = $this->getContextualInjections($parameters);
-        return $this->_cloner->container->make($abstract, $parameters);
     }
 
     public function call($caller, array $parameters = [])
@@ -265,54 +264,6 @@ abstract class AbsDialog implements
         $this->stack[] = $caller;
     }
 
-    public function ticked(): void
-    {
-        $this->ticked = true;
-    }
-
-
-    public function tick() : Operator
-    {
-        // 每个 Dialog 实例只能 tick 一次.
-        if ($this->ticked) {
-            throw new HostLogicException(
-                __METHOD__
-                . ' try to tick dialog that ticked'
-            );
-        }
-
-        if ($this->ticking) {
-            throw new HostLogicException(
-                __METHOD__
-                . ' try to tick dialog that ticking'
-            );
-        }
-
-        $this->ticking = true;
-
-        // 尝试拦截.
-        if ($this instanceof Dialog\Intercept && isset($this->_prev)) {
-            $stageDef = $this->_ucl->findStageDef($this->_cloner);
-            $next = $stageDef->onIntercept($this->_prev, $this);
-        }
-
-        // 未被拦截的时候.
-        if (!isset($next)) {
-            // 下一次 tick 关闭上一次tick
-            $prev = $this->_prev;
-            if (isset($prev)) {
-                $prev->ticked();
-            }
-
-            $this->runStack();
-
-            $next = $this->runTillNext();
-        }
-
-        $this->ticking = false;
-        return $next;
-    }
-
     protected function runStack() : void
     {
         $prev = $this->_prev;
@@ -327,26 +278,11 @@ abstract class AbsDialog implements
         }
     }
 
-    public function isTicking(): bool
-    {
-        return $this->ticking;
-    }
-
-    public function isTicked(): bool
-    {
-        return $this->ticked;
-    }
-
     public function getOperatorDesc(): string
     {
         $name = static::class;
         $ucl = $this->_ucl->toEncodedStr();
         return "$name : $ucl";
-    }
-
-    public function getDialog(): Dialog
-    {
-        return $this;
     }
 
     /*-------- status --------*/
@@ -376,17 +312,6 @@ abstract class AbsDialog implements
             ->recall($this->_cloner);
     }
 
-    /**
-     * @param Dialog $dialog
-     * @return static
-     */
-    public function withPrev(Dialog $dialog): Dialog
-    {
-        $this->_prev = $dialog;
-        return $this;
-    }
-
-
     protected function runAwait(bool $silent = false ) : void
     {
         $process = $this->getProcess();
@@ -409,6 +334,7 @@ abstract class AbsDialog implements
             $this->_cloner->output($input->output($contextMsg));
         }
     }
+
 
     /*-------- getter --------*/
 

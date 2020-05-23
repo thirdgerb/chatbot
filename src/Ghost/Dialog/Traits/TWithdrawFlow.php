@@ -15,7 +15,7 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Runtime\Operator;
 
 
 /**
@@ -26,28 +26,6 @@ use Commune\Blueprint\Ghost\Operator\Operator;
  */
 trait TWithdrawFlow
 {
-    protected function runWithdrawFlow() : ? Operator
-    {
-
-    }
-
-
-
-
-    protected function doWithdraw(Ucl $ucl, string $abstract = null) : ? Operator
-    {
-        $abstract = $abstract ?? static::class;
-        /**
-         * @var Dialog\Withdraw $intercept
-         */
-        $intercept = new $abstract($this->cloner, $ucl);
-        $intercept = $intercept->withPrev($this);
-
-        return $intercept->ucl
-            ->findStageDef($this->cloner)
-            ->onWithdraw($intercept);
-    }
-
     protected function withdrawCanceling(Process $process) : ? Operator
     {
         $poppedDepends = [];
@@ -71,6 +49,19 @@ trait TWithdrawFlow
         }
 
         return null;
+    }
+
+
+    protected function doWithdraw(Ucl $ucl, string $abstract = null) : ? Operator
+    {
+        $abstract = $abstract ?? static::class;
+        /**
+         * @var Dialog\Withdraw $intercept
+         */
+        $intercept = new $abstract($this->cloner, $ucl, $this);
+        return $intercept->ucl
+            ->findStageDef($this->cloner)
+            ->onWithdraw($intercept);
     }
 
     protected function pushDependingToCancel(
@@ -112,81 +103,4 @@ trait TWithdrawFlow
             );
         }
     }
-    protected function fallbackFlow(Process $process) : Dialog
-    {
-        return $this->fallbackBlocking($process)
-            ?? $this->fallbackSleeping($process)
-            ?? $this->quitWatching($process)
-            ?? $this->closeSession();
-    }
-
-    protected function closeSession() : Dialog
-    {
-        return new ICloseSession($this->cloner, $this->ucl, $this->dumpStack());
-    }
-
-    protected function fallbackBlocking(Process $process) : ? Operator
-    {
-        // 检查 block
-        $blocking = $process->popBlocking();
-
-        if (!isset($blocking)) {
-            return null;
-        }
-
-        return new IPreempt($this->cloner, $blocking, $this->dumpStack());
-    }
-
-    protected function fallbackSleeping(Process $process) : ? Operator
-    {
-        // 检查 sleeping
-        $sleeping = $process->popSleeping();
-        if (isset($sleeping)) {
-            return null;
-        }
-
-        return new IWake($this->cloner, $sleeping, $this->dumpStack());
-    }
-
-
-    protected function quitBlocking(Process $process) : ? Operator
-    {
-        while($ucl = $process->popBlocking()) {
-
-            $next = $this->doWithdraw($ucl, IQuit::class);
-            if (isset($next)) {
-                return $next;
-            }
-        }
-        return null;
-
-    }
-
-    protected function quitSleeping(Process $process) : ? Operator
-    {
-        while($ucl = $process->popSleeping()) {
-            $next = $this->doWithdraw($ucl, IQuit::class);
-            if (isset($next)) {
-                return $next;
-            }
-        }
-
-        return null;
-
-    }
-
-
-    protected function quitWatching(Process $process) : ? Operator
-    {
-        while($watching = $process->popWatcher()) {
-            $next = $this->doWithdraw($watching, IQuit::class);
-            if (isset($next)) {
-                return $next;
-            }
-        }
-        return null;
-
-    }
-
-
 }

@@ -95,8 +95,6 @@ interface Process extends ArrayAndJsonAble
 
     public function addBlocking(Ucl $ucl, int $priority) : void;
 
-    public function popBlocking(string $contextId = null) : ? Ucl;
-
     public function countBlocking() : int;
 
     public function firstBlocking() : ? Ucl;
@@ -105,7 +103,7 @@ interface Process extends ArrayAndJsonAble
 
     public function addSleeping(Ucl $ucl, array $wakenStages) : void;
 
-    public function popSleeping(string $ucl = null) : ? Ucl;
+    public function firstSleeping() : ? Ucl;
 
     /**
      * @return Ucl[]
@@ -136,7 +134,8 @@ interface Process extends ArrayAndJsonAble
 
     public function addCallback(Ucl ...$callbacks) : void;
 
-    public function popCallback() : ? Ucl;
+    public function firstCallback() : ? Ucl;
+
 
     /*-------- canceling ---------*/
 

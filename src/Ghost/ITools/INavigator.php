@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Tools;
+namespace Commune\Ghost\ITools;
 
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\IFinale;
@@ -17,13 +17,13 @@ use Commune\Ghost\Dialog\IRetain;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Ghost\Dialog\IWithdraw;
-use Commune\Ghost\Dialog\IOperates;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Ghost\Dialog\IActivate;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Tools\Navigator;
+use Commune\Ghost\Runtime\Operators\Dumb;
 use Commune\Message\Host\SystemInt\TaskBusyInt;
-use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Runtime\Operator;
 use Commune\Blueprint\Ghost\Dialog\Finale\Await;
 
 
@@ -41,7 +41,6 @@ class INavigator implements Navigator
      * @var Cloner
      */
     protected $cloner;
-
 
     /**
      * @var Ucl
@@ -190,11 +189,7 @@ class INavigator implements Navigator
 
     public function dumb(): Operator
     {
-        return new IFinale\IDumb(
-            $this->cloner,
-            $this->ucl,
-            $this->dialog
-        );
+        return new Dumb($this->cloner);
     }
 
     public function backStep(int $step = 1): Operator

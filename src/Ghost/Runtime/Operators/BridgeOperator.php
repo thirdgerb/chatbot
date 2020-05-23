@@ -9,17 +9,21 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Operators;
+namespace Commune\Ghost\Runtime\Operators;
 
-use Commune\Blueprint\Ghost\Operator\Finale;
-use Commune\Blueprint\Ghost\Operator\Operator;
-
+use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Runtime\Finale;
+use Commune\Blueprint\Ghost\Runtime\Operator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class BridgeOperator implements Operator
 {
+    /**
+     * @var Operator
+     */
+    protected $prev;
 
     /**
      * @var Operator
@@ -72,19 +76,14 @@ class BridgeOperator implements Operator
         $this->current->ticked();
     }
 
-    public function pushStack(callable $caller): void
-    {
-        $this->current->pushStack($caller);
-    }
-
-    public function dumpStack(): array
-    {
-        return $this->current->dumpStack();
-    }
-
     public function getOperatorDesc(): string
     {
         return $this->current->getOperatorDesc();
+    }
+
+    public function getDialog(): Dialog
+    {
+        return $this->current->getDialog();
     }
 
 

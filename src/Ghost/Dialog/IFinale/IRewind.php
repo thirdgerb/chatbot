@@ -13,9 +13,10 @@ namespace Commune\Ghost\Dialog\IFinale;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Runtime\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialog;
-use Commune\Blueprint\Ghost\Dialog\Finale;
+use Commune\Blueprint\Ghost\Runtime\Finale;
 
 
 /**
@@ -40,7 +41,7 @@ class IRewind extends AbsDialog implements Finale
         parent::__construct($cloner, $ucl, $prev);
     }
 
-    protected function runTillNext(): Dialog
+    protected function runTillNext(): Operator
     {
 
         $process = $this->getProcess();

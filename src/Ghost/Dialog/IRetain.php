@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Dialog;
 
 use Commune\Blueprint\Ghost\Dialog\Retain;
-use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Runtime\Operator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -23,7 +23,7 @@ class IRetain extends AbsDialog implements Retain
     {
         $this->getProcess()->unsetWaiting($this->ucl);
 
-        $stageDef = $this->ucl->findStageDef($this->cloner);
+        $stageDef = $this->_ucl->findStageDef($this->cloner);
         return $stageDef->onRetain($this);
     }
 }

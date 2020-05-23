@@ -13,9 +13,10 @@ namespace Commune\Ghost\Dialog\IFinale;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Runtime\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialog;
-use Commune\Blueprint\Ghost\Operator\Finale;
+use Commune\Blueprint\Ghost\Runtime\Finale;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 
@@ -44,13 +45,10 @@ class IBackStep extends AbsDialog implements Finale
         parent::__construct($cloner, $ucl, $dialog);
     }
 
-    protected function runTillNext(): Dialog
+    protected function runTillNext(): Operator
     {
         $this->getProcess()->backStep($this->step);
-
         $this->runAwait(false);
-
-        $this->ticked = true;
         return $this;
     }
 

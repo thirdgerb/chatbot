@@ -114,8 +114,6 @@ interface Dialog
     const RETAIN        = Dialog\Retain::class;
     // stage 退出时
     const WITHDRAW      = Dialog\Withdraw::class;
-    // session 结束时
-    const FINALE        = Dialog\Finale::class;
     // intercept
     const INTERCEPT     = Dialog\Intercept::class;
 
@@ -161,6 +159,13 @@ interface Dialog
     const QUIT          = Dialog\Withdraw\Quit::class;
 
     public function isEvent(string $statusType) : bool ;
+
+
+    /**
+     * 推一些方法给下一个 Dialog 执行.
+     * @param callable $caller
+     */
+    public function pushStack(callable $caller) : void;
 
     /**
      * 可以作为后续.

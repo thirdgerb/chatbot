@@ -9,21 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IFinale;
+namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\AbsDialog;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IDumb extends AbsDialog
+interface Finale extends Operator
 {
-    protected function runTillNext(): Dialog
-    {
-        $this->cloner->noState();
 
-        $this->ticked = true;
-        return $this;
-    }
 }

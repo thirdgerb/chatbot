@@ -9,9 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Operator;
-
-use Commune\Blueprint\Ghost\Dialog;
+namespace Commune\Blueprint\Ghost\Runtime;
 
 /**
  * 多轮对话逻辑算子, 链式调用.
@@ -26,7 +24,6 @@ interface Operator
      * @return Operator
      */
     public function tick() : Operator;
-
 
     /**
      * @return bool
@@ -45,22 +42,8 @@ interface Operator
     public function ticked() : void;
 
     /**
-     * @param callable $caller
-     */
-    public function pushStack(callable $caller) : void;
-
-    /**
-     * @return callable[]
-     */
-    public function dumpStack() : array;
-
-    /**
      * @return string
      */
     public function getOperatorDesc() : string;
 
-    /**
-     * @return Dialog
-     */
-    public function getDialog() : Dialog;
 }

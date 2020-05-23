@@ -13,7 +13,7 @@ namespace Commune\Blueprint\Ghost\Tools;
 
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\Dialog\Finale\Await;
-use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Runtime\Operator;
 
 /**
  * 多轮对话导航逻辑.

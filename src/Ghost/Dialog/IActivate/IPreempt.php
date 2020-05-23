@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Dialog\IActivate;
 
-use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Runtime\Operator;
 use Commune\Ghost\Dialog\IActivate;
 use Commune\Blueprint\Ghost\Dialog\Activate\Preempt;
 

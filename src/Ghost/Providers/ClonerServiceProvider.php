@@ -28,7 +28,7 @@ use Commune\Ghost\Cloner\IClonerScene;
 use Commune\Ghost\Cloner\IClonerScope;
 use Commune\Ghost\Cloner\IClonerStorage;
 use Commune\Ghost\Runtime\IRuntime;
-use Commune\Ghost\Tools\IMatcher;
+use Commune\Ghost\ITools\IMatcher;
 use Psr\Log\LoggerInterface;
 
 

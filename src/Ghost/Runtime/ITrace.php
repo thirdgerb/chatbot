@@ -13,7 +13,7 @@ namespace Commune\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Exceptions\TooManyRedirectsException;
-use Commune\Blueprint\Ghost\Operator\Operator;
+use Commune\Blueprint\Ghost\Runtime\Operator;
 use Commune\Blueprint\Ghost\Runtime\Trace;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Psr\Log\LoggerInterface;
