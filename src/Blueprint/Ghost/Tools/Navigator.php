@@ -11,14 +11,8 @@
 
 namespace Commune\Blueprint\Ghost\Tools;
 
-use Commune\Blueprint\Ghost\Ucl;
-use Commune\Blueprint\Ghost\Dialog\Finale\Await;
-use Commune\Blueprint\Ghost\Runtime\Operator;
 
 /**
- * 多轮对话导航逻辑.
- * 管理语境和对话节点的跳转.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Navigator
@@ -83,13 +77,13 @@ interface Navigator
      * 完成当前语境, 并将当前语境回调.
      * 同时指定一个可能的下阶段语境.
      *
-     * @param int $gcTurns
      * @param array $restoreStages
+     * @param int $gcTurns
      * @return Operator
      */
     public function fulfill(
-        int $gcTurns = 0,
-        array $restoreStages = []
+        array $restoreStages = [],
+        int $gcTurns = 0
     ) : Operator;
 
     /**
@@ -132,9 +126,9 @@ interface Navigator
 
     /**
      * 重置当前 context 的 stage 路径.
-     * @return Navigator
+     * @return Redirect
      */
-    public function clearPath() : Navigator;
+    public function clearPath() : Redirect;
 
     /**
      * @param string ...$stageNames
@@ -199,22 +193,23 @@ interface Navigator
 
     /**
      * @param Ucl $subject
-     * @return Navigator
+     * @return Redirect
      */
-    public function watch(Ucl $subject) : Navigator;
+    public function watch(Ucl $subject) : Redirect;
 
     /**
      * @param Ucl $subject
      * @param array $wakeStages
-     * @return Navigator
+     * @return Redirect
      */
-    public function sleep(Ucl $subject, array $wakeStages = []) : Navigator;
+    public function sleep(Ucl $subject, array $wakeStages = []) : Redirect;
 
     /**
      * @param Ucl $subject
      * @param int|null $priority
-     * @return Navigator
+     * @return Redirect
      */
-    public function block(Ucl $subject, int $priority = null) : Navigator;
+    public function block(Ucl $subject, int $priority = null) : Redirect;
+
 
 }

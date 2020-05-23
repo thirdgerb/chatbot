@@ -14,7 +14,7 @@ namespace Commune\Components\Demo\Cases;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Blueprint\Ghost\Tools\Hearing;
+use Commune\Blueprint\Ghost\Operate\Hearing;
 use Commune\Components\Demo\Cases\Memories\UserPlayedHistory;
 use Commune\Host\Contexts\ACodeContext;
 use Commune\Host\Contexts\CodeContext\BuildHearing;
@@ -62,7 +62,7 @@ class Maze extends ACodeContext implements
             ->then()
             ->defaultFallback(function(Dialog $dialog){
                 $dialog->send()->info('没有明白您的意思, 可以说"退出"以退出游戏.');
-                return $dialog->nav()->rewind();
+                return $dialog->redirect()->rewind();
             });
     }
 
@@ -71,7 +71,7 @@ class Maze extends ACodeContext implements
         return $stage
             ->onActivate(function(Dialog $dialog) {
                 if ($this->played->total > 0) {
-                    return $dialog->nav()->next('old_player');
+                    return $dialog->redirect()->next('old_player');
                 }
 
                 return $dialog->send()
@@ -89,13 +89,13 @@ class Maze extends ACodeContext implements
 
                     return $dialog
                         ->hearing()
-                        ->todo($dialog->nav()->next('born'))
+                        ->todo($dialog->redirect()->next('born'))
                             ->hasKeywords([['不', '别']])
                             ->isNegative()
-                        ->todo($dialog->nav()->next('intro'))
+                        ->todo($dialog->redirect()->next('intro'))
                             ->hasKeywords([['是', '好', '要', '可以', '开始']])
                             ->isPositive()
-                        ->end($dialog->nav()->next('intro'));
+                        ->end($dialog->redirect()->next('intro'));
                 }
             )
             ->end();
@@ -122,9 +122,9 @@ class Maze extends ACodeContext implements
                 return $dialog
                     ->hearing()
                     ->isPositive()
-                        ->then($goBorn = $dialog->nav()->next('born'))
+                        ->then($goBorn = $dialog->redirect()->next('born'))
                     ->isNegative()
-                        ->then($dialog->nav()->fulfill())
+                        ->then($dialog->redirect()->fulfill())
                     ->end($goBorn);
             })
             ->end();
@@ -156,9 +156,9 @@ class Maze extends ACodeContext implements
                     return $dialog
                         ->hearing()
                         ->isPositive()
-                            ->then($dialog->nav()->next('born'))
+                            ->then($dialog->redirect()->next('born'))
                         ->isNegative()
-                            ->then($dialog->nav()->fulfill())
+                            ->then($dialog->redirect()->fulfill())
                         ->end();
                 }
             )
@@ -176,7 +176,7 @@ class Maze extends ACodeContext implements
         return $stage
             ->onActivate(function(Dialog $dialog) {
                 return $dialog
-                    ->nav()
+                    ->redirect()
                     ->dependOn(PlayMaze::ucl());
             })
             ->onRetain(function (Dialog $dialog) {
@@ -191,7 +191,7 @@ class Maze extends ACodeContext implements
                     $this->played->highestScore = $score;
                 }
 
-                return $dialog->nav()->next('one_more');
+                return $dialog->redirect()->next('one_more');
             })
             ->end();
     }
@@ -215,17 +215,17 @@ class Maze extends ACodeContext implements
                 return $dialog
                     ->hearing()
                     ->isPositive()
-                    ->then($dialog->nav()->next('born'))
+                    ->then($dialog->redirect()->next('born'))
                     ->isNegative()
                     ->then(function(Dialog $dialog){
                         return $dialog
                             ->send()
                             ->info($this->farewellMessage)
                             ->over()
-                            ->nav()
+                            ->redirect()
                             ->fulfill();
                     })
-                    ->end($dialog->nav()->fulfill());
+                    ->end($dialog->redirect()->fulfill());
 
             })
             ->end();

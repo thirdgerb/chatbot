@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Dialog\IActivate;
 
 use Commune\Ghost\Dialog\AbsDialog;
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Dialog\Activate\Reset;
 
 /**

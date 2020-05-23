@@ -11,7 +11,7 @@
 
 namespace Commune\Host\Contexts\CodeContext;
 
-use Commune\Blueprint\Ghost\Tools\Hearing;
+use Commune\Blueprint\Ghost\Operate\Hearing;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

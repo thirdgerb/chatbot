@@ -14,9 +14,9 @@ namespace Commune\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Finale\Await;
+use Commune\Blueprint\Ghost\Operate\Await;
 use Commune\Blueprint\Ghost\Memory\Recollection;
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Tools;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
@@ -98,9 +98,9 @@ abstract class AbsDialog extends AbsOperator implements
 
     protected function runIntercept(): Operator
     {
-        if ($this instanceof Dialog\Intercept) {
+        if ($this instanceof Dialog\Intend) {
             $stageDef = $this->_ucl->findStageDef($this->_cloner);
-            return $stageDef->onIntercept($this->prev, $this);
+            return $stageDef->onIntend($this->prev, $this);
         }
 
         return null;
@@ -128,6 +128,12 @@ abstract class AbsDialog extends AbsOperator implements
             ?? $this->process = $this->_cloner->runtime->getCurrentProcess();
     }
 
+    protected function setProcess(Process $process) : void
+    {
+        $this->process = $process;
+        $this->_cloner->runtime->setCurrentProcess($process);
+    }
+
 
     /*-------- implements --------*/
 
@@ -136,14 +142,9 @@ abstract class AbsDialog extends AbsOperator implements
         return new ITools\IDeliver($this);
     }
 
-    public function matcher(): Tools\Matcher
+    public function redirect(): Tools\Navigator
     {
-        return $this->_cloner->matcher->refresh();
-    }
-
-    public function nav(): Tools\Navigator
-    {
-        return new ITools\INavigator($this);
+        return new ITools\IRedirect($this);
     }
 
     public function await(
@@ -152,18 +153,18 @@ abstract class AbsDialog extends AbsOperator implements
         int $expire = null
     ): Await
     {
-        return $this->nav()->await($allowContexts, $stageRoutes, $expire);
+        return $this->redirect()->await($allowContexts, $stageRoutes, $expire);
     }
 
 
-    public function hearing(): Tools\Hearing
+    public function hearing(): Tools\Receive
     {
         return new ITools\IHearing($this);
     }
 
     /*-------- history --------*/
 
-    public function depth(): int
+    protected function depth(): int
     {
         $current = $this;
         $depth = 1;
@@ -293,15 +294,6 @@ abstract class AbsDialog extends AbsOperator implements
     }
 
 
-    public function remember(string $name): bool
-    {
-        return $this
-            ->cloner
-            ->mind
-            ->memoryReg()
-            ->hasDef($name);
-    }
-
     public function recall(string $name): Recollection
     {
         return $this
@@ -344,12 +336,14 @@ abstract class AbsDialog extends AbsOperator implements
             return isset($this->_prev);
         }
 
-        return in_array($name, ['cloner', 'ucl', 'context']);
+        return in_array($name, ['cloner', 'ucl', 'context', 'depth']);
     }
 
     public function __get($name)
     {
         switch ($name) {
+            case 'depth' :
+                return $this->depth();
             case 'cloner' :
                 return $this->_cloner;
             case 'ucl' :

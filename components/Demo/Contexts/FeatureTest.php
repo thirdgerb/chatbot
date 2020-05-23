@@ -14,7 +14,7 @@ namespace Commune\Components\Demo\Contexts;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Withdraw;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Blueprint\Ghost\Tools\Hearing;
+use Commune\Blueprint\Ghost\Operate\Hearing;
 use Commune\Components\Demo\Recall\Sandbox;
 use Commune\Host\Contexts\ACodeContext;
 use Commune\Host\Contexts\CodeContext\BuildHearing;
@@ -115,7 +115,7 @@ EOF
                                 ['input' => $message->getText()]
                             );
 
-                            return $dialog->nav()->reactivate();
+                            return $dialog->redirect()->reactivate();
                         })
                         ->pregMatch('/^hello/')
 
@@ -124,7 +124,7 @@ EOF
 
                             $dialog->send()->info('go to testPipeStart stage');
                             return $dialog
-                                ->nav()
+                                ->redirect()
                                 ->next('testPipeStart', 'testMatch');
                         })
                         ->pregMatch('/^test$/')
@@ -138,7 +138,7 @@ EOF
                                 'ord' => implode(',', $int->ordinal)
                             ]);
 
-                            return $dialog->nav()->reactivate();
+                            return $dialog->redirect()->reactivate();
 
                         })
 
@@ -146,7 +146,7 @@ EOF
                         ->hasKeywords(['测试', ['关键字', 'keyword']])
                         ->then(function (Dialog $dialog) {
                             $dialog->send()->info('命中测试关键字');
-                            return $dialog->nav()->reactivate();
+                            return $dialog->redirect()->reactivate();
                         })
 
                         // depend
@@ -160,7 +160,7 @@ EOF
                                 $typer->info("$key : $type");
                             }
 
-                            return $dialog->nav()->reactivate();
+                            return $dialog->redirect()->reactivate();
                         })
                         ->pregMatch('/depend/')
 
@@ -197,16 +197,16 @@ EOF
                         ->isPositive()
                         ->then(function(Dialog $dialog){
                             $dialog->send()->info('is positive emotion');
-                            return $dialog->nav()->next('menu');
+                            return $dialog->redirect()->next('menu');
                         })
                         ->isNegative()
                         ->then(function(Dialog $dialog){
                             $dialog->send()->info('is negative emotion');
-                            return $dialog->nav()->next('menu');
+                            return $dialog->redirect()->next('menu');
                         })
                         ->end(function(Dialog $dialog){
                             $dialog->send()->notice('nether yes nor no');
-                            return $dialog->nav()->next('menu');
+                            return $dialog->redirect()->next('menu');
                         });
                 }
             )
@@ -238,7 +238,7 @@ EOF
                         ->hearing()
 
                         ->is(0)
-                        ->then( $dialog->nav()->reactivate())
+                        ->then( $dialog->redirect()->reactivate())
 
                         ->todo(function(Dialog $dialog) {
 
@@ -254,7 +254,7 @@ EOF
 
                             $sandbox['test'] = $test + 1;
 
-                            return $dialog->nav()->reactivate();
+                            return $dialog->redirect()->reactivate();
 
                         })
                         ->isChoice('a')
@@ -279,7 +279,7 @@ EOF
                                     . ' value is test:%test%, test1:%test1%'
                                 );
 
-                            return $dialog->nav()->reactivate();
+                            return $dialog->redirect()->reactivate();
                         })
                         ->end();
                 }
@@ -314,7 +314,7 @@ EOF
                             '您输入的是:'
                             . $message->getText()
                         );
-                    return $dialog->nav()->next();
+                    return $dialog->redirect()->next();
                 }
             )
             ->end();

@@ -12,10 +12,13 @@
 namespace Commune\Blueprint\Ghost\MindDef;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Retain;
-use Commune\Blueprint\Ghost\Dialog\Withdraw;
+use Commune\Blueprint\Ghost\Dialog\Receive;
+use Commune\Blueprint\Ghost\Dialog\Resume;
+use Commune\Blueprint\Ghost\Dialog\Withdraw\Cancel;
+use Commune\Blueprint\Ghost\Dialog\Withdraw\Quit;
 use Commune\Blueprint\Ghost\Dialog\Activate;
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Dialog\Intend;
 
 
 /**
@@ -41,48 +44,64 @@ interface StageDef extends Def
     public function getContextName() : string;
 
     /**
+     * 当前 Stage 是否是 Context 的第一个 Stage.
      * @return bool
      */
     public function isContextRoot() : bool;
 
     /**
-     * @return IntentDef|null
+     * 所有的 Stage 都可以作为一个意图.
+     * 如果不配置规则, 则没有匹配意图的能力.
+     *
+     * @return IntentDef
      */
-    public function asIntentDef() : ? IntentDef;
+    public function asIntentDef() : IntentDef;
 
 
     /*------- intend to stage -------*/
 
     /**
+     * 当前 Stage 因为意图而被触发时.
+     *
      * @param Dialog $prev
-     * @param Dialog $current
+     * @param Intend $current
      * @return Operator|null
      */
-    public function onIntercept(Dialog $prev, Dialog $current) : ? Operator;
+    public function onIntend(Dialog $prev, Intend $current) : ? Operator;
 
     /**
-     * 激活当前的 Stage, 然后等待回调.
+     * 激活当前的 Stage.
+     *
      * @param Activate $dialog
      * @return Operator
      */
     public function onActivate(Activate $dialog) : Operator;
 
     /**
-     * 接收到一个用户消息时.
-     *
-     * @param Retain $dialog
-     * @return Operator|null
+     * 接受到用户消息时.
+     * @param Receive $dialog
+     * @return Operator
      */
-    public function onRetain(Retain $dialog) : Operator;
+    public function onReceive(Receive $dialog) : Operator;
 
     /**
-     * 当 A Context 依赖 B Context 时, B Context 退出会导致这个流程.
-     * 一层层地退出.
-     *
-     * @param Withdraw $dialog
+     * 当前 stage 恢复时
+     * @param Resume $dialog
      * @return Operator|null
      */
-    public function onWithdraw(Withdraw $dialog) : ? Operator;
+    public function onResume(Resume $dialog) : Operator;
+
+    /**
+     * @param Cancel $dialog
+     * @return Operator|null
+     */
+    public function onCancel(Cancel $dialog) : ? Operator;
+
+    /**
+     * @param Quit $quit
+     * @return Operator|null
+     */
+    public function onQuit(Quit $quit) : ? Operator;
 
 
 }

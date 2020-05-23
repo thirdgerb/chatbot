@@ -12,8 +12,8 @@
 namespace Commune\Ghost\ITools;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Tools\Hearing;
-use Commune\Blueprint\Ghost\Tools\Navigator;
+use Commune\Blueprint\Ghost\Operate\Hearing;
+use Commune\Blueprint\Ghost\Operate\Redirect;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -59,9 +59,9 @@ class IHearing extends IMatcher implements Hearing
             ?? $this->faker = new FakeHearing($this);
     }
 
-    public function nav(): Navigator
+    public function nav(): Redirect
     {
-        return $this->dialog->nav();
+        return $this->dialog->redirect();
     }
 
     public function todo(callable $caller): Hearing
@@ -140,7 +140,7 @@ class IHearing extends IMatcher implements Hearing
             }
         }
 
-        return $this->nextDialog ?? $this->dialog->nav()->confuse();
+        return $this->nextDialog ?? $this->dialog->redirect()->confuse();
     }
 
     public function __destruct()

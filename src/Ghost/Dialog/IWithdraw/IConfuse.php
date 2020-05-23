@@ -12,8 +12,10 @@
 namespace Commune\Ghost\Dialog\IWithdraw;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Blueprint\Ghost\Runtime\Process;
+use Commune\Ghost\Dialog\IActivate;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
 use Commune\Ghost\Dialog\Traits\TIntentMatcher;
 use Commune\Blueprint\Ghost\Dialog\Withdraw\Confuse;
@@ -26,7 +28,7 @@ class IConfuse extends AbsDialog implements Confuse
 {
     use TIntentMatcher;
 
-    protected function runTillNext(): Dialog
+    protected function runTillNext() : Operator
     {
         $process = $this->getProcess();
         return $this->ifEventMsg()
@@ -40,42 +42,42 @@ class IConfuse extends AbsDialog implements Confuse
     {
     }
 
-    protected function ifEventMsg() : ? Dialog
+    /**
+     * 事件类消息不需要专门响应.
+     * @return Operator|null
+     */
+    protected function ifEventMsg() : ? Operator
     {
         $message = $this->cloner->input->getMessage();
         if ($message instanceof EventMsg) {
-            return $this->nav()->dumb();
+            return $this->redirect()->dumb();
         }
         return null;
     }
 
-    protected function tryToWakeSleeping(Process $process) : ? Dialog
+    protected function tryToWakeSleeping(Process $process) : ? Operator
     {
         $sleeping = $process->sleeping;
         if (empty($sleeping)) {
             return null;
         }
 
-        foreach ($sleeping as $uclStr => $stages) {
+        foreach ($sleeping as $id => $stages) {
             // empty
             if (empty($stages)) {
                 continue;
             }
 
-            $sleepingUcl = $process->decodeUcl($uclStr);
-            $matched = $this->stageRoutesMatch($sleepingUcl, $stages);
+            $sleepingUcl = $process->getContextUcl($id);
+            $matched = $this->matchStageRoutes($sleepingUcl, $stages);
             if (isset($matched)) {
-                return DialogHelper::newDialog(
-                    $this,
-                    $matched,
-                    Dialog\Retain\Wake::class
-                );
+                return $this->redirect()->redirectTo($matched);
             }
         }
         return null;
     }
 
-    protected function tryToRestoreDying(Process $process) : ? Dialog
+    protected function tryToRestoreDying(Process $process) : ? Operator
     {
         $dying = $process->dying;
 
@@ -83,18 +85,18 @@ class IConfuse extends AbsDialog implements Confuse
             return null;
         }
 
-        foreach ($dying as $uclStr => list($turns, $stages)) {
+        foreach ($dying as $id => list($turns, $stages)) {
             if (empty($stages)) {
                 continue;
             }
 
-            $dyingUcl = $process->decodeUcl($uclStr);
-            $matched = $this->stageRoutesMatch($dyingUcl, $stages);
+            $dyingUcl = $process->getContextUcl($id);
+            $matched = $this->matchStageRoutes($dyingUcl, $stages);
             if (isset($matched)) {
-                return DialogHelper::newDialog(
-                    $this,
+                return new IActivate\IRestore(
+                    $this->_cloner,
                     $matched,
-                    Dialog\Retain\Restore::class
+                    $this
                 );
             }
         }

@@ -28,6 +28,8 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read Waiter|null $waiter
  *
  *
+ * @property-read array[] $sleeping
+ * @property-read array[] $dying
  */
 interface Process extends ArrayAndJsonAble
 {
@@ -166,7 +168,7 @@ interface Process extends ArrayAndJsonAble
 
     public function resetPath(Ucl $ucl, array $path) : void;
 
-    public function insertPath(Ucl $ucl, array $path) : void;
+    public function insertPath(string $contextId, string ...$path) : void;
 
     public function shiftPath(string $contextId) : ? string;
 

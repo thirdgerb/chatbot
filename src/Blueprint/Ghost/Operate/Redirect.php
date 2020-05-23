@@ -9,14 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IRetain;
-
-use Commune\Ghost\Dialog\IResume;
-use Commune\Blueprint\Ghost\Dialog\Retain\Wake;
+namespace Commune\Blueprint\Ghost\Operate;
 
 /**
+ * 多轮对话导航逻辑.
+ * 管理语境和对话节点的跳转.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IWake extends IResume implements Wake
+interface Redirect
 {
+
 }

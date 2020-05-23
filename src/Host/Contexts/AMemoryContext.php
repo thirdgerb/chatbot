@@ -32,7 +32,7 @@ abstract class AMemoryContext extends ACodeContext implements
     public function __on_start(StageBuilder $stage): StageDef
     {
         return $stage->end(function(Dialog $dialog) {
-            return $dialog->nav()->fulfill();
+            return $dialog->redirect()->fulfill();
         });
     }
 

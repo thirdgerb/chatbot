@@ -9,14 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IRetain;
+namespace Commune\Blueprint\Ghost\Dialog;
 
-use Commune\Ghost\Dialog\IRetain;
-use Commune\Blueprint\Ghost\Dialog\Retain\Restore;
+use Commune\Blueprint\Ghost\Dialog;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IRestore extends IRetain implements Restore
+interface Intend extends Dialog
 {
+
 }

@@ -9,14 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IRetain;
+namespace Commune\Blueprint\Ghost\Operate;
 
-use Commune\Ghost\Dialog\IResume;
-use Commune\Blueprint\Ghost\Dialog\Retain\Wake;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IWake extends IResume implements Wake
+interface Finale extends Operator
 {
+
 }

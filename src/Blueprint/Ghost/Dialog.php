@@ -11,11 +11,11 @@
 
 namespace Commune\Blueprint\Ghost;
 
-use Commune\Blueprint\Ghost\Dialog\Finale\Await;
 use Commune\Blueprint\Ghost\Memory\Recollection;
-use Commune\Blueprint\Ghost\Tools\Hearing;
-use Commune\Blueprint\Ghost\Tools\Matcher;
-use Commune\Blueprint\Ghost\Tools\Navigator;
+use Commune\Blueprint\Ghost\Operate;
+use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Tools\Finale;
+use Commune\Blueprint\Ghost\Operate\Hearing;
 use Commune\Blueprint\Ghost\Tools\Caller;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 
@@ -27,9 +27,73 @@ use Commune\Blueprint\Ghost\Tools\Deliver;
  * @property-read Context $context
  * @property-read Ucl $ucl              当前 Dialog 的 Context 地址.
  * @property-read Dialog|null $prev     前一个 Dialog
+ * @property-read int $depth
  */
 interface Dialog
 {
+    /*----- dialog event -----*/
+
+    // 任意 dialog
+    const ANY           = Dialog::class;
+
+    // 进入一个Stage 时触发的事件.
+    const ACTIVATE      = Dialog\Activate::class;
+    // 由用户消息触发的事件.
+    const RECEIVE       = 1;
+    // stage 回调时
+    const RESUME        = Dialog\Resume::class;
+    // stage 退出时
+    const WITHDRAW      = Dialog\Withdraw::class;
+    // 由意图触发的事件. 均可拦截.
+    const INTEND        = Dialog\Intend::class;
+    // cancel : depending, blocking, fallback -> sleeping, watch
+    const CANCEL        = Dialog\Withdraw\Cancel::class;
+    // quit : depending, blocking, fallback -> sleeping, watch
+    const QUIT          = Dialog\Withdraw\Quit::class;
+
+
+    /* activate 激活一个 stage */
+
+    // 相同的 context 里一个 stage 进入另一个 stage
+    const STAGING       = Dialog\Activate\Staging::class;
+    // 一个 context 依赖到另一个 context 时
+    const DEPENDED      = Dialog\Activate\Depend::class;
+    // 返回到根路径.
+    const RESET         = Dialog\Activate\Reset::class;
+    // reactivate
+    const REACTIVATE    = Dialog\Activate\Reactivate::class;
+
+    /* receive 直接由用户消息触发的事件. */
+
+    // watch
+    const WATCH         = Dialog\Activate\Watch::class;
+    // await -> heed
+    const HEED          = Dialog\Retain\Heed::class;
+    // confuse : fallback -> sleeping, watch
+    const CONFUSE       = Dialog\Withdraw\Confuse::class;
+
+    /* retain 中断的 stage 得到回调 */
+
+    // sleep -> wake
+    const WAKE          = Dialog\Retain\Wake::class;
+    // depending -> callback
+    const CALLBACK      = Dialog\Retain\Callback::class;
+    // dying -> restore
+    const RESTORE       = 1;
+    // yielding -> retain
+    const RETAIN        = 2;
+    // 一个 blocking context 重新占据对话
+    const PREEMPT       = Dialog\Activate\Preempt::class;
+
+    /* withdraw */
+
+    /**
+     * Dialog 自身所代表的事件类型
+     *
+     * @param string $statusType
+     * @return bool
+     */
+    public function isEvent(string $statusType) : bool ;
 
     /*----- call -----*/
 
@@ -48,38 +112,6 @@ interface Dialog
      */
     public function send() : Deliver;
 
-    /**
-     * 匹配工具.
-     * @return Matcher
-     */
-    public function matcher() : Matcher;
-
-    /**
-     * 重定向当前的会话.
-     *
-     * @return Navigator
-     */
-    public function nav() : Navigator;
-
-    /**
-     * 等待用户的回复.
-     *
-     * @param array $allowContexts
-     * @param array $stageRoutes
-     * @param int|null $expire
-     * @return Await
-     */
-    public function await(
-        array $allowContexts = [],
-        array $stageRoutes = [],
-        int $expire = null
-    ) : Await;
-
-
-    /**
-     * @return Hearing
-     */
-    public function hearing() : Hearing;
 
     /*----- memory -----*/
 
@@ -90,86 +122,79 @@ interface Dialog
      */
     public function recall(string $name) : Recollection;
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function remember(string $name) : bool;
-
-    /*----- 下一帧 -----*/
+    /*----- 上下文状态管理. -----*/
 
     /**
-     * Dialog 链当前的深度.
-     * @return int
+     * 等待用户回复
+     * @return Operate\Await
      */
-    public function depth() : int;
+    public function await() : Operate\Await;
 
-    /*----- dialog event -----*/
+    /**
+     * @param string ...$stageNames
+     * @return Operator
+     */
+    public function next(string ...$stageNames) : Operator;
 
-    // 任意 dialog
-    const ANY           = Dialog::class;
-    // stage 启动时
-    const ACTIVATE      = Dialog\Activate::class;
-    // stage 回调时
-    const RETAIN        = Dialog\Retain::class;
-    // stage 退出时
-    const WITHDRAW      = Dialog\Withdraw::class;
-    // intercept
-    const INTERCEPT     = Dialog\Intercept::class;
-
-    /* activate 启动一个 stage */
-
-    // 相同的 context 里一个 stage 进入另一个 stage
-    const STAGING       = Dialog\Activate\Staging::class;
-    // 一个 context 依赖到另一个 context 时
-    const DEPENDED      = Dialog\Activate\Depend::class;
-    // watch
-    const WATCH         = Dialog\Activate\Watch::class;
-    // 从一个 context 主动进入到另一个 context 里
-    const REDIRECT      = Dialog\Activate\Redirect::class;
-    // 返回到根路径.
-    const RESET         = Dialog\Activate\Reset::class;
-    // 一个 blocking context 重新占据对话
-    const PREEMPT       = Dialog\Activate\Preempt::class;
-    // reactivate
-    const REACTIVATE    = Dialog\Activate\Reactivate::class;
-
-    /* retain 中断的 stage 得到回调 */
-
-    // sleep -> wake
-    const WAKE          = Dialog\Retain\Wake::class;
-    // await -> heed
-    const HEED          = Dialog\Retain\Heed::class;
-    // dying -> restore
-    const RESTORE       = Dialog\Retain\Restore::class;
-    // depending -> callback
-    const CALLBACK      = Dialog\Retain\Callback::class;
-
-    /* withdraw */
-
-    // confuse : fallback -> sleeping, watch
-    const CONFUSE       = Dialog\Withdraw\Confuse::class;
-    // cancel : depending, blocking, fallback -> sleeping, watch
-    const CANCEL        = Dialog\Withdraw\Cancel::class;
-    // reject : depending, blocking, fallback -> sleeping, watch
-    const REJECT        = Dialog\Withdraw\Reject::class;
-    // fail : depending, blocking, fallback -> sleeping, watch
-    const FAIL          = Dialog\Withdraw\Fail::class;
-    // quit : depending, blocking, fallback -> sleeping, watch
-    const QUIT          = Dialog\Withdraw\Quit::class;
-
-    public function isEvent(string $statusType) : bool ;
+    /**
+     * 重定向到另一个 Context.
+     *
+     * @param Ucl $ucl
+     * @return Operator
+     */
+    public function redirectTo(Ucl $ucl) : Operator;
 
 
     /**
-     * 推一些方法给下一个 Dialog 执行.
-     * @param callable $caller
+     * 返回到指定的 ucl (或默认的ucl), 然后清空所有的 waiting 关系.
+     * @param Ucl|null $root
+     * @return Operator
      */
-    public function pushStack(callable $caller) : void;
+    public function reset(Ucl $root = null) : Operator;
 
     /**
-     * 可以作为后续.
-     * @return Dialog
+     * 完成当前语境.
+     *
+     * @param array $restoreStage
+     * @param int $gcTurns
+     * @return mixed
      */
-    public function __invoke() : Dialog;
+    public function fulfill(
+        array $restoreStage = [],
+        int $gcTurns = 0
+    ) : Operator;
+
+    /**
+     * 退出当前语境.
+     * @return Operator
+     */
+    public function cancel() : Operator;
+
+    /**
+     * 退出整个对话
+     * @return Operator
+     */
+    public function quit() : Operator;
+
+
+    /**
+     * 同一个 Context 内部的场景切换.
+     *
+     * @return Operate\Staging
+     */
+    public function staging() : Operate\Staging;
+
+    /**
+     * 对输入的消息进行链式匹配操作.
+     * @return Hearing
+     */
+    public function hearing() : Operate\Hearing;
+
+    /**
+     * 挂起当前语境, 跳转到其它语境.
+     * @return Operate\Suspend
+     */
+    public function suspend() : Operate\Suspend;
+
+
 }

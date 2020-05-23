@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Runtime\Operators;
 
 use Commune\Blueprint\Exceptions\HostLogicException;
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
 
 
 /**

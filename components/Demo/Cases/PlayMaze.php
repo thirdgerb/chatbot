@@ -15,7 +15,7 @@ use Commune\Blueprint\Ghost\Context\ParamBuilder;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Withdraw;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Blueprint\Ghost\Tools\Hearing;
+use Commune\Blueprint\Ghost\Operate\Hearing;
 use Commune\Components\Demo\Cases\Maze\Logic\Manager;
 use Commune\Components\Demo\Cases\Memories\UserPlayedHistory;
 use Commune\Host\Contexts\ACodeContext;
@@ -171,7 +171,7 @@ class PlayMaze extends ACodeContext implements
                         ]
                     )
                     ->over()
-                    ->nav()
+                    ->redirect()
                     ->reactivate();
             })
                 ->needHelp()
@@ -291,7 +291,7 @@ class PlayMaze extends ACodeContext implements
 
         // 赢了, 游戏结束
         if ($win) {
-            return $dialog->nav()->next('end_game');
+            return $dialog->redirect()->next('end_game');
 
             // 走进了另一张门
         } elseif ($success) {
@@ -300,13 +300,13 @@ class PlayMaze extends ACodeContext implements
             $this->direction = $direction;
             $this->cell = $cell;
 
-            return $dialog->nav()->reactivate();
+            return $dialog->redirect()->reactivate();
 
             // 退了回去
         } else {
             // 面向不改.
             $this->cell = null; // 下一次一定介绍.
-            return $dialog->nav()->reactivate();
+            return $dialog->redirect()->reactivate();
         }
     }
 
@@ -333,7 +333,7 @@ class PlayMaze extends ACodeContext implements
                 ->send()
                 ->info($this->bornMessage)
                 ->over()
-                ->nav()
+                ->redirect()
                 ->next('play');
         })->end();
     }
@@ -415,7 +415,7 @@ class PlayMaze extends ACodeContext implements
             return $dialog->send()
                 ->info($this->endGameMessage, ['score' => $this->score])
                 ->over()
-                ->nav()
+                ->redirect()
                 ->fulfill();
         })
         ->end();

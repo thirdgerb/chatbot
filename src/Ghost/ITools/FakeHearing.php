@@ -13,9 +13,9 @@ namespace Commune\Ghost\ITools;
 
 use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Tools\Hearing;
+use Commune\Blueprint\Ghost\Operate\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
-use Commune\Blueprint\Ghost\Tools\Navigator;
+use Commune\Blueprint\Ghost\Operate\Redirect;
 use Commune\Support\SoundLike\SoundLikeInterface;
 
 
@@ -39,7 +39,7 @@ class FakeHearing implements Hearing
     }
 
 
-    public function nav(): Navigator
+    public function nav(): Redirect
     {
         return $this->hearing->nav();
     }

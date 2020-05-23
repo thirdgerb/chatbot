@@ -32,6 +32,7 @@ interface Context extends
 {
     const NAMESPACE_SEPARATOR = '.';
     const STAGE_SEPARATOR = '_';
+    const CONTEXT_STAGE_SEPARATOR = '__';
 
     /*----- status -----*/
 

@@ -12,8 +12,8 @@
 namespace Commune\Ghost\Runtime\Operators;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Runtime\Finale;
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Finale;
+use Commune\Blueprint\Ghost\Operate\Operator;
 
 
 /**

@@ -9,13 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Runtime;
+namespace Commune\Ghost\Dialog\IActivate;
 
+use Commune\Ghost\Dialog\IActivate;
+use Commune\Blueprint\Ghost\Dialog\Activate\Restore;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Finale extends Operator
+class IRestore extends IActivate implements Restore
 {
 
 }

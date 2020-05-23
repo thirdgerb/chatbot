@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Dialog;
 
 use Commune\Blueprint\Ghost\Dialog\Activate;
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

@@ -308,18 +308,18 @@ class Ucl implements UclInterface
 
     /*------- property -------*/
 
-    public function toStageIntentName(string $stage = null) : string
+    public function getStageIntentName(string $stage = null) : string
     {
-        return $this->toFullStageName($stage);
+        return $this->getStageFullname($stage);
     }
 
-    public function toFullStageName(string $stage = null) : string
+    public function getStageFullname(string $stage = null) : string
     {
         $stage = $stage ?? $this->stageName;
         return StringUtils::gluePrefixAndName(
             $this->contextName,
             $stage,
-            Context::NAMESPACE_SEPARATOR
+            Context::CONTEXT_STAGE_SEPARATOR
         );
     }
 
@@ -330,7 +330,7 @@ class Ucl implements UclInterface
         if (!$this->stageExists($cloner)) {
             throw new DefNotDefinedException(
                 StageDef::class,
-                $this->toFullStageName()
+                $this->getStageFullname()
             );
         }
 
@@ -365,7 +365,7 @@ class Ucl implements UclInterface
 
     public function findIntentDef(Cloner $cloner) : ? IntentDef
     {
-        $intentName = $this->toStageIntentName();
+        $intentName = $this->getStageIntentName();
 
         if ($this->intentDef === false) {
             return null;
@@ -393,7 +393,7 @@ class Ucl implements UclInterface
     public function stageExists(Cloner $cloner) : bool
     {
         return $this->exists
-            ?? $this->exists = $cloner->mind->stageReg()->hasDef($this->toFullStageName());
+            ?? $this->exists = $cloner->mind->stageReg()->hasDef($this->getStageFullname());
     }
 
     public function findStageDef(Cloner $cloner) : StageDef
@@ -402,7 +402,7 @@ class Ucl implements UclInterface
             ?? $this->stageDef = $cloner
                 ->mind
                 ->stageReg()
-                ->getDef($this->toFullStageName());
+                ->getDef($this->getStageFullname());
     }
 
     public function findContextDef(Cloner $cloner) : ContextDef

@@ -11,12 +11,12 @@
 
 namespace Commune\Blueprint\Ghost\Dialog\Retain;
 
-use Commune\Blueprint\Ghost\Dialog\Retain;
+use Commune\Blueprint\Ghost\Dialog\Resume;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Callback extends Retain
+interface Callback extends Resume
 {
 
 }

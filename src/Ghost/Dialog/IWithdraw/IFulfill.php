@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Dialog\IWithdraw;
 
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\Dialog\AbsWithdraw;
 
 

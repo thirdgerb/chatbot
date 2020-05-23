@@ -13,7 +13,6 @@ namespace Commune\Ghost\Dialog\Traits;
 
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialog;
-use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -22,77 +21,30 @@ use Commune\Support\Utils\StringUtils;
 trait TIntentMatcher
 {
 
-    protected function exactStageIntentMatch(Ucl $ucl) : bool
+    protected function matchStageRoutes(Ucl $current, array $stages = []) : ? Ucl
     {
-        $intentDef = $ucl->findIntentDef($this->cloner);
-
-        return !empty($intentDef)
-            ? $intentDef->validate($this->cloner)
-            : false;
-    }
-
-    protected function wildCardIntentNameMatch(string $name) : ? array
-    {
-        $intention = $this->cloner->input->comprehension->intention;
-        return $intention->wildcardIntentMatch($name);
-    }
-
-
-    protected function checkMatchedStageNameExists(
-        Ucl $current,
-        array $matched,
-        bool $sameContext =false
-    ) : ? string
-    {
-        $reg = $this->cloner->mind->stageReg();
-        foreach ($matched as $stageName) {
-            $ifSameContext = !$sameContext || $current->atSameContext($stageName);
-            if ($ifSameContext && $reg->hasDef($stageName)) {
-                return $stageName;
+        $matcher = $this->_cloner->matcher->refresh();
+        foreach ($stages as $stage) {
+            $intentName = $current->getStageIntentName($stage);
+            if ($matcher->matchStageOfIntent($intentName)->truly()) {
+                return $current->goStage($stage);
             }
         }
 
         return null;
     }
 
-    /**
-     * @param Ucl $current
-     * @param string[] $stages
-     * @return Ucl|null
-     */
-    protected function stageRoutesMatch(Ucl $current, array $stages) : ? Ucl
+    protected function matchContextRoutes(Ucl ...$contexts) : ? Ucl
     {
-        foreach ($stages as $stageName) {
+        $matcher = $this->cloner->matcher->refresh();
 
-            if (StringUtils::isWildCardPattern($stageName)) {
-                $wildCardStageIntentName = $current->toFullStageName($stageName);
-
-                // 只检查意图名是否正确.
-                $matched = $this->wildCardIntentNameMatch($wildCardStageIntentName);
-                if (empty($matched)) {
-                    continue;
-                }
-
-                $matchedStage = $this->checkMatchedStageNameExists(
-                    $current,
-                    $matched,
-                    true
-                );
-
-                if (isset($matchedStage)) {
-                    return $current->goStageByIntentName($matchedStage);
-                }
-
-            } else {
-                // fullname
-                $stageUcl = $current->goStage($stageName);
-                if ($this->exactStageIntentMatch($stageUcl)) {
-                    return $stageUcl;
-                }
+        foreach ($contexts as $ucl) {
+            $intentName = $ucl->getStageIntentName();
+            if ($matcher->matchStageOfIntent($intentName)->truly()) {
+                return $ucl->goStageByIntentName($intentName);
             }
         }
 
         return null;
     }
-
 }

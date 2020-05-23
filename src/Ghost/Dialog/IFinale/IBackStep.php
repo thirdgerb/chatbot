@@ -13,10 +13,10 @@ namespace Commune\Ghost\Dialog\IFinale;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialog;
-use Commune\Blueprint\Ghost\Runtime\Finale;
+use Commune\Blueprint\Ghost\Operate\Finale;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 

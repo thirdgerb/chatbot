@@ -29,7 +29,7 @@ class DemoHome extends ACodeContext
     {
         return $stage
             ->onActivate(function(Activate $dialog){
-               return $dialog->nav()->next('menu');
+               return $dialog->redirect()->next('menu');
             })
             ->onEvent(Dialog::QUIT, function(Dialog $dialog) {
                 $dialog->send()->info('quit from quiting event');
@@ -60,13 +60,13 @@ class DemoHome extends ACodeContext
 
             })
             ->onEvent(
-                Dialog::WAKE,
+                Dialog::FALLBACK,
                 function(Dialog $dialog) {
                     $dialog->send()
                         ->info('完成测试')
                         ->over();
 
-                    return $dialog->nav()->quit();
+                    return $dialog->redirect()->quit();
                 }
             )
             ->end();

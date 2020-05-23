@@ -112,13 +112,13 @@ interface UclInterface extends ArrayAndJsonAble
      * @param string|null $stage
      * @return string
      */
-    public function toStageIntentName(string $stage = null) : string;
+    public function getStageIntentName(string $stage = null) : string;
 
     /**
      * @param string|null $stage
      * @return string
      */
-    public function toFullStageName(string $stage = null) : string;
+    public function getStageFullname(string $stage = null) : string;
 
 
     /*------ redirect ------*/

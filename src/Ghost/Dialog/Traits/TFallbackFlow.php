@@ -15,8 +15,8 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Ghost\Dialog\IActivate;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Blueprint\Ghost\Runtime\Operator;
-use Commune\Ghost\Dialog\IRetain;
+use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Ghost\Dialog\IResume;
 use Commune\Ghost\Dialog\IWithdraw\IQuit;
 use Commune\Ghost\Runtime\Operators\CloseSession;
 
@@ -45,7 +45,7 @@ trait TFallbackFlow
 
         // 回到根节点.
         if (! $root->isSameContext($this->_ucl)) {
-            return $this->nav()->redirectTo($root);
+            return $this->redirect()->redirectTo($root);
         }
 
         // 当前就是根节点, 就直接退出.
@@ -113,9 +113,15 @@ trait TFallbackFlow
     protected function tryToQuitUcl(Process $process, Ucl $ucl) : ? Operator
     {
         $quit = new IQuit($this->_cloner, $ucl, $this);
-        $stageDef = $ucl->findStageDef($this->_cloner);
 
-        $next = $stageDef->onWithdraw($quit);
+        $next = $ucl->findStageDef($this->_cloner)->onWithdraw($quit);
+
+        if (!isset($next) && $ucl->stageName !== '') {
+            $initStage = $ucl->goStage('');
+            $next = $initStage
+                ->findStageDef($this->_cloner)
+                ->onWithdraw(new IQuit($this->_cloner, $initStage, $this));
+        }
 
         if (isset($next)) {
             return $next;

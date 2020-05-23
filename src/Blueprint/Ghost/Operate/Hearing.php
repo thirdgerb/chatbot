@@ -9,9 +9,10 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Tools;
+namespace Commune\Blueprint\Ghost\Operate;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Tools\Matcher;
 
 /**
  * 用户视角对话状态的回归.
@@ -22,7 +23,7 @@ use Commune\Blueprint\Ghost\Dialog;
  */
 interface Hearing extends Matcher
 {
-    public function nav() : Navigator;
+    public function getDialog() : Dialog;
 
     public function todo(callable $caller) : Hearing;
 

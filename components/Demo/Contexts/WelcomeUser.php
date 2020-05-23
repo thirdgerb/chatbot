@@ -69,7 +69,7 @@ class WelcomeUser extends ACodeContext implements
                         ]
                     );
 
-                return $dialog->nav()->next('menu');
+                return $dialog->redirect()->next('menu');
 
             })
             ->end();
@@ -85,7 +85,7 @@ class WelcomeUser extends ACodeContext implements
         return $stage
             ->onActivate(function(Dialog $dialog) : Dialog {
                 return $dialog
-                    ->nav()
+                    ->redirect()
                     ->await(
                         'ask.needs',
                         [
@@ -105,7 +105,7 @@ class WelcomeUser extends ACodeContext implements
                         ->hearing()
                         ->todo([$this, 'showScript'])
                             ->isChoice(3)
-                        ->todo($dialog->nav()->quit())
+                        ->todo($dialog->redirect()->quit())
                             ->isChoice(4)
                         ->end();
                 }
@@ -119,7 +119,7 @@ class WelcomeUser extends ACodeContext implements
             ->info('demo.dialog.commandTest')
             ->info('demo.dialog.helpInfo');
 
-        return $dialog->nav()->reactivate();
+        return $dialog->redirect()->reactivate();
     }
 
 

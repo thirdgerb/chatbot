@@ -13,10 +13,11 @@ namespace Commune\Blueprint\Ghost\Dialog;
 
 use Commune\Blueprint\Ghost\Dialog;
 
+
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Intercept extends Dialog
+interface Receive extends Dialog
 {
 
 }

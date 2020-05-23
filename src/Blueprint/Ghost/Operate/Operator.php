@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Runtime;
+namespace Commune\Blueprint\Ghost\Operate;
 
 /**
  * 多轮对话逻辑算子, 链式调用.
@@ -46,4 +46,10 @@ interface Operator
      */
     public function getOperatorDesc() : string;
 
+
+    /**
+     * 可以作为 callable 对象传给 dialog::caller
+     * @return Operator
+     */
+    public function __invoke() : Operator;
 }

@@ -13,10 +13,10 @@ namespace Commune\Ghost\Dialog\IFinale;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialog;
-use Commune\Blueprint\Ghost\Runtime\Finale;
+use Commune\Blueprint\Ghost\Operate\Finale;
 
 
 /**
@@ -43,12 +43,11 @@ class IRewind extends AbsDialog implements Finale
 
     protected function runTillNext(): Operator
     {
-
         $process = $this->getProcess();
         $prev = $process->prev;
-        $runtime = $this->cloner->runtime;
+
         if (isset($prev)) {
-            $runtime->setCurrentProcess($process);
+            $this->setProcess($process);
         }
 
         $this->runAwait($this->silent);

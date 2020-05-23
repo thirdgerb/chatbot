@@ -11,19 +11,19 @@
 
 namespace Commune\Ghost\Dialog;
 
-use Commune\Blueprint\Ghost\Dialog\Retain;
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Dialog\Resume;
+use Commune\Blueprint\Ghost\Operate\Operator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IRetain extends AbsDialog implements Retain
+class IResume extends AbsDialog implements Resume
 {
     protected function runTillNext() : Operator
     {
         $this->getProcess()->unsetWaiting($this->ucl);
 
         $stageDef = $this->_ucl->findStageDef($this->cloner);
-        return $stageDef->onRetain($this);
+        return $stageDef->onResume($this);
     }
 }

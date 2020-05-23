@@ -9,13 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Dialog\Retain;
+namespace Commune\Blueprint\Ghost\Dialog;
 
-use Commune\Blueprint\Ghost\Dialog\Retain;
+use Commune\Blueprint\Ghost\Dialog;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Restore extends Retain
+interface Resume extends Dialog
 {
+
 }

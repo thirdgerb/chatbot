@@ -13,12 +13,13 @@ namespace Commune\Ghost\Dialog\IRetain;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Retain\Heed;
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Pipe\ComprehendPipe;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Ghost\Dialog\IActivate;
+use Commune\Ghost\Dialog\Traits\TIntentMatcher;
 use Commune\Ghost\Runtime\Operators\BridgeOperator;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\HostMsg\ConvoMsg;
@@ -29,6 +30,8 @@ use Commune\Protocals\Intercom\InputMsg;
  */
 class IHeed extends AbsDialog implements Heed
 {
+    use TIntentMatcher;
+
     protected function runTillNext(): Operator
     {
         $process = $this->getProcess();
@@ -76,7 +79,7 @@ class IHeed extends AbsDialog implements Heed
 
         $context = $message->toContext($this->cloner);
         // 直接重定向到目标位置.
-        return $this->nav()->redirectTo($context->toUcl());
+        return $this->redirect()->redirectTo($context->toUcl());
     }
 
     protected function checkBlocking() : ? Operator
@@ -99,7 +102,7 @@ class IHeed extends AbsDialog implements Heed
         // 没有 waiter, 说明是 session 初始化
         if ($process->isFresh()) {
 
-            $reactivate = $this->nav()->reactivate();
+            $reactivate = $this->redirect()->reactivate();
 
             $heed = function(Dialog $dialog) {
                 $process = $dialog
@@ -189,24 +192,20 @@ class IHeed extends AbsDialog implements Heed
     protected function checkStageRoutes(Process $process) : ? Operator
     {
         $stages = $process->getAwaitStageNames();
+
         if (empty($stages)) {
             return null;
         }
 
-        $matcher = $this->cloner->matcher;
-        foreach ($stages as $stage) {
-            $intentName = $this->_ucl->toStageIntentName($stage);
-            if ($matcher->matchStageOfIntent($intentName)) {
-                $ucl = $this->_ucl->goStage($stage);
-                return new IActivate\IStaging(
-                    $this->_cloner,
-                    $ucl,
-                    $this
-                );
-            }
-        }
+        $matched = $this->matchStageRoutes($this->_ucl, $stages);
 
-        return null;
+        return isset($matched)
+            ? new IActivate\IStaging(
+                    $this->_cloner,
+                    $matched,
+                    $this
+                )
+            : null;
     }
 
     protected function checkContextRoutes(Process $process) : ? Operator
@@ -217,18 +216,11 @@ class IHeed extends AbsDialog implements Heed
             return null;
         }
 
-        $matcher = $this->cloner->matcher->refresh();
+        $matched = $this->matchContextRoutes($contexts);
 
-        foreach ($contexts as $ucl) {
-
-            $intentName = $ucl->toStageIntentName();
-            if ($matcher->matchStageOfIntent($intentName)->truly()) {
-                $target = $ucl->goStageByIntentName($intentName);
-                return $this->nav()->redirectTo($target);
-            }
-        }
-
-        return null;
+        return isset($matched)
+            ? $this->redirect()->redirectTo($matched)
+            : null;
     }
 
     /*--------- heed ---------*/
@@ -237,7 +229,7 @@ class IHeed extends AbsDialog implements Heed
     {
         $process->unsetWaiting($this->_ucl);
         $stageDef = $this->_ucl->findStageDef($this->_cloner);
-        return $stageDef->onRetain($this);
+        return $stageDef->onResume($this);
     }
 
 

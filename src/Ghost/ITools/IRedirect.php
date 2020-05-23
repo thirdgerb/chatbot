@@ -16,24 +16,24 @@ use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Blueprint\Ghost\Exceptions\BadNavigateCallException;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\IFinale;
-use Commune\Ghost\Dialog\IRetain;
+use Commune\Ghost\Dialog\IResume;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Ghost\Dialog\IWithdraw;
 use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Ghost\Dialog\IActivate;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Blueprint\Ghost\Tools\Navigator;
+use Commune\Blueprint\Ghost\Operate\Redirect;
 use Commune\Ghost\Runtime\Operators\Dumb;
 use Commune\Message\Host\SystemInt\TaskBusyInt;
-use Commune\Blueprint\Ghost\Runtime\Operator;
-use Commune\Blueprint\Ghost\Dialog\Finale\Await;
+use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Operate\Await;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class INavigator implements Navigator
+class IRedirect implements Redirect
 {
     /**
      * @var AbsDialog
@@ -86,43 +86,73 @@ class INavigator implements Navigator
         }
 
         $contextId = $target->getContextId();
-        $status = $this->getProcess()->getContextStatus($contextId);
+        $process = $this->getProcess();
 
-        switch ($status) {
+        $currentStatus = $process->getContextStatus($contextId);
+        $targetCurrentUcl = $process->getContextUcl($contextId);
+
+        $bridge = null;
+        if ($targetCurrentUcl->stageName !== $target->stageName) {
+            $stage = $targetCurrentUcl->stageName;
+            $bridge = function() use ($process, $contextId, $stage){
+                $process->insertPath($contextId, $stage);
+            };
+        }
+
+        switch ($currentStatus) {
             // await
             case Context::AWAIT:
-                return $this->rewind();
+
+                return $this->redirectToAwait($target);
 
             // preempt
             case Context::BLOCKING:
+
+                return $this->redirectToBlocking($target);
+
+                isset($bridge) and $this->dialog->pushStack($bridge);
                 return new IActivate\IPreempt(
                     $this->cloner,
-                    $target,
+                    $targetCurrentUcl,
                     $this->dialog
                 );
 
             // depending
             case Context::DEPENDING:
 
+                return $this->redirectToDepending($target);
+
                 // 递归地前进到依赖的起点. 有可能产生死循环.
                 $dependedBy = $this->process
                     ->getDependedBy($target->getContextId());
+
+                isset($bridge) and $this->dialog->pushStack($bridge);
 
                 return $this->redirectTo($dependedBy);
 
             // callback
             case Context::CALLBACK:
+
+                return $this->redirectToCallback($target);
+
+                isset($bridge) and $this->dialog->pushStack($bridge);
+
                 return new IRetain\ICallback(
                     $this->cloner,
-                    $target,
+                    $targetCurrentUcl,
                     $this->dialog
                 );
 
             // wake
             case Context::SLEEPING:
+
+                return $this->redirectToSleeping($target);
+
+                isset($bridge) and $this->dialog->pushStack($bridge);
+
                 return new IRetain\IWake(
                     $this->cloner,
-                    $target,
+                    $targetCurrentUcl,
                     $this->dialog
                 );
 
@@ -138,9 +168,9 @@ class INavigator implements Navigator
             // restore
             case Context::DYING:
 
-                return new IRetain\IRestore(
+                return new IActivate\IRestore(
                     $this->cloner,
-                    $target,
+                    $target, // 直接是 target
                     $this->dialog
                 );
 
@@ -149,7 +179,7 @@ class INavigator implements Navigator
 
                 return new IActivate\IRedirect(
                     $this->cloner,
-                    $target,
+                    $target, // 直接是 target
                     $this->dialog
                 );
         }
@@ -261,7 +291,7 @@ class INavigator implements Navigator
         return $this->next(...$stageNames);
     }
 
-    public function clearPath(): Navigator
+    public function clearPath(): Redirect
     {
         $process = $this->getProcess();
         $ucl = $this->ucl;
@@ -275,8 +305,8 @@ class INavigator implements Navigator
 
 
     public function fulfill(
-        int $gcTurns = 0,
-        array $restoreStages = []
+        array $restoreStages = [],
+        int $gcTurns = 0
     ): Operator
     {
         $ucl = $target ?? $this->ucl;
@@ -384,7 +414,7 @@ class INavigator implements Navigator
 
     /*----- wait some -----*/
 
-    public function watch(Ucl $subject): Navigator
+    public function watch(Ucl $subject): Redirect
     {
         $watcher = $subject->toInstance($this->cloner);
         $process = $this->getProcess();
@@ -397,7 +427,7 @@ class INavigator implements Navigator
         return $this;
     }
 
-    public function sleep(Ucl $subject, array $wakeStages = []): Navigator
+    public function sleep(Ucl $subject, array $wakeStages = []): Redirect
     {
         $sleep = $subject->toInstance($this->cloner);
         $process = $this->getProcess();
@@ -409,7 +439,7 @@ class INavigator implements Navigator
         return $this;
     }
 
-    public function block(Ucl $subject, int $priority = null): Navigator
+    public function block(Ucl $subject, int $priority = null): Redirect
     {
         $block = $subject->toInstance($this->cloner);
         $process = $this->getProcess();

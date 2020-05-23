@@ -71,11 +71,11 @@ class UserInfoMem extends AMemoryContext
                                     ->send()
                                     ->notice("称呼请麻烦控制在10个字符之内");
 
-                                return $dialog->nav()->rewind();
+                                return $dialog->redirect()->rewind();
                             }
 
                             $this->name = $isAnyAnswer;
-                            return $dialog->nav()->next();
+                            return $dialog->redirect()->next();
                         })
                         ->end();
 

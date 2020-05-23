@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Callables;
 
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

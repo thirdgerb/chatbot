@@ -11,13 +11,13 @@
 
 namespace Commune\Ghost\Dialog\IRetain;
 
-use Commune\Ghost\Dialog\IRetain;
+use Commune\Ghost\Dialog\IResume;
 use Commune\Blueprint\Ghost\Dialog\Retain\Callback;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ICallback extends IRetain implements Callback
+class ICallback extends IResume implements Callback
 {
 
 }

@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Dialog;
 
 use Commune\Blueprint\Ghost\Dialog\Withdraw;
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\Traits\TFallbackFlow;
@@ -61,10 +61,20 @@ abstract class AbsWithdraw extends AbsDialog implements Withdraw
 
     protected function doWithdraw(Ucl $ucl) : ? Operator
     {
-        $intercept = new static($this->cloner, $ucl, $this);
-        return $intercept->ucl
-            ->findStageDef($this->cloner)
+        $intercept = new static($this->_cloner, $ucl, $this);
+        $next =  $intercept->ucl
+            ->findStageDef($this->_cloner)
             ->onWithdraw($intercept);
+
+        if (!isset($next) && $ucl->stageName !== '') {
+            $initStage = $ucl->goStage('');
+            $intercept = new static($this->_cloner, $initStage, $this);
+            return $initStage
+                ->findStageDef($this->_cloner)
+                ->onWithdraw($intercept);
+        }
+
+        return $next;
     }
 
     protected function pushDependingToCancel(

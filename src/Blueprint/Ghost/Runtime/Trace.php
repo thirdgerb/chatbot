@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Blueprint\Ghost\Runtime\Operator;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
