@@ -33,7 +33,8 @@ interface IntentMsg extends HostMsg
     const SYSTEM_COMMAND_MISS = 'intent.system.command.miss';
     const SYSTEM_COMMAND_DESC = 'intent.system.command.desc';
 
-    const SYSTEM_TASK_BUSY = 'intent.system.task.busy';
+    const SYSTEM_DIALOG_BUSY = 'intent.system.dialog.busy';
+    const SYSTEM_DIALOG_CONFUSE = 'intent.system.dialog.confuse';
 
     /*----- guest intents -----*/
 

@@ -36,17 +36,18 @@ interface Context extends
 
     /*----- status -----*/
 
-    const NONE      = 0;
+    // 上下文中新建的语境.
+    const CREATED   = 0;
+    const ALIVE     = 1 << 1;
+    const WAITING   = 1 << 10;
 
-    const WAITING   = 1;
-
-    const AWAIT     = 1 << 1 | self::WAITING;
-    const DEPENDING = 1 << 2 | self::WAITING;
-    const BLOCKING  = 1 << 3 | self::WAITING;
-    const CALLBACK  = 1 << 4 | self::WAITING;
-    const SLEEPING  = 1 << 5 | self::WAITING;
-    const YIELDING  = 1 << 6 | self::WAITING;
-    const DYING     = 1 << 7 | self::WAITING;
+    const AWAIT     = 1 << 11 | self::WAITING;
+    const DEPENDING = 1 << 12 | self::WAITING;
+    const BLOCKING  = 1 << 13 | self::WAITING;
+    const CALLBACK  = 1 << 14 | self::WAITING;
+    const SLEEPING  = 1 << 15 | self::WAITING;
+    const YIELDING  = 1 << 16 | self::WAITING;
+    const DYING     = 1 << 17 | self::WAITING;
 
     /*----- properties -----*/
 

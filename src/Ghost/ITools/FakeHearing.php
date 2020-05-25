@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\ITools;
+namespace Commune\Ghost\IOperate\Tool;
 
 use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Operate\Hearing;
+use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
-use Commune\Blueprint\Ghost\Operate\Redirect;
 use Commune\Support\SoundLike\SoundLikeInterface;
 
 
@@ -39,11 +39,6 @@ class FakeHearing implements Hearing
     }
 
 
-    public function nav(): Redirect
-    {
-        return $this->hearing->nav();
-    }
-
     public function todo(callable $caller): Hearing
     {
         return $this;
@@ -65,7 +60,7 @@ class FakeHearing implements Hearing
     }
 
 
-    public function end(): Dialog
+    public function end(): Operator
     {
         return $this->hearing->end();
     }
@@ -234,6 +229,21 @@ class FakeHearing implements Hearing
     }
 
     public function matchEntity(string $entityName): Matcher
+    {
+        return $this;
+    }
+
+    public function getDialog(): Dialog
+    {
+        return $this->hearing->getDialog();
+    }
+
+    public function matchStageOfIntent(string $intentName): Matcher
+    {
+        return $this;
+    }
+
+    public function matchStageInIntents(array $intents): Matcher
     {
         return $this;
     }

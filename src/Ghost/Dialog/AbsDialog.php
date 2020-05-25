@@ -11,377 +11,114 @@
 
 namespace Commune\Ghost\Dialog;
 
-use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Operate\Await;
-use Commune\Blueprint\Ghost\Memory\Recollection;
-use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Blueprint\Ghost\Tools;
-use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Runtime\Operators\AbsOperator;
-use Commune\Ghost\ITools;
-use Commune\Support\DI\Injectable;
-use Commune\Support\DI\TInjectable;
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
-use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
-use Commune\Support\Utils\TypeUtils;
-
+use Commune\Blueprint\Ghost\Operate;
+use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Ghost\IOperate\OExiting;
+use Commune\Ghost\IOperate\OFinale;
+use Commune\Ghost\IOperate\ORedirect;
+use Commune\Ghost\IOperate\OSuspend;
 
 /**
- * 抽象的 Dialog 实现.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read Cloner $cloner
- * @property-read Context $context
- * @property-read Ucl $ucl              当前 Dialog 的 Context 地址.
- * @property-read Dialog|null $prev     前一个 Dialog
  */
-abstract class AbsDialog extends AbsOperator implements
-    Dialog,
-    Injectable,
-    Tools\Caller,
-    Operator
+abstract class AbsDialog extends AbsBaseDialog
 {
-    use TInjectable;
-
-    /*------ params -------*/
-
-    /**
-     * @var Cloner
-     */
-    protected $_cloner;
-
-    /**
-     * @var Ucl
-     */
-    protected $_ucl;
-
-    /**
-     * @var AbsDialog|null
-     */
-    protected $_prev;
-
-
-    /*------ cached -------*/
-
-    /**
-     * @var Process|null
-     */
-    protected $process;
-
-    /**
-     * @var callable[]
-     */
-    protected $stack = [];
-
-    /**
-     * AbsBaseDialog constructor.
-     * @param Cloner $cloner
-     * @param Ucl $ucl
-     * @param AbsDialog|null $prev
-     */
-    public function __construct(Cloner $cloner, Ucl $ucl, AbsDialog $prev = null)
-    {
-        $this->_cloner = $cloner;
-        $this->_ucl = $ucl->toInstance($cloner);
-        $this->_prev = $prev;
-    }
-
-    /**
-     * 寻找到下一个 Intend 的对象.
-     * @return static
-     */
-    abstract protected function runTillNext() : Operator;
-
-    protected function runIntercept(): Operator
-    {
-        if ($this instanceof Dialog\Intend) {
-            $stageDef = $this->_ucl->findStageDef($this->_cloner);
-            return $stageDef->onIntend($this->prev, $this);
-        }
-
-        return null;
-    }
-
-    protected function toNext(): Operator
-    {
-        // 允许放弃当前节点的执行.
-        $next = $this->runIntercept();
-        if (isset($next)) {
-            return $next;
-        }
-
-        $this->runStack();
-
-        return $this->runTillNext();
-    }
-
-    /**
-     * @return Process
-     */
-    protected function getProcess() : Process
-    {
-        return $this->process
-            ?? $this->process = $this->_cloner->runtime->getCurrentProcess();
-    }
-
-    protected function setProcess(Process $process) : void
-    {
-        $this->process = $process;
-        $this->_cloner->runtime->setCurrentProcess($process);
-    }
-
-
-    /*-------- implements --------*/
-
-    public function send(): Tools\Deliver
-    {
-        return new ITools\IDeliver($this);
-    }
-
-    public function redirect(): Tools\Navigator
-    {
-        return new ITools\IRedirect($this);
-    }
 
     public function await(
-        array $allowContexts = [],
         array $stageRoutes = [],
+        array $contextRoutes = [],
         int $expire = null
-    ): Await
+    ): Operate\Await
     {
-        return $this->redirect()->await($allowContexts, $stageRoutes, $expire);
+        return new OFinale\OAwait(
+            $this,
+            $stageRoutes,
+            $contextRoutes,
+            $expire
+        );
+    }
+
+    public function dumb(): Operator
+    {
+        return new OFinale\ODumb($this);
+    }
+
+    public function next(string $ifNone = null): Operator
+    {
+        return new ORedirect\ONext($this, $ifNone);
+    }
+
+    public function rewind(bool $silent = false): Operator
+    {
+        return new OFinale\ORewind($this, $silent);
+    }
+
+    public function backStep(int $step = 1): Operator
+    {
+        return new OFinale\OBackStep($this, $step);
     }
 
 
-    public function hearing(): Tools\Receive
+    public function goStage(string $stageName, string ...$stageNames): Operator
     {
-        return new ITools\IHearing($this);
+        array_unshift($stageNames, $stageName);
+        return new ORedirect\OGoStage($this, $stageNames);
     }
 
-    /*-------- history --------*/
-
-    protected function depth(): int
+    public function reactivate(): Operator
     {
-        $current = $this;
-        $depth = 1;
-
-        while(isset($current)) {
-            $current = $current->prev;
-            $depth++;
-        }
-
-        return $depth;
+        return new ORedirect\OReactivate($this);
     }
 
-
-    /*-------- caller --------*/
-
-    public function caller(): Tools\Caller
+    public function redirectTo(Ucl $ucl): Operator
     {
-        return $this;
+        return new ORedirect\ORedirectTo($this, $ucl);
     }
 
-    public function call($caller, array $parameters = [])
+    public function reset(Ucl $root = null): Operator
     {
-        if (
-            is_string($caller)
-            && class_exists($caller)
-            && method_exists($caller, '__invoke')
-        ) {
-            $caller = [$caller, '__invoke'];
-        }
-
-        $parameters = $this->getContextualInjections($parameters);
-
-        try {
-            return $this->_cloner->container->call($caller, $parameters);
-        } catch (\Exception $e) {
-            throw new BrokenRequestException('', $e);
-        }
+        return new ORedirect\OReset($this, $root);
     }
 
-    public function predict(callable $caller): bool
+    public function dependOn(Ucl $dependUcl, string $fieldName = null): Operator
     {
-        $result = $this->call($caller);
-        if (!is_bool($result)) {
-            throw new InvalidArgumentException('caller is not predict which return with bool');
-        }
-
-        return $result;
+        return new OSuspend\ODependOn($this, $dependUcl, $fieldName);
     }
 
-    public function operate(callable $caller): ? Operator
+    public function blockTo(Ucl $target, int $priority = null): Operator
     {
-        $result = $this->call($caller);
-        if (is_null($result) || $result instanceof Operator) {
-            return $result;
-        }
-
-        throw new InvalidArgumentException('caller should return operator or null, ' . TypeUtils::getType($result) . ' given');
+        return new OSuspend\OBlockTo($this, $target, $priority);
     }
 
-    protected function getContextualInjections(array $parameters) : array
+    public function sleepTo(Ucl $target, array $wakenStages = []): Operator
     {
-        $injections = [
-            'context' => $this->context,
-            'prev' => $this->_prev,
-            'dialog' => $this,
-        ];
-
-        $injections = $parameters + $injections;
-
-        foreach ($injections as $key => $value) {
-
-            $parameters[$key] = $value;
-
-            if (!$value instanceof Injectable) {
-                continue;
-            }
-
-            foreach ($value->getInterfaces() as $interface) {
-                $parameters[$interface] = $value;
-            }
-        }
-
-        return $parameters;
+        return new OSuspend\OSleepTo($this, $target, $wakenStages);
     }
 
 
-    /*-------- operator --------*/
-
-    public function dumpStack() : array
+    public function fulfill(
+        array $restoreStage = [],
+        int $gcTurns = 0
+    ): Operator
     {
-        $stack = $this->stack;
-        $this->stack = [];
-        return $stack;
+        return new OExiting\OFulfill($this);
     }
 
-    public function pushStack(callable $caller) : void
+    public function confuse(bool $silent = false): Operator
     {
-        $this->stack[] = $caller;
-    }
-
-    protected function runStack() : void
-    {
-        $prev = $this->_prev;
-
-        $stack = $this->dumpStack();
-        if (isset($prev)) {
-            $stack = array_merge($prev->dumpStack(), $stack);
-        }
-
-        while($caller = array_shift($stack)) {
-            $caller($this);
-        }
-    }
-
-    public function getOperatorDesc(): string
-    {
-        $name = static::class;
-        $ucl = $this->_ucl->toEncodedStr();
-        return "$name : $ucl";
-    }
-
-    /*-------- status --------*/
-
-    public function isEvent(string $statusType): bool
-    {
-        return is_a($this, $statusType, TRUE);
+        return new OExiting\OConfuse($this, $silent);
     }
 
 
-    public function recall(string $name): Recollection
+    public function cancel(): Operator
     {
-        return $this
-            ->cloner
-            ->mind
-            ->memoryReg()
-            ->getDef($name)
-            ->recall($this->_cloner);
+        return new OExiting\OCancel($this);
     }
 
-    protected function runAwait(bool $silent = false ) : void
+    public function quit(): Operator
     {
-        $process = $this->getProcess();
-        $waiter = $process->waiter;
-
-        if (!isset($waiter) || $silent) {
-            return;
-        }
-
-        // 如果是 waiter, 重新输出 question
-        $question = $waiter->question;
-        $input = $this->_cloner->input;
-        if (isset($question)) {
-            $this->_cloner->output($input->output($question));
-        }
-
-        // 尝试同步状态变更.
-        $contextMsg = $this->_cloner->runtime->toContextMsg();
-        if (isset($contextMsg)) {
-            $this->_cloner->output($input->output($contextMsg));
-        }
+        return new OExiting\OQuit($this);
     }
-
-
-    /*-------- getter --------*/
-
-    public function __isset($name)
-    {
-        if ($name === 'prev') {
-            return isset($this->_prev);
-        }
-
-        return in_array($name, ['cloner', 'ucl', 'context', 'depth']);
-    }
-
-    public function __get($name)
-    {
-        switch ($name) {
-            case 'depth' :
-                return $this->depth();
-            case 'cloner' :
-                return $this->_cloner;
-            case 'ucl' :
-                return $this->_ucl;
-            case 'prev' :
-                return $this->_prev;
-            case 'context' :
-                return $this->_ucl->findContext($this->_cloner);
-            default:
-                return null;
-        }
-
-    }
-
-    public function __destruct()
-    {
-        $prev = $this->_prev;
-        unset($this->_prev);
-
-        if ($prev instanceof self) {
-            $prev->__destruct();
-        }
-
-        $this->_cloner = null;
-        $this->_ucl = null;
-        $this->process = null;
-        $this->stack = [];
-    }
-
-    public function getInterfaces(): array
-    {
-        return static::getInterfacesOf(Dialog::class, false);
-    }
-
-    public function __invoke(): Dialog
-    {
-        return $this;
-    }
-
 
 }

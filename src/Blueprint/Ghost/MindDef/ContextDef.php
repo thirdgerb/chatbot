@@ -21,6 +21,7 @@ use Commune\Blueprint\Ghost\Ucl;
  */
 interface ContextDef extends Def
 {
+    const START_STAGE_NAME = '';
 
     /*------- definition -------*/
 

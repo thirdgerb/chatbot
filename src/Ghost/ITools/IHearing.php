@@ -12,14 +12,18 @@
 namespace Commune\Ghost\ITools;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Operate\Hearing;
-use Commune\Blueprint\Ghost\Operate\Redirect;
+use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Tools\Hearing;
+use Commune\Ghost\IOperate\Tool\FakeHearing;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class IHearing extends IMatcher implements Hearing
 {
+    /**
+     * @var Dialog
+     */
     protected $dialog;
 
     /**
@@ -57,11 +61,6 @@ class IHearing extends IMatcher implements Hearing
     {
         return $this->faker
             ?? $this->faker = new FakeHearing($this);
-    }
-
-    public function nav(): Redirect
-    {
-        return $this->dialog->redirect();
     }
 
     public function todo(callable $caller): Hearing
@@ -125,7 +124,7 @@ class IHearing extends IMatcher implements Hearing
     }
 
 
-    public function end(): Dialog
+    public function end() : Operator
     {
         foreach ($this->fallback as $fallback) {
             if (isset($this->nextDialog)) {
@@ -140,8 +139,14 @@ class IHearing extends IMatcher implements Hearing
             }
         }
 
-        return $this->nextDialog ?? $this->dialog->redirect()->confuse();
+        return $this->nextDialog ?? $this->dialog->confuse();
     }
+
+    public function getDialog(): Dialog
+    {
+        return $this->dialog;
+    }
+
 
     public function __destruct()
     {

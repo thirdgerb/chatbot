@@ -14,11 +14,9 @@ namespace Commune\Blueprint\Ghost\MindDef;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Receive;
 use Commune\Blueprint\Ghost\Dialog\Resume;
-use Commune\Blueprint\Ghost\Dialog\Withdraw\Cancel;
-use Commune\Blueprint\Ghost\Dialog\Withdraw\Quit;
+use Commune\Blueprint\Ghost\Dialog\Exiting;
 use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Blueprint\Ghost\Dialog\Intend;
 
 
 /**
@@ -35,7 +33,7 @@ interface StageDef extends Def
      * Stage 在 Context 内部的唯一ID
      * @return string
      */
-    public function getStageName() : string;
+    public function getStageShortName() : string;
 
     /**
      * 所属 Context 的名称.
@@ -61,47 +59,43 @@ interface StageDef extends Def
     /*------- intend to stage -------*/
 
     /**
-     * 当前 Stage 因为意图而被触发时.
-     *
-     * @param Dialog $prev
-     * @param Intend $current
-     * @return Operator|null
-     */
-    public function onIntend(Dialog $prev, Intend $current) : ? Operator;
-
-    /**
      * 激活当前的 Stage.
      *
      * @param Activate $dialog
-     * @return Operator
+     * @return Operator|null
      */
     public function onActivate(Activate $dialog) : Operator;
 
     /**
      * 接受到用户消息时.
+     *
      * @param Receive $dialog
      * @return Operator
      */
     public function onReceive(Receive $dialog) : Operator;
 
     /**
-     * 当前 stage 恢复时
+     * 当前 Stage 因为意图而被触发时.
+     *
+     * @param Dialog $prev
+     * @param Dialog $current
+     * @return Operator|null
+     */
+    public function onRedirect(Dialog $prev, Dialog $current) : ? Operator;
+
+    /**
+     * 当前 stage 恢复时.
      * @param Resume $dialog
      * @return Operator|null
      */
-    public function onResume(Resume $dialog) : Operator;
+    public function onResume(Resume $dialog) : ? Operator;
 
     /**
-     * @param Cancel $dialog
+     * 当 stage 依赖的语境退出时.
+     * @param Exiting $dialog
      * @return Operator|null
      */
-    public function onCancel(Cancel $dialog) : ? Operator;
-
-    /**
-     * @param Quit $quit
-     * @return Operator|null
-     */
-    public function onQuit(Quit $quit) : ? Operator;
+    public function onExit(Exiting $dialog) : ? Operator;
 
 
 }

@@ -12,12 +12,11 @@
 namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
 use Commune\Blueprint\Ghost\Dialog\Activate;
-use Commune\Blueprint\Ghost\Dialog\Intend;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Reset extends Activate, Intend
+interface Reset extends Activate
 {
 
 }

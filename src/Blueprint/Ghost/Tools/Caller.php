@@ -36,7 +36,7 @@ interface Caller
      * @param callable $caller
      * @return Dialog|null
      */
-    public function operate(callable $caller) : ? Operator;
+    public function action(callable $caller) : ? Operator;
 
 
 }

@@ -393,7 +393,7 @@ class IProcessBak2 implements Process, HasIdGenerator
         $this->_dependingMap = null;
     }
 
-    public function dumpDepending(string $dependedContextId): array
+    public function getDepending(string $dependedContextId): array
     {
         $ids = $this->getDependingOn($dependedContextId);
         foreach ($ids as $id) {

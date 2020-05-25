@@ -18,52 +18,6 @@ use Commune\Protocals\HostMsg\Convo\VerbalMsg;
  */
 interface Await extends Finale
 {
-    /*------ 链式操作 ------*/
-
-    public function listen(
-        array $stageRoutes = [],
-        array $contextRoutes = []
-    ) : Await;
-
-    /**
-     * 设定当前会话多久之后过期.
-     *
-     * @param int $expire
-     * @return Await
-     */
-    public function expire(int $expire) : Await;
-
-
-    /*------ 消极等待 ------*/
-
-    /**
-     * 重置到上一轮的对话.
-     * 可以发出消息, 或者不发出.
-     *
-     * @param bool $silent
-     * @return Operator
-     */
-    public function rewind(bool $silent = false) : Operator;
-
-    /**
-     * 什么也没听见, 当本轮对话没有发生.
-     * @return Operator
-     */
-    public function dumb() : Operator;
-
-    /**
-     * 主动强调无法理解当前对话.
-     * 不会继续尝试 Wake 其它对话.
-     * @return Operator
-     */
-    public function confuse() : Operator;
-
-    /**
-     * 退回到若干步之前.
-     * @param int $step
-     * @return Operator
-     */
-    public function backStep(int $step = 1) : Operator;
 
     /*-------- question ---------*/
 

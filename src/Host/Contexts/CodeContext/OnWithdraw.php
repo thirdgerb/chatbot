@@ -12,7 +12,7 @@
 namespace Commune\Host\Contexts\CodeContext;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Withdraw;
+use Commune\Blueprint\Ghost\Dialog\Exiting;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -20,6 +20,6 @@ use Commune\Blueprint\Ghost\Dialog\Withdraw;
 interface OnWithdraw
 {
 
-    public function __withdraw(Withdraw $dialog) : ? Dialog;
+    public function __withdraw(Exiting $dialog) : ? Dialog;
 
 }

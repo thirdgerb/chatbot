@@ -11,19 +11,19 @@
 
 namespace Commune\Ghost\Dialog;
 
+use Commune\Blueprint\Ghost\Ucl;
+use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate;
-use Commune\Blueprint\Ghost\Operate\Operator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class IActivate extends AbsDialog implements Activate
 {
-    protected function runTillNext() : Operator
-    {
-        $this->getProcess()->unsetWaiting($this->_ucl);
 
-        $stageDef = $this->_ucl->findStageDef($this->_cloner);
-        return $stageDef->onActivate($this);
+    public function __construct(Dialog $prev, Ucl $ucl)
+    {
+        parent::__construct($prev->cloner, $ucl, $prev);
     }
+
 }

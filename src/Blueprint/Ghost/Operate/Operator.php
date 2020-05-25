@@ -11,6 +11,8 @@
 
 namespace Commune\Blueprint\Ghost\Operate;
 
+use Commune\Blueprint\Ghost\Dialog;
+
 /**
  * 多轮对话逻辑算子, 链式调用.
  *
@@ -18,7 +20,6 @@ namespace Commune\Blueprint\Ghost\Operate;
  */
 interface Operator
 {
-
     /**
      * Dialog 逻辑运行一帧.
      * @return Operator
@@ -26,26 +27,9 @@ interface Operator
     public function tick() : Operator;
 
     /**
-     * @return bool
+     * @return Dialog
      */
-    public function isTicking() : bool;
-
-    /**
-     * @return bool
-     */
-    public function isTicked() : bool;
-
-
-    /**
-     * 结束 operator, 不允许继续运行.
-     */
-    public function ticked() : void;
-
-    /**
-     * @return string
-     */
-    public function getOperatorDesc() : string;
-
+    public function getDialog() : Dialog;
 
     /**
      * 可以作为 callable 对象传给 dialog::caller

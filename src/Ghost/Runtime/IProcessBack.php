@@ -293,7 +293,7 @@ class IProcessBack implements Process, HasIdGenerator
         $this->_depending[$ucl] = $dependedContextId;
     }
 
-    public function dumpDepending(string $dependedContextId): array
+    public function getDepending(string $dependedContextId): array
     {
         $depending = array_reverse($this->_depending);
         return $depending[$dependedContextId] ?? [];

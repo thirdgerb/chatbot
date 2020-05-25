@@ -48,17 +48,17 @@ class Ucl implements UclInterface
     /**
      * @var string
      */
-    protected $contextName;
+    protected $_contextName;
 
     /**
      * @var string
      */
-    protected $stageName;
+    protected $_stageName;
 
     /**
      * @var string[]
      */
-    protected $query;
+    protected $_query;
 
     /**
      * @var bool
@@ -115,10 +115,10 @@ class Ucl implements UclInterface
     )
     {
         // 允许使用类名作为 contextName
-        $this->contextName = $contextName;
-        // 真正的 contextName 和 stageName 必须全小写, 用 . 分割.
-        $this->stageName = $stageName;
-        $this->query = $query;
+        $this->_contextName = $contextName;
+        // 真正的 contextName 和 stageName 必须全小写.
+        $this->_stageName = $stageName;
+        $this->_query = $query;
     }
 
     public static function make(
@@ -145,8 +145,8 @@ class Ucl implements UclInterface
     {
         return $this->contextId
             ?? $this->contextId == sha1(json_encode([
-                'contextName' => $this->contextName,
-                'query' => $this->query,
+                'contextName' => $this->_contextName,
+                'query' => $this->_query,
             ]));
     }
 
@@ -154,7 +154,7 @@ class Ucl implements UclInterface
 
     public function atSameContext(Ucl $ucl) : bool
     {
-        return $this->contextName === $ucl->contextName;
+        return $this->_contextName === $ucl->contextName;
     }
 
     /**
@@ -171,7 +171,7 @@ class Ucl implements UclInterface
     {
         $decoded = Ucl::decodeUclStr($ucl);
         return $this->getContextId() === $decoded->getContextId()
-            && $this->stageName === $decoded->stageName;
+            && $this->_stageName === $decoded->stageName;
     }
 
     public function isInstanced(): bool
@@ -188,24 +188,27 @@ class Ucl implements UclInterface
 
     public function isValidPattern() : bool
     {
-        return ContextUtils::isValidContextName($this->contextName)
-            && ContextUtils::isValidStageName($this->stageName)
-            && is_array($this->query);
+        return ContextUtils::isValidContextName($this->_contextName)
+            && ContextUtils::isValidStageName($this->_stageName)
+            && is_array($this->_query);
     }
 
 
     /*------- redirect -------*/
 
-    public function goStage(string $stageName) : Ucl
+    public function goStage(string $stageName = ContextDef::START_STAGE_NAME) : Ucl
     {
         if (!ContextUtils::isValidStageName($stageName)) {
             throw new InvalidArgumentException("invalid stage pattern of $stageName");
         }
 
-        $ucl = new self($this->contextName, $stageName, $this->query);
-        if ($this->instanced) {
-            $ucl->instanced = true;
-        }
+        /**
+         * @var Ucl $ucl
+         */
+        $ucl = new static($this->_contextName, $stageName, $this->_query);
+        $ucl->contextDef = $this->contextDef;
+        $ucl->contextId = $this->contextId;
+
         return $ucl;
     }
 
@@ -216,7 +219,7 @@ class Ucl implements UclInterface
             throw new InvalidArgumentException("invalid stage fullname pattern of $intentName");
         }
 
-        $stageName = str_replace($this->contextName, '', $intentName);
+        $stageName = str_replace($this->_contextName, '', $intentName);
         $stageName = trim($stageName, Context::NAMESPACE_SEPARATOR);
         return $this->goStage($stageName);
     }
@@ -274,9 +277,9 @@ class Ucl implements UclInterface
 
         return $this->encoded
             ?? $this->encoded = self::encodeUcl(
-                $this->contextName,
-                $this->stageName,
-                $this->query
+                $this->_contextName,
+                $this->_stageName,
+                $this->_query
             );
     }
 
@@ -315,9 +318,9 @@ class Ucl implements UclInterface
 
     public function getStageFullname(string $stage = null) : string
     {
-        $stage = $stage ?? $this->stageName;
+        $stage = $stage ?? $this->_stageName;
         return StringUtils::gluePrefixAndName(
-            $this->contextName,
+            $this->_contextName,
             $stage,
             Context::CONTEXT_STAGE_SEPARATOR
         );
@@ -341,10 +344,10 @@ class Ucl implements UclInterface
         $contextDef = $this->findContextDef($cloner);
 
         $params = $contextDef->getQueryParams();
-        $values = $params->parseValues($this->query);
+        $values = $params->parseValues($this->_query);
         $values = array_map(function($value) {
             if (is_null($value)) {
-                throw new InvalidQueryException($this->contextName);
+                throw new InvalidQueryException($this->_contextName);
             }
             return $value;
         }, $values);
@@ -354,7 +357,7 @@ class Ucl implements UclInterface
 
         $query = $values + $map;
 
-        $instance = new static($this->contextName, $this->stageName, $query);
+        $instance = new static($this->_contextName, $this->_stageName, $query);
         $instance->instanced = true;
 
         return $instance;
@@ -411,7 +414,7 @@ class Ucl implements UclInterface
             ?? $this->contextDef = $cloner
                 ->mind
                 ->contextReg()
-                ->getDef($this->contextName);
+                ->getDef($this->_contextName);
     }
 
     public function findContext(Cloner $cloner): Context
@@ -449,10 +452,10 @@ class Ucl implements UclInterface
     public function toArray(): array
     {
         return [
-            'contextName' => $this->contextName,
+            'contextName' => $this->_contextName,
             'contextId' => $this->getContextId(),
-            'stageName' => $this->stageName,
-            'query' => $this->query
+            'stageName' => $this->_stageName,
+            'query' => $this->_query
         ];
     }
 
@@ -466,7 +469,10 @@ class Ucl implements UclInterface
 
     public function __get($name)
     {
-        return $this->{$name};
+        $name = "_$name";
+        return property_exists($this, $name)
+            ? $this->{$name}
+            : null;
     }
 
     public function __toString() : string
@@ -477,9 +483,9 @@ class Ucl implements UclInterface
     public function __sleep()
     {
         return [
-            'contextName',
-            'stageName',
-            'query',
+            '_contextName',
+            '_stageName',
+            '_query',
             'instanced',
         ];
     }

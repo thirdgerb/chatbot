@@ -11,6 +11,8 @@
 
 namespace Commune\Blueprint\Ghost\Cloner;
 
+use Commune\Blueprint\Ghost\Ucl;
+
 
 /**
  * 当前请求的场景信息.
@@ -18,7 +20,7 @@ namespace Commune\Blueprint\Ghost\Cloner;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $sceneId
- * @property-read string $contextName
+ * @property-read Ucl $root
  * @property-read array $env
  */
 interface ClonerScene

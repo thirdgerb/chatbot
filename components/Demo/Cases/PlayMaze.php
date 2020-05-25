@@ -13,7 +13,7 @@ namespace Commune\Components\Demo\Cases;
 
 use Commune\Blueprint\Ghost\Context\ParamBuilder;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Withdraw;
+use Commune\Blueprint\Ghost\Dialog\Exiting;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\Operate\Hearing;
 use Commune\Components\Demo\Cases\Maze\Logic\Manager;
@@ -136,7 +136,7 @@ class PlayMaze extends ACodeContext implements
     }
 
 
-    public function __withdraw(Withdraw $dialog): ? Dialog
+    public function __withdraw(Exiting $dialog): ? Dialog
     {
         if ($dialog->isEvent(Dialog::CANCEL)) {
             $dialog->send()->info($this->cancelMessage);

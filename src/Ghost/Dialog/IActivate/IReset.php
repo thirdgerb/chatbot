@@ -11,24 +11,13 @@
 
 namespace Commune\Ghost\Dialog\IActivate;
 
-use Commune\Ghost\Dialog\AbsDialog;
-use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Ghost\Dialog\IActivate;
 use Commune\Blueprint\Ghost\Dialog\Activate\Reset;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IReset extends AbsDialog implements Reset
+class IReset extends IActivate implements Reset
 {
-
-    protected function runTillNext() : Operator
-    {
-        $process = $this->getProcess();
-        // 重置对话状态
-        $process->flushWaiting();
-
-        $stageDef = $this->ucl->findStageDef($this->cloner);
-        return $stageDef->onActivate($this);
-    }
 
 }

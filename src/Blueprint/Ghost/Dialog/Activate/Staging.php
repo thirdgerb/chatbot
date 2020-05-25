@@ -12,11 +12,10 @@
 namespace Commune\Blueprint\Ghost\Dialog\Activate;
 
 use Commune\Blueprint\Ghost\Dialog\Activate;
-use Commune\Blueprint\Ghost\Dialog\Intend;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Staging extends Activate, Intend
+interface Staging extends Activate
 {
 }

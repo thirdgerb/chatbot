@@ -12,7 +12,7 @@
 namespace Commune\Components\Demo\Contexts;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Dialog\Withdraw;
+use Commune\Blueprint\Ghost\Dialog\Exiting;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\Operate\Hearing;
 use Commune\Components\Demo\Recall\Sandbox;
@@ -43,7 +43,7 @@ class FeatureTest extends ACodeContext implements
             ->then();
     }
 
-    public function __withdraw(Withdraw $dialog): ? Dialog
+    public function __withdraw(Exiting $dialog): ? Dialog
     {
         if ($dialog->isEvent(Dialog::CANCEL)) {
             $dialog->send()->info('cancel from '. __METHOD__);

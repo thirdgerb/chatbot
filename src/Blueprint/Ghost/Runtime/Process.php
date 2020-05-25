@@ -30,31 +30,39 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @property-read array[] $sleeping
  * @property-read array[] $dying
+ * @property-read string[] $depending
+ * @property-read string[] $callbacks
  */
 interface Process extends ArrayAndJsonAble
 {
 
     public function nextSnapshot(string $id, int $maxBacktrace) : Process;
 
+    public function getTask(Ucl $ucl) : Task;
+
+    public function activate(Ucl $ucl) : void;
+
     /*-------- context ---------*/
-
-    public function isContextStatus(string $contextId, int $status) : bool;
-
-    public function getContextStatus(string $contextId) : int;
+//
+//    public function isContextStatus(string $contextId, int $status) : bool;
+//
+//    public function getContextStatus(string $contextId) : int;
+//
 
     public function getContextUcl(string $contextId) : ? Ucl;
 
     /*-------- status ---------*/
-
-    /**
-     * Process 本身是新创建的.
-     * @return bool
-     */
+//
+//    /**
+//     * Process 本身是新创建的.
+//     * @return bool
+//     */
     public function isFresh() : bool;
-
-    /*-------- await ---------*/
-
-    public function buildRoutes() : RoutesMap;
+//
+//    /*-------- await ---------*/
+//
+//    public function buildRoutes() : RoutesMap;
+//
 
     public function await(
         Ucl $ucl,
@@ -62,6 +70,11 @@ interface Process extends ArrayAndJsonAble
         array $stageRoutes,
         array $contextRoutes
     ) : void;
+
+    /**
+     * @return Ucl|null
+     */
+    public function getAwait() : ? Ucl;
 
 
     /**
@@ -74,25 +87,14 @@ interface Process extends ArrayAndJsonAble
      */
     public function getAwaitContexts() : array;
 
-    /*-------- ucl ---------*/
+    /*-------- root ---------*/
 
     public function getRoot() : Ucl;
-
-    /*-------- wait ---------*/
-
-    public function getAwaiting() : ? Ucl;
-
-    /*-------- watch ---------*/
-
-    public function addWatcher(Ucl $watcher) : void;
-
-    public function popWatcher() : ? Ucl;
-
-    /**
-     * @return \Generator|Ucl[]
-     */
-    public function eachWatchers() : \Generator;
-
+//
+//    /*-------- wait ---------*/
+//
+//    public function getAwaiting() : ? Ucl;
+//
     /*-------- block ---------*/
 
     public function addBlocking(Ucl $ucl, int $priority) : void;
@@ -109,28 +111,27 @@ interface Process extends ArrayAndJsonAble
 
     public function eachSleeping() : \Generator;
 
-    /*-------- yield ---------*/
-
-    public function addYielding(Ucl $ucl, string $id) : void;
-
-    public function eachYielding() : \Generator;
-
-    /*-------- dying ---------*/
-
-    public function addDying(Ucl $ucl, int $turns, array $restoreStages);
-
+//    /*-------- yield ---------*/
+//
+//    public function addYielding(Ucl $ucl, string $id) : void;
+//
+//    public function eachYielding() : \Generator;
+//
+//    /*-------- dying ---------*/
+//
+    public function addDying(Ucl $ucl, int $turns = 0, array $restoreStages = []);
 
     /*-------- depending ---------*/
 
-    public function getDependedBy(string $contextId) : ? Ucl;
+    public function getDepended(string $contextId) : ? Ucl;
 
     public function addDepending(Ucl $ucl, string $dependedDependedContextId) : void;
 
     /**
      * @param string $dependedContextId
-     * @return array
+     * @return Ucl[]
      */
-    public function dumpDepending(string $dependedContextId) : array;
+    public function getDepending(string $dependedContextId) : array;
 
     /*-------- callback ---------*/
 
@@ -140,39 +141,10 @@ interface Process extends ArrayAndJsonAble
 
     public function eachCallbacks() : \Generator;
 
-    /*-------- canceling ---------*/
-
-    /**
-     * @param Ucl[] $canceling
-     */
-    public function addCanceling(array $canceling) : void;
-
-    /**
-     * @return Ucl
-     */
-    public function popCanceling() : ? Ucl;
-
-    /**
-     * @return Ucl[]
-     */
-    public function dumpCanceling() : array;
-
 
     /*-------- waiting ---------*/
 
-    public function unsetWaiting(Ucl $ucl) : void;
-
-    public function flushWaiting();
-
-    /*-------- path ---------*/
-
-    public function resetPath(Ucl $ucl, array $path) : void;
-
-    public function insertPath(string $contextId, string ...$path) : void;
-
-    public function shiftPath(string $contextId) : ? string;
-
-    public function pathExists(string $contextId) : bool;
+    public function flushWaiting() : void;
 
     /*-------- backStep ---------*/
 
