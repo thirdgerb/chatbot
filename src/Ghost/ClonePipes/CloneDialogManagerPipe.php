@@ -11,12 +11,13 @@
 
 namespace Commune\Ghost\ClonePipes;
 
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\Dialog\IStartProcess;
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
+use Commune\Blueprint\Ghost\Operate\Finale;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Blueprint\Exceptions\HostRuntimeException;
 use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
+use Commune\Ghost\IOperate\OStart;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -25,24 +26,24 @@ class CloneDialogManagerPipe extends AClonePipe
 {
     protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
-        $nextDialog = $dialog ?? new IStartProcess($this->cloner);
+        $next = new OStart($this->cloner);
 
         try {
 
             $tracer = $this->cloner->runtime->trace;
 
-            while(isset($nextDialog)) {
+            while (isset($next)) {
 
-//                $tracer->record($nextDialog);
-//
-//                dd(123);
-//                $nextDialog = $nextDialog->tick();
-//
-//                if ($next instanceof Dialog\Finale) {
-//                    $next->tick();
-//                    break;
-//                }
+                $tracer->record($next);
+
+                $next = $next->tick();
+
+                if ($next instanceof Finale) {
+                    $next->tick();
+                    break;
+                }
             }
+
             return $request->success($this->cloner);
 
         } catch (HostRuntimeException $e) {
@@ -50,7 +51,7 @@ class CloneDialogManagerPipe extends AClonePipe
 
         } catch (\Throwable $e) {
             $this->cloner->logger->error($e);
-            throw new BrokenRequestException('', $e);
+            throw new BrokenRequestException($e->getMessage(), $e);
         }
     }
 

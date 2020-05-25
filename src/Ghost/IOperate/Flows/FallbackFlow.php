@@ -22,7 +22,6 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 class FallbackFlow extends AbsOperator
 {
 
-
     protected function toNext(): Operator
     {
         $process = $this->dialog->process;

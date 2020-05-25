@@ -55,6 +55,6 @@ class SessionFailInt extends IIntentMsg
 
     public function getText(): string
     {
-        return $this->errmsg;
+        return $this->intentName;
     }
 }
