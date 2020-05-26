@@ -48,7 +48,7 @@ class ORedirectTo extends AbsRedirect
         }
 
         $task = $this->dialog->process->getTask($target);
-        $status = $task->getStatus();
+        $status = $task->status;
 
         switch ($status) {
 

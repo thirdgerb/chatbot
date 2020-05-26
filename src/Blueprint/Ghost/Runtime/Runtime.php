@@ -13,6 +13,7 @@ namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Memory\Memory;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 
 /**
@@ -40,11 +41,11 @@ interface Runtime
     public function setCurrentProcess(Process $process) : void;
 
     /**
-     * 使用 ContextName 生成一个新的 Process
-     * @param string $contextUcl
+     * 生成一个新的 Process
+     * @param Ucl $root
      * @return Process
      */
-    public function createProcess(string $contextUcl) : Process;
+    public function createProcess(Ucl $root) : Process;
 
 
     /*------ context -------*/

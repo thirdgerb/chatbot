@@ -44,9 +44,12 @@ class OQuit extends AbsExiting
     {
         $task = $process->getTask($canceling);
 
-        $watch = $task->watchQuit();
-        if (isset($watch)) {
-            return $this->dialog->redirectTo($watch);
+        $quit = $task->watchQuit();
+        if (
+            isset($quit)
+            && $quit->stageName !== $canceling->stageName
+        ) {
+            return $this->dialog->redirectTo($quit);
         }
 
         return null;

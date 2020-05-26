@@ -11,7 +11,6 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\HostMsg\Convo\QuestionMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
@@ -27,9 +26,4 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  */
 interface Waiter extends ArrayAndJsonAble
 {
-    /**
-     * @return Ucl[]
-     */
-    public function getContextRoutes() : array;
-
 }

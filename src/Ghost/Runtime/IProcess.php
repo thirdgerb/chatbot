@@ -11,7 +11,9 @@
 
 namespace Commune\Ghost\Runtime;
 
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Runtime\Process;
+use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Runtime\Waiter;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\HostMsg\Convo\QuestionMsg;
@@ -23,9 +25,6 @@ use Commune\Support\Uuid\IdGeneratorHelper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read string $belongsTo             进程所属的 Session
- * @property-read string $id                    进程的唯一 ID.
  *
  */
 class IProcess implements Process, HasIdGenerator
@@ -43,6 +42,11 @@ class IProcess implements Process, HasIdGenerator
     protected $_belongsTo;
 
     /**
+     * @var ITask[]
+     */
+    protected $_tasks = [];
+
+    /**
      * @var string
      */
     protected $_root;
@@ -53,15 +57,9 @@ class IProcess implements Process, HasIdGenerator
     protected $_backtrace = [];
 
     /**
-     * @var null|Waiter
+     * @var Waiter|null
      */
     protected $_waiter;
-
-    /**
-     * @var array[]
-     * [ string $ucl, int $status, string[] $paths ]
-     */
-    protected $_contexts = [];
 
     /*----- waiting -----*/
 
@@ -93,11 +91,6 @@ class IProcess implements Process, HasIdGenerator
     /**
      * @var array[]
      */
-    protected $_watching = [];
-
-    /**
-     * @var array[]
-     */
     protected $_dying = [];
 
     /*----- cached -----*/
@@ -108,10 +101,9 @@ class IProcess implements Process, HasIdGenerator
     protected $_prev;
 
     /**
-     * @var string[]
+     * @var Ucl[]
      */
-    protected $_canceling;
-
+    protected $_decoded = [];
 
     /*----- config -----*/
 
@@ -164,14 +156,16 @@ class IProcess implements Process, HasIdGenerator
         array $contextRoutes
     ): void
     {
+        $this->setWaiting($ucl, Context::AWAIT);
+
         $waiter = new IWaiter(
-            $ucl,
+            $ucl->toEncodedStr(),
+            $question,
             $stageRoutes,
-            $contextRoutes,
-            $question
+            $contextRoutes
         );
 
-        if (!isset($this->_waiter)) {
+        if (empty($this->_waiter)) {
             $this->_waiter = $waiter;
             return;
         }
@@ -184,40 +178,378 @@ class IProcess implements Process, HasIdGenerator
         ArrayUtils::slice($this->_backtrace, self::$maxBacktrace);
     }
 
-    /*-------- wait --------*/
+    public function isFresh(): bool
+    {
+        return !isset($this->_waiter);
+    }
+
+    public function getContextUcl(string $contextId): ? Ucl
+    {
+        $task = $this->getTaskById($contextId);
+        return isset($task)
+            ? $task->getUcl()
+            : null;
+    }
+
+    public function getRoot(): Ucl
+    {
+        return $this->decoded($this->_root);
+    }
 
 
+    /*-------- await --------*/
+
+
+    public function getAwait(): ? Ucl
+    {
+        if (isset($this->_waiter)) {
+            $await = $this->_waiter->await;
+            return $this->decoded($await);
+        }
+
+        return null;
+    }
+
+    public function getAwaitStageNames(): array
+    {
+        return isset($this->_waiter)
+            ? $this->_waiter->stageRoutes
+            : [];
+    }
+
+    public function getAwaitContexts(): array
+    {
+        $contexts = isset($this->_waiter)
+            ? $this->_waiter->contextRoutes
+            : [];
+
+        return array_map(function(string $contextName) {
+            return $this->decoded($contextName);
+        }, $contexts);
+    }
+
+    public function getWaiter(): ? Waiter
+    {
+        return $this->_waiter;
+    }
+
+    /*-------- activate --------*/
+
+    public function activate(Ucl $ucl): void
+    {
+        $this->setWaiting($ucl, Context::ALIVE);
+    }
+
+    /*-------- block --------*/
+
+    public function addBlocking(Ucl $ucl, int $priority): void
+    {
+        $this->setWaiting($ucl, Context::BLOCKING);
+        $id = $ucl->getContextId();
+        $this->_depending[$id] = $priority;
+    }
+
+    public function firstBlocking(): ? Ucl
+    {
+        if (empty($this->_depending)) {
+            return null;
+        }
+
+        foreach ($this->_depending as $id => $priority) {
+            return $this->getContextUcl($id);
+        }
+
+        return null;
+    }
+
+    public function eachBlocking(): \Generator
+    {
+        foreach ($this->_depending as $id => $priority) {
+            yield $this->getContextUcl($id);
+        }
+    }
+
+    /*-------- sleep --------*/
+
+    public function addSleeping(Ucl $ucl, array $wakenStages): void
+    {
+        $this->setWaiting($ucl, Context::SLEEPING);
+
+        $id = $ucl->getContextId();
+
+        $this->_sleeping[$id] = $wakenStages;
+    }
+
+    public function firstSleeping(): ? Ucl
+    {
+        if (empty($this->_sleeping)) {
+            return null;
+        }
+
+        foreach ($this->_sleeping as $id => $stages) {
+            return $this->getContextUcl($id);
+        }
+
+        return null;
+    }
+
+    public function eachSleeping(): \Generator
+    {
+        foreach ($this->_sleeping as $id => $stages) {
+            yield $this->getContextUcl($id);
+        }
+    }
+
+    /*-------- depends --------*/
+
+    public function getDepended(string $contextId): ? Ucl
+    {
+        if (isset($this->_depending[$contextId])) {
+            $id = $this->_depending[$contextId];
+            return $this->getContextUcl($id);
+        }
+
+        return null;
+    }
+
+    public function addDepending(Ucl $ucl, string $dependedContextId): void
+    {
+        $this->setWaiting($ucl, Context::DEPENDING);
+
+        $id = $ucl->getContextId();
+        $this->_depending[$id] = $dependedContextId;
+    }
+
+    public function getDepending(string $dependedContextId): array
+    {
+        $result = [];
+        foreach ($this->_depending as $dependingId => $dependedContextId) {
+            if ($dependedContextId === $dependedContextId) {
+                $result[] = $dependingId;
+            }
+        }
+
+        return $result;
+    }
+
+    /*-------- callbacks --------*/
+
+    public function addCallback(Ucl ...$callbacks): void
+    {
+        foreach ($callbacks as $callback) {
+            $id = $callback->getContextId();
+            $this->setWaiting($callback, Context::CALLBACK);
+            $this->_callbacks[$id] = 1;
+        }
+    }
+
+    public function firstCallback(): ? Ucl
+    {
+        foreach ($this->_callbacks as $id => $val) {
+            return $this->getContextUcl($id);
+        }
+
+        return null;
+    }
+
+    public function eachCallbacks(): \Generator
+    {
+        foreach ($this->_callbacks as $id => $val) {
+            yield $this->getContextUcl($id);
+        }
+    }
+
+    /*-------- back step --------*/
+
+    public function backStep(int $step): bool
+    {
+        $waiter = null;
+
+        do {
+            $now = $waiter;
+            $waiter = array_shift($this->_backtrace);
+            $step --;
+        } while($step > 0 && $waiter);
+
+        if (isset($now)) {
+            $this->_waiter = $now;
+            return true;
+        }
+
+        return false;
+    }
+
+    /*-------- dying --------*/
+
+    public function addDying(Ucl $ucl, int $turns = 0, array $restoreStages = [])
+    {
+        $this->setWaiting($ucl, Context::DYING);
+        $contextId = $ucl->getContextId();
+        $this->_dying[$contextId] = [$turns, $restoreStages];
+    }
+
+    public function gc(): void
+    {
+        $dying = [];
+        foreach ($this->_dying as $id => list($turns, $restoreStages)) {
+            $turns --;
+            if ($turns >= 0) {
+                $dying[$id] = [$turns, $restoreStages];
+            }
+        }
+        $this->_dying = $dying;
+
+        $tasks = [];
+
+        foreach ($this->_callbacks as $id => $val) {
+            $tasks[$id] = $this->getTaskById($id);
+        }
+
+        foreach ($this->_blocking as $id => $val) {
+            $tasks[$id] = $this->getTaskById($id);
+        }
+
+        foreach ($this->_sleeping as $id => $val) {
+            $tasks[$id] = $this->getTaskById($id);
+        }
+
+        foreach ($this->_yielding as $id => $val ) {
+            $tasks[$id] = $this->getTaskById($id);
+        }
+
+        foreach ($this->_depending as $id => $val) {
+            $tasks[$id] = $this->getTaskById($id);
+        }
+
+        foreach ($this->_dying as $id => $val) {
+            $tasks[$id] = $this->getTaskById($id);
+        }
+
+        if (isset($this->_waiter)) {
+            $id = $this->decoded($this->_waiter->await)->getContextId();
+            $tasks[$id] = $this->getTaskById($id);
+        }
+
+        $id = $this->getRoot()->getContextId();
+        $tasks[$id] = $this->getTaskById($id);
+
+        $this->_tasks = $tasks;
+    }
+
+
+    /*-------- methods --------*/
+
+    protected function decoded(string $str)
+    {
+        return $this->_decoded[$str]
+            ?? $this->_decoded[$str] = Ucl::decodeUclStr($str);
+    }
+
+
+    /*-------- task --------*/
+
+    /**
+     * @param Ucl $ucl
+     * @return ITask
+     */
+    public function getTask(Ucl $ucl): Task
+    {
+        $id = $ucl->getContextId();
+
+        return $this->_tasks[$id]
+            ?? $this->_tasks[$id] = new ITask($ucl);
+    }
+
+    protected function getTaskById(string $id) : ? ITask
+    {
+        return $this->_tasks[$id] ?? null;
+    }
+
+    /*-------- waiting --------*/
+
+    public function setWaiting(Ucl $ucl, int $status): void
+    {
+        $task = $this->getTask($ucl);
+        $task->setStatus($ucl, $status);
+
+        $id = $ucl->getContextId();
+
+        unset($this->_depending[$id]);
+        unset($this->_callbacks[$id]);
+        unset($this->_blocking[$id]);
+        unset($this->_sleeping[$id]);
+        unset($this->_yielding[$id]);
+        unset($this->_dying[$id]);
+    }
+
+    public function flushWaiting(): void
+    {
+        $this->_depending = [];
+        $this->_callbacks = [];
+        $this->_blocking = [];
+        $this->_sleeping = [];
+        $this->_yielding = [];
+        $this->_dying = [];
+    }
 
     /*-------- magic --------*/
 
     public function __get($name)
     {
-        // TODO: Implement __get() method.
+        $name = "_$name";
+
+        if (property_exists($this, $name)) {
+            return $this->{$name};
+        }
+
+        return null;
     }
 
     public function __isset($name)
     {
-        // TODO: Implement __isset() method.
+        $val = $this->__get($name);
+        return isset($val);
     }
 
     public function __sleep()
     {
-        // TODO: Implement __sleep() method.
+        return [
+            '_id',
+            '_belongsTo',
+            '_waiter',
+            '_backtrace',
+            '_callbacks',
+            '_blocking',
+            '_sleeping',
+            '_depending',
+            '_yielding',
+            '_dying',
+        ];
     }
 
     public function __wakeup()
     {
-        // TODO: Implement __wakeup() method.
     }
 
     public function __clone()
     {
-        // TODO: Implement __clone() method.
+        foreach ($this->_tasks as $id => $val) {
+            $this->_tasks[$id] = clone $val;
+        }
+
+        $this->_waiter = clone $this->_waiter;
+
+        foreach ($this->_backtrace as $id => $val) {
+            $this->_backtrace[$id] = clone $val;
+        }
     }
+
 
     public function __destruct()
     {
-        // TODO: Implement __destruct() method.
+        $this->_backtrace = [];
+        $this->_tasks = [];
+        $this->_waiter = null;
     }
 
 }

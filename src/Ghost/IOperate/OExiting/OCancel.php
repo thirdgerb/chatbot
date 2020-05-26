@@ -43,7 +43,10 @@ class OCancel extends AbsExiting
     {
         $task = $process->getTask($canceling);
         $cancel = $task->watchCancel();
-        if (isset($cancel)) {
+        if (
+            isset($cancel)
+            && $cancel->stageName !== $canceling->stageName
+        ) {
             return $this->dialog->redirectTo($cancel);
         }
 

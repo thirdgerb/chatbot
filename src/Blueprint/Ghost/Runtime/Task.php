@@ -18,10 +18,6 @@ use Commune\Blueprint\Ghost\Ucl;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $id
- * @property-read string $stage
- * @property-read string[] $paths
- *
  */
 interface Task
 {
@@ -56,6 +52,8 @@ interface Task
     public function setPaths(array $stages) : void;
 
     public function insertPaths(array $stages) : void;
+
+    public function getPaths() : array;
 
     /**
      * @return Ucl|null

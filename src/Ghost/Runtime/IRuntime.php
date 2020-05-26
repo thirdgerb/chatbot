@@ -154,8 +154,8 @@ class IRuntime implements Runtime, Spied
         }
 
         // 创建一个新的.
-        $contextName = $this->cloner->scene->contextName;
-        return $this->process = $this->createProcess($contextName);
+        $root = $this->cloner->scene->root;
+        return $this->process = $this->createProcess($root);
     }
 
     public function setCurrentProcess(Process $process): void
@@ -163,11 +163,13 @@ class IRuntime implements Runtime, Spied
         $this->process = $process;
     }
 
-    public function createProcess(string $contextUcl): Process
+    public function createProcess(Ucl $root): Process
     {
-        $ucl = Ucl::decodeUclStr($contextUcl);
-        $root = $ucl->toInstance($this->cloner);
-        return new IProcessBak2($this->convoId, $root, $this->cloner->getTraceId());
+        return $this->process = new IProcess(
+            $this->convoId,
+            $root,
+            $this->cloner->input->getMessageId()
+        );
     }
 
 
@@ -191,11 +193,11 @@ class IRuntime implements Runtime, Spied
         $changed = !isset($prevWaiter) || ($prevWaiter->await !== $waiter->await);
 
         if ($changed) {
-            $ucl = $this->process->decodeUcl($waiter->await);
-            $context = $ucl
+            $ucl = $this->process->getAwait();
+            return $ucl
                 ->toInstance($this->cloner)
-                ->findContext($this->cloner);
-            return $context->toContextMsg();
+                ->findContext($this->cloner)
+                ->toContextMsg();
         }
 
         return null;

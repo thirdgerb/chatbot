@@ -25,13 +25,15 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read string $id                    进程的唯一 ID.
  *
  * @property-read Process|null $prev
+ *
+ *
  * @property-read Waiter|null $waiter
- *
- *
  * @property-read array[] $sleeping
  * @property-read array[] $dying
  * @property-read string[] $depending
  * @property-read string[] $callbacks
+ * @property-read string[] $yielding
+ * @property-read int[] $blocking
  */
 interface Process extends ArrayAndJsonAble
 {
@@ -43,26 +45,20 @@ interface Process extends ArrayAndJsonAble
     public function activate(Ucl $ucl) : void;
 
     /*-------- context ---------*/
-//
-//    public function isContextStatus(string $contextId, int $status) : bool;
-//
-//    public function getContextStatus(string $contextId) : int;
-//
 
     public function getContextUcl(string $contextId) : ? Ucl;
 
     /*-------- status ---------*/
-//
-//    /**
-//     * Process 本身是新创建的.
-//     * @return bool
-//     */
+
+    /**
+     * Process 本身是新创建的.
+     * @return bool
+     */
     public function isFresh() : bool;
-//
-//    /*-------- await ---------*/
-//
-//    public function buildRoutes() : RoutesMap;
-//
+
+    /*-------- await ---------*/
+
+    public function getWaiter() : ? Waiter;
 
     public function await(
         Ucl $ucl,
@@ -125,7 +121,7 @@ interface Process extends ArrayAndJsonAble
 
     public function getDepended(string $contextId) : ? Ucl;
 
-    public function addDepending(Ucl $ucl, string $dependedDependedContextId) : void;
+    public function addDepending(Ucl $ucl, string $dependedContextId) : void;
 
     /**
      * @param string $dependedContextId

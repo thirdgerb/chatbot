@@ -31,7 +31,7 @@ abstract class AbsRedirect extends AbsOperator
         // 如果目标 Context 是新建, 则需要从起点开始走.
         if (
             $task->isStatus(Context::CREATED)
-            && $task->stage !== $target->stageName
+            && $task->getUcl()->stageName !== $target->stageName
         ) {
             $insertPath = [$target->stageName];
             $target = $target->goStage();
@@ -69,7 +69,7 @@ abstract class AbsRedirect extends AbsOperator
         $task = $resume->task;
 
         $insertPaths = [];
-        if ($task->stage !== $target->stageName) {
+        if ($task->getUcl()->stageName !== $target->stageName) {
             $insertPaths = [$target->stageName];
         }
 

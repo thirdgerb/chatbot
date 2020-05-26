@@ -50,21 +50,21 @@ class IWaiter implements Waiter
     /**
      * IWaiter constructor.
      * @param string $ucl
+     * @param QuestionMsg|null $question
      * @param string[] $stageRoutes
      * @param string[] $contextRoutes
-     * @param QuestionMsg|null $question
      */
     public function __construct(
         string $ucl,
+        ?QuestionMsg $question,
         array $stageRoutes,
-        array $contextRoutes,
-        ?QuestionMsg $question
+        array $contextRoutes
     )
     {
+        $this->_await = $ucl;
         $this->_question = $question;
         $this->_stageRoutes = $stageRoutes;
         $this->_contextRoutes = $contextRoutes;
-        $this->_await = $ucl;
     }
 
     public function toArray(): array
@@ -76,7 +76,6 @@ class IWaiter implements Waiter
             'question' => isset($this->_question) ? $this->_question->toArray() : null
         ];
     }
-
 
     public function __get($name)
     {
