@@ -28,11 +28,11 @@ class UserPlayedHistory extends ARecall
         return [ClonerScope::GUEST_ID];
     }
 
-    public static function getParamOptions(ParamBuilder $builder): ParamBuilder
+    public static function paramBuilder(ParamBuilder $builder): ParamBuilder
     {
         return $builder
-            ->add('total', 0)
-            ->add('highestScore', 0);
+            ->define('total', 0)
+            ->define('highestScore', 0);
     }
 
 

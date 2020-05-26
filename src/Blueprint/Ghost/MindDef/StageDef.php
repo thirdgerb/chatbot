@@ -14,7 +14,6 @@ namespace Commune\Blueprint\Ghost\MindDef;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Receive;
 use Commune\Blueprint\Ghost\Dialog\Resume;
-use Commune\Blueprint\Ghost\Dialog\Exiting;
 use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Blueprint\Ghost\Operate\Operator;
 
@@ -89,13 +88,6 @@ interface StageDef extends Def
      * @return Operator|null
      */
     public function onResume(Resume $dialog) : ? Operator;
-
-    /**
-     * 当 stage 依赖的语境退出时.
-     * @param Exiting $dialog
-     * @return Operator|null
-     */
-    public function onExit(Exiting $dialog) : ? Operator;
 
 
 }

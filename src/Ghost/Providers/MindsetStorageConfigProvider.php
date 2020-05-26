@@ -27,7 +27,6 @@ use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $mainDir
- *
  * @property-read int $cacheExpire
  *
  */

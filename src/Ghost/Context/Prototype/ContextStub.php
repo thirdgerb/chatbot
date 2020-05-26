@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context;
+namespace Commune\Ghost\Context\Prototype;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstance;
@@ -40,8 +40,7 @@ class ContextStub implements ClonerInstanceStub
 
     public function toInstance(Cloner $cloner): ClonerInstance
     {
-        $uclObj = Ucl::decodeUclStr($this->ucl);
-        return $cloner->getContext($uclObj);
+        return Ucl::decodeUclStr($this->ucl)->findContext($cloner);
     }
 
 

@@ -11,16 +11,15 @@
 
 namespace Commune\Ghost\IMindDef;
 
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Memory\Recollection;
-use Commune\Blueprint\Ghost\MindDef\DefParamsCollection;
+use Commune\Blueprint\Ghost\MindDef\ParamDefCollection;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
-use Commune\Ghost\Context\IDefParamCollection;
+use Commune\Ghost\Context\IParamDefCollection;
 use Commune\Ghost\Memory\IRecollection;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
 
@@ -37,7 +36,7 @@ class IMemoryDef implements MemoryDef
     protected $meta;
 
     /**
-     * @var DefParamsCollection
+     * @var ParamDefCollection
      */
     protected $params;
 
@@ -71,12 +70,12 @@ class IMemoryDef implements MemoryDef
         return $this->meta->scopes;
     }
 
-    public function getParams(): DefParamsCollection
+    public function getParams(): ParamDefCollection
     {
         return $this->params
-            ?? $this->params = new IDefParamCollection(
+            ?? $this->params = new IParamDefCollection(
                 array_map(function(ParamOption $option) {
-                    return new IDefParam($option);
+                    return new IParamDef($option);
                 }, $this->meta->params)
             );
     }
@@ -102,17 +101,11 @@ class IMemoryDef implements MemoryDef
                 $this->getScopes()
             );
 
-        $memory = $cloner->runtime->findMemory(
-            $id,
-            $longTerm = $this->isLongTerm(),
-            $this->getDefaults()
-        );
+        $memoryDef = $cloner->mind->memoryReg()->getDef($name);
 
         return new IRecollection(
             $id,
-            $name,
-            $longTerm,
-            $memory,
+            $memoryDef,
             $cloner
         );
     }
@@ -124,19 +117,6 @@ class IMemoryDef implements MemoryDef
             $this->getScopes()
         );
     }
-
-
-    public function fetchMemory(Cloner $cloner, string $id = null): Memory
-    {
-        $id = $id ?? $this->makeScopeId($cloner);
-
-        return $cloner->runtime->findMemory(
-            $id,
-            $longTerm = $this->isLongTerm(),
-            $this->getDefaults()
-        );
-    }
-
 
     public function getMeta(): Meta
     {

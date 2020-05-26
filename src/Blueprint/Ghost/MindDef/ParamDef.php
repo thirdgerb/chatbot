@@ -11,11 +11,13 @@
 
 namespace Commune\Blueprint\Ghost\MindDef;
 
+use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
+
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  */
-interface DefParam
+interface ParamDef
 {
     /**
      * 字段名
@@ -53,8 +55,8 @@ interface DefParam
     public function getDefault();
 
     /**
-     * 作为单轮对话. 只有 Entity 类型才可以作为一个单轮对话.
-     * @return StageDef
+     * @return ParamOption
      */
-    public function asStage() : StageDef;
+    public function getOption() : ParamOption;
+
 }

@@ -12,15 +12,15 @@
 namespace Commune\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
-use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Support\Arr\ArrayAbleToJson;
-
+use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 
 /**
- * 标准的记忆体, 可以通过 $cloner->mind->memoryReg()->getDef($name)->recall($cloner) 获取
+ * 标准的记忆体
+ * 可以通过 $cloner->mind->memoryReg()->getDef($name)->recall($cloner) 获取
+ *
  * 这样的上下文, 可以通过配置来调用. 更适合基于配置的逻辑定义.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -37,8 +37,11 @@ class IRecollection implements Recollection
     {
         $this->_id = $id;
         $this->_def = $def;
-        $this->_memory = $def->fetchMemory($cloner, $id);
-        $this->_cloner = $cloner;
+        $this->_memory = $cloner->runtime->findMemory(
+            $id,
+            $longTerm = $this->isLongTerm(),
+            $def->getDefaults()
+        );
     }
 
     public function toInstanceStub(): ClonerInstanceStub

@@ -9,15 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Host\Contexts\CodeContext;
+namespace Commune\Blueprint\Ghost\Context;
 
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DefineParam
+interface DefineParams
 {
-    public static function __params(ParamBuilder $param) : ParamBuilder;
+    public static function __params(ParamBuilder $builder) : ParamBuilder;
 
 }

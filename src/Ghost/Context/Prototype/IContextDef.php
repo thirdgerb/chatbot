@@ -9,13 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context;
+namespace Commune\Ghost\Context\Prototype;
 
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
-use Commune\Blueprint\Ghost\MindDef\DefParam;
-use Commune\Blueprint\Ghost\MindDef\DefParamsCollection;
+use Commune\Blueprint\Ghost\MindDef\ParamDef;
+use Commune\Blueprint\Ghost\MindDef\ParamDefCollection;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
@@ -36,14 +37,12 @@ use Illuminate\Support\Collection;
  *
  * ## 基础属性
  * @property-read int $priority         语境的默认优先级
- * @property-read bool $public
  *
  * ## context wrapper
  * @property-read string|null $contextWrapper       Context 的包装器.
  *
  * ## 属性相关
  * @property-read ParamOption[] $queryParams
- * @property-read string[] $entities
  *
  * ## Stage 相关
  * @property-read StageMeta $asStage                Stage 的定义.
@@ -51,21 +50,21 @@ use Illuminate\Support\Collection;
  * @property-read StageMeta[] $stages               Context 定义的 Stages
  *
  */
-class ContextDefPrototype extends AbsOption implements ContextDef
+class IContextDef extends AbsOption implements ContextDef
 {
 
     /**
-     * @var DefParamsCollection
+     * @var ParamDefCollection
      */
     protected $_queries;
 
     /**
-     * @var DefParamsCollection
+     * @var ParamDefCollection
      */
     protected $_entities;
 
     /**
-     * @var DefParamsCollection
+     * @var ParamDefCollection
      */
     protected $_params;
 
@@ -119,7 +118,6 @@ class ContextDefPrototype extends AbsOption implements ContextDef
             'title' => '',
             'desc' => '',
             'priority' => 0,
-            'public' => true,
             'contextWrapper' => null,
             'queryParams' => [],
             'asStage' => [],
@@ -141,19 +139,19 @@ class ContextDefPrototype extends AbsOption implements ContextDef
 
     public function _filter(array $data): array
     {
-        $name = $data['name'] ?? '';
-        $asStage = $data['asStage'] ?? [];
-        $asStage['contextName'] = $name;
-        $data['asStage'] = $asStage;
-
-        $asMemory = $data['asMemory'] ?? [];
-        $asMemory['name'] = $name;
-        $data['asMemory'] = $asMemory;
-
-        $data['stages'] = array_map(function($stage) use ($name) {
-            $stage['contextName'] = $name;
-            return $stage;
-        }, $data['stages'] ?? []);
+//        $name = $data['name'] ?? '';
+//        $asStage = $data['asStage'] ?? [];
+//        $asStage['contextName'] = $name;
+//        $data['asStage'] = $asStage;
+//
+//        $asMemory = $data['asMemory'] ?? [];
+//        $asMemory['name'] = $name;
+//        $data['asMemory'] = $asMemory;
+//
+//        $data['stages'] = array_map(function($stage) use ($name) {
+//            $stage['contextName'] = $name;
+//            return $stage;
+//        }, $data['stages'] ?? []);
 
         return parent::_filter($data);
     }
@@ -161,6 +159,7 @@ class ContextDefPrototype extends AbsOption implements ContextDef
     public static function validate(array $data): ? string /* errorMsg */
     {
         $name = $data['name'] ?? '';
+
         if (!ContextUtils::isValidContextName($name)) {
             return "contextName $name is invalid";
         }
@@ -191,19 +190,15 @@ class ContextDefPrototype extends AbsOption implements ContextDef
         return $this->priority;
     }
 
-    public function isPublic(): bool
-    {
-        return $this->public;
-    }
-
     /*------ parameters -------*/
-    public function getQueryParams(): DefParamsCollection
+
+    public function getQueryParams(): ParamDefCollection
     {
         return $this->_queries
             ?? $this->_queries = new IDefParamCollection($this->queryParams);
     }
 
-    public function getEntityParams(): DefParamsCollection
+    public function getEntityParams(): ParamDefCollection
     {
         if (isset($this->_entities)) {
             return $this->_entities;
@@ -212,7 +207,7 @@ class ContextDefPrototype extends AbsOption implements ContextDef
         $params = $this->asMemoryDef()->getParams();
 
         return $this->_entities = new IDefParamCollection(
-            array_map(function(string $name) use ($params): DefParam {
+            array_map(function(string $name) use ($params): ParamDef {
                 return $params->getParam($name);
             }, $this->entities)
         );
@@ -223,7 +218,7 @@ class ContextDefPrototype extends AbsOption implements ContextDef
         return $this->entities;
     }
 
-    public function getParams(): DefParamsCollection
+    public function getParams(): ParamDefCollection
     {
         if (isset($this->_params)) {
             return $this->_params;
@@ -269,6 +264,7 @@ class ContextDefPrototype extends AbsOption implements ContextDef
         $name = $data['name'] ?? '';
         $title = $data['title'] ?? '';
         $desc = $data['desc'] ?? '';
+
         unset($data['name']);
         unset($data['title']);
         unset($data['desc']);
@@ -287,6 +283,12 @@ class ContextDefPrototype extends AbsOption implements ContextDef
      */
     public static function wrap(Meta $meta): Wrapper
     {
+        if ($meta instanceof ContextMeta) {
+            throw new InvalidArgumentException(
+                'accept ' . ContextMeta::class . ' only'
+            );
+        }
+
         return new static(
             $meta->name,
             $meta->title,

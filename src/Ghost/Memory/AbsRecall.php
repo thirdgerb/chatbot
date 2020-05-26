@@ -12,22 +12,22 @@
 namespace Commune\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
-use Commune\Blueprint\Ghost\Cloner\ClonerScope;
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
 use Commune\Blueprint\Ghost\Memory\Recall;
+use Commune\Blueprint\Ghost\MindDef\ParamDef;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\TArrayAccessToMutator;
+use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 
 /**
- * 多轮对话的记忆单元.
+ * 不受多轮对话限制的记忆单元
  * 根据 Scopes 决定是长程的还是短程(session 级别)的.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class RecallPrototype implements Recall
+abstract class AbsRecall implements Recall
 {
     use ArrayAbleToJson, TArrayAccessToMutator, TRecollection;
 
@@ -44,8 +44,11 @@ abstract class RecallPrototype implements Recall
         return static::recallName();
     }
 
+    public static function recallName(): string
+    {
+        return ContextUtils::normalizeMemoryName(static::class);
+    }
 
-    abstract public static function recallName() : string;
 
     /**
      * @param Cloner $cloner
@@ -68,11 +71,20 @@ abstract class RecallPrototype implements Recall
         $memoryReg = $cloner->mind->memoryReg();
         if (!$memoryReg->hasDef($name)) {
 
-            $builder = static::getParamOptions($builder);
+            $builder = null;
+
+            $builder = static::__params($builder);
+            $options = array_map(
+                function(ParamDef $param) {
+                    return $param->getOption();
+                },
+                $builder->getParams()->getAllParams()
+            );
+
             $memoryMeta = new MemoryMeta([
                 'name' => $name,
-                'scopes' => static::getScopes(),
-                'params' => $builder->toParamOptions(),
+                'scopes' => static::__scopes(),
+                'params' => $options,
             ]);
 
             $memoryReg->registerDef($memoryMeta->getWrapper());
@@ -84,7 +96,6 @@ abstract class RecallPrototype implements Recall
     {
         return new RecallStub($this->_id, static::class);
     }
-
 
     private function __clone()
     {

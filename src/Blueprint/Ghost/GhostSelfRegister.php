@@ -9,18 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Host\Recall;
+namespace Commune\Blueprint\Ghost;
 
-use Commune\Ghost\Memory\AbsRecall;
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
+use Commune\Blueprint\Ghost;
 
 /**
+ * 可以注册到 Mindset 中的类. 通常通过 psr-4 来读取.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class ARecall extends AbsRecall
+interface GhostSelfRegister
 {
-    abstract public static function __scopes(): array;
+    const REGISTER_METHOD = 'selfRegisterToMind';
 
-    abstract public static function __params(ParamBuilder $builder): ParamBuilder;
-
+    public static function selfRegisterToMind(Ghost $ghost) : void;
 }

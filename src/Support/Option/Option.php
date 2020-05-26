@@ -82,12 +82,12 @@ interface Option extends Struct, Injectable
     /**
      * @return string
      */
-    public static function getTitle() : string;
+    public function getTitle() : string;
 
     /**
      * @return string
      */
-    public static function getDescription() : string;
+    public function getDescription() : string;
 
 
 }

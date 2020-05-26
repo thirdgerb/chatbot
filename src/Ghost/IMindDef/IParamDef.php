@@ -11,16 +11,15 @@
 
 namespace Commune\Ghost\IMindDef;
 
-use Commune\Blueprint\Ghost\MindDef\DefParam;
-use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
-use Commune\Ghost\Support\ContextUtils;
 use Illuminate\Support\Arr;
+use Commune\Ghost\Support\ContextUtils;
+use Commune\Blueprint\Ghost\MindDef\ParamDef;
+use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IDefParam implements DefParam
+class IParamDef implements ParamDef
 {
 
     /**
@@ -199,9 +198,9 @@ class IDefParam implements DefParam
         return $this->option->query;
     }
 
-    public function asStage(): StageDef
+    public function getOption(): ParamOption
     {
-        // TODO: Implement asStage() method.
+        return $this->option;
     }
 
 

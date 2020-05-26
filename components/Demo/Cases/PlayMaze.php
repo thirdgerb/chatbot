@@ -125,14 +125,14 @@ class PlayMaze extends ACodeContext implements
     public static function __params(ParamBuilder $param): ParamBuilder
     {
         return $param
-            ->add('steps', 0 )
-            ->add('map', [], 'array')
-            ->add('direction', 0)
-            ->add('cell', Manager::CELL_BORN)
-            ->add('y', Manager::BORN_LOCATION[0])
-            ->add('x', Manager::BORN_LOCATION[1])
-            ->add('items[]', [], 'string')
-            ->add('toward', null, 'string');
+            ->define('steps', 0 )
+            ->define('map', [], 'array')
+            ->define('direction', 0)
+            ->define('cell', Manager::CELL_BORN)
+            ->define('y', Manager::BORN_LOCATION[0])
+            ->define('x', Manager::BORN_LOCATION[1])
+            ->define('items[]', [], 'string')
+            ->define('toward', null, 'string');
     }
 
 

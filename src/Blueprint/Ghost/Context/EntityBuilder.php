@@ -9,18 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Host\Recall;
+namespace Commune\Blueprint\Ghost\Context;
 
-use Commune\Ghost\Memory\AbsRecall;
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class ARecall extends AbsRecall
+interface EntityBuilder
 {
-    abstract public static function __scopes(): array;
 
-    abstract public static function __params(ParamBuilder $builder): ParamBuilder;
+
+
+
+
+
 
 }

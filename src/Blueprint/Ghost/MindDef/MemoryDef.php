@@ -32,9 +32,9 @@ interface MemoryDef extends Def
     public function getScopes() : array;
 
     /**
-     * @return DefParamsCollection
+     * @return ParamDefCollection
      */
-    public function getParams() : DefParamsCollection;
+    public function getParams() : ParamDefCollection;
 
     /**
      * 记忆体的默认值.
@@ -57,12 +57,5 @@ interface MemoryDef extends Def
      * @return Recollection
      */
     public function recall(Cloner $cloner, string $id = null) : Recollection;
-
-    /**
-     * @param Cloner $cloner
-     * @param string|null $id
-     * @return Memory
-     */
-    public function fetchMemory(Cloner $cloner, string $id = null) : Memory;
 
 }

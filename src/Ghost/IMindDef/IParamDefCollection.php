@@ -12,18 +12,18 @@
 namespace Commune\Ghost\Context;
 
 use Illuminate\Support\Collection;
-use Commune\Blueprint\Ghost\MindDef\DefParam;
-use Commune\Blueprint\Ghost\MindDef\DefParamsCollection;
+use Commune\Blueprint\Ghost\MindDef\ParamDef;
+use Commune\Blueprint\Ghost\MindDef\ParamDefCollection;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IDefParamCollection extends Collection implements DefParamsCollection
+class IParamDefCollection extends Collection implements ParamDefCollection
 {
 
     /**
      * IDefParamCollection constructor.
-     * @param DefParam[] $params
+     * @param ParamDef[] $params
      */
     public function __construct(array $params)
     {
@@ -46,13 +46,13 @@ class IDefParamCollection extends Collection implements DefParamsCollection
         return $this->has($name);
     }
 
-    public function getParam(string $name): DefParam
+    public function getParam(string $name): ParamDef
     {
         return $this->get($name);
     }
 
     /**
-     * @return DefParam[]
+     * @return ParamDef[]
      */
     public function getAllParams(): array
     {
@@ -83,7 +83,7 @@ class IDefParamCollection extends Collection implements DefParamsCollection
 
     public function getDefaultValues(): array
     {
-        return $this->map(function(DefParam $param){
+        return $this->map(function(ParamDef $param){
             return $param->getDefault();
         })->all();
     }

@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context;
+namespace Commune\Ghost\Context\Prototype;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
@@ -34,12 +34,10 @@ use Illuminate\Support\Collection;
  * @see Cloner
  *
  * 最终通过 ContextDef::wrapContext() 完成包装.
- * @see ContextDef
- *
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ContextPrototype implements Context
+class IContext implements Context
 {
     use TInjectable, ArrayAbleToJson, TArrayAccessToMutator;
 
@@ -74,13 +72,18 @@ class ContextPrototype implements Context
         Cloner $cloner
     )
     {
-        $this->_ucl = $ucl->goStage('');
+        $this->_ucl = $ucl;
         $this->_cloner = $cloner;
     }
 
     public function toInstanceStub(): ClonerInstanceStub
     {
         return new ContextStub($this->_ucl->toEncodedStr());
+    }
+
+    public function toUcl(): Ucl
+    {
+        return $this->_ucl;
     }
 
 
@@ -123,7 +126,10 @@ class ContextPrototype implements Context
 
     public function dependEntity(): ? string /* entityName */
     {
-        $entities = $this->getDef()->getEntityNames();
+        $entities = $this
+            ->getDef()
+            ->getEntityParams()
+            ->getParamNames();
 
         foreach ($entities as $name) {
             if (!$this->offsetExists($name)) {
@@ -250,8 +256,6 @@ class ContextPrototype implements Context
         return;
     }
 
-
-
     protected function warningOrException(string $error)
     {
         if ($this->_cloner->isDebugging()) {
@@ -267,7 +271,6 @@ class ContextPrototype implements Context
     {
         return static::getInterfacesOf(Context::class);
     }
-
 
     public function __destruct()
     {

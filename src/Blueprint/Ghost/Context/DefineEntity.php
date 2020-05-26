@@ -15,7 +15,7 @@ namespace Commune\Blueprint\Ghost\Context;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Depending
+interface DefineEntity
 {
-
+    public static function __entities(EntityBuilder $builder) : EntityBuilder;
 }

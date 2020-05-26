@@ -9,14 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Mind;
+namespace Commune\Blueprint\Ghost\Context;
 
-use Commune\Blueprint\Ghost\Mindset;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface SelfRegister
+interface DefineScopes
 {
-    public static function selfRegisterToMind(Mindset $mind) : void;
+    /**
+     * @return string[]
+     */
+    public static function __scopes() : array;
+
 }

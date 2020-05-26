@@ -11,33 +11,57 @@
 
 namespace Commune\Blueprint\Ghost\Context;
 
-use Commune\Blueprint\Ghost\MindDef\StageDef;
+use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Operate\Operator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface StageBuilder
 {
-    /*----- basic -----*/
-
-    public function onIntercept($builder) : StageBuilder;
-
     /**
-     * @param callable|string $builder
+     * @param callable|string $caller
      * @return StageBuilder
      */
-    public function onActivate($builder) : StageBuilder;
+    public function onRedirect($caller) : StageBuilder;
 
-    public function onRetain($builder) : StageBuilder;
+    /**
+     * @param callable|string $caller
+     * @return StageBuilder
+     */
+    public function onActivate($caller) : StageBuilder;
 
-    public function onWithdraw($builder) : StageBuilder;
+    /**
+     * @param callable|string $caller
+     * @return StageBuilder
+     */
+    public function onReceive($caller) : StageBuilder;
+
+    /**
+     * @param string $event
+     * @param callable|string $caller
+     * @return StageBuilder
+     */
+    public function onEvent(string $event, $caller) : StageBuilder;
+
+    /**
+     * @param string $stage
+     * @return StageBuilder
+     */
+    public function onCancel(string $stage) : StageBuilder;
+
+    /**
+     * @param string $stage
+     * @return StageBuilder
+     */
+    public function onQuit(string $stage) : StageBuilder;
 
     /*----- event -----*/
 
-    public function onEvent(string $event, $builder) : StageBuilder;
-
-    public function onHeed($builder) : StageBuilder;
-
-    public function end($fallback = null) : StageDef;
+    /**
+     * @param Dialog $dialog
+     * @return Operator|null
+     */
+    public function fire(Dialog $dialog) : ? Operator;
 
 }

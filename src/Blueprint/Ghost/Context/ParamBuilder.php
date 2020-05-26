@@ -11,39 +11,32 @@
 
 namespace Commune\Blueprint\Ghost\Context;
 
-use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
-
+use Commune\Blueprint\Ghost\MindDef\ParamDefCollection;
 
 /**
+ * 参数校验.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface ParamBuilder
 {
-
     /**
      * @param string $name
-     * @param string $query
      * @param mixed|null $default
      * @param string|null $type
      * @param string|null $parser
      * @return ParamBuilder
      */
-    public function add(
+    public function define(
         string $name,
         $default = null,
         $type = null,
-        $parser = null,
-        string $query = ''
+        $parser = null
     ) : ParamBuilder;
-
-    public function dependOn(
-        string $name,
-        string $contextName
-    ) : ParamBuilder;
-
 
     /**
-     * @return ParamOption[]
+     * @return ParamDefCollection
      */
-    public function toParamOptions() : array;
+    public function getParams() : ParamDefCollection;
+
 }

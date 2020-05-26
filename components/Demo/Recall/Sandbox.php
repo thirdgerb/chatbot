@@ -29,9 +29,9 @@ class Sandbox extends ARecall
     }
 
 
-    public static function getParamOptions(ParamBuilder $builder): ParamBuilder
+    public static function paramBuilder(ParamBuilder $builder): ParamBuilder
     {
-        return $builder->add('test', 0);
+        return $builder->define('test', 0);
     }
 
 

@@ -14,7 +14,7 @@ namespace Commune\Blueprint\Ghost\MindDef;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DefParamsCollection
+interface ParamDefCollection
 {
     /**
      * @return string[]
@@ -29,12 +29,12 @@ interface DefParamsCollection
 
     /**
      * @param string $name
-     * @return DefParam
+     * @return ParamDef
      */
-    public function getParam(string $name) : DefParam;
+    public function getParam(string $name) : ParamDef;
 
     /**
-     * @return DefParam[]
+     * @return ParamDef[]
      *  [name => DefParam]
      */
     public function getAllParams() : array;

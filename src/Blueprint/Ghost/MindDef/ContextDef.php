@@ -32,14 +32,6 @@ interface ContextDef extends Def
     public function getPriority() : int;
 
     /**
-     * 公共语境, 可以作为意图被全局访问到.
-     * Query 中不足的元素将用多轮对话向用户询问.
-     *
-     * @return bool
-     */
-    public function isPublic() : bool;
-
-    /**
      * @param Dialog $current
      * @return array|null
      */
@@ -48,18 +40,25 @@ interface ContextDef extends Def
 
     /*------- properties -------*/
 
-    public function getScopes() : array;
-
-    public function getQueryParams() : DefParamsCollection;
-
-    public function getEntityParams() : DefParamsCollection;
-
-    public function getParams() : DefParamsCollection;
-
     /**
      * @return string[]
      */
-    public function getEntityNames() : array;
+    public function getScopes() : array;
+
+    /**
+     * @return ParamDefCollection
+     */
+    public function getQueryParams() : ParamDefCollection;
+
+    /**
+     * @return ParamDefCollection
+     */
+    public function getEntityParams() : ParamDefCollection;
+
+    /**
+     * @return ParamDefCollection
+     */
+    public function getParams() : ParamDefCollection;
 
     /*------- relation -------*/
 

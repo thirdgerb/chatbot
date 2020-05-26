@@ -12,14 +12,15 @@
 namespace Commune\Blueprint\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
+use Commune\Blueprint\Ghost\Context\DefineParams;
+use Commune\Blueprint\Ghost\Context\DefineScopes;
 
 /**
  * 静态的回忆工具, 用静态方法来定义和获取记忆体.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Recall extends Recollection
+interface Recall extends Recollection, DefineParams, DefineScopes
 {
 
     /**
@@ -29,16 +30,4 @@ interface Recall extends Recollection
      */
     public static function find(Cloner $cloner, string $id = null) : Recall;
 
-    /**
-     * 记忆的上下文, 用于生成唯一 ID.
-     * @see Cloner\ClonerScope
-     * @return string[]
-     */
-    public static function getScopes() : array;
-
-    /**
-     * @param ParamBuilder $builder
-     * @return ParamBuilder
-     */
-    public static function getParamOptions(ParamBuilder $builder) : ParamBuilder;
 }

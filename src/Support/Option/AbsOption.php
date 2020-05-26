@@ -93,12 +93,12 @@ abstract class AbsOption extends AStruct implements Option
         return static::getInterfacesOf(Option::class);
     }
 
-    public static function getTitle(): string
+    public function getTitle(): string
     {
         return '';
     }
 
-    public static function getDescription(): string
+    public function getDescription(): string
     {
         return '';
     }

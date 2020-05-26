@@ -41,6 +41,7 @@ interface Context extends
     const ALIVE     = 1 << 1;
     const WAITING   = 1 << 10;
 
+
     const AWAIT     = 1 << 11 | self::WAITING;
     const DEPENDING = 1 << 12 | self::WAITING;
     const BLOCKING  = 1 << 13 | self::WAITING;
@@ -72,6 +73,9 @@ interface Context extends
      */
     public function getDef() : ContextDef;
 
+    /**
+     * @return Cloner
+     */
     public function getCloner() : Cloner;
 
     /*----- entity -----*/
@@ -89,6 +93,9 @@ interface Context extends
 
     /*----- assignment -----*/
 
+    /**
+     * @param array $data
+     */
     public function merge(array $data) : void;
 
     /*----- array -----*/
@@ -111,5 +118,8 @@ interface Context extends
      */
     public function toContextMsg() : ContextMsg;
 
+    /**
+     * @return Ucl
+     */
     public function toUcl() : Ucl;
 }
