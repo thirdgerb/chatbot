@@ -16,6 +16,7 @@ use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
+use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Message\Host\Convo\IContextMsg;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
@@ -66,6 +67,10 @@ class IContext implements Context
      */
     protected $_query;
 
+    /**
+     * @var Task|null
+     */
+    protected $_task;
 
     public function __construct(
         Ucl $ucl,
@@ -83,7 +88,7 @@ class IContext implements Context
 
     public function toUcl(): Ucl
     {
-        return $this->_ucl;
+        return $this->getTask()->getUcl();
     }
     /*----- property -----*/
 
@@ -118,6 +123,15 @@ class IContext implements Context
     public function getCloner(): Cloner
     {
         return $this->_cloner;
+    }
+
+    public function getTask(): Task
+    {
+        return $this->_task
+            ?? $this->_task = $this->_cloner
+                ->runtime
+                ->getCurrentProcess()
+                ->getTask($this->_ucl);
     }
 
 
@@ -277,5 +291,6 @@ class IContext implements Context
         $this->_query = null;
         $this->_ucl = null;
         $this->_cloner = null;
+        $this->_task = null;
     }
 }

@@ -11,9 +11,9 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
+use Commune\Ghost\IMindDef\IIntentDef;
 use Commune\Support\Option\AbsMeta;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
-use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
 
 /**
  * 意图的元数据. 用于定义标准的意图.
@@ -24,15 +24,9 @@ use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
  * @property-read string $name
  * @property-read string $title
  * @property-read string $desc
- * @property-read string[] $examples
- * @property-read ParamOption[] $entityParams
+ * @property-read string $wrapper
+ * @property-read array $config
  *
- * ## 可选
- * @property-read string $asCommand
- * @property-read string $asSpell
- * @property-read string[] $asKeywords
- * @property-read string[] $asRegex
- * @property-read string[] $anyEntity
  */
 class IntentMeta extends AbsMeta
 {
@@ -41,26 +35,16 @@ class IntentMeta extends AbsMeta
     public static function stub(): array
     {
         return [
+            // 意图的名称
             'name' => '',
+            // 意图的标题, 应允许用标题来匹配.
             'title' => '',
+            // 意图的简介. 可以作为选项的内容.
             'desc' => '',
-            // 例句
-            'examples' => [],
-            // entity 属性定义.
-            'entityParams' => [],
-
-            // 作为命令.
-            'asCommand' => '',
-            // 作为魔法指令
-            'asSpell' => '',
-            // 关键字
-            'asKeywords' => [],
-            // 正则
-            'asRegex' => [],
-            // 命中任意 entity
-            'anyEntity' => [],
-            // 自定义校验器.
-            'validator' => null,
+            // 包装器.
+            'wrapper' => IIntentDef::class,
+            // 细节配置.
+            'config' => [],
         ];
     }
 

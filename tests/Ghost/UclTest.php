@@ -21,10 +21,10 @@ class UclTest extends TestCase
 {
     protected $validCases = [
         // full
-        'abc.efg.ijk/stage_name?a=1&b=2' => 'abc.efg.ijk__stage_name',
+        'abc.efg.ijk/stage_name?a=1&b=2' => 'abc.efg.ijk.stage_name',
 
         // no query
-        'abc/stage_name' => 'abc__stage_name',
+        'abc/stage_name' => 'abc.stage_name',
 
         // only query
         'abc?a=1&b=2' => 'abc',

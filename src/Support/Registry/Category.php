@@ -128,7 +128,13 @@ interface Category
 
     /*---- storage ----*/
 
+    /**
+     * @return Storage
+     */
     public function getStorage() : Storage;
 
+    /**
+     * @return Storage|null
+     */
     public function getInitialStorage() : ? Storage;
 }

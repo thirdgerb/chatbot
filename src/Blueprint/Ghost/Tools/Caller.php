@@ -28,15 +28,17 @@ interface Caller
 
     /**
      * @param callable $caller
+     * @param array $parameters
      * @return bool
      */
-    public function predict(callable $caller) : bool;
+    public function predict(callable $caller, array $parameters = []) : bool;
 
     /**
      * @param callable $caller
+     * @param array $parameters
      * @return Dialog|null
      */
-    public function action(callable $caller) : ? Operator;
+    public function action(callable $caller, array $parameters = []) : ? Operator;
 
 
 }

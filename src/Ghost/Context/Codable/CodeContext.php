@@ -26,6 +26,8 @@ interface CodeContext extends Context
 
     const MAKE_DEF_FUNC = 'makeDef';
     const WRAP_CONTEXT_FUNC = 'wrapContext';
+    const FIRST_STAGE = 'start';
+
 
     /**
      * @param Ucl $ucl

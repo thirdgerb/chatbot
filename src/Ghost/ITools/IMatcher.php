@@ -320,7 +320,7 @@ class IMatcher implements Matcher
         return $this;
     }
 
-    public function isCommand(string $signature) : Matcher
+    public function isCommand(string $signature, bool $correct = false) : Matcher
     {
         $cmd = $this->input
             ->comprehension
@@ -335,7 +335,7 @@ class IMatcher implements Matcher
         $def = ICommandDef::makeBySignature($signature);
 
         $matched = $this->doMatchCommandDef($cmdName, $cmdStr, $def);
-        if (isset($matched)) {
+        if (isset($matched) && ($correct && $matched->isCorrect())) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $matched;
         }
@@ -343,7 +343,7 @@ class IMatcher implements Matcher
         return $this;
     }
 
-    public function matchCommandDef(CommandDef $def): Matcher
+    public function matchCommandDef(CommandDef $def, bool $correct = false): Matcher
     {
         $cmd = $this->input
             ->comprehension
@@ -358,7 +358,7 @@ class IMatcher implements Matcher
         $cmdName = $cmd->getCmdName();
         $matched = $this->doMatchCommandDef($cmdName, $cmdStr, $def);
 
-        if (isset($matched)) {
+        if (isset($matched) && ($correct && $matched->isCorrect())) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $matched;
         }
@@ -366,7 +366,11 @@ class IMatcher implements Matcher
         return $this;
     }
 
-    protected function doMatchCommandDef(string $cmdName, string $cmdStr, CommandDef $def) : ? CommandMsg
+    protected function doMatchCommandDef(
+        string $cmdName,
+        string $cmdStr,
+        CommandDef $def
+    ) : ? CommandMsg
     {
         return $cmdName === $def->getCommandName()
             ? $def->parseCommandMessage($cmdStr)

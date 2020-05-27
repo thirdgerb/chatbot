@@ -42,6 +42,8 @@ interface Process extends ArrayAndJsonAble
 
     public function getTask(Ucl $ucl) : Task;
 
+    public function getTaskById(string $contextId) : ? Task;
+
     public function activate(Ucl $ucl) : void;
 
     /*-------- context ---------*/

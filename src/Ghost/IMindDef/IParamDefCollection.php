@@ -81,6 +81,12 @@ class IParamDefCollection extends Collection implements ParamDefCollection
         return $data;
     }
 
+    public function addParamDef(ParamDef $param): void
+    {
+        $this->put($param->getName(), $param);
+    }
+
+
     public function getDefaultValues(): array
     {
         return $this->map(function(ParamDef $param){

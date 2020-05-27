@@ -460,7 +460,7 @@ class IProcess implements Process, HasIdGenerator
             ?? $this->_tasks[$id] = new ITask($ucl);
     }
 
-    protected function getTaskById(string $id) : ? ITask
+    public function getTaskById(string $id) : ? Task
     {
         return $this->_tasks[$id] ?? null;
     }

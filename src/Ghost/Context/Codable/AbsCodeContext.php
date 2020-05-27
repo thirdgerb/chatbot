@@ -11,17 +11,19 @@
 
 namespace Commune\Ghost\Context\Codable;
 
+use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
+use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Context\Prototype\IContext;
 use Commune\Ghost\Support\ContextUtils;
-use Commune\Support\Option\Meta;
-use Commune\Support\Option\Wrapper;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class AbsCodeContext extends IContext implements CodeContext
+abstract class AbsCodeContext extends IContext implements CodeContext
 {
 
     public static function getContextName() : string
@@ -29,11 +31,15 @@ class AbsCodeContext extends IContext implements CodeContext
         return ContextUtils::normalizeContextName(static::class);
     }
 
-    public static function makeDef(): ContextDef
+    public static function wrapContext(Cloner $cloner, Ucl $ucl): Context
     {
-        // TODO: Implement makeDef() method.
+        return new static($ucl, $cloner);
     }
 
+    public static function makeDef(ContextMeta $meta): ContextDef
+    {
+        return new ICodeContextDef(static::class, $meta);
+    }
 
 
 }

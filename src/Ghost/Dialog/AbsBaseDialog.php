@@ -129,9 +129,9 @@ abstract class AbsBaseDialog implements
         }
     }
 
-    public function predict(callable $caller): bool
+    public function predict(callable $caller, array $parameters = []): bool
     {
-        $result = $this->call($caller);
+        $result = $this->call($caller, $parameters);
         if (!is_bool($result)) {
             throw new InvalidArgumentException('caller is not predict which return with bool');
         }
@@ -139,9 +139,9 @@ abstract class AbsBaseDialog implements
         return $result;
     }
 
-    public function action(callable $caller): ? Operator
+    public function action(callable $caller, array $parameters = []): ? Operator
     {
-        $result = $this->call($caller);
+        $result = $this->call($caller, $parameters);
         if (is_null($result) || $result instanceof Operator) {
             return $result;
         }

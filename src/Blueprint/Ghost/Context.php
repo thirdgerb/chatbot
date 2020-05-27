@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost;
 
 use ArrayAccess;
+use Commune\Blueprint\Ghost\Runtime\Task;
 use IteratorAggregate;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstance;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
@@ -77,6 +78,11 @@ interface Context extends
      * @return Cloner
      */
     public function getCloner() : Cloner;
+
+    /**
+     * @return Task
+     */
+    public function getTask() : Task;
 
     /*----- entity -----*/
 

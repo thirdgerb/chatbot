@@ -82,7 +82,20 @@ interface ContextDef extends Def
      */
     public function asMemoryDef() : MemoryDef;
 
+    /*------- config -------*/
+
+    public function firstStage() : ? string;
+
+    public function onCancelStage() : ? string;
+
+    public function onQuitStage() : ? string;
+
+    public function commonStageRoutes() : array;
+
+    public function commonContextRoutes() : array;
+
     /*------- stage -------*/
+
 
     /**
      * @param string $stageName

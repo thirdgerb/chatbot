@@ -23,6 +23,7 @@ use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\IMindDef\IMemoryDef;
+use Commune\Ghost\Stage\InitStage;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
@@ -57,19 +58,17 @@ class ICodeContextDef implements ContextDef
 
     /**
      * @var array
+     *
+     * @see DefineConfig
      */
-    protected $config = [
-        // 'priority' => 0,
-        // 'scopes' => [],
-        // 'comprehendPipes' => []
-    ];
+    protected $config = [];
 
     /*-------- cached properties --------*/
 
     /**
      * @var ParamDefCollection
      */
-    protected $query;
+    protected $queryParams;
 
     /**
      * @var ParamDefCollection
@@ -92,6 +91,26 @@ class ICodeContextDef implements ContextDef
     protected $scopes = [];
 
     /**
+     * @var string|null
+     */
+    protected $onQuit;
+
+    /**
+     * @var string|null
+     */
+    protected $onCancel;
+
+    /**
+     * @var string[]
+     */
+    protected $stageRoutes;
+
+    /**
+     * @var string[]
+     */
+    protected $contextRoutes;
+
+    /**
      * @var ParamDefCollection
      */
     protected $entityParams;
@@ -105,6 +124,11 @@ class ICodeContextDef implements ContextDef
      * @var StageDef[]
      */
     protected $stages = [];
+
+    /**
+     * @var array
+     */
+    protected $contextIntentMeta = [];
 
     /*-------- construct --------*/
 
@@ -134,7 +158,7 @@ class ICodeContextDef implements ContextDef
         $creator = new CodeDefCreator($this->contextClass);
 
         // query
-        $this->query = $creator->getQueryParams();
+        $this->queryParams = $creator->getQueryParams();
         $configs = $creator->getConfig();
 
         // params
@@ -162,6 +186,8 @@ class ICodeContextDef implements ContextDef
         }
         unset($stages);
 
+        // intent meta
+        $this->contextIntentMeta = $creator->getContextIntentMeta();
 
         // priority
         $this->priority = $this->config[DefineConfig::KEY_PRIORITY]
@@ -195,6 +221,12 @@ class ICodeContextDef implements ContextDef
                 ?? ''
             )
             : $this->desc;
+
+        $this->onCancel = $this->config[DefineConfig::KEY_ON_CANCEL] ?? null;
+        $this->onQuit = $this->config[DefineConfig::KEY_ON_QUIT] ?? null;
+
+        $this->stageRoutes = $this->config[DefineConfig::KEY_STAGE_ROUTES] ?? [];
+        $this->contextRoutes = $this->config[DefineConfig::KEY_CONTEXT_ROUTES] ?? [];
     }
 
     /*-------- contextDef --------*/
@@ -213,7 +245,7 @@ class ICodeContextDef implements ContextDef
 
     public function getQueryParams(): ParamDefCollection
     {
-        return $this->query;
+        return $this->queryParams;
     }
 
     public function getPriority(): int
@@ -241,10 +273,41 @@ class ICodeContextDef implements ContextDef
         return $this->params;
     }
 
+    /*-------- config --------*/
+
+    public function firstStage(): ? string
+    {
+        return CodeContext::FIRST_STAGE;
+    }
+
+    public function onCancelStage(): ? string
+    {
+        return $this->onCancel;
+    }
+
+    public function onQuitStage(): ? string
+    {
+        return $this->onQuit;
+    }
+
+    public function commonStageRoutes(): array
+    {
+        return $this->stageRoutes;
+    }
+
+    public function commonContextRoutes(): array
+    {
+        return $this->contextRoutes;
+    }
+
     /*-------- stage --------*/
 
     public function getStage(string $stageName): StageDef
     {
+        if ($stageName === '') {
+            return $this->asStageDef();
+        }
+
         if (isset($this->stages[$stageName])) {
             return $this->stages[$stageName];
         }
@@ -258,6 +321,7 @@ class ICodeContextDef implements ContextDef
     public function getStageNames(bool $isFullname = false): array
     {
         $names = array_keys($this->stages);
+        array_unshift($names, '');
 
         if ($isFullname) {
             $contextName = $this->contextName;
@@ -294,9 +358,19 @@ class ICodeContextDef implements ContextDef
     }
 
     /*-------- def --------*/
+
     public function asStageDef(): StageDef
     {
-        // TODO: Implement asStageDef() method.
+        $contextName = $this->getName();
+        return new InitStage(
+            $contextName,
+            $contextName,
+            $this->getTitle(),
+            $this->getDescription(),
+            [
+                'asIntent' => $this->contextIntentMeta,
+            ]
+        );
     }
 
     public function asMemoryDef(): MemoryDef
@@ -345,18 +419,11 @@ class ICodeContextDef implements ContextDef
 
     /*-------- magic --------*/
 
-    public function __get($name)
-    {
-        // TODO: Implement __get() method.
-    }
-
-    public function __isset($name)
-    {
-        // TODO: Implement __isset() method.
-    }
-
     public function __destruct()
     {
-        // TODO: Implement __destruct() method.
+        $this->stages = [];
+        $this->params = null;
+        $this->entityParams = null;
+        $this->queryParams = null;
     }
 }

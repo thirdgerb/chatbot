@@ -192,18 +192,18 @@ interface Matcher
      * 并把匹配成功的 CommandMessage 传递给interceptor
      *
      * @param string $signature
-     * @return static
-     * @matched CommandMsg $isCommand
+     * @param bool $correct
+     * @return Matcher
      */
-    public function isCommand(string $signature) : Matcher;
-
+    public function isCommand(string $signature, bool $correct = false) : Matcher;
 
     /**
+     *
      * @param CommandDef $def
-     * @return static
-     * @matched CommandMsg $matchCommandDef
+     * @param bool $correct
+     * @return Matcher
      */
-    public function matchCommandDef(CommandDef $def) : Matcher;
+    public function matchCommandDef(CommandDef $def, bool $correct = false) : Matcher;
 
     /**
      * 用php做比较脏的关键词检查.

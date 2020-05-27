@@ -11,7 +11,9 @@
 
 namespace Commune\Blueprint\Ghost\MindDef;
 
+use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\MindDef\Intent\IntentExample;
 use Commune\Protocals\HostMsg\IntentMsg;
 
 /**
@@ -27,7 +29,6 @@ use Commune\Protocals\HostMsg\IntentMsg;
  * 4. Regex : 正则匹配来获取.
  * 5. Entity : 如果命中了某个指定的 Entity
  * 6. Keyword : 命中了某些关键字.
- * 7. SoundLike : 尝试匹配表达式的发音.
  *
  * Intent 在上下文中的匹配又分为两种, 精确匹配和模糊匹配.
  *
@@ -39,17 +40,37 @@ use Commune\Protocals\HostMsg\IntentMsg;
  */
 interface IntentDef extends Def
 {
+    /**
+     * @param Cloner $cloner
+     * @return bool
+     */
     public function match(Cloner $cloner) : bool;
 
-    public function getEntityNames() : array;
+    /**
+     * 语料
+     * @return string[]
+     */
+    public function getExamples() : array;
 
-    public function asCommand() : ? string;
+    /**
+     * 封装后的语料对象
+     * @return IntentExample[]
+     */
+    public function getExampleObjects() : array;
 
-    public function asSpell() : ? string;
+    /**
+     * @return CommandDef|null
+     */
+    public function getCommandDef() : ? CommandDef;
 
-    public function asKeywords() : array;
+    /**
+     * @return array
+     */
+    public function getKeywords() : array;
 
-    public function asRegex() : array;
+    /**
+     * @return array
+     */
+    public function getRegex() : array;
 
-    public function asSound(string $lang) : string;
 }

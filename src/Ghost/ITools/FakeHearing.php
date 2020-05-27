@@ -163,12 +163,13 @@ class FakeHearing implements Hearing
         return $this;
     }
 
-    public function isCommand(string $signature): Matcher
+    public function isCommand(string $signature, bool $correct = false): Matcher
     {
         return $this;
     }
 
-    public function matchCommandDef(CommandDef $def): Matcher
+
+    public function matchCommandDef(CommandDef $def, bool $corrent = false): Matcher
     {
         return $this;
     }
