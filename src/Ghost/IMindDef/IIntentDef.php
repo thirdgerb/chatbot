@@ -163,11 +163,13 @@ class IIntentDef extends AbsOption implements IntentDef
 
         $matcher = $cloner->matcher->refresh();
 
-        if ($matcher->is($this->getTitle())) {
+        if ($matcher->is($this->getTitle())->truly()) {
+            $matcher->refresh();
             return true;
         }
 
-        if ($matcher->isAnswer($this->getDescription())) {
+        if ($matcher->isAnswer($this->getDescription())->truly()) {
+            $matcher->refresh();
             return true;
         }
 
@@ -175,7 +177,8 @@ class IIntentDef extends AbsOption implements IntentDef
         $regex = $this->getRegex();
         if (!empty($regex)) {
             foreach ($regex as $pattern) {
-                if ($matcher->pregMatch($pattern)) {
+                if ($matcher->pregMatch($pattern)->truly()) {
+                    $matcher->refresh();
                     return true;
                 }
             }
@@ -184,7 +187,8 @@ class IIntentDef extends AbsOption implements IntentDef
         // 命令
         $cmdDef = $this->getCommandDef();
         if (!empty($cmdDef)) {
-            if ($matcher->matchCommandDef($cmdDef, false)) {
+            if ($matcher->matchCommandDef($cmdDef, false)->truly()) {
+                $matcher->refresh();
                 return true;
             }
         }
@@ -192,7 +196,8 @@ class IIntentDef extends AbsOption implements IntentDef
         // 关键词
         $keywords = $this->getKeywords();
         if (!empty($keywords)) {
-            if ($matcher->hasKeywords($keywords, [], true)) {
+            if ($matcher->hasKeywords($keywords, [], true)->truly()) {
+                $matcher->refresh();
                 return true;
             }
         }
