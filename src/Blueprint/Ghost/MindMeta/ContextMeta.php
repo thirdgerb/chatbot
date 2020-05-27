@@ -11,11 +11,11 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
-use Commune\Ghost\Context\IContextDef;
-use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Alias\Aliases;
 use Commune\Support\Option\AbsMeta;
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
+use Commune\Ghost\Context\Prototype\IContextDef;
 
 /**
  * Context 配置的元数据.

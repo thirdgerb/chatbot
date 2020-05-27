@@ -44,19 +44,9 @@ interface StageBuilder
      */
     public function onEvent(string $event, $caller) : StageBuilder;
 
-    /**
-     * @param string $stage
-     * @return StageBuilder
-     */
-    public function onCancel(string $stage) : StageBuilder;
-
-    /**
-     * @param string $stage
-     * @return StageBuilder
-     */
-    public function onQuit(string $stage) : StageBuilder;
-
     /*----- event -----*/
+
+    public function fireRedirect(Dialog $prev, Dialog $current) : ? Operator;
 
     /**
      * @param Dialog $dialog

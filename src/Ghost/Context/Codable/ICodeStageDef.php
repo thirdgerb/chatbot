@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Context;
+namespace Commune\Ghost\Context\Codable;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DefineEntity
+class ICodeStageDef implements CodeStageDef
 {
-    public static function __entities(EntityBuilder $builder) : EntityBuilder;
+
 }

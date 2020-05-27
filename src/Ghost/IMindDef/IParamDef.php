@@ -193,11 +193,6 @@ class IParamDef implements ParamDef
         return $this->option->default;
     }
 
-    public function getQuery(): string
-    {
-        return $this->option->query;
-    }
-
     public function getOption(): ParamOption
     {
         return $this->option;

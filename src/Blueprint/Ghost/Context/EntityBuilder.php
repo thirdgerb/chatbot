@@ -11,6 +11,8 @@
 
 namespace Commune\Blueprint\Ghost\Context;
 
+use Commune\Blueprint\Ghost\MindDef\ParamDefCollection;
+use Commune\Blueprint\Ghost\MindDef\StageDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -18,10 +20,20 @@ namespace Commune\Blueprint\Ghost\Context;
 interface EntityBuilder
 {
 
+    public function define(
+        string $name,
+        string $query,
+        string $validator = null,
+        string $type = null,
+        string $parser = null
+    );
 
 
 
+    public function getEntityParams() : ParamDefCollection;
 
-
-
+    /**
+     * @return StageDef[]
+     */
+    public function getEntityStages() : array;
 }

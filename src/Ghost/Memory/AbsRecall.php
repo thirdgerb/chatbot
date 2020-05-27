@@ -16,6 +16,7 @@ use Commune\Blueprint\Ghost\Memory\Recall;
 use Commune\Blueprint\Ghost\MindDef\ParamDef;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
+use Commune\Ghost\Context\Builders\IParamBuilder;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\TArrayAccessToMutator;
@@ -71,7 +72,7 @@ abstract class AbsRecall implements Recall
         $memoryReg = $cloner->mind->memoryReg();
         if (!$memoryReg->hasDef($name)) {
 
-            $builder = null;
+            $builder = new IParamBuilder([]);
 
             $builder = static::__params($builder);
             $options = array_map(

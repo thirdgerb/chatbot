@@ -9,17 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Context;
+namespace Commune\Ghost\Context\Codable;
 
+use Commune\Blueprint\Ghost\MindDef\ContextDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DefineScopes
+interface CodeContextDef extends ContextDef
 {
-    /**
-     * @return string[]
-     */
-    public static function __scopes() : array;
 
 }

@@ -17,18 +17,18 @@ use Commune\Support\Option\AbsOption;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $name
- * @property-read string $query
  * @property-read mixed|null $default
  * @property-read string|null $type
  * @property-read string|null $parser
  */
 class ParamOption extends AbsOption
 {
+    const IDENTITY = 'name';
+
     public static function stub(): array
     {
         return [
             'name' => '',
-            'query' => '',
             'type' => 'string',
             'parser' => null,
             'default' => null,

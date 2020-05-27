@@ -85,9 +85,8 @@ class IContext implements Context
     {
         return $this->_ucl;
     }
-
-
     /*----- property -----*/
+
 
     public function getDef(): ContextDef
     {

@@ -26,12 +26,6 @@ interface ParamDef
     public function getName() : string;
 
     /**
-     * 字段的介绍, 或者向用户要求输入时给出的问题.
-     * @return string
-     */
-    public function getQuery() : string;
-
-    /**
      * @return callable|null
      */
     public function getTypeValidator() : ? callable ;

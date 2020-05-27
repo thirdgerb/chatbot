@@ -56,5 +56,9 @@ interface ParamDefCollection
      */
     public function getDefaultValues() : array;
 
+    /**
+     * @param ParamDef $param
+     */
+    public function addParamDef(ParamDef $param) : void;
 
 }

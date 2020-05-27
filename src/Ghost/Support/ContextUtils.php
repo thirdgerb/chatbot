@@ -11,6 +11,8 @@
 
 namespace Commune\Ghost\Support;
 
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Support\Utils\StringUtils;
 use Commune\Support\Utils\TypeUtils;
 
@@ -19,6 +21,30 @@ use Commune\Support\Utils\TypeUtils;
  */
 class ContextUtils
 {
+
+    public static function makeFullStageName(string $contextName, string $stageName) : string
+    {
+        return StringUtils::gluePrefixAndName(
+            $contextName,
+            $stageName,
+            Context::CONTEXT_STAGE_SEPARATOR
+        );
+    }
+
+    public static function parseShortStageName(string $stageFullName, string $contextName) : string
+    {
+        $length = strlen($contextName);
+        $first = substr($stageFullName, 0, $length);
+        $last = substr($stageFullName, $length);
+
+        if ($first !== $stageFullName) {
+            throw new InvalidArgumentException(
+                "stage full name must start with its context name"
+            );
+        }
+
+        return trim($last, Context::CONTEXT_STAGE_SEPARATOR);
+    }
 
     public static function normalizeContextName(string $contextName) : string
     {

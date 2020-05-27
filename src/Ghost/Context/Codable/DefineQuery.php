@@ -9,14 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Context;
+namespace Commune\Ghost\Context\Codable;
 
+use Commune\Blueprint\Ghost\Context\ParamBuilder;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DefineParams
+interface DefineQuery
 {
-    public static function __params(ParamBuilder $builder) : ParamBuilder;
+    const DEFINE_QUERY_FUNC = '__query';
 
+    public static function __query(ParamBuilder $params) : ParamBuilder;
 }

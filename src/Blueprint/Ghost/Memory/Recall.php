@@ -12,8 +12,8 @@
 namespace Commune\Blueprint\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Context\DefineParams;
-use Commune\Blueprint\Ghost\Context\DefineScopes;
+use Commune\Ghost\Context\Codable\DefineParams;
+use Commune\Ghost\Context\Codable\DefineScopes;
 
 /**
  * 静态的回忆工具, 用静态方法来定义和获取记忆体.

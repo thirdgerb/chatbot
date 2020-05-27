@@ -86,12 +86,6 @@ interface ContextDef extends Def
 
     /**
      * @param string $stageName
-     * @return bool
-     */
-    public function hasStage(string $stageName) : bool;
-
-    /**
-     * @param string $stageName
      * @return StageDef
      */
     public function getStage(string $stageName) : StageDef;

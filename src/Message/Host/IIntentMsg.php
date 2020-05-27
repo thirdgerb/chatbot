@@ -15,6 +15,7 @@ use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Support\Struct\Struct;
+use Illuminate\Support\Arr;
 
 
 /**
@@ -28,6 +29,12 @@ class IIntentMsg extends AbsMessage implements IntentMsg
 
     const INTENT_NAME = '';
     const DEFAULT_LEVEL = HostMsg::INFO;
+
+
+    /**
+     * @var string
+     */
+    protected $_text;
 
     public function __construct(
         string $intentName,
@@ -89,7 +96,33 @@ class IIntentMsg extends AbsMessage implements IntentMsg
 
     public function getText(): string
     {
-        return $this->intentName;
+        if (isset($this->_text)) {
+            return $this->_text;
+        }
+
+        $template = $this->intentName;
+        $slots = $this->getSlots();
+
+        // 不为空则翻译.
+        if (empty($slots)) {
+            return $template;
+        }
+
+        $flattenSlots = Arr::dot($slots);
+
+//        if (extension_loaded('intl')) {
+//        }
+
+        $trans = [];
+        foreach ($flattenSlots as $key => $val) {
+            $trans["{$key}"] = $val;
+        }
+
+        return $this->_text = str_replace(
+            array_keys($trans),
+            array_values($trans),
+            $template
+        );
     }
 
     public function isEmpty(): bool
@@ -109,6 +142,5 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         unset($arr['level']);
         return $arr;
     }
-
 
 }
