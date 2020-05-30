@@ -34,8 +34,8 @@ class UserInfoMem extends AMemoryContext
     public static function __params(ParamBuilder $param) : ParamBuilder
     {
         return $param
-            ->define('name')
-            ->define('loginTimes', 0);
+            ->def('name')
+            ->def('loginTimes', 0);
     }
 
     public function increaseLoginTimes() : void

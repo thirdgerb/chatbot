@@ -11,13 +11,18 @@
 
 namespace Commune\Ghost\Context\Codable;
 
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
+use Commune\Blueprint\Ghost\Context\ContextOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DefineParams
+interface DefineConfig
 {
-    public static function __params(ParamBuilder $builder) : ParamBuilder;
 
+    const DEFINE_CONFIG_FUNC = '__config';
+
+    /**
+     * @return ContextOption
+     */
+    public static function __config() : ContextOption;
 }

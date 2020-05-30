@@ -21,7 +21,9 @@ class TestOption extends AbsOption
             'id' => '1',
             'a' => 'A',
             'b' => 'B',
-            'c' => [TestSubOption::stub()],
+            'c' => [
+                TestSubOption::stub(),
+            ],
         ];
     }
 

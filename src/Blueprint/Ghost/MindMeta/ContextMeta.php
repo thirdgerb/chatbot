@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
-use Commune\Support\Alias\Aliases;
+use Commune\Support\Alias\TAliases;
 use Commune\Support\Option\AbsMeta;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
@@ -33,6 +33,8 @@ use Commune\Ghost\Context\Prototype\IContextDef;
  */
 class ContextMeta extends AbsMeta
 {
+    use TAliases;
+
     const IDENTITY = 'name';
 
     public static function stub(): array
@@ -41,9 +43,14 @@ class ContextMeta extends AbsMeta
             'name' => '',
             'title' => '',
             'desc' => '',
-            'wrapper' => IContextDef::class,
+            'wrapper' => self::getAliasOfOrigin(IContextDef::class),
             'config' => [],
         ];
+    }
+
+    public function __get_wrapper() : string
+    {
+        return self::getOriginFromAlias($this->_data['wrapper'] ?? '');
     }
 
     public static function relations(): array

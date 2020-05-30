@@ -8,6 +8,7 @@
 namespace Commune\Test\Support;
 
 use Commune\Support\Option\AbsOption;
+use Commune\Support\Registry\Demo\TestOption;
 use PHPUnit\Framework\TestCase;
 
 class OptionTest extends TestCase
@@ -91,6 +92,13 @@ class OptionTest extends TestCase
         $this->assertEquals($o1->getHash(), $o2->getHash());
     }
 
+    public function testTestOptionToArray()
+    {
+        $t = new TestOption([]);
+        $t1 = TestOption::create($t->toArray());
+
+        $this->assertEquals($t->getHash(), $t1->getHash());
+    }
 
 }
 

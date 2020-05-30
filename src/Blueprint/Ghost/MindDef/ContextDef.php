@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Blueprint\Ghost\Context\ParamCollection;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -46,19 +47,27 @@ interface ContextDef extends Def
     public function getScopes() : array;
 
     /**
-     * @return ParamDefCollection
+     * query 参数的默认值
+     * @return ParamCollection
      */
-    public function getQueryParams() : ParamDefCollection;
+    public function getQueryDefaults() : ParamCollection;
 
     /**
-     * @return ParamDefCollection
+     * @return ParamCollection
      */
-    public function getEntityParams() : ParamDefCollection;
+    public function getParamsDefaults() : ParamCollection;
 
     /**
-     * @return ParamDefCollection
+     * 依赖字段. 启动的时候默认会走这些字段来.
+     * @return string[]
      */
-    public function getParams() : ParamDefCollection;
+    public function getDependingNames() : array;
+
+    /**
+     * 可以从 comprehension entity 直接获取的属性.
+     * @return string[]
+     */
+    public function getEntityNames() : array;
 
     /*------- relation -------*/
 
@@ -82,16 +91,31 @@ interface ContextDef extends Def
      */
     public function asMemoryDef() : MemoryDef;
 
-    /*------- config -------*/
+    /*------- context 内的通用配置. -------*/
 
+    /**
+     * @return null|string
+     */
     public function firstStage() : ? string;
 
+    /**
+     * @return null|string
+     */
     public function onCancelStage() : ? string;
 
+    /**
+     * @return null|string
+     */
     public function onQuitStage() : ? string;
 
+    /**
+     * @return array
+     */
     public function commonStageRoutes() : array;
 
+    /**
+     * @return array
+     */
     public function commonContextRoutes() : array;
 
     /*------- stage -------*/
@@ -101,14 +125,14 @@ interface ContextDef extends Def
      * @param string $stageName
      * @return StageDef
      */
-    public function getStage(string $stageName) : StageDef;
+    public function getPredefinedStage(string $stageName) : StageDef;
 
     /**
      * 获取当前 Context 配置下所有的 stage 名称
      * @param bool $isFullname      是否显示全称.
      * @return string[]
      */
-    public function getStageNames(bool $isFullname = false) : array;
+    public function getPredefinedStageNames(bool $isFullname = false) : array;
 
 
 

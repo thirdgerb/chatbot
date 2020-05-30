@@ -31,8 +31,8 @@ class UserPlayedHistory extends ARecall
     public static function paramBuilder(ParamBuilder $builder): ParamBuilder
     {
         return $builder
-            ->define('total', 0)
-            ->define('highestScore', 0);
+            ->def('total', 0)
+            ->def('highestScore', 0);
     }
 
 

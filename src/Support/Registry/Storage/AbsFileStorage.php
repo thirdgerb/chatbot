@@ -16,6 +16,7 @@ use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Storage;
 use Commune\Support\Utils\StringUtils;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 
 
@@ -51,6 +52,25 @@ abstract class AbsFileStorage implements Storage
      * @var string[][]
      */
     protected $allIds = [];
+
+    /*------ construct ------*/
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * AbsFileStorage constructor.
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+
+
     /*------ methods ------*/
 
 
@@ -112,12 +132,21 @@ abstract class AbsFileStorage implements Storage
     protected function newOption(
         string $optionClass,
         array $optionArr
-    ) : Option
+    ) : ? Option
     {
-        return call_user_func(
-            [$optionClass, Option::CREATE_FUNC],
-            $optionArr
-        );
+        try {
+
+            return call_user_func(
+                [$optionClass, Option::CREATE_FUNC],
+                $optionArr
+            );
+
+        } catch (\Exception $e) {
+
+            $this->logger->error($e->getMessage());
+
+            return null;
+        }
     }
 
     protected function isLoaded(CategoryOption $categoryOption) : bool
@@ -157,10 +186,14 @@ abstract class AbsFileStorage implements Storage
 
         $className = $category->optionClass;
         foreach ($data as $optionArr) {
+
             $option = $this->newOption($className, $optionArr);
-            $optionId = $option->getId();
-            $this->optionCaches[$cateId][$optionId] = $option;
-            $this->optionFromFile[$cateId][$optionId] = $path;
+
+            if (isset($option)) {
+                $optionId = $option->getId();
+                $this->optionCaches[$cateId][$optionId] = $option;
+                $this->optionFromFile[$cateId][$optionId] = $path;
+            }
         }
     }
 
@@ -192,10 +225,13 @@ abstract class AbsFileStorage implements Storage
             $filePath = $file->getRealPath();
             $optionArr = $this->readSingleFile($filePath);
             if (isset($optionArr)) {
+
                 $option = $this->newOption($optionClass, $optionArr);
-                $optionId = $option->getId();
-                $this->optionCaches[$cateId][$optionId] = $option;
-                $this->optionFromFile[$cateId][$optionId] = $filePath;
+                if (isset($option)) {
+                    $optionId = $option->getId();
+                    $this->optionCaches[$cateId][$optionId] = $option;
+                    $this->optionFromFile[$cateId][$optionId] = $filePath;
+                }
             }
         }
     }

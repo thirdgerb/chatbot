@@ -29,8 +29,14 @@ interface Memory extends
      */
     public function getId() : string;
 
+    /**
+     * @return bool
+     */
     public function isChanged() : bool;
 
+    /**
+     * @return bool
+     */
     public function isLongTerm() : bool;
 
     /**

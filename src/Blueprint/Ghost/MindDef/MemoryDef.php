@@ -32,11 +32,6 @@ interface MemoryDef extends Def
     public function getScopes() : array;
 
     /**
-     * @return ParamDefCollection
-     */
-    public function getParams() : ParamDefCollection;
-
-    /**
      * 记忆体的默认值.
      * @return array
      */

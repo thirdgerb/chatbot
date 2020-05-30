@@ -11,10 +11,10 @@
 
 namespace Commune\Ghost\Context\Codable;
 
+use Commune\Blueprint\Ghost\Context\ContextOption;
 use Commune\Blueprint\Ghost\Context\EntityBuilder;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Ghost\Context\Builders\IParamBuilder;
-use Commune\Blueprint\Ghost\MindDef\ParamDefCollection;
 
 
 /**
@@ -45,19 +45,11 @@ class CodeDefCreator
         );
     }
 
-    public function getQueryParams() : ParamDefCollection
-    {
-        $builder = new IParamBuilder([]);
-        if ($this->isInstance( DefineQuery::class)) {
-            $builder = call_user_func(
-                [$this->contextClass, DefineQuery::DEFINE_QUERY_FUNC],
-                $builder
-            );
-        }
-        return $builder;
-    }
 
-    public function getConfig() : array
+    /**
+     * @return ContextOption
+     */
+    public function getConfig() : ContextOption
     {
         if ($this->isInstance(DefineConfig::class)) {
             return call_user_func(
@@ -65,31 +57,16 @@ class CodeDefCreator
             );
         }
 
-        return [];
+        return new ContextOption([]);
     }
-
 
     /**
-     * @return StageDef[]
+     * @return \Generator
      */
-    public function getMethodStages() : array
+    public function eachMethodStage() : \Generator
     {
 
     }
 
-    public function getParams() : ParamDefCollection
-    {
-
-    }
-
-    public function getEntityBuilder(string $contextName) : EntityBuilder
-    {
-
-    }
-
-    public function getContextIntentMeta() : array
-    {
-
-    }
 
 }

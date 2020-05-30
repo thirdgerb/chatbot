@@ -72,6 +72,11 @@ class IContext implements Context
      */
     protected $_task;
 
+    /**
+     * IContext constructor.
+     * @param Ucl $ucl
+     * @param Cloner $cloner
+     */
     public function __construct(
         Ucl $ucl,
         Cloner $cloner
@@ -141,8 +146,7 @@ class IContext implements Context
     {
         $entities = $this
             ->getDef()
-            ->getEntityParams()
-            ->getParamNames();
+            ->getEntityNames();
 
         foreach ($entities as $name) {
             if (!$this->offsetExists($name)) {
@@ -151,6 +155,12 @@ class IContext implements Context
         }
 
         return null;
+    }
+
+    public function isPrepared(): bool
+    {
+        $depending = $this->dependEntity();
+        return is_null($depending);
     }
 
 
@@ -202,10 +212,8 @@ class IContext implements Context
     public function getIterator()
     {
         $def = $this->getDef();
-        $names = $def->getQueryParams()->getParamNames();
-        $memoryNames = $def->asMemoryDef()->getParams()->getParamNames();
 
-        $names = array_unique(array_merge($names, $memoryNames));
+        $names = $def->getParamsDefaults()->keys();
 
         foreach ($names as $name) {
             yield $this->offsetGet($name);
@@ -217,10 +225,10 @@ class IContext implements Context
 
     public function offsetExists($offset)
     {
-        $manager = $this->getDef()->getParams();
+        $collection = $this->getDef()->getQueryDefaults();
 
-        if (!$manager->hasParam($offset)) {
-            return false;
+        if ($collection->has($offset)) {
+            return true;
         }
 
         $value = $this->offsetGet($offset);
@@ -230,9 +238,9 @@ class IContext implements Context
     public function offsetGet($offset)
     {
         $def = $this->getDef();
-        $queries = $def->getQueryParams();
+        $queries = $def->getQueryDefaults();
 
-        if($queries->hasParam($offset)) {
+        if($queries->has($offset)) {
             return $this->getQuery()[$offset] ?? null;
         }
 
@@ -242,9 +250,9 @@ class IContext implements Context
     public function offsetSet($offset, $value)
     {
         $def = $this->getDef();
-        $queries = $def->getQueryParams();
+        $queries = $def->getQueryDefaults();
 
-        if ($queries->hasParam($offset)) {
+        if ($queries->has($offset)) {
             $contextName = $this->getName();
             $error = "context $contextName try to set value for query parameter $offset";
             $this->warningOrException($error);
@@ -256,9 +264,9 @@ class IContext implements Context
 
     public function offsetUnset($offset)
     {
-        $queries = $this->getDef()->getQueryParams();
+        $queries = $this->getDef()->getQueryDefaults();
 
-        if ($queries->hasParam($offset)) {
+        if ($queries->has($offset)) {
             $contextName = $this->getName();
             $error = "context $contextName try to unset value for query parameter $offset";
             $this->warningOrException($error);

@@ -9,16 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context\Codable;
-
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
+namespace Commune\Blueprint\Ghost;
 
 /**
+ * 可以注册到 Mindset 中的类. 通常通过 psr-4 来读取.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DefineQuery
+interface MindSelfRegister
 {
-    const DEFINE_QUERY_FUNC = '__query';
+    const REGISTER_METHOD = 'selfRegisterToMind';
 
-    public static function __query(ParamBuilder $params) : ParamBuilder;
+    public static function selfRegisterToMind(Mindset $mindset) : void;
 }

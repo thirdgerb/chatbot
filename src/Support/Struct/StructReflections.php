@@ -11,7 +11,6 @@
 
 namespace Commune\Support\Struct;
 
-use Commune\Protocals\Intercom\ShellInput;
 use Commune\Support\Utils\StringUtils;
 
 

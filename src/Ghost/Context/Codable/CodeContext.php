@@ -13,15 +13,17 @@ namespace Commune\Ghost\Context\Codable;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
+use Commune\Blueprint\Ghost\MindSelfRegister;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
+use Commune\Support\Option\Wrapper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface CodeContext extends Context
+interface CodeContext extends Context, Wrapper, MindSelfRegister
 {
 
     const MAKE_DEF_FUNC = 'makeDef';
@@ -38,7 +40,7 @@ interface CodeContext extends Context
 
     public static function getContextName() : string;
 
-    public static function makeDef(ContextMeta $meta) : ContextDef;
+    public static function makeDef(ContextMeta $meta = null) : ContextDef;
 
     /**
      * @param StageBuilder $builder

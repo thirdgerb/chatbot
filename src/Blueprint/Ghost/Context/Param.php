@@ -9,15 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\MindDef;
+namespace Commune\Blueprint\Ghost\Context;
 
-use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
  */
-interface ParamDef
+interface Param
 {
     /**
      * 字段名
@@ -26,31 +24,21 @@ interface ParamDef
     public function getName() : string;
 
     /**
-     * @return callable|null
-     */
-    public function getTypeValidator() : ? callable ;
-
-    /**
-     * @return callable|null
-     */
-    public function getValParser() : ? callable ;
-
-
-    /**
-     * 是否是数组
+     * 是否是列表字段.
      * @return bool
      */
     public function isList() : bool;
 
+
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
+    public function parse($value);
+
     /**
      * 默认值
-     * @return mixed|null
+     * @return mixed
      */
     public function getDefault();
-
-    /**
-     * @return ParamOption
-     */
-    public function getOption() : ParamOption;
-
 }

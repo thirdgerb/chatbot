@@ -43,9 +43,9 @@ class IContextReg extends AbsDefRegistry implements ContextReg
             && $this->mindset->memoryReg()->registerDef($def->asMemoryDef(), $notExists);
 
         if ($success) {
-            $names = $def->getStageNames();
+            $names = $def->getPredefinedStageNames();
             foreach ($names as $name) {
-                $stageReg->registerDef($def->getStage($name), true);
+                $stageReg->registerDef($def->getPredefinedStage($name), true);
                 return $name;
             }
         }

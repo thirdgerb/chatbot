@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Providers;
 
 use Commune\Blueprint\Ghost;
-use Commune\Blueprint\Ghost\GhostSelfRegister;
+use Commune\Blueprint\Ghost\MindSelfRegister;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
 use Psr\Log\LoggerInterface;
@@ -83,7 +83,7 @@ class Psr4SelfRegisterLoader extends ServiceProvider
                 . '\\' .
                 trim($name, '\\');
 
-            if (!is_a($clazz, GhostSelfRegister::class, TRUE)) {
+            if (!is_a($clazz, MindSelfRegister::class, TRUE)) {
                 continue;
             }
 
@@ -94,7 +94,7 @@ class Psr4SelfRegisterLoader extends ServiceProvider
             }
 
             $logger->debug("register context $clazz");
-            $method = [$clazz, GhostSelfRegister::REGISTER_METHOD];
+            $method = [$clazz, MindSelfRegister::REGISTER_METHOD];
             call_user_func($method, $ghost);
             $i ++;
         }

@@ -9,25 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Support\Alias;
+namespace Commune\Ghost\Context\Builders;
 
+use Commune\Blueprint\Ghost\Context\EntityBuilder;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class Aliases
+class IEntityBuilder implements EntityBuilder
 {
-    private static $aliases = [];
-
-    public static function alias(string $name) : string
-    {
-        return self::$aliases[$name] ?? $name;
-    }
-
-    public static function setAlias(string $origin, string $alias) : void
-    {
-        self::$aliases[$alias] = $origin;
-    }
-
 
 }

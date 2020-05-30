@@ -79,39 +79,19 @@ trait TRecollection
 
     public function offsetSet($offset, $value)
     {
-        $manager = $this->_def->getParams();
+        $defaults = $this->_def->getDefaults();
         $memoryName = $this->getName();
 
         // set undefined param
-        if (!$manager->hasParam($offset)) {
+        if (!array_key_exists($offset, $defaults)) {
 
-
+            // 线上环境日志提醒, 测试状态禁止.
             $error = "memory $memoryName try to set value for undefined parameter $offset";
             $this->warningOrException($error);
-
-            if ($value instanceof Cloner\ClonerInstance) {
-                $value = $value->toInstanceStub();
-            }
-
-            $this->_memory->offsetSet($offset, $value);
-            return;
         }
 
-        $param = $manager->getParam($offset);
 
-        // parse
-        $parser = $param->getValParser();
-        $value = isset($parser)
-            ? $parser($value)
-            : $value;
-
-        // validate
-        $validator = $param->getTypeValidator();
-        if (isset($validator) && !$validator($value)) {
-            $error = "memory $memoryName try to set invalid value for parameter $offset";
-            $this->warningOrException($error);
-        }
-
+        // 变为 instance stub
         if ($value instanceof Cloner\ClonerInstance) {
             $value = $value->toInstanceStub();
         }

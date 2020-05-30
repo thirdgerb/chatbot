@@ -11,6 +11,11 @@
 
 namespace Commune\Support\Struct;
 
+use Commune\Support\Registry\Demo\TestOption;
+use Commune\Support\Utils\ArrayUtils;
+use Commune\Support\Utils\TypeUtils;
+use Illuminate\Support\Arr;
+use InvalidArgumentException;
 use Commune\Support\Arr\ArrayAbleToJson;
 
 /**
@@ -33,22 +38,29 @@ abstract class AbsStruct implements Struct, \Serializable
 
         $stub = static::stub();
         $data = $data + $stub;
+
         // 构建关系
         $this->_constructData($data);
+    }
+
+    private function _constructData(array $data) : void
+    {
+        $this->_filter($data);
+        $error = static::validate($this->_data);
+
+        if (!empty($error)) {
+            throw new InvalidStructException(static::class . ' invalid struct data , ' . $error);
+        }
     }
 
     /**
      * 过滤数据. 自定义规则
      * @param array $data
-     * @return array
      */
-    public function _filter(array $data) : array
+    public function _filter(array $data) : void
     {
-        // 如果是强类型, 则不转换.
-        if (static::STRICT) {
-            return $data;
-        } else {
-            return StructReflections::parse(static::class, $data);
+        foreach ($data as $key => $val) {
+            $this->__set($key, $val);
         }
     }
 
@@ -76,23 +88,25 @@ abstract class AbsStruct implements Struct, \Serializable
         if (method_exists($this, $method = static::GETTER_PREFIX . $name)) {
             return $this->{$method}();
         }
+
         return $this->_data[$name] ?? null;
     }
 
     public function __set($name, $value)
     {
+        // 用自定义 method 来赋值.
         if (method_exists($this, $method = static::SETTER_PREFIX . $name)) {
             $this->{$method}($value);
             return;
         }
 
-        // 关系
+        // 关系类型转换.
         if (static::isRelation($name)) {
-            $this->_data[$name] = $value;
-            $this->_constructData($this->_data);
+            $this->_data[$name] = $this->_parseRelation($name, $value);
             return;
         }
 
+        // 默认的赋值.
         $reflector = StructReflections::getFieldReflector(static::class, $name);
         // 允许赋值
         if (!isset($reflector)) {
@@ -125,70 +139,49 @@ abstract class AbsStruct implements Struct, \Serializable
         return new \ArrayIterator($this->_data);
     }
 
-    private function _constructData(array $data) : void
-    {
-        // 先过滤数据.
-        $data = $this->_filter($data);
-        $data = $this->_recursiveParse($data);
-        // 校验数据.
-        $error = static::validate($data);
-
-        if (isset($error)) {
-            throw new InvalidStructException(static::class . " struct validate data fail: $error");
-        }
-        $this->_data = $data;
-    }
 
     /**
-     * 递归地构建数据.
-     *
-     * @param array $data
-     * @return array
+     * @param string $field
+     * @param $value
+     * @return Struct[]|Struct|null
      */
-    private function _recursiveParse(array $data) : array
+    private function _parseRelation(string $field, $value)
     {
-        // 校验
-        $relations = static::relations();
-        if (empty($relations)) {
-            return $data;
+        if (is_null($value)) {
+            return $value;
         }
 
-        foreach ($relations as $field => $structType) {
-            $isArray = $this->_isArrayFieldName($field);
-            $field = $isArray ? $this->_fieldWithOutArrMark($field) : $field;
+        $structType = static::getRelationClass($field);
+        $isList = static::isListRelation($field);
 
-            // 不能不存在
-            if (!array_key_exists($field, $data)) {
-                throw new InvalidStructException("relation field $field is missing");
-            }
+        if (!$isList) {
 
-            // 如果值是 null, 则继续.
-            if (!isset($data[$field])) {
-                continue;
-            }
+            return $this->_buildRelatedStruct(
+                $field,
+                $structType,
+                $value
+            );
 
-            if (!$isArray) {
-                $data[$field] = $this->_buildRelatedStruct(
-                    $structType,
-                    $data[$field]
-                );
-            } else {
-                foreach ($data[$field] as $key => $value) {
-                    // null
-                    if (is_null($value)) {
-                        continue;
-                    }
-
-                    // build
-                    $data[$field][$key] = $this->_buildRelatedStruct(
-                        $structType,
-                        $value
-                    );
+        } elseif ($isList && is_array($value)) {
+            $result = [];
+            foreach ($value as $key => $val) {
+                // null
+                if (is_null($val)) {
+                    continue;
                 }
+
+                // build
+                $result[$key] = $this->_buildRelatedStruct(
+                    $field . '[' . $key . ']',
+                    $structType,
+                    $val
+                );
             }
+
+            return $result;
         }
 
-        return $data;
+        throw new InvalidArgumentException("invalid relation value for $field");
     }
 
     public static function isRelation(string $fieldName): bool
@@ -252,14 +245,15 @@ abstract class AbsStruct implements Struct, \Serializable
     }
 
 
-    private function _buildRelatedStruct(string $type, $data) : Struct
+    private function _buildRelatedStruct(string $field, string $type, $data) : Struct
     {
+        // 如果是封装好的对象.
         if (is_object($data) && is_a($data, $type, TRUE)) {
             return $data;
         }
 
         if (!is_array($data)) {
-            throw new InvalidStructException("relation value for type $type must be array");
+            throw new InvalidArgumentException(static::class . " relation field $field only accept Struct object or array, ". TypeUtils::getType($data) . ' given');
         }
 
         return call_user_func(
@@ -275,33 +269,7 @@ abstract class AbsStruct implements Struct, \Serializable
     public function toArray(): array
     {
         $data = $this->_data;
-
-        $relations = static::relations();
-        if (empty($relations)) {
-            return $data;
-        }
-
-        foreach ($relations as $field => $structType) {
-            $isArray = $this->_isArrayFieldName($field);
-            $field = $isArray ? $this->_fieldWithOutArrMark($field) : $field;
-
-            if (!isset($data[$field])) {
-                continue;
-            }
-
-            if ($isArray) {
-                /**
-                 * @var Struct $value
-                 */
-                foreach($data[$field] as $key => $value) {
-                    $data[$field][$key] = $value->toArray();
-                }
-
-            } else {
-                $data[$field] = $data[$field]->toArray();
-            }
-        }
-        return $data;
+        return ArrayUtils::recursiveToArray($data);
     }
 
     public static function getDocComment(): string
@@ -319,7 +287,7 @@ abstract class AbsStruct implements Struct, \Serializable
 
     public function serialize()
     {
-        return json_encode($this->_data);
+        return json_encode($this->toArray());
     }
 
     public function unserialize($serialized)

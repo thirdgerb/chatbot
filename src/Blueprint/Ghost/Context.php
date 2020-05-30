@@ -93,6 +93,11 @@ interface Context extends
     public function dependEntity() : ? string /* entityName */;
 
     /**
+     * @return bool
+     */
+    public function isPrepared() : bool;
+
+    /**
      * @return Collection
      */
     public function getQuery() : Collection;

@@ -14,6 +14,7 @@ namespace Commune\Ghost\Stage;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
+use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\IMindDef\IIntentDef;
@@ -32,7 +33,7 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  * @property-read string $desc
  * @property-read string $contextName
  * @property-read string $stageName
- * @property-read array $asIntent
+ * @property-read IntentMeta $asIntent
  * @property-read string[] $events
  * @property-read string|null $ifRedirect
  */
@@ -44,13 +45,20 @@ abstract class AbsStageDef extends AbsOption implements StageDef
         string $contextName,
         string $title,
         string $desc,
-        array $config = []
+        array $asIntent = [],
+        array $events = [],
+        string $ifRedirect = null
     )
     {
-        $config['stageName'] = ContextUtils::parseShortStageName($stageFullName, $contextName);
+        $config['name'] = $stageFullName;
         $config['contextName'] = $contextName;
         $config['title'] = $title;
         $config['desc'] = $desc;
+        $config['stageName'] = ContextUtils::parseShortStageName($stageFullName, $contextName);
+        $config['asIntent'] = $asIntent;
+        $config['events'] = $events;
+        $config['ifRedirect'] = $ifRedirect;
+
         parent::__construct($config);
     }
 
@@ -99,6 +107,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
                 ]);
         }
 
+        return null;
     }
 
     /*------- properties -------*/
@@ -148,7 +157,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
             $config['desc'] = $this->desc;
         }
 
-        return new IIntentDef($config);
+        return new IIntentDef(new IntentMeta($config));
     }
 
     /*------- wrapper -------*/

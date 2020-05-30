@@ -323,7 +323,7 @@ class IContextDef extends AbsOption implements ContextDef
         return $this->getStageMetaMap()->has($stageName);
     }
 
-    public function getStage(string $stageName): StageDef
+    public function getPredefinedStage(string $stageName): StageDef
     {
         $map = $this->getStageMetaMap();
         if (!$map->has($stageName)) {
@@ -332,7 +332,7 @@ class IContextDef extends AbsOption implements ContextDef
         return $map->get($stageName);
     }
 
-    public function getStageNames(bool $isFullname = false): array
+    public function getPredefinedStageNames(bool $isFullname = false): array
     {
         return $this
             ->getStageMetaMap()

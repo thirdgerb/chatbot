@@ -4,6 +4,7 @@
 namespace Commune\Test\Support\OptionRepo;
 
 
+use Commune\Framework\Log\IConsoleLogger;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -29,7 +30,7 @@ class OptRepoTest extends TestCase
     {
         $container = new Container();
         $container->instance(ContainerInterface::class, $container);
-        $container->instance(LoggerInterface::class, new Logger('test'));
+        $container->instance(LoggerInterface::class, new IConsoleLogger());
 
         $container->singleton(OptRegistry::class, IOptRegistry::class);
 
@@ -83,7 +84,7 @@ class OptRepoTest extends TestCase
         return new CategoryOption($data);
     }
 
-    public function testRegistrySigleFile()
+    public function testRegistrySingleFile()
     {
         foreach (['json', 'yml', 'php'] as $type) {
             $meta = $this->prepareMetas($type, TestOption::class, false);
@@ -104,7 +105,6 @@ class OptRepoTest extends TestCase
 
     protected function typeTest(Container $c, string $type)
     {
-
         /**
          * @var OptRegistry $repo
          */
@@ -135,6 +135,7 @@ class OptRepoTest extends TestCase
 
         $t1 = TestOption::createById('test1');
         $t2 = TestOption::createById('test2');
+
 
         $category->save($t1);
         $category->save($t2);

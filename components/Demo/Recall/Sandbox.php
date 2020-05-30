@@ -31,7 +31,7 @@ class Sandbox extends ARecall
 
     public static function paramBuilder(ParamBuilder $builder): ParamBuilder
     {
-        return $builder->define('test', 0);
+        return $builder->def('test', 0);
     }
 
 

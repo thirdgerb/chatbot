@@ -11,7 +11,6 @@
 
 namespace Commune\Support\Registry\Meta;
 
-use Commune\Support\Alias\Aliases;
 use Commune\Support\Option\AbsMeta;
 
 
@@ -37,7 +36,6 @@ class StorageMeta extends AbsMeta
 
     static function validateWrapper(string $wrapper): ? string
     {
-        $wrapper = Aliases::alias($wrapper);
         return is_a($wrapper, StorageOption::class, TRUE)
             ? null
             : 'wrapper must be subclass of ' . StorageOption::class;

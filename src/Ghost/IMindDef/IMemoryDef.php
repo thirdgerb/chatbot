@@ -15,8 +15,6 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\MindDef\ParamDefCollection;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
-use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
-use Commune\Ghost\Context\IParamDefCollection;
 use Commune\Ghost\Memory\IRecollection;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
@@ -70,20 +68,9 @@ class IMemoryDef implements MemoryDef
         return $this->meta->scopes;
     }
 
-    public function getParams(): ParamDefCollection
-    {
-        return $this->params
-            ?? $this->params = new IParamDefCollection(
-                array_map(function(ParamOption $option) {
-                    return new IParamDef($option);
-                }, $this->meta->params)
-            );
-    }
-
-
     public function getDefaults(): array
     {
-        return $this->getParams()->getDefaultValues();
+        return $this->meta->params;
     }
 
     public function isLongTerm(): bool

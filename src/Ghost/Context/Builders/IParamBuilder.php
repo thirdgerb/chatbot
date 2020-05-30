@@ -38,23 +38,40 @@ class IParamBuilder implements ParamBuilder
         }
     }
 
-    public function define(
+    public function def(
         string $name,
         $default = null,
         $type = null,
         $parser = null
     ): ParamBuilder
     {
+        $defaultType = $this->getType($default);
         $option = new ParamOption([
             'name' => $name,
             'default' => $default,
-            'type' => $type,
-            'parser' => $parser
+            'type' => $type ?? $defaultType,
+            'parser' => $parser ?? $defaultType,
         ]);
 
         $this->options[$option->getId()] = $option;
 
         return $this;
+    }
+
+    protected function getType($value) : ? string
+    {
+        if (is_null($value)) {
+            return null;
+        }
+
+        if (is_array($value)) {
+            return 'array';
+        }
+
+        $type = gettype($value);
+        return in_array($type, ['string', 'int', 'float', 'double', 'bool'])
+            ? $type
+            : null;
     }
 
     public function getParams(): ParamDefCollection

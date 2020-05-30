@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Context\Codable;
 
+use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
@@ -36,9 +37,15 @@ abstract class AbsCodeContext extends IContext implements CodeContext
         return new static($ucl, $cloner);
     }
 
-    public static function makeDef(ContextMeta $meta): ContextDef
+    public static function makeDef(ContextMeta $meta = null): ContextDef
     {
         return new ICodeContextDef(static::class, $meta);
+    }
+
+    public static function selfRegisterToMind(Ghost\Mindset $mind): void
+    {
+        $def = static::makeDef(static::class);
+        $mind->contextReg()->registerDef($def, true);
     }
 
 

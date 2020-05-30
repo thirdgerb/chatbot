@@ -11,12 +11,11 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
-use Commune\Blueprint\Ghost\MindDef\MemoryDef;
-use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
+use Commune\Support\Option\Wrapper;
 use Commune\Ghost\IMindDef\IMemoryDef;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\AbsOption;
-use Commune\Support\Option\Wrapper;
+use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -25,8 +24,7 @@ use Commune\Support\Option\Wrapper;
  * @property-read string $title             标题
  * @property-read string $desc              简介
  * @property-read string[] $scopes          记忆的作用域.
- * @property-read ParamOption[] $params     参数
- *
+ * @property-read array $params           默认值, 也是记忆体数据的样板.
  *
  */
 class MemoryMeta extends AbsOption implements DefMeta
@@ -46,9 +44,7 @@ class MemoryMeta extends AbsOption implements DefMeta
 
     public static function relations(): array
     {
-        return [
-            'params[]' => ParamOption::class
-        ];
+        return [];
     }
 
     public static function validate(array $data): ? string /* errorMsg */

@@ -21,7 +21,6 @@ use Commune\Framework\Command\ICommandDef;
 use Commune\Ghost\IMindDef\Intent\IIntentExample;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\HostMsg\IntentMsg;
-use Commune\Support\Option\AbsOption;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
@@ -29,23 +28,9 @@ use Commune\Support\Option\Wrapper;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
- * @property-read string $name
- * @property-read string $title
- * @property-read string $desc
- *
- * ## 意图内容.
- * @property-read string[] $examples
- *
- * ## 匹配规则
- * @property-read string $signature
- * @property-read string[] $keywords
- * @property-read string[] $regex
- * @property-read string[] $ifEntity
- *
- * @property-read string|null $matcher
+
  */
-class IIntentDef extends AbsOption implements IntentDef
+class IIntentDef implements IntentDef
 {
 
     /**
@@ -58,43 +43,38 @@ class IIntentDef extends AbsOption implements IntentDef
      */
     protected $commandDef;
 
-    public static function stub(): array
+    /**
+     * @var IntentMeta
+     */
+    protected $meta;
+
+    /**
+     * IIntentDef constructor.
+     * @param IntentMeta $meta
+     */
+    public function __construct(IntentMeta $meta)
     {
-        return [
-            // 意图的名称
-            'name' => '',
-            // 意图的标题, 应允许用标题来匹配.
-            'title' => '',
-            // 意图的简介. 可以作为选项的内容.
-            'desc' => '',
-            // 例句, 用 []() 标记, 例如 "我想知道[北京](city)[明天](date)天气怎么样"
-            'examples' => [],
-            // 作为命令.
-            'signature' => '',
-
-            // 关键字
-            'keywords' => [],
-            // 正则
-            'regex' => [],
-
-            // 命中任意 entity
-            'anyEntity' => [],
-            // 自定义校验器. 字符串, 通常是类名或者方法名.
-            'matcher' => null,
-        ];
+        $this->meta = $meta;
     }
 
-    public static function relations(): array
-    {
-        return [];
-    }
 
     /*---------- properties ----------*/
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->meta->name;
     }
+
+    public function getTitle(): string
+    {
+        return $this->meta->title;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->meta->desc;
+    }
+
 
     public function getCommandDef(): ? CommandDef
     {
@@ -108,12 +88,12 @@ class IIntentDef extends AbsOption implements IntentDef
 
     public function getKeywords(): array
     {
-        return $this->keywords;
+        return $this->meta->keywords;
     }
 
     public function getRegex(): array
     {
-        return $this->regex;
+        return $this->meta->regex;
     }
 
     /*---------- match ----------*/
@@ -135,7 +115,7 @@ class IIntentDef extends AbsOption implements IntentDef
         }
 
         // 自定义的匹配器优先级相对高.
-        $selfMatcher = $this->matcher;
+        $selfMatcher = $this->meta->matcher;
         if (isset($selfMatcher)) {
             if (
                 is_string($selfMatcher)
@@ -210,7 +190,7 @@ class IIntentDef extends AbsOption implements IntentDef
 
     public function getExamples(): array
     {
-        return $this->examples;
+        return $this->meta->examples;
     }
 
     public function getExampleObjects(): array
@@ -220,7 +200,7 @@ class IIntentDef extends AbsOption implements IntentDef
                 function(string $example){
                     return new IIntentExample($example);
                 },
-                $this->examples
+                $this->meta->examples
             );
     }
 
@@ -229,18 +209,7 @@ class IIntentDef extends AbsOption implements IntentDef
 
     public function getMeta(): Meta
     {
-        $config = $this->toArray();
-        unset($config['name']);
-        unset($config['title']);
-        unset($config['desc']);
-
-        return new IntentMeta([
-            'name' => $this->name,
-            'title' => $this->title,
-            'desc' => $this->desc,
-            'wrapper' => static::class,
-            'config' => $config
-        ]);
+        return $this->meta;
     }
 
     /**
@@ -254,13 +223,7 @@ class IIntentDef extends AbsOption implements IntentDef
                 "only accept subclass of " . IntentMeta::class
             );
         }
-
-        $config = $meta->config;
-        $config['name'] = $meta->name;
-        $config['title'] = $meta->title;
-        $config['desc'] = $meta->desc;
-
-        return new static($config);
+        return new static($meta);
     }
 
 }
