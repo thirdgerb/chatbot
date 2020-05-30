@@ -45,9 +45,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
         string $contextName,
         string $title,
         string $desc,
-        array $asIntent = [],
-        array $events = [],
-        string $ifRedirect = null
+        array $config
     )
     {
         $config['name'] = $stageFullName;
@@ -55,9 +53,6 @@ abstract class AbsStageDef extends AbsOption implements StageDef
         $config['title'] = $title;
         $config['desc'] = $desc;
         $config['stageName'] = ContextUtils::parseShortStageName($stageFullName, $contextName);
-        $config['asIntent'] = $asIntent;
-        $config['events'] = $events;
-        $config['ifRedirect'] = $ifRedirect;
 
         parent::__construct($config);
     }

@@ -96,7 +96,7 @@ abstract class AbsStruct implements Struct, \Serializable
     {
         // 用自定义 method 来赋值.
         if (method_exists($this, $method = static::SETTER_PREFIX . $name)) {
-            $this->{$method}($value);
+            $this->{$method}($name, $value);
             return;
         }
 

@@ -225,9 +225,9 @@ class IContext implements Context
 
     public function offsetExists($offset)
     {
-        $collection = $this->getDef()->getQueryDefaults();
+        $collection = $this->getDef()->getParamsDefaults();
 
-        if ($collection->has($offset)) {
+        if ($collection->hasParam($offset)) {
             return true;
         }
 
@@ -240,7 +240,7 @@ class IContext implements Context
         $def = $this->getDef();
         $queries = $def->getQueryDefaults();
 
-        if($queries->has($offset)) {
+        if($queries->hasParam($offset)) {
             return $this->getQuery()[$offset] ?? null;
         }
 
@@ -252,7 +252,7 @@ class IContext implements Context
         $def = $this->getDef();
         $queries = $def->getQueryDefaults();
 
-        if ($queries->has($offset)) {
+        if ($queries->hasParam($offset)) {
             $contextName = $this->getName();
             $error = "context $contextName try to set value for query parameter $offset";
             $this->warningOrException($error);
@@ -266,7 +266,7 @@ class IContext implements Context
     {
         $queries = $this->getDef()->getQueryDefaults();
 
-        if ($queries->has($offset)) {
+        if ($queries->hasParam($offset)) {
             $contextName = $this->getName();
             $error = "context $contextName try to unset value for query parameter $offset";
             $this->warningOrException($error);

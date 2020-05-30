@@ -11,11 +11,13 @@
 
 namespace Commune\Ghost\Context\Codable;
 
+use Commune\Blueprint\Ghost\MindDef\StageDef;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ICodeStageDef implements CodeStageDef
+class ICodeStageDef implements StageDef
 {
 
 }

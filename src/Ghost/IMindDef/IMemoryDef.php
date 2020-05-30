@@ -12,9 +12,10 @@
 namespace Commune\Ghost\IMindDef;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context\ParamCollection;
 use Commune\Blueprint\Ghost\Memory\Recollection;
-use Commune\Blueprint\Ghost\MindDef\ParamDefCollection;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
+use Commune\Ghost\Context\Params\IParamCollection;
 use Commune\Ghost\Memory\IRecollection;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
@@ -34,7 +35,7 @@ class IMemoryDef implements MemoryDef
     protected $meta;
 
     /**
-     * @var ParamDefCollection
+     * @var ParamCollection
      */
     protected $params;
 
@@ -45,6 +46,7 @@ class IMemoryDef implements MemoryDef
     public function __construct(MemoryMeta $meta)
     {
         $this->meta = $meta;
+        $this->params = new IParamCollection($meta->params);
     }
 
 
@@ -70,7 +72,7 @@ class IMemoryDef implements MemoryDef
 
     public function getDefaults(): array
     {
-        return $this->meta->params;
+        return $this->params->getDefaults();
     }
 
     public function isLongTerm(): bool

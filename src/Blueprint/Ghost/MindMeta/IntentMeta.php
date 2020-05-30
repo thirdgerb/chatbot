@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\MindMeta;
 
 use Commune\Ghost\IMindDef\IIntentDef;
+use Commune\Support\Alias\TAliases;
 use Commune\Support\Option\AbsMeta;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 
@@ -40,6 +41,8 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
  */
 class IntentMeta extends AbsMeta
 {
+    use TAliases;
+
     const IDENTITY = 'name';
 
     public static function stub(): array
@@ -71,6 +74,17 @@ class IntentMeta extends AbsMeta
             'matcher' => null,
         ];
     }
+
+    public function __get_wrapper() : string
+    {
+        return self::getOriginFromAlias($this->_data['wrapper'] ?? '');
+    }
+
+    public function __set_wrapper(string $name, $wrapper) : void
+    {
+        $this->_data[$name] = self::getAliasOfOrigin(strval($wrapper));
+    }
+
 
     public static function relations(): array
     {

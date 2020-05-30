@@ -28,7 +28,6 @@ use Commune\Ghost\Stage\InitStage;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
-use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -152,8 +151,6 @@ class ICodeContextDef implements ContextDef
     }
 
     /*-------- contextDef --------*/
-
-
 
     public function wrapContext(Cloner $cloner, Ucl $ucl): Context
     {

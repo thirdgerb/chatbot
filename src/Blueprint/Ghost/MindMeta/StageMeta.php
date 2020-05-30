@@ -14,6 +14,7 @@ namespace Commune\Blueprint\Ghost\MindMeta;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Ghost\Support\ContextUtils;
+use Commune\Support\Alias\TAliases;
 use Commune\Support\Option\AbsMeta;
 use Commune\Support\Option\Option;
 use Commune\Support\Option\Wrapper;
@@ -35,6 +36,10 @@ use Commune\Support\Utils\StringUtils;
  */
 class StageMeta extends AbsMeta
 {
+    use TAliases;
+
+    const IDENTITY = 'name';
+
     public static function stub(): array
     {
         return [
@@ -47,40 +52,20 @@ class StageMeta extends AbsMeta
         ];
     }
 
-    public function getId(): string
+    public function __get_wrapper() : string
     {
-        return $this->getFullStageName();
+        return self::getOriginFromAlias($this->_data['wrapper'] ?? '');
     }
 
-    public static function createById($id, array $data = []): Option
+    public function __set_wrapper(string $name, $wrapper) : void
     {
-        $contextName = $data['contextName'] ?? '';
-        $id = substr($id, 0, strlen($contextName) + 1);
-        return parent::createById($id, $data);
-    }
-
-    public function getFullStageName() : string
-    {
-        return StringUtils::gluePrefixAndName(
-            $this->contextName,
-            $this->name,
-            Context::NAMESPACE_SEPARATOR
-        );
+        $this->_data[$name] = self::getAliasOfOrigin(strval($wrapper));
     }
 
     public static function relations(): array
     {
         return [];
     }
-
-    /**
-     * @return StageDef
-     */
-    public function getWrapper(): Wrapper
-    {
-        return parent::getWrapper();
-    }
-
 
     public static function validate(array $data): ? string /* errorMsg */
     {

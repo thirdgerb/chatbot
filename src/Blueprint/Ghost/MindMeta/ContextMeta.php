@@ -53,6 +53,11 @@ class ContextMeta extends AbsMeta
         return self::getOriginFromAlias($this->_data['wrapper'] ?? '');
     }
 
+    public function __set_wrapper(string $name, $value) : string
+    {
+        $this->_data[$name] = self::getAliasOfOrigin(strval($value));
+    }
+
     public static function relations(): array
     {
         return [];
