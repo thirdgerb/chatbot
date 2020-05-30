@@ -228,8 +228,26 @@ class IIntention extends AbsMessage implements Intention
         return $entities + $this->_data['publicEntities'] ?? [];
     }
 
-    public function getText(): string
+    public function hasEntity(string $entityName): bool
     {
-        return $this->toPrettyJson();
+        if (!empty($this->_data['publicEntities'][$entityName])) {
+            return true;
+        }
+
+        $keys = array_keys($this->_data['intentEntities'] ?? []);
+
+        if (empty($keys)) {
+            return false;
+        }
+
+        foreach ($keys as $key) {
+            if (!empty($this->_data['intentEntities'][$key][$entityName])) {
+                return true;
+            }
+        }
+
+        return false;
     }
+
+
 }

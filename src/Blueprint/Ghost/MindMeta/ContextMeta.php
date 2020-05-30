@@ -43,14 +43,19 @@ class ContextMeta extends AbsMeta
             'name' => '',
             'title' => '',
             'desc' => '',
-            'wrapper' => self::getAliasOfOrigin(IContextDef::class),
+            'wrapper' => '',
             'config' => [],
         ];
     }
 
     public function __get_wrapper() : string
     {
-        return self::getOriginFromAlias($this->_data['wrapper'] ?? '');
+        $wrapper = $this->_data['wrapper'] ?? '';
+        $wrapper = empty($wrapper)
+            ? self::getAliasOfOrigin(IContextDef::class)
+            : $wrapper;
+
+        return self::getOriginFromAlias($wrapper);
     }
 
     public function __set_wrapper(string $name, $value) : string

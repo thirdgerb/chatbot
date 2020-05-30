@@ -112,12 +112,6 @@ interface UclInterface extends ArrayAndJsonAble
      * @param string|null $stage
      * @return string
      */
-    public function getStageIntentName(string $stage = null) : string;
-
-    /**
-     * @param string|null $stage
-     * @return string
-     */
     public function getStageFullname(string $stage = null) : string;
 
 
@@ -131,10 +125,10 @@ interface UclInterface extends ArrayAndJsonAble
     public function goStage(string $stageName) : Ucl;
 
     /**
-     * @param string $intentName
+     * @param string $fullname
      * @return Ucl
      */
-    public function goStageByIntentName(string $intentName) : Ucl;
+    public function goStageByFullname(string $fullname) : Ucl;
 
     /*------ validate ------*/
 

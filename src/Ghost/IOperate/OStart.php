@@ -229,8 +229,8 @@ class OStart implements Operator
     {
         $matcher = $this->cloner->matcher->refresh();
         foreach ($stages as $stage) {
-            $intentName = $current->getStageIntentName($stage);
-            if ($matcher->matchStageOfIntent($intentName)->truly()) {
+            $stageName = $current->getStageFullname($stage);
+            if ($matcher->matchStage($stageName)->truly()) {
                 return $current->goStage($stage);
             }
         }
@@ -244,10 +244,10 @@ class OStart implements Operator
 
         foreach ($contexts as $ucl) {
             // 这个 ucl 可能是假的, 用了通配符
-            $intentName = $ucl->getStageIntentName();
-            if ($matcher->matchStageOfIntent($intentName)->truly()) {
+            $fullname = $ucl->getStageFullname();
+            if ($matcher->matchStage($fullname)->truly()) {
                 // 这个 ucl 就是真的了.
-                return $ucl->goStageByIntentName($intentName);
+                return $ucl->goStageByFullname($fullname);
             }
         }
 

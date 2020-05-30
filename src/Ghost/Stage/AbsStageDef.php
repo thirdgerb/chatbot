@@ -18,7 +18,6 @@ use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\IMindDef\IIntentDef;
-use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
@@ -29,34 +28,17 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  *
  *
  * @property-read string $name
- * @property-read string $title
- * @property-read string $desc
  * @property-read string $contextName
  * @property-read string $stageName
+ *
+ * @property-read string $title
+ * @property-read string $desc
  * @property-read IntentMeta $asIntent
  * @property-read string[] $events
  * @property-read string|null $ifRedirect
  */
 abstract class AbsStageDef extends AbsOption implements StageDef
 {
-
-    public function __construct(
-        string $stageFullName,
-        string $contextName,
-        string $title,
-        string $desc,
-        array $config
-    )
-    {
-        $config['name'] = $stageFullName;
-        $config['contextName'] = $contextName;
-        $config['title'] = $title;
-        $config['desc'] = $desc;
-        $config['stageName'] = ContextUtils::parseShortStageName($stageFullName, $contextName);
-
-        parent::__construct($config);
-    }
-
     public static function stub(): array
     {
         return [
@@ -73,7 +55,21 @@ abstract class AbsStageDef extends AbsOption implements StageDef
 
     public static function relations(): array
     {
-        return [];
+        return [
+            'asIntent' => IntentMeta::class,
+        ];
+    }
+
+    public function _filter(array $data): void
+    {
+        $data['asIntent'] = IntentMeta::mergeStageInfo(
+            $data['asIntent'] ?? [],
+            $data['name'] ?? '',
+            $data['title'] ?? '',
+            $data['desc'] ?? ''
+        );
+
+        parent::_filter($data);
     }
 
     /*------- methods -------*/
@@ -192,13 +188,13 @@ abstract class AbsStageDef extends AbsOption implements StageDef
             );
         }
 
-        return new static(
-            $meta->name,
-            $meta->contextName,
-            $meta->title,
-            $meta->desc,
-            $meta->config
-        );
+        $config = $meta->config;
+        $config['name'] = $meta->name;
+        $config['contextName'] = $meta->contextName;
+        $config['title'] = $meta->title;
+        $config['desc'] = $meta->desc;
+
+        return new static($config);
     }
 
 

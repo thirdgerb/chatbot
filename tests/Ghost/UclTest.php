@@ -55,13 +55,13 @@ class UclTest extends TestCase
         }
     }
 
-    protected function doTestUcl(string $case, string $intent)
+    protected function doTestUcl(string $case, string $fullname)
     {
 
         // case1
         $caseObj = Ucl::decodeUclStr($case);
         $this->assertTrue($caseObj->isValidPattern(), $case);
-        $this->assertEquals($intent, $caseObj->getStageIntentName());
+        $this->assertEquals($fullname, $caseObj->getStageFullname());
 
         // case2
         $case2 = $caseObj->toEncodedStr();

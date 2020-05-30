@@ -149,9 +149,22 @@ class StringUtils
      */
     public static function fetchDescAnnotation(string $docComment) : ? string
     {
+        $matches = self::fetchAnnotation($docComment, 'description');
+        return $matches[0] ?? null;
+    }
+
+    public static function fetchAnnotation(string $docComment, string $annotation) : array
+    {
         $matches = [];
-        preg_match('/@description\s([^\*]+)/is', $docComment, $matches);
-        return isset($matches[1]) ? trim($matches[1]) : null;
+        $pattern = sprintf('/@%s\s([^\*]+)/', $annotation);
+        preg_match_all($pattern, $docComment, $matches);
+
+        return array_map(
+            function($matched){
+                return self::trim($matched);
+            },
+            $matches[1] ?? []
+        );
     }
 
     /**
@@ -187,7 +200,7 @@ class StringUtils
         $matches = [];
         $suffix = $noSuffix ? '' : '[a-zA-Z-]*';
         $pattern = sprintf(
-            '/%s%s\s+([^\$]*)\$(\w+)(.*)/',
+            '/%s%s\s+([^\$]*)\$(\w+)([^\n]*)/',
             $prefix,
             $suffix
         );

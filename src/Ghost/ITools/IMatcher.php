@@ -491,7 +491,7 @@ class IMatcher implements Matcher
 
     public function isIntent(string $intentName): Matcher
     {
-        $matched = $this->singleIntentMatch($intentName);
+        $matched = $this->singleStageMatch($intentName);
         if (isset($matched)) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $intentName;
@@ -500,7 +500,7 @@ class IMatcher implements Matcher
         return $this;
     }
 
-    protected function singleIntentMatch(string $intentName) : ? string
+    protected function singleStageMatch(string $intentName) : ? string
     {
         return StringUtils::isWildCardPattern($intentName)
             ? $this->singleWildcardIntentMatch($intentName)
@@ -668,9 +668,10 @@ class IMatcher implements Matcher
         return $this;
     }
 
-    public function matchStageOfIntent(string $intentName): Matcher
+    public function matchStage(string $stageFullname): Matcher
     {
-        $matched = $this->singleIntentMatch($intentName);
+        $matched = $this->singleStageMatch($stageFullname);
+
         $stageReg = $this->cloner->mind->stageReg();
         if ($matched && $stageReg->hasDef($matched)) {
             $this->matched = true;
@@ -680,7 +681,7 @@ class IMatcher implements Matcher
         return $this;
     }
 
-    public function matchStageInIntents(array $intents): Matcher
+    public function matchStageIn(array $intents): Matcher
     {
         $matched = $this->doIntentsMatch($intents);
 

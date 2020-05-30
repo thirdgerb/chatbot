@@ -319,17 +319,17 @@ interface Matcher
     /*------- stage -------*/
 
     /**
-     * @param string $intentName
+     * @param string $stageFullname
      * @return static
-     * @matched StageDef $isIntentOfStage
+     * @matched StageDef $matchStage
      */
-    public function matchStageOfIntent(string $intentName) : Matcher;
+    public function matchStage(string $stageFullname) : Matcher;
 
 
     /**
      * @param string[] $intents
      * @return static
-     * @matched StageDef $matchStageInIntents
+     * @matched StageDef $matchStageIn
      */
-    public function matchStageInIntents(array $intents) : Matcher;
+    public function matchStageIn(array $intents) : Matcher;
 }

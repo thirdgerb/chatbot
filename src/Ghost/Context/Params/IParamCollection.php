@@ -38,15 +38,22 @@ class IParamCollection implements ParamCollection
 
         foreach ($definitions as $key => $val) {
 
-            $isList = TypeUtils::isListTypeHint($key);
-            $name = $isList
-                ? TypeUtils::pureListTypeHint($key)
-                : $key;
-
-            $param = new IParam($name, $isList, $val);
-
+            $param = $this->buildParam($key, $val);
+            $name = $param->getName();
             $this->params[$name] = $param;
         }
+    }
+
+    protected function buildParam(string $key, $val) : IParam
+    {
+        $explodedKey = explode(':', $key, 2);
+        $field = $explodedKey[0];
+        $typeHints = !empty($explodedKey[1])
+            ? explode('|', $explodedKey[1])
+            : [];
+
+        return new IParam($field, $typeHints, $val);
+
     }
 
 

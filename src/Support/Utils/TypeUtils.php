@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Support\Utils;
+use Illuminate\Support\Arr;
 
 
 /**
@@ -54,12 +55,22 @@ class TypeUtils
         return is_object($value) ? get_class($value) : gettype($value);
     }
 
+    public static function listTypeHintParse(string $type, $value) : array
+    {
+        $value = Arr::wrap($value);
+
+        return array_map(function($val) use ($type) {
+            return static::typeHintParse($type, $val);
+        }, $value);
+
+    }
+
     /**
      * @param string $type
      * @param mixed $value
      * @return mixed $value
      */
-    public static function scalarValueParseByType(string $type, $value)
+    public static function typeHintParse(string $type, $value)
     {
         if (!is_scalar($value)) {
             return $value;
@@ -96,11 +107,11 @@ class TypeUtils
         }
 
         foreach ($value as $val) {
-            if (self::typeHintValidate($type, $val)) {
-                return true;
+            if (!self::typeHintValidate($type, $val)) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -119,6 +130,8 @@ class TypeUtils
         switch($type) {
             case 'mixed' :
                 return true;
+            case 'null' :
+                return is_null($value);
             case 'string' :
                 return is_string($value);
             case 'bool' :

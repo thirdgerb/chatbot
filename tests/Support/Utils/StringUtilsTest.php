@@ -249,4 +249,44 @@ EOF;
 
         $this->assertFalse(StringUtils::expectKeywords($text, [['am', '567']], false));
     }
+
+
+    /**
+     * @intent intentNameAlias
+     * @example intentExample1
+     * @example intentExample2
+     * hello world
+     *
+     * @regex /^regex1$/
+     * @regex /^regex2$/
+     * @signature commandName {arg1} {arg2}
+     *
+     */
+    public function testFetchAnnotation()
+    {
+        $r = new \ReflectionMethod(static::class, __FUNCTION__);
+        $doc = $r->getDocComment();
+
+        $this->assertEquals(
+            'intentNameAlias',
+            StringUtils::fetchAnnotation($doc, 'intent')[0]
+        );
+
+        $this->assertEquals(
+            ['intentExample1', 'intentExample2'],
+            StringUtils::fetchAnnotation($doc, 'example')
+        );
+
+
+        $this->assertEquals(
+            ['/^regex1$/', '/^regex2$/'],
+            StringUtils::fetchAnnotation($doc, 'regex')
+        );
+
+        $this->assertEquals(
+            'commandName {arg1} {arg2}',
+            StringUtils::fetchAnnotation($doc, 'signature')[0]
+        );
+
+    }
 }

@@ -86,7 +86,7 @@ class IStructFieldReflector implements StructFieldReflector
     {
         if ($this->ruleCounts === 1) {
             $rule = $this->rules[0];
-            return TypeUtils::scalarValueParseByType($rule, $value);
+            return TypeUtils::typeHintParse($rule, $value);
         }
 
         return $value;

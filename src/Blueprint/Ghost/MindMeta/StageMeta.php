@@ -16,10 +16,6 @@ use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Alias\TAliases;
 use Commune\Support\Option\AbsMeta;
-use Commune\Support\Option\Option;
-use Commune\Support\Option\Wrapper;
-use Commune\Support\Utils\StringUtils;
-
 
 /**
  * Stage 的元数据.
@@ -27,6 +23,7 @@ use Commune\Support\Utils\StringUtils;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $name
+ * @property-read string $stageName
  * @property-read string $contextName
  * @property-read string $title
  * @property-read string $desc
@@ -43,10 +40,11 @@ class StageMeta extends AbsMeta
     public static function stub(): array
     {
         return [
-            'name' => '',
+            'stageName' => '',
             'contextName' => '',
-            'title' => 'contextTitle',
-            'desc' => 'contextDesc',
+            'name' => '',
+            'title' => '',
+            'desc' => '',
             'wrapper' => '',
             'config' => [],
         ];
@@ -60,6 +58,32 @@ class StageMeta extends AbsMeta
     public function __set_wrapper(string $name, $wrapper) : void
     {
         $this->_data[$name] = self::getAliasOfOrigin(strval($wrapper));
+    }
+
+    public static function mergeContextInfo(
+        array $data,
+        string $contextName,
+        string $shortName,
+        bool $force = false
+    ) : array
+    {
+
+        if (empty($data['contextName']) || $force) {
+            $data['contextName'] = $contextName;
+        }
+
+        $stageName = $data['stageName'] ?? '';
+        $stageName = empty($stageName) || $force
+            ? $shortName
+            : $stageName;
+        $data['stageName'] = $stageName;
+
+        $data['name'] = ContextUtils::makeFullStageName(
+            $contextName,
+            $shortName
+        );
+
+        return $data;
     }
 
     public static function relations(): array

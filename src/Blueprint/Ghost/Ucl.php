@@ -213,14 +213,17 @@ class Ucl implements UclInterface
     }
 
 
-    public function goStageByIntentName(string $intentName) : Ucl
+    public function goStageByFullname(string $fullname) : Ucl
     {
-        if (!ContextUtils::isValidStageFullName($intentName)) {
-            throw new InvalidArgumentException("invalid stage fullname pattern of $intentName");
+        if (!ContextUtils::isValidStageFullName($fullname)) {
+            throw new InvalidArgumentException("invalid stage fullname pattern of $fullname");
         }
 
-        $stageName = str_replace($this->_contextName, '', $intentName);
-        $stageName = trim($stageName, Context::NAMESPACE_SEPARATOR);
+        $stageName = ContextUtils::parseShortStageName(
+            $fullname,
+            $this->contextName
+        );
+
         return $this->goStage($stageName);
     }
 
@@ -310,11 +313,6 @@ class Ucl implements UclInterface
     }
 
     /*------- property -------*/
-
-    public function getStageIntentName(string $stage = null) : string
-    {
-        return $this->getStageFullname($stage);
-    }
 
     public function getStageFullname(string $stage = null) : string
     {

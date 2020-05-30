@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Context\Params;
 
 use Commune\Blueprint\Ghost\Context\Param;
+use Commune\Blueprint\Ghost\Context\ParamTypeHints;
 use Illuminate\Support\Arr;
 
 /**
@@ -26,9 +27,9 @@ class IParam implements Param
     protected $name;
 
     /**
-     * @var bool
+     * @var array
      */
-    protected $list;
+    protected $typeHints = [];
 
     /**
      * @var mixed
@@ -36,16 +37,38 @@ class IParam implements Param
     protected $default;
 
     /**
-     * IParam constructor.
-     * @param string $name
-     * @param bool $list
-     * @param mixed $default
+     * @var bool
      */
-    public function __construct(string $name, bool $list, $default)
+    protected $nullable;
+
+    public function __construct(string $name, array $typeHints, $default)
     {
         $this->name = $name;
-        $this->list = $list;
         $this->default = $default;
+        $this->initTypeHints($typeHints);
+    }
+
+    protected function initTypeHints(array $typeHints) : void
+    {
+        if (empty($typeHints)) {
+            $this->nullable = true;
+
+        } else {
+            foreach ($typeHints as $typeHint) {
+                if ($typeHint === 'null') {
+                    $this->nullable = true;
+                    continue;
+                }
+
+                if ($typeHint === 'mixed') {
+                    $this->nullable = true;
+                    $this->typeHints = [];
+                    break;
+                }
+
+                $this->typeHints[] = $typeHint;
+            }
+        }
     }
 
 
@@ -54,24 +77,50 @@ class IParam implements Param
         return $this->name;
     }
 
-    public function isList(): bool
-    {
-        return $this->list;
-    }
-
-    public function parse($value)
-    {
-        if ($this->isList()) {
-            return Arr::wrap($value);
-        }
-
-        return (is_array($value) ? current($value) : $value)
-            ?? $this->getDefault();
-    }
-
     public function getDefault()
     {
         return $this->default;
+    }
+
+    public function isNullable(): bool
+    {
+        return $this->nullable;
+    }
+
+    public function getTypeHints(): array
+    {
+        return $this->typeHints;
+    }
+
+    public function parse($value, string $type = null)
+    {
+        if ($type === 'mixed') {
+            return $value;
+        }
+
+        $type = $type ?? $this->validate($value);
+        return ParamTypeHints::parse($type, $value);
+    }
+
+    public function validate($value): ? string
+    {
+        if (empty($this->typeHints)) {
+            return 'mixed';
+        }
+
+        if (is_null($value)) {
+            return $this->nullable
+                ? 'mixed'
+                : null;
+        }
+
+        foreach ($this->getTypeHints() as $typeHint) {
+            if (ParamTypeHints::validate($typeHint, $value) ) {
+                return $typeHint;
+            }
+        }
+
+        return null;
     }
 
 

@@ -17,24 +17,24 @@ namespace Commune\Support\Alias;
  */
 trait TAliases
 {
-    private static $originToAlias = [];
+    protected static $originToAlias = [];
 
-    private static $aliasToOrigin = [];
+    protected static $aliasToOrigin = [];
 
     public static function setAlias(string $origin, string $alias) : void
     {
-        self::$originToAlias[$origin] = $alias;
-        self::$aliasToOrigin[$alias] = $origin;
+        self::$originToAlias[static::class][$origin] = $alias;
+        self::$aliasToOrigin[static::class][$alias] = $origin;
     }
 
     public static function getOriginFromAlias(string $alias) : string
     {
-        return self::$aliasToOrigin[$alias] ?? $alias;
+        return self::$aliasToOrigin[static::class][$alias] ?? $alias;
     }
 
     public static function getAliasOfOrigin(string $origin) : string
     {
-        return self::$originToAlias[$origin] ?? $origin;
+        return self::$originToAlias[static::class][$origin] ?? $origin;
     }
 
 

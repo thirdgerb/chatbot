@@ -24,6 +24,7 @@ use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -75,6 +76,11 @@ class IIntentDef implements IntentDef
         return $this->meta->desc;
     }
 
+    public function getAlias(): ? string
+    {
+        return $this->meta->alias;
+    }
+
 
     public function getCommandDef(): ? CommandDef
     {
@@ -114,6 +120,20 @@ class IIntentDef implements IntentDef
             return true;
         }
 
+
+        // 别名检查.
+        $alias = $this->getAlias();
+        if (!empty($alias)) {
+            $reg = $cloner->mind->intentReg();
+            $matched = $reg->hasDef($alias)
+                ? $reg->getDef($alias)->match($cloner)
+                : $intention->hasPossibleIntent($alias, true);
+
+            if ($matched) {
+                return true;
+            }
+        }
+
         // 自定义的匹配器优先级相对高.
         $selfMatcher = $this->meta->matcher;
         if (isset($selfMatcher)) {
@@ -126,7 +146,9 @@ class IIntentDef implements IntentDef
             }
 
             try {
-                return (bool) $cloner->container->call($selfMatcher);
+                if ($cloner->container->call($selfMatcher)){
+                    return true;
+                }
             } catch (\Exception $e) {
                 throw new BrokenSessionException(
                     "invalid intent matcher",
@@ -135,21 +157,14 @@ class IIntentDef implements IntentDef
             }
         }
 
-
         // 剩下的匹配逻辑都是针对文本的.
         if (!$message instanceof VerbalMsg) {
             return false;
         }
 
-        $matcher = $cloner->matcher->refresh();
+        $text = $message->getText();
 
-        if ($matcher->is($this->getTitle())->truly()) {
-            $matcher->refresh();
-            return true;
-        }
-
-        if ($matcher->isAnswer($this->getDescription())->truly()) {
-            $matcher->refresh();
+        if ($text === $this->getTitle()) {
             return true;
         }
 
@@ -157,8 +172,7 @@ class IIntentDef implements IntentDef
         $regex = $this->getRegex();
         if (!empty($regex)) {
             foreach ($regex as $pattern) {
-                if ($matcher->pregMatch($pattern)->truly()) {
-                    $matcher->refresh();
+                if (preg_match($pattern, $text)) {
                     return true;
                 }
             }
@@ -167,20 +181,26 @@ class IIntentDef implements IntentDef
         // 命令
         $cmdDef = $this->getCommandDef();
         if (!empty($cmdDef)) {
-            if ($matcher->matchCommandDef($cmdDef, false)->truly()) {
-                $matcher->refresh();
+            if ($cmdDef->parseCommandMessage($text)->isCorrect()) {
                 return true;
+            }
+        }
+
+        $ifAnyEntities = $this->meta->ifEntity;
+        if (!empty($ifAnyEntities)) {
+            foreach ($ifAnyEntities as $entityName) {
+                if ($intention->hasEntity($entityName)) {
+                    return true;
+                }
             }
         }
 
         // 关键词
         $keywords = $this->getKeywords();
-        if (!empty($keywords)) {
-            if ($matcher->hasKeywords($keywords, [], true)->truly()) {
-                $matcher->refresh();
-                return true;
-            }
+        if (!empty($keywords) && StringUtils::expectKeywords($text, $keywords, true)) {
+            return true;
         }
+
 
         return false;
     }

@@ -64,7 +64,7 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerConvoMatcher(Container $app) : void
     {
-        $app->singleton(Matcher::class, function(Container $app) {
+        $app->bind(Matcher::class, function(Container $app) {
             $cloner = $app->get(Cloner::class);
             return new IMatcher($cloner, []);
         });

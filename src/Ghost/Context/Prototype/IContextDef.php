@@ -14,321 +14,380 @@ namespace Commune\Ghost\Context\Prototype;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
-use Commune\Blueprint\Ghost\MindDef\ParamDef;
-use Commune\Blueprint\Ghost\MindDef\ParamDefCollection;
+use Commune\Blueprint\Ghost\Context\ParamCollection;
+use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Blueprint\Ghost\MindMeta\Option\ParamOption;
+use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
+use Commune\Ghost\Context\Params\IParamCollection;
+use Commune\Ghost\IMindDef\IMemoryDef;
+use Commune\Ghost\Stage\InitStage;
 use Commune\Ghost\Support\ContextUtils;
+use Commune\Support\Alias\TAliases;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
-use Illuminate\Support\Collection;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @property-read string $name      当前配置的 ID
+ * @property-read string $title     标题
+ * @property-read string $desc      简介
  *
- * ## 基础属性
- * @property-read int $priority         语境的默认优先级
  *
  * ## context wrapper
- * @property-read string|null $contextWrapper       Context 的包装器.
+ * @property-read string $contextWrapper       Context 的包装器.
  *
- * ## 属性相关
- * @property-read ParamOption[] $queryParams
  *
- * ## Stage 相关
- * @property-read StageMeta $asStage                Stage 的定义.
- * @property-read MemoryMeta $asMemory              Memory 的定义
- * @property-read StageMeta[] $stages               Context 定义的 Stages
+ * ## 基础属性
+ * @property-read int $priority                     语境的默认优先级
+ * @property-read IntentMeta $asIntent
+ *
+ * @property-read array $queryParams
+ *
+ * @property-read string[] $memoryScopes
+ * @property-read array $memoryParams
+ *
+ * @property-read string[] $dependingNames
+ * @property-read string[] $entityNames
+ *
+ * @property-read null|array $comprehendPipes
+ *
+ * @property-read null|string $onCancel
+ * @property-read null|string $onQuit
+ *
+ * @property-read string[] $stageRoutes
+ * @property-read string[] $contextRoutes
+ *
+ *
+ * @property-read StageMeta[] $stages
  *
  */
 class IContextDef extends AbsOption implements ContextDef
 {
-//
-//    /**
-//     * @var ParamDefCollection
-//     */
-//    protected $_queries;
-//
-//    /**
-//     * @var ParamDefCollection
-//     */
-//    protected $_entities;
-//
-//    /**
-//     * @var ParamDefCollection
-//     */
-//    protected $_params;
-//
-//    /**
-//     * @var Collection
-//     */
-//    protected $_stageMap;
-//
-//    /**
-//     * @var MemoryDef
-//     */
-//    protected $_asMemory;
-//
-//    /**
-//     * @var StageDef
-//     */
-//    protected $_asStage;
-//
-//    /**
-//     * @var string
-//     */
-//    protected $_name;
-//
-//    /**
-//     * @var string
-//     */
-//    protected $_desc;
-//
-//    /**
-//     * @var string
-//     */
-//    protected $_title;
-//
-//    public function __construct(
-//        string $name,
-//        string $title,
-//        string $desc,
-//        array $data
-//    )
-//    {
-//        $this->_name = $name;
-//        $this->_title = $title;
-//        $this->_desc = $desc;
-//        parent::__construct($data);
-//    }
-//
-//    public static function stub(): array
-//    {
-//        return [
-//            'name' => '',
-//            'title' => '',
-//            'desc' => '',
-//            'priority' => 0,
-//            'contextWrapper' => null,
-//            'stages' => [],
-//        ];
-//    }
-//
-//    public static function relations(): array
-//    {
-//        return [
-//            'stages[]' => StageMeta::class,
-//        ];
-//    }
-//
-//    public static function validate(array $data): ? string /* errorMsg */
-//    {
-//        $name = $data['name'] ?? '';
-//
-//        if (!ContextUtils::isValidContextName($name)) {
-//            return "contextName $name is invalid";
-//        }
-//
-//        return parent::validate($data);
-//    }
-//
-//
-//    /*------ properties -------*/
-//
-//    public function getName(): string
-//    {
-//        return $this->_name;
-//    }
-//
-//    public function getTitle(): string
-//    {
-//        return $this->_title;
-//    }
-//
-//    public function getDescription(): string
-//    {
-//        return $this->_desc;
-//    }
-//
-//    public function getPriority(): int
-//    {
-//        return $this->priority;
-//    }
-//
-//    /*------ parameters -------*/
-//
-//    public function getQueryParams(): ParamDefCollection
-//    {
-//        return $this->_queries
-//            ?? $this->_queries = new IDefParamCollection($this->queryParams);
-//    }
-//
-//    public function getEntityParams(): ParamDefCollection
-//    {
-//        if (isset($this->_entities)) {
-//            return $this->_entities;
-//        }
-//
-//        $params = $this->asMemoryDef()->getParams();
-//
-//        return $this->_entities = new IDefParamCollection(
-//            array_map(function(string $name) use ($params): ParamDef {
-//                return $params->getParam($name);
-//            }, $this->entities)
-//        );
-//    }
-//
-//    public function getEntityNames(): array
-//    {
-//        return $this->entities;
-//    }
-//
-//    public function getParams(): ParamDefCollection
-//    {
-//        if (isset($this->_params)) {
-//            return $this->_params;
-//        }
-//        $params = $this->getQueryParams()->getAllParams();
-//        $params = array_merge(
-//            $params,
-//            $this->asMemoryDef()->getParams()->getAllParams()
-//        );
-//
-//        return $this->_params = $params;
-//    }
-//
-//
-//    /*------ relations -------*/
-//
-//    public function asMemoryDef() : MemoryDef
-//    {
-//        return $this->_asMemory
-//            ?? $this->_asMemory = $this->asMemory->getWrapper();
-//    }
-//
-//    public function asStageDef() : StageDef
-//    {
-//        return $this->_asStage
-//            ?? $this->_asStage = $this->asStage->getWrapper();
-//    }
-//
-//
-//    /*------ to context -------*/
-//
-//    public function wrapContext(Cloner $cloner, Ucl $ucl): Context
-//    {
-//        $wrapper = $this->contextWrapper ?? IContext::class;
-//        return new $wrapper($ucl, $cloner);
-//    }
-//
-//    /*------ meta -------*/
-//
-//    public function getMeta(): Meta
-//    {
-//        $data = $this->toArray();
-//        $name = $data['name'] ?? '';
-//        $title = $data['title'] ?? '';
-//        $desc = $data['desc'] ?? '';
-//
-//        unset($data['name']);
-//        unset($data['title']);
-//        unset($data['desc']);
-//
-//        return new ContextMeta([
-//            'name' => $name,
-//            'title' => $title,
-//            'desc' => $desc,
-//            'config' => $data,
-//        ]);
-//    }
-//
-//    /**
-//     * @param ContextMeta $meta
-//     * @return Wrapper
-//     */
-//    public static function wrap(Meta $meta): Wrapper
-//    {
-//        if ($meta instanceof ContextMeta) {
-//            throw new InvalidArgumentException(
-//                'accept ' . ContextMeta::class . ' only'
-//            );
-//        }
-//
-//        return new static(
-//            $meta->name,
-//            $meta->title,
-//            $meta->desc,
-//            $meta->config
-//        );
-//    }
-//
-//
-//
-//    /*------ stages -------*/
-//
-//    protected function getStageMetaMap() : Collection
-//    {
-//        return $this->_stageMap
-//            ?? $this->_stageMap = new Collection(array_reduce(
-//                $this->stages,
-//                function($output, StageMeta $stage) {
-//                    $output[$stage->name] = $stage;
-//                    return $output;
-//                },
-//                [$this->asStage]
-//            ));
-//    }
-//
-//    public function hasStage(string $stageName): bool
-//    {
-//        if ($stageName === '') {
-//            return true;
-//        }
-//
-//        return $this->getStageMetaMap()->has($stageName);
-//    }
-//
-//    public function getPredefinedStage(string $stageName): StageDef
-//    {
-//        $map = $this->getStageMetaMap();
-//        if (!$map->has($stageName)) {
-//            throw new DefNotDefinedException(StageMeta::class, $stageName);
-//        }
-//        return $map->get($stageName);
-//    }
-//
-//    public function getPredefinedStageNames(bool $isFullname = false): array
-//    {
-//        return $this
-//            ->getStageMetaMap()
-//            ->map(function(StageMeta $meta) use ($isFullname){
-//                if ($isFullname) {
-//                    return $meta->getFullStageName();
-//                }
-//
-//                return $meta->name;
-//            })
-//            ->all();
-//    }
-//
-//    public function __destruct()
-//    {
-//        $this->_asStage = null;
-//        $this->_asMemory = null;
-//        $this->_entities = null;
-//        $this->_queries = null;
-//        $this->_stageMap = null;
-//        $this->_params = null;
-//        parent::__destruct();
-//    }
+
+    use TAliases;
+
+    /**
+     * @var MemoryDef
+     */
+    protected $_asMemoryDef;
+
+    /**
+     * @var StageDef
+     */
+    protected $_asStageDef;
+
+    /**
+     * @var ParamCollection
+     */
+    protected $_queryCollection;
+
+    /**
+     * @var ParamCollection
+     */
+    protected $_paramCollection;
+
+    public static function stub(): array
+    {
+        return [
+            'name' => '',
+            'title' => '',
+            'desc' => '',
+
+            'contextWrapper' => '',
+
+            'priority' => 0,
+            'asIntent' => IntentMeta::stub(),
+
+            'queryParams' => [],
+
+            'memoryScopes' => null,
+            'memoryParams' => [],
+
+            'dependingNames' => [],
+            'entityNames' => [],
+
+            'comprehendPipes' => null,
+
+            'onCancel' => null,
+            'onQuit' => null,
+            'stageRoutes' => [],
+            'contextRoutes' => [],
+
+            'stages' => [],
+        ];
+    }
+
+    public static function relations(): array
+    {
+        return [
+            'stages[]' => StageMeta::class,
+            'asIntent' => IntentMeta::class,
+        ];
+    }
+
+    public function _filter(array $data): void
+    {
+        $asIntent = $data['asIntent'] ?? [];
+
+        if (is_array($asIntent)) {
+            $asIntent = IntentMeta::mergeStageInfo(
+                $asIntent,
+                $data['name'] ?? '',
+                $data['title'] ?? '',
+                $data['desc'] ?? ''
+            );
+            $data['asIntent'] = $asIntent;
+        }
+
+        $stages = $data['stages'] ?? [];
+        foreach ($stages as $shortName => $stage) {
+            $stages[$shortName] = StageMeta::mergeContextInfo(
+                $stage,
+                $data['name'] ?? '',
+                $stage['stageName'] ?? strval($shortName)
+            );
+        }
+
+        $data['stages'] = $stages;
+
+        parent::_filter($data);
+    }
+
+    public static function validate(array $data): ? string /* errorMsg */
+    {
+        $name = $data['name'] ?? '';
+
+        if (!ContextUtils::isValidContextName($name)) {
+            return "contextName $name is invalid";
+        }
+
+        return parent::validate($data);
+    }
+
+    public function __get_contextWrapper() : string
+    {
+        $wrapper = $this->_data['contextWrapper'] ?? '';
+        $wrapper = empty($wrapper)
+            ? IContext::class
+            : $wrapper;
+
+        return self::getOriginFromAlias($wrapper);
+    }
+
+    public function __set_contextWrapper($name, $value) : void
+    {
+        $this->_data[$name] = self::getAliasOfOrigin($value);
+    }
+
+    /*------ wrap -------*/
+
+    /**
+     * @return ContextMeta
+     */
+    public function getMeta(): Meta
+    {
+        $config = $this->toArray();
+        unset($config['name']);
+        unset($config['title']);
+        unset($config['desc']);
+
+        return new ContextMeta([
+            'name' => $this->name,
+            'title' => $this->title,
+            'desc' => $this->desc,
+            'wrapper' => static::class,
+            'config' => $config
+        ]);
+    }
+
+    /**
+     * @param Meta $meta
+     * @return Wrapper
+     */
+    public static function wrap(Meta $meta): Wrapper
+    {
+        if (!$meta instanceof ContextMeta) {
+            throw new InvalidArgumentException(
+                __METHOD__
+                . ' only accept meta of subclass ' . ContextMeta::class
+            );
+        }
+
+        $config = $meta->config;
+        $config['name'] = $meta->name;
+        $config['title'] = $meta->title;
+        $config['desc'] = $meta->desc;
+        return new static($config);
+    }
+
+    /*------ properties -------*/
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->desc;
+    }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function onCancelStage(): ? string
+    {
+        return $this->onCancel;
+    }
+
+    public function onQuitStage(): ? string
+    {
+        return $this->onQuit;
+    }
+
+    public function commonStageRoutes(): array
+    {
+        return $this->stageRoutes;
+    }
+
+    public function commonContextRoutes(): array
+    {
+        return $this->contextRoutes;
+    }
+
+    public function getScopes(): array
+    {
+        return $this->memoryScopes;
+    }
+
+    public function getDependingNames(): array
+    {
+        return $this->dependingNames;
+    }
+
+    public function getEntityNames(): array
+    {
+        return $this->entityNames;
+    }
+
+    public function comprehendPipes(Dialog $current): ? array
+    {
+        return $this->comprehendPipes;
+    }
+
+
+    /*------ parameters -------*/
+
+    public function getQueryDefaults(): ParamCollection
+    {
+        return $this->_queryCollection
+            ?? $this->_queryCollection = new IParamCollection($this->queryParams);
+    }
+
+    public function getParamsDefaults(): ParamCollection
+    {
+        return $this->_paramCollection
+            ?? $this->_paramCollection = new IParamCollection($this->memoryParams);
+    }
+
+
+    /*------ relations -------*/
+
+    public function asMemoryDef() : MemoryDef
+    {
+        return $this->_asMemoryDef
+            ?? $this->_asMemoryDef = new IMemoryDef(new MemoryMeta([
+                'name' => $this->name,
+                'title' => $this->title,
+                'desc' => $this->desc,
+                'scopes' => $this->memoryScopes,
+                'params' => $this->memoryParams,
+            ]));
+    }
+
+    public function asStageDef() : StageDef
+    {
+        return $this->_asStageDef
+            ?? $this->_asStageDef = new InitStage([
+                'name' => $this->name,
+                'contextName' => $this->name,
+                'title' => $this->title,
+                'desc' => $this->desc,
+                'stageName' => '',
+                'asIntent' => $this->asIntent,
+            ]);
+    }
+
+
+    /*------ to context -------*/
+
+    public function wrapContext(Cloner $cloner, Ucl $ucl): Context
+    {
+        return call_user_func(
+            [$this->contextWrapper, Context::WRAP_FUNC],
+            $cloner,
+            $ucl
+        );
+    }
+
+    /*------ stages -------*/
+
+    public function eachPredefinedStage(): \Generator
+    {
+        foreach ($this->stages as $stageMeta) {
+            yield $stageMeta->getWrapper();
+        }
+    }
+
+    public function getPredefinedStageNames(bool $isFullname = false): array
+    {
+        return array_map(
+            function(StageMeta $meta) use ($isFullname) {
+                if ($isFullname) {
+                    return $meta->name;
+                }
+
+                return $meta->stageName;
+            },
+            $this->stages
+        );
+    }
+
+    public function firstStage(): ? string
+    {
+        foreach ($this->stages as $stage) {
+            return ContextUtils::parseShortStageName(
+                $stage->name,
+                $this->name
+            );
+        }
+
+        return null;
+    }
+
+    public function __destruct()
+    {
+        $this->_paramCollection = null;
+        $this->_queryCollection = null;
+        $this->_asMemoryDef = null;
+        $this->_asStageDef = null;
+
+        parent::__destruct();
+    }
 
 }

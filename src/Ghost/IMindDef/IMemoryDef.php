@@ -46,7 +46,6 @@ class IMemoryDef implements MemoryDef
     public function __construct(MemoryMeta $meta)
     {
         $this->meta = $meta;
-        $this->params = new IParamCollection($meta->params);
     }
 
 
@@ -70,9 +69,16 @@ class IMemoryDef implements MemoryDef
         return $this->meta->scopes;
     }
 
+    public function getParams(): ParamCollection
+    {
+        return $this->params
+            ?? $this->params = new IParamCollection($this->meta->params);
+    }
+
+
     public function getDefaults(): array
     {
-        return $this->params->getDefaults();
+        return $this->getParams()->getDefaults();
     }
 
     public function isLongTerm(): bool

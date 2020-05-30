@@ -117,7 +117,7 @@ class OConfuse extends AbsOperator
         $matcher = $this->cloner->matcher->refresh();
         foreach ($stages as $stage) {
             $intentName = $current->getStageIntentName($stage);
-            if ($matcher->matchStageOfIntent($intentName)->truly()) {
+            if ($matcher->matchStage($intentName)->truly()) {
                 return $current->goStage($stage);
             }
         }
@@ -132,9 +132,9 @@ class OConfuse extends AbsOperator
         foreach ($contexts as $ucl) {
             // 这个 ucl 可能是假的, 用了通配符
             $intentName = $ucl->getStageIntentName();
-            if ($matcher->matchStageOfIntent($intentName)->truly()) {
+            if ($matcher->matchStage($intentName)->truly()) {
                 // 这个 ucl 就是真的了.
-                return $ucl->goStageByIntentName($intentName);
+                return $ucl->goStageByFullname($intentName);
             }
         }
 

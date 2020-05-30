@@ -19,6 +19,7 @@ use Commune\Blueprint\Ghost\Context\ParamCollection;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
  */
 interface ContextDef extends Def
 {
@@ -122,10 +123,9 @@ interface ContextDef extends Def
 
 
     /**
-     * @param string $stageName
-     * @return StageDef
+     * @return StageDef[]
      */
-    public function getPredefinedStage(string $stageName) : StageDef;
+    public function eachPredefinedStage() : \Generator;
 
     /**
      * 获取当前 Context 配置下所有的 stage 名称

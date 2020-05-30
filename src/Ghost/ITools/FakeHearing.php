@@ -239,12 +239,12 @@ class FakeHearing implements Hearing
         return $this->hearing->getDialog();
     }
 
-    public function matchStageOfIntent(string $intentName): Matcher
+    public function matchStage(string $stageFullname): Matcher
     {
         return $this;
     }
 
-    public function matchStageInIntents(array $intents): Matcher
+    public function matchStageIn(array $intents): Matcher
     {
         return $this;
     }

@@ -24,17 +24,27 @@ interface Param
     public function getName() : string;
 
     /**
-     * 是否是列表字段.
      * @return bool
      */
-    public function isList() : bool;
+    public function isNullable() : bool;
 
+    /**
+     * @return string[]
+     */
+    public function getTypeHints() : array;
 
     /**
      * @param mixed $value
+     * @param string|null $type 可指定合法的 type
      * @return mixed
      */
-    public function parse($value);
+    public function parse($value, string $type = null);
+
+    /**
+     * @param $value
+     * @return null|string  返回合法的 typeHint
+     */
+    public function validate($value) : ? string;
 
     /**
      * 默认值

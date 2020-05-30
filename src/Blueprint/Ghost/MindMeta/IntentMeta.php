@@ -31,6 +31,7 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
  * @property-read string[] $examples
  *
  * ## 匹配规则
+ * @property-read string|null $alias
  * @property-read string $signature
  * @property-read string[] $keywords
  * @property-read string[] $regex
@@ -38,6 +39,8 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
  *
  * @property-read string|null $matcher
  *
+ *
+ * @method IntentDef getWrapper(): Wrapper
  */
 class IntentMeta extends AbsMeta
 {
@@ -52,12 +55,14 @@ class IntentMeta extends AbsMeta
             'name' => '',
 
             // wrapper
-            'wrapper' => IIntentDef::class,
+            'wrapper' => '',
 
             // 意图的标题, 应允许用标题来匹配.
             'title' => '',
             // 意图的简介. 可以作为选项的内容.
             'desc' => '',
+            // 意图的别名. 允许别名中的意图作为精确匹配规则.
+            'alias' => null,
             // 例句, 用 []() 标记, 例如 "我想知道[北京](city)[明天](date)天气怎么样"
             'examples' => [],
             // 作为命令.
@@ -69,15 +74,48 @@ class IntentMeta extends AbsMeta
             'regex' => [],
 
             // 命中任意 entity
-            'anyEntity' => [],
+            'ifEntity' => [],
             // 自定义校验器. 字符串, 通常是类名或者方法名.
             'matcher' => null,
         ];
     }
 
+
+    public static function mergeStageInfo(
+        array $data,
+        string $name,
+        string $title,
+        string $desc,
+        bool $force = false
+    ) : array
+    {
+
+        if (empty($data['name']) || $force) {
+            $data['name'] = $name;
+        }
+
+        if (empty($data['title']) || $force) {
+            $data['title'] = $title;
+        }
+
+        if (empty($data['desc']) || $force) {
+            $data['desc'] = $desc;
+        }
+
+        return $data;
+    }
+
+
+
+
     public function __get_wrapper() : string
     {
-        return self::getOriginFromAlias($this->_data['wrapper'] ?? '');
+        $wrapper = $this->_data['wrapper'] ?? '';
+        $wrapper = empty($wrapper)
+            ? IIntentDef::class
+            : $wrapper;
+
+        return self::getOriginFromAlias( $wrapper);
     }
 
     public function __set_wrapper(string $name, $wrapper) : void

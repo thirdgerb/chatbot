@@ -11,14 +11,26 @@
 
 namespace Commune\Ghost\Context\Codable;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\MindSelfRegister;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
-use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Support\Option\Wrapper;
+
+
+/**
+ * 意图默认值定义的规则, 采取注解的形式.
+ * 可以用于类的注解, 以及 stage 方法的注解.
+ *
+ * @intent intentNameAlias
+ * @example intentExample1
+ * @example intentExample2
+ * @regex /^regex1$/
+ * @regex /^regex2$/
+ * @signature commandName {arg1} {arg2}
+ *
+ */
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -26,21 +38,30 @@ use Commune\Support\Option\Wrapper;
 interface CodeContext extends Context, Wrapper, MindSelfRegister
 {
 
-    const MAKE_DEF_FUNC = 'makeDef';
-    const WRAP_CONTEXT_FUNC = 'wrapContext';
     const FIRST_STAGE = 'start';
+
+    const MAKE_DEF_FUNC = '__def';
+    const CONTEXT_NAME_FUNC = '__name';
+    const CONTEXT_OPTION_FUNC = '__option';
+    const STAGE_BUILDER_PREFIX = '__on_';
 
 
     /**
-     * @param Ucl $ucl
-     * @param Cloner $cloner
-     * @return static
+     * @return string
      */
-    public static function wrapContext(Cloner $cloner, Ucl $ucl) : Context;
+    public static function __name() : string;
 
-    public static function getContextName() : string;
+    /**
+     * @param ContextMeta|null $meta
+     * @return ContextDef
+     */
+    public static function __def(ContextMeta $meta = null) : ContextDef;
 
-    public static function makeDef(ContextMeta $meta = null) : ContextDef;
+    /**
+     * @return CodeContextOption
+     *  return new CodeContextOption($option = []);
+     */
+    public static function __option() : CodeContextOption;
 
     /**
      * @param StageBuilder $builder

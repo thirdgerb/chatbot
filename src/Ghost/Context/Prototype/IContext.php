@@ -78,13 +78,19 @@ class IContext implements Context
      * @param Cloner $cloner
      */
     public function __construct(
-        Ucl $ucl,
-        Cloner $cloner
+        Cloner $cloner,
+        Ucl $ucl
     )
     {
-        $this->_ucl = $ucl;
         $this->_cloner = $cloner;
+        $this->_ucl = $ucl;
     }
+
+    public static function wrap(Cloner $cloner, Ucl $ucl): Context
+    {
+        return new static($cloner, $ucl);
+    }
+
 
     public function toInstanceStub(): ClonerInstanceStub
     {

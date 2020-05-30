@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Blueprint\Ghost\Dialog\Receive;
 use Commune\Blueprint\Ghost\Dialog\Resume;
+use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
 
 
@@ -26,7 +27,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
  * @property-read string $desc
  * @property-read string $contextName
  * @property-read string $stageName
- * @property-read array $asIntent
+ * @property-read IntentMeta $asIntent
  */
 class InitStage extends AbsStageDef
 {

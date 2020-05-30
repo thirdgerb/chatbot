@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\MindDef;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context\ParamCollection;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 
@@ -30,6 +31,11 @@ interface MemoryDef extends Def
      * @return string[]
      */
     public function getScopes() : array;
+
+    /**
+     * @return ParamCollection
+     */
+    public function getParams() : ParamCollection;
 
     /**
      * 记忆体的默认值.

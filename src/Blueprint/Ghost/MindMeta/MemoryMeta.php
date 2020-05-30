@@ -35,8 +35,8 @@ class MemoryMeta extends AbsOption implements DefMeta
     {
         return [
             'name' => '',
-            'title' => 'contextTitle',
-            'desc' => 'contextDesc',
+            'title' => '',
+            'desc' => '',
             'scopes' => [],
             'params' => [],
         ];

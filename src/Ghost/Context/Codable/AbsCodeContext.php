@@ -19,6 +19,7 @@ use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Context\Prototype\IContext;
 use Commune\Ghost\Support\ContextUtils;
+use Commune\Support\Option\Meta;
 
 
 /**
@@ -27,24 +28,29 @@ use Commune\Ghost\Support\ContextUtils;
 abstract class AbsCodeContext extends IContext implements CodeContext
 {
 
-    public static function getContextName() : string
+    public static function __name() : string
     {
         return ContextUtils::normalizeContextName(static::class);
     }
 
-    public static function wrapContext(Cloner $cloner, Ucl $ucl): Context
+    public function getMeta(): Meta
     {
-        return new static($ucl, $cloner);
+        return $this->_def->getMeta();
     }
 
-    public static function makeDef(ContextMeta $meta = null): ContextDef
+    public static function __def(ContextMeta $meta = null): ContextDef
     {
         return new ICodeContextDef(static::class, $meta);
     }
 
+    public static function wrap(Cloner $cloner, Ucl $ucl): Context
+    {
+        return new static($cloner, $ucl);
+    }
+
     public static function selfRegisterToMind(Ghost\Mindset $mind): void
     {
-        $def = static::makeDef(static::class);
+        $def = static::__def(static::class);
         $mind->contextReg()->registerDef($def, true);
     }
 

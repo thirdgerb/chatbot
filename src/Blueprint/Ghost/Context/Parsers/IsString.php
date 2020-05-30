@@ -9,14 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context\Codable;
+namespace Commune\Blueprint\Ghost\Context\Parsers;
 
-use Commune\Blueprint\Ghost\MindDef\ContextDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface CodeContextDef extends ContextDef
+class IsString
 {
 
 }

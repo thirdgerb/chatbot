@@ -145,6 +145,12 @@ interface Intention
     public function getMatchedEntities() : array;
 
     /**
+     * @param string $entityName
+     * @return bool
+     */
+    public function hasEntity(string $entityName) : bool;
+
+    /**
      * 获取某个意图的所有实体.
      * 意图必须是 highly possible intent
      *

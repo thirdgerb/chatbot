@@ -14,7 +14,6 @@ namespace Commune\Blueprint\Ghost\MindDef;
 use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindDef\Intent\IntentExample;
-use Commune\Protocals\HostMsg\IntentMsg;
 
 /**
  * 关于意图的定义.
@@ -26,6 +25,7 @@ use Commune\Protocals\HostMsg\IntentMsg;
  *
  * 1. Intent : 直接用 Comprehension 的 intent 模块去匹配. 最合理的做法.
  * 2. 命令行 : 允许用命令行来开启一个多轮对话
+ * 3. alias : 允许用别名来匹配意图.
  * 4. Regex : 正则匹配来获取.
  * 5. Entity : 如果命中了某个指定的 Entity
  * 6. Keyword : 命中了某些关键字.
@@ -51,6 +51,12 @@ interface IntentDef extends Def
      * @return string[]
      */
     public function getExamples() : array;
+
+    /**
+     * 意图的别名.
+     * @return null|string
+     */
+    public function getAlias() : ? string;
 
     /**
      * 封装后的语料对象

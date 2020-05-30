@@ -53,6 +53,15 @@ interface Context extends
 
     /*----- properties -----*/
 
+    const WRAP_FUNC = 'wrap';
+
+    /**
+     * @param Cloner $cloner
+     * @param Ucl $ucl
+     * @return static
+     */
+    public static function wrap(Cloner $cloner, Ucl $ucl) : Context;
+
     /**
      * Context 名称
      * @return string

@@ -14,7 +14,9 @@ namespace Commune\Ghost\Context\Codable;
 use Commune\Blueprint\Ghost\Context\ContextOption;
 use Commune\Blueprint\Ghost\Context\EntityBuilder;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
+use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Ghost\Context\Builders\IParamBuilder;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -45,28 +47,72 @@ class CodeDefCreator
         );
     }
 
-
-    /**
-     * @return ContextOption
-     */
-    public function getConfig() : ContextOption
+    public function getContextName() : string
     {
-        if ($this->isInstance(DefineConfig::class)) {
-            return call_user_func(
-                [$this->contextClass, DefineConfig::DEFINE_CONFIG_FUNC]
-            );
+        return call_user_func([
+            $this->contextClass,
+            CodeContext::CONTEXT_NAME_FUNC
+        ]);
+    }
+
+    public function getCodeContextOption() : CodeContextOption
+    {
+        return call_user_func([
+            $this->contextClass,
+            CodeContext::CONTEXT_OPTION_FUNC
+        ]);
+    }
+
+    public function getContextIntentInfo() : array
+    {
+        $r = new \ReflectionClass($this->contextClass);
+        return $this->readIntentInfoByComment($r->getDocComment());
+    }
+
+
+    protected function readIntentInfoByComment(string $doc) : array
+    {
+        $intentName = StringUtils::fetchAnnotation($doc, 'intent')[0] ?? '';
+        $signature = StringUtils::fetchAnnotation($doc, 'signature')[0] ?? '';
+        $examples  = StringUtils::fetchAnnotation($doc, 'example');
+        $regex = StringUtils::fetchAnnotation($doc, 'regex');
+
+        return [
+            'examples' => $examples,
+            'alias' => $intentName,
+            'signature' => $signature,
+            'regex' => $regex
+        ];
+    }
+
+    public function getPredefinedStageMetas() : array
+    {
+        $r = new \ReflectionClass($this->contextClass);
+        $results = [];
+        foreach ($r->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+            $isStageMethod = strpos(
+                $method->getName(),
+                CodeContext::STAGE_BUILDER_PREFIX
+            ) === 0;
+
+            $name = substr($method->getName(), strlen(CodeContext::STAGE_BUILDER_PREFIX));
+
+            if ($isStageMethod) {
+                $results[$name] = $this->buildStageMeta($name, $method);
+            }
         }
 
-        return new ContextOption([]);
+        return $results;
     }
 
-    /**
-     * @return \Generator
-     */
-    public function eachMethodStage() : \Generator
+    protected function buildStageMeta(string $name, \ReflectionMethod $method) : StageMeta
     {
 
+        return new ICodeStageDef([
+
+        ]);
     }
+
 
 
 }
