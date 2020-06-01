@@ -9,11 +9,10 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context\Params;
+namespace Commune\Support\Parameter;
 
-use Commune\Blueprint\Ghost\Context\Param;
-use Commune\Blueprint\Ghost\Context\ParamTypeHints;
-use Illuminate\Support\Arr;
+use Commune\Support\Parameter\Param;
+use Commune\Support\Parameter\ParamTypeHints;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -52,22 +51,15 @@ class IParam implements Param
     {
         if (empty($typeHints)) {
             $this->nullable = true;
+            return;
+        }
 
-        } else {
-            foreach ($typeHints as $typeHint) {
-                if ($typeHint === 'null') {
-                    $this->nullable = true;
-                    continue;
-                }
-
-                if ($typeHint === 'mixed') {
-                    $this->nullable = true;
-                    $this->typeHints = [];
-                    break;
-                }
-
-                $this->typeHints[] = $typeHint;
+        foreach ($typeHints as $typeHint) {
+            if ($typeHint === 'null' || $typeHint === 'mixed') {
+                $this->nullable = true;
             }
+
+            $this->typeHints[] = $typeHint;
         }
     }
 
@@ -98,11 +90,16 @@ class IParam implements Param
             return $value;
         }
 
-        $type = $type ?? $this->validate($value);
-        return ParamTypeHints::parse($type, $value);
+        $type = $type ?? $this->getValidType($value);
+
+        if (isset($type)) {
+            return ParamTypeHints::parse($type, $value);
+        }
+
+        return $value;
     }
 
-    public function validate($value): ? string
+    public function getValidType($value): ? string
     {
         if (empty($this->typeHints)) {
             return 'mixed';
@@ -121,6 +118,24 @@ class IParam implements Param
         }
 
         return null;
+    }
+
+    public function isValid($value): bool
+    {
+        $type = $this->getValidType($value);
+        return isset($type);
+    }
+
+
+    public function getDefString(): string
+    {
+        $name = $this->getName();
+        $types = $this->getTypeHints();
+        $typesDef = empty($types)
+            ? ''
+            : ':' . implode('|', $types);
+
+        return $name . $typesDef;
     }
 
 

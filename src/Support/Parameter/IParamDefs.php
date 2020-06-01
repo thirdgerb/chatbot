@@ -9,42 +9,43 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context\Params;
-
-use Commune\Blueprint\Ghost\Context\Param;
-use Commune\Blueprint\Ghost\Context\ParamCollection;
-use Commune\Support\Utils\TypeUtils;
-
+namespace Commune\Support\Parameter;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IParamCollection implements ParamCollection
+class IParamDefs implements ParamDefs
 {
-
-    /**
-     * @var array
-     */
-    protected $definitions;
 
     /**
      * @var Param[]
      */
     protected $params = [];
 
-    public function __construct(array $definitions)
+    /**
+     * IParamDefs constructor.
+     * @param Param[] $params
+     */
+    public function __construct(array $params)
     {
-        $this->definitions = $definitions;
-
-        foreach ($definitions as $key => $val) {
-
-            $param = $this->buildParam($key, $val);
-            $name = $param->getName();
-            $this->params[$name] = $param;
+        foreach ($params as $param) {
+            $this->params[$param->getName()] = $param;
         }
     }
 
-    protected function buildParam(string $key, $val) : IParam
+    public static function create(array $definition): ParamDefs
+    {
+        $params = [];
+        foreach ($definition as $key => $val) {
+
+            $param = static::buildParam($key, $val);
+            $params[] = $param;
+        }
+        return new static($params);
+    }
+
+
+    protected static function buildParam(string $key, $val) : IParam
     {
         $explodedKey = explode(':', $key, 2);
         $field = $explodedKey[0];
@@ -54,6 +55,18 @@ class IParamCollection implements ParamCollection
 
         return new IParam($field, $typeHints, $val);
 
+    }
+
+
+
+    public function count(): int
+    {
+        return count($this->params);
+    }
+
+    public function addParam(Param $param): void
+    {
+        $this->params[$param->getName()] = $param;
     }
 
 
@@ -77,7 +90,7 @@ class IParamCollection implements ParamCollection
         return array_keys($this->params);
     }
 
-    public function parse(array $values, bool $strict = false): array
+    public function parse(array $values, bool $onlyDefined = false): array
     {
         $results = [];
 
@@ -85,7 +98,7 @@ class IParamCollection implements ParamCollection
             $results[$key] = $param->parse($values[$key] ?? null);
         }
 
-        if (!$strict) {
+        if (!$onlyDefined) {
             $results = $results + $values;
         }
 
@@ -104,7 +117,12 @@ class IParamCollection implements ParamCollection
 
     public function getDefinitions(): array
     {
-        return $this->definitions;
+        $definitions = [];
+        foreach ($this->params as $param) {
+            $definitions[$param->getDefString()] = $param->getDefault();
+        }
+
+        return $definitions;
     }
 
 

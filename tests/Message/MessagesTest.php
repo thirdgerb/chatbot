@@ -42,6 +42,13 @@ class MessagesTest extends MessageTestCase
         Message\Intercom\IInputMsg::class,
         Message\Intercom\IOutputMsg::class,
 
+        // qa
+        Message\Host\QA\IQuestionMsg::class,
+        Message\Host\QA\IAnswerMsg::class,
+        Message\Host\QA\IChoose::class,
+        Message\Host\QA\IChoice::class,
+        Message\Host\QA\IConfirm::class,
+        Message\Host\QA\IConfirmation::class,
 
     ];
 

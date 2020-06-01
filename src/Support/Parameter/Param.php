@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Context;
+namespace Commune\Support\Parameter;
 
 
 /**
@@ -44,7 +44,18 @@ interface Param
      * @param $value
      * @return null|string  返回合法的 typeHint
      */
-    public function validate($value) : ? string;
+    public function getValidType($value) : ? string;
+
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function isValid($value) : bool;
+
+    /**
+     * @return string
+     */
+    public function getDefString() : string;
 
     /**
      * 默认值

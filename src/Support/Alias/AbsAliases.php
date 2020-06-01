@@ -15,26 +15,53 @@ namespace Commune\Support\Alias;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-trait TAliases
+class AbsAliases
 {
+    /**
+     * @var string[]
+     */
     protected static $originToAlias = [];
 
+    /**
+     * @var string[]
+     */
     protected static $aliasToOrigin = [];
 
+    /**
+     * @var bool
+     */
+    protected static $loaded;
+
+    abstract public static function preload() : void;
+
+    /**
+     * @param string $origin
+     * @param string $alias
+     */
     public static function setAlias(string $origin, string $alias) : void
     {
-        self::$originToAlias[static::class][$origin] = $alias;
-        self::$aliasToOrigin[static::class][$alias] = $origin;
+        self::$originToAlias[$origin] = $alias;
+        self::$aliasToOrigin[$alias] = $origin;
+    }
+
+    public static function boot() : void
+    {
+        if (!self::$loaded) {
+            self::preload();
+            self::$loaded = true;
+        }
     }
 
     public static function getOriginFromAlias(string $alias) : string
     {
-        return self::$aliasToOrigin[static::class][$alias] ?? $alias;
+        self::boot();
+        return self::$aliasToOrigin[$alias] ?? $alias;
     }
 
     public static function getAliasOfOrigin(string $origin) : string
     {
-        return self::$originToAlias[static::class][$origin] ?? $origin;
+        self::boot();
+        return self::$originToAlias[$origin] ?? $origin;
     }
 
 

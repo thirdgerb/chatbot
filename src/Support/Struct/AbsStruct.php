@@ -214,8 +214,8 @@ abstract class AbsStruct implements Struct, \Serializable
         $names = [];
         $relations = array_keys(static::relations());
         foreach($relations as $relation) {
-            $names[] = self::_isArrayFieldName($relation)
-                ? self::_fieldWithOutArrMark($relation)
+            $names[] = TypeUtils::isListTypeHint($relation)
+                ? TypeUtils::pureListTypeHint($relation)
                 : $relation;
         }
         return $names;
@@ -231,17 +231,6 @@ abstract class AbsStruct implements Struct, \Serializable
         $relations = static::relations();
 
         return $relations[$fieldName] ?? $relations[$fieldName . '[]'] ?? null;
-    }
-
-
-    private static function _fieldWithOutArrMark(string $field) : string
-    {
-        return substr($field, 0, -2);
-    }
-
-    private static function _isArrayFieldName($field) : bool
-    {
-        return substr($field, -2, 2) === '[]';
     }
 
 

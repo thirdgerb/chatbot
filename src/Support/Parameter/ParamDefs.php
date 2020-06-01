@@ -9,14 +9,25 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Context;
+namespace Commune\Support\Parameter;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ParamCollection
+interface ParamDefs
 {
+
+    /**
+     * @param array $definition
+     * @return ParamDefs
+     */
+    public static function create(array $definition) : ParamDefs;
+
+    /**
+     * @return int
+     */
+    public function count() : int;
 
     /**
      * @param string $name
@@ -36,16 +47,21 @@ interface ParamCollection
     public function getParam(string $name) : ? Param;
 
     /**
+     * @param Param $param
+     */
+    public function addParam(Param $param) : void;
+
+    /**
      * @return string[]
      */
     public function keys() : array;
 
     /**
      * @param array $values
-     * @param bool $strict
+     * @param bool $onlyDefined
      * @return array
      */
-    public function parse(array $values, bool $strict = false) : array;
+    public function parse(array $values, bool $onlyDefined = false) : array;
 
     /**
      * @return array

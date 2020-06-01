@@ -4,17 +4,14 @@
 namespace Commune\Support\Utils;
 
 
+use Illuminate\Support\Arr;
+
 class ArrayUtils
 {
 
     public static function slice(array &$arr, int $maxLength) : void
     {
-        $size = count($arr);
-        $maxLength = $maxLength > 0 ? $maxLength : 0;
-
-        while ($size > $maxLength) {
-            array_pop($arr);
-        }
+        $arr = array_slice($arr, 0, $maxLength);
     }
 
     /**
@@ -118,5 +115,97 @@ class ArrayUtils
             return $value;
 
         }, $array);
+    }
+
+
+    /**
+     * 根据键名的定义来过滤一个数组. 拥有 [] 标记的键名, 默认接受数组. 否则是非数组. 自动转化.
+     * @param array $values
+     * @param array $keys
+     * @param bool $onlyDefined
+     * @return array
+     */
+    public static function parseValuesByKeysWithListMark(
+        array $values,
+        array $keys,
+        bool $onlyDefined = true
+    ) : array
+    {
+        $results = [];
+
+        foreach ($keys as $key) {
+
+            $isList = TypeUtils::isListTypeHint($key);
+            $key = $isList ? TypeUtils::pureListTypeHint($key) : $key;
+
+            // 如果要求数组, 按数组的方式进行封装.
+            if ($isList) {
+                $results[$key] = isset($values[$key])
+                    ? Arr::wrap($values[$key])
+                    : [];
+
+                // 如果不是数组, 即便输入值是数组也只使用第一个参数
+            } else {
+
+                $results[$key] = isset($values[$key]) && is_array($values[$key])
+                    ? current($values[$key])
+                    : ($values[$key] ?? null);
+            }
+        }
+
+        if ($onlyDefined) {
+            return $results;
+        }
+        return $results + $values;
+    }
+
+
+    /**
+     * 检查一个列表, 给出所有的 unique 值.
+     * 如果有重复值 name , 则该值变成 name[]
+     *
+     * @param array $names
+     * @return array
+     */
+    public static function uniqueValuesWithListMark(array $names) : array
+    {
+        $map = static::valueCount($names);
+        return static::uniqueValuesWithListMarkByValueCounts($map);
+    }
+
+    public static function uniqueValuesWithListMarkByValueCounts(array $valueCounts) : array
+    {
+        $result = [];
+        foreach ($valueCounts as $name => $count) {
+            $result[] = $count > 1 ? $name . '[]' : strval($name);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $array
+     * @return array
+     */
+    public static function valueCount(array $array) : array
+    {
+        return array_reduce($array, function($map, $name) {
+            $map[$name] = $map[$name] ?? 0;
+            $map[$name] ++ ;
+            return $map;
+        }, []);
+    }
+
+    public static function mergeMapByMaxVal(array $map, array $mergeMap) : array
+    {
+        foreach ($mergeMap as $key => $val) {
+            if (array_key_exists($key, $map) && $map[$key] > $val) {
+                continue;
+            }
+
+            $map[$key] = $val;
+        }
+
+        return $map;
     }
 }

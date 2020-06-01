@@ -9,13 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Context\Parsers;
+namespace Commune\Support\Parameter;
 
 
 /**
+ * 自定义的类型约束.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IsString
+interface TypeHint
 {
+
+    public function validate($value, string ...$params) : bool;
+
+    public function parse($value, string ...$params);
 
 }

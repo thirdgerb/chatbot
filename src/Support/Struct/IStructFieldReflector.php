@@ -86,7 +86,7 @@ class IStructFieldReflector implements StructFieldReflector
     {
         if ($this->ruleCounts === 1) {
             $rule = $this->rules[0];
-            return TypeUtils::typeHintParse($rule, $value);
+            return TypeUtils::parse($rule, $value);
         }
 
         return $value;
@@ -176,12 +176,12 @@ class IStructFieldReflector implements StructFieldReflector
         }
 
         $rule = TypeUtils::pureListTypeHint($rule);
-        return TypeUtils::listTypeHintValidate($rule, $value);
+        return TypeUtils::listValidate($rule, $value);
     }
 
     protected function validateSingleRule(string $rule, $value) : bool
     {
-        return TypeUtils::typeHintValidate($rule, $value);
+        return TypeUtils::validate($rule, $value);
     }
 
     public function getRules(): array
