@@ -13,7 +13,6 @@ namespace Commune\Ghost\Context\Prototype;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
-use Commune\Support\Parameter\ParamDefs;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
@@ -22,7 +21,6 @@ use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
-use Commune\Support\Parameter\IParamDefs;
 use Commune\Ghost\IMindDef\IMemoryDef;
 use Commune\Ghost\Stage\InitStage;
 use Commune\Ghost\Support\ContextUtils;
@@ -51,8 +49,10 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  *
  * @property-read string[] $queryNames              context 请求参数键名的定义, 如果是列表则要加上 []
  *
+ * @property-read string[] $dependingNames
+ *
  * @property-read string[] $memoryScopes
- * @property-read array $memoryParams
+ * @property-read array $memoryAttrs
  *
  * @property-read null|array $comprehendPipes
  *
@@ -79,20 +79,6 @@ class IContextDef extends AbsOption implements ContextDef
      */
     protected $_asStageDef;
 
-    /**
-     * @var ParamDefs
-     */
-    protected $_queryCollection;
-
-    /**
-     * @var ParamDefs
-     */
-    protected $_paramCollection;
-
-    /**
-     * @var ParamDefs
-     */
-    protected $_entityParams;
 
     public static function stub(): array
     {
@@ -107,9 +93,10 @@ class IContextDef extends AbsOption implements ContextDef
             'asIntent' => IntentMeta::stub(),
 
             'queryNames' => [],
+            'dependingNames' => [],
 
             'memoryScopes' => null,
-            'memoryParams' => [],
+            'memoryAttrs' => [],
 
             'comprehendPipes' => null,
 
@@ -277,23 +264,14 @@ class IContextDef extends AbsOption implements ContextDef
         return $this->dependingNames;
     }
 
+    public function getQueryNames(): array
+    {
+        return $this->queryNames;
+    }
+
     public function comprehendPipes(Dialog $current): ? array
     {
         return $this->comprehendPipes;
-    }
-
-    /*------ parameters -------*/
-
-    public function getQueryDefs(): ParamDefs
-    {
-        return $this->_queryCollection
-            ?? $this->_queryCollection = IParamDefs::create($this->queryParams);
-    }
-
-    public function getParamsDefs(): ParamDefs
-    {
-        return $this->_paramCollection
-            ?? $this->_paramCollection = IParamDefs::create($this->memoryParams);
     }
 
 
@@ -307,7 +285,7 @@ class IContextDef extends AbsOption implements ContextDef
                 'title' => $this->title,
                 'desc' => $this->desc,
                 'scopes' => $this->memoryScopes,
-                'params' => $this->memoryParams,
+                'attrs' => $this->memoryAttrs,
             ]));
     }
 
@@ -373,12 +351,8 @@ class IContextDef extends AbsOption implements ContextDef
 
     public function __destruct()
     {
-        $this->_paramCollection = null;
-        $this->_queryCollection = null;
-        $this->_entityParams = null;
         $this->_asMemoryDef = null;
         $this->_asStageDef = null;
-
         parent::__destruct();
     }
 

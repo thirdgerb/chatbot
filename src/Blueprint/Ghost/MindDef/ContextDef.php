@@ -62,12 +62,6 @@ interface ContextDef extends Def
      */
     public function getDependingNames() : array;
 
-    /**
-     * 属性的默认值. 目前没有类型检验.
-     * @return array
-     */
-    public function getAttrDefaults() : array;
-
     /*------- relation -------*/
 
     /**
