@@ -37,6 +37,10 @@ class MessagesTest extends MessageTestCase
         Message\Host\SystemInt\RequestFailInt::class,
         Message\Host\SystemInt\SessionBusyInt::class,
         Message\Host\SystemInt\SessionQuitInt::class,
+        Message\Host\SystemInt\SessionFailInt::class,
+        Message\Host\SystemInt\DialogAskInt::class,
+        Message\Host\SystemInt\DialogConfuseInt::class,
+        Message\Host\SystemInt\DialogYieldInt::class,
 
         // intercom
         Message\Intercom\IInputMsg::class,

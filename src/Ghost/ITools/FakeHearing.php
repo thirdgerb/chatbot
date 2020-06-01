@@ -39,22 +39,22 @@ class FakeHearing implements Hearing
     }
 
 
-    public function todo(callable $caller): Hearing
+    public function todo($action): Hearing
     {
         return $this;
     }
 
-    public function then(callable $caller = null): Hearing
+    public function then($action = null): Hearing
     {
         return $this;
     }
 
-    public function component(callable $caller): Hearing
+    public function component($action): Hearing
     {
         return $this;
     }
 
-    public function fallback(callable $caller): Hearing
+    public function fallback($action): Hearing
     {
         return $this;
     }
@@ -143,22 +143,18 @@ class FakeHearing implements Hearing
         return $this;
     }
 
-    public function isAnswer(string $answer): Matcher
+    public function action($action): Hearing
     {
         return $this;
     }
 
-    public function isAnyAnswer(): Matcher
+    public function isAnswer(): Matcher
     {
         return $this;
     }
+
 
     public function isChoice($suggestionIndex): Matcher
-    {
-        return $this;
-    }
-
-    public function hasChoiceIn(array $choices): Matcher
     {
         return $this;
     }

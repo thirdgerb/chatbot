@@ -25,11 +25,12 @@ use Commune\Blueprint\Ghost\Tools\Hearing;
  *
  *
  * @property-read Cloner $cloner        当前对话机器人的分身.
- * @property-read Context $context      当前的上下文语境.
  * @property-read Ucl $ucl              当前语境的地址.
  * @property-read Task $task            当前语境的任务状态.
  * @property-read Process $process      当前多轮对话运行中的进程.
  * @property-read Dialog|null $prev     上一个 Dialog 对象.
+ *
+ * @property Context $context           当前的上下文语境.
  */
 interface Dialog
 {

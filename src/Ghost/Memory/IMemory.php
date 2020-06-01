@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\Arr\TArrayData;
+use Commune\Support\Utils\ArrayUtils;
 
 
 /**
@@ -76,6 +77,11 @@ class IMemory implements Memory
     public function toData(): array
     {
         return $this->_data;
+    }
+
+    public function keys(): array
+    {
+        return array_keys($this->_data);
     }
 
 

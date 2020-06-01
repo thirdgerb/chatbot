@@ -107,6 +107,11 @@ trait TRecollection
 
     }
 
+    public function keys() : array
+    {
+        return $this->_memory->keys();
+    }
+
     public function __destruct()
     {
         $this->_cloner = null;

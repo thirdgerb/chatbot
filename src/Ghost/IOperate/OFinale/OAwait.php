@@ -14,6 +14,10 @@ namespace Commune\Ghost\IOperate\OFinale;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Await;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Ucl;
+use Commune\Message\Host\QA\IChoose;
+use Commune\Message\Host\QA\IConfirm;
+use Commune\Message\Host\QA\IQuestionMsg;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 
 /**
@@ -72,6 +76,67 @@ class OAwait extends AbsFinale implements Await
             $this->stageRoutes,
             $this->contextRoutes
         );
+        return $this;
+    }
+
+    public function askChoose(
+        string $query,
+        array $suggestions = [],
+        $defaultChoice = null
+    ): Operator
+    {
+        $choose = new IChoose($query, $defaultChoice);
+        $this->question = $this->addSuggestions($choose, $suggestions);
+        return $this;
+    }
+
+    public function askConfirm(
+        string $query,
+        bool $default = true,
+        Ucl $positiveRoute = null,
+        Ucl $negativeRoute = null
+    ): Operator
+    {
+        $confirm = new IConfirm($query, $default);
+        $confirm->setPositive('yes', $positiveRoute);
+        $confirm->setNegative('no', $negativeRoute);
+        return $this;
+    }
+
+    public function askVerbal(
+        string $query,
+        array $suggestions = []
+    ): Operator
+    {
+        $question = new IQuestionMsg($query, null);
+        $this->question = $this->addSuggestions($question, $suggestions);
+        return $this;
+    }
+
+    protected function addSuggestions(QuestionMsg $question, array $suggestions) : QuestionMsg
+    {
+        foreach ($suggestions as $index => $suggestion) {
+            if ($this->isCurrentStage($suggestion)) {
+                $question = $this->addStageToQuestion($question, $index, $suggestion);
+
+            } elseif ($suggestion instanceof Ucl) {
+                $question = $this->addUclToQuestion($question, $index, $suggestion);
+
+            } elseif ($this->isContextName($suggestion)) {
+                $question = $this->addContextNameToQuestion($question, $index, $suggestion);
+            } else {
+                $question->addSuggestion($suggestion, $index);
+            }
+        }
+
+        return $question;
+    }
+
+    public function ask(
+        QuestionMsg $question
+    ): Operator
+    {
+        $this->question = $question;
         return $this;
     }
 

@@ -11,25 +11,27 @@
 
 namespace Commune\Message\Host\SystemInt;
 
+use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Struct\Struct;
-use Commune\Message\Host\IIntentMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ * 
+ * @property-read string $attr
  */
-class TaskBusyInt extends IIntentMsg
+class DialogAskInt extends IIntentMsg
 {
     const DEFAULT_LEVEL = HostMsg::INFO;
-    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_SESSION_QUIT;
+    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_DIALOG_ASK;
 
 
-    public function __construct(string $ucl = '')
+    public function __construct(string $attr = '')
     {
         parent::__construct(
             '',
             [
-                'ucl' => $ucl
+                'attr' => $attr
             ]
         );
     }
@@ -37,13 +39,13 @@ class TaskBusyInt extends IIntentMsg
     public static function intentStub(): array
     {
         return [
-            'ucl' => ''
+            'attr' => ''
         ];
     }
 
     public static function create(array $data = []): Struct
     {
-        return new static($data['ucl'] ?? '');
+        return new static($data['attr'] ?? '');
     }
 
 

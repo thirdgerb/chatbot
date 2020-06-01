@@ -19,7 +19,7 @@ use Commune\Ghost\Dialog\IResume\IPreempt;
 use Commune\Ghost\Dialog\IResume\IRestore;
 use Commune\Ghost\Dialog\IResume\IWake;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Message\Host\SystemInt\TaskBusyInt;
+use Commune\Message\Host\SystemInt\DialogYieldInt;
 use Commune\Ghost\Dialog\IActivate\IRedirect;
 
 /**
@@ -48,7 +48,7 @@ class ORedirectTo extends AbsRedirect
         }
 
         $task = $this->dialog->process->getTask($target);
-        $status = $task->status;
+        $status = $task->getStatus();
 
         switch ($status) {
 
@@ -82,7 +82,7 @@ class ORedirectTo extends AbsRedirect
 
                 $this->dialog
                     ->send()
-                    ->message(new TaskBusyInt($target->toEncodedStr()));
+                    ->message(new DialogYieldInt($target->toEncodedStr()));
 
                 return $this->dialog->rewind();
 

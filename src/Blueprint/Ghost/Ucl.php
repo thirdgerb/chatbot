@@ -351,7 +351,20 @@ class Ucl implements UclInterface
 
         $scopes = $contextDef->getScopes();
         $map = $cloner->scope->getLongTermDimensionsDict($scopes);
+
+        // query 定义值的优先级高于当前作用域的值.
         $query = $query + $map;
+
+        // query 值不能为 null.
+        array_walk($query, function ($value, $index) {
+            if (is_null($value)) {
+                throw new InvalidQueryException(
+                    $this->contextName,
+                    $index,
+                    'is required'
+                );
+            }
+        });
 
         $instance = new static($this->_contextName, $this->_stageName, $query);
         $instance->instanced = true;

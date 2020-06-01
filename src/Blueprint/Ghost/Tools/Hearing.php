@@ -25,13 +25,39 @@ interface Hearing extends Matcher
 {
     public function getDialog() : Dialog;
 
-    public function todo(callable $caller) : Hearing;
+    /**
+     * @param callable|string $action
+     * @return Hearing
+     */
+    public function action($action) : Hearing;
 
-    public function then(callable $caller = null) : Hearing;
 
-    public function component(callable $caller) : Hearing;
+    /**
+     * @param callable|string $action
+     * @return Hearing
+     */
+    public function todo($action) : Hearing;
 
-    public function fallback(callable $caller) : Hearing;
+
+    /**
+     * @param callable|string $action
+     * @return Hearing
+     */
+    public function then($action = null) : Hearing;
+
+
+    /**
+     * @param callable|string $action
+     * @return Hearing
+     */
+    public function component($action) : Hearing;
+
+
+    /**
+     * @param callable|string $action
+     * @return Hearing
+     */
+    public function fallback($action) : Hearing;
 
     public function end() : Operator;
 }

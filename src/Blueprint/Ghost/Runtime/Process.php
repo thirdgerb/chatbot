@@ -133,6 +133,10 @@ interface Process extends ArrayAndJsonAble
 
     public function getDepended(string $contextId) : ? Ucl;
 
+    /**
+     * @param Ucl $ucl
+     * @param string $dependedContextId
+     */
     public function addDepending(Ucl $ucl, string $dependedContextId) : void;
 
     /**

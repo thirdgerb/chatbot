@@ -20,9 +20,10 @@ use Commune\Support\Option\Wrapper;
 
 
 /**
- * 意图默认值定义的规则, 采取注解的形式.
- * 可以用于类的注解, 以及 stage 方法的注解.
+ * 可以在方法名和类名上使用的注解类型.
  *
+ * @title title
+ * @desc desc
  * @intent intentNameAlias
  * @example intentExample1
  * @example intentExample2
@@ -32,7 +33,10 @@ use Commune\Support\Option\Wrapper;
  *
  */
 
+
 /**
+ * 用代码来定义的 Context, 基于面向对象, 将 Stage 的方法都定义在 Context 内部.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface CodeContext extends Context, Wrapper, MindSelfRegister
@@ -40,6 +44,7 @@ interface CodeContext extends Context, Wrapper, MindSelfRegister
 
     const FIRST_STAGE = 'start';
 
+    const DEFINE_DEPENDING_FUNC = '__depending';
     const MAKE_DEF_FUNC = '__def';
     const CONTEXT_NAME_FUNC = '__name';
     const CONTEXT_OPTION_FUNC = '__option';
@@ -47,9 +52,18 @@ interface CodeContext extends Context, Wrapper, MindSelfRegister
 
 
     /**
+     * 定义 context name
      * @return string
      */
     public static function __name() : string;
+
+    /**
+     * 定义启动时必须要设置值的参数.
+     *
+     * @param Depending $depending
+     * @return Depending
+     */
+    public static function __depending(Depending $depending) : Depending;
 
     /**
      * @param ContextMeta|null $meta

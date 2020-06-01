@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Operate;
 
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 
 /**
@@ -30,21 +31,21 @@ interface Await extends Finale
     public function askChoose(
         string $query,
         array $suggestions = [],
-        $defaultChoice = 0
+        $defaultChoice = null
     ) : Operator;
 
     /**
      * @param string $query
      * @param bool $default
-     * @param string|null $positiveRoute
-     * @param string|null $negativeRoute
+     * @param Ucl|null $positiveRoute
+     * @param Ucl|null $negativeRoute
      * @return Operator
      */
     public function askConfirm(
         string $query,
         bool $default = true,
-        string $positiveRoute = null,
-        string $negativeRoute = null
+        Ucl $positiveRoute = null,
+        Ucl $negativeRoute = null
     ) : Operator;
 
     /**

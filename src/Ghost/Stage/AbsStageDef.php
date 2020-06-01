@@ -196,6 +196,9 @@ abstract class AbsStageDef extends AbsOption implements StageDef
 
     /*------- wrapper -------*/
 
+    /**
+     * @return StageMeta
+     */
     public function getMeta(): Meta
     {
         $data = $this->toArray();

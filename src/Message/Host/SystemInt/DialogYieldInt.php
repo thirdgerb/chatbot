@@ -11,31 +11,41 @@
 
 namespace Commune\Message\Host\SystemInt;
 
-use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Struct\Struct;
+use Commune\Message\Host\IIntentMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $ucl
  */
-class ConfuseInt extends IIntentMsg
+class DialogYieldInt extends IIntentMsg
 {
-    const DEFAULT_LEVEL = HostMsg::NOTICE;
-    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_DIALOG_CONFUSE;
+    const DEFAULT_LEVEL = HostMsg::INFO;
+    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_DIALOG_YIELD;
 
-
-    public function __construct(string $ucl)
+    public function __construct(string $ucl = '')
     {
-        parent::__construct('', ['ucl' => $ucl]);
+        parent::__construct(
+            '',
+            [
+                'ucl' => $ucl
+            ]
+        );
     }
 
     public static function intentStub(): array
     {
-        return ['ucl' => ''];
+        return [
+            'ucl' => ''
+        ];
     }
 
     public static function create(array $data = []): Struct
     {
         return new static($data['ucl'] ?? '');
     }
+
+
 }

@@ -24,27 +24,33 @@ class ICodeContextDef extends IContextDef
     public function __construct(string $contextClass, ContextMeta $meta = null)
     {
         $creator = new CodeDefCreator($contextClass);
+        $contextName = isset($meta) ? $meta->name : $creator->getContextName();
 
         $option = $creator->getCodeContextOption();
         $config = isset($meta) ? $meta->config : [];
+        $contextAnnotation = $creator->getContextAnnotation();
+
+        $stages = $creator->getMethodStageMetas();
+        $depending = $creator->getDependingBuilder();
 
         parent::__construct([
-            'name' => isset($meta) ? $meta->name : $creator->getContextName(),
-            'title' => isset($meta) ? $meta->title : $option->title,
-            'desc' => isset($meta) ? $meta->desc : $option->desc,
+            'name' => $contextName,
+            'title' => isset($meta) ? $meta->title : $contextAnnotation->title,
+            'desc' => isset($meta) ? $meta->desc : $contextAnnotation->desc,
 
             'contextWrapper' => $contextClass,
 
             'priority' => $config['priority'] ?? $option->priority,
-            'asIntent' => $config['asIntent'] ?? $creator->getContextIntentInfo(),
+            'asIntent' => $config['asIntent'] ?? $contextAnnotation->asIntentMeta($contextName),
 
-            'queryParams' => $config['queryParams'] ?? $option->queryParams,
+            'queryNames' => $config['queryNames'] ?? $option->queryNames,
 
             'memoryScopes' => $config['memoryScopes'] ?? $option->memoryScopes,
-            'memoryParams' => $config['memoryParams'] ?? $option->memoryParams,
 
-            'dependingNames' => $config['dependingNames'] ?? $option->dependingNames,
-            'entityNames' => $config['entityNames'] ?? $option->entityNames,
+            'memoryAttrs' => $config['memoryAttrs']
+                    ?? $depending->attrs + $option->memoryAttrs,
+
+            'dependingAttrs' => $config['dependingNames'] ?? array_keys($depending->attrs),
 
             'comprehendPipes' => $config['comprehendPipes'] ?? $option->comprehendPipes,
 
@@ -53,7 +59,9 @@ class ICodeContextDef extends IContextDef
             'stageRoutes' => $config['stageRoutes'] ?? $option->stageRoutes,
             'contextRoutes' => $config['contextRoutes'] ?? $option->contextRoutes,
 
-            'stages' => $creator->getPredefinedStageMetas(),
+            'stages' => $stages + $depending->stages,
         ]);
+
+        unset($creator);
     }
 }

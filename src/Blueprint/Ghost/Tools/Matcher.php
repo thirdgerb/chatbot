@@ -176,7 +176,7 @@ interface Matcher
      * $matches = [ string $answer]
      *
      * @return static
-     * @matched AnswerMsg $isAnswer
+     * @matched \Commune\Protocals\HostMsg\Convo\QA\AnswerMsg $isAnswer
      */
     public function isAnswer() : Matcher;
 
@@ -186,13 +186,6 @@ interface Matcher
      * @matched string $isChoice
      */
     public function isChoice(string $index) : Matcher;
-
-    /**
-     * @param string[] $suggestions
-     * @return Matcher
-     * @matched Choice $matchChoiceIn
-     */
-    public function matchChoiceIn(array $suggestions) : Matcher;
 
     /*------- command -------*/
 

@@ -20,7 +20,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Recollection extends \ArrayAccess, ArrayAndJsonAble, ClonerInstance
+interface Recollection extends \ArrayAccess, ArrayAndJsonAble, ClonerInstance, \IteratorAggregate
 {
     public function getId() : string;
 
@@ -29,4 +29,6 @@ interface Recollection extends \ArrayAccess, ArrayAndJsonAble, ClonerInstance
     public function isLongTerm() : bool;
 
     public function toData() : array;
+
+    public function keys() : array;
 }

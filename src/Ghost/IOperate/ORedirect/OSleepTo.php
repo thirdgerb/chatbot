@@ -9,17 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\IOperate\OSuspend;
+namespace Commune\Ghost\IOperate\ORedirect;
 
-use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Ghost\IOperate\AbsOperator;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Ucl;
+use Commune\Ghost\IOperate\AbsOperator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class OBlockTo extends AbsOperator
+class OSleepTo extends AbsOperator
 {
 
     /**
@@ -28,16 +28,14 @@ class OBlockTo extends AbsOperator
     protected $target;
 
     /**
-     * @var int
+     * @var array
      */
-    protected $priority;
+    protected $wakenStages;
 
-    public function __construct(Dialog $dialog, Ucl $target, int $priority = null)
+    public function __construct(Dialog $dialog, Ucl $target, array $wakenStages)
     {
         $this->target = $target;
-        $this->priority = $priority ?? $target
-                ->findContextDef($dialog->cloner)
-                ->getPriority();
+        $this->wakenStages = $wakenStages;
 
         parent::__construct($dialog);
     }
@@ -46,9 +44,9 @@ class OBlockTo extends AbsOperator
     {
         $this->dialog
             ->process
-            ->addBlocking(
+            ->addSleeping(
                 $this->dialog->ucl,
-                $this->priority
+                $this->wakenStages
             );
 
         return $this->dialog->redirectTo($this->target);

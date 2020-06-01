@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\IOperate\OExiting;
 use Commune\Ghost\IOperate\OFinale;
 use Commune\Ghost\IOperate\ORedirect;
-use Commune\Ghost\IOperate\OSuspend;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -83,17 +83,32 @@ abstract class AbsDialog extends AbsBaseDialog
 
     public function dependOn(Ucl $dependUcl, string $fieldName = null): Operator
     {
-        return new OSuspend\ODependOn($this, $dependUcl, $fieldName);
+        $this->shouldNotBeSameContext(__METHOD__, $dependUcl);
+        return new ORedirect\ODependOn($this, $dependUcl, $fieldName);
     }
 
     public function blockTo(Ucl $target, int $priority = null): Operator
     {
-        return new OSuspend\OBlockTo($this, $target, $priority);
+        $this->shouldNotBeSameContext(__METHOD__, $target);
+        return new ORedirect\OBlockTo($this, $target, $priority);
+    }
+
+    protected function shouldNotBeSameContext(string $func, Ucl $target) : void
+    {
+        $target = $target->toInstance($this->cloner);
+        if ($this->ucl->isSameContext($target)) {
+            $targetUcl = $target->toEncodedStr();
+            $currentUcl = $this->ucl->toEncodedStr();
+            throw new InvalidArgumentException(
+                "target ucl $targetUcl is in same context with current $currentUcl, called by $func"
+            );
+        }
     }
 
     public function sleepTo(Ucl $target, array $wakenStages = []): Operator
     {
-        return new OSuspend\OSleepTo($this, $target, $wakenStages);
+        $this->shouldNotBeSameContext(__METHOD__, $target);
+        return new ORedirect\OSleepTo($this, $target, $wakenStages);
     }
 
 

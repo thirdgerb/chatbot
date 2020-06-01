@@ -32,9 +32,9 @@ class IHearing extends IMatcher implements Hearing
     protected $todo;
 
     /**
-     * @var Dialog|null;
+     * @var Operator|null;
      */
-    protected $nextDialog;
+    protected $nextOperator;
 
     /**
      * @var Hearing|null
@@ -57,27 +57,35 @@ class IHearing extends IMatcher implements Hearing
         return $this->dialog->caller()->call($caller, $this->matchedParams);
     }
 
+    public function action($action): Hearing
+    {
+        if (!isset($this->nextOperator)) {
+            $this->nextOperator = $this->call($action);
+        }
+        return $this;
+    }
+
     protected function fakeHearing() : Hearing
     {
         return $this->faker
             ?? $this->faker = new FakeHearing($this);
     }
 
-    public function todo(callable $caller): Hearing
+    public function todo($action): Hearing
     {
-        if (isset($this->nextDialog)) {
+        if (isset($this->nextOperator)) {
             return $this->fakeHearing();
         }
 
         $this->then();
 
-        $this->todo = $caller;
+        $this->todo = $action;
         return $this;
     }
 
-    public function then(callable $caller = null): Hearing
+    public function then($action = null): Hearing
     {
-        if (isset($this->nextDialog)) {
+        if (isset($this->nextOperator)) {
             return $this->fakeHearing();
         }
 
@@ -98,8 +106,8 @@ class IHearing extends IMatcher implements Hearing
         if (!empty($todo)) {
             foreach ($todo as $action) {
                 $nav = $this->call($action);
-                if ($nav instanceof Dialog) {
-                    $this->nextDialog = $nav;
+                if ($nav instanceof Operator) {
+                    $this->nextOperator = $nav;
                     break;
                 }
             }
@@ -107,19 +115,19 @@ class IHearing extends IMatcher implements Hearing
 
         $this->refresh();
 
-        return isset($this->nextDialog)
+        return isset($this->nextOperator)
             ? $this->fakeHearing()
             : $this;
     }
 
-    public function component(callable $caller): Hearing
+    public function component($action): Hearing
     {
-        return $caller($this);
+        return $action($this);
     }
 
-    public function fallback(callable $caller): Hearing
+    public function fallback($action): Hearing
     {
-        $this->fallback[] = $caller;
+        $this->fallback[] = $action;
         return $this;
     }
 
@@ -127,19 +135,19 @@ class IHearing extends IMatcher implements Hearing
     public function end() : Operator
     {
         foreach ($this->fallback as $fallback) {
-            if (isset($this->nextDialog)) {
+            if (isset($this->nextOperator)) {
                 break;
             }
 
             $next = $this->call($fallback);
 
             if ($next instanceof Dialog) {
-                $this->nextDialog = $next;
+                $this->nextOperator = $next;
                 break;
             }
         }
 
-        return $this->nextDialog ?? $this->dialog->confuse();
+        return $this->nextOperator ?? $this->dialog->confuse();
     }
 
     public function getDialog(): Dialog

@@ -25,8 +25,8 @@ use Commune\Support\Struct\Struct;
  */
 class IConfirm extends IQuestionMsg implements Confirm
 {
-    const POSITIVE_INDEX = '1';
-    const NEGATIVE_INDEX = '0';
+    const POSITIVE_INDEX = 1;
+    const NEGATIVE_INDEX = 0;
 
     public function __construct(
         string $query,
@@ -54,8 +54,8 @@ class IConfirm extends IQuestionMsg implements Confirm
         return [
             'query' => '',
             'suggestions' => [
-                self::NEGATIVE_INDEX => 'n',
-                self::POSITIVE_INDEX => 'y'
+                self::NEGATIVE_INDEX => 'no',
+                self::POSITIVE_INDEX => 'yes'
             ],
             'routes' => [],
             'default' => null,

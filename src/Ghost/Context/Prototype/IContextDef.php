@@ -49,10 +49,10 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  *
  * @property-read string[] $queryNames              context 请求参数键名的定义, 如果是列表则要加上 []
  *
- * @property-read string[] $dependingNames
  *
  * @property-read string[] $memoryScopes
  * @property-read array $memoryAttrs
+ * @property-read array $dependingAttrs
  *
  * @property-read null|array $comprehendPipes
  *
@@ -63,6 +63,7 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  * @property-read string[] $contextRoutes
  *
  *
+ * @property-read string[] $dependingStages
  * @property-read StageMeta[] $stages
  *
  */
@@ -83,20 +84,38 @@ class IContextDef extends AbsOption implements ContextDef
     public static function stub(): array
     {
         return [
+            // context 的全名. 同时也是意图名称.
             'name' => '',
+            // context 的标题. 可以用于 精确意图校验.
             'title' => '',
+            // context 的简介. 通常用于 askChoose 的选项.
             'desc' => '',
+            // context 的优先级. 若干个语境在 blocking 状态中, 根据优先级决定谁先恢复.
+            'priority' => 0,
 
+            // context 的默认参数名, 类似 url 的 query 参数.
+            // query 参数值默认是字符串.
+            // query 参数如果是数组, 则定义参数名时应该用 [] 做后缀, 例如 ['key1', 'key2', 'key3[]']
+            'queryNames' => [],
+
+
+            // context 实例的封装类.
             'contextWrapper' => '',
 
-            'priority' => 0,
+            // context 作为意图的默认配置. 可以被覆盖.
             'asIntent' => IntentMeta::stub(),
 
-            'queryNames' => [],
-            'dependingNames' => [],
-
+            // 定义 context 上下文记忆的作用域.
+            // 相关作用域参数, 会自动添加到 query 参数中.
+            // 作用域为空, 则是一个 session 级别的短程记忆.
+            // 不为空, 则是长程记忆, 会持久化保存.
             'memoryScopes' => null,
+
+            // memory 记忆体的默认值.
             'memoryAttrs' => [],
+
+            // Context 启动时, 会依次检查的参数. 当这些参数都不是 null 时, 认为 Context::isPrepared
+            'dependingAttrs' => [],
 
             'comprehendPipes' => null,
 
@@ -105,6 +124,7 @@ class IContextDef extends AbsOption implements ContextDef
             'stageRoutes' => [],
             'contextRoutes' => [],
 
+            // 预定义的 stage 的配置. StageMeta
             'stages' => [],
         ];
     }
@@ -259,9 +279,9 @@ class IContextDef extends AbsOption implements ContextDef
         return $this->memoryScopes;
     }
 
-    public function getDependingNames(): array
+    public function getDependingAttrs(): array
     {
-        return $this->dependingNames;
+        return $this->dependingAttrs;
     }
 
     public function getQueryNames(): array

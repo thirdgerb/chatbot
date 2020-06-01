@@ -44,4 +44,9 @@ interface Memory extends
      * @return array
      */
     public function toData() : array;
+
+    /**
+     * @return array
+     */
+    public function keys() : array;
 }

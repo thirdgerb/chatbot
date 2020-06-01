@@ -9,19 +9,18 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\IOperate\OSuspend;
+namespace Commune\Ghost\IOperate\ORedirect;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\IActivate\IDepend;
 use Commune\Ghost\Dialog\IResume\ICallback;
-use Commune\Ghost\IOperate\AbsOperator;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ODependOn extends AbsOperator
+class ODependOn extends AbsRedirect
 {
 
     /**
@@ -55,19 +54,17 @@ class ODependOn extends AbsOperator
         }
 
         // 如果数据已经完整, 则不必重定向.
+        $self = $this->dialog->ucl;
         if ($dependContext->isPrepared()) {
-            $ucl = $this->dialog->ucl;
-            $resume = new ICallback($this->dialog, $ucl);
-            return $ucl
+            $resume = new ICallback($this->dialog, $self);
+            return $self
                 ->findStageDef($this->dialog->cloner)
                 ->onResume($resume);
         }
 
-        // 否则需要重定向.
-        $dependOn = new IDepend($this->dialog, $this->dependUcl);
-        return $this->dependUcl
-            ->findStageDef($this->dialog->cloner)
-            ->onActivate($dependOn);
+        return $this->redirect($this->dependUcl, function (Ucl $ucl) {
+            return new IDepend($this->dialog, $ucl);
+        });
     }
 
 

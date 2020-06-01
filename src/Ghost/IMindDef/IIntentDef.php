@@ -74,10 +74,6 @@ class IIntentDef extends AbsOption implements IntentDef
         return [
             // 意图的名称
             'name' => '',
-
-            // wrapper
-            'wrapper' => '',
-
             // 意图的标题, 应允许用标题来匹配.
             'title' => '',
             // 意图的简介. 可以作为选项的内容.
@@ -88,20 +84,25 @@ class IIntentDef extends AbsOption implements IntentDef
             'examples' => [],
             // 作为命令.
             'signature' => '',
-
             // entityNames
             'entityNames' => [],
-
             // 关键字
             'keywords' => [],
             // 正则
             'regex' => [],
-
             // 命中任意 entity
             'ifEntity' => [],
             // 自定义校验器. 字符串, 通常是类名或者方法名.
             'matcher' => null,
         ];
+    }
+
+    public static function toMetaConfig(array $data) : array
+    {
+        unset($data['name']);
+        unset($data['title']);
+        unset($data['desc']);
+        return $data;
     }
 
     public static function relations(): array
@@ -329,6 +330,9 @@ class IIntentDef extends AbsOption implements IntentDef
 
     /*---------- meta ----------*/
 
+    /**
+     * @return IntentMeta
+     */
     public function getMeta(): Meta
     {
         $data = [];
@@ -337,13 +341,8 @@ class IIntentDef extends AbsOption implements IntentDef
         $data['name'] = $config['name'];
         $data['title'] = $config['title'];
         $data['desc'] = $config['desc'];
-
-        unset($config['name']);
-        unset($config['title']);
-        unset($config['desc']);
-
         $data['wrapper'] = static::class;
-        $data['config'] = $config;
+        $data['config'] = static::toMetaConfig($config);
 
         return new IntentMeta($data);
     }

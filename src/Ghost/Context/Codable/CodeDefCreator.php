@@ -11,13 +11,9 @@
 
 namespace Commune\Ghost\Context\Codable;
 
-use Commune\Blueprint\Ghost\Context\ContextOption;
-use Commune\Blueprint\Ghost\Context\EntityBuilder;
-use Commune\Blueprint\Ghost\MindDef\StageDef;
+use Commune\Blueprint\Exceptions\HostLogicException;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
-use Commune\Ghost\Context\Builders\IParamBuilder;
-use Commune\Support\Utils\StringUtils;
-
+use Commune\Ghost\Support\ContextUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -28,6 +24,11 @@ class CodeDefCreator
      * @var string
      */
     protected $contextClass;
+
+    /**
+     * @var IDepending
+     */
+    protected $depending;
 
     /**
      * CodeDefCreator constructor.
@@ -49,68 +50,84 @@ class CodeDefCreator
 
     public function getContextName() : string
     {
-        return call_user_func([
-            $this->contextClass,
-            CodeContext::CONTEXT_NAME_FUNC
-        ]);
+        return call_user_func(
+            [$this->contextClass, CodeContext::CONTEXT_NAME_FUNC]
+        );
     }
 
     public function getCodeContextOption() : CodeContextOption
     {
-        return call_user_func([
-            $this->contextClass,
-            CodeContext::CONTEXT_OPTION_FUNC
-        ]);
+        return call_user_func(
+            [$this->contextClass, CodeContext::CONTEXT_OPTION_FUNC]
+        );
     }
 
-    public function getContextIntentInfo() : array
+    public function getContextAnnotation() : AnnotationReflector
     {
         $r = new \ReflectionClass($this->contextClass);
-        return $this->readIntentInfoByComment($r->getDocComment());
+        return AnnotationReflector::create($r->getDocComment());
     }
 
-
-    protected function readIntentInfoByComment(string $doc) : array
+    public function getDependingBuilder() : IDepending
     {
-        $intentName = StringUtils::fetchAnnotation($doc, 'intent')[0] ?? '';
-        $signature = StringUtils::fetchAnnotation($doc, 'signature')[0] ?? '';
-        $examples  = StringUtils::fetchAnnotation($doc, 'example');
-        $regex = StringUtils::fetchAnnotation($doc, 'regex');
-
-        return [
-            'examples' => $examples,
-            'alias' => $intentName,
-            'signature' => $signature,
-            'regex' => $regex
-        ];
+        return call_user_func(
+            [$this->contextClass, CodeContext::DEFINE_DEPENDING_FUNC],
+            new IDepending($this->getContextName())
+        );
     }
 
-    public function getPredefinedStageMetas() : array
+    public function getMethodStageMetas() : array
     {
         $r = new \ReflectionClass($this->contextClass);
         $results = [];
+        $contextName = $this->getContextName();
         foreach ($r->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             $isStageMethod = strpos(
                 $method->getName(),
                 CodeContext::STAGE_BUILDER_PREFIX
             ) === 0;
 
-            $name = substr($method->getName(), strlen(CodeContext::STAGE_BUILDER_PREFIX));
-
-            if ($isStageMethod) {
-                $results[$name] = $this->buildStageMeta($name, $method);
+            if (!$isStageMethod) {
+                continue;
             }
+
+            $methodName = $method->getName();
+            $name = substr($methodName, strlen(CodeContext::STAGE_BUILDER_PREFIX));
+
+            if (!ContextUtils::isValidStageName($name)) {
+                $class = $this->contextClass;
+                throw new HostLogicException("invalid method stage name of class $class method $methodName");
+            }
+
+            $results[$name] = $this->buildStageMeta($contextName, $name, $method);
         }
 
         return $results;
     }
 
-    protected function buildStageMeta(string $name, \ReflectionMethod $method) : StageMeta
+    protected function buildStageMeta(
+        string $contextName,
+        string $shortName,
+        \ReflectionMethod $method
+    ) : StageMeta
     {
+        $annotation = AnnotationReflector::create($method->getDocComment());
 
-        return new ICodeStageDef([
+        $def = new CodeStageDef([
+            'name' => $name = ContextUtils::makeFullStageName($contextName, $shortName),
+            'title' => $annotation->title,
+            'desc' => $annotation->desc,
+
+            'contextName' => $contextName,
+            'stageName' => $shortName,
+            'asIntent' => $annotation->asIntentMeta($name),
+
+            'events' => [],
+            'ifRedirect' => null,
 
         ]);
+
+        return $def->getMeta();
     }
 
 

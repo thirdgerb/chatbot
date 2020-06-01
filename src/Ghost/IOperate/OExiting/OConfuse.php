@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\IOperate\AbsOperator;
-use Commune\Message\Host\SystemInt\ConfuseInt;
+use Commune\Message\Host\SystemInt\DialogConfuseInt;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
 
 /**
@@ -82,7 +82,7 @@ class OConfuse extends AbsOperator
         $uclStr = $this->dialog->ucl->toEncodedStr();
         $this->dialog
             ->send()
-            ->message(new ConfuseInt($uclStr));
+            ->message(new DialogConfuseInt($uclStr));
 
         return $this->dialog->rewind();
     }

@@ -152,7 +152,7 @@ class IContext implements Context
     {
         $depending = $this
             ->getDef()
-            ->getDependingNames();
+            ->getDependingAttrs();
 
 
         foreach ($depending as $name) {
@@ -218,12 +218,13 @@ class IContext implements Context
 
     public function getIterator()
     {
-        $def = $this->getDef();
+        $queries = $this->getQuery();
+        foreach ($queries as $value) {
+            yield $value;
+        }
 
-        $names = $def->getParamsDefs()->keys();
-
-        foreach ($names as $name) {
-            yield $this->offsetGet($name);
+        foreach ($this->getRecollection() as $value) {
+            yield $value;
         }
     }
 
@@ -232,11 +233,6 @@ class IContext implements Context
 
     public function offsetExists($offset)
     {
-        $collection = $this->getDef()->getParamsDefs();
-
-        if ($collection->hasParam($offset)) {
-            return true;
-        }
 
         $value = $this->offsetGet($offset);
         return isset($value);
@@ -244,36 +240,28 @@ class IContext implements Context
 
     public function offsetGet($offset)
     {
-        $def = $this->getDef();
-        $queries = $def->getQueryNames();
+        $query = $this->getQuery();
 
-        if($queries->hasParam($offset)) {
-            return $this->getQuery()[$offset] ?? null;
+        if($query->has($offset)) {
+            return $query[$offset];
         }
 
-        return $this->getRecollection()->offsetGet($offset);
+        $value = $this->getRecollection()->offsetGet($offset);
+        return $value instanceof Context && !$value->isPrepared()
+            ? null
+            : $value;
     }
 
     public function offsetSet($offset, $value)
     {
-        $def = $this->getDef();
-        $queries = $def->getQueryDefs();
-
-        if ($queries->hasParam($offset)) {
-            $contextName = $this->getName();
-            $error = "context $contextName try to set value for query parameter $offset";
-            $this->warningOrException($error);
-            return;
-        }
-
         $this->getRecollection()->offsetSet($offset, $value);
     }
 
     public function offsetUnset($offset)
     {
-        $queries = $this->getDef()->getQueryDefs();
+        $query = $this->getQuery();
 
-        if ($queries->hasParam($offset)) {
+        if ($query->has($offset)) {
             $contextName = $this->getName();
             $error = "context $contextName try to unset value for query parameter $offset";
             $this->warningOrException($error);

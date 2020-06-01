@@ -43,7 +43,10 @@ class IAnswerMsg extends AbsMessage implements AnswerMsg
 
     public function getChoice(): ? string
     {
-        return $this->choice;
+        $choice = $this->choice;
+        return isset($choice)
+            ? (string) $choice
+            : null;
     }
 
     public function getRenderId(): string

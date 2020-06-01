@@ -273,49 +273,22 @@ class IMatcher implements Matcher
         return $this;
     }
 
-
-    public function isAnswer(string $answer) : Matcher
+    public function isAnswer(): Matcher
     {
-        $actual = $this->input->comprehension->answer->getAnswer();
-        if ($actual === $answer) {
+        $answer = $this->input->comprehension->answer->getAnswer();
+        if (isset($answer)) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $answer;
         }
-
-        return $this;
-    }
-
-    public function isAnyAnswer(): Matcher
-    {
-        $actual = $this->input->comprehension->answer->getAnswer();
-        if (isset($actual)) {
-            $this->matched = true;
-            $this->matchedParams[__FUNCTION__] = $actual;
-        }
-
         return $this;
     }
 
     public function isChoice($suggestionIndex): Matcher
     {
-        $choice = $this->input->comprehension->choice->getChoice();
-        if (isset($choice) && $choice == $suggestionIndex) {
+        $answer = $this->input->comprehension->answer->getAnswer();
+        if (isset($answer) && $answer->getChoice() == $suggestionIndex) {
             $this->matched = true;
-            $this->matchedParams[__FUNCTION__] = $suggestionIndex;
-        }
-
-        return $this;
-    }
-
-    public function hasChoiceIn(array $choices) : Matcher
-    {
-        $actual = $this->input->comprehension->choice->getChoice();
-        foreach ($choices as $choice) {
-            if ($actual == $choice) {
-                $this->matchedParams[__FUNCTION__] = $choice;
-                return $this;
-            }
-            return $choice;
+            $this->matchedParams[__FUNCTION__] = $answer;
         }
 
         return $this;

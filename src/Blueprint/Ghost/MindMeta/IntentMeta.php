@@ -40,14 +40,13 @@ class IntentMeta extends AbsMeta
         return [
             // 意图的名称
             'name' => '',
-
             // wrapper
             'wrapper' => '',
-
             // 意图的标题, 应允许用标题来匹配.
             'title' => '',
             // 意图的简介. 可以作为选项的内容.
             'desc' => '',
+            // wrapper 的额外配置.
             'config' => [],
         ];
     }
