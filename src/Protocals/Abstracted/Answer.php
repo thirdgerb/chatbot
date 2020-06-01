@@ -11,6 +11,7 @@
 
 namespace Commune\Protocals\Abstracted;
 
+use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -18,8 +19,8 @@ namespace Commune\Protocals\Abstracted;
 interface Answer
 {
 
-    public function setAnswer(string $answer) : void;
+    public function setAnswer(AnswerMsg $answer) : void;
 
-    public function getAnswer() : ? string;
+    public function getAnswer() : ? AnswerMsg;
 
 }

@@ -110,9 +110,6 @@ class IIntentMsg extends AbsMessage implements IntentMsg
 
         $flattenSlots = Arr::dot($slots);
 
-//        if (extension_loaded('intl')) {
-//        }
-
         $trans = [];
         foreach ($flattenSlots as $key => $val) {
             $trans["{$key}"] = $val;
@@ -141,6 +138,11 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         unset($arr['intentName']);
         unset($arr['level']);
         return $arr;
+    }
+
+    public function __toString()
+    {
+        return $this->getText();
     }
 
 }

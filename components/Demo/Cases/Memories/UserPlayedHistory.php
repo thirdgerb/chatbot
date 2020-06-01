@@ -12,7 +12,7 @@
 namespace Commune\Components\Demo\Cases\Memories;
 
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
+use Commune\Support\Parameter\ParamBuilder;
 use Commune\Host\Recall\ARecall;
 
 /**

@@ -11,11 +11,11 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
-use Commune\Support\Alias\TAliases;
 use Commune\Support\Option\AbsMeta;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Ghost\Context\Prototype\IContextDef;
+use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
 
 /**
  * Context 配置的元数据.
@@ -33,7 +33,6 @@ use Commune\Ghost\Context\Prototype\IContextDef;
  */
 class ContextMeta extends AbsMeta
 {
-    use TAliases;
 
     const IDENTITY = 'name';
 
@@ -52,15 +51,15 @@ class ContextMeta extends AbsMeta
     {
         $wrapper = $this->_data['wrapper'] ?? '';
         $wrapper = empty($wrapper)
-            ? self::getAliasOfOrigin(IContextDef::class)
+            ? AliasesForContext::getAliasOfOrigin(IContextDef::class)
             : $wrapper;
 
-        return self::getOriginFromAlias($wrapper);
+        return AliasesForContext::getOriginFromAlias($wrapper);
     }
 
     public function __set_wrapper(string $name, $value) : string
     {
-        $this->_data[$name] = self::getAliasOfOrigin(strval($value));
+        $this->_data[$name] = AliasesForContext::getAliasOfOrigin(strval($value));
     }
 
     public static function relations(): array

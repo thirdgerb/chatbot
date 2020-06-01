@@ -11,7 +11,7 @@
 
 namespace Commune\Components\Demo\Recall;
 
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
+use Commune\Support\Parameter\ParamBuilder;
 use Commune\Host\Recall\ARecall;
 
 

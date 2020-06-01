@@ -74,6 +74,8 @@ interface Cloner extends Session
 
     /*----- 手动输出 -----*/
 
+    public function replaceInput(InputMsg $input) : void;
+
     /**
      * 同步输出一个消息.
      * @param IntercomMsg $output

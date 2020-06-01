@@ -15,7 +15,6 @@ use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Blueprint\Ghost\Context\ParamCollection;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -43,20 +42,19 @@ interface ContextDef extends Def
     /*------- properties -------*/
 
     /**
+     * 语境的作用域, 维度 @see Cloner\ClonerScope
+     * 定义的参数会自动添加到 query 上.
+     * 同样也会影响到 Context 的记忆维度.
+     *
      * @return string[]
      */
     public function getScopes() : array;
 
     /**
      * query 参数的默认值
-     * @return ParamCollection
+     * @return string[]
      */
-    public function getQueryDefaults() : ParamCollection;
-
-    /**
-     * @return ParamCollection
-     */
-    public function getParamsDefaults() : ParamCollection;
+    public function getQueryNames() : array;
 
     /**
      * 依赖字段. 启动的时候默认会走这些字段来.
@@ -65,10 +63,10 @@ interface ContextDef extends Def
     public function getDependingNames() : array;
 
     /**
-     * 可以从 comprehension entity 直接获取的属性.
-     * @return string[]
+     * 属性的默认值. 目前没有类型检验.
+     * @return array
      */
-    public function getEntityNames() : array;
+    public function getAttrDefaults() : array;
 
     /*------- relation -------*/
 

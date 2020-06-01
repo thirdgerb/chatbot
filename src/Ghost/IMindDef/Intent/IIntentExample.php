@@ -124,6 +124,13 @@ class IIntentExample implements IntentExample
         return $this->entities;
     }
 
+    public function getEntityNames() : array
+    {
+        return array_map(function(ExampleEntity $entity) {
+            return $entity->name;
+        }, $this->getEntities());
+    }
+
 
     public function __sleep()
     {

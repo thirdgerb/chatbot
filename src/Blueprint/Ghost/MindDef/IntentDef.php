@@ -47,27 +47,33 @@ interface IntentDef extends Def
     public function match(Cloner $cloner) : bool;
 
     /**
+     * @return string
+     */
+    public function getIntentName() : string;
+
+    /**
+     * @return string[]
+     */
+    public function getEntityNames() : array;
+
+    /**
+     * @param string[][] $entities  entity 的特征是可能同时命中多个值. 但对于语义而言, 要区分是列表还是非列表.
+     *
+     * @return array
+     */
+    public function parseEntities(array $entities) : array;
+
+    /**
      * 语料
      * @return string[]
      */
     public function getExamples() : array;
 
     /**
-     * 意图的别名.
-     * @return null|string
-     */
-    public function getAlias() : ? string;
-
-    /**
      * 封装后的语料对象
      * @return IntentExample[]
      */
     public function getExampleObjects() : array;
-
-    /**
-     * @return CommandDef|null
-     */
-    public function getCommandDef() : ? CommandDef;
 
     /**
      * @return array

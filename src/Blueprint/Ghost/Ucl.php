@@ -12,15 +12,17 @@
 namespace Commune\Blueprint\Ghost;
 
 use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
+use Commune\Support\Parameter\IParamDefs;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
+use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Exceptions\InvalidQueryException;
-use PharIo\Manifest\InvalidUrlException;
+use Illuminate\Support\Arr;
 
 /**
  * Uniform Context Locator
@@ -340,20 +342,16 @@ class Ucl implements UclInterface
         }
 
         $contextDef = $this->findContextDef($cloner);
+        $queryNames = $contextDef->getQueryNames();
+        $query = ArrayUtils::parseValuesByKeysWithListMark(
+            $this->_query,
+            $queryNames
+        );
 
-        $params = $contextDef->getQueryParams();
-        $values = $params->parseValues($this->_query);
-        $values = array_map(function($value) {
-            if (is_null($value)) {
-                throw new InvalidQueryException($this->_contextName);
-            }
-            return $value;
-        }, $values);
 
         $scopes = $contextDef->getScopes();
         $map = $cloner->scope->getLongTermDimensionsDict($scopes);
-
-        $query = $values + $map;
+        $query = $query + $map;
 
         $instance = new static($this->_contextName, $this->_stageName, $query);
         $instance->instanced = true;
@@ -366,7 +364,7 @@ class Ucl implements UclInterface
 
     public function findIntentDef(Cloner $cloner) : ? IntentDef
     {
-        $intentName = $this->getStageIntentName();
+        $intentName = $this->getStageFullname();
 
         if ($this->intentDef === false) {
             return null;
@@ -429,21 +427,21 @@ class Ucl implements UclInterface
         $def = $this->findContextDef($cloner);
         $context = $def->wrapContext($cloner, $this);
 
-        // 与 entity 合并
-        $manager = $def->getEntityParams();
-        if ($manager->countParams()) {
-            $entities = $cloner->input
-                ->comprehension
-                ->intention
-                ->getIntentEntities($def->getName());
+        $intentDef = $this->findIntentDef($cloner);
+        // 是否意图匹配中命中了 entities
+        $entities = $cloner->input
+            ->comprehension
+            ->intention
+            ->getIntentEntities($intentDef->getIntentName());
 
-            $entities = $manager->parseValues($entities);
+        // 匹配到了 entity 的话, 默认会合并.
+        if (!empty($entities)) {
+            $entities = $intentDef->parseEntities($entities);
             $context->merge($entities);
         }
 
         return $this->context = $context;
     }
-
 
     /*------- to array -------*/
 

@@ -11,8 +11,8 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
+use Commune\Blueprint\Ghost\MindDef\AliasesForIntent;
 use Commune\Ghost\IMindDef\IIntentDef;
-use Commune\Support\Alias\TAliases;
 use Commune\Support\Option\AbsMeta;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 
@@ -27,25 +27,12 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
  * @property-read string $desc
  * @property-read string $wrapper
  *
- * ## 意图内容.
- * @property-read string[] $examples
- *
- * ## 匹配规则
- * @property-read string|null $alias
- * @property-read string $signature
- * @property-read string[] $keywords
- * @property-read string[] $regex
- * @property-read string[] $ifEntity
- *
- * @property-read string|null $matcher
- *
+ * @property-read array $config
  *
  * @method IntentDef getWrapper(): Wrapper
  */
 class IntentMeta extends AbsMeta
 {
-    use TAliases;
-
     const IDENTITY = 'name';
 
     public static function stub(): array
@@ -61,22 +48,7 @@ class IntentMeta extends AbsMeta
             'title' => '',
             // 意图的简介. 可以作为选项的内容.
             'desc' => '',
-            // 意图的别名. 允许别名中的意图作为精确匹配规则.
-            'alias' => null,
-            // 例句, 用 []() 标记, 例如 "我想知道[北京](city)[明天](date)天气怎么样"
-            'examples' => [],
-            // 作为命令.
-            'signature' => '',
-
-            // 关键字
-            'keywords' => [],
-            // 正则
-            'regex' => [],
-
-            // 命中任意 entity
-            'ifEntity' => [],
-            // 自定义校验器. 字符串, 通常是类名或者方法名.
-            'matcher' => null,
+            'config' => [],
         ];
     }
 
@@ -105,9 +77,6 @@ class IntentMeta extends AbsMeta
         return $data;
     }
 
-
-
-
     public function __get_wrapper() : string
     {
         $wrapper = $this->_data['wrapper'] ?? '';
@@ -115,12 +84,12 @@ class IntentMeta extends AbsMeta
             ? IIntentDef::class
             : $wrapper;
 
-        return self::getOriginFromAlias( $wrapper);
+        return AliasesForIntent::getOriginFromAlias( $wrapper);
     }
 
     public function __set_wrapper(string $name, $wrapper) : void
     {
-        $this->_data[$name] = self::getAliasOfOrigin(strval($wrapper));
+        $this->_data[$name] = AliasesForIntent::getAliasOfOrigin(strval($wrapper));
     }
 
 

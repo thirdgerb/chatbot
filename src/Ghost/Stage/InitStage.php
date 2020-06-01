@@ -31,6 +31,25 @@ use Commune\Blueprint\Ghost\Operate\Operator;
  */
 class InitStage extends AbsStageDef
 {
+    const IDENTITY = 'name';
+
+    public static function stub(): array
+    {
+        return [
+            'name' => '',
+            'title' => '',
+            'desc' => '',
+
+            'contextName' => '',
+            'stageName' => '',
+            'asIntent' => [],
+
+
+            'events' => [],
+            'ifRedirect' => null,
+        ];
+    }
+
     public function onActivate(Activate $dialog): Operator
     {
         // 事件
@@ -39,7 +58,7 @@ class InitStage extends AbsStageDef
             return $next;
         }
 
-        $depending = $dialog->context->dependEntity();
+        $depending = $dialog->context->depending();
 
         if (isset($depending)) {
             return $dialog->goStage($depending, $this->getStageShortName());

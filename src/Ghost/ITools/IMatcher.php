@@ -15,6 +15,7 @@ use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Ghost\Callables\Prediction;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\MindDef\EmotionDef;
 use Commune\Blueprint\Ghost\MindReg\EmotionReg;
 use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Framework\Command\ICommandDef;
@@ -472,7 +473,7 @@ class IMatcher implements Matcher
 
     public function isPositive(): Matcher
     {
-        if ($this->doFeels($name = EmotionReg::EMO_POSITIVE)) {
+        if ($this->doFeels($name = EmotionDef::EMO_POSITIVE)) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $name;
         }
@@ -481,7 +482,7 @@ class IMatcher implements Matcher
 
     public function isNegative(): Matcher
     {
-        if ($this->doFeels($name = EmotionReg::EMO_NEGATIVE)) {
+        if ($this->doFeels($name = EmotionDef::EMO_NEGATIVE)) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $name;
         }

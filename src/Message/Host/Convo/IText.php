@@ -71,7 +71,6 @@ class IText extends AbsMessage implements VerbalMsg
         return $this->level;
     }
 
-
     public function isEmpty(): bool
     {
         return empty($this->_data['text']);
@@ -80,5 +79,10 @@ class IText extends AbsMessage implements VerbalMsg
     public static function relations(): array
     {
         return [];
+    }
+
+    public function __toString()
+    {
+        return $this->getText();
     }
 }

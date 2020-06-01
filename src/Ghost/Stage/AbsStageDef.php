@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Stage;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\MindDef\AliasesForStage;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
@@ -30,24 +31,29 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  * @property-read string $name
  * @property-read string $contextName
  * @property-read string $stageName
+ * @property-read IntentMeta $asIntent
  *
  * @property-read string $title
  * @property-read string $desc
- * @property-read IntentMeta $asIntent
+ *
  * @property-read string[] $events
  * @property-read string|null $ifRedirect
  */
 abstract class AbsStageDef extends AbsOption implements StageDef
 {
+    const IDENTITY = 'name';
+
     public static function stub(): array
     {
         return [
             'name' => '',
-            'contextName' => '',
             'title' => '',
             'desc' => '',
+
+            'contextName' => '',
             'stageName' => '',
             'asIntent' => [],
+
             'events' => [],
             'ifRedirect' => null,
         ];
@@ -72,14 +78,50 @@ abstract class AbsStageDef extends AbsOption implements StageDef
         parent::_filter($data);
     }
 
-    /*------- methods -------*/
+    public function __get_events() : array
+    {
+        $events = $this->_data['events'] ?? [];
+        $results = [];
+        foreach ($events as $event => $action) {
 
+            $event = AliasesForStage::getOriginFromAlias($event);
+            $action = AliasesForStage::getOriginFromAlias($action);
+
+            $results[$event] = $action;
+        }
+
+        return $results;
+    }
+
+    public function __set_events(string $name, array $events) : void
+    {
+        $results = [];
+        foreach ($events as $event => $action) {
+            $event = AliasesForStage::getAliasOfOrigin($event);
+            $action = AliasesForStage::getAliasOfOrigin($action);
+            $results[$event] = $action;
+        }
+
+        $this->_data[$name] = $results;
+    }
+
+    /*------- methods -------*/
 
     protected function fireEvent(Dialog $dialog) : ? Operator
     {
         foreach ($this->events as $event => $action) {
-            if (is_a($dialog, $event, TRUE)) {
-                return $dialog->caller()->action($action);
+
+            $event = AliasesForStage::getOriginFromAlias($event);
+            $action = AliasesForStage::getOriginFromAlias($action);
+
+            if (!is_a($dialog, $event, TRUE)) {
+                continue;
+            }
+
+            $operator = $dialog->caller()->action($action);
+
+            if (isset($operator)) {
+                return $operator;
             }
         }
 
@@ -91,7 +133,8 @@ abstract class AbsStageDef extends AbsOption implements StageDef
         $redirect = $this->ifRedirect;
 
         if (isset($redirect)) {
-            return $current->caller()
+            return $current
+                ->caller()
                 ->action($redirect, [
                     'prev' => $prev,
                     'current' => $current

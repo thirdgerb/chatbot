@@ -12,7 +12,7 @@
 namespace Commune\Host\Recall;
 
 use Commune\Ghost\Memory\AbsRecall;
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
+use Commune\Support\Parameter\ParamBuilder;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

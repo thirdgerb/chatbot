@@ -21,14 +21,32 @@ use Commune\Support\SoundLike\SoundLikeInterface;
  */
 interface Matcher
 {
+    /**
+     * @return array
+     */
     public function getMatchedParams() : array;
 
+    /**
+     * @return bool
+     */
     public function truly() : bool;
 
     /**
      * @return static
      */
     public function refresh() : Matcher;
+
+    /*------- expect -------*/
+
+    /**
+     * 自定义的监听.
+     * 用一个 prediction callable 判断是否命中条件.
+     * 命中后执行 interceptor
+     *
+     * @param Prediction|callable|string $prediction
+     * @return static
+     */
+    public function expect($prediction) : Matcher;
 
     /*------- 匹配事件 -------*/
 
@@ -51,18 +69,16 @@ interface Matcher
     public function isEventIn(array $eventNames) : Matcher;
 
 
-    /*------- php matcher -------*/
+    /*------- message  -------*/
 
     /**
-     * 自定义的监听.
-     * 用一个 prediction callable 判断是否命中条件.
-     * 命中后执行 interceptor
+     * Message->isEmpty() === true
      *
-     * @param Prediction|callable|string $prediction
      * @return static
      */
-    public function expect($prediction) : Matcher;
+    public function isEmpty() : Matcher;
 
+    /*------- verbal match -------*/
 
     /**
      * 检查 message 的 trimmedText 是否等于目标字符串. 不区分大小写, 精确匹配
@@ -72,14 +88,6 @@ interface Matcher
      * @matched string $is
      */
     public function is(string $text) : Matcher;
-
-
-    /**
-     * Message->isEmpty() === true
-     *
-     * @return static
-     */
-    public function isEmpty() : Matcher;
 
     /**
      * 通过正则匹配获取数据.
@@ -91,6 +99,8 @@ interface Matcher
      * @matched array $pregMatch
      */
     public function pregMatch(string $pattern): Matcher;
+
+    /*------- message type -------*/
 
     /**
      * 判断输入信息是否是口头或文字的.
@@ -120,6 +130,8 @@ interface Matcher
      */
     public function isProtocal(string $protocalName) : Matcher;
 
+    /*------- sound like -------*/
+
     /**
      * 发音相似. 目前应该只支持中文.
      * 用于弥补其它系统对语音识别有限的问题.
@@ -145,47 +157,44 @@ interface Matcher
         int $type = SoundLikeInterface::COMPARE_ANY_PART
     ) : Matcher;
 
-
-
-
-
     /*------- question matcher -------*/
 
+
+
     /**
-     * 只要有answer, 不管上文有没有命中过.
-     *
-     * @param string $answer
      * @return static
-     * @matched string $isAnswer
      */
-    public function isAnswer(string $answer) : Matcher;
+    public function isPositive() : Matcher;
+
+    /**
+     * @return static
+     */
+    public function isNegative() : Matcher;
 
     /**
      *
      * $matches = [ string $answer]
      *
      * @return static
-     * @matched string $isAnyAnswer
+     * @matched AnswerMsg $isAnswer
      */
-    public function isAnyAnswer() : Matcher;
-
+    public function isAnswer() : Matcher;
 
     /**
-     * 之前提了一个问题, 答案命中了问题的一个建议的情况.
-     * 可以与 answered 挑选使用.
-     *
-     * @param int|string $suggestionIndex
-     * @return static
-     */
-    public function isChoice($suggestionIndex) : Matcher;
-
-    /**
-     * 有多个choice 中的一个
-     * @param array $choices
+     * @param string $index
      * @return Matcher
-     * @matched mixed $hasChoiceIn
+     * @matched string $isChoice
      */
-    public function hasChoiceIn(array $choices) : Matcher;
+    public function isChoice(string $index) : Matcher;
+
+    /**
+     * @param string[] $suggestions
+     * @return Matcher
+     * @matched Choice $matchChoiceIn
+     */
+    public function matchChoiceIn(array $suggestions) : Matcher;
+
+    /*------- command -------*/
 
     /**
      * 尝试匹配一个临时定义的命令
@@ -234,16 +243,6 @@ interface Matcher
      * @matched string $feels
      */
     public function feels(string $emotionName) : Matcher;
-
-    /**
-     * @return static
-     */
-    public function isPositive() : Matcher;
-
-    /**
-     * @return static
-     */
-    public function isNegative() : Matcher;
 
     /*------- intents -------*/
 

@@ -79,38 +79,8 @@ trait TRecollection
 
     public function offsetSet($offset, $value)
     {
-        $params = $this->_def->getParams();
-        $memoryName = $this->getName();
+        // 暂时放弃了默认的类型校验了. 极大地增加复杂度, 收益却不大.
 
-        // set undefined param
-        if (!$params->hasParam($offset)) {
-
-            // 线上环境日志提醒, 测试状态禁止.
-            $error = "memory $memoryName try to set value for undefined parameter $offset";
-            $this->warningOrException($error);
-            $this->doSetValue($offset, $value);
-            return;
-        }
-
-        $param = $params->getParam($offset);
-        $type = $param->validate($value);
-
-        if (is_null($type)) {
-            // 线上环境日志提醒, 测试状态禁止.
-            $error = "memory $memoryName try to set invalid value for parameter $offset";
-            $this->warningOrException($error);
-        }
-
-        if (!empty($type)) {
-            $value = $param->parse($value, $type);
-        }
-
-        $this->doSetValue($offset, $value);
-        return;
-    }
-
-    protected function doSetValue($offset, $value) : void
-    {
         // 变为 instance stub
         if ($value instanceof Cloner\ClonerInstance) {
             $value = $value->toInstanceStub();

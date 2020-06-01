@@ -63,6 +63,7 @@ use Commune\Components;
  * @property-read int $maxRequestFailTimes
  * @property-read int $mindsetCacheExpire       Mindset 的配置过期时间.
  * @property-read int $maxBacktrace
+ * @property-read string|null $confuseHandler
  *
  * @property-read Nest\ProtocalOption[] $protocals   Session 可以处理的协议.
  * [

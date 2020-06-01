@@ -17,6 +17,7 @@ use Commune\Protocals\Abstracted;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
+use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -30,7 +31,6 @@ class IComprehension extends AbsMessage implements
     Abstracted\Query,
     Abstracted\Vector,
     Abstracted\Selection,
-    Abstracted\Choice,
     Abstracted\Answer
 {
     protected $transferNoEmptyRelations = true;
@@ -40,7 +40,6 @@ class IComprehension extends AbsMessage implements
     public static function stub(): array
     {
         return [
-            'choice' => null,
             'answer' => null,
             'cmd' => null,
             'emotions' => [],
@@ -59,6 +58,7 @@ class IComprehension extends AbsMessage implements
         return [
             'intention' => IIntention::class,
             'replies[]' => HostMsg::class,
+            'answer' => AnswerMsg::class
         ];
     }
 
@@ -273,32 +273,14 @@ class IComprehension extends AbsMessage implements
 
     /*------- answer -------*/
 
-    public function setAnswer(string $answer): void
+    public function setAnswer(AnswerMsg $answer): void
     {
         $this->_data['answer'] = $answer;
     }
 
-    public function getAnswer(): ? string
+    public function getAnswer(): ? AnswerMsg
     {
         return $this->_data['answer'] ?? null;
-    }
-
-
-    /*------- choice -------*/
-
-    public function getChoice()
-    {
-        return $this->_data['choice'] ?? null;
-    }
-
-    public function hasChoice($choice): bool
-    {
-        return $this->_data['choice'] ?? false;
-    }
-
-    public function setChoice($choice): void
-    {
-        $this->_data['choice'] = $choice;
     }
 
 

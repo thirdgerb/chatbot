@@ -48,7 +48,7 @@ class ContextUtils
 
     public static function normalizeContextName(string $contextName) : string
     {
-        return TypeUtils::normalizeClassName($contextName);
+        return ContextUtils::normalizeContextName($contextName);
     }
 
     public static function normalizeStageName(string $stageName) : string

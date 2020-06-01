@@ -9,16 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\HostMsg\Convo;
+namespace Commune\Protocals\HostMsg\Convo\QA;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Protocals\HostMsg\ConvoMsg;
-
+use Commune\Blueprint\Ghost\Ucl;
+use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface QuestionMsg extends ConvoMsg
+interface QuestionMsg extends VerbalMsg
 {
     /**
      * @return string
@@ -31,15 +31,21 @@ interface QuestionMsg extends ConvoMsg
     public function getSuggestions() : array;
 
     /**
-     * @param $index
-     * @param $suggestion
-     * @param string|null $stageName
+     * @param string $choice
      */
-    public function addSuggestion($index, $suggestion, string $stageName = null) : void;
+    public function addDefault(string $choice) : void;
+
+    /**
+     * @param string $index
+     * @param string $suggestion
+     * @param Ucl|null $ucl
+     */
+    public function addSuggestion(string $suggestion, string $index = null, Ucl $ucl = null) : void;
 
     /**
      * @param Cloner $cloner
+     * @return AnswerMsg
      */
-    public function parse(Cloner $cloner)  :void;
+    public function parse(Cloner $cloner) : ? AnswerMsg;
 
 }

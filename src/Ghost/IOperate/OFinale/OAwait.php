@@ -14,8 +14,7 @@ namespace Commune\Ghost\IOperate\OFinale;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Await;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -24,12 +23,17 @@ class OAwait extends AbsFinale implements Await
 {
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $stageRoutes;
 
     /**
-     * @var array
+     * @var QuestionMsg|null
+     */
+    protected $question;
+
+    /**
+     * @var string[]
      */
     protected $contextRoutes;
 
@@ -59,64 +63,16 @@ class OAwait extends AbsFinale implements Await
         parent::__construct($dialog);
     }
 
-    public function rewind(bool $dumb = false): Operator
-    {
-        return new ORewind($this->dialog, $dumb);
-    }
 
     protected function toNext(): Operator
     {
-        // TODO: Implement toNext() method.
-    }
-
-    public function backStep(int $step = 1): Operator
-    {
-        // TODO: Implement backStep() method.
-    }
-
-    public function askChoose(
-        string $query,
-        array $suggestions = [],
-        $defaultChoice = 0,
-        bool $withRoutes = true
-    ): Operator
-    {
-        // TODO: Implement askChoose() method.
-    }
-
-    public function askConfirm(string $query, bool $default = true): Operator
-    {
-        // TODO: Implement askConfirm() method.
-    }
-
-    public function askEntity(
-        string $query,
-        string $entityName
-    ): Operator
-    {
-        // TODO: Implement askEntity() method.
-    }
-
-    public function askAny(
-        string $query,
-        array $suggestions = [],
-        string $messageType = VerbalMsg::class
-    ): Operator
-    {
-        // TODO: Implement askAny() method.
-    }
-
-    public function askMessage(string $protocal): Operator
-    {
-        // TODO: Implement askMessage() method.
-    }
-
-    public function askLoop(
-        string $query,
-        int $maxTurn
-    ): Operator
-    {
-        // TODO: Implement askLoop() method.
+        $this->process->await(
+            $this->dialog->ucl,
+            $this->question,
+            $this->stageRoutes,
+            $this->contextRoutes
+        );
+        return $this;
     }
 
 

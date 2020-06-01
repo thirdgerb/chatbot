@@ -15,7 +15,7 @@ use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Host\Contexts\AMemoryContext;
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
+use Commune\Support\Parameter\ParamBuilder;
 use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
 
 /**
@@ -55,7 +55,7 @@ class UserInfoMem extends AMemoryContext
             ->onActivate(function(Dialog $dialog){
                 return $dialog
                     ->await()
-                    ->askAny('请问我应该如何称呼您');
+                    ->askVerbal('请问我应该如何称呼您');
             })
             ->onEvent(
                 Dialog::HEED,

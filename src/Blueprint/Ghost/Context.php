@@ -99,7 +99,7 @@ interface Context extends
      * 按顺序第一个未被填满的 Query 名称.
      * @return null|string
      */
-    public function dependEntity() : ? string /* entityName */;
+    public function depending() : ? string /* entityName */;
 
     /**
      * @return bool

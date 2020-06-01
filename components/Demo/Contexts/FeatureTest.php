@@ -302,7 +302,7 @@ EOF
 
                 return $dialog
                     ->await()
-                    ->askAny('输入一个值 (会展示这个值然后跳到下一步)');
+                    ->askVerbal('输入一个值 (会展示这个值然后跳到下一步)');
 
             })
             ->onEvent(

@@ -24,7 +24,7 @@ use Commune\Blueprint\Ghost\MindDef\MemoryDef;
  * @property-read string $title             标题
  * @property-read string $desc              简介
  * @property-read string[] $scopes          记忆的作用域.
- * @property-read array $params           默认值, 也是记忆体数据的样板.
+ * @property-read array $attrs              默认值, 也是记忆体数据的样板.
  *
  */
 class MemoryMeta extends AbsOption implements DefMeta
@@ -38,7 +38,7 @@ class MemoryMeta extends AbsOption implements DefMeta
             'title' => '',
             'desc' => '',
             'scopes' => [],
-            'params' => [],
+            'attrs' => [],
         ];
     }
 

@@ -38,6 +38,7 @@ interface IntentMsg extends HostMsg
 
     /*----- guest intents -----*/
 
+    const GUEST_DIALOG_ORDINAL = 'dialogue.ordinal';
 
     public function getIntentName() : string;
 

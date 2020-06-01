@@ -148,13 +148,14 @@ class IContext implements Context
 
     /*----- entities -----*/
 
-    public function dependEntity(): ? string /* entityName */
+    public function depending(): ? string /* entityName */
     {
-        $entities = $this
+        $depending = $this
             ->getDef()
-            ->getEntityNames();
+            ->getDependingNames();
 
-        foreach ($entities as $name) {
+
+        foreach ($depending as $name) {
             if (!$this->offsetExists($name)) {
                 return $name;
             }
@@ -165,7 +166,7 @@ class IContext implements Context
 
     public function isPrepared(): bool
     {
-        $depending = $this->dependEntity();
+        $depending = $this->depending();
         return is_null($depending);
     }
 
@@ -219,7 +220,7 @@ class IContext implements Context
     {
         $def = $this->getDef();
 
-        $names = $def->getParamsDefaults()->keys();
+        $names = $def->getParamsDefs()->keys();
 
         foreach ($names as $name) {
             yield $this->offsetGet($name);
@@ -231,7 +232,7 @@ class IContext implements Context
 
     public function offsetExists($offset)
     {
-        $collection = $this->getDef()->getParamsDefaults();
+        $collection = $this->getDef()->getParamsDefs();
 
         if ($collection->hasParam($offset)) {
             return true;
@@ -244,7 +245,7 @@ class IContext implements Context
     public function offsetGet($offset)
     {
         $def = $this->getDef();
-        $queries = $def->getQueryDefaults();
+        $queries = $def->getQueryNames();
 
         if($queries->hasParam($offset)) {
             return $this->getQuery()[$offset] ?? null;
@@ -256,7 +257,7 @@ class IContext implements Context
     public function offsetSet($offset, $value)
     {
         $def = $this->getDef();
-        $queries = $def->getQueryDefaults();
+        $queries = $def->getQueryDefs();
 
         if ($queries->hasParam($offset)) {
             $contextName = $this->getName();
@@ -270,7 +271,7 @@ class IContext implements Context
 
     public function offsetUnset($offset)
     {
-        $queries = $this->getDef()->getQueryDefaults();
+        $queries = $this->getDef()->getQueryDefs();
 
         if ($queries->hasParam($offset)) {
             $contextName = $this->getName();

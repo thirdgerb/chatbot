@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Components\Predefined\Memory\UserInfoMem;
 use Commune\Host\Contexts\CodeContext\DefineParam;
 use Commune\Host\Contexts\CodeContext\HasEntity;
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
+use Commune\Support\Parameter\ParamBuilder;
 use Commune\Host\Contexts\ACodeContext;
 use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
 

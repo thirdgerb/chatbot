@@ -49,7 +49,17 @@ class OConfuse extends AbsOperator
         return $this->ifEventMsg()
             ?? $this->tryToWakeSleeping($process)
             ?? $this->tryToRestoreDying($process)
+            ?? $this->tryConfuseAction()
             ?? $this->reallyConfuse();
+    }
+
+    protected function tryConfuseAction() : ? Operator
+    {
+        $action = $this->cloner->config->confuseHandler;
+        if (isset($action)) {
+            return $this->dialog->caller()->call($action);
+        }
+        return null;
     }
 
     /**
@@ -116,7 +126,7 @@ class OConfuse extends AbsOperator
     {
         $matcher = $this->cloner->matcher->refresh();
         foreach ($stages as $stage) {
-            $intentName = $current->getStageIntentName($stage);
+            $intentName = $current->getStageFullname($stage);
             if ($matcher->matchStage($intentName)->truly()) {
                 return $current->goStage($stage);
             }
@@ -131,7 +141,7 @@ class OConfuse extends AbsOperator
 
         foreach ($contexts as $ucl) {
             // 这个 ucl 可能是假的, 用了通配符
-            $intentName = $ucl->getStageIntentName();
+            $intentName = $ucl->getStageFullname();
             if ($matcher->matchStage($intentName)->truly()) {
                 // 这个 ucl 就是真的了.
                 return $ucl->goStageByFullname($intentName);

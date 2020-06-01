@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\IActivate\IDepend;
+use Commune\Ghost\Dialog\IResume\ICallback;
 use Commune\Ghost\IOperate\AbsOperator;
 
 /**
@@ -42,15 +43,27 @@ class ODependOn extends AbsOperator
 
     protected function toNext(): Operator
     {
+        $dependContext = $this->dependUcl->findContext($this->dialog->cloner);
+
         if (isset($this->fieldName)) {
             $this->dialog
                 ->context
                 ->offsetSet(
                     $this->fieldName,
-                    $this->dependUcl->findContext($this->dialog->cloner)
+                    $dependContext
                 );
         }
 
+        // 如果数据已经完整, 则不必重定向.
+        if ($dependContext->isPrepared()) {
+            $ucl = $this->dialog->ucl;
+            $resume = new ICallback($this->dialog, $ucl);
+            return $ucl
+                ->findStageDef($this->dialog->cloner)
+                ->onResume($resume);
+        }
+
+        // 否则需要重定向.
         $dependOn = new IDepend($this->dialog, $this->dependUcl);
         return $this->dependUcl
             ->findStageDef($this->dialog->cloner)

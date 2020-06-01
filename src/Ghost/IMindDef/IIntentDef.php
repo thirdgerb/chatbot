@@ -15,6 +15,7 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\MindDef\Intent\ExampleEntity;
 use Commune\Blueprint\Ghost\MindDef\Intent\IntentExample;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Framework\Command\ICommandDef;
@@ -22,16 +23,35 @@ use Commune\Ghost\IMindDef\Intent\IIntentExample;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
+use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
+use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
-
+ * @property-read string $name
+ * @property-read string $title
+ * @property-read string $desc
+ * @property-read string $wrapper
+ *
+ * ## 意图内容.
+ * @property-read string[] $examples
+ * @property-read string[] $entityNames
+ *
+ * ## 匹配规则
+ * @property-read string|null $alias
+ * @property-read string $signature
+ * @property-read string[] $keywords
+ * @property-read string[] $regex
+ * @property-read string[] $ifEntity
+ *
+ * @property-read string|null $matcher
+ *
  */
-class IIntentDef implements IntentDef
+class IIntentDef extends AbsOption implements IntentDef
 {
 
     /**
@@ -45,17 +65,98 @@ class IIntentDef implements IntentDef
     protected $commandDef;
 
     /**
-     * @var IntentMeta
+     * @var string[]
      */
-    protected $meta;
+    protected $_entityNames;
 
-    /**
-     * IIntentDef constructor.
-     * @param IntentMeta $meta
-     */
-    public function __construct(IntentMeta $meta)
+    public static function stub(): array
     {
-        $this->meta = $meta;
+        return [
+            // 意图的名称
+            'name' => '',
+
+            // wrapper
+            'wrapper' => '',
+
+            // 意图的标题, 应允许用标题来匹配.
+            'title' => '',
+            // 意图的简介. 可以作为选项的内容.
+            'desc' => '',
+            // 意图的别名. 允许别名中的意图作为精确匹配规则.
+            'alias' => null,
+            // 例句, 用 []() 标记, 例如 "我想知道[北京](city)[明天](date)天气怎么样"
+            'examples' => [],
+            // 作为命令.
+            'signature' => '',
+
+            // entityNames
+            'entityNames' => [],
+
+            // 关键字
+            'keywords' => [],
+            // 正则
+            'regex' => [],
+
+            // 命中任意 entity
+            'ifEntity' => [],
+            // 自定义校验器. 字符串, 通常是类名或者方法名.
+            'matcher' => null,
+        ];
+    }
+
+    public static function relations(): array
+    {
+        return [];
+    }
+
+    /*---------- parse ----------*/
+    public function parseEntities(array $values) : array
+    {
+        return ArrayUtils::parseValuesByKeysWithListMark(
+            $values,
+            $this->getEntityNames(),
+            true
+        );
+    }
+
+
+    public function getEntityNames(): array
+    {
+        if (isset($this->_entityNames)) {
+            return $this->_entityNames;
+        }
+
+        // 最好手动定义 entity 字段名
+        $names = $this->entityNames;
+        if (!empty($names)) {
+            return $this->_entityNames = $names;
+        }
+
+        // 如果没有定义, 则会遍历所有的 example, 提取出可能的 entity name
+        $examples = $this->getExampleObjects();
+        if (empty($examples)) {
+            return $this->_entityNames = [];
+        }
+
+        // 检查是否同一个 entity 在同一个例子里出现过两次, 如果出现过则意味着是 list entity
+        // 否则默认都当作 unique entity, 一个句子里只会出现一次.
+        $namesCounts = array_reduce(
+            $examples,
+            function(array $valueCounts, IntentExample $example) {
+
+                $names = array_map(function(ExampleEntity $entity) {
+                    return $entity->name;
+                }, $example->getEntities());
+
+                $counts = ArrayUtils::valueCount($names);
+
+                return ArrayUtils::mergeMapByMaxVal($valueCounts, $counts);
+            },
+            []
+        );
+
+        // 所有 list entity 会用 "[]" (list mark) 在结尾标记.
+        return $this->_entityNames = ArrayUtils::uniqueValuesWithListMark($namesCounts);
     }
 
 
@@ -63,24 +164,24 @@ class IIntentDef implements IntentDef
 
     public function getName(): string
     {
-        return $this->meta->name;
+        return $this->name;
     }
 
     public function getTitle(): string
     {
-        return $this->meta->title;
+        return $this->title;
     }
 
     public function getDescription(): string
     {
-        return $this->meta->desc;
+        return $this->desc;
     }
 
-    public function getAlias(): ? string
+    public function getIntentName(): string
     {
-        return $this->meta->alias;
+        $alias = $this->alias;
+        return $alias ?? $this->name;
     }
-
 
     public function getCommandDef(): ? CommandDef
     {
@@ -94,12 +195,12 @@ class IIntentDef implements IntentDef
 
     public function getKeywords(): array
     {
-        return $this->meta->keywords;
+        return $this->keywords;
     }
 
     public function getRegex(): array
     {
-        return $this->meta->regex;
+        return $this->regex;
     }
 
     /*---------- match ----------*/
@@ -108,21 +209,22 @@ class IIntentDef implements IntentDef
     {
         $input = $cloner->input;
 
+        $selfName = $this->getName();
+
         // 检查消息体本身.
         $message = $input->getMessage();
         if ($message instanceof IntentMsg) {
-            return $message->getIntentName() === $this->getName();
+            return $message->getIntentName() === $selfName;
         }
 
         // 检查理解模块的结果.
         $intention = $input->comprehension->intention;
-        if ($intention->hasPossibleIntent($this->getName())) {
+        if ($intention->hasPossibleIntent($selfName)) {
             return true;
         }
 
-
         // 别名检查.
-        $alias = $this->getAlias();
+        $alias = $this->alias;
         if (!empty($alias)) {
             $reg = $cloner->mind->intentReg();
             $matched = $reg->hasDef($alias)
@@ -135,7 +237,7 @@ class IIntentDef implements IntentDef
         }
 
         // 自定义的匹配器优先级相对高.
-        $selfMatcher = $this->meta->matcher;
+        $selfMatcher = $this->matcher;
         if (isset($selfMatcher)) {
             if (
                 is_string($selfMatcher)
@@ -146,9 +248,9 @@ class IIntentDef implements IntentDef
             }
 
             try {
-                if ($cloner->container->call($selfMatcher)){
-                    return true;
-                }
+                $predict = $cloner->container->call($selfMatcher, ['intentDef' => $this]);
+                return $predict === true;
+
             } catch (\Exception $e) {
                 throw new BrokenSessionException(
                     "invalid intent matcher",
@@ -186,7 +288,7 @@ class IIntentDef implements IntentDef
             }
         }
 
-        $ifAnyEntities = $this->meta->ifEntity;
+        $ifAnyEntities = $this->ifEntity;
         if (!empty($ifAnyEntities)) {
             foreach ($ifAnyEntities as $entityName) {
                 if ($intention->hasEntity($entityName)) {
@@ -210,7 +312,7 @@ class IIntentDef implements IntentDef
 
     public function getExamples(): array
     {
-        return $this->meta->examples;
+        return $this->examples;
     }
 
     public function getExampleObjects(): array
@@ -220,7 +322,7 @@ class IIntentDef implements IntentDef
                 function(string $example){
                     return new IIntentExample($example);
                 },
-                $this->meta->examples
+                $this->examples
             );
     }
 
@@ -229,7 +331,21 @@ class IIntentDef implements IntentDef
 
     public function getMeta(): Meta
     {
-        return $this->meta;
+        $data = [];
+        $config = $this->toArray();
+
+        $data['name'] = $config['name'];
+        $data['title'] = $config['title'];
+        $data['desc'] = $config['desc'];
+
+        unset($config['name']);
+        unset($config['title']);
+        unset($config['desc']);
+
+        $data['wrapper'] = static::class;
+        $data['config'] = $config;
+
+        return new IntentMeta($data);
     }
 
     /**
@@ -243,6 +359,11 @@ class IIntentDef implements IntentDef
                 "only accept subclass of " . IntentMeta::class
             );
         }
+        $config = $meta->config;
+        $config['name'] = $meta->name;
+        $config['title'] = $meta->title;
+        $config['desc'] = $meta->desc;
+
         return new static($meta);
     }
 

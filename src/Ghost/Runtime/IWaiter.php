@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Runtime\Waiter;
-use Commune\Protocals\HostMsg\Convo\QuestionMsg;
+use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
 
 /**

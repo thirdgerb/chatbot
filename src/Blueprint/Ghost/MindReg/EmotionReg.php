@@ -20,7 +20,4 @@ use Commune\Blueprint\Ghost\MindDef\EmotionDef;
  */
 interface EmotionReg extends DefRegistry
 {
-    const EMO_POSITIVE = 'emotion.positive';
-    const EMO_NEGATIVE = 'emotion.negative';
-
 }

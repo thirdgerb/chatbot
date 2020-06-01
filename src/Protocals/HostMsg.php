@@ -40,8 +40,14 @@ interface HostMsg extends Message, Protocal
     ];
 
 
+    /**
+     * @return string
+     */
     public function getRenderId() : string;
 
+    /**
+     * @return string
+     */
     public function getText() : string;
 
     /**

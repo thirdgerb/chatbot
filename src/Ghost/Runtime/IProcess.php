@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Runtime\Waiter;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Protocals\HostMsg\Convo\QuestionMsg;
+use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Uuid\HasIdGenerator;
@@ -209,6 +209,14 @@ class IProcess implements Process, HasIdGenerator
 
         return null;
     }
+
+    public function getAwaitQuestion(): ? QuestionMsg
+    {
+        return isset($this->_waiter)
+            ? $this->_waiter->question
+            : null;
+    }
+
 
     public function getAwaitStageNames(): array
     {

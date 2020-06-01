@@ -122,6 +122,12 @@ class ICloner extends ASession implements Cloner
         return $this->ghost;
     }
 
+    public function replaceInput(InputMsg $input): void
+    {
+        $this->container->share(InputMsg::class, $input);
+        $this->input = $input;
+    }
+
 
     /*-------- conversation id ---------*/
 

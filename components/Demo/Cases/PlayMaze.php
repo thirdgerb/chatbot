@@ -11,7 +11,7 @@
 
 namespace Commune\Components\Demo\Cases;
 
-use Commune\Blueprint\Ghost\Context\ParamBuilder;
+use Commune\Support\Parameter\ParamBuilder;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Exiting;
 use Commune\Blueprint\Ghost\MindDef\StageDef;

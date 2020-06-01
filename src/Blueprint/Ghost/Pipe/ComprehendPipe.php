@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Pipe;
 
-use Commune\Blueprint\Ghost\Cloner;
+use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -20,6 +20,6 @@ interface ComprehendPipe
 {
     const HANDLE = 'handle';
 
-    public function handle(Cloner $cloner, \Closure $next) : Cloner;
+    public function handle(InputMsg $input, \Closure $next) : InputMsg;
 
 }

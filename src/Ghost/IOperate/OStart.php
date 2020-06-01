@@ -72,7 +72,9 @@ class OStart implements Operator
             // 如果不是影响对话状态的 convo msg, 则全部由 await ucl 来处理. 不走任何理解和路由.
             ?? $this->isNotConvoMsgCall($input)
             // 通过管道试图理解消息, 将理解结果保留在 comprehension 中.
-            ?? $this->runComprehendPipes()
+            ?? $this->runComprehendPipes($input)
+            // 问题匹配
+            ?? $this->checkQuestion()
             // 检查是否命中了 stage 路由
             ?? $this->checkStageRoutes()
             // 检查是否命中了 context 路由.
@@ -153,7 +155,7 @@ class OStart implements Operator
 
     /*------ comprehend pipes ------*/
 
-    protected function runComprehendPipes() : ? Operator
+    protected function runComprehendPipes(InputMsg $input) : ? Operator
     {
 
         $awaitUcl = $this->start;
@@ -162,21 +164,32 @@ class OStart implements Operator
         $pipes = $contextDef->comprehendPipes($this->dialog);
 
         if (is_null($pipes)) {
-            return $this->runGhostComprehendPipes();
+            return $this->runGhostComprehendPipes($input);
         }
 
-        $this->runComprehendPipeline($pipes);
+        $this->runComprehendPipeline($input, $pipes);
         return null;
     }
 
-    protected function runGhostComprehendPipes() : ? Operator
+    protected function checkQuestion() : ? Operator
+    {
+        $question = $this->process->getAwaitQuestion();
+        if (empty($question)) {
+            return null;
+        }
+
+        $question->parse($this->cloner);
+        return null;
+    }
+
+    protected function runGhostComprehendPipes(InputMsg $input) : ? Operator
     {
         $pipes = $this->cloner->ghost->getConfig()->comprehensionPipes;
-        $this->runComprehendPipeline($pipes);
+        $this->runComprehendPipeline($input, $pipes);
         return null;
     }
 
-    protected function runComprehendPipeline(array $pipes) : void
+    protected function runComprehendPipeline(InputMsg $input, array $pipes) : void
     {
         if (empty($pipes)) {
             return;
@@ -185,11 +198,12 @@ class OStart implements Operator
         $pipeline = $this->cloner->buildPipeline(
             $pipes,
             ComprehendPipe::HANDLE,
-            function($cloner){
-                return $cloner;
+            function(InputMsg $input) : InputMsg{
+                return $input;
             });
 
-        $this->cloner = $pipeline($this->cloner);
+        $input = $pipeline($input);
+        $this->cloner->replaceInput($input);
     }
 
 

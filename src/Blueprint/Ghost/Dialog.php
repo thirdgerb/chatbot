@@ -111,8 +111,8 @@ interface Dialog
     /**
      * 等待用户回复
      *
-     * @param array $stageRoutes
-     * @param array $contextRoutes
+     * @param string[] $stageRoutes
+     * @param string[]|Ucl[] $contextRoutes
      * @param int|null $expire
      * @return Operate\Await
      */

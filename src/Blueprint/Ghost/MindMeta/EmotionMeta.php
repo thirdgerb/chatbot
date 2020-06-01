@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
+use Commune\Blueprint\Ghost\MindDef\AliasesForEmotion;
 use Commune\Ghost\IMindDef\IEmotionDef;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Wrapper;
@@ -41,6 +42,26 @@ class EmotionMeta extends AbsOption implements DefMeta
             'emotionalIntents' => [],
             'matchers' => [],
         ];
+    }
+
+    public function __get_matcher() : array
+    {
+        return array_map(
+            function (string $matcher) {
+                return AliasesForEmotion::getOriginFromAlias($matcher);
+            },
+            $this->_data['matchers'] ?? []
+        );
+    }
+
+    public function __set_matcher(string $name, array $matchers) : void
+    {
+        $this->_data[$name] = array_map(
+            function(string $matcher) {
+                return AliasesForEmotion::getAliasOfOrigin($matcher);
+            },
+            $matchers
+        );
     }
 
     public static function relations(): array

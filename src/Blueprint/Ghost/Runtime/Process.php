@@ -12,8 +12,8 @@
 namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Protocals\HostMsg\Convo\QuestionMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
+use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 
 
 /**
@@ -62,6 +62,12 @@ interface Process extends ArrayAndJsonAble
 
     public function getWaiter() : ? Waiter;
 
+    /**
+     * @param Ucl $ucl
+     * @param QuestionMsg|null $question
+     * @param string[] $stageRoutes
+     * @param string[] $contextRoutes
+     */
     public function await(
         Ucl $ucl,
         ? QuestionMsg $question,
@@ -74,6 +80,10 @@ interface Process extends ArrayAndJsonAble
      */
     public function getAwait() : ? Ucl;
 
+    /**
+     * @return QuestionMsg|null
+     */
+    public function getAwaitQuestion() : ? QuestionMsg;
 
     /**
      * @return string[]

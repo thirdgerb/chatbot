@@ -18,6 +18,9 @@ use Commune\Blueprint\Ghost\Cloner;
  */
 interface EmotionDef extends Def
 {
+    const EMO_POSITIVE = 'emotion.positive';
+    const EMO_NEGATIVE = 'emotion.negative';
+
     /**
      * @param Cloner $cloner
      * @param array $injectionContext

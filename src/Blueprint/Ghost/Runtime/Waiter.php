@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Protocals\HostMsg\Convo\QuestionMsg;
+use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
