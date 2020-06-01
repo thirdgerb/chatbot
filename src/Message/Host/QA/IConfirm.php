@@ -95,10 +95,10 @@ class IConfirm extends IQuestionMsg implements Confirm
      * @param Comprehension $comprehension
      * @return AnswerMsg
      */
-    protected function setAnswerComprehension(AnswerMsg $answer, Comprehension $comprehension): AnswerMsg
+    protected function setAnswerToComprehension(AnswerMsg $answer, Comprehension $comprehension): AnswerMsg
     {
         $positive = $answer->isPositive();
-        $answer = parent::setAnswerComprehension($answer, $comprehension);
+        $answer = parent::setAnswerToComprehension($answer, $comprehension);
 
 
         $comprehension->emotion->setEmotion(EmotionDef::EMO_POSITIVE, $positive);

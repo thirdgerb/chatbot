@@ -37,15 +37,15 @@ interface Await extends Finale
     /**
      * @param string $query
      * @param bool $default
-     * @param Ucl|null $positiveRoute
-     * @param Ucl|null $negativeRoute
+     * @param Ucl|string|null $positiveRoute
+     * @param Ucl|string|null $negativeRoute
      * @return Operator
      */
     public function askConfirm(
         string $query,
         bool $default = true,
-        Ucl $positiveRoute = null,
-        Ucl $negativeRoute = null
+        $positiveRoute = null,
+        $negativeRoute = null
     ) : Operator;
 
     /**

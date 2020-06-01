@@ -50,7 +50,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         ]);
 
         foreach ($suggestions as $index => $suggestion) {
-            $this->addSuggestion($suggestion, strval($index));
+            $this->addSuggestion($suggestion, $index);
         }
     }
 
@@ -99,11 +99,11 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             ?? null;
 
         return isset($answer)
-            ? $this->setAnswerComprehension($answer, $comprehension)
+            ? $this->setAnswerToComprehension($answer, $comprehension)
             : null;
     }
 
-    protected function setAnswerComprehension(AnswerMsg $answer, Comprehension $comprehension) : AnswerMsg
+    protected function setAnswerToComprehension(AnswerMsg $answer, Comprehension $comprehension) : AnswerMsg
     {
         $comprehension->answer->setAnswer($answer);
 
@@ -182,6 +182,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
     {
         $matcher = $cloner->matcher->refresh();
         $ordinalInt = HostMsg\IntentMsg::GUEST_DIALOG_ORDINAL;
+
         if ($matcher->isIntent($ordinalInt)) {
             $entities = $cloner->input
                 ->comprehension
@@ -194,7 +195,6 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             if (isset($suggestions[$index])) {
                 return $this->newAnswer($suggestions[$index], $index);
             }
-
         }
 
         return null;

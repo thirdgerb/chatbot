@@ -16,7 +16,6 @@ use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Ghost\Callables\Prediction;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindDef\EmotionDef;
-use Commune\Blueprint\Ghost\MindReg\EmotionReg;
 use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Framework\Command\ICommandDef;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
@@ -484,8 +483,13 @@ class IMatcher implements Matcher
     protected function singleExactlyIntentMatch(string $intent) : ? string
     {
         $reg = $this->cloner->mind->intentReg();
+        $intention = $this->cloner->input->comprehension->intention;
+        if ($intention->hasPossibleIntent($intent)) {
+            return $intent;
+        }
+
         if (!$reg->hasDef($intent)) {
-            return false;
+            return null;
         }
 
         $def = $reg->getDef($intent);
@@ -520,7 +524,7 @@ class IMatcher implements Matcher
             return [];
         }
 
-        $possibleIntents = $this->cloner
+        $possibleIntents = $this
             ->input
             ->comprehension
             ->intention
@@ -545,7 +549,7 @@ class IMatcher implements Matcher
 
     public function isAnyIntent(): Matcher
     {
-        $intent = $this->cloner
+        $intent = $this
             ->input
             ->comprehension
             ->intention
@@ -671,6 +675,8 @@ class IMatcher implements Matcher
 
         return $this;
     }
+
+    /*-------- getter --------*/
 
 
     public function __destruct()

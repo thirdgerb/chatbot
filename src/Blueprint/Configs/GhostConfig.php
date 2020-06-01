@@ -79,7 +79,8 @@ use Commune\Components;
  *
  * # 多轮对话相关逻辑.
  *
- * @property-read string[] $sceneContextNames   场景对应的根路径.
+ * @property-read string[] $sceneContextNames       场景对应的根路径.
+ * @property-read string[] $globalContextRoutes
  */
 class GhostConfig extends AbsOption
 {
@@ -137,8 +138,8 @@ class GhostConfig extends AbsOption
             'maxRedirectTimes' => 255,
             'mindsetCacheExpire' => 600,
             'maxBacktrace' => 10,
-            'sceneContextNames' => [
-            ],
+            'sceneContextNames' => [],
+            'globalContextRoutes' => [],
         ];
     }
 
