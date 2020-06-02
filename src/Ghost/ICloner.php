@@ -68,11 +68,6 @@ class ICloner extends ASession implements Cloner
     /*------- cached -------*/
 
     /**
-     * @var string
-     */
-    protected $clonerId;
-
-    /**
      * @var int
      */
     protected $expire;
@@ -103,18 +98,10 @@ class ICloner extends ASession implements Cloner
         $this->ghost = $ghost;
         $this->ghostConfig = $ghost->getConfig();
         $this->input = $input;
-        // id
-        $this->clonerId = 'ght:' . $ghost->getId() .':'. $input->getSessionId();
 
         // expire
         $this->expire = $this->ghostConfig->sessionExpire;
-        parent::__construct($container, $input->getConversationId());
-    }
-
-
-    public function getId(): string
-    {
-        return $this->clonerId;
+        parent::__construct($container, $input->getSessionId());
     }
 
     public function getApp(): App
@@ -127,7 +114,6 @@ class ICloner extends ASession implements Cloner
         $this->container->share(InputMsg::class, $input);
         $this->input = $input;
     }
-
 
     /*-------- conversation id ---------*/
 
@@ -146,16 +132,18 @@ class ICloner extends ASession implements Cloner
             return $this->conversationId = $convoId;
         }
 
-        $inputSid = $this->input->getConversationId();
-        $cachedSid = $this->getConvoIdFromCache();
+        $inputCid = $this->input->getConversationId();
+        $cachedCid = $this->getConvoIdFromCache();
 
-        if (empty($cachedSid)) {
-            $convoId = $inputSid ?? $this->makeConvoId();
+        // 如果没有缓存, 重新生成一个
+        if (empty($cachedCid)) {
+            $convoId = empty($inputCid) ? $this->makeConvoId() : $inputCid;
 
-        } elseif(empty($inputSid)) {
-            $convoId = $cachedSid;
+        // 有缓存的情况下, 可以被inputSid 覆盖.
+        } elseif(empty($inputCid)) {
+            $convoId = $cachedCid;
         } else {
-            $convoId = $inputSid;
+            $convoId = $inputCid;
         }
 
         return $this->conversationId = $convoId;
@@ -171,19 +159,19 @@ class ICloner extends ASession implements Cloner
     protected function getConvoIdFromCache() : ? string
     {
         $key = $this->getConvoCacheKey();
-        return $this->cache->get($key);
+        return $this->__get('cache')->get($key);
     }
 
     protected function cacheConvoId(string $convoId) : void
     {
         $key = $this->getConvoCacheKey();
-        $this->cache->set($key, $convoId, $this->getSessionExpire());
+        $this->__get('cache')->set($key, $convoId, $this->getSessionExpire());
     }
 
     protected function ioDeleteConvoIdCache() : void
     {
         $key = $this->getConvoCacheKey();
-        $this->cache->forget($key);
+        $this->__get('cache')->forget($key);
     }
 
     protected function getConvoCacheKey() : string
@@ -199,15 +187,14 @@ class ICloner extends ASession implements Cloner
         return $this->ghostConfig->protocals;
     }
 
-
     public function getStorage(): SessionStorage
     {
-        return $this->storage;
+        return $this->__get('storage');
     }
 
     public function getLogger(): LoggerInterface
     {
-        return $this->logger;
+        return $this->__get('logger');
     }
 
     /*------- getter -------*/
@@ -243,7 +230,7 @@ class ICloner extends ASession implements Cloner
         $ttl = $this->ghostConfig->sessionLockerExpire;
         if ($ttl > 0) {
             $locker = $this->getGhostClonerLockerKey();
-            return $this->cache->lock($locker, $ttl);
+            return $this->__get('cache')->lock($locker, $ttl);
         } else {
             return true;
         }
@@ -255,7 +242,7 @@ class ICloner extends ASession implements Cloner
         $ttl = $this->ghostConfig->sessionLockerExpire;
         if ($ttl > 0) {
             $locker = $this->getGhostClonerLockerKey();
-            return $this->cache->has($locker);
+            return $this->__get('cache')->has($locker);
         }
         return false;
     }
@@ -265,7 +252,7 @@ class ICloner extends ASession implements Cloner
         $ttl = $this->ghostConfig->sessionLockerExpire;
         if ($ttl > 0) {
             $locker = $this->getGhostClonerLockerKey();
-            return $this->cache->unlock($locker);
+            return $this->__get('cache')->unlock($locker);
         }
         return true;
     }
@@ -345,13 +332,13 @@ class ICloner extends ASession implements Cloner
         }
 
         // runtime 更新.
-        if (!$this->isSingletonInstanced('runtime')) {
-            $this->runtime->save();
+        if ($this->isSingletonInstanced('runtime')) {
+            $this->__get('runtime')->save();
         }
 
         // storage 更新.
         if ($this->isSingletonInstanced('storage')) {
-            $this->storage->save();
+            $this->__get('storage')->save();
         }
 
         // 更新 sessionId 缓存.

@@ -109,12 +109,14 @@ class DemoRuntimeDriver extends ARuntimeDriver
 
     /**
      * @param string $key
-     * @return string[]
+     * @param string $memoryId
+     * @return string
      */
-    protected function doFetchSessionMemories(string $key) : array
+    protected function doFetchSessionMemory(string $key, string $memoryId) : ? string
     {
-        return $this->cache->hGetAll($key);
+        return $this->cache->hGet($key, $memoryId);
     }
+
 
     public function saveLongTermMemories(
         string $clonerId,

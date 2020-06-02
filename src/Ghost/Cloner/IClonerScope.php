@@ -11,8 +11,8 @@
 
 namespace Commune\Ghost\Cloner;
 
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
-use Commune\Protocals\Intercom\InputMsg;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Support\Arr\ArrayAbleToJson;
 
@@ -48,12 +48,12 @@ class IClonerScope implements ClonerScope
      */
     protected $sceneId;
 
-    public function __construct(InputMsg $input)
+    public function __construct(Cloner $cloner)
     {
-        $this->clonerId = $input->getSessionId();
-        $this->guestId = $input->getGuestId();
-        $this->convoId = $input->getConversationId();
-        $this->sceneId = $input->getSceneId();
+        $this->clonerId = $cloner->getId();
+        $this->guestId = $cloner->input->getGuestId();
+        $this->convoId = $cloner->getConversationId();
+        $this->sceneId = $cloner->scene->sceneId;
         $this->time = time();
     }
 

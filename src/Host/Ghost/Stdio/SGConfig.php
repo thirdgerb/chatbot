@@ -80,6 +80,7 @@ class SGConfig extends GhostConfig
                 GhostHelpCmd::class,
                 Commands\Super\SpyCmd::class,
                 Commands\Super\ScopeCmd::class,
+                Commands\Super\ProcessCmd::class,
             ],
             'comprehensionPipes' => [
 
@@ -91,9 +92,9 @@ class SGConfig extends GhostConfig
             // session
             'sessionExpire' => 3600,
             'sessionLockerExpire' => 3,
-            'maxRequestFailTimes' => 3,
             'maxRedirectTimes' => 255,
             'mindsetCacheExpire' => 600,
+            'maxBacktrace' => 10,
             'defaultContextName' => HelloWorld::class,
             'sceneContextNames' => [
             ],

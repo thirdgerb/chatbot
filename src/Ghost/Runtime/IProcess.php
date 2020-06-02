@@ -149,7 +149,7 @@ class IProcess implements Process, HasIdGenerator
             'id' => $this->_id,
             'tasks' => ArrayUtils::recursiveToArray($this->_tasks),
             'root' => $this->_root,
-            'waiter' => $this->_waiter->toArray(),
+            'waiter' => isset($this->_waiter) ? $this->_waiter->toArray() : null,
             'backtrace' => ArrayUtils::recursiveToArray($this->_backtrace),
             'waiting' => [
                 'callbacks' => $this->_callbacks,

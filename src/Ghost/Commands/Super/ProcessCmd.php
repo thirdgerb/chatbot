@@ -14,24 +14,21 @@ namespace Commune\Ghost\Commands\Super;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Ghost\Cmd\AGhostCmd;
-use Commune\Support\Arr\ArrayAndJsonAble;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ScopeCmd extends AGhostCmd
+class ProcessCmd extends AGhostCmd
 {
-    const SIGNATURE = 'scope';
+    const SIGNATURE = 'process';
 
-    const DESCRIPTION = '查看用户自己的数据';
+    const DESCRIPTION = '查看多轮对话进程的数据';
+
 
     protected function handle(CommandMsg $command, RequestCmdPipe $pipe): void
     {
-        $data = $this->cloner->scope->toArray();
-        $data['traceId'] = $this->cloner->getTraceId();
-
-        $this->info(json_encode($data, ArrayAndJsonAble::PRETTY_JSON));
+        $process = $this->cloner->runtime->getCurrentProcess();
+        $this->info($process->toPrettyJson());
     }
-
-
 }

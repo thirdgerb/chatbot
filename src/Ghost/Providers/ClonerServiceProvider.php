@@ -29,6 +29,7 @@ use Commune\Ghost\Cloner\IClonerScope;
 use Commune\Ghost\Cloner\IClonerStorage;
 use Commune\Ghost\Runtime\IRuntime;
 use Commune\Ghost\ITools\IMatcher;
+use Commune\Protocals\Intercom\InputMsg;
 use Psr\Log\LoggerInterface;
 
 
@@ -50,10 +51,10 @@ class ClonerServiceProvider extends ServiceProvider
 
     public function register(Container $app): void
     {
-        $this->registerConvoScope($app);
-        $this->registerConvoLogger($app);
-        $this->registerConvoScene($app);
-        $this->registerConvoMatcher($app);
+        $this->registerCloneScope($app);
+        $this->registerCloneLogger($app);
+        $this->registerCloneScene($app);
+        $this->registerCloneMatcher($app);
         $this->registerAuth($app);
         $this->registerRuntime($app);
         $this->registerStorage($app);
@@ -62,7 +63,7 @@ class ClonerServiceProvider extends ServiceProvider
 
     /*-------- register --------*/
 
-    protected function registerConvoMatcher(Container $app) : void
+    protected function registerCloneMatcher(Container $app) : void
     {
         $app->bind(Matcher::class, function(Container $app) {
             $cloner = $app->get(Cloner::class);
@@ -74,12 +75,12 @@ class ClonerServiceProvider extends ServiceProvider
      * 场景信息.
      * @param Container $app
      */
-    protected function registerConvoScene(Container $app) : void
+    protected function registerCloneScene(Container $app) : void
     {
         $app->singleton(ClonerScene::class, IClonerScene::class);
     }
 
-    protected function registerConvoScope(Container $app) : void
+    protected function registerCloneScope(Container $app) : void
     {
         $app->singleton(ClonerScope::class, IClonerScope::class);
     }
@@ -88,19 +89,29 @@ class ClonerServiceProvider extends ServiceProvider
      * 对话日志.
      * @param Container $app
      */
-    protected function registerConvoLogger(Container $app) : void
+    protected function registerCloneLogger(Container $app) : void
     {
         $app->singleton(ClonerLogger::class, function(Container $app) {
             /**
-             * @var ClonerScope $scope
+             * @var InputMsg $input
              * @var ExceptionReporter $reporter
              * @var LoggerInterface $logger
              */
-            $scope = $app->make(ClonerScope::class);
+            $input = $app->make(InputMsg::class);
             $logger = $app->make(LoggerInterface::class);
             $reporter = $app->make(ExceptionReporter::class);
 
-            return new IClonerLogger($logger, $reporter, $scope->toArray());
+            return new IClonerLogger(
+                $logger,
+                $reporter,
+                [
+                    'sid' => $input->getSessionId(),
+                    'tid' => $input->getTraceId(),
+                    'mid' => $input->getMessageId(),
+                    'cid' => $input->getConversationId(),
+                    'shn' => $input->getShellName(),
+                ]
+            );
         });
     }
 

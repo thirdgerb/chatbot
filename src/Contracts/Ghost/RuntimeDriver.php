@@ -19,41 +19,47 @@ use Commune\Blueprint\Ghost\Runtime\Process;
  */
 interface RuntimeDriver
 {
+
     /**
-     * @param string $clonerId
+     * @param string $cloneId
+     * @param string $convoId
      * @param Process $process
      * @param int $expire
      * @return bool
      */
-    public function cacheProcess(string $clonerId, Process $process, int $expire) : bool;
+    public function cacheProcess(string $cloneId, string $convoId, Process $process, int $expire) : bool;
 
     /**
-     * @param string $clonerId
-     * @param string $belongsTo
+     * @param string $cloneId
+     * @param string $convoId
      * @return Process|null
      */
-    public function fetchProcess(string $clonerId, string $belongsTo) : ? Process;
+    public function fetchProcess(string $cloneId, string $convoId) : ? Process;
 
     /**
-     * @param string $clonerId
-     * @param string $sessionId
+     * @param string $cloneId
+     * @param string $convoId
      * @param Memory[] $memories
      * @param int $expire
      * @return bool
      */
     public function cacheSessionMemories(
-        string $clonerId,
-        string $sessionId,
+        string $cloneId,
+        string $convoId,
         array $memories,
         int $expire
     ) : bool;
 
     /**
-     * @param string $clonerId
-     * @param string $sessionId
-     * @return Memory[]
+     * @param string $cloneId
+     * @param string $convoId
+     * @param string $memoryId
+     * @return Memory|null
      */
-    public function fetchSessionMemories(string $clonerId, string $sessionId) : array;
+    public function fetchSessionMemory(
+        string $cloneId,
+        string $convoId,
+        string $memoryId) : ? Memory;
 
     /**
      * @param string $clonerId

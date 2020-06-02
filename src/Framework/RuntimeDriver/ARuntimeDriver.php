@@ -36,28 +36,28 @@ abstract class ARuntimeDriver implements RuntimeDriver
 
     abstract protected function doCacheSessionMemories(string $key, array $map, int $expire) : bool;
 
-    abstract protected function doFetchSessionMemories(string $key) : array;
+    abstract protected function doFetchSessionMemory(string $key, string $memoryId) : ? string;
 
-    public function cacheProcess(string $clonerId, Process $process, int $expire): bool
+    public function cacheProcess(string $cloneId, string $convoId, Process $process, int $expire): bool
     {
-        $key = $this->getProcessKey($clonerId, $process->belongsTo);
+        $key = $this->getProcessKey($cloneId, $convoId);
         return $this->doCacheProcess($key, $process, $expire);
     }
 
-    public function fetchProcess(string $clonerId, string $belongsTo): ? Process
+    public function fetchProcess(string $cloneId, string $convoId): ? Process
     {
-        $key = $this->getProcessKey($clonerId, $belongsTo);
+        $key = $this->getProcessKey($cloneId, $convoId);
         return $this->doFetchProcess($key);
     }
 
     public function cacheSessionMemories(
-        string $clonerId,
-        string $sessionId,
+        string $cloneId,
+        string $convoId,
         array $memories,
         int $expire
     ): bool
     {
-        $key = $this->getSessionMemoriesCacheKey($clonerId, $sessionId);
+        $key = $this->getSessionMemoriesCacheKey($cloneId, $convoId);
         $saving = [];
 
         foreach ($memories as $memory) {
@@ -70,26 +70,21 @@ abstract class ARuntimeDriver implements RuntimeDriver
         return $this->doCacheSessionMemories($key, $saving, $expire);
     }
 
-    public function fetchSessionMemories(string $clonerId, string $sessionId): array
+    public function fetchSessionMemory(string $cloneId, string $convoId, string $memoryId): ? Memory
     {
-        $key = $this->getSessionMemoriesCacheKey($clonerId, $sessionId);
-        $map = $this->doFetchSessionMemories($key);
+        $key = $this->getSessionMemoriesCacheKey($cloneId, $convoId);
+        $data = $this->doFetchSessionMemory($key, $memoryId);
 
-        if (empty($map)) {
-            return [];
+        if (empty($data)) {
+            return null;
         }
 
-        $result = [];
-        foreach ($map as $serialized) {
-            $memory = unserialize($serialized);
-            if ($memory instanceof Memory) {
-                $result[$memory->getId()] = $memory;
-            } else {
-                $error = "cached session memory cannot unserialized, key $key";
-                throw new InvalidSavedDataException($error);
-            }
+        $memory = unserialize($data);
+        if ($memory instanceof Memory) {
+            return $memory;
+        } else {
+            $error = "cached session memory cannot unserialized, key $key";
+            throw new InvalidSavedDataException($error);
         }
-
-        return $result;
     }
 }

@@ -11,7 +11,6 @@
 
 namespace Commune\Ghost\Runtime;
 
-use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Exceptions\IO\LoadDataFailException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Memory\Memory;
@@ -48,11 +47,6 @@ class IRuntime implements Runtime, Spied
      * @var string
      */
     protected $traceId;
-
-    /**
-     * @var string
-     */
-    protected $convoId;
 
     /*---- cached ----*/
 
@@ -92,8 +86,6 @@ class IRuntime implements Runtime, Spied
         }
 
         $this->traceId = $cloner->getTraceId();
-        $this->convoId = $cloner->getConversationId();
-
         static::addRunningTrace($this->traceId, $this->traceId);
     }
 
@@ -103,19 +95,18 @@ class IRuntime implements Runtime, Spied
     {
         return $longTerm
             ? $this->findLongTermMemory($id, $defaults)
-            : $this->findConvoMemory($id, $defaults);
+            : $this->findSessionMemory($id, $defaults);
     }
 
-    protected function findConvoMemory(string $id, array $defaults) : Memory
+    protected function findSessionMemory(string $id, array $defaults) : Memory
     {
-        // 一次性读取所有缓存
-        if (!isset($this->convoMemories)) {
-            $this->convoMemories = $this->ioFindSessionMemories();
+        if (isset($this->convoMemories[$id])) {
+            return $this->convoMemories[$id];
         }
 
+
         // 不存在则生成
-        return $this->convoMemories[$id]
-            ?? $this->convoMemories[$id] = new IMemory($id, false, $defaults);
+        return $this->convoMemories[$id] = $this->ioFindSessionMemory($id) ?? new IMemory($id, false, $defaults);
     }
 
     protected function findLongTermMemory(string $id, array $defaults) : Memory
@@ -167,7 +158,7 @@ class IRuntime implements Runtime, Spied
     public function createProcess(Ucl $root): Process
     {
         return $this->process = new IProcess(
-            $this->convoId,
+            $this->cloner->getConversationId(),
             $root,
             $this->cloner->input->getMessageId()
         );
@@ -266,7 +257,12 @@ class IRuntime implements Runtime, Spied
             // gc, 不过现在简单了, 只要删除掉 dying 就足够了.
             $this->process->gc();
 
-            return $this->driver->cacheProcess($this->cloner, $this->process, $expire);
+            return $this->driver->cacheProcess(
+                $this->cloner->getId(),
+                $this->cloner->getConversationId(),
+                $this->process,
+                $expire
+            );
         } catch (\Exception $e) {
             throw new SaveDataFailException('process', $e);
         }
@@ -301,19 +297,21 @@ class IRuntime implements Runtime, Spied
         }
     }
 
-    protected function ioFindSessionMemories() : array
+    protected function ioFindSessionMemory(string $id) : ? Memory
     {
         if (!isset($this->driver)) {
-            return [];
+            return null;
         }
 
         try {
 
             return $this->driver
-                ->fetchSessionMemories(
+                ->fetchSessionMemory(
                     $this->cloner->getId(),
-                    $this->cloner->getConversationId()
+                    $this->cloner->getConversationId(),
+                    $id
                 );
+
         } catch (\Exception $e) {
             throw new LoadDataFailException('session memories', $e);
         }
@@ -371,8 +369,7 @@ class IRuntime implements Runtime, Spied
             return $this->trace
                 ?? $this->trace = new ITrace(
                     $this->cloner->config->maxRedirectTimes,
-                    $this->cloner->logger,
-                    CommuneEnv::isDebug()
+                    $this->cloner->logger
                 );
         }
         return null;
