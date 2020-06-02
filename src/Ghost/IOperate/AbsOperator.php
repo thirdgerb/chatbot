@@ -14,6 +14,7 @@ namespace Commune\Ghost\IOperate;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Exceptions\CommuneLogicException;
+use Commune\Framework\Spy\SpyAgency;
 
 
 /**
@@ -43,6 +44,7 @@ abstract class AbsOperator implements Operator
     public function __construct(Dialog $dialog)
     {
         $this->dialog = $dialog;
+        SpyAgency::incr(static::class);
     }
 
     /**
@@ -75,11 +77,16 @@ abstract class AbsOperator implements Operator
         // 尝试拦截.
         $next = $this->toNext();
 
-        $this->ticking = false;
-        $this->ticked = true;
+        $this->destroy();
         return $next;
     }
 
+    protected function destroy() : void
+    {
+        $this->dialog = null;
+        $this->ticking = false;
+        $this->ticked = true;
+    }
 
     public function getDialog(): Dialog
     {
@@ -96,5 +103,9 @@ abstract class AbsOperator implements Operator
         return $this;
     }
 
-
+    public function __destruct()
+    {
+        $this->dialog = null;
+        SpyAgency::incr(static::class);
+    }
 }

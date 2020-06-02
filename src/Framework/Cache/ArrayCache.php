@@ -4,23 +4,18 @@
 namespace Commune\Framework\Cache;
 
 use Commune\Contracts\Cache;
+use Commune\Framework\Spy\SpyAgency;
 use Psr\SimpleCache\CacheInterface;
-use Commune\Support\RunningSpy\Spied;
 use Commune\Blueprint\Framework\Session;
-use Commune\Support\RunningSpy\SpyTrait;
 
 /**
  * 模拟的cache. 方便测试用.
  */
-class ArrayCache implements Cache, Spied
+class ArrayCache implements Cache
 {
-    use SpyTrait;
-
     protected static $cached = [];
 
     protected static $hashMap = [];
-
-    protected $logger;
 
     /**
      * @var string
@@ -34,9 +29,8 @@ class ArrayCache implements Cache, Spied
 
     public function __construct(Session $session)
     {
-        $this->logger = $session->getLogger();
         $this->traceId = $session->getTraceId();
-        self::addRunningTrace($this->traceId, $this->traceId);
+        SpyAgency::incr(static::class);
     }
 
 
@@ -114,6 +108,7 @@ class ArrayCache implements Cache, Spied
     public function hSet(string $key, string $memberKey, string $value, int $ttl = null): bool
     {
         static::$hashMap[$key][$memberKey] = $value;
+        return true;
     }
 
     public function hGet(string $key, string $memberKey): ? string
@@ -150,7 +145,7 @@ class ArrayCache implements Cache, Spied
 
     public function __destruct()
     {
-        self::removeRunningTrace($this->traceId);
+        SpyAgency::decr(static::class);
     }
 
 }

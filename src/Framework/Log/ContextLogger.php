@@ -7,51 +7,25 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 use Commune\Contracts\Log\ExceptionReporter;
 
-class ContextLogger implements LoggerInterface
+abstract class ContextLogger implements LoggerInterface
 {
     use LoggerTrait;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $monolog;
+    abstract protected function getLogger() : LoggerInterface;
 
-    /**
-     * @var ExceptionReporter
-     */
-    protected $reporter;
+    abstract protected function getReporter() : ExceptionReporter;
 
-    /**
-     * @var array
-     */
-    protected $context;
-
-    /**
-     * MonologWriter constructor.
-     * @param LoggerInterface $logger
-     * @param ExceptionReporter $reporter
-     * @param array $context
-     */
-    public function __construct(
-        LoggerInterface $logger,
-        ExceptionReporter $reporter,
-        array $context = []
-    )
-    {
-        $this->monolog = $logger;
-        $this->reporter = $reporter;
-        $this->context = $context;
-    }
+    abstract protected function getContext() : array;
 
     public function log($level, $message, array $context = array())
     {
         // 尝试报告异常.
         if ($message instanceof \Throwable) {
-            $this->reporter->report($message);
+            $this->getReporter()->report($message);
             $message = get_class($message) . ' : ' . $message->getMessage();
         }
 
-        $this->monolog->log($level, $message, $context + $this->context);
+        $this->getLogger()->log($level, $message, $context + $this->getContext());
     }
 
 

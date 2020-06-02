@@ -14,6 +14,7 @@ namespace Commune\Ghost\Context\Builders;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Framework\Spy\SpyAgency;
 
 
 /**
@@ -30,6 +31,11 @@ class IStageBuilder implements StageBuilder
      * @var callable
      */
     protected $redirector;
+
+    public function __construct()
+    {
+        SpyAgency::incr(static::class);
+    }
 
     public function onRedirect($caller): StageBuilder
     {
@@ -85,5 +91,6 @@ class IStageBuilder implements StageBuilder
     {
         $this->redirector = null;
         $this->listeners = [];
+        SpyAgency::decr(static::class);
     }
 }

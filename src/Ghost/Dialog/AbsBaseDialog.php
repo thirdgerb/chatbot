@@ -11,6 +11,8 @@
 
 namespace Commune\Ghost\Dialog;
 
+use Commune\Blueprint\CommuneEnv;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Ghost\ITools;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Ucl;
@@ -85,6 +87,8 @@ abstract class AbsBaseDialog implements
      */
     protected $process;
 
+    private static $count = 0;
+
     /**
      * AbsBaseDialog constructor.
      * @param Cloner $cloner
@@ -100,6 +104,7 @@ abstract class AbsBaseDialog implements
         $this->_cloner = $cloner;
         $this->_ucl = $ucl->toInstance($cloner);
         $this->_prev = $prev;
+        SpyAgency::incr(static::class);
     }
 
     /*-------- dialog tool --------*/
@@ -289,20 +294,6 @@ abstract class AbsBaseDialog implements
         return $depth;
     }
 
-    public function __destruct()
-    {
-        $prev = $this->_prev;
-        unset($this->_prev);
-
-        if ($prev instanceof self) {
-            $prev->__destruct();
-        }
-
-        $this->_cloner = null;
-        $this->_ucl = null;
-        $this->process = null;
-    }
-
     public function getInterfaces(): array
     {
         return static::getInterfacesOf(
@@ -310,4 +301,19 @@ abstract class AbsBaseDialog implements
             false
         );
     }
+
+
+    public function __destruct()
+    {
+        if (CommuneEnv::isDebug()) {
+            self::$count--;
+        }
+
+        $this->_prev = null;
+        $this->_cloner = null;
+        $this->_ucl = null;
+        $this->process = null;
+        SpyAgency::decr(static::class);
+    }
+
 }

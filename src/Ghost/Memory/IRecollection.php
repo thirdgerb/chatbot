@@ -14,6 +14,7 @@ namespace Commune\Ghost\Memory;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 
@@ -42,6 +43,8 @@ class IRecollection implements Recollection
             $longTerm = $this->isLongTerm(),
             $def->getDefaults()
         );
+
+        SpyAgency::incr(static::class);
     }
 
     public function toInstanceStub(): ClonerInstanceStub
@@ -66,5 +69,9 @@ class IRecollection implements Recollection
         }
     }
 
+    public function __destruct()
+    {
+        SpyAgency::decr(static::class);
+    }
 
 }

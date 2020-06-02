@@ -55,14 +55,15 @@ class IClonerScope implements ClonerScope
         $this->convoId = $cloner->getConversationId();
         $this->sceneId = $cloner->scene->sceneId;
         $this->time = time();
+        unset($cloner);
     }
 
     public function toArray(): array
     {
         return [
             'clone' => $this->clonerId,
-            'guest' => $this->guestId,
             'convo' => $this->convoId,
+            'guest' => $this->guestId,
             'scene' => $this->sceneId,
             'time' => $this->time,
         ];

@@ -19,20 +19,17 @@ use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Runtime\Trace;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Ghost\RuntimeDriver;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Ghost\Memory\IMemory;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
-use Commune\Support\RunningSpy\Spied;
-use Commune\Support\RunningSpy\SpyTrait;
 use Commune\Blueprint\Exceptions\IO\SaveDataFailException;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IRuntime implements Runtime, Spied
+class IRuntime implements Runtime
 {
-    use SpyTrait;
-
     /**
      * @var Cloner
      */
@@ -56,9 +53,9 @@ class IRuntime implements Runtime, Spied
     protected $process;
 
     /**
-     * @var array|null
+     * @var array
      */
-    protected $convoMemories;
+    protected $sessionMemories = [];
 
     /**
      * @var array
@@ -86,7 +83,7 @@ class IRuntime implements Runtime, Spied
         }
 
         $this->traceId = $cloner->getTraceId();
-        static::addRunningTrace($this->traceId, $this->traceId);
+        SpyAgency::incr(static::class);
     }
 
     /*---- memory ----*/
@@ -100,13 +97,12 @@ class IRuntime implements Runtime, Spied
 
     protected function findSessionMemory(string $id, array $defaults) : Memory
     {
-        if (isset($this->convoMemories[$id])) {
-            return $this->convoMemories[$id];
+        if (isset($this->sessionMemories[$id])) {
+            return $this->sessionMemories[$id];
         }
 
-
         // 不存在则生成
-        return $this->convoMemories[$id] = $this->ioFindSessionMemory($id) ?? new IMemory($id, false, $defaults);
+        return $this->sessionMemories[$id] = $this->ioFindSessionMemory($id) ?? new IMemory($id, false, $defaults);
     }
 
     protected function findLongTermMemory(string $id, array $defaults) : Memory
@@ -276,7 +272,7 @@ class IRuntime implements Runtime, Spied
             return true;
         }
 
-        $memories = array_filter($this->convoMemories, function(Memory $memory){
+        $memories = array_filter($this->sessionMemories, function(Memory $memory){
             return $memory->isChanged();
         });
 
@@ -382,8 +378,8 @@ class IRuntime implements Runtime, Spied
         $this->cloner = null;
         $this->process = null;
         $this->longTermMemories = [];
-        $this->convoMemories = null;
+        $this->sessionMemories = [];
 
-        static::removeRunningTrace($this->traceId);
+        SpyAgency::decr(static::class);
     }
 }

@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -19,4 +20,6 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 interface Trace
 {
     public function record(Operator $operator) : void;
+
+    public function log(LoggerInterface $logger) : void;
 }

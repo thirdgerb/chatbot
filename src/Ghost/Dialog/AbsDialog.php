@@ -24,7 +24,6 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  */
 abstract class AbsDialog extends AbsBaseDialog
 {
-
     public function await(
         array $stageRoutes = [],
         array $contextRoutes = [],

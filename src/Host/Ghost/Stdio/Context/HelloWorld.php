@@ -49,7 +49,8 @@ class HelloWorld extends ACodeContext
                 ->send()
                 ->info('receive : ' . $dialog->message->getText())
                 ->over()
-                ->fulfill();
+                ->reactivate();
+                //->fulfill();
         });
     }
 

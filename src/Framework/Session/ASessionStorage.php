@@ -12,19 +12,17 @@
 namespace Commune\Framework\Session;
 
 use Commune\Contracts\Cache;
-use Commune\Support\RunningSpy\Spied;
-use Commune\Support\RunningSpy\SpyTrait;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Framework\Session\SessionStorage;
 use Commune\Blueprint\Exceptions\IO\SaveDataFailException;
+use Commune\Framework\Spy\SpyAgency;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class ASessionStorage implements SessionStorage, Spied
+abstract class ASessionStorage implements SessionStorage
 {
-    use SpyTrait;
 
     /**
      * @var string
@@ -61,8 +59,7 @@ abstract class ASessionStorage implements SessionStorage, Spied
             $this->initDataFromCache();
         }
 
-        static::addRunningTrace($this->traceId, $this->traceId);
-
+        SpyAgency::incr(static::class);
     }
 
     abstract public function getSessionKey(string $sessionName, string $sessionId) : string;
@@ -145,7 +142,7 @@ abstract class ASessionStorage implements SessionStorage, Spied
         $this->cache = null;
         $this->data = [];
 
-        static::removeRunningTrace($this->traceId);
+        SpyAgency::decr(static::class);
     }
 
 

@@ -224,8 +224,6 @@ class OAwait extends AbsFinale implements Await
         return $this->addUclToQuestion($question, $index, $ucl);
     }
 
-
-
     protected function addUclToQuestion(QuestionMsg $question, $index, $suggestion) : bool
     {
         if (!$suggestion instanceof Ucl) {
@@ -263,5 +261,15 @@ class OAwait extends AbsFinale implements Await
         return true;
     }
 
-
+    protected function destroy(): void
+    {
+        unset($this->dialog);
+        unset($this->cloner);
+        unset($this->process);
+        unset($this->stageReg);
+        unset($this->stageRoutes);
+        unset($this->contextRoutes);
+        unset($this->question);
+        parent::destroy();
+    }
 }

@@ -93,24 +93,12 @@ class ClonerServiceProvider extends ServiceProvider
     {
         $app->singleton(ClonerLogger::class, function(Container $app) {
             /**
-             * @var InputMsg $input
-             * @var ExceptionReporter $reporter
              * @var LoggerInterface $logger
              */
-            $input = $app->make(InputMsg::class);
             $logger = $app->make(LoggerInterface::class);
-            $reporter = $app->make(ExceptionReporter::class);
-
             return new IClonerLogger(
                 $logger,
-                $reporter,
-                [
-                    'sid' => $input->getSessionId(),
-                    'tid' => $input->getTraceId(),
-                    'mid' => $input->getMessageId(),
-                    'cid' => $input->getConversationId(),
-                    'shn' => $input->getShellName(),
-                ]
+                $app
             );
         });
     }

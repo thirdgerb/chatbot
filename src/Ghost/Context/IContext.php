@@ -19,13 +19,13 @@ use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Message\Host\Convo\IContextMsg;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\TArrayAccessToMutator;
 use Commune\Blueprint\Exceptions\CommuneLogicException;
 use Commune\Support\DI\TInjectable;
-use Illuminate\Support\Collection;
 
 /**
  * 上下文语境的默认.
@@ -64,11 +64,6 @@ class IContext implements Context
     protected $_def;
 
     /**
-     * @var Collection|null
-     */
-    protected $_query;
-
-    /**
      * @var Task|null
      */
     protected $_task;
@@ -85,6 +80,7 @@ class IContext implements Context
     {
         $this->_cloner = $cloner;
         $this->_ucl = $ucl;
+        SpyAgency::incr(static::class);
     }
 
     public static function create(Cloner $cloner, Ucl $ucl): Context
@@ -126,10 +122,9 @@ class IContext implements Context
         return $this->getDef()->getPriority();
     }
 
-    public function getQuery(): Collection
+    public function getQuery(): array
     {
-        return $this->_query
-            ?? $this->_query = new Collection($this->_ucl->query);
+        return $this->_ucl->query;
     }
 
     public function getCloner(): Cloner
@@ -188,7 +183,7 @@ class IContext implements Context
 
     public function toArray(): array
     {
-        $data = $this->getQuery()->toArray();
+        $data = $this->getQuery();
         $data = $data + $this->getRecollection()->toArray();
 
         return $data;
@@ -201,6 +196,10 @@ class IContext implements Context
 
     public function merge(array $data): void
     {
+        if (empty($data)) {
+            return;
+        }
+
         foreach ($data as $key => $val) {
             $this->offsetSet($key, $val);
         }
@@ -243,7 +242,7 @@ class IContext implements Context
     {
         $query = $this->getQuery();
 
-        if($query->has($offset)) {
+        if(array_key_exists($offset, $query)) {
             return $query[$offset];
         }
 
@@ -262,7 +261,7 @@ class IContext implements Context
     {
         $query = $this->getQuery();
 
-        if ($query->has($offset)) {
+        if (array_key_exists($offset, $query)) {
             $contextName = $this->getName();
             $error = "context $contextName try to unset value for query parameter $offset";
             $this->warningOrException($error);
@@ -292,9 +291,10 @@ class IContext implements Context
     public function __destruct()
     {
         $this->_def = null;
-        $this->_query = null;
         $this->_ucl = null;
         $this->_cloner = null;
         $this->_task = null;
+        $this->_recollection = null;
+        SpyAgency::decr(static::class);
     }
 }

@@ -15,10 +15,9 @@ use Commune\Blueprint\Configs\Nest\ProtocalOption;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
 use Commune\Framework\Exceptions\SerializeForbiddenException;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Support\Pipeline\OnionPipeline;
 use Commune\Support\Protocal\Protocal;
-use Commune\Support\RunningSpy\Spied;
-use Commune\Support\RunningSpy\SpyTrait;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 
@@ -26,9 +25,9 @@ use Commune\Support\Uuid\IdGeneratorHelper;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class ASession implements Session, Spied, HasIdGenerator
+abstract class ASession implements Session, HasIdGenerator
 {
-    use SpyTrait, IdGeneratorHelper;
+    use IdGeneratorHelper;
 
     const SINGLETONS = [
     ];
@@ -92,7 +91,7 @@ abstract class ASession implements Session, Spied, HasIdGenerator
         $this->traceId = $container->getId();
         // 允许为 null
         $this->sessionId = $sessionId ?? $this->createUuId();
-        static::addRunningTrace($this->traceId, $this->traceId);
+        SpyAgency::incr(static::class);
     }
 
     /*------ id ------*/
@@ -254,8 +253,9 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
         $this->listened = [];
         $this->singletons = [];
-        $this->flushInstances();
         $this->finished = true;
+        $this->protocalMap = null;
+        $this->flushInstances();
 
         // container
         $this->container->destroy();
@@ -271,9 +271,6 @@ abstract class ASession implements Session, Spied, HasIdGenerator
 
     public function __destruct()
     {
-        $this->container = null;
-        $this->singletons = [];
-        $this->protocalMap = null;
-        static::removeRunningTrace($this->traceId);
+        SpyAgency::decr(static::class);
     }
 }

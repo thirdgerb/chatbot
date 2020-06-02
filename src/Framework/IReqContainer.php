@@ -13,9 +13,8 @@ namespace Commune\Framework;
 
 use Commune\Container\ContainerContract;
 use Commune\Container\RecursiveContainer;
-use Commune\Support\RunningSpy\Spied;
-use Commune\Support\RunningSpy\SpyTrait;
 use Commune\Blueprint\Framework\ReqContainer;
+use Commune\Framework\Spy\SpyAgency;
 
 
 /**
@@ -25,11 +24,10 @@ use Commune\Blueprint\Framework\ReqContainer;
  *
  * 所属需要实现以下两个 interface
  * @mixin ReqContainer
- * @mixin Spied
  */
-class IReqContainer implements ReqContainer, Spied
+class IReqContainer implements ReqContainer
 {
-    use RecursiveContainer, SpyTrait;
+    use RecursiveContainer;
 
     /**
      * @var string
@@ -65,7 +63,7 @@ class IReqContainer implements ReqContainer, Spied
     {
         $container = new static($procContainer);
         $container->uuid = $id;
-        static::addRunningTrace($id, $id);
+        SpyAgency::incr(static::class);
         return $container;
     }
 
@@ -94,8 +92,8 @@ class IReqContainer implements ReqContainer, Spied
 
     public function __destruct()
     {
-        // 回收 ID
-        static::removeRunningTrace($this->uuid);
+        $this->parentContainer = null;
+        SpyAgency::decr(static::class);
     }
 
 }

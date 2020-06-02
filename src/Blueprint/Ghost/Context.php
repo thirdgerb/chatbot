@@ -107,9 +107,9 @@ interface Context extends
     public function isPrepared() : bool;
 
     /**
-     * @return Collection
+     * @return array
      */
-    public function getQuery() : Collection;
+    public function getQuery() : array;
 
     /*----- assignment -----*/
 

@@ -29,8 +29,5 @@ class OReactivate extends AbsOperator
         return $ucl
             ->findStageDef($this->dialog->cloner)
             ->onActivate($reactivate);
-
     }
-
-
 }

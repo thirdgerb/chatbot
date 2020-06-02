@@ -14,17 +14,13 @@ namespace Commune\Ghost\IOperate;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Finale;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Framework\Spy\SpyAgency;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class BridgeOperator implements Operator
 {
-    /**
-     * @var Operator
-     */
-    protected $prev;
-
     /**
      * @var Operator
      */
@@ -38,12 +34,13 @@ class BridgeOperator implements Operator
     /**
      * BridgeOperator constructor.
      * @param Operator $current
-     * @param callable $next
+     * @param \Closure $next
      */
-    public function __construct(Operator $current, callable $next)
+    public function __construct(Operator $current, \Closure $next)
     {
         $this->current = $current;
         $this->next = $next;
+        SpyAgency::incr(static::class);
     }
 
     public function tick(): Operator
@@ -51,10 +48,15 @@ class BridgeOperator implements Operator
         if ($this->current instanceof Finale) {
             $next = call_user_func(
                 $this->next,
-                $this->current->getDialog()
+                $this->getDialog()
             );
 
-            return $next ?? $this->current;
+            $current = $this->current;
+
+            unset($this->current);
+            unset($this->next);
+
+            return $next ?? $current;
         }
 
         $this->current = $this->current->tick();
@@ -76,5 +78,9 @@ class BridgeOperator implements Operator
         return $this;
     }
 
+    public function __destruct()
+    {
+        SpyAgency::decr(static::class);
+    }
 
 }

@@ -15,6 +15,7 @@ use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Ghost\Exceptions\TooManyRedirectsException;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Runtime\Trace;
+use Commune\Framework\Spy\SpyAgency;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -44,20 +45,14 @@ class ITrace implements Trace
     protected $maxTimes;
 
     /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * ITrace constructor.
      * @param int $maxTimes
-     * @param LoggerInterface $logger
      */
-    public function __construct(int $maxTimes, LoggerInterface $logger)
+    public function __construct(int $maxTimes)
     {
         $this->maxTimes = $maxTimes;
-        $this->logger = $logger;
         $this->debug = CommuneEnv::isDebug();
+        SpyAgency::incr(static::class);
     }
 
 
@@ -79,16 +74,19 @@ class ITrace implements Trace
         }
     }
 
-    public function __destruct()
+    public function log(LoggerInterface $logger): void
     {
-        if ($this->debug) {
-            $this->logger->debug('runtime dialog trace', [
+        $logger->debug(
+            "runtime trace",
+            [
                 'operates' => $this->operates,
-
-            ]);
-        }
-        unset($this->logger);
+            ]
+        );
     }
 
+    public function __destruct()
+    {
+        SpyAgency::decr(static::class);
+    }
 
 }

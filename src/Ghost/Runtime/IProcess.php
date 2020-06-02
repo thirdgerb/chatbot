@@ -16,6 +16,7 @@ use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Runtime\Waiter;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Utils\ArrayUtils;
@@ -130,6 +131,7 @@ class IProcess implements Process, HasIdGenerator
         $this->_belongsTo = $belongsTo;
         $this->_id = $id ?? $this->createUuId();
         $this->_root = $root->toEncodedStr();
+        SpyAgency::incr(static::class);
     }
 
     public function nextSnapshot(string $id, int $maxBacktrace): Process
@@ -137,6 +139,7 @@ class IProcess implements Process, HasIdGenerator
         $next = clone $this;
         $next->_id = $id ?? $this->createUuId();
         $next->_prev = $this;
+        self::$maxBacktrace = $maxBacktrace;
         return $next;
     }
 
@@ -269,6 +272,7 @@ class IProcess implements Process, HasIdGenerator
         $this->setWaiting($ucl, Context::BLOCKING);
         $id = $ucl->getContextId();
         $this->_depending[$id] = $priority;
+        ArrayUtils::maxLength($this->_depending, self::$maxBlocking);
     }
 
     public function firstBlocking(): ? Ucl
@@ -298,8 +302,8 @@ class IProcess implements Process, HasIdGenerator
         $this->setWaiting($ucl, Context::SLEEPING);
 
         $id = $ucl->getContextId();
-
         $this->_sleeping[$id] = $wakenStages;
+        ArrayUtils::maxLength($this->_sleeping, self::$maxSleeping);
     }
 
     public function firstSleeping(): ? Ucl
@@ -408,6 +412,7 @@ class IProcess implements Process, HasIdGenerator
         $this->setWaiting($ucl, Context::DYING);
         $contextId = $ucl->getContextId();
         $this->_dying[$contextId] = [$turns, $restoreStages];
+        ArrayUtils::maxLength($this->_dying, self::$maxDying);
     }
 
     public function gc(): void
@@ -574,6 +579,7 @@ class IProcess implements Process, HasIdGenerator
         $this->_backtrace = [];
         $this->_tasks = [];
         $this->_waiter = null;
+        SpyAgency::decr(static::class);
     }
 
 }

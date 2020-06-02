@@ -102,7 +102,6 @@ class GhostConfig extends AbsOption
             'procProviders' => [
                 Framework\Providers\ExpReporterByConsoleProvider::class,
                 Framework\Providers\LoggerByMonologProvider::class,
-                Framework\Providers\SpyAgencyServiceProvider::class,
                 GhostProviders\MindsetServiceProvider::class,
             ],
             'reqProviders' => [

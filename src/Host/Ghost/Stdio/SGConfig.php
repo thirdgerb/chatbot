@@ -42,7 +42,6 @@ class SGConfig extends GhostConfig
             'procProviders' => [
                 Framework\Providers\ExpReporterByConsoleProvider::class,
                 Framework\Providers\LoggerByMonologProvider::class,
-                Framework\Providers\SpyAgencyServiceProvider::class,
                 Framework\Providers\SoundLikeServiceProvider::class,
                 GhostProviders\MindsetServiceProvider::class,
             ],
@@ -94,7 +93,7 @@ class SGConfig extends GhostConfig
             'sessionLockerExpire' => 3,
             'maxRedirectTimes' => 255,
             'mindsetCacheExpire' => 600,
-            'maxBacktrace' => 10,
+            'maxBacktrace' => 3,
             'defaultContextName' => HelloWorld::class,
             'sceneContextNames' => [
             ],

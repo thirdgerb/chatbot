@@ -18,7 +18,6 @@ use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Ghost\IMindDef\IIntentDef;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;

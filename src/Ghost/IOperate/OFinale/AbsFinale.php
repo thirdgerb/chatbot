@@ -57,7 +57,7 @@ abstract class AbsFinale extends AbsOperator implements Finale
     protected function setProcess(Process $process) : void
     {
         $this->process = $process;
-        $this->dialog->cloner->runtime->setCurrentProcess($process);
+        $this->cloner->runtime->setCurrentProcess($process);
     }
 
     protected function runAwait(bool $silent = false ) : void

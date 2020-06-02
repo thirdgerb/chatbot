@@ -25,17 +25,12 @@ use Commune\Protocals\Intercom\InputMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class OStart implements Operator
+class OStart extends AbsOperator
 {
     /**
      * @var Cloner
      */
     protected $cloner;
-
-    /**
-     * @var Dialog
-     */
-    protected $dialog;
 
     /**
      * @var Process
@@ -52,10 +47,11 @@ class OStart implements Operator
         $this->cloner = $cloner;
         $this->process = $cloner->runtime->getCurrentProcess();
         $this->start = $this->process->getAwait() ?? $this->process->getRoot();
-        $this->dialog = new IReceive($this->cloner, $this->start, null);
+        $dialog = new IReceive($this->cloner, $this->start, null);
+        parent::__construct($dialog);
     }
 
-    public function tick(): Operator
+    protected function toNext(): Operator
     {
         $process = $this->process;
         // 先 activate
@@ -83,6 +79,15 @@ class OStart implements Operator
             // 啥都没有的时候, 让 await ucl 来处理.
             ?? $this->heed();
     }
+
+    protected function destroy(): void
+    {
+        $this->cloner = null;
+        $this->process = null;
+        $this->start = null;
+        parent::destroy();
+    }
+
 
     /*------ pipeline ------*/
 
@@ -129,13 +134,15 @@ class OStart implements Operator
             // 先 reactivate
             $reactivate = $this->dialog->reactivate();
 
-            // 然后重新启动.
-            return new BridgeOperator($reactivate, function(Dialog $dialog) {
+            $creator = function(Dialog $dialog) {
                 if (!$dialog->process->isFresh()) {
                     return new OStart($dialog->cloner);
                 }
                 return null;
-            });
+            };
+
+            // 然后重新启动.
+            return new BridgeOperator($reactivate, $creator);
         }
 
         return null;

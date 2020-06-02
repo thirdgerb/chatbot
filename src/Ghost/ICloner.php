@@ -15,7 +15,6 @@ use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Context;
 use Commune\Contracts\Cache;
 use Commune\Framework\ASession;
 use Psr\Log\LoggerInterface;
@@ -71,11 +70,6 @@ class ICloner extends ASession implements Cloner
      * @var int
      */
     protected $expire;
-
-    /**
-     * @var Context[]
-     */
-    protected $contexts = [];
 
     /**
      * @var IntercomMsg[]
@@ -317,7 +311,6 @@ class ICloner extends ASession implements Cloner
         $this->ghost = null;
         $this->ghostConfig = null;
         $this->input = null;
-        $this->contexts = [];
         $this->outputs = [];
         $this->asyncInputs = [];
     }

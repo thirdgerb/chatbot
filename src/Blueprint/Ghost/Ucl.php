@@ -11,8 +11,9 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
-use Commune\Support\Parameter\IParamDefs;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Utils\ArrayUtils;
@@ -22,7 +23,6 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Exceptions\InvalidQueryException;
-use Illuminate\Support\Arr;
 
 /**
  * Uniform Context Locator
@@ -104,6 +104,8 @@ class Ucl implements UclInterface
      */
     protected $context;
 
+    private static $count = 0;
+
     /**
      * Ucl constructor.
      * @param string $contextName
@@ -116,11 +118,16 @@ class Ucl implements UclInterface
         array $query = []
     )
     {
+        if (CommuneEnv::isDebug()) {
+            self::$count ++;
+        }
+
         // 允许使用类名作为 contextName
         $this->_contextName = $contextName;
         // 真正的 contextName 和 stageName 必须全小写.
         $this->_stageName = $stageName;
         $this->_query = $query;
+        SpyAgency::incr(static::class);
     }
 
     public static function make(
@@ -147,7 +154,7 @@ class Ucl implements UclInterface
     public function getContextId() : string
     {
         return $this->contextId
-            ?? $this->contextId == sha1(json_encode([
+            ?? $this->contextId = sha1(json_encode([
                 'contextName' => $this->_contextName,
                 'query' => $this->_query,
             ]));
@@ -208,11 +215,7 @@ class Ucl implements UclInterface
         /**
          * @var Ucl $ucl
          */
-        $ucl = new static($this->_contextName, $stageName, $this->_query);
-        $ucl->contextDef = $this->contextDef;
-        $ucl->contextId = $this->contextId;
-
-        return $ucl;
+        return new static($this->_contextName, $stageName, $this->_query);
     }
 
 
@@ -441,15 +444,15 @@ class Ucl implements UclInterface
         $def = $this->findContextDef($cloner);
         $context = $def->wrapContext($cloner, $this);
 
-        $intentDef = $this->findIntentDef($cloner);
         // 是否意图匹配中命中了 entities
         $entities = $cloner->input
             ->comprehension
             ->intention
-            ->getIntentEntities($intentDef->getIntentName());
+            ->getIntentEntities($this->getStageFullname());
 
         // 匹配到了 entity 的话, 默认会合并.
         if (!empty($entities)) {
+            $intentDef = $this->findIntentDef($cloner);
             $entities = $intentDef->parseEntities($entities);
             $context->merge($entities);
         }
@@ -506,5 +509,7 @@ class Ucl implements UclInterface
         $this->intentDef = null;
         $this->contextDef = null;
         $this->context = null;
+        SpyAgency::decr(static::class);
     }
+
 }
