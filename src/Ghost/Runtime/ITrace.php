@@ -11,11 +11,10 @@
 
 namespace Commune\Ghost\Runtime;
 
-use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Ghost\Exceptions\TooManyRedirectsException;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Runtime\Trace;
-use Commune\Support\Arr\ArrayAbleToJson;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -23,21 +22,26 @@ use Psr\Log\LoggerInterface;
  */
 class ITrace implements Trace
 {
-    use ArrayAbleToJson;
 
-    protected $records = [];
+    /**
+     * @var array
+     */
+    protected $operates = [];
 
+    /**
+     * @var bool
+     */
+    protected $debug;
+
+    /**
+     * @var int
+     */
     protected $times = 0;
 
     /**
      * @var int
      */
     protected $maxTimes;
-
-    /**
-     * @var bool
-     */
-    protected $debug;
 
     /**
      * @var LoggerInterface
@@ -47,20 +51,19 @@ class ITrace implements Trace
     /**
      * ITrace constructor.
      * @param int $maxTimes
-     * @param bool $debug
      * @param LoggerInterface $logger
      */
-    public function __construct(int $maxTimes, LoggerInterface $logger, bool $debug = true)
+    public function __construct(int $maxTimes, LoggerInterface $logger)
     {
         $this->maxTimes = $maxTimes;
-        $this->debug = $debug;
         $this->logger = $logger;
+        $this->debug = CommuneEnv::isDebug();
     }
 
 
     public function toArray(): array
     {
-        return $this->records;
+        return $this->operates;
     }
 
     public function record(Operator $operator): void
@@ -71,14 +74,20 @@ class ITrace implements Trace
             throw new TooManyRedirectsException($this->times);
         }
 
-        $this->records[] = $operator->getOperatorDesc();
+        if ($this->debug) {
+            $this->operates[] = $operator->getName();
+        }
     }
 
     public function __destruct()
     {
         if ($this->debug) {
-            $this->logger->debug('runtime dialog trace : '. $this->toJson());
+            $this->logger->debug('runtime dialog trace', [
+                'operates' => $this->operates,
+
+            ]);
         }
+        unset($this->logger);
     }
 
 

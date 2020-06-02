@@ -11,12 +11,12 @@
 
 namespace Commune\Blueprint\Exceptions\Logic;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class InvalidConfigException extends HostLogicException
+class InvalidConfigException extends CommuneLogicException
 {
 
     public function __construct(string $configType, string $optionName, string $error = '')

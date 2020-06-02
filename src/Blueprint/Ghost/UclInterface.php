@@ -38,11 +38,13 @@ interface UclInterface extends ArrayAndJsonAble
     /**
      * @param string $contextName
      * @param array $query
+     * @param string $stageName
      * @return Ucl
      */
     public static function make(
         string $contextName,
-        array $query
+        array $query = [],
+        string $stageName = ''
     ) : Ucl;
 
     /**

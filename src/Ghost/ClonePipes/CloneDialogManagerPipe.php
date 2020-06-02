@@ -15,7 +15,7 @@ use Commune\Ghost\IOperate\OStart;
 use Commune\Blueprint\Ghost\Operate\Finale;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
-use Commune\Blueprint\Exceptions\HostRuntimeException;
+use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 
 /**
@@ -30,7 +30,6 @@ class CloneDialogManagerPipe extends AClonePipe
         try {
 
             $tracer = $this->cloner->runtime->trace;
-
             while (isset($next)) {
 
                 $tracer->record($next);
@@ -45,7 +44,7 @@ class CloneDialogManagerPipe extends AClonePipe
 
             return $request->success($this->cloner);
 
-        } catch (HostRuntimeException $e) {
+        } catch (CommuneRuntimeException $e) {
             throw $e;
 
         } catch (\Throwable $e) {

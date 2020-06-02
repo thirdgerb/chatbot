@@ -14,8 +14,9 @@ namespace Commune\Blueprint\Ghost\MindMeta;
 use Commune\Support\Option\AbsMeta;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
-use Commune\Ghost\Context\Prototype\IContextDef;
+use Commune\Ghost\Context\IContextDef;
 use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
+use Commune\Support\Option\Wrapper;
 
 /**
  * Context 配置的元数据.
@@ -31,7 +32,7 @@ use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
  *
  * @property-read array $config     wrapper 对应的配置.
  */
-class ContextMeta extends AbsMeta
+class ContextMeta extends AbsMeta implements DefMeta
 {
 
     const IDENTITY = 'name';
@@ -57,7 +58,7 @@ class ContextMeta extends AbsMeta
         return AliasesForContext::getOriginFromAlias($wrapper);
     }
 
-    public function __set_wrapper(string $name, $value) : string
+    public function __set_wrapper(string $name, $value) : void
     {
         $this->_data[$name] = AliasesForContext::getAliasOfOrigin(strval($value));
     }
@@ -79,8 +80,8 @@ class ContextMeta extends AbsMeta
 
     public static function validateWrapper(string $wrapper): ? string
     {
-        $defType = ContextDef::class;
-        return is_a($wrapper, $defType, TRUE)
+        // 从设计理念上看, Context Wrapper 可以指定为 CodableContext , 情况特殊.
+        return is_a($wrapper, $defType = Wrapper::class, TRUE)
             ? null
             : static::class . " wrapper should be subclass of $defType, $wrapper given";
     }

@@ -95,7 +95,7 @@ class IEmotionDef implements EmotionDef
         return false;
     }
 
-    public function getMeta(): Meta
+    public function toMeta(): Meta
     {
         return $this->meta;
     }
@@ -104,7 +104,7 @@ class IEmotionDef implements EmotionDef
      * @param EmotionMeta $meta
      * @return Wrapper
      */
-    public static function wrap(Meta $meta): Wrapper
+    public static function wrapMeta(Meta $meta): Wrapper
     {
         return new static($meta);
     }

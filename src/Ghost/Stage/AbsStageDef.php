@@ -23,6 +23,7 @@ use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Support\Utils\ArrayUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -69,7 +70,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
     public function _filter(array $data): void
     {
         $data['asIntent'] = IntentMeta::mergeStageInfo(
-            $data['asIntent'] ?? [],
+            ArrayUtils::fetchArray($data, 'asIntent'),
             $data['name'] ?? '',
             $data['title'] ?? '',
             $data['desc'] ?? ''
@@ -178,20 +179,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
 
     public function asIntentDef(): IntentDef
     {
-        $config = $this->asIntent;
-        if (empty($config['name'])) {
-            $config['name'] = $this->name;
-        }
-
-        if (empty($config['title'])) {
-            $config['title'] = $this->title;
-        }
-
-        if (empty($config['desc'])) {
-            $config['desc'] = $this->desc;
-        }
-
-        return new IIntentDef(new IntentMeta($config));
+        return $this->asIntent->toWrapper();
     }
 
     /*------- wrapper -------*/
@@ -199,34 +187,30 @@ abstract class AbsStageDef extends AbsOption implements StageDef
     /**
      * @return StageMeta
      */
-    public function getMeta(): Meta
+    public function toMeta(): Meta
     {
         $data = $this->toArray();
 
         $name = $data['name'] ?? '';
         unset($data['name']);
-
-        $contextName = $data['contextName'] ?? '';
         unset($data['contextName']);
-
-        $title = $data['title'] ?? '';
         unset($data['title']);
-
-        $desc = $data['desc'] ?? '';
         unset($data['desc']);
+        unset($data['stageName']);
 
 
         return new StageMeta([
             'name' => $name,
-            'contextName' => $contextName,
-            'title' => $title,
-            'desc' => $desc,
+            'stageName' => $this->stageName,
+            'contextName' => $this->contextName,
+            'title' => $this->title,
+            'desc' => $this->desc,
             'wrapper' => static::class,
             'config' => [],
         ]);
     }
 
-    public static function wrap(Meta $meta): Wrapper
+    public static function wrapMeta(Meta $meta): Wrapper
     {
         if (!$meta instanceof StageMeta) {
             throw new InvalidArgumentException(
@@ -239,6 +223,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
         $config['contextName'] = $meta->contextName;
         $config['title'] = $meta->title;
         $config['desc'] = $meta->desc;
+        $config['stageName'] = $meta->stageName;
 
         return new static($config);
     }

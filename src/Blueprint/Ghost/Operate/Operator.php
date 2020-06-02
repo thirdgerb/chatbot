@@ -32,6 +32,11 @@ interface Operator
     public function getDialog() : Dialog;
 
     /**
+     * @return string
+     */
+    public function getName() : string;
+
+    /**
      * 可以作为 callable 对象传给 dialog::caller
      * @return Operator
      */

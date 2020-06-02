@@ -18,7 +18,7 @@ use Commune\Blueprint\Framework\Request\AppResponse;
  * 机器人运行时异常.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class HostRuntimeException extends \RuntimeException
+class CommuneRuntimeException extends \RuntimeException
 {
     public function __construct(
         string $message = "",

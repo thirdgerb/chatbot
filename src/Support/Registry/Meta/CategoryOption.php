@@ -36,8 +36,8 @@ class CategoryOption extends AbsOption
         return [
             'name' => '',
             'optionClass' => '',
-            'title' => 'title',
-            'desc' => 'desc',
+            'title' => '',
+            'desc' => '',
             'storage' => [],
             'initialStorage' => null,
         ];

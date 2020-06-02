@@ -144,7 +144,21 @@ class IProcess implements Process, HasIdGenerator
 
     public function toArray(): array
     {
-        // todo
+        return [
+            'belongTo' => $this->_belongsTo,
+            'id' => $this->_id,
+            'tasks' => ArrayUtils::recursiveToArray($this->_tasks),
+            'root' => $this->_root,
+            'waiter' => $this->_waiter->toArray(),
+            'backtrace' => ArrayUtils::recursiveToArray($this->_backtrace),
+            'waiting' => [
+                'callbacks' => $this->_callbacks,
+                'depending' => $this->_depending,
+                'blocking' => $this->_blocking,
+                'sleeping' => $this->_sleeping,
+                'dying' => $this->_dying,
+            ]
+        ];
     }
 
     /*-------- wait --------*/
@@ -175,7 +189,7 @@ class IProcess implements Process, HasIdGenerator
         $this->_waiter = $waiter;
 
         array_unshift($this->_backtrace, $last);
-        ArrayUtils::slice($this->_backtrace, self::$maxBacktrace);
+        ArrayUtils::maxLength($this->_backtrace, self::$maxBacktrace);
     }
 
     public function isFresh(): bool
@@ -524,6 +538,8 @@ class IProcess implements Process, HasIdGenerator
         return [
             '_id',
             '_belongsTo',
+            '_tasks',
+            '_root',
             '_waiter',
             '_backtrace',
             '_callbacks',

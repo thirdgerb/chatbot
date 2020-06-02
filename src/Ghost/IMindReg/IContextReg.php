@@ -12,7 +12,6 @@
 namespace Commune\Ghost\IMindReg;
 
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
-use Commune\Blueprint\Ghost\MindDef\Def;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\MindReg\ContextReg;
 
@@ -25,32 +24,6 @@ class IContextReg extends AbsDefRegistry implements ContextReg
     public function getMetaId(): string
     {
         return ContextMeta::class;
-    }
-
-    /**
-     * @param ContextDef $def
-     * @param bool $notExists
-     * @return bool
-     */
-    protected function doRegisterDef(Def $def, bool $notExists) : bool
-    {
-        $success = parent::doRegisterDef($def, $notExists);
-
-        $stageReg = $this->mindset->stageReg();
-        $success = $success
-            // 同时注册到 StageDef 中.
-            && $stageReg->registerDef($def->asStageDef(), $notExists)
-            && $this->mindset->memoryReg()->registerDef($def->asMemoryDef(), $notExists);
-
-        $stageReg->registerDef($def->asStageDef());
-
-        if ($success) {
-            foreach ($def->eachPredefinedStage() as $stageDef) {
-                $stageReg->registerDef($stageDef, $notExists);
-            }
-        }
-
-        return $success;
     }
 
     protected function getDefType(): string

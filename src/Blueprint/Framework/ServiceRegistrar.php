@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Framework;
 
-use Commune\Blueprint\Exceptions\HostBootingException;
+use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Contracts\ServiceProvider;
 
@@ -114,7 +114,7 @@ interface ServiceRegistrar
     /**
      * 启动配置类服务.
      * @return bool
-     * @throws HostBootingException
+     * @throws CommuneBootingException
      */
     public function bootConfigServices() : bool;
 
@@ -122,14 +122,14 @@ interface ServiceRegistrar
     /**
      * 启动进程类服务
      * @return bool
-     * @throws HostBootingException
+     * @throws CommuneBootingException
      */
     public function bootProcServices() : bool;
 
     /**
      * 启动请求类服务
      *
-     * @throws HostBootingException
+     * @throws CommuneBootingException
      * @param ReqContainer $container
      * @return bool
      */

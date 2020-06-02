@@ -19,7 +19,6 @@ use Commune\Blueprint\Ghost\MindReg\IntentReg;
 use Commune\Blueprint\Ghost\MindReg\MemoryReg;
 use Commune\Blueprint\Ghost\MindReg\StageReg;
 use Commune\Blueprint\Ghost\MindReg\SynonymReg;
-use Psr\Log\LoggerInterface;
 
 /**
  * 对话机器人的基础思维
@@ -30,14 +29,13 @@ interface Mindset
 {
 
     /**
-     * 初始化所有的 Contexts
-     *
-     * @param LoggerInterface $logger
+     * 清除所有逻辑的记忆.
+     * 非常危险的举动. 各处应该做好备份.
      */
-    public function initContexts(LoggerInterface $logger) : void;
+    public function reset() : void;
 
     /**
-     * 清空所有的逻辑记忆.
+     * 清空所有的逻辑缓存
      */
     public function reload() : void;
 

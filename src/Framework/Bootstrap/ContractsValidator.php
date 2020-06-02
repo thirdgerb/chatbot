@@ -11,7 +11,7 @@
 
 namespace Commune\Framework\Bootstrap;
 
-use Commune\Blueprint\Exceptions\HostBootingException;
+use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\Bootstrapper;
 
@@ -31,7 +31,7 @@ abstract class ContractsValidator implements Bootstrapper
         $proc = $app->getProcContainer();
         foreach ($procBindings as $abstract) {
             if (!$proc->bound($abstract)) {
-                throw new HostBootingException(
+                throw new CommuneBootingException(
                     $logInfo->bootContractNotBound($abstract)
                 );
             }
@@ -41,7 +41,7 @@ abstract class ContractsValidator implements Bootstrapper
         $req = $app->getReqContainer();
         foreach ($reqBindings as $abstract) {
             if (!$req->bound($abstract)) {
-                throw new HostBootingException(
+                throw new CommuneBootingException(
                     $logInfo->bootContractNotBound($abstract)
                 );
             }

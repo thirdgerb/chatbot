@@ -14,7 +14,6 @@ namespace Commune\Ghost\Support;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Support\Utils\StringUtils;
-use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -27,8 +26,15 @@ class ContextUtils
         return StringUtils::gluePrefixAndName(
             $contextName,
             $stageName,
-            Context::CONTEXT_STAGE_SEPARATOR
+            Context::CONTEXT_STAGE_DELIMITER
         );
+    }
+
+    public static function divideContextNameFromStageName(string $stageFullname) : array
+    {
+        $exploded = explode(Context::CONTEXT_STAGE_DELIMITER, $stageFullname);
+        $stageName = array_pop($exploded);
+        return [implode(Context::CONTEXT_STAGE_DELIMITER, $exploded), $stageName];
     }
 
     public static function parseShortStageName(string $stageFullName, string $contextName) : string
@@ -43,12 +49,12 @@ class ContextUtils
             );
         }
 
-        return trim($last, Context::CONTEXT_STAGE_SEPARATOR);
+        return trim($last, Context::CONTEXT_STAGE_DELIMITER);
     }
 
     public static function normalizeContextName(string $contextName) : string
     {
-        return ContextUtils::normalizeContextName($contextName);
+        return StringUtils::normalizeString(StringUtils::namespaceSlashToDot($contextName));
     }
 
     public static function normalizeStageName(string $stageName) : string
@@ -56,10 +62,9 @@ class ContextUtils
         return strtolower($stageName);
     }
 
-    public static function parseContextClassToName(string $str) : string
+    public static function normalizeIntentName(string $intentName) : string
     {
-        $str = StringUtils::namespaceSlashToDot($str);
-        return strtolower($str);
+        return static::normalizeContextName($intentName);
     }
 
     public static function isValidContextName(string $str) : bool

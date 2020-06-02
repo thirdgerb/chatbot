@@ -74,7 +74,7 @@ class ICategory implements Category
         $this->container = $container;
         $this->logger = $logger;
         $this->categoryOption = $categoryOption;
-        $this->storageOption = $categoryOption->storage->getWrapper();
+        $this->storageOption = $categoryOption->storage->toWrapper();
     }
 
     public function has(string $optionId): bool
@@ -97,6 +97,7 @@ class ICategory implements Category
         if (empty($option)) {
             throw new OptionNotFoundException(
                 __METHOD__,
+                $this->categoryOption->name,
                 $optionId
             );
         }
@@ -203,7 +204,7 @@ class ICategory implements Category
             return $this->storage;
         }
 
-        $storageOption = $this->categoryOption->storage->getWrapper();
+        $storageOption = $this->categoryOption->storage->toWrapper();
         $driver = $storageOption->getDriver();
 
         return $this->storage = $this->container->get($driver);
@@ -220,7 +221,7 @@ class ICategory implements Category
             return null;
         }
 
-        $driver = $option->getWrapper()->getDriver();
+        $driver = $option->toWrapper()->getDriver();
         return $this->initialStorage = $this->container->get($driver);
     }
 
@@ -272,7 +273,7 @@ class ICategory implements Category
             return;
         }
 
-        $initStorageOption = $this->categoryOption->initialStorage->getWrapper();
+        $initStorageOption = $this->categoryOption->initialStorage->toWrapper();
         $initStorage->boot(
             $this->categoryOption,
             $initStorageOption
@@ -296,6 +297,13 @@ class ICategory implements Category
         }
     }
 
+    public function flush(): bool
+    {
+        return $this->getStorage()->flush(
+            $this->categoryOption,
+            $this->storageOption
+        );
+    }
 
 
     public function __destruct()

@@ -9,20 +9,21 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context\Codable;
+namespace Commune\Blueprint\Exceptions\Boot;
 
-use Commune\Blueprint\Ghost\Context\ContextOption;
+use Commune\Blueprint\Exceptions\CommuneBootingException;
+use Throwable;
+
 
 /**
+ * 机器人未运行.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface DefineConfig
+class CommuneNotRunningException extends CommuneBootingException
 {
+    public function __construct(string $method)
+    {
+        parent::__construct("host not running, called by $method");
+    }
 
-    const DEFINE_CONFIG_FUNC = '__config';
-
-    /**
-     * @return ContextOption
-     */
-    public static function __config() : ContextOption;
 }

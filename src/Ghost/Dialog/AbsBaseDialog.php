@@ -16,6 +16,8 @@ use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Tools;
+use Commune\Protocals\HostMsg;
+use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\DI\Injectable;
 use Commune\Support\DI\TInjectable;
 use Commune\Blueprint\Ghost\Cloner;
@@ -58,6 +60,17 @@ abstract class AbsBaseDialog implements
      * @var Ucl
      */
     protected $_ucl;
+
+    /**
+     * @var InputMsg
+     */
+    protected $_input;
+
+
+    /**
+     * @var HostMsg
+     */
+    protected $_message;
 
     /**
      * @var Dialog|null
@@ -221,7 +234,7 @@ abstract class AbsBaseDialog implements
             return isset($this->_prev);
         }
 
-        return in_array($name, ['cloner', 'ucl', 'context', 'task', 'process']);
+        return in_array($name, ['cloner', 'ucl', 'context', 'task', 'process', 'input', 'message']);
     }
 
     public function __get($name)
@@ -229,6 +242,13 @@ abstract class AbsBaseDialog implements
         switch ($name) {
             case 'cloner' :
                 return $this->_cloner;
+
+            case 'input' :
+                return $this->_input
+                    ?? $this->_input = $this->_cloner->input;
+            case 'message' :
+                return $this->_message
+                    ?? $this->_message = $this->_cloner->input->getMessage();
 
             case 'ucl' :
                 return $this->_ucl;

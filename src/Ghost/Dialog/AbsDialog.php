@@ -46,6 +46,12 @@ abstract class AbsDialog extends AbsBaseDialog
 
     public function next(string $ifNone = null): Operator
     {
+        if (isset($ifNone) && $ifNone === $this->_ucl->stageName) {
+            throw new InvalidArgumentException(
+                static::class . '::next should not pass self stage name as next path, which lead to endless loop'
+            );
+        }
+
         return new ORedirect\ONext($this, $ifNone);
     }
 
@@ -117,7 +123,7 @@ abstract class AbsDialog extends AbsBaseDialog
         int $gcTurns = 0
     ): Operator
     {
-        return new OExiting\OFulfill($this);
+        return new OExiting\OFulfill($this, $gcTurns, $restoreStage);
     }
 
     public function confuse(bool $silent = false): Operator

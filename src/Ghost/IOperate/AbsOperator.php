@@ -13,7 +13,7 @@ namespace Commune\Ghost\IOperate;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 
 
 /**
@@ -57,14 +57,14 @@ abstract class AbsOperator implements Operator
     {
         // 每个 Dialog 实例只能 tick 一次.
         if ($this->ticked) {
-            throw new HostLogicException(
+            throw new CommuneLogicException(
                 __METHOD__
                 . ' try to tick dialog that ticked'
             );
         }
 
         if ($this->ticking) {
-            throw new HostLogicException(
+            throw new CommuneLogicException(
                 __METHOD__
                 . ' try to tick dialog that ticking'
             );
@@ -86,6 +86,10 @@ abstract class AbsOperator implements Operator
         return $this->dialog;
     }
 
+    public function getName(): string
+    {
+        return static::class;
+    }
 
     public function __invoke(): Operator
     {

@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Context\Codable;
 
+use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Stage\AttrStageDef;
@@ -96,7 +97,7 @@ class IDepending implements Depending
             'ifRedirect' => null,
             'title' => '',
             'desc' => '',
-        ]))->getMeta();
+        ]))->toMeta();
 
         return $this;
     }
@@ -125,7 +126,7 @@ class IDepending implements Depending
             'ifRedirect' => null,
             'title' => '',
             'desc' => '',
-        ]))->getMeta();
+        ]))->toMeta();
 
         return $this;
     }

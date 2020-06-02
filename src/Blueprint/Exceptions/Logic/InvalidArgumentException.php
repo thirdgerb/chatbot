@@ -11,12 +11,12 @@
 
 namespace Commune\Blueprint\Exceptions\Logic;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class InvalidArgumentException extends HostLogicException
+class InvalidArgumentException extends CommuneLogicException
 {
     public function __construct(string $error)
     {

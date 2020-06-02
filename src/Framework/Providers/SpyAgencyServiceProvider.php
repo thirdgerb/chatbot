@@ -11,6 +11,7 @@
 
 namespace Commune\Framework\Providers;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Framework\App;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
@@ -29,7 +30,7 @@ class SpyAgencyServiceProvider extends ServiceProvider
 
     public function boot(ContainerContract $app): void
     {
-        $isDebug = $app->get(App::DEBUG_BINDING);
+        $isDebug = CommuneEnv::isDebug();
         SpyAgency::$running = $isDebug;
     }
 

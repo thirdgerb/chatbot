@@ -1,5 +1,6 @@
 <?php
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Message;
 use Commune\Ghost\IGhost;
 use Clue\React\Stdio\Stdio;
@@ -11,6 +12,11 @@ use Commune\Host\Ghost\Stdio\SGConsoleLogger;
 require __DIR__ .'/../vendor/autoload.php';
 
 
+CommuneEnv::defineDebug(true);
+CommuneEnv::defineResetMind(true);
+
+
+
 $loop = Factory::create();
 $stdio = new Stdio($loop);
 
@@ -20,7 +26,6 @@ $stdio->setPrompt('> ');
 $config = [];
 $app = new IGhost(
     new SGConfig(),
-    true,
     null,
     null,
     null,

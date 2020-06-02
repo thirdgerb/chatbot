@@ -62,7 +62,7 @@ class SynonymMeta extends AbsOption implements DefMeta
     /**
      * @return SynonymDef
      */
-    public function getWrapper(): Wrapper
+    public function toWrapper(): Wrapper
     {
         return new ISynonymDef($this);
     }

@@ -15,6 +15,7 @@ use Commune\Framework;
 use Commune\Blueprint\Configs\Nest\ProtocalOption;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
+use Commune\Host\Ghost\Stdio\Context\HelloWorld;
 use Commune\Ghost\Handlers\GhostRequestHandler;
 use Commune\Support\Option\AbsOption;
 use Commune\Ghost\Providers as GhostProviders;
@@ -50,6 +51,7 @@ use Commune\Components;
  *
  * ## 管道配置
  *
+ * @property-read string[] $psr4MindRegister
  * @property-read string[] $apiHandlers         api消息的处理器.
  * @property-read string[] $userCommands
  * @property-read string[] $superCommands
@@ -78,7 +80,7 @@ use Commune\Components;
  *
  *
  * # 多轮对话相关逻辑.
- *
+ * @property-read string $defaultContextName        默认启动场景.
  * @property-read string[] $sceneContextNames       场景对应的根路径.
  * @property-read string[] $globalContextRoutes
  */
@@ -131,14 +133,19 @@ class GhostConfig extends AbsOption
             'userCommands' => [
 
             ],
+            'psr4MindRegister' => [
 
+            ],
             // session
             'sessionExpire' => 3600,
             'sessionLockerExpire' => 3,
             'maxRedirectTimes' => 255,
             'mindsetCacheExpire' => 600,
             'maxBacktrace' => 10,
-            'sceneContextNames' => [],
+            'defaultContextName' => HelloWorld::class,
+            'sceneContextNames' => [
+
+            ],
             'globalContextRoutes' => [],
         ];
     }

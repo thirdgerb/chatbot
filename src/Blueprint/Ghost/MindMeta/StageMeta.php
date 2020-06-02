@@ -29,8 +29,9 @@ use Commune\Blueprint\Ghost\MindDef\AliasesForStage;
  * @property-read string $wrapper
  * @property-read array $config
  *
+ * @method StageDef toWrapper(): Wrapper
  */
-class StageMeta extends AbsMeta
+class StageMeta extends AbsMeta implements DefMeta
 {
     const IDENTITY = 'name';
 
@@ -57,6 +58,13 @@ class StageMeta extends AbsMeta
         $this->_data[$name] = AliasesForStage::getAliasOfOrigin(strval($wrapper));
     }
 
+    /**
+     * @param array $data
+     * @param string $contextName
+     * @param string $shortName
+     * @param bool $force
+     * @return array
+     */
     public static function mergeContextInfo(
         array $data,
         string $contextName,
@@ -87,23 +95,4 @@ class StageMeta extends AbsMeta
     {
         return [];
     }
-
-    public static function validate(array $data): ? string /* errorMsg */
-    {
-        $name = $data['name'] ?? '';
-        if (ContextUtils::isValidStageName($name)) {
-            return "stage name $name is invalid";
-        }
-
-        return parent::validate($data);
-    }
-
-    public static function validateWrapper(string $wrapper): ? string
-    {
-        $defType = StageDef::class;
-        return is_a($wrapper, $defType, TRUE)
-            ? null
-            : static::class . " wrapper should be subclass of $defType, $wrapper given";
-    }
-
 }

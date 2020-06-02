@@ -83,7 +83,7 @@ abstract class AbsRecall implements Recall
                 'defaults' => $configs->paramDefaults,
             ]);
 
-            $memoryReg->registerDef($memoryMeta->getWrapper());
+            $memoryReg->registerDef($memoryMeta->toWrapper());
         }
         return $memoryReg->getDef($name);
     }

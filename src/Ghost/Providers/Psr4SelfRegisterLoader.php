@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Providers;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\MindSelfRegister;
 use Commune\Container\ContainerContract;
@@ -43,13 +44,12 @@ class Psr4SelfRegisterLoader extends ServiceProvider
 
     public function register(ContainerContract $app): void
     {
-        $ghost = $app->get(Ghost::class);
+        $mind = $app->get(Ghost\Mindset::class);
         $logger = $app->get(LoggerInterface::class);
 
         foreach ($this->prs4 as $namespace => $path) {
             static::loadSelfRegister(
-                $ghost,
-                $app,
+                $mind,
                 $namespace,
                 $path,
                 $logger
@@ -59,8 +59,7 @@ class Psr4SelfRegisterLoader extends ServiceProvider
 
 
     public static function loadSelfRegister(
-        Ghost $ghost,
-        ContainerContract $processContainer,
+        Ghost\Mindset $mind,
         string $namespace,
         string $directory,
         LoggerInterface $logger
@@ -95,7 +94,7 @@ class Psr4SelfRegisterLoader extends ServiceProvider
 
             $logger->debug("register context $clazz");
             $method = [$clazz, MindSelfRegister::REGISTER_METHOD];
-            call_user_func($method, $ghost);
+            call_user_func($method, $mind);
             $i ++;
         }
 

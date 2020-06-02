@@ -111,16 +111,6 @@ class StringUtils
         return is_scalar($value) || (is_object($value) && method_exists($value, '__toString'));
     }
 
-    /**
-     * 将意图名称标准化.
-     *
-     * @param string $name
-     * @return string
-     */
-    public static function normalizeIntentName(string $name) : string
-    {
-        return strtolower(static::namespaceSlashToDot($name));
-    }
 
     /**
      * 命名空间 \ 转为用 . 连接的字符串.

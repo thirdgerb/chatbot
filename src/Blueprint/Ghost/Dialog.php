@@ -19,18 +19,30 @@ use Commune\Blueprint\Ghost\Tools\Caller;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Tools\Hearing;
+use Commune\Protocals\HostMsg;
+use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
+ * ## 核心组件.
  * @property-read Cloner $cloner        当前对话机器人的分身.
+ *
+ * ## 请求信息
+ * @property-read InputMsg $input
+ * @property-read HostMsg $message
+ *
+ * ## 自身状态
  * @property-read Ucl $ucl              当前语境的地址.
+ * @property Context $context           当前的上下文语境.
  * @property-read Task $task            当前语境的任务状态.
+ *
+ *
+ * ## 多轮对话
  * @property-read Process $process      当前多轮对话运行中的进程.
  * @property-read Dialog|null $prev     上一个 Dialog 对象.
  *
- * @property Context $context           当前的上下文语境.
  */
 interface Dialog
 {

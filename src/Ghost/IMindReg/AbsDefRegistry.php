@@ -65,10 +65,11 @@ abstract class AbsDefRegistry implements DefRegistry
     {
         $this->mindset = $mindset;
         $this->optRegistry = $optRegistry;
-        $this->cacheExpire = $cacheExpire;
+        $this->cacheExpire = $cacheExpire > 10 ? $cacheExpire : 10;
     }
 
     /*------- meta -------*/
+
 
     abstract protected function getDefType() : string;
 
@@ -76,7 +77,7 @@ abstract class AbsDefRegistry implements DefRegistry
     {
         $type = $this->getDefType();
         if (!is_a($def, $type, TRUE)) {
-            throw new InvalidArgumentException('def should be subclass of ' . $type);
+            throw new InvalidArgumentException($method . ' def should be subclass of ' . $type);
         }
     }
 
@@ -106,7 +107,7 @@ abstract class AbsDefRegistry implements DefRegistry
 
     protected function doRegisterDef(Def $def, bool $notExists) : bool
     {
-        $meta = $def->getMeta();
+        $meta = $def->toMeta();
         return $this->getMetaRegistry()->save($meta, $notExists);
     }
 
@@ -140,16 +141,7 @@ abstract class AbsDefRegistry implements DefRegistry
             return true;
         }
 
-        if ($this->hasRegisteredMeta($defName)) {
-            /**
-             * @var DefMeta $meta
-             */
-            $meta = $this->getMetaRegistry()->find($defName);
-            $this->registerDef($meta->getWrapper());
-            return true;
-        }
-
-        return false;
+        return $this->hasRegisteredMeta($defName);
     }
 
     public function getDef(string $defName): Def
@@ -161,8 +153,15 @@ abstract class AbsDefRegistry implements DefRegistry
             return $this->cachedDefs[$defName];
         }
 
+        if (!$this->hasDef($defName)) {
+            throw new DefNotDefinedException(
+                $this->getMetaId(),
+                $defName
+            );
+        }
+
         $meta = $this->getRegisteredMeta($defName);
-        $def = $meta->getWrapper();
+        $def = $meta->toWrapper();
 
         // 用 null 表示存在, 但不缓存.
         $this->setDefCache($defName, $def);
@@ -186,13 +185,11 @@ abstract class AbsDefRegistry implements DefRegistry
         $this->checkDefType(__METHOD__, $def);
 
         $name = $def->getName();
-        if ($notExists && $this->hasDef($name)) {
+        if ($notExists && $this->getMetaRegistry()->has($name)) {
             return false;
         }
 
-        // 用 null 表示存在, 但不缓存.
         $this->setDefCache($name, $def);
-
         return $this->doRegisterDef($def, $notExists);
     }
 
@@ -217,6 +214,12 @@ abstract class AbsDefRegistry implements DefRegistry
             return $this->getDef($id);
         }, $ids);
     }
+
+    public function reset(): void
+    {
+        $this->getMetaRegistry()->flush();
+    }
+
 
     public function __destruct()
     {

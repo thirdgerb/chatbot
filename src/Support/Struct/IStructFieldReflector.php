@@ -76,7 +76,7 @@ class IStructFieldReflector implements StructFieldReflector
         $this->structType = $structType;
         $this->fieldName = $fieldName;
         $this->nullable = in_array('null', $rules);
-        $this->rules = array_diff($rules, ['null']);
+        $this->rules = array_values(array_diff($rules, ['null']));
         $this->relationClass = $relationClass;
         $this->isListRelation = $isListRelation;
         $this->ruleCounts = count($this->rules);
@@ -114,7 +114,7 @@ class IStructFieldReflector implements StructFieldReflector
             if ($this->nullable) {
                 return null;
             }
-            return $this->fieldName . 'is null which is not allowed';
+            return $this->fieldName . ' is null which is not allowed';
         }
 
         // 否则检查类型.

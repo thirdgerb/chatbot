@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context\Prototype;
+namespace Commune\Ghost\Context;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
@@ -30,6 +30,7 @@ use Commune\Support\Option\Wrapper;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Support\Utils\ArrayUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -51,6 +52,7 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  *
  *
  * @property-read string[] $memoryScopes
+ *
  * @property-read array $memoryAttrs
  * @property-read array $dependingAttrs
  *
@@ -59,11 +61,10 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  * @property-read null|string $onCancel
  * @property-read null|string $onQuit
  *
+ * @property-read string|null $firstStage
  * @property-read string[] $stageRoutes
  * @property-read string[] $contextRoutes
  *
- *
- * @property-read string[] $dependingStages
  * @property-read StageMeta[] $stages
  *
  */
@@ -80,6 +81,10 @@ class IContextDef extends AbsOption implements ContextDef
      */
     protected $_asStageDef;
 
+    /**
+     * @var StageMeta[]
+     */
+    protected $_stageMetaMap;
 
     public static function stub(): array
     {
@@ -123,6 +128,7 @@ class IContextDef extends AbsOption implements ContextDef
             'onQuit' => null,
             'stageRoutes' => [],
             'contextRoutes' => [],
+            'firstStage' => null,
 
             // 预定义的 stage 的配置. StageMeta
             'stages' => [],
@@ -154,7 +160,7 @@ class IContextDef extends AbsOption implements ContextDef
         $stages = $data['stages'] ?? [];
         foreach ($stages as $shortName => $stage) {
             $stages[$shortName] = StageMeta::mergeContextInfo(
-                $stage,
+                ArrayUtils::wrap($stage),
                 $data['name'] ?? '',
                 $stage['stageName'] ?? strval($shortName)
             );
@@ -196,7 +202,7 @@ class IContextDef extends AbsOption implements ContextDef
     /**
      * @return ContextMeta
      */
-    public function getMeta(): Meta
+    public function toMeta(): Meta
     {
         $config = $this->toArray();
         unset($config['name']);
@@ -216,7 +222,7 @@ class IContextDef extends AbsOption implements ContextDef
      * @param Meta $meta
      * @return Wrapper
      */
-    public static function wrap(Meta $meta): Wrapper
+    public static function wrapMeta(Meta $meta): Wrapper
     {
         if (!$meta instanceof ContextMeta) {
             throw new InvalidArgumentException(
@@ -328,7 +334,7 @@ class IContextDef extends AbsOption implements ContextDef
     public function wrapContext(Cloner $cloner, Ucl $ucl): Context
     {
         return call_user_func(
-            [$this->contextWrapper, Context::WRAP_FUNC],
+            [$this->contextWrapper, Context::CREATE_FUNC],
             $cloner,
             $ucl
         );
@@ -338,8 +344,8 @@ class IContextDef extends AbsOption implements ContextDef
 
     public function eachPredefinedStage(): \Generator
     {
-        foreach ($this->stages as $stageMeta) {
-            yield $stageMeta->getWrapper();
+        foreach ($this->getStageMetaMap() as $stageMeta) {
+            yield $stageMeta->toWrapper();
         }
     }
 
@@ -357,16 +363,36 @@ class IContextDef extends AbsOption implements ContextDef
         );
     }
 
-    public function firstStage(): ? string
+
+    /**
+     * @return StageMeta[]
+     */
+    protected function getStageMetaMap() : array
     {
-        foreach ($this->stages as $stage) {
-            return ContextUtils::parseShortStageName(
-                $stage->name,
-                $this->name
-            );
+        if (isset($this->_stageMetaMap)) {
+            return $this->_stageMetaMap;
         }
 
-        return null;
+        foreach ($this->stages as $stageMeta) {
+            $shortName = $stageMeta->stageName;
+            $this->_stageMetaMap[$shortName] = $stageMeta;
+        }
+
+        return $this->_stageMetaMap;
+    }
+
+    public function getPredefinedStage(string $name): ? StageDef
+    {
+        $meta = $this->getStageMetaMap()[$name] ?? null;
+        return isset($meta)
+            ? $meta->toWrapper()
+            : null;
+    }
+
+
+    public function firstStage(): ? string
+    {
+        return $this->firstStage;
     }
 
     public function __destruct()

@@ -68,6 +68,7 @@ class InitStage extends AbsStageDef
         $contextDef = $dialog->ucl->findContextDef($cloner);
 
         $next = $contextDef->firstStage();
+
         $task = $dialog->task;
 
         $ifCancel = $contextDef->onCancelStage();

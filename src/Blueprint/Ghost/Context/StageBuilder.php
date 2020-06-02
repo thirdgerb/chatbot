@@ -11,9 +11,6 @@
 
 namespace Commune\Blueprint\Ghost\Context;
 
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Operate\Operator;
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */

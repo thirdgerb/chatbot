@@ -126,6 +126,11 @@ interface ContextDef extends Def
      */
     public function getPredefinedStageNames(bool $isFullname = false) : array;
 
+    /**
+     * @param string $name
+     * @return StageDef|null
+     */
+    public function getPredefinedStage(string $name) : ? StageDef;
 
 
 }

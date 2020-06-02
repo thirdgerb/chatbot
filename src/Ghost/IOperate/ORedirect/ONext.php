@@ -36,10 +36,13 @@ class ONext extends AbsRedirect
     protected function toNext(): Operator
     {
         $next = $this->dialog->task->popPath()
-            ?? $this->dialog->ucl->goStage($this->orNext);
+            ?? (isset($this->orNext)
+                ? $this->dialog->ucl->goStage($this->orNext)
+                : null
+            );
 
         if (empty($next)) {
-            return new OFulfill($this->dialog);
+            return new OFulfill($this->dialog, 0, []);
         }
 
         if ($next->stageName === $this->dialog->ucl->stageName) {

@@ -78,7 +78,7 @@ class CodeStageDef extends AbsStageDef
 
     protected function getMethodName() : string
     {
-        return CodeContext::STAGE_BUILDER_PREFIX . $this->getStageShortName();
+        return Context\CodeContext::STAGE_BUILDER_PREFIX . $this->getStageShortName();
     }
 
     protected function getStageBuilder(Context $context) : IStageBuilder

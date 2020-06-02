@@ -11,12 +11,12 @@
 
 namespace Commune\Blueprint\Ghost\Exceptions;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class BadNavigateCallException extends HostLogicException
+class BadNavigateCallException extends CommuneLogicException
 {
     public function __construct(string $ucl, string $error)
     {

@@ -11,17 +11,16 @@
 
 namespace Commune\Support\Struct;
 
-use Commune\Support\Registry\Demo\TestOption;
+use ArrayAccess;
 use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\TypeUtils;
-use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Commune\Support\Arr\ArrayAbleToJson;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbsStruct implements Struct, \Serializable
+abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
 {
     use ArrayAbleToJson;
 
@@ -31,21 +30,32 @@ abstract class AbsStruct implements Struct, \Serializable
     /**
      * @var array
      */
-    protected $_data;
+    protected $_data = [];
 
     public function __construct(array $data = [])
     {
-
         $stub = static::stub();
         $data = $data + $stub;
 
-        // 构建关系
+        $this->_shouldBeArray($data);
         $this->_constructData($data);
+    }
+
+    private function _shouldBeArray($data) : void
+    {
+        // 构建关系
+        if (!is_array($data)) {
+            throw new InvalidStructException(
+                static::class
+                . ' struct data should be array'
+            );
+        }
     }
 
     private function _constructData(array $data) : void
     {
         $this->_filter($data);
+        $this->_shouldBeArray($this->_data);
         $error = static::validate($this->_data);
 
         if (!empty($error)) {
@@ -82,6 +92,8 @@ abstract class AbsStruct implements Struct, \Serializable
     {
         return new static($data);
     }
+
+    /*------- magic --------*/
 
     public function __get($name)
     {
@@ -134,11 +146,44 @@ abstract class AbsStruct implements Struct, \Serializable
         return isset($this->_data[$name]);
     }
 
+    public function __unset($name)
+    {
+        unset($this->_data[$name]);
+    }
+
+    /*------- iterator --------*/
+
     public function getIterator()
     {
         return new \ArrayIterator($this->_data);
     }
 
+    /*------- array able --------*/
+
+    public function offsetExists($offset)
+    {
+        return $this->__isset($offset);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        $this->__set($offset, $value);
+    }
+
+    public function offsetUnset($offset)
+    {
+        $this->__unset($offset);
+    }
+
+
+
+
+    /*------- private --------*/
 
     /**
      * @param string $field
@@ -183,6 +228,8 @@ abstract class AbsStruct implements Struct, \Serializable
 
         throw new InvalidArgumentException("invalid relation value for $field");
     }
+
+    /*------- relation --------*/
 
     public static function isRelation(string $fieldName): bool
     {
@@ -251,6 +298,8 @@ abstract class AbsStruct implements Struct, \Serializable
         );
     }
 
+    /*------- array --------*/
+
     /**
      * 递归生成数组数据.
      * @return array
@@ -261,12 +310,15 @@ abstract class AbsStruct implements Struct, \Serializable
         return ArrayUtils::recursiveToArray($data);
     }
 
+    /*------- doc --------*/
+
     public static function getDocComment(): string
     {
         $r = new \ReflectionClass(static::class);
         return $r->getDocComment();
     }
 
+    /*------- serialize --------*/
 
     public function __destruct()
     {

@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * Task 是 Context 在进程中的运行状态缓存.
@@ -19,7 +20,7 @@ use Commune\Blueprint\Ghost\Ucl;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  */
-interface Task
+interface Task extends ArrayAndJsonAble
 {
     /*------- status -------*/
 

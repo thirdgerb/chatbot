@@ -20,7 +20,7 @@ use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Ghost\Handlers\GhostRequestHandler;
 use Commune\Ghost\Providers as GhostProviders;
-
+use Commune\Host\Ghost\Stdio\Context\HelloWorld;
 
 
 /**
@@ -84,16 +84,20 @@ class SGConfig extends GhostConfig
             'comprehensionPipes' => [
 
             ],
+            'psr4MindRegister' => [
+                "Commune\\Host\\Ghost\\Stdio\\Context" => __DIR__ . '/Context'
+
+            ],
             // session
             'sessionExpire' => 3600,
             'sessionLockerExpire' => 3,
             'maxRequestFailTimes' => 3,
             'maxRedirectTimes' => 255,
             'mindsetCacheExpire' => 600,
+            'defaultContextName' => HelloWorld::class,
             'sceneContextNames' => [
             ],
-            'defaultScene' => '',
-
+            'globalContextRoutes' => []
         ];
     }
 

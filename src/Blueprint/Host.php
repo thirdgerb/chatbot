@@ -17,7 +17,7 @@ use Commune\Blueprint\Configs\ShellConfig;
 use Commune\Blueprint\Exceptions\Boot\AppNotBootException;
 use Commune\Blueprint\Exceptions\Boot\AppNotDefinedException;
 use Commune\Blueprint\Exceptions\Boot\BootRepetitionException;
-use Commune\Blueprint\Exceptions\Boot\HostNotRunningException;
+use Commune\Blueprint\Exceptions\Boot\CommuneNotRunningException;
 use Commune\Blueprint\Host\ServiceRegistrar;
 use Commune\Blueprint\Platform\Server;
 use Commune\Container\ContainerContract;
@@ -50,12 +50,6 @@ interface Host
      * @return HostConfig
      */
     public function getConfig() : HostConfig;
-
-    /**
-     * 调试模式
-     * @return bool
-     */
-    public function isDebugging() : bool;
 
     /*----- 启动 -----*/
 
@@ -134,7 +128,7 @@ interface Host
      * 用于管理 Server 本身的一些功能.
      *
      * @return Server
-     * @throws HostNotRunningException
+     * @throws CommuneNotRunningException
      */
     public function getServer() : Server;
 

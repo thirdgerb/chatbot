@@ -156,4 +156,16 @@ interface Storage
         int $offset = 0,
         int $limit = 20
     ) : array;
+
+    /**
+     * 清除所有的数据. 非常危险的操作.
+     *
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @return bool
+     */
+    public function flush(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption
+    ) : bool;
 }

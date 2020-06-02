@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Runtime;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Exceptions\IO\LoadDataFailException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Memory\Memory;
@@ -241,7 +242,7 @@ class IRuntime implements Runtime, Spied
             }
 
             return $this->driver->fetchProcess(
-                $this->cloner,
+                $this->cloner->getId(),
                 $this->cloner->getConversationId()
             );
 
@@ -371,7 +372,7 @@ class IRuntime implements Runtime, Spied
                 ?? $this->trace = new ITrace(
                     $this->cloner->config->maxRedirectTimes,
                     $this->cloner->logger,
-                    $this->cloner->isDebugging()
+                    CommuneEnv::isDebug()
                 );
         }
         return null;

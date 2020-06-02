@@ -32,8 +32,18 @@ class IMemoryReg extends AbsDefRegistry implements MemoryReg
 
     protected function hasRegisteredMeta(string $defName): bool
     {
-        return parent::hasRegisteredMeta($defName)
-            || $this->mindset->contextReg()->hasDef($defName);
+        if (parent::hasRegisteredMeta($defName)) {
+            return true;
+        }
+
+        $contextReg = $this->mindset->contextReg();
+        if ($contextReg->hasDef($defName)) {
+            $def = $contextReg->getDef($defName)->asMemoryDef();
+            $this->registerDef($def);
+            return true;
+        }
+
+        return false;
     }
 
 

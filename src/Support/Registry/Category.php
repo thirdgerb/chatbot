@@ -74,6 +74,11 @@ interface Category
      */
     public function findByIds(array $ids) : array;
 
+    /**
+     * 删除所有的数据.
+     */
+    public function flush() : bool;
+
 
     /*---- 多个 Option 管理 ----*/
 

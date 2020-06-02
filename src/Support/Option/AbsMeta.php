@@ -20,18 +20,10 @@ namespace Commune\Support\Option;
 abstract class AbsMeta extends AbsOption implements Meta
 {
 
-    abstract public static function validateWrapper(string $wrapper) : ? string;
-
-    public function getWrapper(): Wrapper
+    public function toWrapper(): Wrapper
     {
         $wrapperName = $this->wrapper;
-        return call_user_func([$wrapperName, Wrapper::INIT_FUNC], $this);
-    }
-
-    public static function validate(array $data): ? string /* errorMsg */
-    {
-        $wrapper = $data['wrapper'] ?? '';
-        return static::validateWrapper($wrapper) ?? parent::validate($data);
+        return call_user_func([$wrapperName, Wrapper::WRAP_META_FUNC], $this);
     }
 
 }

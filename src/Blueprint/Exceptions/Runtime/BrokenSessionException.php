@@ -11,14 +11,14 @@
 
 namespace Commune\Blueprint\Exceptions\Runtime;
 
-use Commune\Blueprint\Exceptions\HostRuntimeException;
+use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Throwable;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class BrokenSessionException extends HostRuntimeException
+class BrokenSessionException extends CommuneRuntimeException
 {
     public function __construct(string $message = "",  Throwable $previous = null)
     {

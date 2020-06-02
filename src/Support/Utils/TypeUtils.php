@@ -10,8 +10,6 @@
  */
 
 namespace Commune\Support\Utils;
-use Illuminate\Support\Arr;
-
 
 /**
  * 类型检查和转换工具.
@@ -81,7 +79,7 @@ class TypeUtils
      */
     public static function listParser($parser, $value) : array
     {
-        $value = Arr::wrap($value);
+        $value = ArrayUtils::wrap($value);
 
         return array_map(function($val) use ($parser) {
             return static::parse($parser, $val);

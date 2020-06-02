@@ -16,9 +16,9 @@ namespace Commune\Support\Registry\Exceptions;
  */
 class OptionNotFoundException extends \RuntimeException
 {
-    public function __construct(string $method, string $optionId)
+    public function __construct(string $method, string $optionType, string $optionId)
     {
-        $message = "option not found that id is $optionId, called by $method";
+        $message = "option $optionType, not found that id is $optionId, called by $method";
         parent::__construct($message);
     }
 

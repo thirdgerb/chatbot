@@ -4,14 +4,14 @@
 namespace Commune\Framework\Cache;
 
 
-use Commune\Blueprint\Exceptions\HostRuntimeException;
+use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * psr16 的异常.
  */
 class Psr16InvalidArgsException
-    extends HostRuntimeException
+    extends CommuneRuntimeException
     implements InvalidArgumentException
 {
 }

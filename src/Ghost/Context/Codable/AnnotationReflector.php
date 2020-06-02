@@ -82,7 +82,7 @@ class AnnotationReflector
             'matcher' => null,
         ]);
 
-        return $def->getMeta();
+        return $def->toMeta();
     }
 
     public static function create(string $docComment) : self

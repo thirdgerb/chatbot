@@ -19,7 +19,7 @@ use Commune\Blueprint\Framework\Request\AppResponse;
  * 机器人的逻辑错误, 不应该发生.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class HostLogicException extends \LogicException
+class CommuneLogicException extends \LogicException
 {
     public function __construct(
         string $message = "",

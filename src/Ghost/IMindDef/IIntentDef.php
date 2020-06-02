@@ -35,7 +35,6 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string $name
  * @property-read string $title
  * @property-read string $desc
- * @property-read string $wrapper
  *
  * ## 意图内容.
  * @property-read string[] $examples
@@ -333,7 +332,7 @@ class IIntentDef extends AbsOption implements IntentDef
     /**
      * @return IntentMeta
      */
-    public function getMeta(): Meta
+    public function toMeta(): Meta
     {
         $data = [];
         $config = $this->toArray();
@@ -351,7 +350,7 @@ class IIntentDef extends AbsOption implements IntentDef
      * @param IntentMeta $meta
      * @return static
      */
-    public static function wrap(Meta $meta): Wrapper
+    public static function wrapMeta(Meta $meta): Wrapper
     {
         if (!$meta instanceof IntentMeta) {
             throw new InvalidArgumentException(
@@ -363,7 +362,7 @@ class IIntentDef extends AbsOption implements IntentDef
         $config['title'] = $meta->title;
         $config['desc'] = $meta->desc;
 
-        return new static($meta);
+        return new static($config);
     }
 
 }

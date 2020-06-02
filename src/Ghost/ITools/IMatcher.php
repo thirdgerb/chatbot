@@ -685,5 +685,6 @@ class IMatcher implements Matcher
         $this->input = null;
         $this->matched = false;
         $this->matchedParams = [];
+        $this->injectionContext = [];
     }
 }

@@ -21,6 +21,12 @@ use Commune\Support\Registry\Category;
  */
 interface DefRegistry
 {
+
+    /**
+     * 重置所有的逻辑. 非常危险, 需要做好备份才行.
+     */
+    public function reset() : void;
+
     /**
      * 重置注册表的 Def 缓存.
      */

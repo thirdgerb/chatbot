@@ -11,13 +11,13 @@
 
 namespace Commune\Blueprint\Ghost\Exceptions;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class NotInstanceException extends HostLogicException
+class NotInstanceException extends CommuneLogicException
 {
     public function __construct(string $context)
     {

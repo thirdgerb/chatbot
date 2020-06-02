@@ -11,14 +11,14 @@
 
 namespace Commune\Blueprint\Exceptions\Boot;
 
-use Commune\Blueprint\Exceptions\HostBootingException;
+use Commune\Blueprint\Exceptions\CommuneBootingException;
 
 
 /**
  * 机器人重复启动异常.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class BootRepetitionException extends HostBootingException
+class BootRepetitionException extends CommuneBootingException
 {
 
 }

@@ -19,7 +19,7 @@ use Commune\Support\Option\Wrapper;
  * 系统对 Meta 数据的加载, 决定了自己会有哪些逻辑.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
- * @method DefMeta getMeta() : Meta
+ * @method DefMeta toMeta() : Meta
  */
 interface Def extends Wrapper
 {

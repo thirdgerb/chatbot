@@ -14,6 +14,7 @@ namespace Commune\Ghost\Runtime;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Support\Arr\ArrayAbleToJson;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -21,6 +22,8 @@ use Commune\Blueprint\Ghost\Ucl;
  */
 class ITask implements Task
 {
+    use ArrayAbleToJson;
+
     /**
      * @var Ucl
      */
@@ -151,5 +154,17 @@ class ITask implements Task
         $this->ucl = $ucl;
         $this->status = $status;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'ucl' => $this->ucl->toEncodedStr(),
+            'paths' => $this->paths,
+            'status' => $this->status,
+            'cancel' => $this->cancel,
+            'quit' => $this->quit
+        ];
+    }
+
 
 }

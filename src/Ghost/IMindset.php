@@ -15,7 +15,6 @@ use Commune\Blueprint\Ghost\Mindset;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Blueprint\Ghost\MindReg;
 use Commune\Blueprint\Ghost\MindReg\DefRegistry;
-use Psr\Log\LoggerInterface;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -58,6 +57,18 @@ class IMindset implements Mindset
         $this->cacheExpire = $cacheExpire;
     }
 
+    public function reset(): void
+    {
+        $this->contextReg()->reset();
+        $this->intentReg()->reset();
+        $this->stageReg()->reset();
+        $this->memoryReg()->reset();
+        $this->entityReg()->reset();
+        $this->synonymReg()->reset();
+        $this->emotionReg()->reset();
+    }
+
+
     public function reload(): void
     {
         $this->contextReg()->flushCache();
@@ -68,18 +79,6 @@ class IMindset implements Mindset
         $this->synonymReg()->flushCache();
         $this->emotionReg()->flushCache();
     }
-
-    public function initContexts(LoggerInterface $logger): void
-    {
-        $contextReg = $this->contextReg();
-        foreach($contextReg->each() as $def) {
-            if ($contextReg->registerDef($def)) {
-                $name = $def->getName();
-                $logger->debug("register context def: $name");
-            }
-        }
-    }
-
 
     /*---- registries ----*/
 

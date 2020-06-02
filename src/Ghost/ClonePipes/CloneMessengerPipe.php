@@ -12,10 +12,12 @@
 namespace Commune\Ghost\ClonePipes;
 
 use Closure;
-use Commune\Blueprint\Exceptions\HostRuntimeException;
+use Commune\Blueprint\Exceptions\CommuneRuntimeException;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
+use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Message\Host\SystemInt\RequestFailInt;
 use Commune\Message\Host\SystemInt\SessionFailInt;
 use Commune\Protocals\HostMsg\Convo\UnsupportedMsg;
@@ -28,6 +30,22 @@ use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
  */
 class CloneMessengerPipe extends AClonePipe
 {
+    /**
+     * @var ExceptionReporter
+     */
+    protected $expReporter;
+
+    /**
+     * CloneMessengerPipe constructor.
+     * @param Cloner $cloner
+     * @param ExceptionReporter $expReporter
+     */
+    public function __construct(Cloner $cloner, ExceptionReporter $expReporter)
+    {
+        $this->expReporter = $expReporter;
+        parent::__construct($cloner);
+    }
+
 
     protected function doHandle(GhostRequest $request, Closure $next) : GhostResponse
     {
@@ -44,10 +62,11 @@ class CloneMessengerPipe extends AClonePipe
             return $response;
 
         } catch (BrokenSessionException $e) {
-
+            $this->expReporter->report($e);
             return $this->quitSession($request, $e);
 
         } catch (BrokenRequestException $e) {
+            $this->expReporter->report($e);
 
             return $this->requestFail($request, $e);
         }
@@ -55,7 +74,7 @@ class CloneMessengerPipe extends AClonePipe
 
     protected function requestFail(
         GhostRequest $request,
-        HostRuntimeException $e
+        CommuneRuntimeException $e
     ) : GhostResponse
     {
 
@@ -76,7 +95,7 @@ class CloneMessengerPipe extends AClonePipe
 
     protected function quitSession(
         GhostRequest $request,
-        HostRuntimeException $e
+        CommuneRuntimeException $e
     ) : GhostResponse
     {
         $message = new SessionFailInt(

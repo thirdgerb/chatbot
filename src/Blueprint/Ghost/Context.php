@@ -33,7 +33,7 @@ interface Context extends
 {
     const NAMESPACE_SEPARATOR = '.';
     const STAGE_SEPARATOR = '_';
-    const CONTEXT_STAGE_SEPARATOR = '.';
+    const CONTEXT_STAGE_DELIMITER = '.';
 
     /*----- status -----*/
 
@@ -53,14 +53,14 @@ interface Context extends
 
     /*----- properties -----*/
 
-    const WRAP_FUNC = 'wrap';
+    const CREATE_FUNC = 'create';
 
     /**
      * @param Cloner $cloner
      * @param Ucl $ucl
      * @return static
      */
-    public static function wrap(Cloner $cloner, Ucl $ucl) : Context;
+    public static function create(Cloner $cloner, Ucl $ucl) : Context;
 
     /**
      * Context 名称

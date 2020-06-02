@@ -19,7 +19,6 @@ use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
 use Commune\Support\Option\Option;
 
-
 /**
  * 读取配置文件中所有预定义的配置.
  * 直接作为实例绑定到 worker process 容器上.
@@ -43,7 +42,7 @@ abstract class LoadConfigOption implements Bootstrapper
         // 绑定所有用类来标记的配置数据. 方便依赖注入.
         foreach($configBindings as $key => $value) {
 
-            $this->registerAndValidateEntry(
+            $this->registerAndValidateOption(
                 $logger,
                 $logInfo,
                 $container,
@@ -65,7 +64,7 @@ abstract class LoadConfigOption implements Bootstrapper
      * @param $key
      * @param $value
      */
-    protected function registerAndValidateEntry(
+    protected function registerAndValidateOption(
         ConsoleLogger $logger,
         LogInfo $logInfo,
         ContainerContract $container,

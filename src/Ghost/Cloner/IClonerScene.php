@@ -14,6 +14,7 @@ namespace Commune\Ghost\Cloner;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Exceptions\Logic\InvalidConfigException;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Protocals\Intercom\InputMsg;
 
@@ -21,7 +22,7 @@ use Commune\Protocals\Intercom\InputMsg;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $sceneId
- * @property-read string $contextName
+ * @property-read Ucl $root
  * @property-read array $env
  */
 class IClonerScene implements ClonerScene
@@ -29,7 +30,7 @@ class IClonerScene implements ClonerScene
 
     protected $sceneId;
 
-    protected $contextName;
+    protected $root;
 
     protected $env;
 
@@ -38,14 +39,13 @@ class IClonerScene implements ClonerScene
         $sceneId = $input->getSceneId();
 
         if (!isset($config->sceneContextNames[$sceneId])) {
-            $scenes = $config->sceneContextNames;
-            $sceneId = array_keys($scenes)[0];
+            $sceneId = '';
         }
 
+        // 重置场景 ID
         $this->sceneId = $sceneId;
         $input->setSceneId($sceneId);
-
-        $contextName = $config->sceneContextNames[$sceneId] ?? null;
+        $contextName = $config->sceneContextNames[$sceneId] ?? $config->defaultContextName;
 
         if (empty($contextName)) {
             throw new InvalidConfigException(
@@ -53,7 +53,7 @@ class IClonerScene implements ClonerScene
                 'sceneId'
             );
         }
-        $this->contextName = ContextUtils::normalizeContextName($contextName);
+        $this->root = Ucl::decodeUclStr($contextName);
         $this->env = $input->getEnv();
     }
 

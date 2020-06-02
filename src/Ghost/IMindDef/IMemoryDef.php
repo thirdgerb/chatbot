@@ -15,7 +15,6 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Support\Parameter\ParamDefs;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
-use Commune\Support\Parameter\IParamDefs;
 use Commune\Ghost\Memory\IRecollection;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
@@ -104,12 +103,12 @@ class IMemoryDef implements MemoryDef
         );
     }
 
-    public function getMeta(): Meta
+    public function toMeta(): Meta
     {
         return $this->meta;
     }
 
-    public static function wrap(Meta $meta): Wrapper
+    public static function wrapMeta(Meta $meta): Wrapper
     {
         if (!$meta instanceof MemoryMeta) {
             throw new InvalidArgumentException('meta should be subclass of ' . MemoryMeta::class);

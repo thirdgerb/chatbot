@@ -125,11 +125,12 @@ class Ucl implements UclInterface
 
     public static function make(
         string $contextName,
-        array $query = []
+        array $query = [],
+        string $stageName = ''
     ): Ucl
     {
         $contextName = ContextUtils::normalizeContextName($contextName);
-        return new static($contextName, '', $query);
+        return new static($contextName, $stageName, $query);
     }
 
 
@@ -258,7 +259,7 @@ class Ucl implements UclInterface
         $stageName = $ex[1] ?? '';
         $query = is_array($query) ? $query : [];
 
-        return new self($contextName, $stageName, $query);
+        return static::make($contextName, $query, $stageName);
     }
 
     public static function decodeQueryStr(string $str) : array
@@ -322,7 +323,7 @@ class Ucl implements UclInterface
         return StringUtils::gluePrefixAndName(
             $this->_contextName,
             $stage,
-            Context::CONTEXT_STAGE_SEPARATOR
+            Context::CONTEXT_STAGE_DELIMITER
         );
     }
 

@@ -9,8 +9,9 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context\Prototype;
+namespace Commune\Ghost\Context;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 use Commune\Blueprint\Ghost\Context;
@@ -22,7 +23,7 @@ use Commune\Message\Host\Convo\IContextMsg;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\TArrayAccessToMutator;
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 use Commune\Support\DI\TInjectable;
 use Illuminate\Support\Collection;
 
@@ -86,7 +87,7 @@ class IContext implements Context
         $this->_ucl = $ucl;
     }
 
-    public static function wrap(Cloner $cloner, Ucl $ucl): Context
+    public static function create(Cloner $cloner, Ucl $ucl): Context
     {
         return new static($cloner, $ucl);
     }
@@ -274,10 +275,10 @@ class IContext implements Context
 
     protected function warningOrException(string $error)
     {
-        if ($this->_cloner->isDebugging()) {
+        if (CommuneEnv::isDebug()) {
             $this->_cloner->logger->warning($error);
         } else {
-            throw new HostLogicException($error);
+            throw new CommuneLogicException($error);
         }
     }
 

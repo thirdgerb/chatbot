@@ -61,12 +61,6 @@ interface Session
     /*----- status -----*/
 
     /**
-     * 是否是调试模式.
-     * @return bool
-     */
-    public function isDebugging() : bool;
-
-    /**
      * 设置为无状态请求
      */
     public function noState() : void;

@@ -19,5 +19,5 @@ interface MindSelfRegister
 {
     const REGISTER_METHOD = 'selfRegisterToMind';
 
-    public static function selfRegisterToMind(Mindset $mindset) : void;
+    public static function selfRegisterToMind(Mindset $mindset, bool $force = false) : void;
 }

@@ -21,7 +21,7 @@ use Commune\Support\Option\Wrapper;
 abstract class StorageOption extends AbsOption implements Wrapper
 {
 
-    public function getMeta(): Meta
+    public function toMeta(): Meta
     {
         $data = $this->toArray();
         return new StorageMeta([
@@ -34,7 +34,7 @@ abstract class StorageOption extends AbsOption implements Wrapper
      * @param StorageMeta $meta
      * @return Wrapper
      */
-    public static function wrap(Meta $meta): Wrapper
+    public static function wrapMeta(Meta $meta): Wrapper
     {
         $config = $meta->config;
         return new static($config);

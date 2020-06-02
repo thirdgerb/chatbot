@@ -11,8 +11,13 @@
 
 namespace Commune\Ghost\Context\Codable;
 
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Blueprint\Ghost\Context\CodeContext;
+use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
-use Commune\Ghost\Context\Prototype\IContextDef;
+use Commune\Ghost\Context\IContextDef;
+use Commune\Support\Option\Meta;
+use Commune\Support\Option\Wrapper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -23,6 +28,7 @@ class ICodeContextDef extends IContextDef
 
     public function __construct(string $contextClass, ContextMeta $meta = null)
     {
+        $this->contextClass = $contextClass;
         $creator = new CodeDefCreator($contextClass);
         $contextName = isset($meta) ? $meta->name : $creator->getContextName();
 
@@ -60,8 +66,43 @@ class ICodeContextDef extends IContextDef
             'contextRoutes' => $config['contextRoutes'] ?? $option->contextRoutes,
 
             'stages' => $stages + $depending->stages,
+            'firstStage' => CodeContext::FIRST_STAGE
         ]);
 
         unset($creator);
     }
+
+    public function toMeta(): Meta
+    {
+        $config = $this->toArray();
+        unset($config['name']);
+        unset($config['title']);
+        unset($config['desc']);
+
+        return new ContextMeta([
+            'name' => $this->name,
+            'title' => $this->title,
+            'desc' => $this->desc,
+            'wrapper' => $this->contextClass,
+            'config' => $config
+        ]);
+    }
+
+    /**
+     * @param Meta $meta
+     * @return ContextDef
+     */
+    public static function wrapMeta(Meta $meta): Wrapper
+    {
+        if (!$meta instanceof ContextMeta) {
+            throw new InvalidArgumentException(
+                __METHOD__
+                . ' only accept meta of subclass ' . ContextMeta::class
+            );
+        }
+
+        $className = $meta->wrapper;
+        return new static($className, $meta);
+    }
+
 }

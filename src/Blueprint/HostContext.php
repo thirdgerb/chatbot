@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint;
 
-use Commune\Blueprint\Exceptions\Boot\HostNotRunningException;
+use Commune\Blueprint\Exceptions\Boot\CommuneNotRunningException;
 
 
 /**
@@ -38,7 +38,7 @@ class HostContext
             return self::$host;
         }
 
-        throw new HostNotRunningException(__METHOD__);
+        throw new CommuneNotRunningException(__METHOD__);
     }
 
     private function __construct()

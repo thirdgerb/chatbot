@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context\Codable;
+namespace Commune\Blueprint\Ghost\Context;
 
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\MindSelfRegister;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
-use Commune\Blueprint\Ghost\Context\StageBuilder;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Support\Option\Wrapper;
 
 
@@ -50,6 +50,7 @@ interface CodeContext extends Context, Wrapper, MindSelfRegister
     const CONTEXT_OPTION_FUNC = '__option';
     const STAGE_BUILDER_PREFIX = '__on_';
 
+    public static function makeUcl(array $query, string $stage = '') : Ucl;
 
     /**
      * 定义 context name
@@ -81,5 +82,5 @@ interface CodeContext extends Context, Wrapper, MindSelfRegister
      * @param StageBuilder $builder
      * @return StageBuilder
      */
-    public static function __on_start(StageBuilder $builder) : StageBuilder;
+    public function __on_start(StageBuilder $builder) : StageBuilder;
 }

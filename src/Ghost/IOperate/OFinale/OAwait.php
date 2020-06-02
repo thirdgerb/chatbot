@@ -112,8 +112,8 @@ class OAwait extends AbsFinale implements Await
     {
         return array_unique(
             array_merge(
-                $this->stageRoutes,
-                $contextDef->commonStageRoutes()
+                $this->stageRoutes ?? [],
+                $contextDef->commonStageRoutes() ?? []
             )
         );
     }
@@ -122,9 +122,9 @@ class OAwait extends AbsFinale implements Await
     {
         return array_unique(
             array_merge(
-                $this->contextRoutes,
-                $contextDef->commonContextRoutes(),
-                $this->cloner->config->globalContextRoutes
+                $this->contextRoutes ?? [],
+                $contextDef->commonContextRoutes() ?? [],
+                $this->cloner->config->globalContextRoutes ?? []
             )
         );
     }

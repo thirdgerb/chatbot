@@ -69,7 +69,7 @@ class EmotionMeta extends AbsOption implements DefMeta
         return [];
     }
 
-    public function getWrapper(): Wrapper
+    public function toWrapper(): Wrapper
     {
         return new IEmotionDef($this);
     }

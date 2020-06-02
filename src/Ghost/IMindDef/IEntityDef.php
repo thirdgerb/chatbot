@@ -49,7 +49,7 @@ class IEntityDef implements EntityDef
      * @param Meta $meta
      * @return Wrapper
      */
-    public static function wrap(Meta $meta): Wrapper
+    public static function wrapMeta(Meta $meta): Wrapper
     {
         if (!$meta instanceof EntityMeta) {
             throw new InvalidArgumentException('meta should be subclass of '. EntityMeta::class);
@@ -104,7 +104,7 @@ class IEntityDef implements EntityDef
                     'name' => $value,
                     'synonyms' => [$value]
                 ]);
-                $reg->registerDef($meta->getWrapper(), true);
+                $reg->registerDef($meta->toWrapper(), true);
             }
         }
     }
@@ -140,7 +140,7 @@ class IEntityDef implements EntityDef
         return $this->meta->synonyms;
     }
 
-    public function getMeta(): Meta
+    public function toMeta(): Meta
     {
         return $this->meta;
     }

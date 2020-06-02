@@ -15,22 +15,22 @@ namespace Commune\Support\Alias;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class AbsAliases
+abstract class AbsAliases
 {
     /**
-     * @var string[]
+     * @var string[][]
      */
     protected static $originToAlias = [];
 
     /**
-     * @var string[]
+     * @var string[][]
      */
     protected static $aliasToOrigin = [];
 
     /**
-     * @var bool
+     * @var bool[]
      */
-    protected static $loaded;
+    protected static $loaded = [];
 
     abstract public static function preload() : void;
 
@@ -40,28 +40,30 @@ class AbsAliases
      */
     public static function setAlias(string $origin, string $alias) : void
     {
-        self::$originToAlias[$origin] = $alias;
-        self::$aliasToOrigin[$alias] = $origin;
+        $class = static::class;
+        static::$originToAlias[$class][$origin] = $alias;
+        static::$aliasToOrigin[$class][$alias] = $origin;
     }
 
     public static function boot() : void
     {
-        if (!self::$loaded) {
-            self::preload();
-            self::$loaded = true;
+        $class = static::class;
+        if (empty(static::$loaded[$class])) {
+            static::preload();
+            static::$loaded[$class] = true;
         }
     }
 
     public static function getOriginFromAlias(string $alias) : string
     {
-        self::boot();
-        return self::$aliasToOrigin[$alias] ?? $alias;
+        static::boot();
+        return static::$aliasToOrigin[static::class][$alias] ?? $alias;
     }
 
     public static function getAliasOfOrigin(string $origin) : string
     {
-        self::boot();
-        return self::$originToAlias[$origin] ?? $origin;
+        static::boot();
+        return static::$originToAlias[static::class][$origin] ?? $origin;
     }
 
 

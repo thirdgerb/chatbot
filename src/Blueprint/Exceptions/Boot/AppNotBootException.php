@@ -11,13 +11,13 @@
 
 namespace Commune\Blueprint\Exceptions\Boot;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 
 /**
  * App 尚未启动的异常.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class AppNotBootException extends HostLogicException
+class AppNotBootException extends CommuneLogicException
 {
 
 }

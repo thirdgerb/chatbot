@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Pipe\ComprehendPipe;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Dialog\IRetain\IReceive;
+use Commune\Ghost\Dialog\IReceive;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\HostMsg\ConvoMsg;
 use Commune\Protocals\Intercom\InputMsg;
@@ -49,6 +49,7 @@ class OStart implements Operator
 
     public function __construct(Cloner $cloner)
     {
+        $this->cloner = $cloner;
         $this->process = $cloner->runtime->getCurrentProcess();
         $this->start = $this->process->getAwait() ?? $this->process->getRoot();
         $this->dialog = new IReceive($this->cloner, $this->start, null);
@@ -68,7 +69,7 @@ class OStart implements Operator
             // 检查是否有阻塞中的任务.
             ?? $this->checkBlocking()
             // 检查是否是 session 第一次输入, 是的话要初始化 session
-            ?? $this->shouldStartSession()
+            ?? $this->isSessionStart()
             // 如果不是影响对话状态的 convo msg, 则全部由 await ucl 来处理. 不走任何理解和路由.
             ?? $this->isNotConvoMsgCall($input)
             // 通过管道试图理解消息, 将理解结果保留在 comprehension 中.
@@ -118,7 +119,7 @@ class OStart implements Operator
     }
 
 
-    protected function shouldStartSession()
+    protected function isSessionStart()
     {
         $process = $this->process;
 
@@ -130,11 +131,9 @@ class OStart implements Operator
 
             // 然后重新启动.
             return new BridgeOperator($reactivate, function(Dialog $dialog) {
-                $await = $dialog->process->getAwait();
-                if (isset($await)) {
+                if (!$dialog->process->isFresh()) {
                     return new OStart($dialog->cloner);
                 }
-
                 return null;
             });
         }
@@ -300,6 +299,11 @@ class OStart implements Operator
     }
 
     /*------ operator ------*/
+    public function getName(): string
+    {
+        return static::class;
+    }
+
 
     public function getDialog(): Dialog
     {

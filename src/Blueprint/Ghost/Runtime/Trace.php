@@ -12,12 +12,11 @@
 namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Trace extends ArrayAndJsonAble
+interface Trace
 {
     public function record(Operator $operator) : void;
 }

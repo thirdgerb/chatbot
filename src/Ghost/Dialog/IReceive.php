@@ -9,9 +9,8 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Dialog\IRetain;
+namespace Commune\Ghost\Dialog;
 
-use Commune\Ghost\Dialog\AbsDialog;
 use Commune\Blueprint\Ghost\Dialog\Receive;
 
 /**

@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Framework;
 
-use Commune\Blueprint\Exceptions\HostBootingException;
+use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
@@ -23,13 +23,6 @@ use Commune\Contracts\Log\LogInfo;
  */
 interface App
 {
-    const DEBUG_BINDING = 'appDebug';
-    /**
-     * 是否调试状态.
-     * @return bool
-     */
-    public function isDebugging() : bool;
-
     /**
      * App 的唯一 ID 标识, 可用于各种缓存和数据存储.
      * @return string
@@ -62,7 +55,7 @@ interface App
      * $app->bootstrap()->activate();
      *
      * @return static
-     * @throws HostBootingException
+     * @throws CommuneBootingException
      */
     public function activate() : App;
 

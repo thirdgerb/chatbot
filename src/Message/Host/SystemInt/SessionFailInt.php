@@ -11,10 +11,10 @@
 
 namespace Commune\Message\Host\SystemInt;
 
-use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Struct\Struct;
+use Commune\Blueprint\Framework\Request\AppResponse;
 
 
 /**

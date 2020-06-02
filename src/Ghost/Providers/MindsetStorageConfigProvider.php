@@ -14,7 +14,6 @@ namespace Commune\Ghost\Providers;
 use Commune\Blueprint\Ghost\MindMeta;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
-use Commune\Support\Option\Option;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\OptRegistry;
@@ -64,13 +63,13 @@ class MindsetStorageConfigProvider extends ServiceProvider
     protected function getCategoriesConfigs() : array
     {
         return [
-            'contexts' => [MindMeta\ContextMeta::class, PHPStorageOption::class],
-            'stages' => [MindMeta\StageMeta::class, PHPStorageOption::class],
-            'intents' => [MindMeta\IntentMeta::class, YmlStorageOption::class],
-            'memories' => [MindMeta\MemoryMeta::class, YmlStorageOption::class],
-            'emotions' => [MindMeta\EmotionMeta::class, YmlStorageOption::class],
-            'entities' => [MindMeta\EntityMeta::class, YmlStorageOption::class],
-            'synonyms' => [MindMeta\SynonymMeta::class, YmlStorageOption::class],
+            'contexts' => [MindMeta\ContextMeta::class, PHPStorageOption::class, '语境', '上下文语境配置'],
+            'stages' => [MindMeta\StageMeta::class, PHPStorageOption::class, 'stage', '多轮对话节点逻辑配置'],
+            'intents' => [MindMeta\IntentMeta::class, YmlStorageOption::class, '意图', '对话意图配置'],
+            'memories' => [MindMeta\MemoryMeta::class, YmlStorageOption::class, '记忆', '上下文记忆配置'],
+            'emotions' => [MindMeta\EmotionMeta::class, YmlStorageOption::class, '情绪', '情绪逻辑配置, 用于复杂意图匹配'],
+            'entities' => [MindMeta\EntityMeta::class, YmlStorageOption::class, '实体词典', '实体词典配置'],
+            'synonyms' => [MindMeta\SynonymMeta::class, YmlStorageOption::class, '同义词词典', '同义词词典配置'],
         ];
     }
 
@@ -79,7 +78,7 @@ class MindsetStorageConfigProvider extends ServiceProvider
         $metas = $this->getCategoriesConfigs();
 
         // 遍历获取所有的 Category 配置.
-        foreach ($metas as $type => list($metaName, $storageName)) {
+        foreach ($metas as $type => list($metaName, $storageName, $title, $desc)) {
             /**
              * @var StorageOption $storageOption
              */
@@ -89,13 +88,13 @@ class MindsetStorageConfigProvider extends ServiceProvider
                 'isDir' => true,
             ]);
 
-            $meta = $storageOption->getMeta();
+            $meta = $storageOption->toMeta();
 
             yield new CategoryOption([
                 'name' => $metaName,
                 'optionClass' => $metaName,
-                'title' => call_user_func([$metaName, Option::TITLE_FUNC]),
-                'desc' => call_user_func([$metaName, Option::DESC_FUNC]),
+                'title' => $title,
+                'desc' => $desc,
                 'cacheExpire' => $this->cacheExpire,
                 'storage' => $meta,
                 'initialStorage' => null,

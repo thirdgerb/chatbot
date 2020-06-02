@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Exceptions\Logic;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 
 
 /**
@@ -19,7 +19,7 @@ use Commune\Blueprint\Exceptions\HostLogicException;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class InvalidCallableReturnException extends HostLogicException
+class InvalidCallableReturnException extends CommuneLogicException
 {
 
     public function __construct(string $method, string $expect, string $given)

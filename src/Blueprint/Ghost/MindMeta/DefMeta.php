@@ -13,12 +13,15 @@ namespace Commune\Blueprint\Ghost\MindMeta;
 
 use Commune\Blueprint\Ghost\MindDef\Def;
 use Commune\Support\Option\Meta;
+use Commune\Support\Option\Wrapper;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @method Def getWrapper() : Wrapper
  */
 interface DefMeta extends Meta
 {
+    /**
+     * @return Def
+     */
+    public function toWrapper() : Wrapper;
 }

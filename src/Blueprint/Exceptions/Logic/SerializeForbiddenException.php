@@ -11,12 +11,12 @@
 
 namespace Commune\Framework\Exceptions;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SerializeForbiddenException extends HostLogicException
+class SerializeForbiddenException extends CommuneLogicException
 {
 
     public function __construct(string $sessionClass)

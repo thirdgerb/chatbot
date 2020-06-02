@@ -11,12 +11,12 @@
 
 namespace Commune\Blueprint\Exceptions\Logic;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class InvalidClassException extends HostLogicException
+class InvalidClassException extends CommuneLogicException
 {
     public function __construct(string $expect, string $given)
     {

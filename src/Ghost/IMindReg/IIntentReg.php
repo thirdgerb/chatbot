@@ -33,22 +33,19 @@ class IIntentReg extends AbsDefRegistry implements IntentReg
 
     protected function hasRegisteredMeta(string $defName): bool
     {
-        if (array_key_exists($defName, $this->cachedDefs)) {
+        // 先检查 Stage, 会尝试注册 Context
+        $stageReg = $this->mindset->stageReg();
+
+        if (parent::hasRegisteredMeta($defName)) {
             return true;
         }
 
-        // 先检查 Stage, 会尝试注册 Context
-        $stageReg = $this->mindset->stageReg();
-        $hasStage = $stageReg->hasDef($defName);
-        return $hasStage || parent::hasRegisteredMeta($defName);
+        if (!$stageReg->hasDef($defName)) {
+            return false;
+        }
+
+        $stageDef = $stageReg->getDef($defName);
+        $this->registerDef($stageDef->asIntentDef());
+        return true;
     }
-
-
-    protected function getRegisteredMetaIds(): array
-    {
-        $stageIds = $this->mindset->stageReg()->getAllDefIds();
-        $intentIds = parent::getRegisteredMetaIds();
-        return array_merge($stageIds, $intentIds);
-    }
-
 }

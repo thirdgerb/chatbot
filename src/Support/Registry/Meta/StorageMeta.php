@@ -20,7 +20,7 @@ use Commune\Support\Option\AbsMeta;
  * @property-read string $wrapper
  * @property-read array $config
  *
- * @method StorageOption getWrapper()
+ * @method StorageOption toWrapper()
  */
 class StorageMeta extends AbsMeta
 {

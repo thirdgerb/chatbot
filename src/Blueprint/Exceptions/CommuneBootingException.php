@@ -9,21 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Exceptions\Boot;
+namespace Commune\Blueprint\Exceptions;
 
-use Commune\Blueprint\Exceptions\HostBootingException;
 use Throwable;
 
 
 /**
- * 机器人未运行.
+ * 机器人启动时的致命错误.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class HostNotRunningException extends HostBootingException
+class CommuneBootingException extends CommuneLogicException
 {
-    public function __construct(string $method)
+    public function __construct(string $message = "", Throwable $previous = null)
     {
-        parent::__construct("host not running, called by $method");
+        parent::__construct($message, 0, $previous);
     }
-
 }

@@ -11,7 +11,9 @@
 
 namespace Commune\Ghost\Context\Codable;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
+use Commune\Blueprint\Ghost\Context\CodeContext;
+use Commune\Blueprint\Ghost\Context\CodeContextOption;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Ghost\Support\ContextUtils;
 
@@ -57,9 +59,11 @@ class CodeDefCreator
 
     public function getCodeContextOption() : CodeContextOption
     {
-        return call_user_func(
+        $option = call_user_func(
             [$this->contextClass, CodeContext::CONTEXT_OPTION_FUNC]
         );
+
+        return $option;
     }
 
     public function getContextAnnotation() : AnnotationReflector
@@ -92,14 +96,14 @@ class CodeDefCreator
             }
 
             $methodName = $method->getName();
-            $name = substr($methodName, strlen(CodeContext::STAGE_BUILDER_PREFIX));
+            $shortName = substr($methodName, strlen(CodeContext::STAGE_BUILDER_PREFIX));
 
-            if (!ContextUtils::isValidStageName($name)) {
+            if (!ContextUtils::isValidStageName($shortName)) {
                 $class = $this->contextClass;
-                throw new HostLogicException("invalid method stage name of class $class method $methodName");
+                throw new CommuneLogicException("invalid method stage name of class $class method $methodName");
             }
 
-            $results[$name] = $this->buildStageMeta($contextName, $name, $method);
+            $results[$shortName] = $this->buildStageMeta($contextName, $shortName, $method);
         }
 
         return $results;
@@ -112,22 +116,23 @@ class CodeDefCreator
     ) : StageMeta
     {
         $annotation = AnnotationReflector::create($method->getDocComment());
+        $fullName = ContextUtils::makeFullStageName($contextName, $shortName);
 
-        $def = new CodeStageDef([
-            'name' => $name = ContextUtils::makeFullStageName($contextName, $shortName),
+        $config = [
+            'name' => $fullName,
             'title' => $annotation->title,
             'desc' => $annotation->desc,
 
             'contextName' => $contextName,
             'stageName' => $shortName,
-            'asIntent' => $annotation->asIntentMeta($name),
+            'asIntent' => $annotation->asIntentMeta($fullName),
 
             'events' => [],
             'ifRedirect' => null,
 
-        ]);
-
-        return $def->getMeta();
+        ];
+        $def = new CodeStageDef($config);
+        return $def->toMeta();
     }
 
 

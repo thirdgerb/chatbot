@@ -37,7 +37,6 @@ interface DependInjections
 
     const APP_PROC_BINDINGS = [
         Framework\ProcContainer::class,
-        Framework\App::DEBUG_BINDING,
         Contracts\Log\ExceptionReporter::class,
         OptRegistry::class,
         LoggerInterface::class,

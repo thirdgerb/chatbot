@@ -17,9 +17,10 @@ use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Context\Prototype\IContext;
-use Commune\Ghost\Support\ContextUtils;
+use Commune\Ghost\Context\IContext;
 use Commune\Support\Option\Meta;
+use Commune\Support\Option\Wrapper;
+use Commune\Blueprint\Ghost\Context\CodeContext;
 
 
 /**
@@ -27,15 +28,21 @@ use Commune\Support\Option\Meta;
  */
 abstract class AbsCodeContext extends IContext implements CodeContext
 {
-
-    public static function __name() : string
+    public static function makeUcl(array $query, string $stage = ''): Ucl
     {
-        return ContextUtils::normalizeContextName(static::class);
+        $name = static::__name();
+        return Ucl::make($name, $query, $stage);
     }
 
-    public function getMeta(): Meta
+
+    public function toMeta(): Meta
     {
-        return $this->_def->getMeta();
+        return $this->_def->toMeta();
+    }
+
+    public static function wrapMeta(Meta $meta): Wrapper
+    {
+        return static::__def($meta);
     }
 
     public static function __def(ContextMeta $meta = null): ContextDef
@@ -43,16 +50,17 @@ abstract class AbsCodeContext extends IContext implements CodeContext
         return new ICodeContextDef(static::class, $meta);
     }
 
-    public static function wrap(Cloner $cloner, Ucl $ucl): Context
+    public static function create(Cloner $cloner, Ucl $ucl): Context
     {
         return new static($cloner, $ucl);
     }
 
-    public static function selfRegisterToMind(Ghost\Mindset $mind): void
+    public static function selfRegisterToMind(Ghost\Mindset $mind, bool $force = false): void
     {
-        $def = static::__def(static::class);
-        $mind->contextReg()->registerDef($def, true);
+        $def = static::__def();
+        $mind->contextReg()->registerDef($def, !$force);
     }
+
 
 
 }

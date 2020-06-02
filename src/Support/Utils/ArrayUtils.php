@@ -4,12 +4,48 @@
 namespace Commune\Support\Utils;
 
 
+use Commune\Support\Arr\ArrayAndJsonAble;
 use Illuminate\Support\Arr;
 
 class ArrayUtils
 {
 
-    public static function slice(array &$arr, int $maxLength) : void
+    public static function wrap($data) : array
+    {
+        if (is_null($data)) {
+            return [];
+        }
+
+        if (is_array($data)) {
+            return $data;
+        }
+
+        if ($data instanceof ArrayAndJsonAble) {
+            return $data->toArray();
+        }
+
+        if (is_object($data) && method_exists($data, 'toArray')) {
+            return $data->toArray();
+        }
+
+        return [$data];
+    }
+
+    public static function fetchArray(array $data, $key)  : array
+    {
+        if (!isset($data[$key])) {
+            return [];
+        }
+
+        $value = $data[$key];
+        return static::wrap(static::recursiveToArray($value));
+    }
+
+    /**
+     * @param array $arr
+     * @param int $maxLength
+     */
+    public static function maxLength(array &$arr, int $maxLength) : void
     {
         $arr = array_slice($arr, 0, $maxLength);
     }
@@ -141,7 +177,7 @@ class ArrayUtils
             // 如果要求数组, 按数组的方式进行封装.
             if ($isList) {
                 $results[$key] = isset($values[$key])
-                    ? Arr::wrap($values[$key])
+                    ? static::wrap($values[$key])
                     : [];
 
                 // 如果不是数组, 即便输入值是数组也只使用第一个参数

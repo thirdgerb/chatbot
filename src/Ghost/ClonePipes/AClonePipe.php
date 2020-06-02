@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\ClonePipes;
 
+use Commune\Blueprint\CommuneEnv;
 use Psr\Log\LoggerInterface;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
@@ -53,20 +54,25 @@ abstract class AClonePipe implements RequestPipe
             throw new InvalidArgumentException('request is not instance of '. GhostRequest::class);
         }
 
-        $a = microtime(true);
+        $debug = CommuneEnv::isDebug();
+
+        if ($debug) {
+            $a = microtime(true);
+        }
 
         // 如果已经 quit, 就不往后走了.
         if ($this->cloner->isQuit()) {
-            return $request->response($this->cloner);
+            return $request->success($this->cloner);
         }
 
         $response = $this->doHandle($request, $next);
 
-        $b = microtime(true);
-        $gap = round(($b - $a) * 1000000);
-        $pipeName = static::class;
-
-        $this->logger->debug("$pipeName end pipe gap: {$gap}ws");
+        if ($debug && isset($a)) {
+            $b = microtime(true);
+            $gap = round(($b - $a) * 1000000);
+            $pipeName = static::class;
+            $this->logger->debug("$pipeName end pipe gap: {$gap}ws");
+        }
         return $response;
     }
 }

@@ -14,7 +14,7 @@ namespace Commune\Ghost\Commands\Super;
 use Commune\Ghost\Cmd\AGhostCmd;
 use Commune\Support\RunningSpy\Spied;
 use Commune\Support\RunningSpy\SpyAgency;
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 
@@ -45,7 +45,7 @@ class SpyCmd extends AGhostCmd
         $str = '';
         foreach ($classes as $running) {
             if (!is_a($running, Spied::class, TRUE)) {
-                throw new HostLogicException(__METHOD__ . " : $running is not subclass of " . Spied::class);
+                throw new CommuneLogicException(__METHOD__ . " : $running is not subclass of " . Spied::class);
             }
 
             $str .= $this->showRunningTrace(

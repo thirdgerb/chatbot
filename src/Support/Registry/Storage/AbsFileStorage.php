@@ -510,6 +510,19 @@ abstract class AbsFileStorage implements Storage
         return array_slice($ids, $offset, $limit);
     }
 
+    public function flush(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption
+    ): bool
+    {
+        $ids = $this->getAllIds($categoryOption, $storageOption);
+        $id = array_shift($ids);
+        if (!isset($id)) {
+            return true;
+        }
+        return (bool) $this->delete($categoryOption, $storageOption, $id, ...$ids);
+    }
+
 
     public function __destruct()
     {

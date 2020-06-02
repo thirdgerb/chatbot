@@ -50,7 +50,8 @@ class MemoryMeta extends AbsOption implements DefMeta
     public static function validate(array $data): ? string /* errorMsg */
     {
         $name = $data['name'] ?? '';
-        if (ContextUtils::isValidMemoryName($name)) {
+
+        if (!ContextUtils::isValidMemoryName($name)) {
             return "memory name $name is invalid";
         }
 
@@ -60,9 +61,9 @@ class MemoryMeta extends AbsOption implements DefMeta
     /**
      * @return MemoryDef
      */
-    public function getWrapper(): Wrapper
+    public function toWrapper(): Wrapper
     {
-        return IMemoryDef::wrap($this);
+        return IMemoryDef::wrapMeta($this);
     }
 
 

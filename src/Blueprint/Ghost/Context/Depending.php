@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Context\Codable;
+namespace Commune\Blueprint\Ghost\Context;
 
 use Commune\Blueprint\Ghost\Ucl;
 

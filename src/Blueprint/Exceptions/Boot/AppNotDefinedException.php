@@ -11,13 +11,13 @@
 
 namespace Commune\Blueprint\Exceptions\Boot;
 
-use Commune\Blueprint\Exceptions\HostBootingException;
+use Commune\Blueprint\Exceptions\CommuneBootingException;
 
 /**
  * 应用未定义
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class AppNotDefinedException extends HostBootingException
+class AppNotDefinedException extends CommuneBootingException
 {
     public function __construct(string $method, string $appName)
     {

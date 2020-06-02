@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\IOperate\OExiting;
 
+use Commune\Blueprint\Ghost\Dialog;
 use Commune\Ghost\IOperate\AbsOperator;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\IOperate\Flows\FallbackFlow;
@@ -28,7 +29,14 @@ class OFulfill extends AbsOperator
     /**
      * @var string[]
      */
-    protected $restoreStages;
+    protected $restoreStages = [];
+
+    public function __construct(Dialog $dialog, int $turns, array $restoreStages)
+    {
+        $this->turns = $turns;
+        $this->restoreStages = $restoreStages;
+        parent::__construct($dialog);
+    }
 
     protected function toNext(): Operator
     {

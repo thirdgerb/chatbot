@@ -41,7 +41,6 @@ class GhostApp extends IGhost
 
         parent::__construct(
             $config,
-            $set ? $app->isDebugging() : $debug,
             $set ? $app->getProcContainer() : $procC,
             $set ? $app->getReqContainer() : null,
             $set ? $app->getServiceRegistrar() : null,

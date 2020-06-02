@@ -23,6 +23,6 @@ namespace Commune\Support\Option;
 interface Meta extends Option
 {
 
-    public function getWrapper() : Wrapper;
+    public function toWrapper() : Wrapper;
 
 }

@@ -11,7 +11,8 @@
 
 namespace Commune\Ghost\Memory;
 
-use Commune\Blueprint\Exceptions\HostLogicException;
+use Commune\Blueprint\CommuneEnv;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
@@ -70,10 +71,10 @@ trait TRecollection
 
     protected function warningOrException(string $error)
     {
-        if ($this->_cloner->isDebugging()) {
+        if (CommuneEnv::isDebug()) {
             $this->_cloner->logger->warning($error);
         } else {
-            throw new HostLogicException($error);
+            throw new CommuneLogicException($error);
         }
     }
 

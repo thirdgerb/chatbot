@@ -65,7 +65,9 @@ interface Struct extends ArrayAndJsonAble, \IteratorAggregate
     /*------- reflection -------*/
 
     /**
-     * 获得当前类的注解.
+     * 获得当前类的注解文档.
+     * 因为注解对于 Struct 的类型判断是有意义的, 所以可以考虑自己定义注解的获取源头.
+     *
      * @return string
      */
     public static function getDocComment() : string;

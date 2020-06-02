@@ -57,12 +57,12 @@ class ISynonymDef implements SynonymDef
         return $this->meta->synonyms;
     }
 
-    public function getMeta(): Meta
+    public function toMeta(): Meta
     {
         return $this->meta;
     }
 
-    public static function wrap(Meta $meta): Wrapper
+    public static function wrapMeta(Meta $meta): Wrapper
     {
         if (!$meta instanceof SynonymMeta) {
             throw new InvalidArgumentException("meta should be subclass of ". SynonymMeta::class);

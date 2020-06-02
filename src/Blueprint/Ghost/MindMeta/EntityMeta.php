@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
+use Commune\Ghost\IMindDef\IEntityDef;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Wrapper;
@@ -67,10 +68,9 @@ class EntityMeta extends AbsOption implements DefMeta
         return [];
     }
 
-    public function getWrapper(): Wrapper
+    public function toWrapper(): Wrapper
     {
-        // TODO: Implement getWrapper() method.
+        return new IEntityDef($this);
     }
-
 
 }

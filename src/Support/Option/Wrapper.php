@@ -17,14 +17,14 @@ namespace Commune\Support\Option;
  */
 interface Wrapper
 {
-    const INIT_FUNC = 'wrap';
+    const WRAP_META_FUNC = 'wrapMeta';
 
-    public function getMeta() : Meta;
+    public function toMeta() : Meta;
 
     /**
      * @param Meta $meta
      * @return static
      */
-    public static function wrap(Meta $meta) : Wrapper;
+    public static function wrapMeta(Meta $meta) : Wrapper;
 
 }

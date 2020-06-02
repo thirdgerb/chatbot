@@ -11,7 +11,7 @@
 
 namespace Commune\Framework;
 
-use Commune\Blueprint\Exceptions\HostBootingException;
+use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Blueprint\Framework\ComponentOption;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\ServiceRegistrar;
@@ -200,7 +200,7 @@ class IServiceRegistrar implements ServiceRegistrar
     public function bootReqServices(ReqContainer $container): bool
     {
         if (!$container->isInstanced()) {
-            throw new HostBootingException(
+            throw new CommuneBootingException(
                 $this->logInfo->bootingUnInstancedReqContainer()
             );
         }

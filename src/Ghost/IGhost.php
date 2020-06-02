@@ -12,7 +12,7 @@
 namespace Commune\Ghost;
 
 use Commune\Blueprint\Configs\GhostConfig;
-use Commune\Blueprint\Exceptions\HostBootingException;
+use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Framework\ServiceRegistrar;
@@ -57,7 +57,6 @@ class IGhost extends AbsApp implements Ghost
 
     public function __construct(
         GhostConfig $config,
-        bool $debug,
         ContainerContract $procC = null,
         ReqContainer $reqC = null,
         ServiceRegistrar $registrar = null,
@@ -66,7 +65,7 @@ class IGhost extends AbsApp implements Ghost
     )
     {
         $this->config = $config;
-        parent::__construct($debug, $procC, $reqC, $registrar, $consoleLogger, $logInfo);
+        parent::__construct($procC, $reqC, $registrar, $consoleLogger, $logInfo);
     }
 
     public function getName(): string
@@ -93,7 +92,7 @@ class IGhost extends AbsApp implements Ghost
     public function newCloner(InputMsg $input): Cloner
     {
         if (!$this->activated) {
-            throw new HostBootingException(
+            throw new CommuneBootingException(
                 'Ghost not activated'
             );
         }

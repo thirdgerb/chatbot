@@ -29,9 +29,9 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
  *
  * @property-read array $config
  *
- * @method IntentDef getWrapper(): Wrapper
+ * @method IntentDef toWrapper(): Wrapper
  */
-class IntentMeta extends AbsMeta
+class IntentMeta extends AbsMeta implements DefMeta
 {
     const IDENTITY = 'name';
 
@@ -52,6 +52,14 @@ class IntentMeta extends AbsMeta
     }
 
 
+    /**
+     * @param array $data
+     * @param string $name
+     * @param string $title
+     * @param string $desc
+     * @param bool $force
+     * @return array
+     */
     public static function mergeStageInfo(
         array $data,
         string $name,
@@ -60,7 +68,6 @@ class IntentMeta extends AbsMeta
         bool $force = false
     ) : array
     {
-
         if (empty($data['name']) || $force) {
             $data['name'] = $name;
         }
@@ -97,11 +104,4 @@ class IntentMeta extends AbsMeta
         return [];
     }
 
-    public static function validateWrapper(string $wrapper): ? string
-    {
-        $defType = IntentDef::class;
-        return is_a($wrapper, $defType, TRUE)
-            ? null
-            : static::class . " wrapper should be subclass of $defType, $wrapper given";
-    }
 }

@@ -11,8 +11,10 @@
 
 namespace Commune\Message\Abstracted;
 
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Protocals\Abstracted\Intention;
 use Commune\Support\Message\AbsMessage;
+use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;
 use Illuminate\Support\Arr;
 
@@ -119,7 +121,7 @@ class IIntention extends AbsMessage implements Intention
 
     public function setMatchedIntent(string $intentName): void
     {
-        $intentName = StringUtils::normalizeIntentName($intentName);
+        $intentName = ContextUtils::normalizeIntentName($intentName);
         $this->_data['matchedIntent'] = $intentName;
         if (! $this->hasPossibleIntent($intentName)) {
             $this->addPossibleIntent($intentName, 999);
@@ -206,7 +208,7 @@ class IIntention extends AbsMessage implements Intention
     {
         // 所有 entity 值统一用数组的方式. 避免长期以来的混乱.
         $entities = array_map(function($entity) {
-            return Arr::wrap($entity);
+            return ArrayUtils::wrap($entity);
         }, $entities);
 
         $this->_data['intentEntities'][$intentName] = $entities;

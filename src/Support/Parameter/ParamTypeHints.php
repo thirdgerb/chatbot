@@ -11,8 +11,8 @@
 
 namespace Commune\Support\Parameter;
 
+use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\TypeUtils;
-use Illuminate\Support\Arr;
 
 /**
  * 自定义的类型约束管理者.
@@ -99,7 +99,7 @@ class ParamTypeHints
 
         // 如果要求是数组, 传入参数不是数组时, 会自动转成数组
         if ($isList && !is_array($value)) {
-            $value = Arr::wrap($value);
+            $value = ArrayUtils::wrap($value);
         }
 
         // 如果要求不是数组, 而传入是数组时, 会取第一个值.

@@ -46,11 +46,9 @@ class BridgeOperator implements Operator
         $this->next = $next;
     }
 
-
     public function tick(): Operator
     {
         if ($this->current instanceof Finale) {
-
             $next = call_user_func(
                 $this->next,
                 $this->current->getDialog()
@@ -66,6 +64,11 @@ class BridgeOperator implements Operator
     public function getDialog(): Dialog
     {
         return $this->current->getDialog();
+    }
+
+    public function getName(): string
+    {
+        return $this->current->getName();
     }
 
     public function __invoke(): Operator

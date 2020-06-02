@@ -11,6 +11,7 @@
 
 namespace Commune\Framework;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Framework\ProcContainer;
 use Commune\Framework\Bootstrap;
 use Commune\Blueprint\Exceptions\Logic\InvalidConfigException;
@@ -35,11 +36,6 @@ abstract class AbsApp implements App
      * @var string[]
      */
     protected $bootstrappers = [];
-
-    /**
-     * @var bool
-     */
-    protected $debug;
 
     /**
      * @var ContainerContract
@@ -82,7 +78,6 @@ abstract class AbsApp implements App
     protected $fail;
 
     public function __construct(
-        bool $debug,
         ContainerContract $procC = null,
         ReqContainer $reqC = null,
         ServiceRegistrar $registrar = null,
@@ -90,7 +85,6 @@ abstract class AbsApp implements App
         LogInfo $logInfo = null
     )
     {
-        $this->debug = $debug;
         $this->procC = $procC ?? new Container();
         $this->reqC = $reqC ?? new IReqContainer($this->procC);
         $this->console = $consoleLogger ?? new IConsoleLogger();
@@ -107,18 +101,12 @@ abstract class AbsApp implements App
         $this->instance(ConsoleLogger::class, $this->console);
         $this->instance(LogInfo::class, $this->logInfo);
         $this->instance(ServiceRegistrar::class, $this->registrar);
-        $this->instance(App::DEBUG_BINDING, $debug);
 
         // 默认绑定关系.
         $this->basicBindings();
     }
 
     abstract protected function basicBindings() : void;
-
-    public function isDebugging(): bool
-    {
-        return $this->debug;
-    }
 
     protected function instance($abstract, $instance) : void
     {
