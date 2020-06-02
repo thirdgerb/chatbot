@@ -263,13 +263,15 @@ class OAwait extends AbsFinale implements Await
 
     protected function destroy(): void
     {
-        unset($this->dialog);
         unset($this->cloner);
         unset($this->process);
         unset($this->stageReg);
         unset($this->stageRoutes);
         unset($this->contextRoutes);
         unset($this->question);
+        unset($this->ucl);
+        unset($this->expire);
+
         parent::destroy();
     }
 }

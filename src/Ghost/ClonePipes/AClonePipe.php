@@ -12,6 +12,7 @@
 namespace Commune\Ghost\ClonePipes;
 
 use Commune\Blueprint\CommuneEnv;
+use Commune\Framework\Spy\SpyAgency;
 use Psr\Log\LoggerInterface;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
@@ -39,6 +40,7 @@ abstract class AClonePipe implements RequestPipe
     {
         $this->cloner = $cloner;
         $this->logger = $cloner->logger;
+        SpyAgency::incr(self::class);
     }
 
     abstract protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse;
@@ -74,5 +76,10 @@ abstract class AClonePipe implements RequestPipe
             $this->logger->debug("$pipeName end pipe gap: {$gap}ws");
         }
         return $response;
+    }
+
+    public function __destruct()
+    {
+        SpyAgency::decr(self::class);
     }
 }

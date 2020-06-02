@@ -34,8 +34,6 @@ use Commune\Protocals\HostMsg\Intents\OrdinalInt;
  */
 class IQuestionMsg extends AbsMessage implements QuestionMsg
 {
-    protected $initIntIndex = 0;
-
     public function __construct(
         string $query,
         string $default = null,
@@ -231,14 +229,14 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         return $this->suggestions;
     }
 
-    public function addSuggestion(string $suggestion, string $index = null, Ucl $ucl = null): void
+    public function addSuggestion(string $suggestion, $index = null, Ucl $ucl = null): void
     {
         if (is_null($index)) {
-            $this->initIntIndex ++;
-            $index = strval($this->initIntIndex);
+            $this->_data['suggestions'][] = $suggestion;
+        } else {
+            $this->_data['suggestions'][$index] = $suggestion;
         }
 
-        $this->_data['suggestions'][$index] = $suggestion;
 
         if (isset($ucl)) {
             $this->_data['routes'][$index] = $ucl->toEncodedStr();

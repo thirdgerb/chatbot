@@ -13,6 +13,7 @@ namespace Commune\Ghost\Runtime;
 
 use Commune\Blueprint\Exceptions\IO\LoadDataFailException;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
@@ -66,6 +67,11 @@ class IRuntime implements Runtime
      * @var Trace|null
      */
     protected $trace;
+
+    /**
+     * @var Context[]
+     */
+    protected $contexts = [];
 
     /**
      * IRuntime constructor.
@@ -129,15 +135,17 @@ class IRuntime implements Runtime
 
         // 从历史记忆中寻找.
         if (!$this->cloner->isStateless()) {
-            $process = $this->ioFetchCurrentProcess();
 
+            $process = $this->ioFetchCurrentProcess();
             if (isset($process)) {
                 // 生成一个新的 Snapshot
-                return $this->process = $process
+                $this->process = $process
                     ->nextSnapshot(
                         $this->cloner->getTraceId(),
                         $this->cloner->config->maxBacktrace
                     );
+
+                return $this->process;
             }
         }
 
@@ -158,6 +166,17 @@ class IRuntime implements Runtime
             $root,
             $this->cloner->input->getMessageId()
         );
+    }
+
+    /*------ context ------*/
+    public function cacheContext(Context $context): void
+    {
+        $this->contexts[$context->getId()] = $context;
+    }
+
+    public function getCachedContext(string $id): ? Context
+    {
+        return $this->contexts[$id] ?? null;
     }
 
 
@@ -363,10 +382,7 @@ class IRuntime implements Runtime
     {
         if ($name === 'trace') {
             return $this->trace
-                ?? $this->trace = new ITrace(
-                    $this->cloner->config->maxRedirectTimes,
-                    $this->cloner->logger
-                );
+                ?? $this->trace = new ITrace($this->cloner->config->maxRedirectTimes);
         }
         return null;
     }
@@ -374,12 +390,13 @@ class IRuntime implements Runtime
     public function __destruct()
     {
         // 清空数据
-        $this->driver = null;
-        $this->cloner = null;
-        $this->process = null;
-        $this->longTermMemories = [];
-        $this->sessionMemories = [];
-
+        unset($this->driver);
+        unset($this->cloner);
+        unset($this->process);
+        unset($this->longTermMemories);
+        unset($this->sessionMemories);
+        unset($this->trace);
+        unset($this->contexts);
         SpyAgency::decr(static::class);
     }
 }

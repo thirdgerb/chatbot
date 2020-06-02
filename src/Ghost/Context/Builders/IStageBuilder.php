@@ -23,74 +23,79 @@ use Commune\Framework\Spy\SpyAgency;
 class IStageBuilder implements StageBuilder
 {
     /**
-     * @var callable[]
+     * @var Operator|null
      */
-    protected $listeners = [];
+    public $operator;
 
     /**
-     * @var callable
+     * @var Dialog
      */
-    protected $redirector;
+    protected $dialog;
 
-    public function __construct()
+    /**
+     * @var bool
+     */
+    protected $redirect;
+
+    public function __construct(Dialog $dialog, bool $redirect)
     {
+        $this->dialog = $dialog;
+        $this->redirect = $redirect;
+
         SpyAgency::incr(static::class);
     }
 
     public function onRedirect($caller): StageBuilder
     {
-        $this->redirector = $caller;
+        $prev = $this->dialog->prev;
+
+        if ($this->redirect && isset($prev)) {
+            $this->operator = $caller($prev, $this->dialog);
+        }
+
         return $this;
     }
 
     public function onActivate($caller): StageBuilder
     {
-        $this->listeners[Dialog\Activate::class] = $caller;
+        if ($this->dialog->isEvent(Dialog::ACTIVATE)) {
+            $this->operator = $this->dialog->caller()->action($caller);
+        }
+
         return $this;
     }
 
     public function onReceive($caller): StageBuilder
     {
-        $this->listeners[Dialog\Receive::class] = $caller;
+        if ($this->dialog->isEvent(Dialog::RECEIVE)) {
+            $this->operator = $this->dialog->caller()->action($caller);
+        }
+
         return $this;
     }
+
+    public function onResume($caller): StageBuilder
+    {
+        if ($this->dialog->isEvent(Dialog::RESUME)) {
+            $this->operator = $this->dialog->caller()->action($caller);
+        }
+
+        return $this;
+    }
+
 
     public function onEvent(string $event, $caller): StageBuilder
     {
-        $this->listeners[$event] = $caller;
+        if ($this->dialog->isEvent($event)) {
+            $this->operator = $this->dialog->caller()->action($caller);
+        }
+
         return $this;
     }
 
 
-    public function fireRedirect(Dialog $prev, Dialog $current) : ? Operator
-    {
-        if (isset($this->redirector)) {
-            return call_user_func($this->redirector, $prev, $current);
-        }
-        return null;
-    }
-
-    public function fire(Dialog $dialog) : ? Operator
-    {
-        foreach ($this->listeners as $type => $caller) {
-
-            $operator = null;
-            if (isset($caller) && is_a($dialog, $type, TRUE)) {
-                $operator = $dialog->caller()->action($caller);
-            }
-
-            if (isset($operator)) {
-                return $operator;
-            }
-        }
-
-        return null;
-    }
-
     public function __destruct()
     {
-        $this->redirector = null;
-        $this->listeners = [];
         SpyAgency::decr(static::class);
     }
 }

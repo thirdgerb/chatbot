@@ -100,13 +100,6 @@ class Ucl implements UclInterface
     protected $exists;
 
     /**
-     * @var Context|null
-     */
-    protected $context;
-
-    private static $count = 0;
-
-    /**
      * Ucl constructor.
      * @param string $contextName
      * @param string $stageName
@@ -118,10 +111,6 @@ class Ucl implements UclInterface
         array $query = []
     )
     {
-        if (CommuneEnv::isDebug()) {
-            self::$count ++;
-        }
-
         // 允许使用类名作为 contextName
         $this->_contextName = $contextName;
         // 真正的 contextName 和 stageName 必须全小写.
@@ -432,13 +421,16 @@ class Ucl implements UclInterface
 
     public function findContext(Cloner $cloner): Context
     {
-        if (isset($this->context)) {
-            return $this->context;
-        }
-
         if (!$this->instanced) {
             $ucl = $this->toInstance($cloner);
             return $ucl->findContext($cloner);
+        }
+
+        $runtime = $cloner->runtime;
+        $context = $runtime->getCachedContext($this->getContextId());
+
+        if (isset($context)) {
+            return $context;
         }
 
         $def = $this->findContextDef($cloner);
@@ -457,7 +449,8 @@ class Ucl implements UclInterface
             $context->merge($entities);
         }
 
-        return $this->context = $context;
+        $runtime->cacheContext($context);
+        return $context;
     }
 
     /*------- to array -------*/
@@ -505,10 +498,9 @@ class Ucl implements UclInterface
 
     public function __destruct()
     {
-        $this->stageDef = null;
-        $this->intentDef = null;
-        $this->contextDef = null;
-        $this->context = null;
+        unset($this->stageDef);
+        unset($this->intentDef);
+        unset($this->contextDef);
         SpyAgency::decr(static::class);
     }
 

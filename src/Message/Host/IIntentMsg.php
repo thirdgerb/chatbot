@@ -112,7 +112,9 @@ class IIntentMsg extends AbsMessage implements IntentMsg
 
         $trans = [];
         foreach ($flattenSlots as $key => $val) {
-            $trans["{$key}"] = $val;
+
+            $replace = '{' . $key . '}';
+            $trans[$replace] = $val;
         }
 
         return $this->_text = str_replace(

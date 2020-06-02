@@ -38,6 +38,10 @@ abstract class AbsRedirect extends AbsOperator
         }
 
         $redirect = $creator($target);
+        // 解除绑定.
+        if ($creator instanceof \Closure) {
+            $creator->bindTo(null);
+        }
         unset($creator);
 
         return $this->activate($redirect, $insertPath);

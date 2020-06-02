@@ -58,8 +58,8 @@ class OStart extends AbsOperator
         $process->activate($this->start);
         $input = $this->cloner->input;
 
-        // 检查是否是异步 yielding 消息
-        return $this->checkAsyncInput($input)
+            // 检查是否是异步 yielding 消息
+        $operator = $this->checkAsyncInput($input)
             // 检查是否是强制同步状态的 contextMsg
             ?? $this->isContextMsgCall($input)
             // 检查是否有阻塞中的任务.
@@ -78,6 +78,8 @@ class OStart extends AbsOperator
             ?? $this->checkContextRoutes()
             // 啥都没有的时候, 让 await ucl 来处理.
             ?? $this->heed();
+
+        return $operator;
     }
 
     protected function destroy(): void
@@ -124,7 +126,7 @@ class OStart extends AbsOperator
     }
 
 
-    protected function isSessionStart()
+    protected function isSessionStart() : ? Operator
     {
         $process = $this->process;
 
@@ -185,6 +187,7 @@ class OStart extends AbsOperator
         }
 
         $question->parse($this->cloner);
+
         return null;
     }
 

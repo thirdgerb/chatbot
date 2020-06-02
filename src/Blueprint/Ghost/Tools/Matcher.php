@@ -176,9 +176,12 @@ interface Matcher
      * $matches = [ string $answer]
      *
      * @return static
-     * @matched \Commune\Protocals\HostMsg\Convo\QA\AnswerMsg $isAnswer
+     * @matched \Commune\Protocals\HostMsg\Convo\QA\AnswerMsg $isAnswered
      */
-    public function isAnswer() : Matcher;
+    public function isAnswered() : Matcher;
+
+
+    // public function isAnswer(string $answer) : Matcher;
 
     /**
      * @param string $index

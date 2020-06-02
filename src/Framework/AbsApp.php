@@ -25,6 +25,7 @@ use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
 use Commune\Framework\Log\IConsoleLogger;
 use Commune\Framework\Log\ILogInfo;
+use Commune\Framework\Spy\SpyAgency;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -104,6 +105,8 @@ abstract class AbsApp implements App
 
         // 默认绑定关系.
         $this->basicBindings();
+
+        SpyAgency::incr(static::class);
     }
 
     abstract protected function basicBindings() : void;
@@ -282,6 +285,11 @@ abstract class AbsApp implements App
         } else {
             exit(1);
         }
+    }
+
+    public function __destruct()
+    {
+        SpyAgency::decr(static::class);
     }
 
 }

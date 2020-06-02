@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\IOperate\Tool;
+namespace Commune\Ghost\ITools;
 
 use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Ghost\Dialog;
@@ -148,7 +148,7 @@ class FakeHearing implements Hearing
         return $this;
     }
 
-    public function isAnswer(): Matcher
+    public function isAnswered(): Matcher
     {
         return $this;
     }

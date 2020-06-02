@@ -76,16 +76,15 @@ abstract class AbsOperator implements Operator
 
         // 尝试拦截.
         $next = $this->toNext();
-
         $this->destroy();
         return $next;
     }
 
     protected function destroy() : void
     {
-        $this->dialog = null;
-        $this->ticking = false;
-        $this->ticked = true;
+        unset($this->dialog);
+        unset($this->ticking);
+        unset($this->ticked);
     }
 
     public function getDialog(): Dialog
@@ -106,6 +105,6 @@ abstract class AbsOperator implements Operator
     public function __destruct()
     {
         $this->dialog = null;
-        SpyAgency::incr(static::class);
+        SpyAgency::decr(static::class);
     }
 }

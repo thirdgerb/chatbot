@@ -76,6 +76,7 @@ class IClonerLogger extends ContextLogger implements ClonerLogger
     {
         $this->context = [];
         $this->app = null;
+        $this->logger = null;
         SpyAgency::decr(static::class);
     }
 

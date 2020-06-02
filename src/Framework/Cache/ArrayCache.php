@@ -6,7 +6,6 @@ namespace Commune\Framework\Cache;
 use Commune\Contracts\Cache;
 use Commune\Framework\Spy\SpyAgency;
 use Psr\SimpleCache\CacheInterface;
-use Commune\Blueprint\Framework\Session;
 
 /**
  * 模拟的cache. 方便测试用.
@@ -18,18 +17,12 @@ class ArrayCache implements Cache
     protected static $hashMap = [];
 
     /**
-     * @var string
-     */
-    protected $traceId;
-
-    /**
      * @var CacheInterface
      */
     protected $psrCache;
 
-    public function __construct(Session $session)
+    public function __construct()
     {
-        $this->traceId = $session->getTraceId();
         SpyAgency::incr(static::class);
     }
 

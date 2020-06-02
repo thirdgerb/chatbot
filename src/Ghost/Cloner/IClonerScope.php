@@ -14,6 +14,7 @@ namespace Commune\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Support\Arr\ArrayAbleToJson;
 
 /**
@@ -56,6 +57,7 @@ class IClonerScope implements ClonerScope
         $this->sceneId = $cloner->scene->sceneId;
         $this->time = time();
         unset($cloner);
+        SpyAgency::incr(static::class);
     }
 
     public function toArray(): array
@@ -127,5 +129,9 @@ class IClonerScope implements ClonerScope
         }
     }
 
+    public function __destruct()
+    {
+        SpyAgency::decr(static::class);
+    }
 
 }

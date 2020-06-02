@@ -71,11 +71,6 @@ abstract class ASession implements Session, HasIdGenerator
     protected $stateless = false;
 
     /**
-     * @var bool
-     */
-    protected $debug;
-
-    /**
      * @var ProtocalOption[][]
      */
     protected $protocalMap;
@@ -251,15 +246,16 @@ abstract class ASession implements Session, HasIdGenerator
             $this->saveSession();
         }
 
-        $this->listened = [];
-        $this->singletons = [];
-        $this->finished = true;
-        $this->protocalMap = null;
+        unset($this->listened);
+        unset($this->singletons);
+        unset($this->finished);
+        unset($this->protocalMap);
         $this->flushInstances();
 
         // container
-        $this->container->destroy();
-        $this->container = null;
+        $container = $this->container;
+        unset($this->container);
+        $container->destroy();
     }
 
 

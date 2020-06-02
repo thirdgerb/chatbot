@@ -308,11 +308,11 @@ class ICloner extends ASession implements Cloner
 
     protected function flushInstances(): void
     {
-        $this->ghost = null;
-        $this->ghostConfig = null;
-        $this->input = null;
-        $this->outputs = [];
-        $this->asyncInputs = [];
+        unset($this->ghost);
+        unset($this->ghostConfig);
+        unset($this->input);
+        unset($this->outputs);
+        unset($this->asyncInputs);
     }
 
 

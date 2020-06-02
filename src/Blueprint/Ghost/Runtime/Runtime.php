@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
@@ -49,6 +50,17 @@ interface Runtime
 
 
     /*------ context -------*/
+
+    /**
+     * @param string $id
+     * @return Context|null
+     */
+    public function getCachedContext(string $id) : ? Context;
+
+    /**
+     * @param Context $context
+     */
+    public function cacheContext(Context $context) : void;
 
     /**
      * 状态变更的消息, 用于和客户端同步.

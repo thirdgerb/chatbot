@@ -11,8 +11,6 @@
 
 namespace Commune\Ghost\Dialog;
 
-use Commune\Blueprint\CommuneEnv;
-use Commune\Framework\Spy\SpyAgency;
 use Commune\Ghost\ITools;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Ucl;
@@ -25,6 +23,7 @@ use Commune\Support\DI\TInjectable;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Ghost\Context;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Operate\Operator;
@@ -86,8 +85,6 @@ abstract class AbsBaseDialog implements
      * @var Process|null
      */
     protected $process;
-
-    private static $count = 0;
 
     /**
      * AbsBaseDialog constructor.
@@ -305,14 +302,11 @@ abstract class AbsBaseDialog implements
 
     public function __destruct()
     {
-        if (CommuneEnv::isDebug()) {
-            self::$count--;
-        }
-
-        $this->_prev = null;
-        $this->_cloner = null;
-        $this->_ucl = null;
-        $this->process = null;
+        unset($this->_prev);
+        unset($this->_cloner);
+        unset($this->_ucl);
+        unset($this->_message);
+        unset($this->_input);
         SpyAgency::decr(static::class);
     }
 

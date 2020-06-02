@@ -11,7 +11,6 @@
 
 namespace Commune\Ghost\Providers;
 
-use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\MindSelfRegister;
 use Commune\Container\ContainerContract;
@@ -92,7 +91,7 @@ class Psr4SelfRegisterLoader extends ServiceProvider
                 continue;
             }
 
-            $logger->debug("register context $clazz");
+            $logger->debug("load mind self register: $clazz");
             $method = [$clazz, MindSelfRegister::REGISTER_METHOD];
             call_user_func($method, $mind);
             $i ++;

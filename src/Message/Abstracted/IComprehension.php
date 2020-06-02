@@ -305,7 +305,8 @@ class IComprehension extends AbsMessage implements
     public function __get($name)
     {
         if (
-            $name === 'command'
+            $name === 'answer'
+            || $name === 'command'
             || $name === 'emotion'
             || $name === 'question'
             || $name === 'replies'

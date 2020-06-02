@@ -35,6 +35,12 @@ interface StageBuilder
     public function onReceive($caller) : StageBuilder;
 
     /**
+     * @param callable|string $caller
+     * @return StageBuilder
+     */
+    public function onResume($caller) : StageBuilder;
+
+    /**
      * @param string $event
      * @param callable|string $caller
      * @return StageBuilder

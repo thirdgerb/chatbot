@@ -36,11 +36,11 @@ interface QuestionMsg extends VerbalMsg
     public function addDefault(string $choice) : void;
 
     /**
-     * @param string $index
      * @param string $suggestion
+     * @param string|int|null $index
      * @param Ucl|null $ucl
      */
-    public function addSuggestion(string $suggestion, string $index = null, Ucl $ucl = null) : void;
+    public function addSuggestion(string $suggestion, $index = null, Ucl $ucl = null) : void;
 
     /**
      * @param Cloner $cloner

@@ -85,7 +85,8 @@ class IMatcher implements Matcher
             $caller = [$caller, '__invoke'];
         }
 
-        return $this->cloner->container->call($caller, $this->injectionContext);
+        $injection = $this->matchedParams + $this->injectionContext;
+        return $this->cloner->container->call($caller, $injection);
     }
 
     public function getMatchedParams(): array
@@ -272,7 +273,7 @@ class IMatcher implements Matcher
         return $this;
     }
 
-    public function isAnswer(): Matcher
+    public function isAnswered(): Matcher
     {
         $answer = $this->input->comprehension->answer->getAnswer();
         if (isset($answer)) {

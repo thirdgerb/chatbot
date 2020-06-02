@@ -13,6 +13,7 @@ namespace Commune\Framework\RuntimeDriver;
 
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Framework\FileCache\FileCacheOption;
+use Commune\Framework\Spy\SpyAgency;
 use Psr\Log\LoggerInterface;
 use Commune\Contracts\Cache;
 use Commune\Support\Registry\OptRegistry;
@@ -51,6 +52,7 @@ class DemoRuntimeDriver extends ARuntimeDriver
         $this->cache = $cache;
         $this->logger = $logger;
         $this->registry = $registry;
+        SpyAgency::incr(static::class);
     }
 
     protected function getProcessKey(string $clonerId, string $belongsTo) : string
@@ -167,5 +169,9 @@ class DemoRuntimeDriver extends ARuntimeDriver
         return "clone:$clonerId:memory:$memoryId";
     }
 
+    public function __destruct()
+    {
+        SpyAgency::decr(static::class);
+    }
 
 }

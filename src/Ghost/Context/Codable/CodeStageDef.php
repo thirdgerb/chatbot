@@ -48,32 +48,28 @@ class CodeStageDef extends AbsStageDef
 
     public function onActivate(Activate $dialog): Operator
     {
-        $builder = $this->getStageBuilder($dialog->context);
-        return $builder->fire($dialog)
-            ?? $this->fireEvent($dialog)
+        return $this->fireEvent($dialog)
+            ?? $this->getStageBuilder($dialog)->operator
             ?? $dialog->next();
     }
 
     public function onReceive(Receive $dialog): Operator
     {
-        $builder = $this->getStageBuilder($dialog->context);
-        return $builder->fire($dialog)
-            ?? $this->fireEvent($dialog)
+        return $this->fireEvent($dialog)
+            ?? $this->getStageBuilder($dialog)->operator
             ?? $dialog->next();
     }
 
     public function onRedirect(Dialog $prev, Dialog $current): ? Operator
     {
-        $builder = $this->getStageBuilder($current->context);
-        return $builder->fireRedirect($prev, $current)
-            ?? $this->fireRedirect($prev, $current);
+        return $this->fireRedirect($prev, $current)
+            ?? $this->getStageBuilder($current, true)->operator;
     }
 
     public function onResume(Resume $dialog): ? Operator
     {
-        $builder = $this->getStageBuilder($dialog->context);
-        return $builder->fire($dialog)
-            ?? $this->fireEvent($dialog);
+        return $this->fireEvent($dialog)
+            ?? $this->getStageBuilder($dialog)->operator;
     }
 
     protected function getMethodName() : string
@@ -81,10 +77,10 @@ class CodeStageDef extends AbsStageDef
         return Context\CodeContext::STAGE_BUILDER_PREFIX . $this->getStageShortName();
     }
 
-    protected function getStageBuilder(Context $context) : IStageBuilder
+    protected function getStageBuilder(Dialog $dialog, bool $redirect = false) : IStageBuilder
     {
-        $builder = new IStageBuilder();
-        $creator = [$context, $this->getMethodName()];
-        return $creator($builder);
+        $builder = new IStageBuilder($dialog, $redirect);
+        $context = $dialog->context;
+        return  call_user_func([$context, $this->getMethodName()], $builder);
     }
 }

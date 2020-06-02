@@ -26,6 +26,7 @@ class OReactivate extends AbsOperator
 
         $reactivate = new IReactivate($this->dialog, $ucl);
         $this->dialog->process->activate($ucl);
+
         return $ucl
             ->findStageDef($this->dialog->cloner)
             ->onActivate($reactivate);

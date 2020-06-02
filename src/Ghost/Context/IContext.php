@@ -290,11 +290,11 @@ class IContext implements Context
 
     public function __destruct()
     {
-        $this->_def = null;
-        $this->_ucl = null;
-        $this->_cloner = null;
-        $this->_task = null;
-        $this->_recollection = null;
+        unset($this->_def);
+        unset($this->_ucl);
+        unset($this->_cloner);
+        unset($this->_task);
+        unset($this->_recollection);
         SpyAgency::decr(static::class);
     }
 }

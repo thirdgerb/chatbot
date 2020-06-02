@@ -23,11 +23,6 @@ use Commune\Blueprint\Ghost\Runtime\Process;
 abstract class AbsFinale extends AbsOperator implements Finale
 {
     /**
-     * @var Dialog
-     */
-    protected $dialog;
-
-    /**
      * @var Process
      */
     protected $process;

@@ -14,7 +14,8 @@ namespace Commune\Ghost\ITools;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Tools\Hearing;
-use Commune\Ghost\IOperate\Tool\FakeHearing;
+use Commune\Blueprint\Ghost\Tools\Matcher;
+use Commune\Ghost\ITools\FakeHearing;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -50,6 +51,15 @@ class IHearing extends IMatcher implements Hearing
     {
         $this->dialog = $dialog;
         parent::__construct($dialog->cloner, []);
+    }
+
+    /**
+     * @return static
+     */
+    public function refresh(): Matcher
+    {
+        $this->todo = null;
+        return parent::refresh();
     }
 
     protected function call($caller)
@@ -96,16 +106,16 @@ class IHearing extends IMatcher implements Hearing
         $todo = [];
         if (isset($this->todo)) {
             $todo[] = $this->todo;
-            unset($this->todo);
+            $this->todo = null;
         }
 
-        if (isset($caller)) {
-            $todo[] = $caller;
+        if (isset($action)) {
+            $todo[] = $action;
         }
 
         if (!empty($todo)) {
-            foreach ($todo as $action) {
-                $nav = $this->call($action);
+            foreach ($todo as $caller) {
+                $nav = $this->call($caller);
                 if ($nav instanceof Operator) {
                     $this->nextOperator = $nav;
                     break;
@@ -114,7 +124,6 @@ class IHearing extends IMatcher implements Hearing
         }
 
         $this->refresh();
-
         return isset($this->nextOperator)
             ? $this->fakeHearing()
             : $this;
@@ -159,11 +168,8 @@ class IHearing extends IMatcher implements Hearing
     public function __destruct()
     {
         $this->fallback = [];
-        $this->matchedParams = [];
-        $this->matched = false;
         $this->dialog = null;
-        $this->cloner = null;
-        $this->input = null;
+        parent::__destruct();
     }
 
 }

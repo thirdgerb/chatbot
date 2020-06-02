@@ -13,7 +13,6 @@ namespace Commune\Blueprint\Framework\Request;
 
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
-use Commune\Protocals\IntercomMsg;
 use Commune\Support\Protocal\Protocal;
 
 /**
