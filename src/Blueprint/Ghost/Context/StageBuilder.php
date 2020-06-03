@@ -11,11 +11,21 @@
 
 namespace Commune\Blueprint\Ghost\Context;
 
+use Commune\Blueprint\Ghost\Dialog;
+
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read Dialog $dialog
  */
 interface StageBuilder
 {
+    /**
+     * @param  callable|string $caller
+     * @return StageBuilder
+     */
+    public function always($caller) : StageBuilder;
+
     /**
      * @param callable|string $caller
      * @return StageBuilder

@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Runtime\Waiter;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
 
@@ -40,40 +41,38 @@ class IWaiter implements Waiter
     /**
      * @var string[]
      */
-    protected $_stageRoutes;
-
-    /**
-     * @var string[]
-     */
-    protected $_contextRoutes;
+    protected $_routes;
 
     /**
      * IWaiter constructor.
      * @param string $ucl
      * @param QuestionMsg|null $question
-     * @param string[] $stageRoutes
-     * @param string[] $contextRoutes
+     * @param Ucl[] $routes
      */
     public function __construct(
         string $ucl,
         ?QuestionMsg $question,
-        array $stageRoutes,
-        array $contextRoutes
+        array $routes
     )
     {
         $this->_await = $ucl;
         $this->_question = $question;
-        $this->_stageRoutes = $stageRoutes;
-        $this->_contextRoutes = $contextRoutes;
+        $this->_routes = array_values(
+            array_map(
+                function (Ucl $route) {
+                    return $route->encode();
+                },
+                $routes
+            )
+        );
     }
 
     public function toArray(): array
     {
         return [
             'await' => $this->_await,
-            'stageRoutes' => $this->_stageRoutes,
-            'contextRoutes' => $this->_contextRoutes,
-            'question' => isset($this->_question) ? $this->_question->toArray() : null
+            'question' => isset($this->_question) ? $this->_question->toArray() : null,
+            'routes' => $this->_routes,
         ];
     }
 

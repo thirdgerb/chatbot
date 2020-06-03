@@ -79,7 +79,8 @@ class GhostRequestHandler
             $end
         );
 
-        return $pipeline($request);
+        $response = $pipeline($request);
+        return $response;
     }
 
 }

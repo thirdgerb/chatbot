@@ -91,13 +91,9 @@ class IContext implements Context
 
     public function toInstanceStub(): ClonerInstanceStub
     {
-        return new ContextStub($this->_ucl->toEncodedStr());
+        return new ContextStub($this->_ucl->encode());
     }
 
-    public function toUcl(): Ucl
-    {
-        return $this->getTask()->getUcl();
-    }
     /*----- property -----*/
 
 
@@ -139,6 +135,29 @@ class IContext implements Context
                 ->runtime
                 ->getCurrentProcess()
                 ->getTask($this->_ucl);
+    }
+
+
+    public function getUcl(): Ucl
+    {
+        return $this->getTask()->getUcl();
+    }
+
+    public function getStage(string $stage = ''): Ucl
+    {
+        return $this->getUcl()->goStage($stage);
+    }
+
+    public function getStages(array $stages): array
+    {
+        return array_map(
+            function ($stage) {
+                return $stage instanceof Ucl
+                    ? $stage
+                    : $this->_ucl->goStage($stage);
+            },
+            $stages
+        );
     }
 
 

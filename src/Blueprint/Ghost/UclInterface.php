@@ -47,6 +47,19 @@ interface UclInterface extends ArrayAndJsonAble
         string $stageName = ''
     ) : Ucl;
 
+
+    /**
+     * @param string|Ucl $string
+     * @return Ucl
+     * @throws InvalidArgumentException
+     */
+    public static function decode($string) : Ucl;
+
+    /**
+     * @return string
+     */
+    public function encode() : string;
+
     /**
      * @param Cloner $cloner
      * @param string $contextName
@@ -56,12 +69,14 @@ interface UclInterface extends ArrayAndJsonAble
      * @throws InvalidQueryException
      * @throws DefNotDefinedException
      */
-    public static function create(
+    public static function newInstance(
         Cloner $cloner,
         string $contextName,
         array $query = null,
         string $stageName = ''
     )  : Ucl;
+
+
 
     /*------ property ------*/
 
@@ -106,11 +121,6 @@ interface UclInterface extends ArrayAndJsonAble
     public function toInstance(Cloner $cloner) : Ucl;
 
     /**
-     * @return string
-     */
-    public function toEncodedStr() : string;
-
-    /**
      * @param string|null $stage
      * @return string
      */
@@ -144,39 +154,6 @@ interface UclInterface extends ArrayAndJsonAble
      * @return bool
      */
     public function isValid(Cloner $cloner) : bool;
-
-    /*------ encode decode ------*/
-
-    /**
-     * @param string|Ucl $string
-     * @return Ucl
-     * @throws InvalidArgumentException
-     */
-    public static function decodeUclStr($string) : Ucl;
-
-    /**
-     * @param string $contextName
-     * @param string $stageName
-     * @param array $query
-     * @return string
-     */
-    public static function encodeUcl(
-        string $contextName,
-        string $stageName = '',
-        array $query = []
-    ) : string;
-
-    /**
-     * @param array $query
-     * @return string
-     */
-    public static function encodeQueryStr(array $query) : string;
-
-    /**
-     * @param string $str
-     * @return array
-     */
-    public static function decodeQueryStr(string $str) : array;
 
     /*------ mindset ------*/
 

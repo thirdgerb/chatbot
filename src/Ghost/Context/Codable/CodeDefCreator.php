@@ -115,7 +115,11 @@ class CodeDefCreator
         \ReflectionMethod $method
     ) : StageMeta
     {
-        $annotation = AnnotationReflector::create($method->getDocComment());
+
+        $doc = $method->getDocComment();
+        $doc = $doc ? $doc : '';
+
+        $annotation = AnnotationReflector::create($doc);
         $fullName = ContextUtils::makeFullStageName($contextName, $shortName);
 
         $config = [

@@ -130,7 +130,7 @@ class IProcess implements Process, HasIdGenerator
     {
         $this->_belongsTo = $belongsTo;
         $this->_id = $id ?? $this->createUuId();
-        $this->_root = $root->toEncodedStr();
+        $this->_root = $root->encode();
         SpyAgency::incr(static::class);
     }
 
@@ -169,17 +169,15 @@ class IProcess implements Process, HasIdGenerator
     public function await(
         Ucl $ucl,
         ? QuestionMsg $question,
-        array $stageRoutes,
-        array $contextRoutes
+        array $routes
     ): void
     {
         $this->setWaiting($ucl, Context::AWAIT);
 
         $waiter = new IWaiter(
-            $ucl->toEncodedStr(),
+            $ucl->encode(),
             $question,
-            $stageRoutes,
-            $contextRoutes
+            $routes
         );
 
         if (empty($this->_waiter)) {
@@ -234,18 +232,10 @@ class IProcess implements Process, HasIdGenerator
             : null;
     }
 
-
-    public function getAwaitStageNames(): array
-    {
-        return isset($this->_waiter)
-            ? $this->_waiter->stageRoutes
-            : [];
-    }
-
-    public function getAwaitContexts(): array
+    public function getAwaitRoutes(): array
     {
         $contexts = isset($this->_waiter)
-            ? $this->_waiter->contextRoutes
+            ? $this->_waiter->routes
             : [];
 
         return array_map(function(string $contextName) {
@@ -469,7 +459,7 @@ class IProcess implements Process, HasIdGenerator
     protected function decoded(string $str)
     {
         return $this->_decoded[$str]
-            ?? $this->_decoded[$str] = Ucl::decodeUclStr($str);
+            ?? $this->_decoded[$str] = Ucl::decode($str);
     }
 
 

@@ -72,7 +72,7 @@ class AttrStageDef extends AbsStageDef
         $validator = $this->validator;
 
         if (isset($validator)) {
-            return $dialog->caller()->action($validator);
+            return $dialog->ioc()->action($validator);
         }
 
         $name = $this->stageName;

@@ -12,7 +12,6 @@
 namespace Commune\Ghost\ClonePipes;
 
 use Commune\Blueprint\CommuneEnv;
-use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Ghost\IOperate\OStart;
 use Commune\Blueprint\Ghost\Operate\Finale;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
@@ -25,30 +24,31 @@ use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
  */
 class CloneDialogManagerPipe extends AClonePipe
 {
-    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
+    protected function doHandle(GhostRequest $request, \Closure $current): GhostResponse
     {
-        $next = new OStart($this->cloner);
+        $current = new OStart($this->cloner);
         $tracer = $this->cloner->runtime->trace;
 
         try {
 
-            while (isset($next)) {
+            while (isset($current)) {
 
-                $tracer->record($next);
-
-                $next = $next->tick();
-
-                if ($next instanceof Finale) {
-                    $next->tick();
-                    $next = null;
+                $next = $current->tick();
+                $tracer->record($current);
+                if ($current instanceof Finale) {
+                    break;
                 }
+
+                $current = $next;
             }
+
+            unset($current);
+            unset($next);
 
         } catch (CommuneRuntimeException $e) {
             throw $e;
 
         } catch (\Throwable $e) {
-            $this->cloner->logger->error($e);
             throw new BrokenRequestException($e->getMessage(), $e);
 
         } finally {

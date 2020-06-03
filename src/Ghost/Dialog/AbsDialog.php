@@ -21,6 +21,8 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * todo 考虑把所有 operator 都改造成依赖注入, 方便替换流程. 但必要性不大.
  */
 abstract class AbsDialog extends AbsBaseDialog
 {
@@ -102,8 +104,8 @@ abstract class AbsDialog extends AbsBaseDialog
     {
         $target = $target->toInstance($this->cloner);
         if ($this->ucl->isSameContext($target)) {
-            $targetUcl = $target->toEncodedStr();
-            $currentUcl = $this->ucl->toEncodedStr();
+            $targetUcl = $target->encode();
+            $currentUcl = $this->ucl->encode();
             throw new InvalidArgumentException(
                 "target ucl $targetUcl is in same context with current $currentUcl, called by $func"
             );

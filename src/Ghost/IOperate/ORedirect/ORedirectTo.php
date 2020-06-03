@@ -44,7 +44,9 @@ class ORedirectTo extends AbsRedirect
 
         $target = $this->target;
         if ($current->isSameContext($target)) {
-            return $this->dialog->goStage($target->stageName);
+            return $current->stageName === $target->stageName
+                ? $this->dialog->reactivate()
+                : $this->dialog->goStage($target->stageName);
         }
 
         $task = $this->dialog->process->getTask($target);
@@ -82,7 +84,7 @@ class ORedirectTo extends AbsRedirect
 
                 $this->dialog
                     ->send()
-                    ->message(new DialogYieldInt($target->toEncodedStr()));
+                    ->message(new DialogYieldInt($target->encode()));
 
                 return $this->dialog->rewind();
 

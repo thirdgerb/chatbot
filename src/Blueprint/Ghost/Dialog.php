@@ -98,7 +98,7 @@ interface Dialog
      * 上下文相关的 IoC 容器.
      * @return Caller
      */
-    public function caller() : Caller;
+    public function ioc() : Caller;
 
 
     /*----- conversation -----*/

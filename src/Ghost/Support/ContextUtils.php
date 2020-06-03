@@ -43,7 +43,7 @@ class ContextUtils
         $first = substr($stageFullName, 0, $length);
         $last = substr($stageFullName, $length);
 
-        if ($first !== $stageFullName) {
+        if ($first !== $contextName) {
             throw new InvalidArgumentException(
                 "stage full name must start with its context name"
             );

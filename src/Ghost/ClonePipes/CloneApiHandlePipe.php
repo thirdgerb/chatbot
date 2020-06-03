@@ -25,12 +25,12 @@ use Commune\Protocals\HostMsg\Convo\ApiMsg;
 class CloneApiHandlePipe extends AClonePipe
 {
 
-    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
+    protected function doHandle(GhostRequest $request, \Closure $current): GhostResponse
     {
         $message = $request->getInput()->getMessage();
 
         if (!$message instanceof ApiMsg) {
-            return $next($request);
+            return $current($request);
         }
 
         $apiName = $message->getApiName();

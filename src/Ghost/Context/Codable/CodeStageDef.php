@@ -27,7 +27,6 @@ use Commune\Ghost\Stage\AbsStageDef;
 class CodeStageDef extends AbsStageDef
 {
 
-
     public static function stub(): array
     {
         return [
@@ -48,28 +47,30 @@ class CodeStageDef extends AbsStageDef
 
     public function onActivate(Activate $dialog): Operator
     {
-        return $this->fireEvent($dialog)
-            ?? $this->getStageBuilder($dialog)->operator
-            ?? $dialog->next();
+        $next = $this->fireEvent($dialog);
+        $next = $next ?? $this->runStageBuilder($dialog)->popOperator();
+        $next = $next ?? $dialog->next();
+        return $next;
     }
 
     public function onReceive(Receive $dialog): Operator
     {
-        return $this->fireEvent($dialog)
-            ?? $this->getStageBuilder($dialog)->operator
-            ?? $dialog->next();
+        $next = $this->fireEvent($dialog);
+        $next = $next ?? $this->runStageBuilder($dialog)->popOperator() ;
+        $next = $next ?? $dialog->next();
+        return $next;
     }
 
     public function onRedirect(Dialog $prev, Dialog $current): ? Operator
     {
         return $this->fireRedirect($prev, $current)
-            ?? $this->getStageBuilder($current, true)->operator;
+            ?? $this->runStageBuilder($current, true)->popOperator();
     }
 
     public function onResume(Resume $dialog): ? Operator
     {
         return $this->fireEvent($dialog)
-            ?? $this->getStageBuilder($dialog)->operator;
+            ?? $this->runStageBuilder($dialog)->popOperator();
     }
 
     protected function getMethodName() : string
@@ -77,10 +78,14 @@ class CodeStageDef extends AbsStageDef
         return Context\CodeContext::STAGE_BUILDER_PREFIX . $this->getStageShortName();
     }
 
-    protected function getStageBuilder(Dialog $dialog, bool $redirect = false) : IStageBuilder
+    protected function runStageBuilder(Dialog $dialog, bool $redirect = false) : IStageBuilder
     {
         $builder = new IStageBuilder($dialog, $redirect);
         $context = $dialog->context;
-        return  call_user_func([$context, $this->getMethodName()], $builder);
+
+        $func = [$context, $this->getMethodName()];
+        $builder = $func($builder);
+
+        return $builder;
     }
 }

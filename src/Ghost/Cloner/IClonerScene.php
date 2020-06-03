@@ -53,7 +53,7 @@ class IClonerScene implements ClonerScene
                 'sceneId'
             );
         }
-        $this->_root = Ucl::decodeUclStr($contextName);
+        $this->_root = Ucl::decode($contextName);
         $this->_env = $input->getEnv();
 
         SpyAgency::incr(static::class);

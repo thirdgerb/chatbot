@@ -30,7 +30,7 @@ class IConfirm extends IQuestionMsg implements Confirm
 
     public function __construct(
         string $query,
-        bool $default = true,
+        bool $default = null,
         string $positive = null,
         string $negative = null,
         array $routes = []
@@ -41,9 +41,15 @@ class IConfirm extends IQuestionMsg implements Confirm
         isset($positive) and $suggestions[self::POSITIVE_INDEX] = $positive;
         isset($negative) and $suggestions[self::NEGATIVE_INDEX] = $negative;
 
+        $default = isset($default)
+            ? (
+                $default ? self::POSITIVE_INDEX : self::NEGATIVE_INDEX
+            )
+            : null;
+
         parent::__construct(
             $query,
-            $default ? self::POSITIVE_INDEX : self::NEGATIVE_INDEX,
+            $default,
             $suggestions,
             $routes
         );
@@ -78,11 +84,11 @@ class IConfirm extends IQuestionMsg implements Confirm
     {
         $matcher = $cloner->matcher->refresh();
 
-        if ($matcher->isPositive()) {
+        if ($matcher->isPositive()->truly()) {
             $matcher->refresh();
             return $this->newAnswer($this->_data['suggestions'][self::POSITIVE_INDEX], self::POSITIVE_INDEX);
 
-        } elseif($matcher->isNegative()) {
+        } elseif($matcher->isNegative()->truly()) {
             $matcher->refresh();
             return $this->newAnswer($this->_data['suggestions'][self::NEGATIVE_INDEX], self::NEGATIVE_INDEX);
         }
@@ -99,7 +105,6 @@ class IConfirm extends IQuestionMsg implements Confirm
     {
         $positive = $answer->isPositive();
         $answer = parent::setAnswerToComprehension($answer, $comprehension);
-
 
         $comprehension->emotion->setEmotion(EmotionDef::EMO_POSITIVE, $positive);
         $comprehension->emotion->setEmotion(EmotionDef::EMO_NEGATIVE, !$positive);
@@ -120,7 +125,7 @@ class IConfirm extends IQuestionMsg implements Confirm
         $this->addSuggestion(
             self::POSITIVE_INDEX,
             $suggestion,
-            $ucl ? $ucl->toEncodedStr() : null
+            $ucl ? $ucl->encode() : null
         );
         return $this;
     }
@@ -130,7 +135,7 @@ class IConfirm extends IQuestionMsg implements Confirm
         $this->addSuggestion(
             self::NEGATIVE_INDEX,
             $suggestion,
-            $ucl ? $ucl->toEncodedStr() : null
+            $ucl ? $ucl->encode() : null
         );
         return $this;
     }

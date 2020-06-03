@@ -59,7 +59,7 @@ class DependStageDef extends AbsStageDef
             return $dialog->next();
         }
 
-        $ucl = Ucl::decodeUclStr($this->dependedUcl);
+        $ucl = Ucl::decode($this->dependedUcl);
         $attr = $this->dependedAttr;
 
         return $dialog->dependOn(
@@ -70,7 +70,7 @@ class DependStageDef extends AbsStageDef
 
     public function onReceive(Receive $dialog): Operator
     {
-        $ucl = Ucl::decodeUclStr($this->dependedUcl);
+        $ucl = Ucl::decode($this->dependedUcl);
         $attr = $this->dependedAttr;
         $name = $this->getStageShortName();
 

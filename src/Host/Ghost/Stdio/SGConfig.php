@@ -92,7 +92,7 @@ class SGConfig extends GhostConfig
             'sessionExpire' => 3600,
             'sessionLockerExpire' => 3,
             'maxRedirectTimes' => 255,
-            'mindsetCacheExpire' => 600,
+            'mindsetCacheExpire' => 10,
             'maxBacktrace' => 3,
             'defaultContextName' => HelloWorld::class,
             'sceneContextNames' => [

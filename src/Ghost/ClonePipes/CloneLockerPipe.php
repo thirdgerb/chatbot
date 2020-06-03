@@ -24,15 +24,15 @@ class CloneLockerPipe extends AClonePipe
 {
     /**
      * @param GhostRequest $request
-     * @param \Closure $next
+     * @param \Closure $current
      * @return GhostResponse
      * @throws \Exception
      */
-    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
+    protected function doHandle(GhostRequest $request, \Closure $current): GhostResponse
     {
 
         if ($this->cloner->isStateless()) {
-            return $next($request);
+            return $current($request);
         }
 
 
@@ -41,7 +41,7 @@ class CloneLockerPipe extends AClonePipe
             if (!$this->cloner->lock($this->cloner->config->sessionLockerExpire)) {
                 return $request->output(new SessionBusyInt());
             }
-            $response = $next($request);
+            $response = $current($request);
             $this->cloner->unlock();
             return $response;
 

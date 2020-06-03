@@ -158,7 +158,7 @@ class ITask implements Task
     public function toArray(): array
     {
         return [
-            'ucl' => $this->ucl->toEncodedStr(),
+            'ucl' => $this->ucl->encode(),
             'paths' => $this->paths,
             'status' => $this->status,
             'cancel' => $this->cancel,

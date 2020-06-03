@@ -19,10 +19,9 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read null|QuestionMsg $question
- * @property-read string[] $stageRoutes
- * @property-read string[] $contextRoutes
  * @property-read string $await
+ * @property-read null|QuestionMsg $question
+ * @property-read string[] $routes
  */
 interface Waiter extends ArrayAndJsonAble
 {

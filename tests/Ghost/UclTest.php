@@ -50,7 +50,7 @@ class UclTest extends TestCase
         }
 
         foreach ($this->invalidCases as $case) {
-            $caseObj = Ucl::decodeUclStr($case);
+            $caseObj = Ucl::decode($case);
             $this->assertFalse($caseObj->isValidPattern(), $case);
         }
     }
@@ -59,17 +59,17 @@ class UclTest extends TestCase
     {
 
         // case1
-        $caseObj = Ucl::decodeUclStr($case);
+        $caseObj = Ucl::decode($case);
         $this->assertTrue($caseObj->isValidPattern(), $case);
         $this->assertEquals($fullname, $caseObj->getStageFullname());
 
         // case2
-        $case2 = $caseObj->toEncodedStr();
-        $case2Obj = Ucl::decodeUclStr($case2);
+        $case2 = $caseObj->encode();
+        $case2Obj = Ucl::decode($case2);
 
         // case3
-        $case3 = $case2Obj->toEncodedStr();
-        $case3Obj = Ucl::decodeUclStr($case3);
+        $case3 = $case2Obj->encode();
+        $case3Obj = Ucl::decode($case3);
 
         // ucl字符串相等
         $this->assertEquals($case2, $case3, $case);

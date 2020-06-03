@@ -118,7 +118,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
                 continue;
             }
 
-            $operator = $dialog->caller()->action($action);
+            $operator = $dialog->ioc()->action($action);
 
             if (isset($operator)) {
                 return $operator;
@@ -134,7 +134,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
 
         if (isset($redirect)) {
             return $current
-                ->caller()
+                ->ioc()
                 ->action($redirect, [
                     'prev' => $prev,
                     'current' => $current
@@ -197,7 +197,6 @@ abstract class AbsStageDef extends AbsOption implements StageDef
         unset($data['desc']);
         unset($data['stageName']);
 
-
         return new StageMeta([
             'name' => $name,
             'stageName' => $this->stageName,
@@ -205,7 +204,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
             'title' => $this->title,
             'desc' => $this->desc,
             'wrapper' => static::class,
-            'config' => [],
+            'config' => $data,
         ]);
     }
 

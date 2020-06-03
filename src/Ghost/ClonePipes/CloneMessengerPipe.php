@@ -47,7 +47,7 @@ class CloneMessengerPipe extends AClonePipe
     }
 
 
-    protected function doHandle(GhostRequest $request, Closure $next) : GhostResponse
+    protected function doHandle(GhostRequest $request, Closure $current) : GhostResponse
     {
         $message = $request->getInput()->getMessage();
 
@@ -57,7 +57,7 @@ class CloneMessengerPipe extends AClonePipe
 
         try {
 
-            $response = $next($request);
+            $response = $current($request);
             $this->resetFailureCount();
             return $response;
 

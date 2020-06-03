@@ -46,18 +46,20 @@ class OConfuse extends AbsOperator
     {
         $process = $this->dialog->process;
 
-        return $this->ifEventMsg()
+        $next = $this->ifEventMsg()
             ?? $this->tryToWakeSleeping($process)
             ?? $this->tryToRestoreDying($process)
-            ?? $this->tryConfuseAction()
+            ?? $this->tryDefaultConfuseAction()
             ?? $this->reallyConfuse();
+
+        return $next;
     }
 
-    protected function tryConfuseAction() : ? Operator
+    protected function tryDefaultConfuseAction() : ? Operator
     {
         $action = $this->cloner->config->confuseHandler;
         if (isset($action)) {
-            return $this->dialog->caller()->call($action);
+            return $this->dialog->ioc()->call($action);
         }
         return null;
     }
@@ -79,7 +81,7 @@ class OConfuse extends AbsOperator
 
     protected function reallyConfuse() : Operator
     {
-        $uclStr = $this->dialog->ucl->toEncodedStr();
+        $uclStr = $this->dialog->ucl->encode();
         $this->dialog
             ->send()
             ->message(new DialogConfuseInt($uclStr));

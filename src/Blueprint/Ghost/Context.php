@@ -18,7 +18,6 @@ use Commune\Blueprint\Ghost\Cloner\ClonerInstance;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Support\DI\Injectable;
-use Illuminate\Support\Collection;
 
 /**
  * 当前语境. 用来读写当前语境的变量.
@@ -93,6 +92,23 @@ interface Context extends
      */
     public function getTask() : Task;
 
+    /**
+     * @return Ucl
+     */
+    public function getUcl() : Ucl;
+
+    /**
+     * @param string $stage
+     * @return Ucl
+     */
+    public function getStage(string $stage = '') : Ucl;
+
+    /**
+     * @param string[] $stages
+     * @return Ucl[]
+     */
+    public function getStages(array $stages) : array;
+
     /*----- entity -----*/
 
     /**
@@ -138,8 +154,4 @@ interface Context extends
      */
     public function toContextMsg() : ContextMsg;
 
-    /**
-     * @return Ucl
-     */
-    public function toUcl() : Ucl;
 }

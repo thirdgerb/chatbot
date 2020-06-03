@@ -120,7 +120,7 @@ abstract class AbsBaseDialog implements
 
     /*-------- caller --------*/
 
-    public function caller(): Tools\Caller
+    public function ioc(): Tools\Caller
     {
         return $this;
     }

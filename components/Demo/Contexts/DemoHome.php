@@ -14,8 +14,8 @@ namespace Commune\Components\Demo\Contexts;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Host\Contexts\ACodeContext;
 use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
+use Commune\Ghost\Context\ACodeContext;
 
 
 /**
@@ -25,11 +25,11 @@ class DemoHome extends ACodeContext
 {
     const DESCRIPTION = "demo的入口";
 
-    public function __on_start(Stage $stage): StageDef
+    public function __on_start(Stage $stage): Stage
     {
         return $stage
             ->onActivate(function(Activate $dialog){
-               return $dialog->redirect()->next('menu');
+               return $dialog->next('menu');
             })
             ->onEvent(Dialog::QUIT, function(Dialog $dialog) {
                 $dialog->send()->info('quit from quiting event');
@@ -40,6 +40,11 @@ class DemoHome extends ACodeContext
                 return null;
             })
             ->end();
+    }
+
+    public function __on_quit(Stage $stage) : Stage
+    {
+        return $stage->onActivate()
     }
 
     public function __on_menu(Stage $stage) : StageDef

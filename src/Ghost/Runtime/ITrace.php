@@ -40,6 +40,11 @@ class ITrace implements Trace
     protected $times = 0;
 
     /**
+     * @var float
+     */
+    protected $last = 0.0;
+
+    /**
      * @var int
      */
     protected $maxTimes;
@@ -52,6 +57,9 @@ class ITrace implements Trace
     {
         $this->maxTimes = $maxTimes;
         $this->debug = CommuneEnv::isDebug();
+        if ($this->debug) {
+            $this->last = microtime(true);
+        }
         SpyAgency::incr(static::class);
     }
 
@@ -70,9 +78,21 @@ class ITrace implements Trace
         }
 
         if ($this->debug) {
-            $this->operates[] = $operator->getName();
+            $this->addTrace($operator);
         }
     }
+
+    protected function addTrace(Operator $operator) : void
+    {
+        // operates and gap
+        $now = microtime(true);
+        $gap = $now - $this->last;
+        $gap = round($gap * 1000000);
+        $this->last = $now;
+        $name = $operator->getName();
+        $this->operates[] = [$name, $gap];
+    }
+
 
     public function log(LoggerInterface $logger): void
     {

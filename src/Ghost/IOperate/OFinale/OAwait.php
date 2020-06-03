@@ -11,9 +11,7 @@
 
 namespace Commune\Ghost\IOperate\OFinale;
 
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindReg\StageReg;
 use Commune\Blueprint\Ghost\Operate\Await;
 use Commune\Blueprint\Ghost\Operate\Operator;
@@ -24,6 +22,7 @@ use Commune\Message\Host\QA\IConfirm;
 use Commune\Message\Host\QA\IQuestionMsg;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Support\Utils\TypeUtils;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -32,30 +31,24 @@ class OAwait extends AbsFinale implements Await
 {
 
     /**
-     * @var string[]
-     */
-    protected $stageRoutes;
-
-    /**
      * @var QuestionMsg|null
      */
     protected $question;
 
     /**
-     * @var string[]
+     * @var Ucl[]
      */
-    protected $contextRoutes;
+    protected $routes = [];
 
     /**
      * @var int|null
      */
     protected $expire;
 
-
     /**
      * @var Ucl
      */
-    protected $ucl;
+    protected $current;
 
     /**
      * @var StageReg
@@ -65,7 +58,7 @@ class OAwait extends AbsFinale implements Await
     /**
      * IAwait constructor.
      * @param Dialog $dialog
-     * @param array $stageRoutes
+     * @param string[]|Ucl[] $stageRoutes
      * @param array $contextRoutes
      * @param int $expire
      */
@@ -77,26 +70,63 @@ class OAwait extends AbsFinale implements Await
     )
     {
         $this->dialog = $dialog;
-        $this->stageRoutes = $stageRoutes;
-        $this->contextRoutes = $contextRoutes;
+        $this->routes = $contextRoutes;
         $this->expire = $expire;
+        $this->current = $this->dialog->ucl;
+
+        if (!empty($stageRoutes)) {
+            $this->routes = array_merge(
+                $this->routes,
+                $this->wrapStage($stageRoutes)
+            );
+        }
+
+        if (!empty($contextRoutes)) {
+            $this->routes = array_merge(
+                $this->routes,
+                $this->wrapUcl($contextRoutes)
+            );
+        }
 
         parent::__construct($dialog);
-
-        $this->ucl = $this->dialog->ucl;
-        $this->stageReg = $this->cloner->mind->stageReg();
     }
 
+    protected function wrapStage(array $stages) : array
+    {
+        return array_map(
+            function($stage) : Ucl {
+                return $stage instanceof Ucl
+                    ? $stage
+                    : $this->current->goStage($stage);
+            },
+            $stages
+        );
+    }
+
+    protected function wrapUcl(array $routes) : array
+    {
+        return array_map(
+            function($route) : Ucl {
+                return $route instanceof Ucl
+                    ? $route
+                    : Ucl::decode($route);
+            },
+            $routes
+        );
+    }
+
+    protected function getStageReg() : StageReg
+    {
+        return $this->stageReg
+            ?? $this->stageReg = $this->cloner->mind->stageReg();
+    }
 
     protected function toNext(): Operator
     {
-        $def = $this->dialog->ucl->findContextDef($this->cloner);
-
         $this->process->await(
             $this->dialog->ucl,
             $this->question,
-            $this->getStageRoutes($def),
-            $this->getContextRoutes($def)
+            array_unique(array_values($this->routes))
         );
 
         $this->runAwait();
@@ -104,29 +134,7 @@ class OAwait extends AbsFinale implements Await
         if (isset($this->expire)) {
             $this->cloner->setSessionExpire($this->expire);
         }
-
         return $this;
-    }
-
-    protected function getStageRoutes(ContextDef $contextDef) : array
-    {
-        return array_unique(
-            array_merge(
-                $this->stageRoutes ?? [],
-                $contextDef->commonStageRoutes() ?? []
-            )
-        );
-    }
-
-    protected function getContextRoutes(ContextDef $contextDef) : array
-    {
-        return array_unique(
-            array_merge(
-                $this->contextRoutes ?? [],
-                $contextDef->commonContextRoutes() ?? [],
-                $this->cloner->config->globalContextRoutes ?? []
-            )
-        );
     }
 
     public function askChoose(
@@ -142,16 +150,18 @@ class OAwait extends AbsFinale implements Await
 
     public function askConfirm(
         string $query,
-        bool $default = true,
+        ? bool $default = true,
         $positiveRoute = null,
         $negativeRoute = null
     ): Operator
     {
         $confirm = new IConfirm($query, $default);
+        $positiveRoute = isset($positiveRoute) ? Ucl::decode($positiveRoute) : null;
+        $negativeRoute = isset($negativeRoute) ? Ucl::decode($negativeRoute) : null;
         $confirm->setPositive('yes', $positiveRoute);
         $confirm->setNegative('no', $negativeRoute);
 
-        return $this;
+        return $this->ask($confirm);
     }
 
     public function askVerbal(
@@ -160,8 +170,8 @@ class OAwait extends AbsFinale implements Await
     ): Operator
     {
         $question = new IQuestionMsg($query, null);
-        $this->question = $this->addSuggestions($question, $suggestions);
-        return $this;
+        $question = $this->addSuggestions($question, $suggestions);
+        return $this->ask($question);
     }
 
     public function ask(
@@ -169,6 +179,13 @@ class OAwait extends AbsFinale implements Await
     ): Operator
     {
         $this->question = $question;
+
+        $routes = $question->getRoutes();
+        $this->routes = array_merge(
+            $this->routes,
+            array_values($routes)
+        );
+
         return $this;
     }
 
@@ -177,15 +194,12 @@ class OAwait extends AbsFinale implements Await
         foreach ($suggestions as $index => $suggestion) {
             $this->addSuggestionToQuestion($question, $index, $suggestion);
         }
-
         return $question;
     }
 
     protected function addSuggestionToQuestion(QuestionMsg $question, $index, $suggestion) : void
     {
-        $success = $this->addStageSuggestion($question, $index, $suggestion)
-            || $this->addUclToQuestion($question, $index, $suggestion)
-            || $this->addContextRouteToQuestion($question, $index, $suggestion)
+        $success = $this->addUclToQuestion($question, $index, $suggestion)
             || $this->addNormalSuggestion($question, $index, $suggestion);
 
         if (!$success) {
@@ -210,53 +224,25 @@ class OAwait extends AbsFinale implements Await
         return true;
     }
 
-    protected function addContextRouteToQuestion(
-        QuestionMsg $question,
-        $index,
-        $suggestion
-    ) : bool
-    {
-        if (!is_string($suggestion)) {
-            return false;
-        }
-
-        $ucl = Ucl::decodeUclStr($suggestion);
-        return $this->addUclToQuestion($question, $index, $ucl);
-    }
-
     protected function addUclToQuestion(QuestionMsg $question, $index, $suggestion) : bool
     {
+        $suggestion = Ucl::decode($suggestion);
         if (!$suggestion instanceof Ucl) {
             return false;
         }
 
         $fullname = $suggestion->getStageFullname();
-        if (ContextUtils::isValidStageFullName($fullname) || !$this->stageReg->hasDef($fullname)) {
+        $isValid = ContextUtils::isValidStageFullName($fullname)
+            && $this->getStageReg()->hasDef($fullname);
+
+        if (!$isValid) {
             return false;
         }
 
-        $this->contextRoutes[] = $uclStr = $suggestion->toEncodedStr();
-        $question->addSuggestion($question, $index, $fullname);
+        $this->routes[] = $suggestion;
 
-        return true;
-    }
-
-    protected function addStageSuggestion(QuestionMsg $question, $index, $suggestion) : bool
-    {
-        if (!is_string($suggestion) || !ContextUtils::isValidStageName($suggestion)) {
-            return false;
-        }
-
-        $stageName = $suggestion;
-
-        $fullname = $this->ucl->getStageFullname($stageName);
-        if (!$this->stageReg->hasDef($fullname)) {
-            return false;
-        }
-
-        $def = $this->stageReg->getDef($fullname);
-        $this->stageRoutes[] = $stageName;
-        $question->addSuggestion($def->getDescription(), $index, $fullname);
+        $def = $this->getStageReg()->getDef($fullname);
+        $question->addSuggestion($def->getDescription(), $index, $suggestion);
 
         return true;
     }
@@ -266,10 +252,9 @@ class OAwait extends AbsFinale implements Await
         unset($this->cloner);
         unset($this->process);
         unset($this->stageReg);
-        unset($this->stageRoutes);
-        unset($this->contextRoutes);
+        unset($this->routes);
         unset($this->question);
-        unset($this->ucl);
+        unset($this->current);
         unset($this->expire);
 
         parent::destroy();

@@ -19,7 +19,6 @@ use Commune\Blueprint\Ghost\Context\CodeContextOption;
 use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Protocals\HostMsg\Convo\QA\Choice;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
@@ -44,7 +43,10 @@ class HelloWorld extends ACodeContext
                 ->info('hello world!')
                 ->over()
                 ->await()
-                ->askChoose('test query', ['abc','bbb','ccc', 'ddd']);
+                ->askChoose(
+                    'test query',
+                    ['abc','bbb','ccc', 'ddd', $this->getStage('finish')]
+                );
 
         })->onReceive(function(Dialog $dialog) : Operator {
             return $dialog
@@ -63,5 +65,24 @@ class HelloWorld extends ACodeContext
         });
     }
 
+    /**
+     * @param StageBuilder $builder
+     * @return StageBuilder
+     *
+     * @title 测试
+     * @desc 测试简介
+     * @intent finish
+     * @regex /^finish$/
+     */
+    public function __on_finish(StageBuilder $builder) : StageBuilder
+    {
+        return $builder->always(
+            $builder->dialog
+                ->send()
+                ->info('finish')
+                ->over()
+                ->fulfill()
+        );
+    }
 
 }

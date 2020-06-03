@@ -73,7 +73,7 @@ abstract class AbsExiting extends AbsOperator
     {
         $uncanceled = $this->canceling;
         foreach ($uncanceled as $un) {
-            $ucl = $un->toEncodedStr();
+            $ucl = $un->encode();
             $process->addDepending(
                 $un,
                 $poppedDepends[$ucl]

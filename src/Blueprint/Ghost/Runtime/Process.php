@@ -65,14 +65,12 @@ interface Process extends ArrayAndJsonAble
     /**
      * @param Ucl $ucl
      * @param QuestionMsg|null $question
-     * @param string[] $stageRoutes
-     * @param string[] $contextRoutes
+     * @param Ucl[] $routes
      */
     public function await(
         Ucl $ucl,
         ? QuestionMsg $question,
-        array $stageRoutes,
-        array $contextRoutes
+        array $routes
     ) : void;
 
     /**
@@ -86,24 +84,15 @@ interface Process extends ArrayAndJsonAble
     public function getAwaitQuestion() : ? QuestionMsg;
 
     /**
-     * @return string[]
-     */
-    public function getAwaitStageNames() : array;
-
-    /**
      * @return Ucl[]
      */
-    public function getAwaitContexts() : array;
+    public function getAwaitRoutes() : array;
 
     /*-------- root ---------*/
 
     public function getRoot() : Ucl;
-//
-//    /*-------- wait ---------*/
-//
-//    public function getAwaiting() : ? Ucl;
-//
-    /*-------- block ---------*/
+
+    /*-------- blocking ---------*/
 
     public function addBlocking(Ucl $ucl, int $priority) : void;
 
@@ -111,7 +100,7 @@ interface Process extends ArrayAndJsonAble
 
     public function eachBlocking() : \Generator;
 
-    /*-------- sleep ---------*/
+    /*-------- sleeping ---------*/
 
     public function addSleeping(Ucl $ucl, array $wakenStages) : void;
 

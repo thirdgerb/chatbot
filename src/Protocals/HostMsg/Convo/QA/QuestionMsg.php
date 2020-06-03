@@ -43,6 +43,11 @@ interface QuestionMsg extends VerbalMsg
     public function addSuggestion(string $suggestion, $index = null, Ucl $ucl = null) : void;
 
     /**
+     * @return Ucl[]
+     */
+    public function getRoutes() : array;
+
+    /**
      * @param Cloner $cloner
      * @return AnswerMsg
      */

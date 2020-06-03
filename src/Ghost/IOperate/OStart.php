@@ -33,6 +33,11 @@ class OStart extends AbsOperator
     protected $cloner;
 
     /**
+     * @var IReceive
+     */
+    protected $dialog;
+
+    /**
      * @var Process
      */
     protected $process;
@@ -58,7 +63,8 @@ class OStart extends AbsOperator
         $process->activate($this->start);
         $input = $this->cloner->input;
 
-            // 检查是否是异步 yielding 消息
+
+        // 检查是否是异步 yielding 消息
         $operator = $this->checkAsyncInput($input)
             // 检查是否是强制同步状态的 contextMsg
             ?? $this->isContextMsgCall($input)
@@ -72,11 +78,8 @@ class OStart extends AbsOperator
             ?? $this->runComprehendPipes($input)
             // 问题匹配
             ?? $this->checkQuestion()
-            // 检查是否命中了 stage 路由
-            ?? $this->checkStageRoutes()
-            // 检查是否命中了 context 路由.
-            ?? $this->checkContextRoutes()
-            // 啥都没有的时候, 让 await ucl 来处理.
+            // 检查是否命中了路由.
+            ?? $this->checkAwaitRoutes()
             ?? $this->heed();
 
         return $operator;
@@ -111,7 +114,7 @@ class OStart extends AbsOperator
 
         $context = $message->toContext($this->cloner);
         // 直接重定向到目标位置.
-        return $this->dialog->redirectTo($context->toUcl());
+        return $this->dialog->redirectTo($context->getUcl());
     }
 
     protected function checkBlocking() : ? Operator
@@ -218,30 +221,15 @@ class OStart extends AbsOperator
 
     /*--------- intent match ---------*/
 
-    protected function checkStageRoutes() : ? Operator
+    protected function checkAwaitRoutes() : ? Operator
     {
-        $stages = $this->process->getAwaitStageNames();
+        $routes = $this->process->getAwaitRoutes();
 
-        if (empty($stages)) {
+        if (empty($routes)) {
             return null;
         }
 
-        $matched = $this->matchStageRoutes($this->start, $stages);
-
-        return isset($matched)
-            ? $this->dialog->next($matched->stageName)
-            : null;
-    }
-
-    protected function checkContextRoutes() : ? Operator
-    {
-        $contexts = $this->process->getAwaitContexts();
-
-        if (empty($contexts)) {
-            return null;
-        }
-
-        $matched = $this->matchContextRoutes(...$contexts);
+        $matched = $this->matchAwaitRoutes(...$routes);
 
         return isset($matched)
             ? $this->dialog->redirectTo($matched)
@@ -261,7 +249,7 @@ class OStart extends AbsOperator
         return null;
     }
 
-    protected function matchContextRoutes(Ucl ...$contexts) : ? Ucl
+    protected function matchAwaitRoutes(Ucl ...$contexts) : ? Ucl
     {
         $matcher = $this->cloner->matcher->refresh();
 
@@ -281,10 +269,9 @@ class OStart extends AbsOperator
 
     protected function heed() : Operator
     {
-        return $this->start
-            ->findStageDef($this->cloner)
-            ->onReceive($this->dialog);
-
+        $stageDef = $this->start->findStageDef($this->cloner);
+        $next = $stageDef->onReceive($this->dialog);
+        return $next;
     }
 
     /*------ methods ------*/

@@ -43,7 +43,7 @@ abstract class AClonePipe implements RequestPipe
         SpyAgency::incr(self::class);
     }
 
-    abstract protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse;
+    abstract protected function doHandle(GhostRequest $request, \Closure $current): GhostResponse;
 
     /**
      * @param AppRequest $request

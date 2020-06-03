@@ -130,7 +130,7 @@ class Ucl implements UclInterface
     }
 
 
-    public static function create(Cloner $cloner, string $contextName, array $query = null, string $stageName = '')  : Ucl
+    public static function newInstance(Cloner $cloner, string $contextName, array $query = null, string $stageName = '')  : Ucl
     {
         $contextName = ContextUtils::normalizeContextName($contextName);
         $stageName = ContextUtils::normalizeStageName($stageName);
@@ -168,7 +168,7 @@ class Ucl implements UclInterface
 
     public function equals(string $ucl) : bool
     {
-        $decoded = Ucl::decodeUclStr($ucl);
+        $decoded = Ucl::decode($ucl);
         return $this->getContextId() === $decoded->getContextId()
             && $this->_stageName === $decoded->stageName;
     }
@@ -229,7 +229,7 @@ class Ucl implements UclInterface
      * @return Ucl
      * @throws InvalidArgumentException
      */
-    public static function decodeUclStr($string) : Ucl
+    public static function decode($string) : Ucl
     {
         if ($string instanceof Ucl) {
             return $string;
@@ -267,7 +267,7 @@ class Ucl implements UclInterface
 
 
 
-    public function toEncodedStr() : string
+    public function encode() : string
     {
         if (isset($this->encoded)) {
             return $this->encoded;
@@ -483,7 +483,7 @@ class Ucl implements UclInterface
 
     public function __toString() : string
     {
-        return $this->toEncodedStr();
+        return $this->encode();
     }
 
     public function __sleep()

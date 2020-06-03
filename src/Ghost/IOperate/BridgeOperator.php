@@ -51,12 +51,7 @@ class BridgeOperator implements Operator
                 $this->getDialog()
             );
 
-            $current = $this->current;
-
-            unset($this->current);
-            unset($this->next);
-
-            return $next ?? $current;
+            return $next ?? $this->current;
         }
 
         $this->current = $this->current->tick();
@@ -80,6 +75,8 @@ class BridgeOperator implements Operator
 
     public function __destruct()
     {
+        unset($this->current);
+        unset($this->next);
         SpyAgency::decr(static::class);
     }
 

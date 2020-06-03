@@ -24,7 +24,7 @@ class OCloseSession extends AbsFinale
     {
         $this->dialog
             ->send()
-            ->message(new SessionQuitInt($this->dialog->ucl->toEncodedStr()))
+            ->message(new SessionQuitInt($this->dialog->ucl->encode()))
             ->over();
 
         $this->dialog->cloner->quit();

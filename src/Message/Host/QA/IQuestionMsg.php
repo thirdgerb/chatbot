@@ -62,6 +62,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         ];
     }
 
+
     public static function create(array $data = []): Struct
     {
         return new static(
@@ -90,6 +91,8 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             return null;
         }
 
+        $a = microtime(true);
+
         $answer = $this->isDefault($message)
             ?? $this->parseAnswerByMatcher($cloner)
             ?? $this->isInSuggestions($message)
@@ -106,11 +109,11 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         $comprehension->answer->setAnswer($answer);
 
         $choice = $answer->getChoice();
-        $routes = $this->routes;
+        $routes = $this->getRoutes();
 
         if (isset($routes[$choice])) {
-            $intent = $routes[$choice];
-            $comprehension->intention->setMatchedIntent($intent);
+            $ucl = $routes[$choice];
+            $comprehension->intention->setMatchedIntent($ucl->getStageFullname());
         }
 
         return $answer;
@@ -123,35 +126,33 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
     protected function isInSuggestions(VerbalMsg $message) : ? AnswerMsg
     {
-        $matchedIndexes = [];
         $matchedSuggestions = [];
 
         $text = StringUtils::normalizeString($message->getText());
 
-        foreach ($this->suggestions as $index => $suggestion) {
+        if (empty($text)) {
+            return null;
+        }
+
+        $suggestions = $this->suggestions;
+        if (empty($suggestions)) {
+            return null;
+        }
+
+        foreach ($suggestions as $index => $suggestion) {
             $indexStr = StringUtils::normalizeString(strval($index));
 
-            // 完全匹配的情况.
+            // index 需要完全匹配的情况.
             if ($indexStr === $text) {
                 return $this->newAnswer($suggestion, $index);
-            }
-
-            // 对索引进行部分匹配.
-            if (strstr($indexStr, $text) !== false) {
-                $matchedIndexes[] = $index;
             }
 
             // 对内容进行部分匹配
             $suggestion = StringUtils::normalizeString($suggestion);
             // 如果是其中一部分.
-            if (strstr($suggestion, $text) !== false) {
+            if (mb_strstr($suggestion, $text) !== false) {
                 $matchedSuggestions[] = $index;
             }
-        }
-
-        if (count($matchedIndexes) === 1) {
-            $index = current($matchedIndexes);
-            return $this->newAnswer($this->suggestions[$index], $index);
         }
 
         if (count($matchedSuggestions) === 1) {
@@ -181,7 +182,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         $matcher = $cloner->matcher->refresh();
         $ordinalInt = HostMsg\IntentMsg::GUEST_DIALOG_ORDINAL;
 
-        if ($matcher->isIntent($ordinalInt)) {
+        if ($matcher->isIntent($ordinalInt)->truly() === true) {
             $entities = $cloner->input
                 ->comprehension
                 ->intention
@@ -197,6 +198,24 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
         return null;
     }
+
+    /**
+     * @return Ucl[]
+     */
+    public function getRoutes(): array
+    {
+        $routes = $this->routes;
+        if (empty($routes)) {
+            return [];
+        }
+        return array_map(
+            function($route) {
+                return Ucl::decode($route);
+            },
+            $routes
+        );
+    }
+
 
     protected function newAnswer(string $answer, string $choice = null) : AnswerMsg
     {
@@ -239,7 +258,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
 
         if (isset($ucl)) {
-            $this->_data['routes'][$index] = $ucl->toEncodedStr();
+            $this->_data['routes'][$index] = $ucl->encode();
         }
     }
 

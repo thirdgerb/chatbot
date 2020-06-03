@@ -87,7 +87,7 @@ class IDepending implements Depending
             'name' => $fullname,
             'contextName' => $this->contextName,
 
-            'dependedUcl' => $ucl->toEncodedStr(),
+            'dependedUcl' => $ucl->encode(),
             'dependedAttr' => null,
             'validator' => $validator,
 
@@ -116,7 +116,7 @@ class IDepending implements Depending
             'name' => $fullname,
             'contextName' => $this->contextName,
 
-            'dependedUcl' => $ucl->toEncodedStr(),
+            'dependedUcl' => $ucl->encode(),
             'dependedAttr' => $attrName,
             'validator' => $validator,
 
