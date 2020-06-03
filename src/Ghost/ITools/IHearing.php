@@ -15,7 +15,6 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
-use Commune\Ghost\ITools\FakeHearing;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -58,7 +57,8 @@ class IHearing extends IMatcher implements Hearing
      */
     public function refresh(): Matcher
     {
-        $this->todo = null;
+        unset($this->todo);
+        $this->fallback = [];
         return parent::refresh();
     }
 
@@ -106,7 +106,7 @@ class IHearing extends IMatcher implements Hearing
         $todo = [];
         if (isset($this->todo)) {
             $todo[] = $this->todo;
-            $this->todo = null;
+            unset($this->todo);
         }
 
         if (isset($action)) {
@@ -123,6 +123,7 @@ class IHearing extends IMatcher implements Hearing
             }
         }
 
+        unset($todo);
         $this->refresh();
         return isset($this->nextOperator)
             ? $this->fakeHearing()
@@ -156,7 +157,18 @@ class IHearing extends IMatcher implements Hearing
             }
         }
 
-        return $this->nextOperator ?? $this->dialog->confuse();
+        $next = $this->nextOperator ?? $this->dialog->confuse();
+        $this->destroy();
+        return $next;
+    }
+
+    protected function destroy()
+    {
+        unset($this->faker);
+        unset($this->dialog);
+        unset($this->cloner);
+        unset($this->todo);
+        unset($this->fallback);
     }
 
     public function getDialog(): Dialog
@@ -167,8 +179,9 @@ class IHearing extends IMatcher implements Hearing
 
     public function __destruct()
     {
-        $this->fallback = [];
-        $this->dialog = null;
+        unset($this->todo);
+        unset($this->fallback);
+        unset($this->nextOperator);
         parent::__destruct();
     }
 

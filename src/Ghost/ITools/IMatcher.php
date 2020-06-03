@@ -18,6 +18,7 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindDef\EmotionDef;
 use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Framework\Command\ICommandDef;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\Intercom\InputMsg;
@@ -66,6 +67,7 @@ class IMatcher implements Matcher
         $this->cloner = $cloner;
         $this->input = $cloner->input;
         $this->injectionContext = $injectionContext;
+        SpyAgency::incr(static::class);
     }
 
 
@@ -682,10 +684,11 @@ class IMatcher implements Matcher
 
     public function __destruct()
     {
-        $this->cloner = null;
-        $this->input = null;
+        unset($this->cloner);
+        unset($this->input);
         $this->matched = false;
-        $this->matchedParams = [];
-        $this->injectionContext = [];
+        unset($this->matchedParams);
+        unset($this->injectionContext);
+        SpyAgency::decr(static::class);
     }
 }

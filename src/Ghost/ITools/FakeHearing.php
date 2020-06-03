@@ -16,6 +16,7 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Support\SoundLike\SoundLikeInterface;
 
 
@@ -36,6 +37,7 @@ class FakeHearing implements Hearing
     public function __construct(Hearing $hearing)
     {
         $this->hearing = $hearing;
+        SpyAgency::incr(static::class);
     }
 
 
@@ -245,5 +247,10 @@ class FakeHearing implements Hearing
         return $this;
     }
 
+    public function __destruct()
+    {
+        unset($this->hearing);
+        SpyAgency::decr(static::class);
+    }
 
 }
