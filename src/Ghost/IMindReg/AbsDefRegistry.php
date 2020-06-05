@@ -185,6 +185,7 @@ abstract class AbsDefRegistry implements DefRegistry
         $this->checkDefType(__METHOD__, $def);
 
         $name = $def->getName();
+
         if ($notExists && $this->getMetaRegistry()->has($name)) {
             return false;
         }

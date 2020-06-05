@@ -9,15 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Host\Contexts\CodeContext;
+namespace Commune\Components\Demo\Test;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface AsMemory
+class DevTools
 {
-
-    public static function __scopes() : array;
 
 }

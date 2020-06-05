@@ -12,12 +12,12 @@
 namespace Commune\Components\Predefined;
 
 use Commune\Blueprint\Framework\App;
-use Commune\Framework\Component\AComponentOption;
+use Commune\Ghost\Component\GhostComponent;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class PredefinedComponent extends AComponentOption
+class PredefinedComponent extends GhostComponent
 {
     public static function stub(): array
     {
@@ -31,6 +31,12 @@ class PredefinedComponent extends AComponentOption
 
     public function bootstrap(App $app): void
     {
+        $this->loadPsr4MindRegister(
+            $app,
+            [
+                "Commune\\Components\\Predefined\\Memory" => __DIR__ . '/Memory',
+            ]
+        );
     }
 
 

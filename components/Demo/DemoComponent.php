@@ -12,12 +12,12 @@
 namespace Commune\Components\Demo;
 
 use Commune\Blueprint\Framework\App;
-use Commune\Framework\Component\AComponentOption;
+use Commune\Ghost\Component\GhostComponent;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class DemoComponent extends AComponentOption
+class DemoComponent extends GhostComponent
 {
     public static function stub(): array
     {
@@ -31,6 +31,13 @@ class DemoComponent extends AComponentOption
 
     public function bootstrap(App $app): void
     {
+        // 注册组件.
+        $this->loadPsr4MindRegister(
+            $app,
+            [
+                'Commune\Components\Demo\Contexts' => __DIR__ . '/Contexts'
+            ]
+        );
     }
 
 }

@@ -90,25 +90,37 @@ interface ServiceRegistrar
     /**
      * 注册一个组件.
      *
-     * @param string $appType
      * @param ComponentOption $component
-     * @param string $by
+     * @param string|null $by
      * @param bool $force
      * @return bool
      */
     public function registerComponent(
-        string $appType,
         ComponentOption $component,
         string $by = null,
         bool $force = false
+    ) : bool;
+
+    /**
+     * @param string $by
+     * @param string $componentName
+     * @param array $params
+     * @return bool
+     */
+    public function dependComponent(
+        string $by,
+        string $componentName,
+        array $params = []
     ) : bool;
 
     /*----------- 初始化服务 -----------*/
 
     /**
      * 启动所有组件.
+     *
+     * @param App $app
      */
-    public function bootComponents(): void;
+    public function bootComponents(App $app): void;
 
 
     /**

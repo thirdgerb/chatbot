@@ -12,6 +12,7 @@
 namespace Commune\Framework;
 
 use Commune\Blueprint\Exceptions\CommuneBootingException;
+use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\ComponentOption;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\ServiceRegistrar;
@@ -64,14 +65,28 @@ class IServiceRegistrar implements ServiceRegistrar
 
 
     /**
-     * @var ComponentOption[][]
+     * @var ComponentOption[]
      */
     protected $components = [];
 
+    /**
+     * @var array[]
+     */
+    protected $dependingComponents = [];
+
+    /**
+     * @var bool
+     */
     protected $configBooted = false;
 
+    /**
+     * @var bool
+     */
     protected $procBooted = false;
 
+    /**
+     * @var bool
+     */
     protected $componentBooted = false;
 
     /**
@@ -235,7 +250,6 @@ class IServiceRegistrar implements ServiceRegistrar
 
 
     public function registerComponent(
-        string $appType,
         ComponentOption $componentOption,
         string $by = null,
         bool $force = false
@@ -244,37 +258,56 @@ class IServiceRegistrar implements ServiceRegistrar
         $id = $componentOption->getId();
 
         if (
-            isset($this->components[$appType][$id])
+            isset($this->components[$id])
             && !$force
         ) {
            return false;
         }
 
-        $this->components[$appType][$id] = $componentOption;
+        $this->components[$id] = $componentOption;
         $this->consoleLogger->debug(
             $this->logInfo->bootingRegisterComponent($id, $by)
         );
         return true;
     }
 
-    public function bootComponents(): void
+    public function dependComponent(
+        string $by,
+        string $componentName,
+        array $params = []
+    ): bool
+    {
+        if (isset($this->dependingComponents[$componentName])) {
+            return false;
+        }
+
+        $this->dependingComponents[$componentName] = [$by, $params];
+        return true;
+    }
+
+
+    public function bootComponents(App $app): void
     {
         if ($this->componentBooted) {
             return;
         }
 
-        foreach ($this->components as $appType => $components) {
-            $app = $this->procC->get($appType);
-            foreach ($components as $id => $component) {
+        // 先注册依赖组件.
+        foreach ($this->dependingComponents as $name => list($by, $params)) {
+            $component = new $name($params);
+            $this->registerComponent($component, $by, false);
+            unset($component);
+        }
 
-                $component->bootstrap($app);
-                $this->consoleLogger->debug(
-                    $this->logInfo->bootingBootComponent(
-                        $appType,
-                        $id
-                    )
-                );
-            }
+        // 启动所有的组件.
+        foreach ($this->components as $id => $component) {
+            $component->bootstrap($app);
+            $this->consoleLogger->debug(
+                $this->logInfo->bootingBootComponent(
+                    get_class($app),
+                    $id
+                )
+            );
         }
         $this->componentBooted = true;
     }

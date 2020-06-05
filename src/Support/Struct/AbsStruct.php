@@ -52,9 +52,9 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
         }
     }
 
-    private function _constructData(array $data) : void
+    protected function _constructData(array $data) : void
     {
-        $this->_filter($data);
+        $this->fill($data);
         $this->_shouldBeArray($this->_data);
         $error = static::validate($this->_data);
 
@@ -67,7 +67,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
      * 过滤数据. 自定义规则
      * @param array $data
      */
-    public function _filter(array $data) : void
+    public function fill(array $data) : void
     {
         foreach ($data as $key => $val) {
             $this->__set($key, $val);

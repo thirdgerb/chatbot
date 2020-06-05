@@ -16,7 +16,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * 当前 Ghost 分身的作用域.
+ * 当前 Ghost 分身的作用域. 可以用于定义记忆体的长程作用域.
  *
  * @property-read string $cloneId           Clone 的 Id.
  * @property-read string $convoId

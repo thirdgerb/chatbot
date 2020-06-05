@@ -3,9 +3,7 @@
 
 namespace Commune\Support\Utils;
 
-
 use Commune\Support\Arr\ArrayAndJsonAble;
-use Illuminate\Support\Arr;
 
 class ArrayUtils
 {
@@ -230,6 +228,22 @@ class ArrayUtils
             $map[$name] ++ ;
             return $map;
         }, []);
+    }
+
+    public static function recursiveCloneArray(array $array) : array
+    {
+        $results = [];
+        foreach ($array as $key => $val) {
+            if (is_array($val)) {
+                $results[$key] = self::recursiveCloneArray($array);
+            } elseif (is_object($val)) {
+                $results[$key] = clone $val;
+            } else {
+                $results[$key] = $val;
+            }
+        }
+
+        return $results;
     }
 
     public static function mergeMapByMaxVal(array $map, array $mergeMap) : array

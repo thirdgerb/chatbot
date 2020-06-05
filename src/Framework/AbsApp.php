@@ -201,7 +201,7 @@ abstract class AbsApp implements App
         );
 
         $this->console->debug($this->logInfo->bootingStartKeyStep('boot components'));
-        $registrar->bootComponents();
+        $registrar->bootComponents($this);
 
         // 初始化所有的进程级服务.
         $this->console->debug($this->logInfo->bootingStartKeyStep('boot config service'));

@@ -12,6 +12,9 @@
 namespace Commune\Support\Registry\Storage;
 
 use Commune\Support\Registry\Meta\StorageOption;
+use Commune\Support\Registry\Storage\Json\JsonStorageOption;
+use Commune\Support\Registry\Storage\PHP\PHPStorageOption;
+use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
 use Symfony\Component\Finder\Finder;
 
 
@@ -31,6 +34,16 @@ use Symfony\Component\Finder\Finder;
  */
 abstract class FileStorageOption extends StorageOption
 {
+
+    const OPTION_PHP = 'php';
+    const OPTION_JSON = 'json';
+    const OPTION_YML = 'yml';
+
+    const OPTIONS = [
+        self::OPTION_JSON => JsonStorageOption::class,
+        self::OPTION_PHP => PHPStorageOption::class,
+        self::OPTION_YML => YmlStorageOption::class,
+    ];
 
     public static function stub(): array
     {

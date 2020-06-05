@@ -86,7 +86,7 @@ class IContextMsg extends AbsMessage implements ContextMsg
 
     public function getText(): string
     {
-        return Ucl::make($this->contextName, $this->query)->encode();
+        return $this->toJson();
     }
 
     public function isEmpty(): bool

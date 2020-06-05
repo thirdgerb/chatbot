@@ -446,6 +446,18 @@ abstract class AbsFileStorage implements Storage
         return $result;
     }
 
+    public function eachOption(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption
+    ): \Generator
+    {
+        $ids = $this->getAllIds($categoryOption, $storageOption);
+        foreach ($ids as $id) {
+            yield $this->find($categoryOption, $storageOption, $id);
+        }
+    }
+
+
     public function getAllIds(
         CategoryOption $categoryOption,
         StorageOption $storageOption

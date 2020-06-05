@@ -22,14 +22,15 @@ use Illuminate\Support\Arr;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $intentName
+ * @property-read string $textTemplate
  * @property-read string $level
  */
 class IIntentMsg extends AbsMessage implements IntentMsg
 {
+    /*------ 需要配置的常量 ------*/
 
     const INTENT_NAME = '';
     const DEFAULT_LEVEL = HostMsg::INFO;
-
 
     /**
      * @var string
@@ -59,6 +60,7 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         $intentStub = static::intentStub();
         $stub = [
             'intentName' => static::INTENT_NAME,
+            'textTemplate' => '',
             'level' => static::DEFAULT_LEVEL
         ];
         return $intentStub + $stub;
@@ -94,13 +96,21 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         return $this->level;
     }
 
+    public function getTextTemplate() : string
+    {
+        $temp = $this->textTemplate;
+        return empty($temp)
+            ? $this->intentName
+            : $temp;
+    }
+
     public function getText(): string
     {
         if (isset($this->_text)) {
             return $this->_text;
         }
 
-        $template = $this->intentName;
+        $template = $this->getTextTemplate();
         $slots = $this->getSlots();
 
         // 不为空则翻译.
@@ -136,10 +146,7 @@ class IIntentMsg extends AbsMessage implements IntentMsg
 
     public function getSlots(): array
     {
-        $arr = $this->toArray();
-        unset($arr['intentName']);
-        unset($arr['level']);
-        return $arr;
+        return $this->toArray();
     }
 
     public function __toString()

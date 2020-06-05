@@ -14,6 +14,7 @@ namespace Commune\Ghost\Providers;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\MindSelfRegister;
 use Commune\Container\ContainerContract;
+use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\ServiceProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
@@ -23,7 +24,7 @@ use Symfony\Component\Finder\Finder;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $id
- * @property-read string[] $prs4
+ * @property-read string[] $psr4
  */
 class Psr4SelfRegisterLoader extends ServiceProvider
 {
@@ -39,14 +40,10 @@ class Psr4SelfRegisterLoader extends ServiceProvider
 
     public function boot(ContainerContract $app): void
     {
-    }
-
-    public function register(ContainerContract $app): void
-    {
         $mind = $app->get(Ghost\Mindset::class);
-        $logger = $app->get(LoggerInterface::class);
+        $logger = $app->get(ConsoleLogger::class);
 
-        foreach ($this->prs4 as $namespace => $path) {
+        foreach ($this->psr4 as $namespace => $path) {
             static::loadSelfRegister(
                 $mind,
                 $namespace,
@@ -54,6 +51,10 @@ class Psr4SelfRegisterLoader extends ServiceProvider
                 $logger
             );
         }
+    }
+
+    public function register(ContainerContract $app): void
+    {
     }
 
 
@@ -93,7 +94,7 @@ class Psr4SelfRegisterLoader extends ServiceProvider
 
             $logger->debug("load mind self register: $clazz");
             $method = [$clazz, MindSelfRegister::REGISTER_METHOD];
-            call_user_func($method, $mind);
+            call_user_func($method, $mind, false);
             $i ++;
         }
 

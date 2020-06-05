@@ -66,7 +66,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
         ];
     }
 
-    public function _filter(array $data): void
+    public function fill(array $data): void
     {
         $data['asIntent'] = IntentMeta::mergeStageInfo(
             ArrayUtils::fetchArray($data, 'asIntent'),
@@ -75,7 +75,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
             $data['desc'] ?? ''
         );
 
-        parent::_filter($data);
+        parent::fill($data);
     }
 
     public function __get_events() : array

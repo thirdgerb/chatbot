@@ -57,7 +57,7 @@ class CodeStageDef extends AbsStageDef
     {
         $next = $this->fireEvent($dialog);
         $next = $next ?? $this->runStageBuilder($dialog)->popOperator() ;
-        $next = $next ?? $dialog->next();
+        $next = $next ?? $dialog->confuse();
         return $next;
     }
 

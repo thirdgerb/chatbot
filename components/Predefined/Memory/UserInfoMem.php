@@ -12,17 +12,22 @@
 namespace Commune\Components\Predefined\Memory;
 
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
+use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Host\Contexts\AMemoryContext;
-use Commune\Support\Parameter\ParamBuilder;
 use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
+use Commune\Ghost\Context\AMemoryContext;
+use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $name
  * @property-read int $loginTimes
+ *
+ * # 用注解的方式定义 Context 的标题和简介.
+ *
+ * @title 用户信息
+ * @desc 了解用户信息
  */
 class UserInfoMem extends AMemoryContext
 {
@@ -31,11 +36,15 @@ class UserInfoMem extends AMemoryContext
         return [ClonerScope::GUEST_ID];
     }
 
-    public static function __params(ParamBuilder $param) : ParamBuilder
+    public static function __defaults(): array
     {
-        return $param
-            ->def('name')
-            ->def('loginTimes', 0);
+        return ['loginTimes' => 0];
+    }
+
+
+    public static function __depending(Depending $depending): Depending
+    {
+        return $depending->on('name');
     }
 
     public function increaseLoginTimes() : void
@@ -43,45 +52,41 @@ class UserInfoMem extends AMemoryContext
         $this->loginTimes = $this->loginTimes + 1;
     }
 
-    public static function __entities(): array
-    {
-        return ['name'];
-    }
-
-
-    public function __on_name(Stage $stage) : StageDef
+    /**
+     * @param Stage $stage
+     * @return Stage
+     *
+     * @desc 请问应该如何称呼您
+     */
+    public function __on_name(Stage $stage) : Stage
     {
         return $stage
             ->onActivate(function(Dialog $dialog){
                 return $dialog
                     ->await()
-                    ->askVerbal('请问我应该如何称呼您');
+                    ->askVerbal('请问应该如何称呼您');
             })
-            ->onEvent(
-                Dialog::HEED,
-                function(Dialog $dialog)
-                {
+            ->onReceive(function(Dialog $dialog) {
 
                     return $dialog
                         ->hearing()
-                        ->isAnyAnswer()
-                        ->then(function(Dialog $dialog, string $isAnyAnswer){
-                            if (mb_strlen($isAnyAnswer) > 10) {
+                        ->isAnswered()
+                        ->then(function(Dialog $dialog, AnswerMsg $isAnswered){
+                            $answer = $isAnswered->getAnswer();
+                            if (mb_strlen($answer) > 10) {
                                 $dialog
                                     ->send()
-                                    ->notice("称呼请麻烦控制在10个字符之内");
+                                    ->notice("请把称呼控制在10个字符之内");
 
-                                return $dialog->redirect()->rewind();
+                                return $dialog->rewind();
                             }
 
-                            $this->name = $isAnyAnswer;
-                            return $dialog->redirect()->next();
+                            $this->name = $answer;
+                            return $dialog->next();
                         })
                         ->end();
 
-                }
-            )
-            ->end();
+            });
     }
 
 

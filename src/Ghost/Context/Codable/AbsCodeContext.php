@@ -28,7 +28,7 @@ use Commune\Blueprint\Ghost\Context\CodeContext;
  */
 abstract class AbsCodeContext extends IContext implements CodeContext
 {
-    public static function makeUcl(array $query, string $stage = ''): Ucl
+    public static function makeUcl(array $query = [], string $stage = ''): Ucl
     {
         $name = static::__name();
         return Ucl::make($name, $query, $stage);

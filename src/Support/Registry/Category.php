@@ -120,13 +120,6 @@ interface Category
     public function searchIdExists(string $wildcardId) : int;
 
     /**
-     * 遍历一个 category 下所有的 Option 实例.
-     *
-     * @return \Generator|Option
-     */
-    public function each() : \Generator;
-
-    /**
      * @return \Generator|string
      */
     public function eachId() : \Generator;

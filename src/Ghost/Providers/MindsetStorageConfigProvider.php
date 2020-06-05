@@ -25,7 +25,7 @@ use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $mainDir
+ * @property-read string $resourcePath
  * @property-read int $cacheExpire
  *
  */
@@ -34,7 +34,7 @@ class MindsetStorageConfigProvider extends ServiceProvider
     public static function stub(): array
     {
         return [
-            'mainDir' => realpath(__DIR__ .'/../../../demo/resources'),
+            'resourcePath' => realpath(__DIR__ .'/../../../demo/resources'),
             'cacheExpire' => 600,
         ];
     }
@@ -84,7 +84,7 @@ class MindsetStorageConfigProvider extends ServiceProvider
              */
             $storageOption = new $storageName([
                 'name' => $type,
-                'path' => $this->mainDir . '/' . $type,
+                'path' => $this->resourcePath . '/' . $type,
                 'isDir' => true,
             ]);
 

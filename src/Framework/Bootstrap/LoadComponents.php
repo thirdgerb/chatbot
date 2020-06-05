@@ -11,14 +11,15 @@
 
 namespace Commune\Framework\Bootstrap;
 
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Support\Struct\Struct;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\Bootstrapper;
 use Commune\Blueprint\Framework\ComponentOption;
-use Commune\Support\Option\Option;
-use Commune\Support\Struct\Struct;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 /**
+ * 加载模块的组件.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 abstract class LoadComponents implements Bootstrapper
@@ -26,13 +27,11 @@ abstract class LoadComponents implements Bootstrapper
     public function bootstrap(App $app): void
     {
         $configs = $this->getComponentConfigs($app);
-        $appType = $this->getAppType();
-
         $registrar = $app->getServiceRegistrar();
 
         foreach ($configs as $key => $value) {
             $component = $this->wrapComponent($key, $value);
-            $registrar->registerComponent($appType, $component);
+            $registrar->registerComponent($component);
         }
     }
 
@@ -57,7 +56,4 @@ abstract class LoadComponents implements Bootstrapper
     }
 
     abstract public function getComponentConfigs(App $app) : array;
-
-    abstract public function getAppType() : string;
-
 }

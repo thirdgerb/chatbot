@@ -279,15 +279,11 @@ class ICategory implements Category
             $initStorageOption
         );
 
-        $ids = $initStorage->getAllIds($this->categoryOption, $initStorageOption);
+        $gen = $initStorage->eachId($this->categoryOption, $this->storageOption);
 
-        foreach ($ids as $id) {
-            $option = $initStorage->find(
-                $this->categoryOption,
-                $initStorageOption,
-                $id
-            );
 
+        foreach ($gen as $id) {
+            $option = $initStorage->find($this->categoryOption, $this->storageOption, $id);
             $storage->save(
                 $this->categoryOption,
                 $this->storageOption,

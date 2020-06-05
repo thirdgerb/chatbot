@@ -52,7 +52,7 @@ class SGConfig extends GhostConfig
                 StdioReqServiceProvider::class,
             ],
             'components' => [
-                Components\Predefined\PredefinedComponent::class,
+                // 测试用例
                 Components\Demo\DemoComponent::class,
             ],
             'options' => [
@@ -94,7 +94,7 @@ class SGConfig extends GhostConfig
             'maxRedirectTimes' => 255,
             'mindsetCacheExpire' => 10,
             'maxBacktrace' => 3,
-            'defaultContextName' => HelloWorld::class,
+            'defaultContextName' => Components\Demo\Contexts\DemoHome::makeUcl()->encode(),
             'sceneContextNames' => [
             ],
             'globalContextRoutes' => []

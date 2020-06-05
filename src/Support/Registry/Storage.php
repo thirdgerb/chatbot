@@ -94,6 +94,15 @@ interface Storage
         string ...$ids
     ) : int;
 
+    /**
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @return \Generator|Option[]
+     */
+    public function eachOption(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption
+    ) : \Generator;
 
     /**
      * 使用 id 数组, 取出相关 Option 的 map
@@ -107,18 +116,6 @@ interface Storage
         CategoryOption $categoryOption,
         StorageOption $storageOption,
         array $ids
-    ) : array;
-
-    /**
-     * 取出所有 option 的ID
-     *
-     * @param CategoryOption $categoryOption
-     * @param StorageOption $storageOption
-     * @return array
-     */
-    public function getAllIds(
-        CategoryOption $categoryOption,
-        StorageOption $storageOption
     ) : array;
 
     /**

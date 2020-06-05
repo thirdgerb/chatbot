@@ -4,6 +4,7 @@ namespace Commune\Support\Option;
 
 use Commune\Support\DI\TInjectable;
 use Commune\Support\Struct\AStruct;
+use Commune\Support\Utils\ArrayUtils;
 
 /**
  * 基于Entry 实现的配置.
@@ -103,5 +104,9 @@ abstract class AbsOption extends AStruct implements Option
         return '';
     }
 
+    public function __clone()
+    {
+        $this->_data = ArrayUtils::recursiveCloneArray($this->_data);
+    }
 
 }

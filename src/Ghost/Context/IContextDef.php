@@ -143,7 +143,7 @@ class IContextDef extends AbsOption implements ContextDef
         ];
     }
 
-    public function _filter(array $data): void
+    public function fill(array $data): void
     {
         $asIntent = $data['asIntent'] ?? [];
 
@@ -168,7 +168,7 @@ class IContextDef extends AbsOption implements ContextDef
 
         $data['stages'] = $stages;
 
-        parent::_filter($data);
+        parent::fill($data);
     }
 
     public static function validate(array $data): ? string /* errorMsg */

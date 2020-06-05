@@ -13,6 +13,7 @@ namespace Commune\Ghost\Bootstrap;
 
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost;
+use Commune\Components\Predefined\PredefinedComponent;
 use Commune\Framework\Bootstrap\LoadComponents;
 
 /**
@@ -26,7 +27,17 @@ class GhostLoadComponent extends LoadComponents
      */
     public function getComponentConfigs(App $app): array
     {
-        return $app->getConfig()->components;
+        $config = $app->getConfig()->components;
+        $predefined = PredefinedComponent::class;
+
+        if (
+            !array_key_exists($predefined, $config)
+            && !in_array($predefined, $config)
+        ) {
+            $config[] = $predefined;
+        }
+
+        return $config;
     }
 
     public function getAppType(): string

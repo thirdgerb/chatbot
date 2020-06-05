@@ -50,7 +50,7 @@ interface CodeContext extends Context, Wrapper, MindSelfRegister
     const CONTEXT_OPTION_FUNC = '__option';
     const STAGE_BUILDER_PREFIX = '__on_';
 
-    public static function makeUcl(array $query, string $stage = '') : Ucl;
+    public static function makeUcl(array $query = [], string $stage = '') : Ucl;
 
     /**
      * 定义 context name

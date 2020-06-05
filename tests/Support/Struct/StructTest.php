@@ -21,6 +21,17 @@ use PHPUnit\Framework\TestCase;
  */
 class StructTest extends TestCase
 {
+    public function testIterator()
+    {
+        $aObj = new A();
+        $array = $aObj->toArray();
+
+        foreach ($array as $key => $val) {
+            $this->assertEquals($val, $aObj->{$key});
+        }
+
+    }
+
     public function testExample()
     {
         $aObj = new A();

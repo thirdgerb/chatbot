@@ -11,43 +11,66 @@
 
 namespace Commune\Components\Demo\Contexts;
 
+use Commune\Blueprint\Ghost\Context\CodeContextOption;
+use Commune\Blueprint\Ghost\Context\Depending;
+use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate;
-use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
 use Commune\Ghost\Context\ACodeContext;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @desc Demo的入口
  */
 class DemoHome extends ACodeContext
 {
-    const DESCRIPTION = "demo的入口";
-
-    public function __on_start(Stage $stage): Stage
+    public static function __depending(Depending $depending): Depending
     {
-        return $stage
-            ->onActivate(function(Activate $dialog){
-               return $dialog->next('menu');
-            })
-            ->onEvent(Dialog::QUIT, function(Dialog $dialog) {
-                $dialog->send()->info('quit from quiting event');
-                return null;
-            })
-            ->onEvent(Dialog::CANCEL, function(Dialog $dialog) {
-                $dialog->send()->info('quit from cancel event');
-                return null;
-            })
-            ->end();
+        return $depending;
     }
+
+    public static function __option(): CodeContextOption
+    {
+        return new CodeContextOption([
+            'onQuit' => 'quit',
+            'onCancel' => 'cancel',
+        ]);
+    }
+
+    public function __on_start(Stage $builder): Stage
+    {
+        return $builder
+            ->onActivate(function(Activate $dialog){
+                return $dialog->next('menu');
+            });
+    }
+
 
     public function __on_quit(Stage $stage) : Stage
     {
-        return $stage->onActivate()
+        return $stage->always(function(Activate $dialog){
+            return $dialog
+                ->send()
+                ->notice('quiting pass by quit stage')
+                ->over()
+                ->quit();
+        });
     }
 
-    public function __on_menu(Stage $stage) : StageDef
+    public function __on_cancel(Stage $stage) : Stage
+    {
+        return $stage->always(function(Activate $dialog){
+            return $dialog
+                ->send()
+                ->notice('canceling pass by cancel stage')
+                ->over()
+                ->quit();
+        });
+    }
+
+    public function __on_menu(Stage $stage) : Stage
     {
         return $stage
             ->onActivate(function(Activate $dialog){
@@ -57,24 +80,22 @@ class DemoHome extends ACodeContext
                     ->askChoose(
                         '请您选择',
                         [
-                            FeatureTest::class,
-                            WelcomeUser::class,
-                            DevTools::class,
+                            'hello',
+//                            FeatureTest::class,
+//                            WelcomeUser::class,
+//                            DevTools::class,
                         ]
                     );
 
             })
-            ->onEvent(
-                Dialog::FALLBACK,
-                function(Dialog $dialog) {
-                    $dialog->send()
-                        ->info('完成测试')
-                        ->over();
-
-                    return $dialog->redirect()->quit();
-                }
-            )
-            ->end();
+            ->onResume(function(Dialog $dialog) {
+                $dialog->send()
+                    ->info('完成测试')
+                    ->over()
+                    ->quit();
+            });
 
     }
+
+
 }
