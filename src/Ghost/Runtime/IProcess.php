@@ -173,7 +173,6 @@ class IProcess implements Process, HasIdGenerator
     ): void
     {
         $this->setWaiting($ucl, Context::AWAIT);
-
         $waiter = new IWaiter(
             $ucl->encode(),
             $question,

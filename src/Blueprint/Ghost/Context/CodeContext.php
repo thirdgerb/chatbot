@@ -79,8 +79,8 @@ interface CodeContext extends Context, Wrapper, MindSelfRegister
     public static function __option() : CodeContextOption;
 
     /**
-     * @param StageBuilder $builder
+     * @param StageBuilder $stage
      * @return StageBuilder
      */
-    public function __on_start(StageBuilder $builder) : StageBuilder;
+    public function __on_start(StageBuilder $stage) : StageBuilder;
 }

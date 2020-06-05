@@ -59,8 +59,8 @@ class IWaiter implements Waiter
         $this->_question = $question;
         $this->_routes = array_values(
             array_map(
-                function (Ucl $route) {
-                    return $route->encode();
+                function ($route) {
+                    return strval($route);
                 },
                 $routes
             )

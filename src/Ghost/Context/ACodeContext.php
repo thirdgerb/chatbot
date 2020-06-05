@@ -33,7 +33,7 @@ abstract class ACodeContext extends AbsCodeContext
 
     abstract public static function __option(): CodeContextOption;
 
-    abstract public function __on_start(StageBuilder $builder): StageBuilder;
+    abstract public function __on_start(StageBuilder $stage): StageBuilder;
 
 
 

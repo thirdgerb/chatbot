@@ -41,9 +41,9 @@ class DemoHome extends ACodeContext
         ]);
     }
 
-    public function __on_start(Stage $builder): Stage
+    public function __on_start(Stage $stage): Stage
     {
-        return $builder
+        return $stage
             ->onActivate(function(Activate $dialog){
                 return $dialog->next('menu');
             });
@@ -88,10 +88,7 @@ class DemoHome extends ACodeContext
                     ->askChoose(
                         '请您选择',
                         [
-                            'hello',
-//                            FeatureTest::class,
-//                            WelcomeUser::class,
-//                            DevTools::class,
+                            FeatureTest::makeUcl(),
                         ]
                     );
 

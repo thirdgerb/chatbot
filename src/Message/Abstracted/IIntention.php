@@ -139,7 +139,7 @@ class IIntention extends AbsMessage implements Intention
         bool $highlyPossible = true
     )
     {
-        $intentName = StringUtils::normalizeIntentName($intentName);
+        $intentName = ContextUtils::normalizeIntentName($intentName);
         $this->_data['possibleIntents'][$intentName] = [$intentName, $odd, $highlyPossible];
         $this->sorted = false;
     }

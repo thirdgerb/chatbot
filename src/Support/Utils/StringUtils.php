@@ -6,9 +6,20 @@ namespace Commune\Support\Utils;
 
 class StringUtils
 {
+
+    public static function isEmptyStr($str) : bool
+    {
+        return self::isString($str) && (strval($str) === '');
+    }
+
+    public static function isString($str) : bool
+    {
+        return is_string($str) || (is_object($str) && method_exists('__toString', $str));
+    }
+
     public static function isNotEmptyStr($str) : bool
     {
-        return is_string($str) && $str !== '';
+        return self::isString($str) && (strval($str) !== '');
     }
 
     /**

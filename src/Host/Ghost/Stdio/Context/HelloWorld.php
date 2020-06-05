@@ -34,9 +34,9 @@ class HelloWorld extends ACodeContext
         return new CodeContextOption([]);
     }
 
-    public function __on_start(StageBuilder $builder): StageBuilder
+    public function __on_start(StageBuilder $stage): StageBuilder
     {
-        return $builder->onActivate(function(Dialog $dialog) : Operator {
+        return $stage->onActivate(function(Dialog $dialog) : Operator {
 
             return $dialog
                 ->send()

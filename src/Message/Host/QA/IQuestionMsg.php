@@ -130,7 +130,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
         $text = StringUtils::normalizeString($message->getText());
 
-        if (empty($text)) {
+        if (StringUtils::isEmptyStr($text)) {
             return null;
         }
 

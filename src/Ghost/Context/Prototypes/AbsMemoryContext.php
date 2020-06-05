@@ -58,9 +58,9 @@ abstract class AbsMemoryContext extends AbsCodeContext
         ]);
     }
 
-    public function __on_start(StageBuilder $builder): StageBuilder
+    public function __on_start(StageBuilder $stage): StageBuilder
     {
-        return $builder->always($builder->dialog->fulfill());
+        return $stage->always($stage->dialog->fulfill());
     }
 
 

@@ -62,13 +62,13 @@ class ICodeContextDef extends IContextDef
 
             'onCancel' => $config['onCancel'] ?? $option->onCancel,
             'onQuit' => $config['onQuit'] ?? $option->onQuit,
+
             'stageRoutes' => $config['stageRoutes'] ?? $option->stageRoutes,
             'contextRoutes' => $config['contextRoutes'] ?? $option->contextRoutes,
 
             'stages' => $stages + $depending->stages,
             'firstStage' => CodeContext::FIRST_STAGE
         ]);
-
         unset($creator);
     }
 

@@ -69,26 +69,23 @@ class OAwait extends AbsFinale implements Await
         ? int $expire
     )
     {
-        $this->dialog = $dialog;
-        $this->routes = $contextRoutes;
+        parent::__construct($dialog);
+
         $this->expire = $expire;
         $this->current = $this->dialog->ucl;
+        $contextDef = $this->current->findContextDef($this->cloner);
 
-        if (!empty($stageRoutes)) {
-            $this->routes = array_merge(
-                $this->routes,
-                $this->wrapStage($stageRoutes)
-            );
-        }
+        $this->routes = array_merge(
+            $this->routes,
+            $this->wrapStage($contextDef->commonStageRoutes()),
+            $this->wrapStage($stageRoutes)
+        );
 
-        if (!empty($contextRoutes)) {
-            $this->routes = array_merge(
-                $this->routes,
-                $this->wrapUcl($contextRoutes)
-            );
-        }
-
-        parent::__construct($dialog);
+        $this->routes = array_merge(
+            $this->routes,
+            $this->wrapUcl($contextDef->commonContextRoutes()),
+            $this->wrapUcl($contextRoutes)
+        );
     }
 
     protected function wrapStage(array $stages) : array
