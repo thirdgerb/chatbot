@@ -336,11 +336,22 @@ class Ucl implements UclInterface
 
         $contextDef = $this->findContextDef($cloner);
         $queryNames = $contextDef->getQueryNames();
-        $query = ArrayUtils::parseValuesByKeysWithListMark(
-            $this->_query,
-            $queryNames
-        );
+        $query = $this->mergeQuery($queryNames, $contextDef, $cloner);
 
+        $instance = new static($this->_contextName, $this->_stageName, $query);
+        $instance->instanced = true;
+
+        return $instance;
+    }
+
+    protected function mergeQuery(array $queryNames, ContextDef $contextDef, Cloner $cloner) : array
+    {
+        $query = empty($queryNames)
+            ? []
+            : ArrayUtils::parseValuesByKeysWithListMark(
+                $this->_query,
+                $queryNames
+            );
 
         $scopes = $contextDef->getScopes();
         $map = $cloner->scope->getLongTermDimensionsDict($scopes);
@@ -359,10 +370,7 @@ class Ucl implements UclInterface
             }
         });
 
-        $instance = new static($this->_contextName, $this->_stageName, $query);
-        $instance->instanced = true;
-
-        return $instance;
+        return $query;
     }
 
 

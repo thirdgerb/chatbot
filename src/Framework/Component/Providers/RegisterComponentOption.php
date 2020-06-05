@@ -38,6 +38,10 @@ class RegisterComponentOption extends ServiceProvider
         ];
     }
 
+    public function getDefaultScope(): string
+    {
+        return self::SCOPE_PROC;
+    }
 
     public function __get_id() : string
     {

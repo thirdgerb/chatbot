@@ -48,6 +48,11 @@ class LoadComponentOption extends ServiceProvider
         ];
     }
 
+    public function getDefaultScope(): string
+    {
+        return self::SCOPE_CONFIG;
+    }
+
     public function __get_id() : string
     {
         return static::class
@@ -56,7 +61,6 @@ class LoadComponentOption extends ServiceProvider
             . ':'
             . $this->resourceName;
     }
-
 
     public static function makeComponentOptionId(
         string $componentName,

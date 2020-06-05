@@ -35,13 +35,14 @@ interface LogInfo
 
     public function bootingRegisterProvider(string $id) : string;
 
+    public function bootingBootProvider(string $id) : string;
+
+    public function bootingRegisterProviderWarning(string $providerId, string $except, string $given) : string;
+
     public function bootingUnInstancedReqContainer() : string;
 
     public function bootingRegisterConfigOption(string $optionName) : string;
 
-    public function bootingBootProvider(string $id) : string;
-
-//    public function bootInvalidProviderConfiguration($index, $value) : string;
 
     public function bootContractNotBound(string $abstract) : string;
 

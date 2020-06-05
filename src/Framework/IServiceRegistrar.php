@@ -116,7 +116,22 @@ class IServiceRegistrar implements ServiceRegistrar
     ): void
     {
         $provider->register($this->procC);
+        $this->checkProviderScope($provider, ServiceProvider::SCOPE_CONFIG);
         $this->registerProvider($this->configProviders, $provider, $top);
+    }
+
+    protected function checkProviderScope(ServiceProvider $provider, string $actual) : void
+    {
+        $expect = $provider->getDefaultScope();
+        if ($expect !== $actual) {
+            $this->consoleLogger->warning(
+                $this->logInfo->bootingRegisterProviderWarning(
+                    $provider->getId(),
+                    $expect,
+                    $actual
+                )
+            );
+        }
     }
 
     public function registerProcProvider(
@@ -125,6 +140,7 @@ class IServiceRegistrar implements ServiceRegistrar
     ): void
     {
         $provider->register($this->procC);
+        $this->checkProviderScope($provider, ServiceProvider::SCOPE_PROC);
         $this->registerProvider($this->procProviders, $provider, $top);
     }
 
@@ -134,6 +150,7 @@ class IServiceRegistrar implements ServiceRegistrar
     ): void
     {
         $provider->register($this->reqC);
+        $this->checkProviderScope($provider, ServiceProvider::SCOPE_REQ);
         $this->registerProvider($this->reqProviders, $provider, $top);
     }
 

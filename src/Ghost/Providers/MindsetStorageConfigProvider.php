@@ -39,6 +39,11 @@ class MindsetStorageConfigProvider extends ServiceProvider
         ];
     }
 
+    public function getDefaultScope(): string
+    {
+        return self::SCOPE_CONFIG;
+    }
+
     public static function relations(): array
     {
         return [];

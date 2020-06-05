@@ -201,10 +201,13 @@ class IRuntime implements Runtime
 
         if ($changed) {
             $ucl = $this->process->getAwait();
-            return $ucl
-                ->toInstance($this->cloner)
-                ->findContext($this->cloner)
-                ->toContextMsg();
+            $ucl = $ucl->toInstance($this->cloner);
+            $context = $ucl->findContext($this->cloner);
+
+            $message = $context->toContextMsg();
+
+
+            return $message;
         }
 
         return null;

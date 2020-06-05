@@ -22,16 +22,17 @@ use Commune\Support\Registry\OptRegistry;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read int $defCacheExpire
  */
 class MindsetServiceProvider extends ServiceProvider
 {
     public static function stub(): array
     {
-        return [
-            'defCacheExpire' => 599,
-        ];
+        return [];
+    }
+
+    public function getDefaultScope(): string
+    {
+        return self::SCOPE_PROC;
     }
 
     public function boot(ContainerContract $app): void
@@ -66,7 +67,11 @@ class MindsetServiceProvider extends ServiceProvider
     {
         $app->singleton(Mindset::class, function(ContainerContract $app){
             $optRegistry = $app->get(OptRegistry::class);
-            return new IMindset($optRegistry, $this->defCacheExpire);
+            /**
+             * @var GhostConfig $config
+             */
+            $config = $app->get(GhostConfig::class);
+            return new IMindset($optRegistry, $config->mindsetCacheExpire);
         });
     }
 

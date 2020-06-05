@@ -38,6 +38,11 @@ class Psr4SelfRegisterLoader extends ServiceProvider
         ];
     }
 
+    public function getDefaultScope(): string
+    {
+        return self::SCOPE_PROC;
+    }
+
     public function boot(ContainerContract $app): void
     {
         $mind = $app->get(Ghost\Mindset::class);

@@ -40,7 +40,6 @@ class ORewind extends AbsFinale
         if (isset($prev)) {
             $this->setProcess($prev);
         }
-
         $this->runAwait($this->silent);
         return $this;
     }

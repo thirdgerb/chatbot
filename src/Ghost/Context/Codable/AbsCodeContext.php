@@ -28,6 +28,13 @@ use Commune\Blueprint\Ghost\Context\CodeContext;
  */
 abstract class AbsCodeContext extends IContext implements CodeContext
 {
+    /**
+     * 缓存所有的 def 定义.
+     * 避免当所有 Mindset registry 不设置缓存时, 每次请求重新生成一次 def
+     * @var ICodeContextDef[]
+     */
+    private static $_defs = [];
+
     public static function makeUcl(array $query = [], string $stage = ''): Ucl
     {
         $name = static::__name();
@@ -47,7 +54,16 @@ abstract class AbsCodeContext extends IContext implements CodeContext
 
     public static function __def(ContextMeta $meta = null): ContextDef
     {
-        return new ICodeContextDef(static::class, $meta);
+        // 避免 mindset 缓存时间为 0 时, 每次请求重新生成 def.
+        // Meta 存在时, 是从配置中获取并查询的.
+        if (isset($meta)) {
+            $name = static::__name();
+            return self::$_defs[$name]
+                ?? self::$_defs[$name] = new ICodeContextDef(static::class, $meta);
+        }
+
+        // 配置不存在时, 直接生成一个.
+        return new ICodeContextDef(static::class);
     }
 
     public static function create(Cloner $cloner, Ucl $ucl): Context

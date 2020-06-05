@@ -32,6 +32,12 @@ class CacheByArrProvider extends ServiceProvider
     {
     }
 
+    public function getDefaultScope(): string
+    {
+        return self::SCOPE_REQ;
+    }
+
+
     public function register(ContainerContract $app): void
     {
         $app->singleton(

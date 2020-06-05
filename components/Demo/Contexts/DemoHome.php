@@ -16,7 +16,9 @@ use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Ghost\Context\ACodeContext;
+use Commune\Support\Registry\OptRegistry;
 
 
 /**
@@ -72,6 +74,12 @@ class DemoHome extends ACodeContext
 
     public function __on_menu(Stage $stage) : Stage
     {
+        /**
+         * @var OptRegistry $a
+         */
+        $ab = $stage->dialog->cloner->mind;
+        $ab->stageReg()->hasDef(static::__name());
+
         return $stage
             ->onActivate(function(Activate $dialog){
 

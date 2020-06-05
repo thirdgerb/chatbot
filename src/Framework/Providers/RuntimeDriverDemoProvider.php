@@ -27,6 +27,12 @@ class RuntimeDriverDemoProvider extends ServiceProvider
         return [];
     }
 
+    public function getDefaultScope(): string
+    {
+        return self::SCOPE_REQ;
+    }
+
+
     public function boot(ContainerContract $app): void
     {
     }

@@ -35,6 +35,12 @@ class FileCacheServiceProvider extends ServiceProvider
         ];
     }
 
+    public function getDefaultScope(): string
+    {
+        return self::SCOPE_CONFIG;
+    }
+
+
     public function boot(ContainerContract $app): void
     {
         /**

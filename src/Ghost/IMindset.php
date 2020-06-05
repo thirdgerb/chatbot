@@ -89,8 +89,7 @@ class IMindset implements Mindset
         }
 
         $impl = static::REGISTRY_IMPL[$type];
-
-        return new $impl(
+        return $this->registries[$type] = new $impl(
             $this,
             $this->optRegistry,
             $cacheExpire

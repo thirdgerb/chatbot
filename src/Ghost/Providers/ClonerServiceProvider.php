@@ -42,6 +42,10 @@ class ClonerServiceProvider extends ServiceProvider
         return [];
     }
 
+    public function getDefaultScope(): string
+    {
+        return self::SCOPE_REQ;
+    }
 
     public function boot(Container $app): void
     {

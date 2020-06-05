@@ -49,6 +49,12 @@ class LoggerByMonologProvider extends ServiceProvider
         ];
     }
 
+    public function getDefaultScope(): string
+    {
+        return self::SCOPE_PROC;
+    }
+
+
     public function boot(ContainerContract $app): void
     {
     }

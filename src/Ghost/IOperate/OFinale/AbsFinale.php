@@ -67,12 +67,14 @@ abstract class AbsFinale extends AbsOperator implements Finale
         // 如果是 waiter, 重新输出 question
         $question = $waiter->question;
         $input = $this->cloner->input;
+
         if (isset($question)) {
             $this->cloner->output($input->output($question));
         }
 
         // 尝试同步状态变更.
         $contextMsg = $this->cloner->runtime->toContextMsg();
+
         if (isset($contextMsg)) {
             $this->cloner->output($input->output($contextMsg));
         }

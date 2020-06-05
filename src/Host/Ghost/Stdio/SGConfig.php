@@ -92,7 +92,7 @@ class SGConfig extends GhostConfig
             'sessionExpire' => 3600,
             'sessionLockerExpire' => 3,
             'maxRedirectTimes' => 255,
-            'mindsetCacheExpire' => 10,
+            'mindsetCacheExpire' => 0,
             'maxBacktrace' => 3,
             'defaultContextName' => Components\Demo\Contexts\DemoHome::makeUcl()->encode(),
             'sceneContextNames' => [

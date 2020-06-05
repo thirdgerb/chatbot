@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\MindDef\Def;
 use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Blueprint\Ghost\MindReg\DefRegistry;
+use Commune\Framework\Spy\SpyAgency;
 use Commune\Support\Registry\Category;
 use Commune\Support\Registry\Exceptions\OptionNotFoundException;
 use Commune\Support\Registry\OptRegistry;
@@ -65,7 +66,8 @@ abstract class AbsDefRegistry implements DefRegistry
     {
         $this->mindset = $mindset;
         $this->optRegistry = $optRegistry;
-        $this->cacheExpire = $cacheExpire > 10 ? $cacheExpire : 10;
+        $this->cacheExpire = $cacheExpire > 0 ? $cacheExpire : 0;
+        SpyAgency::incr(static::class);
     }
 
     /*------- meta -------*/
@@ -127,6 +129,10 @@ abstract class AbsDefRegistry implements DefRegistry
 
     protected function checkExpire() : void
     {
+        if ($this->cacheExpire <= 0) {
+            return;
+        }
+
         $now = time();
         if ($now > $this->expireAt) {
             $this->flushCache();
@@ -141,7 +147,8 @@ abstract class AbsDefRegistry implements DefRegistry
             return true;
         }
 
-        return $this->hasRegisteredMeta($defName);
+        $has = $this->hasRegisteredMeta($defName);
+        return $has;
     }
 
     public function getDef(string $defName): Def
@@ -149,7 +156,7 @@ abstract class AbsDefRegistry implements DefRegistry
         $this->checkExpire();
 
         // 有缓存
-        if (isset($this->cachedDefs[$defName])) {
+        if ($this->cacheExpire > 0 && isset($this->cachedDefs[$defName])) {
             return $this->cachedDefs[$defName];
         }
 
@@ -224,9 +231,10 @@ abstract class AbsDefRegistry implements DefRegistry
 
     public function __destruct()
     {
-        $this->cachedDefs = [];
-        $this->mindset = null;
-        $this->optRegistry = null;
+        unset($this->cachedDefs);
+        unset($this->mindset);
+        unset($this->optRegistry);
+        SpyAgency::decr(static::class);
     }
 
 }

@@ -54,6 +54,11 @@ class ILogInfo implements LogInfo
         return "boot service provider: $id";
     }
 
+    public function bootingRegisterProviderWarning(string $providerId, string $except, string $given): string
+    {
+        return "register service provider $providerId at scope $given, $except expected";
+    }
+
 
     public function bootingRegisterProvider(string $id): string
     {
