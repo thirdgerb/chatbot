@@ -230,6 +230,7 @@ class IContext implements Context
         return new IContextMsg([
             'contextName' => $this->_ucl->contextName,
             'contextId' => $this->_ucl->getContextId(),
+            'stageName' => $this->_ucl->stageName,
             'query' => $this->_ucl->query,
             'data' => $this->toData(),
         ]);

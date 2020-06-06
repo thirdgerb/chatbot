@@ -27,8 +27,7 @@ class OCancel extends AbsExiting
         $target = $this->dialog->ucl;
         $process = $this->dialog->process;
 
-        $this->addCanceling([$target]);
-
+        $this->addCanceling($target);
         return $this->recursiveWithdraw($process)
             ?? $this->fallback();
     }

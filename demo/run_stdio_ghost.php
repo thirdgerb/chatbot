@@ -31,16 +31,26 @@ $app = new IGhost(
     null,
     new SGConsoleLogger($stdio)
 );
+
+// activate
 $app->onFail([$stdio, 'end'])
     ->bootstrap()
     ->activate();
 
+// connect event
+$response = $app->handle(new SGRequest(
+    new Message\Host\Convo\IEventMsg(['eventName' => 'connected']),
+    $stdio
+));
+$response->end();
+
+// each message
 $stdio->on('data', function($line) use ($app, $stdio) {
 
     $line = rtrim($line, "\r\n");
     $a = microtime(true);
 
-    $request = new SGRequest($line, $stdio);
+    $request = new SGRequest(new Message\Host\Convo\IText($line), $stdio);
     $response = $app->handle($request);
 
     $response->end();

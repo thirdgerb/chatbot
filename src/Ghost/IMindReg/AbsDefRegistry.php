@@ -67,7 +67,7 @@ abstract class AbsDefRegistry implements DefRegistry
         $this->mindset = $mindset;
         $this->optRegistry = $optRegistry;
         $this->cacheExpire = $cacheExpire > 0 ? $cacheExpire : 0;
-        SpyAgency::incr(static::class);
+        SpyAgency::incr(self::class);
     }
 
     /*------- meta -------*/
@@ -234,7 +234,7 @@ abstract class AbsDefRegistry implements DefRegistry
         unset($this->cachedDefs);
         unset($this->mindset);
         unset($this->optRegistry);
-        SpyAgency::decr(static::class);
+        SpyAgency::decr(self::class);
     }
 
 }

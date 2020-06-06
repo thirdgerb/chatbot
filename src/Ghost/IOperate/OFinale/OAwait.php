@@ -137,10 +137,11 @@ class OAwait extends AbsFinale implements Await
     public function askChoose(
         string $query,
         array $suggestions = [],
-        $defaultChoice = null
+        $defaultChoice = null,
+        array $routes = []
     ): Operator
     {
-        $choose = new IChoose($query, $defaultChoice);
+        $choose = new IChoose($query, $defaultChoice, [], $routes);
         $this->question = $this->addSuggestions($choose, $suggestions);
         return $this;
     }
@@ -227,6 +228,7 @@ class OAwait extends AbsFinale implements Await
         if (!$suggestion instanceof Ucl) {
             return false;
         }
+
 
         $fullname = $suggestion->getStageFullname();
         $isValid = ContextUtils::isValidStageFullName($fullname)

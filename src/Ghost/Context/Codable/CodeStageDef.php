@@ -80,7 +80,7 @@ class CodeStageDef extends AbsStageDef
 
     protected function runStageBuilder(Dialog $dialog, bool $redirect = false) : IStageBuilder
     {
-        $builder = new IStageBuilder($dialog, $redirect);
+        $builder = new IStageBuilder($dialog, $this, $redirect);
         $context = $dialog->context;
 
         $func = [$context, $this->getMethodName()];

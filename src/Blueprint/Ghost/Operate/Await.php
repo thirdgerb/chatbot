@@ -25,13 +25,15 @@ interface Await extends Finale
     /**
      * @param string $query
      * @param array $suggestions
-     * @param $defaultChoice
+     * @param int|string $defaultChoice
+     * @param Ucl[] $routes
      * @return Operator
      */
     public function askChoose(
         string $query,
         array $suggestions = [],
-        $defaultChoice = null
+        $defaultChoice = null,
+        array $routes = []
     ) : Operator;
 
     /**

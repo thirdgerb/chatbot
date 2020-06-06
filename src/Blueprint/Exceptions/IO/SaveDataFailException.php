@@ -26,6 +26,6 @@ class SaveDataFailException extends BrokenRequestException
     )
     {
         $message = "save data $dataDesc fail";
-        parent::__construct($message, 0, $e);
+        parent::__construct($message, $e);
     }
 }

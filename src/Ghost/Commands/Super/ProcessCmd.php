@@ -21,7 +21,10 @@ use Commune\Ghost\Cmd\AGhostCmd;
  */
 class ProcessCmd extends AGhostCmd
 {
-    const SIGNATURE = 'process';
+    const SIGNATURE = 'process 
+       {--l|len : 检查长度}
+       {--s|serialize : 检查序列化压缩结果}
+    ';
 
     const DESCRIPTION = '查看多轮对话进程的数据';
 
@@ -30,5 +33,61 @@ class ProcessCmd extends AGhostCmd
     {
         $process = $this->cloner->runtime->getCurrentProcess();
         $this->info($process->toPrettyJson());
+
+        $json = $process->toJson();
+
+        if (!empty($command['--len'])) {
+            $this->info(
+                "process to json mb_string length : {len}",
+                ['len' => mb_strlen($json)]
+            );
+        }
+
+        $gz = $command['--gz'] ?? false;
+
+        if (!empty($command['--serialize']) || $gz) {
+
+            // 序列化
+            $a = microtime(true);
+            $serialized = serialize($process);
+            $gzStr = gzcompress($serialized);
+            $b = microtime(true);
+            $serializedTime = round(($b - $a) * 1000000);
+
+            $this->info(
+                "process to serialized string length : {len}, time: {time}ws ",
+                ['len' => strlen($serialized), 'time' => $serializedTime]
+            );
+
+            // 输出序列化字符串
+            $this->info("serialized: $serialized");
+
+            $len = strlen($gzStr);
+
+            // gz compress 检查.
+            $this->info(
+                "process to gzcompress string length : {len}",
+                ['len' => $len]
+            );
+
+
+            // 反序列化检查.
+            $a = microtime(true);
+            $un = gzuncompress($gzStr);
+            $unProcess = unserialize($un);
+            $b = microtime(true);
+            $time = round(($b - $a) * 1000000);
+            $this->info(
+                "process gzuncompress equals serialized : {bool}",
+                ['bool' => $serialized === $un ? "true" : "false"]
+            );
+
+            $this->info(
+                "process unserialize time is {time}ws",
+                ['time' => $time]
+            );
+        }
+
+
     }
 }

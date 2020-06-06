@@ -32,9 +32,9 @@ class SGRequest implements GhostRequest
     use TInjectable;
 
     /**
-     * @var string
+     * @var HostMsg
      */
-    protected $line;
+    protected $message;
 
     /**
      * @var Stdio
@@ -74,7 +74,7 @@ class SGRequest implements GhostRequest
     protected $input;
 
     public function __construct(
-        string $line,
+        HostMsg $message,
         Stdio $stdio,
         string $shellName = 'stdioTestName',
         string $sessionId = 'stdioSessionId',
@@ -82,7 +82,7 @@ class SGRequest implements GhostRequest
         string $guestName = 'stdioTestGuestName'
     )
     {
-        $this->line = $line;
+        $this->message = $message;
         $this->stdio = $stdio;
         $this->console = new SGConsoleLogger($stdio, false);
         $this->shellName = $shellName;
@@ -99,7 +99,7 @@ class SGRequest implements GhostRequest
         return $this->input
             ?? $this->input = new IInputMsg(
                 $this->shellName,
-                new IText($this->line),
+                $this->message,
                 $this->guestId,
                 null,
                 null,

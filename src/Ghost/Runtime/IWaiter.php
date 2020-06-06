@@ -55,7 +55,7 @@ class IWaiter implements Waiter
         array $routes
     )
     {
-        $this->_await = $ucl;
+        $this->_await = strval($ucl);
         $this->_question = $question;
         $this->_routes = array_values(
             array_map(

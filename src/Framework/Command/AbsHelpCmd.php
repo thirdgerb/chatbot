@@ -112,7 +112,7 @@ abstract class AbsHelpCmd extends ARequestCmd
                 $commandName,
                 $desc,
                 $this->rangeMessages($args),
-                $this->rangeMessages($options)
+                $this->rangeMessages($opts)
             )
         );
     }

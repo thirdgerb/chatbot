@@ -70,7 +70,7 @@ class SGResponse implements GhostResponse
         foreach ($this->outputs as $output) {
             $hostMsg = $output->getMessage();
             $level = $hostMsg->getLevel();
-            $this->console->log($level, $hostMsg->getText());
+            $this->console->log($level, $hostMsg->getText() . "\n");
 
             if ($hostMsg->getText() === IntentMsg::SYSTEM_SESSION_QUIT ) {
                 $quit = true;

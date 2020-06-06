@@ -11,7 +11,6 @@
 
 namespace Commune\Blueprint\Ghost;
 
-use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Ghost\Support\ContextUtils;
@@ -35,6 +34,8 @@ use Commune\Blueprint\Ghost\Exceptions\InvalidQueryException;
  * @property-read string $contextName       语境名. 相当于 url 的域名
  * @property-read string $stageName         stage名. 相当于 url 的路径
  * @property-read string[] $query           query参数, 相当于 url 的query
+ * @property-read string $queryStr          query参数的字符串.
+ *
  *
  *
  * 相关 API 文档:
@@ -115,6 +116,8 @@ class Ucl implements UclInterface
         $this->_contextName = $contextName;
         // 真正的 contextName 和 stageName 必须全小写.
         $this->_stageName = $stageName;
+        // 排序一下.
+        ksort($query);
         $this->_query = $query;
         SpyAgency::incr(static::class);
     }
@@ -279,6 +282,11 @@ class Ucl implements UclInterface
                 $this->_stageName,
                 $this->_query
             );
+    }
+
+    public function toString(): string
+    {
+        return $this->encode();
     }
 
     public static function encodeUcl(
@@ -478,11 +486,15 @@ class Ucl implements UclInterface
 
     public function __isset($name)
     {
-        return in_array($name, ['contextName', 'stageName', 'query']);
+        return in_array($name, ['contextName', 'stageName', 'query', 'queryStr']);
     }
 
     public function __get($name)
     {
+        if ($name === 'queryStr') {
+            return static::encodeQueryStr($this->_query);
+        }
+
         $name = "_$name";
         return property_exists($this, $name)
             ? $this->{$name}

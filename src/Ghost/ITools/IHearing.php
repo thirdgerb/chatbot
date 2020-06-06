@@ -144,6 +144,7 @@ class IHearing extends IMatcher implements Hearing
 
     public function end() : Operator
     {
+        $this->then();
         foreach ($this->fallback as $fallback) {
             if (isset($this->nextOperator)) {
                 break;

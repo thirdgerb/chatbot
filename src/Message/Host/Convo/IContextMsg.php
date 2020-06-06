@@ -22,10 +22,11 @@ use Commune\Protocals\HostMsg\Convo\ContextMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property string $contextName       语境名称
- * @property string $contextId         语境Id
+ * @property string $contextName        语境名称
+ * @property string $contextId          语境Id
+ * @property string $stageName
  * @property-read array $query
- * @property array $data               语境的数据.
+ * @property array $data                语境的数据.
  */
 class IContextMsg extends AbsMessage implements ContextMsg
 {
@@ -34,6 +35,7 @@ class IContextMsg extends AbsMessage implements ContextMsg
         return [
             'contextName' => '',
             'contextId' => '',
+            'stageName' => '',
             'query' => [],
             'data' => [],
         ];

@@ -34,6 +34,13 @@ use Commune\Protocals\HostMsg\Intents\OrdinalInt;
  */
 class IQuestionMsg extends AbsMessage implements QuestionMsg
 {
+    /**
+     * IQuestionMsg constructor.
+     * @param string $query
+     * @param string|null $default
+     * @param string[] $suggestions
+     * @param Ucl[]|string[] $routes
+     */
     public function __construct(
         string $query,
         string $default = null,
@@ -44,7 +51,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         parent::__construct([
             'query' => $query,
             'default' => $default,
-            'routes' => $routes
+            'routes' => array_map('strval', $routes)
         ]);
 
         foreach ($suggestions as $index => $suggestion) {

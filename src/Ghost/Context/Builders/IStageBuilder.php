@@ -13,6 +13,7 @@ namespace Commune\Ghost\Context\Builders;
 
 use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Framework\Spy\SpyAgency;
 
@@ -32,13 +33,19 @@ class IStageBuilder implements StageBuilder
     public $dialog;
 
     /**
+     * @var StageDef
+     */
+    public $def;
+
+    /**
      * @var bool
      */
     protected $redirect;
 
-    public function __construct(Dialog $dialog, bool $redirect)
+    public function __construct(Dialog $dialog, StageDef $stageDef, bool $redirect)
     {
         $this->dialog = $dialog;
+        $this->def = $stageDef;
         $this->redirect = $redirect;
 
         SpyAgency::incr(static::class);

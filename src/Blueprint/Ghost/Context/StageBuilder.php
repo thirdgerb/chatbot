@@ -12,11 +12,13 @@
 namespace Commune\Blueprint\Ghost\Context;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\MindDef\StageDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read Dialog $dialog
+ * @property-read StageDef $def
  */
 interface StageBuilder
 {

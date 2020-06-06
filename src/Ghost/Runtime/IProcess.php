@@ -28,7 +28,7 @@ use Commune\Support\Uuid\IdGeneratorHelper;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  */
-class IProcess implements Process, HasIdGenerator
+class IProcess implements Process, HasIdGenerator, \Serializable
 {
     use ArrayAbleToJson, IdGeneratorHelper;
 
@@ -148,7 +148,7 @@ class IProcess implements Process, HasIdGenerator
     public function toArray(): array
     {
         return [
-            'belongTo' => $this->_belongsTo,
+            'belongsTo' => $this->_belongsTo,
             'id' => $this->_id,
             'tasks' => ArrayUtils::recursiveToArray($this->_tasks),
             'root' => $this->_root,
@@ -188,8 +188,10 @@ class IProcess implements Process, HasIdGenerator
         $last = $this->_waiter;
         $this->_waiter = $waiter;
 
-        array_unshift($this->_backtrace, $last);
-        ArrayUtils::maxLength($this->_backtrace, self::$maxBacktrace);
+        if ($last->await !== $waiter->await) {
+            array_unshift($this->_backtrace, $last);
+            ArrayUtils::maxLength($this->_backtrace, self::$maxBacktrace);
+        }
     }
 
     public function isFresh(): bool
@@ -540,10 +542,31 @@ class IProcess implements Process, HasIdGenerator
             '_blocking',
             '_sleeping',
             '_depending',
-            '_yielding',
+            // '_yielding',
             '_dying',
         ];
     }
+
+    public function serialize()
+    {
+        $fields = $this->__sleep();
+        $results = [];
+        foreach ($fields as $field) {
+            $results[$field] = $this->{$field};
+        }
+
+        $str = ProcessSerializeManager::serialize($results);
+        return $str;
+    }
+
+    public function unserialize($serialized)
+    {
+        $data = ProcessSerializeManager::unserialize($serialized);
+        foreach ($data as $key => $val) {
+            $this->{$key} = $val;
+        }
+    }
+
 
     public function __wakeup()
     {
