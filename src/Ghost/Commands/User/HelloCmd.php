@@ -33,7 +33,7 @@ class HelloCmd extends AGhostCmd
      */
     const DESCRIPTION = '测试命令';
 
-    protected function handle(CommandMsg $command, RequestCmdPipe $pipe): void
+    protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
     {
         $this->info('hello world!');
     }

@@ -26,7 +26,7 @@ class SpyCmd extends AGhostCmd
 
     const DESCRIPTION = '查看一些关键类的实例数量. 用于排查部分内存泄露问题.';
 
-    protected function handle(CommandMsg $command, RequestCmdPipe $pipe): void
+    protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
     {
         if (! CommuneEnv::isDebug()) {
             $this->error('spy agency is only running at debug mode');

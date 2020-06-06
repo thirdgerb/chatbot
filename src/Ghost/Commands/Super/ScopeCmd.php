@@ -25,7 +25,7 @@ class ScopeCmd extends AGhostCmd
 
     const DESCRIPTION = '查看用户自己的数据';
 
-    protected function handle(CommandMsg $command, RequestCmdPipe $pipe): void
+    protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
     {
         $data = $this->cloner->scope->toArray();
         $data['traceId'] = $this->cloner->getTraceId();

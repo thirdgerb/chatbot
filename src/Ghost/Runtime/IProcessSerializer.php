@@ -19,6 +19,9 @@ use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Support\Message\Message;
 
 /**
+ * 进程序列化的压缩算法. 把常见的重复, 如 id, contextName, stageName, query 替换成整数序号.
+ * 在调用栈很深的复杂多轮对话场景, 可能可以压缩 1/3 的数据量.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class IProcessSerializer implements ProcessSerializer
@@ -75,68 +78,6 @@ class IProcessSerializer implements ProcessSerializer
         $this->queries = [];
     }
 
-    public function unserialize(string $string) : array
-    {
-        $this->init();
-        $data = json_decode($string, true);
-
-        $result = [];
-        $info = $data[0];
-        $this->ids = $data[1];
-        $this->contexts = $data[2];
-        $this->stages = $data[3];
-        $this->queries = $data[4];
-
-        $result['_id'] = $this->_unserializeId($info['_id']);
-        $result['_belongsTo'] = $info['_belongsTo'];
-
-        $tasks = $info['_tasks'] ?? [];
-        foreach ($tasks as $id => $arr) {
-            $id = $this->_unserializeId($id);
-            $task = $this->_unserializeTask($arr);
-            $result['_tasks'][$id] = $task;
-        }
-
-        $result['_root'] = $this->_unserializeUcl($info['_root'])->encode();
-        $result['_waiter'] = $this->_unserializeWaiter($info['_waiter']);
-        $result['_backtrace'] = array_map([$this, '_unserializeWaiter'], $info['_backtrace'] ?? []);
-
-        $callbacks = $info['_callbacks'] ?? [];
-        foreach ($callbacks as $id => $val) {
-            $id = $this->_unserializeId($id);
-            $result['_callbacks'][$id] = $val;
-        }
-
-        $blocking = $info['_blocking'] ?? [];
-        foreach ($blocking as $id => $val) {
-            $id = $this->_unserializeId($id);
-            $result['_blocking'][$id] = $val;
-        }
-
-        $sleeping = $info['_sleeping'] ?? [];
-        foreach ($sleeping as $id => $stages) {
-            $id = $this->_unserializeId($id);
-            $stages = array_map([$this, '_unserializeStage'], $stages);
-            $result['_sleeping'][$id] = $stages;
-        }
-
-        $depending = $info['_depending'] ?? [];
-        foreach ($depending as $id1 => $id2) {
-            $id1 = $this->_unserializeId($id1);
-            $id2 = $this->_unserializeId($id2);
-            $result['_depending'][$id1] = $id2;
-        }
-
-        $dying = $info['_dying'] ?? [];
-        foreach ($dying as $id => list($turns, $stages)) {
-            $id = $this->_unserializeId($id);
-            $stages = array_map([$this, '_unserializeStage'], $stages);
-            $result['_dying'][$id] = [$turns, $stages];
-        }
-
-        $this->init();
-        return $result;
-    }
 
     public function serialize(array $data) : string
     {
@@ -206,15 +147,82 @@ class IProcessSerializer implements ProcessSerializer
             $result['_dying'][$id] = $val;
         }
 
-        $data = json_encode([
+        $data = [
             $result,
             array_keys($this->ids),
             array_keys($this->contexts),
             array_keys($this->stages),
             array_keys($this->queries),
-        ]);
+        ];
+
         $this->init();
-        return $data;
+        // return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        // 可能比 json 会好一些. 毕竟json在 web 中传输, 各种反斜杠之类的规矩很多, 怕不够全面.
+        return serialize($data);
+    }
+
+    public function unserialize(string $string) : array
+    {
+        $this->init();
+        // $data = json_decode($string, true);
+        $data = unserialize($string);
+
+        $result = [];
+        $info = $data[0];
+        $this->ids = $data[1];
+        $this->contexts = $data[2];
+        $this->stages = $data[3];
+        $this->queries = $data[4];
+
+        $result['_id'] = $this->_unserializeId($info['_id']);
+        $result['_belongsTo'] = $info['_belongsTo'];
+
+        $tasks = $info['_tasks'] ?? [];
+        foreach ($tasks as $id => $arr) {
+            $id = $this->_unserializeId($id);
+            $task = $this->_unserializeTask($arr);
+            $result['_tasks'][$id] = $task;
+        }
+
+        $result['_root'] = $this->_unserializeUcl($info['_root'])->encode();
+        $result['_waiter'] = $this->_unserializeWaiter($info['_waiter']);
+        $result['_backtrace'] = array_map([$this, '_unserializeWaiter'], $info['_backtrace'] ?? []);
+
+        $callbacks = $info['_callbacks'] ?? [];
+        foreach ($callbacks as $id => $val) {
+            $id = $this->_unserializeId($id);
+            $result['_callbacks'][$id] = $val;
+        }
+
+        $blocking = $info['_blocking'] ?? [];
+        foreach ($blocking as $id => $val) {
+            $id = $this->_unserializeId($id);
+            $result['_blocking'][$id] = $val;
+        }
+
+        $sleeping = $info['_sleeping'] ?? [];
+        foreach ($sleeping as $id => $stages) {
+            $id = $this->_unserializeId($id);
+            $stages = array_map([$this, '_unserializeStage'], $stages);
+            $result['_sleeping'][$id] = $stages;
+        }
+
+        $depending = $info['_depending'] ?? [];
+        foreach ($depending as $id1 => $id2) {
+            $id1 = $this->_unserializeId($id1);
+            $id2 = $this->_unserializeId($id2);
+            $result['_depending'][$id1] = $id2;
+        }
+
+        $dying = $info['_dying'] ?? [];
+        foreach ($dying as $id => list($turns, $stages)) {
+            $id = $this->_unserializeId($id);
+            $stages = array_map([$this, '_unserializeStage'], $stages);
+            $result['_dying'][$id] = [$turns, $stages];
+        }
+
+        $this->init();
+        return $result;
     }
 
     public function _unserializeId(int $id) : string

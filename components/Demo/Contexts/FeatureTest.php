@@ -135,7 +135,7 @@ class FeatureTest extends ACodeContext
             return $dialog
                 ->await()
                 ->askChoose(
-                    '请选择功能测试用例 (输入 #q 退出测试, #r 回到选项)',
+                    '请选择功能测试用例 (输入 #q 退出测试, #r 回到选项, #c 退出语境)',
                     [
                         $this->getStage('test_match'),
                         '上下文记忆' => 'test_memory',

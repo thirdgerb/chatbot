@@ -29,23 +29,23 @@ class ProcessCmd extends AGhostCmd
     const DESCRIPTION = '查看多轮对话进程的数据';
 
 
-    protected function handle(CommandMsg $command, RequestCmdPipe $pipe): void
+    protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
     {
         $process = $this->cloner->runtime->getCurrentProcess();
         $this->info($process->toPrettyJson());
 
         $json = $process->toJson();
 
-        if (!empty($command['--len'])) {
+        if (!empty($message['--len'])) {
             $this->info(
                 "process to json mb_string length : {len}",
                 ['len' => mb_strlen($json)]
             );
         }
 
-        $gz = $command['--gz'] ?? false;
+        $gz = $message['--gz'] ?? false;
 
-        if (!empty($command['--serialize']) || $gz) {
+        if (!empty($message['--serialize']) || $gz) {
 
             // 序列化
             $a = microtime(true);

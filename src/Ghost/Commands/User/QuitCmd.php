@@ -25,7 +25,7 @@ class QuitCmd extends AGhostCmd
 
     const DESCRIPTION = '退出会话';
 
-    protected function handle(CommandMsg $command, RequestCmdPipe $pipe): void
+    protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
     {
         $this->cloner->quit();
     }

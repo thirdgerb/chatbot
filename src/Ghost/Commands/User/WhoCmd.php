@@ -26,7 +26,7 @@ class WhoCmd extends AGhostCmd
 
     const DESCRIPTION = '查看我是谁';
 
-    protected function handle(CommandMsg $command, RequestCmdPipe $pipe): void
+    protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
     {
         $this->info(json_encode([
             'id' => $this->cloner->input->getGuestId(),

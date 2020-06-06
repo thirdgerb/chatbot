@@ -55,7 +55,7 @@ abstract class ARequestCmd implements RequestCmd
 
     abstract protected function getHelpCmd() : AbsHelpCmd;
 
-    abstract protected function handle(CommandMsg $command, RequestCmdPipe $pipe) : void;
+    abstract protected function handle(CommandMsg $message, RequestCmdPipe $pipe) : void;
 
     abstract protected function response(AppRequest $request, array $messages) : ? AppResponse;
 
