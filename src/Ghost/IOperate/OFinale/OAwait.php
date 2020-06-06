@@ -75,16 +75,15 @@ class OAwait extends AbsFinale implements Await
         $this->current = $this->dialog->ucl;
         $contextDef = $this->current->findContextDef($this->cloner);
 
+
+        $config = $this->cloner->config;
         $this->routes = array_merge(
             $this->routes,
             $this->wrapStage($contextDef->commonStageRoutes()),
-            $this->wrapStage($stageRoutes)
-        );
-
-        $this->routes = array_merge(
-            $this->routes,
+            $this->wrapStage($stageRoutes),
             $this->wrapUcl($contextDef->commonContextRoutes()),
-            $this->wrapUcl($contextRoutes)
+            $this->wrapUcl($contextRoutes),
+            $this->wrapUcl($config->globalContextRoutes ?? [])
         );
     }
 

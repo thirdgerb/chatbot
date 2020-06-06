@@ -42,6 +42,7 @@ use Commune\Support\Utils\StringUtils;
  *
  * ## 匹配规则
  * @property-read string|null $alias
+ * @property-read string $spell
  * @property-read string $signature
  * @property-read string[] $keywords
  * @property-read string[] $regex
@@ -73,24 +74,37 @@ class IIntentDef extends AbsOption implements IntentDef
         return [
             // 意图的名称
             'name' => '',
-            // 意图的标题, 应允许用标题来匹配.
+
+            // 意图的标题.
             'title' => '',
+
             // 意图的简介. 可以作为选项的内容.
             'desc' => '',
+
             // 意图的别名. 允许别名中的意图作为精确匹配规则.
             'alias' => null,
+
+            // 意图的精确命中命令.
+            'spell' => '',
+
             // 例句, 用 []() 标记, 例如 "我想知道[北京](city)[明天](date)天气怎么样"
             'examples' => [],
+
             // 作为命令.
             'signature' => '',
+
             // entityNames
             'entityNames' => [],
+
             // 关键字
             'keywords' => [],
+
             // 正则
             'regex' => [],
+
             // 命中任意 entity
             'ifEntity' => [],
+
             // 自定义校验器. 字符串, 通常是类名或者方法名.
             'matcher' => null,
         ];
@@ -265,8 +279,10 @@ class IIntentDef extends AbsOption implements IntentDef
         }
 
         $text = $message->getText();
+        $text = StringUtils::normalizeString($text);
+        $spell = $this->spell;
 
-        if ($text === $this->getTitle()) {
+        if (!empty($spell) && $text === $spell) {
             return true;
         }
 

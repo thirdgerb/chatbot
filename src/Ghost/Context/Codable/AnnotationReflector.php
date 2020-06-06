@@ -36,6 +36,11 @@ class AnnotationReflector
     public $intent = null;
 
     /**
+     * @var string
+     */
+    public $spell = '';
+
+    /**
      * @var string[]
      */
     public $examples = [];
@@ -66,6 +71,8 @@ class AnnotationReflector
             'desc' => $this->desc,
             // 意图的别名. 允许别名中的意图作为精确匹配规则.
             'alias' => $this->intent,
+            // 精确命中
+            'spell' => $this->spell,
             // 例句, 用 []() 标记, 例如 "我想知道[北京](city)[明天](date)天气怎么样"
             'examples' => $this->examples,
             // 作为命令.
@@ -97,6 +104,7 @@ class AnnotationReflector
         $ins->examples = StringUtils::fetchAnnotation($docComment, 'example');
         $ins->regex = StringUtils::fetchAnnotation($docComment, 'regex');
 
+        $ins->spell = StringUtils::fetchAnnotation($docComment, 'spell')[0] ?? '';
         $ins->entities = explode(
             ',',
             StringUtils::fetchAnnotation($docComment, 'entities')[0] ?? ''

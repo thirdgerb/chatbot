@@ -35,6 +35,7 @@ class PredefinedComponent extends GhostComponent
             $app,
             [
                 "Commune\\Components\\Predefined\\Memory" => __DIR__ . '/Memory',
+                "Commune\\Components\\Predefined\\Intent" => __DIR__ . '/Intent',
             ]
         );
     }

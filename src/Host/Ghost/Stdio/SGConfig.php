@@ -21,6 +21,7 @@ use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Ghost\Handlers\GhostRequestHandler;
 use Commune\Ghost\Providers as GhostProviders;
 use Commune\Host\Ghost\Stdio\Context\HelloWorld;
+use Commune\Components\Predefined\Intent\Navigation;
 
 
 /**
@@ -98,7 +99,14 @@ class SGConfig extends GhostConfig
             'defaultContextName' => Components\Demo\Contexts\DemoHome::makeUcl()->encode(),
             'sceneContextNames' => [
             ],
-            'globalContextRoutes' => []
+            'globalContextRoutes' => [
+                Navigation\CancelInt::makeUcl(),
+                Navigation\RepeatInt::makeUcl(),
+                Navigation\QuitInt::makeUcl(),
+                Navigation\HomeInt::makeUcl(),
+                Navigation\BackwardInt::makeUcl(),
+                Navigation\RestartInt::makeUcl(),
+            ]
         ];
     }
 

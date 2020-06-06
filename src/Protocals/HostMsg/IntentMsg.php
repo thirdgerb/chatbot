@@ -23,21 +23,28 @@ interface IntentMsg extends HostMsg
 {
     /*----- system intents -----*/
 
-    const SYSTEM_SESSION_BUSY = 'intent.system.session.busy';
-    const SYSTEM_SESSION_QUIT = 'intent.system.session.quit';
-    const SYSTEM_SESSION_FAIL = 'intent.system.session.fail';
-    const SYSTEM_REQUEST_FAILURE = 'intent.system.request.fail';
+    const SYSTEM_SESSION_BUSY = 'system.session.busy';
+    const SYSTEM_SESSION_QUIT = 'system.session.quit';
+    const SYSTEM_SESSION_FAIL = 'system.session.fail';
+    const SYSTEM_REQUEST_FAILURE = 'system.request.fail';
     
-    const SYSTEM_COMMAND_ERROR = 'intent.system.command.error';
-    const SYSTEM_COMMAND_LIST = 'intent.system.command.list';
-    const SYSTEM_COMMAND_MISS = 'intent.system.command.miss';
-    const SYSTEM_COMMAND_DESC = 'intent.system.command.desc';
+    const SYSTEM_COMMAND_ERROR = 'system.command.error';
+    const SYSTEM_COMMAND_LIST = 'system.command.list';
+    const SYSTEM_COMMAND_MISS = 'system.command.miss';
+    const SYSTEM_COMMAND_DESC = 'system.command.desc';
 
-    const SYSTEM_DIALOG_YIELD = 'intent.system.dialog.yield';
-    const SYSTEM_DIALOG_CONFUSE = 'intent.system.dialog.confuse';
-    const SYSTEM_DIALOG_ASK = 'intent.system.dialog.ask';
+    const SYSTEM_DIALOG_YIELD = 'system.dialog.yield';
+    const SYSTEM_DIALOG_CONFUSE = 'system.dialog.confuse';
+    const SYSTEM_DIALOG_ASK = 'system.dialog.ask';
 
     /*----- guest intents -----*/
+
+    const GUEST_NAVIGATE_CANCEL = 'navigation.cancel';
+    const GUEST_NAVIGATE_QUIT = 'navigation.quit';
+    const GUEST_NAVIGATE_HOME = 'navigation.home';
+    const GUEST_NAVIGATE_BACK = 'navigation.backward';
+    const GUEST_NAVIGATE_REPEAT = 'navigation.repeat';
+    const GUEST_NAVIGATE_RESTART = 'navigation.restart';
 
     const GUEST_DIALOG_ORDINAL = 'dialogue.ordinal';
 
