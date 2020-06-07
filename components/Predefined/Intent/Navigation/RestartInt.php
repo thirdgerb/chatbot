@@ -22,6 +22,14 @@ use Commune\Protocals\HostMsg\IntentMsg;
  *
  * @title 重启语境
  * @desc 当前语境从头开始对话
+ *
+ * @example 重来一次
+ * @example 重来一遍吧
+ * @example 从头开始
+ * @example 重新来一次
+ * @example 从第一步再来
+ * @example 能不能重新开始
+ * @example 我想要重来一遍
  */
 class RestartInt extends AIntentContext
 {

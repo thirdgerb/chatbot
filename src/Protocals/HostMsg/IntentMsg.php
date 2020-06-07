@@ -47,7 +47,22 @@ interface IntentMsg extends HostMsg
     const GUEST_NAVIGATE_REPEAT = 'navigation.repeat';
     const GUEST_NAVIGATE_RESTART = 'navigation.restart';
 
+    const GUEST_ATTITUDES_AFFIRM = 'attitudes.affirm';
+    const GUEST_ATTITUDES_AGREE = 'attitudes.agree';
+    const GUEST_ATTITUDES_COMPLEMENT = 'attitudes.complement';
+    const GUEST_ATTITUDES_DENY = 'attitudes.deny';
+    const GUEST_ATTITUDES_DONT = 'attitudes.dont';
+    const GUEST_ATTITUDES_GREET = 'attitudes.greet';
+    const GUEST_ATTITUDES_THANKS = 'attitudes.thanks';
+
     const GUEST_DIALOG_ORDINAL = 'dialogue.ordinal';
+    const GUEST_DIALOG_RANDOM = 'dialogue.random';
+    const GUEST_DIALOG_HELP = 'dialogue.help';
+
+    const GUEST_LOOP_BREAK = 'loop.break';
+    const GUEST_LOOP_NEXT = 'loop.next';
+    const GUEST_LOOP_PREVIOUS = 'loop.previous';
+    const GUEST_LOOP_REWIND = 'loop.rewind';
 
 
     /*------ struct 特殊字段名常量 ------*/

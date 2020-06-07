@@ -121,6 +121,7 @@ class IIntentDef extends AbsOption implements IntentDef
         unset($data['name']);
         unset($data['title']);
         unset($data['desc']);
+        unset($data['examples']);
         return $data;
     }
 
@@ -375,6 +376,7 @@ class IIntentDef extends AbsOption implements IntentDef
         $data['name'] = $config['name'];
         $data['title'] = $config['title'];
         $data['desc'] = $config['desc'];
+        $data['examples'] = $config['examples'];
         $data['wrapper'] = static::class;
         $data['config'] = static::toMetaConfig($config);
 
@@ -396,6 +398,7 @@ class IIntentDef extends AbsOption implements IntentDef
         $config['name'] = $meta->name;
         $config['title'] = $meta->title;
         $config['desc'] = $meta->desc;
+        $config['examples'] = $meta->examples;
 
         return new static($config);
     }

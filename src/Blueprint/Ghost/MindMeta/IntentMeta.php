@@ -26,6 +26,7 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
  * @property-read string $title
  * @property-read string $desc
  * @property-read string $wrapper
+ * @property-read string[] $examples
  *
  * @property-read array $config
  *
@@ -46,6 +47,8 @@ class IntentMeta extends AbsMeta implements DefMeta
             'title' => '',
             // 意图的简介. 可以作为选项的内容.
             'desc' => '',
+            // 例句
+            'examples' => [],
             // wrapper 的额外配置.
             'config' => [],
         ];

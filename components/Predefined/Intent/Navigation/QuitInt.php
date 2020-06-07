@@ -24,7 +24,10 @@ use Commune\Protocals\HostMsg\IntentMsg;
  * @title 退出多轮对话
  * @desc 退出当前多轮对话
  *
- * @spell #quit
+ * @example 再见
+ * @example 我走了
+ * @example 拜拜
+ * @example 我想退出
  */
 class QuitInt extends AIntentContext
 {

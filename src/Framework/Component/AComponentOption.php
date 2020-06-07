@@ -44,36 +44,36 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
 
 
     /**
-     * 将组件里的 option 资源读取出来, 并加载到注册表正式的分类中.
      * @param App $app
-     * @param string $optionName
+     * @param string $categoryName
      * @param string $optionClass
-     * @param string $resourceName
      * @param string $resourcePath
+     * @param bool $isDir
+     * @param string $loader
      */
     public function loadResourceOption(
         App $app,
-        string $optionName,
+        string $categoryName,
         string $optionClass,
-        string $resourceName,
-        string $resourcePath
+        string $resourcePath,
+        bool $isDir,
+        string $loader = FileStorageOption::OPTION_PHP
     ) : void
     {
         $registrar = $app->getServiceRegistrar();
 
         $registrar->registerConfigProvider(new LoadComponentOption([
             'componentName' => static::class,
-            'resourceName' => $resourceName,
             'resourcePath' => $resourcePath,
             'optionClass' => $optionClass,
-            'loader' => FileStorageOption::OPTION_PHP,
+            'loader' => $loader,
+            'isDir' => $isDir
         ]), false);
 
         $registrar->registerProcProvider(new RegisterComponentOption([
+            'categoryName' => $categoryName,
             'componentName' => static::class,
-            'resourceName' => $resourceName,
             'optionClass' => $optionClass,
-            'optionName' => $optionName,
         ]), false);
     }
 

@@ -12,7 +12,10 @@
 namespace Commune\Components\Predefined;
 
 use Commune\Blueprint\Framework\App;
+use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
+use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Ghost\Component\GhostComponent;
+use Commune\Support\Registry\Storage\FileStorageOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -31,6 +34,27 @@ class PredefinedComponent extends GhostComponent
 
     public function bootstrap(App $app): void
     {
+        // 加载 entity 配置.
+        $this->loadResourceOption(
+            $app,
+            EntityMeta::class,
+            EntityMeta::class,
+            __DIR__ . '/resources/entities.yml',
+            false,
+            FileStorageOption::OPTION_YML
+        );
+
+        // 加载 intent 配置.
+        $this->loadResourceOption(
+            $app,
+            IntentMeta::class,
+            IntentMeta::class,
+            __DIR__ . '/resources/intents.yml',
+            false,
+            FileStorageOption::OPTION_YML
+        );
+
+        // 加载代码
         $this->loadPsr4MindRegister(
             $app,
             [

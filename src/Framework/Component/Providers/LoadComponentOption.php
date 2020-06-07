@@ -11,7 +11,6 @@
 
 namespace Commune\Framework\Component\Providers;
 
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
 use Commune\Support\Registry\Meta\CategoryOption;
@@ -26,9 +25,9 @@ use Commune\Support\Registry\Storage\FileStorageOption;
  *
  * @property-read string $id
  * @property-read string $componentName
- * @property-read string $resourceName
  * @property-read string $resourcePath
  * @property-read string $optionClass
+ * @property-read bool $isDir
  * @property-read string $loader
  *
  */
@@ -41,9 +40,9 @@ class LoadComponentOption extends ServiceProvider
     {
         return [
             'componentName' => '',
-            'resourceName' => '',
-            'resourcePath' =>  __DIR__ . '/../resources',
+            'resourcePath' =>  '',
             'optionClass' => '',
+            'isDir' => true,
             'loader' => FileStorageOption::OPTION_PHP,
         ];
     }
@@ -59,38 +58,39 @@ class LoadComponentOption extends ServiceProvider
             . ':'
             . $this->componentName
             . ':'
-            . $this->resourceName;
+            . $this->optionClass;
     }
 
     public static function makeComponentOptionId(
         string $componentName,
-        string $resourceName
+        string $optionClass
     ) : string
     {
-        return "$componentName:$resourceName:preload";
+        return "$componentName:$optionClass:preload";
     }
 
     public function boot(ContainerContract $app): void
     {
         $name = static::makeComponentOptionId(
             $this->componentName,
-            $this->resourceName
+            $this->optionClass
         );
 
         /**
          * @var OptRegistry $registry
          */
         $registry = $app->get(OptRegistry::class);
+
         $registry->registerCategory(new CategoryOption([
             'name' => $name,
             'optionClass' => $this->optionClass,
-            'title' => $this->componentName . ':' . $this->resourceName,
+            'title' => $this->componentName . ':' . $this->optionClass,
             'desc' => 'preload option '
                 . $this->optionClass
                 . ' by component '
                 . $this->componentName,
 
-            'storage' => $this->getStorageOption(),
+            'storage' => $this->getStorageOption()->toMeta(),
 
             'initialStorage' => null,
         ]));
@@ -101,33 +101,10 @@ class LoadComponentOption extends ServiceProvider
         $abstract = FileStorageOption::OPTIONS[$this->loader];
 
         return new $abstract([
-            'path' => $this->getPath(),
-            'isDir' => true,
+            'path' => $this->resourcePath,
+            'isDir' => $this->isDir,
             'depth' => 0,
         ]);
-    }
-
-    protected function getPath() : string
-    {
-        $resourcePath = realpath($this->resourcePath);
-        if (empty($resourcePath) || !is_dir($resourcePath)) {
-            $componentName = $this->componentName;
-            throw new InvalidArgumentException(
-                "component $componentName resource path $resourcePath is invalid dir"
-            );
-        }
-
-        $resourceName = $this->resourceName;
-        $path = realpath($resourcePath . '/' . $resourceName);
-
-        if (empty($path) || !is_dir($path)) {
-            $componentName = $this->componentName;
-            throw new InvalidArgumentException(
-                "component $componentName resource $resourceName file path $path is invalid dir"
-            );
-        }
-
-        return $path;
     }
 
     public function register(ContainerContract $app): void
