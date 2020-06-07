@@ -13,6 +13,7 @@ namespace Commune\Ghost\IOperate\OExiting;
 
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Runtime\Process;
+use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\IOperate\OFinale\OCloseSession;
 
@@ -37,27 +38,16 @@ class OQuit extends AbsExiting
             ?? $this->quitSession();
     }
 
-    protected function doWithdraw(
-        Process $process,
-        Ucl $canceling
-    ): ? Operator
-    {
-        $task = $process->getTask($canceling);
-
-        $quit = $task->watchQuit();
-        if (
-            isset($quit)
-            && $quit->stageName !== $canceling->stageName
-        ) {
-            return $this->dialog->redirectTo($quit);
-        }
-
-        return null;
-    }
 
     protected function quitSession()
     {
         return new OCloseSession($this->dialog);
     }
+
+    protected function getWithdrawWatcher(Task $task): ? Ucl
+    {
+        return $task->watchQuit();
+    }
+
 
 }

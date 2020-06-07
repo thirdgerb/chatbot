@@ -15,7 +15,9 @@ use Commune\Blueprint\Ghost\Context\CodeContext;
 use Commune\Blueprint\Ghost\Context\CodeContextOption;
 use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
+use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\Context\Codable\AbsCodeContext;
 use Commune\Ghost\Context\Codable\CodeDefCreator;
 
@@ -61,6 +63,11 @@ abstract class AbsMemoryContext extends AbsCodeContext
     public function __on_start(StageBuilder $stage): StageBuilder
     {
         return $stage->always($stage->dialog->fulfill());
+    }
+
+    public static function __redirect(Dialog $prev): ? Operator
+    {
+        return null;
     }
 
 

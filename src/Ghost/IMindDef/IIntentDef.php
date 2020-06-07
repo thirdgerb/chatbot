@@ -20,12 +20,14 @@ use Commune\Blueprint\Ghost\MindDef\Intent\IntentExample;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Framework\Command\ICommandDef;
 use Commune\Ghost\IMindDef\Intent\IIntentExample;
+use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
+use Commune\Support\Struct\Struct;
 use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;
 
@@ -50,6 +52,7 @@ use Commune\Support\Utils\StringUtils;
  *
  * @property-read string|null $matcher
  *
+ * @property-read string|null $messageWrapper
  */
 class IIntentDef extends AbsOption implements IntentDef
 {
@@ -107,6 +110,9 @@ class IIntentDef extends AbsOption implements IntentDef
 
             // 自定义校验器. 字符串, 通常是类名或者方法名.
             'matcher' => null,
+
+            // 用于包装 IntentMsg 的方法.
+            'messageWrapper' => null,
         ];
     }
 
@@ -321,6 +327,19 @@ class IIntentDef extends AbsOption implements IntentDef
 
 
         return false;
+    }
+
+    public function toIntentMessage(Cloner $cloner): IntentMsg
+    {
+        $wrapper = $this->messageWrapper ?? IIntentMsg::class;
+        $entities = $cloner->input
+            ->comprehension
+            ->intention
+            ->getIntentEntities($this->getName());
+        $data = $this->parseEntities($entities);
+        $data[IntentMsg::INTENT_NAME_FIELD] = $this->getName();
+
+        return call_user_func([$wrapper, Struct::CREATE_FUNC], $data);
     }
 
 

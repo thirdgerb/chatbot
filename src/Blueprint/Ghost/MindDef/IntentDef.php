@@ -14,6 +14,7 @@ namespace Commune\Blueprint\Ghost\MindDef;
 use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindDef\Intent\IntentExample;
+use Commune\Protocals\HostMsg\IntentMsg;
 
 /**
  * 关于意图的定义.
@@ -45,6 +46,12 @@ interface IntentDef extends Def
      * @return bool
      */
     public function match(Cloner $cloner) : bool;
+
+    /**
+     * @param Cloner $cloner
+     * @return IntentMsg
+     */
+    public function toIntentMessage(Cloner $cloner) : IntentMsg;
 
     /**
      * @return string
@@ -81,7 +88,7 @@ interface IntentDef extends Def
     public function getKeywords() : array;
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getRegex() : array;
 

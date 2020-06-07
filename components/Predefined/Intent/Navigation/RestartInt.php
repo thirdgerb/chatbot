@@ -13,7 +13,7 @@ namespace Commune\Components\Predefined\Intent\Navigation;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Ghost\Context\AEventContext;
+use Commune\Ghost\Context\AIntentContext;
 use Commune\Protocals\HostMsg\IntentMsg;
 
 
@@ -22,10 +22,8 @@ use Commune\Protocals\HostMsg\IntentMsg;
  *
  * @title 重启语境
  * @desc 当前语境从头开始对话
- *
- * @spell #restart
  */
-class RestartInt extends AEventContext
+class RestartInt extends AIntentContext
 {
 
     public static function __name(): string
@@ -33,9 +31,9 @@ class RestartInt extends AEventContext
         return IntentMsg::GUEST_NAVIGATE_RESTART;
     }
 
-    public function action(Dialog $dialog): Operator
+    public static function __redirect(Dialog $prev): Operator
     {
-        return $dialog->goStage('');
+        return $prev->goStage('');
     }
 
 }

@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Blueprint\Ghost\Dialog\Receive;
 use Commune\Blueprint\Ghost\Dialog\Resume;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Context\Builders\IStageBuilder;
 use Commune\Ghost\Stage\AbsStageDef;
 
@@ -48,7 +49,7 @@ class CodeStageDef extends AbsStageDef
     public function onActivate(Activate $dialog): Operator
     {
         $next = $this->fireEvent($dialog);
-        $next = $next ?? $this->runStageBuilder($dialog)->popOperator();
+        $next = $next ?? $this->runStageBuilder($dialog, $dialog->ucl)->popOperator();
         $next = $next ?? $dialog->next();
         return $next;
     }
@@ -56,21 +57,21 @@ class CodeStageDef extends AbsStageDef
     public function onReceive(Receive $dialog): Operator
     {
         $next = $this->fireEvent($dialog);
-        $next = $next ?? $this->runStageBuilder($dialog)->popOperator() ;
+        $next = $next ?? $this->runStageBuilder($dialog, $dialog->ucl)->popOperator() ;
         $next = $next ?? $dialog->confuse();
         return $next;
     }
 
-    public function onRedirect(Dialog $prev, Dialog $current): ? Operator
+    public function onRedirect(Dialog $prev, Ucl $current): ? Operator
     {
-        return $this->fireRedirect($prev, $current)
-            ?? $this->runStageBuilder($current, true)->popOperator();
+        return $this->fireRedirect($prev)
+            ?? $this->runStageBuilder($prev, $current, true)->popOperator();
     }
 
     public function onResume(Resume $dialog): ? Operator
     {
         return $this->fireEvent($dialog)
-            ?? $this->runStageBuilder($dialog)->popOperator();
+            ?? $this->runStageBuilder($dialog, $dialog->ucl)->popOperator();
     }
 
     protected function getMethodName() : string
@@ -78,10 +79,10 @@ class CodeStageDef extends AbsStageDef
         return Context\CodeContext::STAGE_BUILDER_PREFIX . $this->getStageShortName();
     }
 
-    protected function runStageBuilder(Dialog $dialog, bool $redirect = false) : IStageBuilder
+    protected function runStageBuilder(Dialog $dialog, Ucl $current, bool $redirect = false) : IStageBuilder
     {
         $builder = new IStageBuilder($dialog, $this, $redirect);
-        $context = $dialog->context;
+        $context = $current->findContext($dialog->cloner);
 
         $func = [$context, $this->getMethodName()];
         $builder = $func($builder);

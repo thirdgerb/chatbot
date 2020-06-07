@@ -14,21 +14,27 @@ namespace Commune\Ghost\Commands\User;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Ghost\Cmd\AGhostCmd;
+use Commune\Protocals\HostMsg\IntentMsg;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class QuitCmd extends AGhostCmd
+class CancelCmd extends AGhostCmd
 {
-    const SIGNATURE = 'quit';
+    const SIGNATURE = 'cancel';
 
-    const DESCRIPTION = '退出会话';
+    const DESCRIPTION = '退出当前上下文语境';
 
     protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
     {
-        $this->cloner->endSession();
-    }
+        $this->cloner
+            ->input
+            ->comprehension
+            ->intention
+            ->setMatchedIntent(IntentMsg::GUEST_NAVIGATE_CANCEL);
 
+        $this->goNext();
+    }
 
 }

@@ -33,7 +33,7 @@ trait TGhostCmd
     /**
      * @var bool
      */
-    protected $goNext = false;
+    protected $stillToNextPipe = false;
 
     /**
      * TGhostCmd constructor.
@@ -71,7 +71,7 @@ trait TGhostCmd
             $this->cloner->output($input->output($message));
         }
 
-        if ($this->goNext) {
+        if ($this->stillToNextPipe) {
             $this->cloner->noState();
             return null;
 
@@ -82,7 +82,7 @@ trait TGhostCmd
 
     public function goNext() : void
     {
-        $this->goNext = true;
+        $this->stillToNextPipe = true;
     }
 
     public function getContainer(): ContainerContract

@@ -18,7 +18,8 @@ use Commune\Support\Struct\Struct;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $ucl
+ * @property-read string $await     等待的语境
+ * @property-read string $matched   命中的意图
  */
 class DialogConfuseInt extends IIntentMsg
 {
@@ -26,18 +27,23 @@ class DialogConfuseInt extends IIntentMsg
     const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_DIALOG_CONFUSE;
 
 
-    public function __construct(string $ucl)
+    public function __construct(string $await = '', string $matchedIntent = '')
     {
-        parent::__construct('', ['ucl' => $ucl]);
+        parent::__construct('', ['await' => $await, 'matched' => $matchedIntent]);
     }
 
     public static function intentStub(): array
     {
-        return ['ucl' => ''];
+        return ['await' => '', 'matched' => ''];
     }
 
     public static function create(array $data = []): Struct
     {
-        return new static($data['ucl'] ?? '');
+        return new static($data['await'] ?? '');
+    }
+
+    public function getTextTemplate(): string
+    {
+        return "confused, await:{await}, matchedIntent:{matched}";
     }
 }

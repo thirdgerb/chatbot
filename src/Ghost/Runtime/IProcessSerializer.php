@@ -156,16 +156,13 @@ class IProcessSerializer implements ProcessSerializer
         ];
 
         $this->init();
-        // return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        // 可能比 json 会好一些. 毕竟json在 web 中传输, 各种反斜杠之类的规矩很多, 怕不够全面.
-        return serialize($data);
+        return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
     public function unserialize(string $string) : array
     {
         $this->init();
-        // $data = json_decode($string, true);
-        $data = unserialize($string);
+        $data = json_decode($string, true);
 
         $result = [];
         $info = $data[0];
@@ -185,7 +182,9 @@ class IProcessSerializer implements ProcessSerializer
         }
 
         $result['_root'] = $this->_unserializeUcl($info['_root'])->encode();
-        $result['_waiter'] = $this->_unserializeWaiter($info['_waiter']);
+
+        $waiter = $info['_waiter'] ?? null;
+        $result['_waiter'] = isset($waiter) ? $this->_unserializeWaiter($info['_waiter']) : null;
         $result['_backtrace'] = array_map([$this, '_unserializeWaiter'], $info['_backtrace'] ?? []);
 
         $callbacks = $info['_callbacks'] ?? [];

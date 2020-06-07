@@ -68,7 +68,6 @@ class IClonerLogger extends ContextLogger implements ClonerLogger
             return $this->context;
         }
         $context = $this->app->get(ClonerScope::class)->toArray();;
-        $context['peak'] = memory_get_peak_usage();
         return $this->context = $context;
     }
 

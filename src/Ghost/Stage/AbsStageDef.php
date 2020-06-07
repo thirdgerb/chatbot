@@ -128,17 +128,14 @@ abstract class AbsStageDef extends AbsOption implements StageDef
         return null;
     }
 
-    protected function fireRedirect(Dialog $prev, Dialog $current) : ? Operator
+    protected function fireRedirect(Dialog $prev) : ? Operator
     {
         $redirect = $this->ifRedirect;
 
         if (isset($redirect)) {
-            return $current
+            return $prev
                 ->ioc()
-                ->action($redirect, [
-                    'prev' => $prev,
-                    'current' => $current
-                ]);
+                ->action($redirect, ['prev' => $prev]);
         }
 
         return null;

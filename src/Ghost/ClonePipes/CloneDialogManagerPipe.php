@@ -12,6 +12,7 @@
 namespace Commune\Ghost\ClonePipes;
 
 use Commune\Blueprint\CommuneEnv;
+use Commune\Blueprint\Ghost\Dialog;
 use Commune\Ghost\IOperate\OStart;
 use Commune\Blueprint\Ghost\Operate\Finale;
 use Commune\Blueprint\Ghost\Request\GhostRequest;

@@ -18,6 +18,7 @@ use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
@@ -60,6 +61,8 @@ use Commune\Support\Utils\ArrayUtils;
  *
  * @property-read null|string $onCancel
  * @property-read null|string $onQuit
+ *
+ * @property-read null|string $ifRedirect
  *
  * @property-read string|null $firstStage
  * @property-read string[] $stageRoutes
@@ -132,6 +135,8 @@ class IContextDef extends AbsOption implements ContextDef
 
             // 预定义的 stage 的配置. StageMeta
             'stages' => [],
+
+            'ifRedirect' => null,
         ];
     }
 
@@ -339,6 +344,22 @@ class IContextDef extends AbsOption implements ContextDef
             $ucl
         );
     }
+
+    /*------ redirect -------*/
+
+    public function onRedirect(Dialog $prev, Ucl $current): ? Operator
+    {
+        $redirect = $this->ifRedirect;
+
+        if (isset($redirect)) {
+            return $prev
+                ->ioc()
+                ->action($redirect, ['prev' => $prev, 'current' => $current]);
+        }
+
+        return null;
+    }
+
 
     /*------ stages -------*/
 

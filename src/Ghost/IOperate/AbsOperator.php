@@ -76,16 +76,9 @@ abstract class AbsOperator implements Operator
 
         // 尝试拦截.
         $next = $this->toNext();
-        $this->destroy();
         return $next;
     }
 
-    protected function destroy() : void
-    {
-        unset($this->dialog);
-        $this->ticking = false;
-        $this->ticked = true;
-    }
 
     public function getDialog(): Dialog
     {

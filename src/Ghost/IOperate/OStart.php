@@ -33,11 +33,6 @@ class OStart extends AbsOperator
     protected $cloner;
 
     /**
-     * @var IReceive
-     */
-    protected $dialog;
-
-    /**
      * @var Process
      */
     protected $process;
@@ -47,6 +42,11 @@ class OStart extends AbsOperator
      */
     protected $start;
 
+
+    /**
+     * OStart constructor.
+     * @param Cloner $cloner
+     */
     public function __construct(Cloner $cloner)
     {
         $this->cloner = $cloner;
@@ -54,6 +54,7 @@ class OStart extends AbsOperator
         $this->start = $this->process->getAwait() ?? $this->process->getRoot();
         $dialog = new IReceive($this->cloner, $this->start, null);
         parent::__construct($dialog);
+
     }
 
     protected function toNext(): Operator
@@ -84,15 +85,6 @@ class OStart extends AbsOperator
 
         return $operator;
     }
-
-    protected function destroy(): void
-    {
-        $this->cloner = null;
-        $this->process = null;
-        $this->start = null;
-        parent::destroy();
-    }
-
 
     /*------ pipeline ------*/
 
@@ -299,12 +291,6 @@ class OStart extends AbsOperator
     public function getName(): string
     {
         return static::class;
-    }
-
-
-    public function getDialog(): Dialog
-    {
-        return $this->dialog;
     }
 
     public function __invoke(): Operator

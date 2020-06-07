@@ -14,6 +14,7 @@ namespace Commune\Blueprint\Ghost\MindDef;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 
 /**
@@ -61,6 +62,18 @@ interface ContextDef extends Def
      * @return string[]
      */
     public function getDependingAttrs() : array;
+
+    /*------- redirect -------*/
+
+    /**
+     * 当前 Context 因为意图而被触发时.
+     *
+     * @param Dialog $prev
+     * @param Ucl $current
+     * @return Operator|null
+     */
+    public function onRedirect(Dialog $prev, Ucl $current) : ? Operator;
+
 
     /*------- relation -------*/
 

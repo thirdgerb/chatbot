@@ -169,7 +169,7 @@ class Ucl implements UclInterface
             && $this->getContextId() === $ucl->getContextId();
     }
 
-    public function equals(string $ucl) : bool
+    public function equals($ucl) : bool
     {
         $decoded = Ucl::decode($ucl);
         return $this->getContextId() === $decoded->getContextId()

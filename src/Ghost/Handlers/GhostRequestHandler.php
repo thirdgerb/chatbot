@@ -61,6 +61,14 @@ class GhostRequestHandler
 
     public function __invoke(GhostRequest $request) : GhostResponse
     {
+        $start = microtime(true);
+
+        // 不接受异常请求.
+        if (!$request->isValid()) {
+            return $request->fail(AppResponse::BAD_REQUEST);
+        }
+
+        // 无状态标记
         if ($request->isStateless()) {
             $this->cloner->noState();
         }
@@ -70,16 +78,22 @@ class GhostRequestHandler
         };
 
         if (empty($this->middleware)) {
-            return $end($request);
+            $response = $end($request);
+
+        } else {
+            $pipeline = $this->cloner->buildPipeline(
+                $this->middleware,
+                RequestPipe::HANDLER_FUNC,
+                $end
+            );
+
+            $response = $pipeline($request);
         }
 
-        $pipeline = $this->cloner->buildPipeline(
-            $this->middleware,
-            RequestPipe::HANDLER_FUNC,
-            $end
-        );
-
-        $response = $pipeline($request);
+        $end = microtime(true);
+        $gap = round(($end - $start) * 1000000);
+        $peak = memory_get_peak_usage();
+        $this->cloner->logger->info("finish request in $gap, memory peak $peak");
         return $response;
     }
 

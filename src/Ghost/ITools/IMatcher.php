@@ -19,8 +19,10 @@ use Commune\Blueprint\Ghost\MindDef\EmotionDef;
 use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Framework\Command\ICommandDef;
 use Commune\Framework\Spy\SpyAgency;
+use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\SoundLike\SoundLikeInterface;
@@ -476,6 +478,32 @@ class IMatcher implements Matcher
         return $this;
     }
 
+    protected function wrapIntentMsg(string $intentName) : IntentMsg
+    {
+        $reg = $this->cloner->mind->intentReg();
+        if ($reg->hasDef($intentName)) {
+            return $reg->getDef($intentName)->toIntentMessage($this->cloner);
+        }
+
+        $entities = $this->cloner
+            ->input
+            ->comprehension
+            ->intention
+            ->getIntentEntities($intentName);
+
+        $entities = array_map(
+            function($entityValues) {
+                return is_array($entityValues) ? current($entityValues) : $entityValues;
+            },
+            $entities
+        );
+
+        return new IIntentMsg(
+            $intentName,
+            $entities
+        );
+    }
+
     protected function singleIntentMatch(string $intentName) : ? string
     {
         return StringUtils::isWildCardPattern($intentName)
@@ -511,7 +539,7 @@ class IMatcher implements Matcher
 
     public function isIntentIn(array $intentNames): Matcher
     {
-        $matched = $this->doIntentsMatch($intentNames);
+        $matched = $this->multiIntentsMatch($intentNames);
 
         if (!empty($matched)) {
             $this->matched = true;
@@ -521,7 +549,7 @@ class IMatcher implements Matcher
         return $this;
     }
 
-    protected function doIntentsMatch(array $intents) : array
+    protected function multiIntentsMatch(array $intents) : array
     {
         if (empty($intents)) {
             return [];
@@ -565,6 +593,33 @@ class IMatcher implements Matcher
 
         return $this;
     }
+
+    public function isIntentMsg(string ...$intentNames): Matcher
+    {
+        $intentName = array_shift($intentNames);
+
+        // 无参数情况.
+        if (empty($intentName)) {
+            $matched = $this->cloner->input->comprehension->intention->getMatchedIntent();
+
+        // 只有一个参数
+        } elseif (empty($intentNames)) {
+            $matched = $this->singleIntentMatch($intentName);
+
+        // 有 n 个参数
+        } else {
+            array_unshift($intentNames, $intentName);
+            $matched = $this->multiIntentsMatch($intentNames)[0] ?? null;
+        }
+
+        if (isset($matched)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $this->wrapIntentMsg($matched);
+        }
+
+        return $this;
+    }
+
 
     public function hasPossibleIntent(string $intentName): Matcher
     {
@@ -664,7 +719,7 @@ class IMatcher implements Matcher
 
     public function matchStageIn(array $intents): Matcher
     {
-        $matched = $this->doIntentsMatch($intents);
+        $matched = $this->multiIntentsMatch($intents);
 
         $stageReg = $this->cloner->mind->stageReg();
         foreach ($matched as $intentName) {

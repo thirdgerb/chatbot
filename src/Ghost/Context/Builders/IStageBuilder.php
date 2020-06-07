@@ -53,7 +53,7 @@ class IStageBuilder implements StageBuilder
 
     public function always($caller): StageBuilder
     {
-        if (isset($this->operator)) {
+        if (isset($this->operator) || $this->redirect) {
             unset($caller);
             return  $this;
         }
@@ -70,11 +70,8 @@ class IStageBuilder implements StageBuilder
             return  $this;
         }
 
-        $prev = $this->dialog->prev;
-
-        if ($this->redirect && isset($prev)) {
-            $this->operator = $caller($prev, $this->dialog);
-            unset($caller);
+        if ($this->redirect) {
+            $this->operator = $this->dialog->ioc()->action($caller);
         }
 
         return  $this;
@@ -82,9 +79,9 @@ class IStageBuilder implements StageBuilder
 
     public function onActivate($caller): StageBuilder
     {
-        if (isset($this->operator)) {
+        if (isset($this->operator) || $this->redirect) {
             unset($caller);
-            return  $this;
+            return $this;
         }
 
         if ($this->dialog->isEvent(Dialog::ACTIVATE)) {
@@ -97,7 +94,7 @@ class IStageBuilder implements StageBuilder
 
     public function onReceive($caller): StageBuilder
     {
-        if (isset($this->operator)) {
+        if (isset($this->operator) || $this->redirect) {
             return $this;
         }
 
@@ -110,7 +107,7 @@ class IStageBuilder implements StageBuilder
 
     public function onResume($caller): StageBuilder
     {
-        if (isset($this->operator)) {
+        if (isset($this->operator) || $this->redirect) {
             return $this;
         }
 
@@ -124,7 +121,7 @@ class IStageBuilder implements StageBuilder
 
     public function onEvent(string $event, $caller): StageBuilder
     {
-        if (isset($this->operator)) {
+        if (isset($this->operator) || $this->redirect) {
             if ($caller instanceof \Closure) $caller->bindTo(null);
             return $this;
         }

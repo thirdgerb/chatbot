@@ -68,9 +68,9 @@ interface Cloner extends Session
 
     public function getConversationId() : string;
 
-    public function quit() : void;
+    public function endSession() : void;
 
-    public function isQuit() : bool;
+    public function isSessionEnd() : bool;
 
     /*----- 手动输出 -----*/
 

@@ -11,13 +11,16 @@
 
 namespace Commune\Ghost\Context\Codable;
 
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Context\CodeContext;
+use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
+use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Context\IContextDef;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -105,4 +108,8 @@ class ICodeContextDef extends IContextDef
         return new static($className, $meta);
     }
 
+    public function onRedirect(Dialog $prev, Ucl $current): ? Operator
+    {
+        return call_user_func([$this->contextClass, CodeContext::FUNC_REDIRECT], $prev, $current);
+    }
 }

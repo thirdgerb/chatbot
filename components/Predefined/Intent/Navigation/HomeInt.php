@@ -13,7 +13,7 @@ namespace Commune\Components\Predefined\Intent\Navigation;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Ghost\Context\AEventContext;
+use Commune\Ghost\Context\AIntentContext;
 use Commune\Protocals\HostMsg\IntentMsg;
 
 
@@ -23,10 +23,8 @@ use Commune\Protocals\HostMsg\IntentMsg;
  * @title 返回根语境
  * @desc 回到当前对话的根语境
  *
- * @spell #home
- *
  */
-class HomeInt extends AEventContext
+class HomeInt extends AIntentContext
 {
 
     public static function __name(): string
@@ -34,9 +32,9 @@ class HomeInt extends AEventContext
         return IntentMsg::GUEST_NAVIGATE_HOME;
     }
 
-    public function action(Dialog $dialog): Operator
+    public static function __redirect(Dialog $prev): Operator
     {
-        return $dialog->reset();
+        return $prev->reset();
     }
 
 }

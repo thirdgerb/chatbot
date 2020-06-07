@@ -16,6 +16,7 @@ use Commune\Blueprint\Ghost\Dialog\Receive;
 use Commune\Blueprint\Ghost\Dialog\Resume;
 use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Ucl;
 
 
 /**
@@ -77,10 +78,10 @@ interface StageDef extends Def
      * 当前 Stage 因为意图而被触发时.
      *
      * @param Dialog $prev
-     * @param Dialog $current
+     * @param Ucl $current
      * @return Operator|null
      */
-    public function onRedirect(Dialog $prev, Dialog $current) : ? Operator;
+    public function onRedirect(Dialog $prev, Ucl $current) : ? Operator;
 
     /**
      * 当前 stage 恢复时.

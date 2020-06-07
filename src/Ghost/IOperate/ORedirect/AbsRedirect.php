@@ -24,22 +24,28 @@ use Commune\Ghost\IOperate\AbsOperator;
 abstract class AbsRedirect extends AbsOperator
 {
 
-    protected function redirect(Ucl $target, callable $creator) : Operator
+    protected function redirect(Ucl $target, callable $creator, array $insertPath = []) : Operator
     {
+        // 检查重定向是否被拦截.
+        $intercepted = $target
+            ->findStageDef($this->dialog->cloner)
+            ->onRedirect($this->dialog, $target);
+
+        if (isset($intercepted )) {
+            return $intercepted;
+        }
+
         $task = $this->dialog->process->getTask($target);
-        $insertPath = [];
-        // 如果目标 Context 是新建, 则需要从起点开始走.
+        // 如果目标 Context 是新建, 则需要从起点开始走. 否则不需要.
         if (
             $task->isStatus(Context::CREATED)
             && $task->getUcl()->stageName !== $target->stageName
         ) {
-            $insertPath = [$target->stageName];
+            array_unshift($insertPath, $target->stageName);
             $target = $target->goStage();
         }
 
         $redirect = $creator($target);
-        unset($creator);
-
         return $this->activate($redirect, $insertPath);
     }
 
@@ -47,13 +53,6 @@ abstract class AbsRedirect extends AbsOperator
     {
         $target = $iActivate->ucl;
         $def = $target->findStageDef($this->dialog->cloner);
-
-        // 检查拦截
-        $next =  $def->onRedirect($iActivate->prev, $iActivate);
-
-        if (isset($next)) {
-            return $next;
-        }
 
         if (empty($insertPath)) {
             $iActivate->task->insertPaths($insertPath);

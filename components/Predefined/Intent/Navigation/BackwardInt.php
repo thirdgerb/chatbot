@@ -13,7 +13,7 @@ namespace Commune\Components\Predefined\Intent\Navigation;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Ghost\Context\AEventContext;
+use Commune\Ghost\Context\AIntentContext;
 use Commune\Protocals\HostMsg\IntentMsg;
 
 
@@ -23,15 +23,13 @@ use Commune\Protocals\HostMsg\IntentMsg;
  * @title 返回
  * @desc 返回上一步
  *
- * @spell #back
- *
  * @example 回到上一步
  * @example 返回上一步
  * @example 回到刚才那个问题
  * @example 返回前面的问题
  * @example 再说一次上一个问题
  */
-class BackwardInt extends AEventContext
+class BackwardInt extends AIntentContext
 {
 
     public static function __name(): string
@@ -39,9 +37,9 @@ class BackwardInt extends AEventContext
         return IntentMsg::GUEST_NAVIGATE_BACK;
     }
 
-    public function action(Dialog $dialog): Operator
+    public static function __redirect(Dialog $prev): Operator
     {
-        return $dialog->backStep(1);
+        return $prev->backStep(1);
     }
 
 }

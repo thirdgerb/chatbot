@@ -11,7 +11,6 @@
 
 namespace Commune\Blueprint\Framework;
 
-use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 use Commune\Blueprint\Framework\Session\SessionEvent;
 use Commune\Blueprint\Framework\Session\SessionStorage;
 use Commune\Support\Protocal\Protocal;

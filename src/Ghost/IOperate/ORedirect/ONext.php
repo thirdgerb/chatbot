@@ -49,8 +49,9 @@ class ONext extends AbsRedirect
             return $this->dialog->reactivate();
         }
 
-        $activate = new IStaging($this->dialog, $next);
-        return $this->activate($activate, []);
+        return $this->redirect($next, function($next) {
+            return new IStaging($this->dialog, $next);
+        });
     }
 
 

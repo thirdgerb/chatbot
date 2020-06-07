@@ -82,9 +82,16 @@ class OConfuse extends AbsOperator
     protected function reallyConfuse() : Operator
     {
         $uclStr = $this->dialog->ucl->encode();
+        $matched = $this
+                ->cloner
+                ->input
+                ->comprehension
+                ->intention
+                ->getMatchedIntent() ?? '';
+
         $this->dialog
             ->send()
-            ->message(new DialogConfuseInt($uclStr));
+            ->message(new DialogConfuseInt($uclStr, $matched));
 
         return $this->dialog->rewind();
     }

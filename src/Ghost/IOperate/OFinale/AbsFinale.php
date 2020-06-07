@@ -43,12 +43,6 @@ abstract class AbsFinale extends AbsOperator implements Finale
         $this->cloner = $dialog->cloner;
     }
 
-    public function getDialog(): Dialog
-    {
-        return $this->dialog;
-    }
-
-
     protected function setProcess(Process $process) : void
     {
         $this->process = $process;

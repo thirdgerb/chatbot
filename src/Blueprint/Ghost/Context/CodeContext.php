@@ -12,9 +12,11 @@
 namespace Commune\Blueprint\Ghost\Context;
 
 use Commune\Blueprint\Ghost\Context;
+use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindSelfRegister;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
+use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Support\Option\Wrapper;
 
@@ -44,10 +46,12 @@ interface CodeContext extends Context, Wrapper, MindSelfRegister
 
     const FIRST_STAGE = 'start';
 
-    const DEFINE_DEPENDING_FUNC = '__depending';
-    const MAKE_DEF_FUNC = '__def';
-    const CONTEXT_NAME_FUNC = '__name';
-    const CONTEXT_OPTION_FUNC = '__option';
+    const FUNC_REDIRECT = '__redirect';
+    const FUNC_DEFINE_DEPENDING = '__depending';
+    const FUNC_MAKE_DEF = '__def';
+    const FUNC_CONTEXT_NAME = '__name';
+    const FUNC_CONTEXT_OPTION = '__option';
+
     const STAGE_BUILDER_PREFIX = '__on_';
 
     public static function makeUcl(array $query = [], string $stage = '') : Ucl;
@@ -77,6 +81,13 @@ interface CodeContext extends Context, Wrapper, MindSelfRegister
      *  return new CodeContextOption($option = []);
      */
     public static function __option() : CodeContextOption;
+
+    /**
+     * 重定向到当前 context 时.
+     * @param Dialog $prev
+     * @return Operator|null
+     */
+    public static function __redirect(Dialog $prev) : ? Operator;
 
     /**
      * @param StageBuilder $stage

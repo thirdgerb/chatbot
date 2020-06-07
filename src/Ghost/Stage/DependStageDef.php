@@ -89,7 +89,7 @@ class DependStageDef extends AbsStageDef
         return $dialog->next();
     }
 
-    public function onRedirect(Dialog $prev, Dialog $current): ? Operator
+    public function onRedirect(Dialog $prev, Ucl $current): ? Operator
     {
         return null;
     }

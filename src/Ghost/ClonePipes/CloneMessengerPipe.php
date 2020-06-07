@@ -12,6 +12,7 @@
 namespace Commune\Ghost\ClonePipes;
 
 use Closure;
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
@@ -50,6 +51,11 @@ class CloneMessengerPipe extends AClonePipe
     protected function doHandle(GhostRequest $request, Closure $current) : GhostResponse
     {
         $message = $request->getInput()->getMessage();
+
+        if (CommuneEnv::isDebug()) {
+            $text = $message->getText();
+            $this->logger->debug("receive message : \"$text\"");
+        }
 
         if ($message instanceof UnsupportedMsg) {
             return $request->fail(AppResponse::NO_CONTENT);
@@ -105,7 +111,7 @@ class CloneMessengerPipe extends AClonePipe
         $this->cloner->output(
             $this->cloner->input->output($message)
         );
-        $this->cloner->quit();
+        $this->cloner->endSession();
         $this->resetFailureCount();
 
         return $request->success($this->cloner);

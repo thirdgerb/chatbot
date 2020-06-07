@@ -63,7 +63,7 @@ abstract class AClonePipe implements RequestPipe
         }
 
         // 如果已经 quit, 就不往后走了.
-        if ($this->cloner->isQuit()) {
+        if ($this->cloner->isSessionEnd()) {
             return $request->success($this->cloner);
         }
 

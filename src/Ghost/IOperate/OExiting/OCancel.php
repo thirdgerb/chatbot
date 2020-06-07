@@ -11,9 +11,9 @@
 
 namespace Commune\Ghost\IOperate\OExiting;
 
+use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Ghost\IOperate\Flows\FallbackFlow;
 
 /**
@@ -37,19 +37,9 @@ class OCancel extends AbsExiting
         return new FallbackFlow($this->dialog);
     }
 
-
-    protected function doWithdraw(Process $process, Ucl $canceling) : ? Operator
+    protected function getWithdrawWatcher(Task $task): ? Ucl
     {
-        $task = $process->getTask($canceling);
-        $cancel = $task->watchCancel();
-        if (
-            isset($cancel)
-            && $cancel->stageName !== $canceling->stageName
-        ) {
-            return $this->dialog->redirectTo($cancel);
-        }
-
-        return null;
+        return $task->watchCancel();
     }
 
 

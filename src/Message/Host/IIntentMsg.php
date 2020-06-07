@@ -15,6 +15,7 @@ use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Support\Struct\Struct;
+use Commune\Support\Utils\StringUtils;
 use Illuminate\Support\Arr;
 
 
@@ -32,6 +33,7 @@ class IIntentMsg extends AbsMessage implements IntentMsg
     const INTENT_NAME = '';
     const DEFAULT_LEVEL = HostMsg::INFO;
 
+
     /**
      * @var string
      */
@@ -39,19 +41,19 @@ class IIntentMsg extends AbsMessage implements IntentMsg
 
     public function __construct(
         string $intentName,
-        array $slots = [],
+        array $entities = [],
         string $level = null
     )
     {
         if (!empty($intentName)) {
-            $slots['intentName'] = $intentName;
+            $entities[self::INTENT_NAME_FIELD] = $intentName;
         }
 
         if (isset($level)) {
-            $slots['level'] = $level;
+            $entities[self::LEVEL_FIELD] = $level;
         }
 
-        parent::__construct($slots);
+        parent::__construct($entities);
     }
 
 
@@ -59,9 +61,9 @@ class IIntentMsg extends AbsMessage implements IntentMsg
     {
         $intentStub = static::intentStub();
         $stub = [
-            'intentName' => static::INTENT_NAME,
-            'textTemplate' => '',
-            'level' => static::DEFAULT_LEVEL
+            self::INTENT_NAME_FIELD => static::INTENT_NAME,
+            self::TEMPLATE_FIELD => '',
+            self::LEVEL_FIELD => static::DEFAULT_LEVEL
         ];
         return $intentStub + $stub;
     }
@@ -80,9 +82,9 @@ class IIntentMsg extends AbsMessage implements IntentMsg
     public static function create(array $data = []): Struct
     {
         return new static(
-            $data['id'] ?? '',
+            $data[self::INTENT_NAME_FIELD] ?? '',
             $data,
-            $data['level'] ?? null
+            $data[self::LEVEL_FIELD] ?? null
         );
     }
 
@@ -118,10 +120,9 @@ class IIntentMsg extends AbsMessage implements IntentMsg
             return $template;
         }
 
-        $flattenSlots = Arr::dot($slots);
 
         $trans = [];
-        foreach ($flattenSlots as $key => $val) {
+        foreach ($slots as $key => $val) {
 
             $replace = '{' . $key . '}';
             $trans[$replace] = $val;
@@ -144,9 +145,24 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         return $this->intentName;
     }
 
+    public function getEntities(): array
+    {
+        $data = $this->toArray();
+        unset($data[self::INTENT_NAME_FIELD]);
+        unset($data[self::TEMPLATE_FIELD]);
+        unset($data[self::LEVEL_FIELD]);
+        return $data;
+    }
+
+
     public function getSlots(): array
     {
-        return $this->toArray();
+        $values = $this->toArray();
+        $flattenSlots = Arr::dot($values);
+        $slots = array_filter($flattenSlots, function($value) {
+            return is_scalar($value) || StringUtils::isString($value);
+        });
+        return array_map('strval', $slots);
     }
 
     public function __toString()

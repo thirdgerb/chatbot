@@ -24,9 +24,8 @@ use Commune\Ghost\Context\Codable\AbsCodeContext;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbsEventContext extends AbsCodeContext
+abstract class AbsIntentContext extends AbsCodeContext
 {
-    abstract public function action(Dialog $dialog) : Operator;
 
     public static function __depending(Depending $depending): Depending
     {
@@ -43,7 +42,7 @@ abstract class AbsEventContext extends AbsCodeContext
     // 直接执行 action.
     public function __on_start(StageBuilder $stage): StageBuilder
     {
-        return $stage->always($this->action($stage->dialog->prev ?? $stage->dialog));
+        return $stage->always($stage->dialog->fulfill());
     }
 
 }

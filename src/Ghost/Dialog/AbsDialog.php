@@ -63,7 +63,7 @@ abstract class AbsDialog extends AbsBaseDialog
 
     public function backStep(int $step = 1): Operator
     {
-        return new OFinale\OBackStep($this, $step);
+        return new ORedirect\OBackStep($this, $step);
     }
 
 

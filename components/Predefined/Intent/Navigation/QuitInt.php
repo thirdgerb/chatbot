@@ -13,7 +13,7 @@ namespace Commune\Components\Predefined\Intent\Navigation;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Ghost\Context\AEventContext;
+use Commune\Ghost\Context\AIntentContext;
 use Commune\Protocals\HostMsg\IntentMsg;
 
 
@@ -26,7 +26,7 @@ use Commune\Protocals\HostMsg\IntentMsg;
  *
  * @spell #quit
  */
-class QuitInt extends AEventContext
+class QuitInt extends AIntentContext
 {
 
     public static function __name(): string
@@ -34,9 +34,9 @@ class QuitInt extends AEventContext
         return IntentMsg::GUEST_NAVIGATE_QUIT;
     }
 
-    public function action(Dialog $dialog): Operator
+    public static function __redirect(Dialog $prev): Operator
     {
-        return $dialog->quit();
+        return $prev->quit();
     }
 
 }

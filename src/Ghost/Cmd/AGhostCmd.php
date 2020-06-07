@@ -11,12 +11,15 @@
 
 namespace Commune\Ghost\Cmd;
 
+use Commune\Blueprint\Framework\Pipes\RequestCmd;
 use Commune\Framework\Command\AbsHelpCmd;
 use Commune\Framework\Command\ARequestCmd;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @see RequestCmd
  */
 abstract class AGhostCmd extends ARequestCmd
 {

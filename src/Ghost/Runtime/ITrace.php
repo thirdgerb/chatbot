@@ -90,17 +90,15 @@ class ITrace implements Trace
         $gap = round($gap * 1000000);
         $this->last = $now;
         $name = $operator->getName();
-        $this->operates[] = [$name, $gap];
+        $ucl = $operator->getDialog()->ucl->encode();
+        $this->operates[] = [$name, $ucl, $gap];
     }
 
 
     public function log(LoggerInterface $logger): void
     {
         $logger->debug(
-            "runtime trace",
-            [
-                'operates' => $this->operates,
-            ]
+            "runtime trace : " . json_encode($this->operates, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
         );
     }
 

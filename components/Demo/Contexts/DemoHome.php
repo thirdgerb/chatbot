@@ -52,7 +52,7 @@ class DemoHome extends ACodeContext
 
     public function __on_quit(Stage $stage) : Stage
     {
-        return $stage->always(function(Activate $dialog){
+        return $stage->always(function(Dialog $dialog){
             return $dialog
                 ->send()
                 ->notice('quiting pass by quit stage')
@@ -63,7 +63,7 @@ class DemoHome extends ACodeContext
 
     public function __on_cancel(Stage $stage) : Stage
     {
-        return $stage->always(function(Activate $dialog){
+        return $stage->always(function(Dialog $dialog){
             return $dialog
                 ->send()
                 ->notice('canceling pass by cancel stage')

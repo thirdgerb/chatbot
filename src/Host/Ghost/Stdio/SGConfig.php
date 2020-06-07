@@ -73,8 +73,12 @@ class SGConfig extends GhostConfig
             'userCommands' => [
                 GhostHelpCmd::class,
                 Commands\User\HelloCmd::class,
-                Commands\User\QuitCmd::class,
                 Commands\User\WhoCmd::class,
+                Commands\User\QuitCmd::class,
+                Commands\User\CancelCmd::class,
+                Commands\User\BackCmd::class,
+                Commands\User\RepeatCmd::class,
+                Commands\User\RestartCmd::class,
             ],
             'superCommands' => [
                 GhostHelpCmd::class,

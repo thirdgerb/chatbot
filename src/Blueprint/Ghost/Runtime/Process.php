@@ -28,6 +28,7 @@ use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
  *
  *
  * @property-read Waiter|null $waiter
+ * @property-read Waiter[] $backtrace
  * @property-read array[] $sleeping
  * @property-read array[] $dying
  * @property-read string[] $depending

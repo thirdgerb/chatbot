@@ -30,7 +30,7 @@ class WhoCmd extends AGhostCmd
     {
         $this->info(json_encode([
             'id' => $this->cloner->input->getGuestId(),
-            'name' => $this->cloner->input->getSenderName(),
+            'name' => $this->cloner->input->getGuestName(),
         ], ArrayAndJsonAble::PRETTY_JSON));
     }
 

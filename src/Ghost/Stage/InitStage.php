@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\Dialog\Receive;
 use Commune\Blueprint\Ghost\Dialog\Resume;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Ucl;
 
 
 /**
@@ -44,9 +45,7 @@ class InitStage extends AbsStageDef
             'stageName' => '',
             'asIntent' => [],
 
-
             'events' => [],
-            'ifRedirect' => null,
         ];
     }
 
@@ -87,9 +86,10 @@ class InitStage extends AbsStageDef
             ?? $dialog->reactivate();
     }
 
-    public function onRedirect(Dialog $prev, Dialog $current): ? Operator
+    public function onRedirect(Dialog $prev, Ucl $current): ? Operator
     {
-        return $this->fireRedirect($prev, $current) ?? null;
+        $def = $current->findContextDef($prev->cloner);
+        return $def->onRedirect($prev, $current);
     }
 
     public function onResume(Resume $dialog): ? Operator

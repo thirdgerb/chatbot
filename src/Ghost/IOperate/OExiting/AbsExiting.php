@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\IOperate\OExiting;
 
+use Commune\Blueprint\Ghost\Runtime\Task;
 use Generator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\IOperate\AbsOperator;
@@ -27,12 +28,6 @@ abstract class AbsExiting extends AbsOperator
      */
     protected $canceling = [];
 
-    abstract protected function doWithdraw(
-        Process $process,
-        Ucl $canceling
-    ) : ? Operator;
-
-
     protected function addCanceling(Ucl ...$canceling) : void
     {
         $this->canceling = array_merge(
@@ -45,6 +40,27 @@ abstract class AbsExiting extends AbsOperator
     {
         return array_shift($this->canceling);
     }
+
+
+    protected function doWithdraw(Process $process, Ucl $canceling) : ? Operator
+    {
+        $task = $process->getTask($canceling);
+        $watcher = $this->getWithdrawWatcher($task);
+
+        if (!isset($watcher)) {
+            return null;
+        }
+
+        $current = $this->dialog->ucl;
+        // 自己内部的 withdraw 不用拦截. 完全可以自己重定向去退出.
+        if ($watcher->equals($current)) {
+            return null;
+        }
+
+        return $this->dialog->redirectTo($watcher);
+    }
+
+    abstract protected function getWithdrawWatcher(Task $task) : ? Ucl;
 
 
     protected function recursiveWithdraw(Process $process) : ? Operator

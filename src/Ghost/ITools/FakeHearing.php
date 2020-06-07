@@ -212,6 +212,12 @@ class FakeHearing implements Hearing
         return $this;
     }
 
+    public function isIntentMsg(string ...$intentNames): Matcher
+    {
+        return $this;
+    }
+
+
     public function hasPossibleIntent(string $intentName): Matcher
     {
         return $this;

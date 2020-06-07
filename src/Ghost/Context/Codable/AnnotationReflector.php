@@ -16,6 +16,18 @@ use Commune\Ghost\IMindDef\IIntentDef;
 use Commune\Support\Utils\StringUtils;
 
 /**
+ * 从注解中获取 intent(意图) 的基本定义.
+ *
+ * 合法的注解有:
+ *
+ * @title 标题, 唯一
+ * @desc 简介, 唯一
+ * @intent 意图的别名, 唯一
+ * @spell 可以精确命中意图的字符串. 唯一
+ * @example 意图的语料, 用 [实体名](实体值) 来标注实体
+ * @entity 用来定义意图的实体参数, 数组类型的参数要加 "[]"作为后缀. 例如 "city", 或者 "date[]"
+ * @signature 用来定义命令. 唯一
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class AnnotationReflector
@@ -99,18 +111,22 @@ class AnnotationReflector
         $ins->title = StringUtils::fetchAnnotation($docComment, 'title')[0] ?? '';
         $ins->desc = StringUtils::fetchAnnotation($docComment, 'desc')[0] ?? '';
         $ins->intent = StringUtils::fetchAnnotation($docComment, 'intent')[0] ?? null;
+
         $ins->signature = StringUtils::fetchAnnotation($docComment, 'signature')[0] ?? '';
 
-        $ins->examples = StringUtils::fetchAnnotation($docComment, 'example');
-        $ins->regex = StringUtils::fetchAnnotation($docComment, 'regex');
+        $examples = StringUtils::fetchAnnotation($docComment, 'example') ?? [];
+        $ins->examples = array_filter($examples, [StringUtils::class, 'isNotEmptyStr']) ?? [];
+
+        $regex = StringUtils::fetchAnnotation($docComment, 'regex')  ?? [];
+        $ins->regex = array_filter($regex, [StringUtils::class, 'isNotEmptyStr']);
 
         $ins->spell = StringUtils::fetchAnnotation($docComment, 'spell')[0] ?? '';
-        $ins->entities = explode(
-            ',',
-            StringUtils::fetchAnnotation($docComment, 'entities')[0] ?? ''
-        );
+
+        $entities = StringUtils::fetchAnnotation($docComment, 'entities')[0] ?? [];
+        $ins->entities = array_filter($entities, [StringUtils::class, 'isNotEmptyStr']);
 
 
         return $ins;
     }
+
 }

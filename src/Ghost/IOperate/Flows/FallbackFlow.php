@@ -21,7 +21,6 @@ use Commune\Blueprint\Ghost\Operate\Operator;
  */
 class FallbackFlow extends AbsOperator
 {
-
     protected function toNext(): Operator
     {
         $process = $this->dialog->process;
@@ -44,6 +43,7 @@ class FallbackFlow extends AbsOperator
     protected function fallbackToRoot(Process $process) : Operator
     {
         $root = $process->getRoot();
+
         // 如果不是相同的, 回到 root
         if (!$root->isSameContext($this->dialog->ucl)) {
             return $this->dialog->reset();
@@ -52,7 +52,5 @@ class FallbackFlow extends AbsOperator
         // 否则 quit
         return $this->dialog->quit();
     }
-
-
 
 }

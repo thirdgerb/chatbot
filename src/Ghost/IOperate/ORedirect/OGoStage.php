@@ -13,13 +13,14 @@ namespace Commune\Ghost\IOperate\ORedirect;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Ghost\Dialog\IActivate\IStaging;
 use Commune\Ghost\IOperate\AbsOperator;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class OGoStage extends AbsOperator
+class OGoStage extends AbsRedirect
 {
 
     /**
@@ -35,8 +36,13 @@ class OGoStage extends AbsOperator
 
     protected function toNext(): Operator
     {
-        $this->dialog->task->insertPaths($this->stages);
-        return $this->dialog->next();
+        $stages = $this->stages;
+        $first = array_shift($stages);
+        $target = $this->dialog->ucl->goStage($first);
+
+        return $this->redirect($target, function($target){
+            return new IStaging($this->dialog, $target);
+        }, $stages);
     }
 
 

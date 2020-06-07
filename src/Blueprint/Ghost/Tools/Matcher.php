@@ -247,6 +247,7 @@ interface Matcher
      *
      * @param string $intentName  可以是意图的 ContextName, 也可以是意图的类名
      * @return static
+     * @matched string $isIntent
      */
     public function isIntent(string $intentName) : Matcher;
 
@@ -266,6 +267,14 @@ interface Matcher
      * @matched string $isAnyIntent
      */
     public function isAnyIntent() : Matcher;
+
+
+    /**
+     * @param string ...$intentNames
+     * @return Matcher
+     * @matched IntentMsg $isIntentMsg
+     */
+    public function isIntentMsg(string ...$intentNames) : Matcher;
 
     /**
      * 仅仅从 Cloner::getNlu() 对象中判断意图是否存在

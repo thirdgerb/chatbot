@@ -380,16 +380,19 @@ class IProcess implements Process, HasIdGenerator, \Serializable
 
     public function backStep(int $step): bool
     {
-        $waiter = null;
 
+        if ($step < 1) {
+            return false;
+        }
+
+        $waiter = null;
         do {
-            $now = $waiter;
             $waiter = array_shift($this->_backtrace);
             $step --;
-        } while($step > 0 && $waiter);
+        } while($step > 0 && isset($waiter));
 
-        if (isset($now)) {
-            $this->_waiter = $now;
+        if (isset($waiter)) {
+            $this->_waiter = $waiter;
             return true;
         }
 
@@ -448,8 +451,9 @@ class IProcess implements Process, HasIdGenerator, \Serializable
             $tasks[$id] = $this->getTaskById($id);
         }
 
-        $id = $this->getRoot()->getContextId();
-        $tasks[$id] = $this->getTaskById($id);
+        $root = $this->getRoot();
+        $rootTask = $this->getTask($root);
+        $tasks[$rootTask->getId()] = $rootTask;
 
         $this->_tasks = $tasks;
     }

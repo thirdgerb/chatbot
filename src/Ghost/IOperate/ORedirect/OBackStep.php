@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\IOperate\OFinale;
+namespace Commune\Ghost\IOperate\ORedirect;
 
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Dialog;
@@ -19,7 +19,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class OBackStep extends AbsFinale
+class OBackStep extends AbsRedirect
 {
     /**
      * @var int
@@ -41,9 +41,15 @@ class OBackStep extends AbsFinale
 
     protected function toNext(): Operator
     {
-        $this->dialog->process->backStep($this->step);
-        $this->runAwait(false);
-        return $this;
+        $process = $this->dialog->process;
+        if ($process->backStep($this->step)) {
+            $await = $process->getAwait();
+            if (isset($await)) {
+                return $this->dialog->redirectTo($process->getAwait());
+            }
+        }
+
+        return $this->dialog->rewind();
     }
 
 }

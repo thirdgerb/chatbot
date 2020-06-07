@@ -13,7 +13,7 @@ namespace Commune\Ghost\Context;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Ghost\Context\Prototypes\AbsEventContext;
+use Commune\Ghost\Context\Prototypes\AbsIntentContext;
 use Commune\Ghost\Support\ContextUtils;
 
 
@@ -23,14 +23,22 @@ use Commune\Ghost\Support\ContextUtils;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AEventContext extends AbsEventContext
+abstract class AIntentContext extends AbsIntentContext
 {
-    abstract public function action(Dialog $dialog): Operator;
 
     public static function __name(): string
     {
         return ContextUtils::normalizeContextName(static::class);
     }
+
+    /**
+     * 定义响应事件.
+     *
+     * @param Dialog $prev
+     * @return Operator|null
+     */
+    abstract public static function __redirect(Dialog $prev): ? Operator;
+
 
 
 }

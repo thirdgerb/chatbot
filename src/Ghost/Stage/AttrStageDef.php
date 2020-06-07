@@ -16,6 +16,7 @@ use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Blueprint\Ghost\Dialog\Receive;
 use Commune\Blueprint\Ghost\Dialog\Resume;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Host\SystemInt\DialogAskInt;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
@@ -89,7 +90,7 @@ class AttrStageDef extends AbsStageDef
             ->end();
     }
 
-    public function onRedirect(Dialog $prev, Dialog $current): ? Operator
+    public function onRedirect(Dialog $prev, Ucl $current): ? Operator
     {
         return null;
     }

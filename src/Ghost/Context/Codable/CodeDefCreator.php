@@ -53,14 +53,14 @@ class CodeDefCreator
     public function getContextName() : string
     {
         return call_user_func(
-            [$this->contextClass, CodeContext::CONTEXT_NAME_FUNC]
+            [$this->contextClass, CodeContext::FUNC_CONTEXT_NAME]
         );
     }
 
     public function getCodeContextOption() : CodeContextOption
     {
         $option = call_user_func(
-            [$this->contextClass, CodeContext::CONTEXT_OPTION_FUNC]
+            [$this->contextClass, CodeContext::FUNC_CONTEXT_OPTION]
         );
 
         return $option;
@@ -75,7 +75,7 @@ class CodeDefCreator
     public function getDependingBuilder() : IDepending
     {
         return call_user_func(
-            [$this->contextClass, CodeContext::DEFINE_DEPENDING_FUNC],
+            [$this->contextClass, CodeContext::FUNC_DEFINE_DEPENDING],
             new IDepending($this->getContextName())
         );
     }

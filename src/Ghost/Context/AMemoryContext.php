@@ -12,9 +12,6 @@
 namespace Commune\Ghost\Context;
 
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
-use Commune\Blueprint\Ghost\Context\CodeContextOption;
-use Commune\Blueprint\Ghost\Context\Depending;
-use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Ghost\Context\Prototypes\AbsMemoryContext;
 use Commune\Ghost\Support\ContextUtils;
 

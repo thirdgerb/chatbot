@@ -13,7 +13,7 @@ namespace Commune\Components\Predefined\Intent\Navigation;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Ghost\Context\AEventContext;
+use Commune\Ghost\Context\AIntentContext;
 use Commune\Protocals\HostMsg\IntentMsg;
 
 
@@ -23,8 +23,6 @@ use Commune\Protocals\HostMsg\IntentMsg;
  * @title 重复对话
  * @desc 重复上一轮的对话
  *
- * @spell #repeat
- * 
  * @example 再说一遍
  * @example 刚才说什么
  * @example 现在说的是啥
@@ -32,7 +30,7 @@ use Commune\Protocals\HostMsg\IntentMsg;
  * @example 刚才说啥
  * 
  */
-class RepeatInt extends AEventContext
+class RepeatInt extends AIntentContext
 {
 
     public static function __name(): string
@@ -40,8 +38,8 @@ class RepeatInt extends AEventContext
         return IntentMsg::GUEST_NAVIGATE_REPEAT;
     }
 
-    public function action(Dialog $dialog): Operator
+    public static function __redirect(Dialog $prev): Operator
     {
-        return $dialog->rewind();
+        return $prev->reactivate();
     }
 }

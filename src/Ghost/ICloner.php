@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Contracts\Cache;
 use Commune\Framework\ASession;
+use Commune\Message\Host\SystemInt\SessionQuitInt;
 use Psr\Log\LoggerInterface;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\IntercomMsg;
@@ -294,12 +295,16 @@ class ICloner extends ASession implements Cloner
 
     /*------- quit -------*/
 
-    public function quit(): void
+    public function endSession(): void
     {
+        $this->output(
+            $this->input->output(new SessionQuitInt())
+        );
+
         $this->quit = true;
     }
 
-    public function isQuit(): bool
+    public function isSessionEnd(): bool
     {
         return $this->quit;
     }
@@ -319,7 +324,7 @@ class ICloner extends ASession implements Cloner
 
     protected function saveSession(): void
     {
-        if ($this->isQuit()) {
+        if ($this->isSessionEnd()) {
             $this->ioDeleteConvoIdCache();
             return;
         }

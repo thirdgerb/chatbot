@@ -55,18 +55,17 @@ class FeatureTest extends ACodeContext
      * @param StageBuilder $builder
      * @return StageBuilder
      *
-     * @title #q
+     * @spell #q
      */
     public function __on_quit(StageBuilder $builder): StageBuilder
     {
-        return $builder->always(
-            $builder
-                ->dialog
+        return $builder->always(function(Dialog $dialog) {
+            return $dialog
                 ->send()
                 ->info('quit from event')
                 ->over()
-                ->quit()
-        );
+                ->quit();
+        });
     }
 
 
@@ -74,7 +73,7 @@ class FeatureTest extends ACodeContext
      * @param StageBuilder $builder
      * @return StageBuilder
      *
-     * @title #r
+     * @spell #r
      */
     public function __on_rewind(StageBuilder $builder) : StageBuilder
     {
@@ -87,18 +86,17 @@ class FeatureTest extends ACodeContext
      * @param StageBuilder $builder
      * @return StageBuilder
      *
-     * @title #c
+     * @spell #c
      */
     public function __on_cancel(StageBuilder $builder): StageBuilder
     {
-        return $builder->always(
-            $builder
-                ->dialog
-                ->send()
+        // var_dump(get_class($builder->dialog));
+        return $builder->always(function(Dialog $dialog) {
+            return $dialog->send()
                 ->info('cancel from event')
                 ->over()
-                ->cancel()
-        );
+                ->cancel();
+        });
     }
 
     /*-------- 功能测试用例 --------*/

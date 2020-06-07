@@ -41,7 +41,6 @@ abstract class AbsCodeContext extends IContext implements CodeContext
         return Ucl::make($name, $query, $stage);
     }
 
-
     public function toMeta(): Meta
     {
         return $this->_def->toMeta();

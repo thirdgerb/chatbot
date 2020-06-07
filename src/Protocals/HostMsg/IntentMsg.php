@@ -21,6 +21,7 @@ use Commune\Protocals\HostMsg;
  */
 interface IntentMsg extends HostMsg
 {
+
     /*----- system intents -----*/
 
     const SYSTEM_SESSION_BUSY = 'system.session.busy';
@@ -48,8 +49,26 @@ interface IntentMsg extends HostMsg
 
     const GUEST_DIALOG_ORDINAL = 'dialogue.ordinal';
 
+
+    /*------ struct 特殊字段名常量 ------*/
+
+    const INTENT_NAME_FIELD = 'intentName';
+    const LEVEL_FIELD = 'level';
+    const TEMPLATE_FIELD = 'textTemplate';
+
+
     public function getIntentName() : string;
 
+    /**
+     * 除去 intentName, level 之外的所有参数.
+     * @return array
+     */
+    public function getEntities() : array;
+
+    /**
+     * 用于翻译时的所有非对象参数, 并且均会转化为字符串.
+     * @return string[]
+     */
     public function getSlots() : array;
 
 }

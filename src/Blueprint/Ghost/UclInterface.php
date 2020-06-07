@@ -108,7 +108,7 @@ interface UclInterface extends ArrayAndJsonAble
      * @param string $ucl
      * @return bool
      */
-    public function equals(string $ucl) : bool;
+    public function equals($ucl) : bool;
 
     /*------ transformer ------*/
 

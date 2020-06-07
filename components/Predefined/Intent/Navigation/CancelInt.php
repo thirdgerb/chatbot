@@ -13,7 +13,7 @@ namespace Commune\Components\Predefined\Intent\Navigation;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Ghost\Context\AEventContext;
+use Commune\Ghost\Context\AIntentContext;
 use Commune\Protocals\HostMsg\IntentMsg;
 
 
@@ -23,8 +23,6 @@ use Commune\Protocals\HostMsg\IntentMsg;
  * @title 取消
  * @desc 取消当前语境
  *
- * @spell #cancel
- *
  * @example 退出
  * @example 我要退出
  * @example cancel
@@ -33,7 +31,7 @@ use Commune\Protocals\HostMsg\IntentMsg;
  * @example 取消任务
  * @example 我要取消
  */
-class CancelInt extends AEventContext
+class CancelInt extends AIntentContext
 {
 
     public static function __name(): string
@@ -41,9 +39,9 @@ class CancelInt extends AEventContext
         return IntentMsg::GUEST_NAVIGATE_CANCEL;
     }
 
-    public function action(Dialog $dialog): Operator
+    public static function __redirect(Dialog $prev): Operator
     {
-        return $dialog->cancel();
+        return $prev->cancel();
     }
 
 }
