@@ -185,7 +185,7 @@ interface Matcher
 
     /**
      * @param string $index
-     * @return Matcher
+     * @return static
      * @matched string $isChoice
      */
     public function isChoice(string $index) : Matcher;
@@ -198,7 +198,7 @@ interface Matcher
      *
      * @param string $signature
      * @param bool $correct
-     * @return Matcher
+     * @return static
      */
     public function isCommand(string $signature, bool $correct = false) : Matcher;
 
@@ -206,7 +206,7 @@ interface Matcher
      *
      * @param CommandDef $def
      * @param bool $correct
-     * @return Matcher
+     * @return static
      */
     public function matchCommandDef(CommandDef $def, bool $correct = false) : Matcher;
 
@@ -271,7 +271,7 @@ interface Matcher
 
     /**
      * @param string ...$intentNames
-     * @return Matcher
+     * @return static
      * @matched IntentMsg $isIntentMsg
      */
     public function isIntentMsg(string ...$intentNames) : Matcher;

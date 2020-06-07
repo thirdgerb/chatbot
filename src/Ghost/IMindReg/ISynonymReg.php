@@ -20,6 +20,11 @@ use Commune\Blueprint\Ghost\MindMeta\SynonymMeta;
  */
 class ISynonymReg extends AbsDefRegistry implements SynonymReg
 {
+    protected function normalizeDefName(string $name): string
+    {
+        return $name;
+    }
+
     protected function getDefType(): string
     {
         return SynonymDef::class;

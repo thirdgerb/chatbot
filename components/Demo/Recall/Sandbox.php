@@ -11,8 +11,7 @@
 
 namespace Commune\Components\Demo\Recall;
 
-use Commune\Support\Parameter\ParamBuilder;
-use Commune\Host\Recall\ARecall;
+use Commune\Ghost\Memory\AbsRecall;
 
 
 /**
@@ -21,18 +20,18 @@ use Commune\Host\Recall\ARecall;
  * @property int $test
  * @property int $test1
  */
-class Sandbox extends ARecall
+class Sandbox extends AbsRecall
 {
-    public static function getScopes(): array
+    public static function __scopes(): array
     {
         return [];
     }
 
-
-    public static function paramBuilder(ParamBuilder $builder): ParamBuilder
+    public static function __attrs(): array
     {
-        return $builder->def('test', 0);
+        return [
+            'test' => 0,
+            'test1' => 0,
+        ];
     }
-
-
 }

@@ -14,6 +14,7 @@ namespace Commune\Ghost\IMindReg;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\MindReg\ContextReg;
+use Commune\Ghost\Support\ContextUtils;
 
 
 /**
@@ -21,6 +22,11 @@ use Commune\Blueprint\Ghost\MindReg\ContextReg;
  */
 class IContextReg extends AbsDefRegistry implements ContextReg
 {
+    protected function normalizeDefName(string $name): string
+    {
+        return ContextUtils::normalizeContextName($name);
+    }
+
     public function getMetaId(): string
     {
         return ContextMeta::class;

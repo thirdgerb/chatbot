@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Components\Demo\Recall\Sandbox;
 use Commune\Ghost\Context\ACodeContext;
 use Commune\Protocals\HostMsg;
 
@@ -136,7 +137,7 @@ class FeatureTest extends ACodeContext
                     '请选择功能测试用例 (输入 #q 退出测试, #r 回到选项, #c 退出语境)',
                     [
                         $this->getStage('test_match'),
-                        '上下文记忆' => 'test_memory',
+                        $this->getStage('test_memory'),
                         'confirmation && emotion' => 'test_confirmation',
                         'askContinue 机制' => 'test_ask_continue',
                         'gc 机制' => 'test_gc',
@@ -242,5 +243,81 @@ EOF
                 }
             );
     }
+
+
+    /**
+     * @param Stage $stage
+     * @return Stage
+     *
+     * @desc 上下文记忆
+     */
+    public function __on_test_memory(Stage $stage): Stage
+    {
+        return $stage
+            ->onActivate(function(Dialog $dialog) : Operator {
+
+                return $dialog
+                    ->await()
+                    ->askChoose(
+                        '测试记忆功能',
+                        [
+                            'a' => 'sandbox : 测试在config里定义的 memory',
+                            'b' => 'sandbox class: 测试用类定义的 memory',
+                            '返回',
+                        ]
+                    );
+
+            })
+            ->onReceive(function(Dialog $dialog) : Operator {
+                return $dialog
+                    ->hearing()
+                    ->todo($dialog->goStage(''))
+                        ->isChoice(0)
+                    ->todo(function(Dialog $dialog) {
+
+                        $sandbox = $dialog->recall(Sandbox::class);
+                        $test = $sandbox['test'];
+
+                        $dialog
+                            ->send()
+                            ->info(
+                                "test is : {test}",
+                                ['test' => $test]
+                            );
+
+                        $sandbox['test'] = $test + 1;
+
+                        return $dialog->reactivate();
+
+                    })
+                    ->isChoice('a')
+                    ->is('sandbox')
+
+                    ->then()
+
+                    ->isChoice('b')
+                    ->then(function(Dialog $dialog){
+
+                        $s = Sandbox::find($dialog->cloner);
+                        $test = $s->test ?? 0;
+                        $test1 = $s->test1 ?? 0;
+                        $s->test = $test + 1;
+                        $s->test1 = $test1 + 2;
+
+                        $dialog->send()
+                            ->withSlots($s->toArray())
+                            ->info(
+                                'class '
+                                . Sandbox::class
+                                . ' value is test:{test}, test1:{test1}'
+                            );
+
+                        return $dialog->reactivate();
+                    })
+                    ->end();
+            }
+        );
+    }
+
 
 }

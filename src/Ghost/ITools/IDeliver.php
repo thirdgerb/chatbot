@@ -122,6 +122,7 @@ class IDeliver implements Deliver
 
     protected function log(string $level, string $intent, array $slots) : Deliver
     {
+        $slots = $slots + $this->slots;
         $intentMsg = new IIntentMsg($intent, $slots, $level);
         return $this->message($intentMsg);
     }

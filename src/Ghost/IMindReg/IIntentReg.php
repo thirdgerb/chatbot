@@ -14,6 +14,7 @@ namespace Commune\Ghost\IMindReg;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\MindReg\IntentReg;
+use Commune\Ghost\Support\ContextUtils;
 
 
 /**
@@ -21,6 +22,11 @@ use Commune\Blueprint\Ghost\MindReg\IntentReg;
  */
 class IIntentReg extends AbsDefRegistry implements IntentReg
 {
+    protected function normalizeDefName(string $name): string
+    {
+        return ContextUtils::normalizeIntentName($name);
+    }
+
     protected function getDefType(): string
     {
         return IntentDef::class;

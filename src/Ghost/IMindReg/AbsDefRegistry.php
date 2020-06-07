@@ -21,6 +21,7 @@ use Commune\Framework\Spy\SpyAgency;
 use Commune\Support\Registry\Category;
 use Commune\Support\Registry\Exceptions\OptionNotFoundException;
 use Commune\Support\Registry\OptRegistry;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -142,7 +143,10 @@ abstract class AbsDefRegistry implements DefRegistry
 
     public function hasDef(string $defName): bool
     {
+        $defName = $this->normalizeDefName($defName);
+
         $this->checkExpire();
+
         if (array_key_exists($defName, $this->cachedDefs)) {
             return true;
         }
@@ -151,8 +155,12 @@ abstract class AbsDefRegistry implements DefRegistry
         return $has;
     }
 
+    abstract protected function normalizeDefName(string $name) : string;
+
     public function getDef(string $defName): Def
     {
+        $defName = $this->normalizeDefName($defName);
+
         $this->checkExpire();
 
         // 有缓存

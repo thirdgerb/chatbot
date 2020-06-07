@@ -93,9 +93,6 @@ class Psr4SelfRegisterLoader extends ServiceProvider
 
             // 判断是不是可以实例化的.
             $r = new \ReflectionClass($clazz);
-            if (!$r->isInstantiable()) {
-                continue;
-            }
 
             $logger->debug("load mind self register: $clazz");
             $method = [$clazz, MindSelfRegister::REGISTER_METHOD];

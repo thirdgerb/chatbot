@@ -60,15 +60,6 @@ class IRecollection implements Recollection
         return $this->_def->getName();
     }
 
-    public function getIterator()
-    {
-        $keys = $this->keys();
-        $keys = array_flip($keys);
-        foreach ($keys as $key => $index) {
-            yield $this->offsetGet($key);
-        }
-    }
-
     public function __destruct()
     {
         SpyAgency::decr(static::class);

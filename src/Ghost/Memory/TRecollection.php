@@ -108,6 +108,15 @@ trait TRecollection
 
     }
 
+    public function getIterator()
+    {
+        $keys = $this->keys();
+        $keys = array_flip($keys);
+        foreach ($keys as $key => $index) {
+            yield $this->offsetGet($key);
+        }
+    }
+
     public function keys() : array
     {
         return $this->_memory->keys();

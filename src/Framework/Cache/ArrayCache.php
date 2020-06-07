@@ -116,8 +116,8 @@ class ArrayCache implements Cache
 
     public function hMSet(string $key, array $values, int $ttl = null): bool
     {
-        foreach ($values as $key => $val) {
-            $bool = $this->hSet((string)$key, $val, $ttl);
+        foreach ($values as $memberKey => $val) {
+            $bool = $this->hSet($key, $memberKey, $val, $ttl);
             if (!$bool) {
                 return false;
             }

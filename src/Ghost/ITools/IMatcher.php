@@ -289,8 +289,9 @@ class IMatcher implements Matcher
 
     public function isChoice($suggestionIndex): Matcher
     {
+        $suggestionIndex = strval($suggestionIndex);
         $answer = $this->input->comprehension->answer->getAnswer();
-        if (isset($answer) && $answer->getChoice() == $suggestionIndex) {
+        if (isset($answer) && $answer->getChoice() === $suggestionIndex) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $answer;
         }

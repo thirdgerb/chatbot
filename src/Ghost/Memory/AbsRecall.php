@@ -12,15 +12,14 @@
 namespace Commune\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Memory\Recall;
-use Commune\Blueprint\Ghost\MindDef\ParamDef;
-use Commune\Blueprint\Ghost\MindDef\MemoryDef;
-use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
-use Commune\Ghost\Context\Builders\IParamBuilder;
-use Commune\Ghost\Context\Codable\DefineConfig;
+use Commune\Blueprint\Ghost\MindSelfRegister;
+use Commune\Blueprint\Ghost\Mindset;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
+use Commune\Blueprint\Ghost\Memory\Recall;
 use Commune\Support\Arr\TArrayAccessToMutator;
+use Commune\Blueprint\Ghost\MindDef\MemoryDef;
+use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 
 /**
@@ -29,7 +28,7 @@ use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbsRecall implements Recall
+abstract class AbsRecall implements Recall, MindSelfRegister
 {
     use ArrayAbleToJson, TArrayAccessToMutator, TRecollection;
 
@@ -38,8 +37,22 @@ abstract class AbsRecall implements Recall
         $this->_id = $id;
         $this->_def = $def;
         $this->_cloner = $cloner;
+        $this->_memory = $def->recall($cloner, $id);
     }
 
+    /**
+     * 定义记忆体的作用域
+     *
+     * @see Cloner\ClonerScope
+     * @return string[]
+     */
+    abstract public static function __scopes() : array;
+
+    /**
+     * 记忆体的默认值
+     * @return array
+     */
+    abstract public static function __attrs() : array;
 
     public function getName(): string
     {
@@ -59,7 +72,7 @@ abstract class AbsRecall implements Recall
      */
     public static function find(Cloner $cloner, string $id = null) : Recall
     {
-        $def = static::getMemoryDef($cloner);
+        $def = static::getMemoryDef($cloner->mind);
         return new static(
             $id ?? $def->makeScopeId($cloner),
             $def,
@@ -67,24 +80,24 @@ abstract class AbsRecall implements Recall
         );
     }
 
-    protected static function getMemoryDef(Cloner $cloner) : MemoryDef
+    protected static function getMemoryDef(Mindset $mind) : MemoryDef
     {
         $name = static::recallName();
-        $memoryReg = $cloner->mind->memoryReg();
+        $memoryReg = $mind->memoryReg();
 
         if (!$memoryReg->hasDef($name)) {
 
-            $configs = static::__config();
             $memoryMeta = new MemoryMeta([
                 'name' => $name,
-                'title' => $configs->title,
-                'desc' => $configs->desc,
-                'scopes' => $configs->memoryScopes,
-                'defaults' => $configs->paramDefaults,
+                'title' => static::class,
+                'desc' => '',
+                'scopes' => static::__scopes(),
+                'attrs' => static::__attrs(),
             ]);
 
             $memoryReg->registerDef($memoryMeta->toWrapper());
         }
+
         return $memoryReg->getDef($name);
     }
 
@@ -92,6 +105,12 @@ abstract class AbsRecall implements Recall
     {
         return new RecallStub($this->_id, static::class);
     }
+
+    public static function selfRegisterToMind(Mindset $mindset, bool $force = false): void
+    {
+        $mindset->memoryReg()->registerDef(static::getMemoryDef($mindset), !$force);
+    }
+
 
     private function __clone()
     {

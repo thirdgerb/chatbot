@@ -12,14 +12,13 @@
 namespace Commune\Blueprint\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Ghost\Context\Codable\DefineConfig;
 
 /**
  * 静态的回忆工具, 用静态方法来定义和获取记忆体.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Recall extends Recollection, DefineConfig
+interface Recall extends Recollection
 {
 
     /**

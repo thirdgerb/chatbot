@@ -20,6 +20,11 @@ use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
  */
 class IEmotionReg extends AbsDefRegistry implements EmotionReg
 {
+    protected function normalizeDefName(string $name): string
+    {
+        return $name;
+    }
+
     protected function getDefType(): string
     {
         return EmotionDef::class;

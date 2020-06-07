@@ -11,7 +11,6 @@
 
 namespace Commune\Ghost\IMindReg;
 
-use Commune\Blueprint\Ghost\MindDef\Def;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\MindReg\StageReg;
@@ -22,6 +21,11 @@ use Commune\Ghost\Support\ContextUtils;
  */
 class IStageReg extends AbsDefRegistry implements StageReg
 {
+    protected function normalizeDefName(string $name): string
+    {
+        return ContextUtils::normalizeStageName($name);
+    }
+
     protected function getDefType(): string
     {
         return StageDef::class;

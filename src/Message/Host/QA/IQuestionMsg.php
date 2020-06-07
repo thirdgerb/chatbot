@@ -136,6 +136,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         $matchedSuggestions = [];
 
         $text = StringUtils::normalizeString($message->getText());
+        $text = StringUtils::trim($text);
 
         if (StringUtils::isEmptyStr($text)) {
             return null;

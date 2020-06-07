@@ -14,12 +14,18 @@ namespace Commune\Ghost\IMindReg;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindReg\MemoryReg;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
+use Commune\Ghost\Support\ContextUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class IMemoryReg extends AbsDefRegistry implements MemoryReg
 {
+    protected function normalizeDefName(string $name): string
+    {
+        return ContextUtils::normalizeMemoryName($name);
+    }
+
     protected function getDefType(): string
     {
         return MemoryDef::class;

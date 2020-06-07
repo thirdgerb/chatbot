@@ -35,7 +35,8 @@ class DemoComponent extends GhostComponent
         $this->loadPsr4MindRegister(
             $app,
             [
-                'Commune\Components\Demo\Contexts' => __DIR__ . '/Contexts'
+                'Commune\Components\Demo\Contexts' => __DIR__ . '/Contexts',
+                'Commune\Components\Demo\Recall' => __DIR__ . '/Recall',
             ]
         );
     }

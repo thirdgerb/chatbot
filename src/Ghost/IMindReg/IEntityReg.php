@@ -21,6 +21,11 @@ use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
  */
 class IEntityReg extends AbsDefRegistry implements EntityReg
 {
+    protected function normalizeDefName(string $name): string
+    {
+        return $name;
+    }
+
     protected function getDefType(): string
     {
         return EntityDef::class;
