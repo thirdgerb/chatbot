@@ -1,4 +1,6 @@
-- name : attitudes.affirm
+- name : attitude.affirm
+  emotions:
+    - emotion.positive
   examples :
     - yes
     - 是的
@@ -10,7 +12,9 @@
     - 对
     - 嗯
     - 嗯呢
-- name : attitudes.agree
+- name : attitude.agree
+  emotions:
+    - emotion.positive
   examples :
     - 好的
     - ok
@@ -20,7 +24,9 @@
     - 好啊
     - 同意
     - 允许
-- name : attitudes.deny
+- name : attitude.deny
+  emotions :
+    - emotion.negative
   examples :
     - no
     - nope
@@ -33,7 +39,9 @@
     - 不对
     - 错了
     - 并非如此
-- name : attitudes.dont
+- name : attitude.dont
+  emotions:
+    - emotion.negative
   examples :
     - 不要
     - 不好
@@ -45,7 +53,7 @@
     - 别这么做
     - 算逑
     - 我不用
-- name : attitudes.complement
+- name : attitude.complement
   examples :
     - 挺好的
     - 真棒
@@ -58,7 +66,7 @@
     - 厉害呀
     - 真是好
     - very good
-- name : attitudes.diss
+- name : attitude.diss
   examples :
     - 太蠢了
     - 你真是傻
@@ -71,13 +79,13 @@
     - 没见过这么蠢的
     - 简直是个智障
     - 好弱智啊
-- name : attitudes.greet
+- name : attitude.greet
   examples :
     - 你好
     - 您好呀
     - hello
     - 哈喽
-- name : attitudes.thanks
+- name : attitude.thanks
   examples :
     - 谢谢啦
     - 非常感谢

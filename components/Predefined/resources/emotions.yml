@@ -1,0 +1,10 @@
+- name: emotion.positive
+  title: 积极
+  desc: 表示积极情绪
+  opposites:
+    - emotion.negative
+- name: emotion.negative
+  title: 消极
+  desc: 表示消极情绪
+  opposites:
+    - emotion.positive

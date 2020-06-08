@@ -77,6 +77,11 @@ interface UclInterface extends ArrayAndJsonAble
     )  : Ucl;
 
 
+    /**
+     * @param Ucl|string $ucl
+     * @return string
+     */
+    public static function parseIntentName($ucl) : ? string;
 
     /*------ property ------*/
 

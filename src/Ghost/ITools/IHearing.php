@@ -142,9 +142,14 @@ class IHearing extends IMatcher implements Hearing
     }
 
 
-    public function end() : Operator
+    public function end($action = null) : Operator
     {
         $this->then();
+
+        if (isset($action)) {
+            $this->fallback[] = $action;
+        }
+
         foreach ($this->fallback as $fallback) {
             if (isset($this->nextOperator)) {
                 break;
@@ -152,7 +157,7 @@ class IHearing extends IMatcher implements Hearing
 
             $next = $this->call($fallback);
 
-            if ($next instanceof Dialog) {
+            if ($next instanceof Operator) {
                 $this->nextOperator = $next;
                 break;
             }

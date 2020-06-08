@@ -62,9 +62,9 @@ class FakeHearing implements Hearing
     }
 
 
-    public function end(): Operator
+    public function end($action = null): Operator
     {
-        return $this->hearing->end();
+        return $this->hearing->end($action);
     }
 
 

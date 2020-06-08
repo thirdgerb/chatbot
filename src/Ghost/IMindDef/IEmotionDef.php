@@ -12,12 +12,9 @@
 namespace Commune\Ghost\IMindDef;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
 use Commune\Blueprint\Ghost\MindDef\EmotionDef;
-use Commune\Blueprint\Ghost\Mindset;
-use Commune\Container\ContainerContract;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocals\Comprehension;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
 
@@ -69,31 +66,102 @@ class IEmotionDef implements EmotionDef
         array $injectionContext = []
     ): bool
     {
-        $intents = $this->meta->emotionalIntents;
-        // 检查是否有相关的 intents 命中了.
-        if (!empty($intents)) {
-            $intention = $cloner->input->comprehension->intention;
-            $matched = $intention->matchAnyIntent($intents);
-            if (isset($matched)) {
-                return true;
+        $comprehension = $cloner->input->comprehension;
+        $name = $this->getName();
+
+        $feel = $this->hasEmotionComprehended($comprehension, $name)
+            ?? $this->hasOppositeEmotions($comprehension, $name)
+            ?? $this->hasMatchedIntentEmotion($comprehension, $cloner, $name)
+            ?? $this->hasDefinedEmotionIntents($comprehension, $name)
+            ?? $this->runEmotionMatchers($comprehension, $name)
+            ?? false;
+        return $feel;
+    }
+
+    protected function hasOppositeEmotions(Comprehension $comprehension, string $name) : ? bool
+    {
+        $opposites = $this->meta->opposites;
+        if (empty($opposites)) {
+            return null;
+        }
+
+        $emotionModule = $comprehension->emotion;
+        foreach ($opposites as $opposite) {
+            $has = $emotionModule->isEmotion($opposite);
+            if (isset($has)) {
+                return $this->setEmotion($comprehension, $name, !$has);
             }
         }
 
+        return null;
+    }
+
+    protected function runEmotionMatchers(Comprehension $comprehension, string $name) : ? bool
+    {
         $matchers = $this->meta->matchers;
         if (empty($matchers)) {
-            return false;
+            return $this->setEmotion($comprehension, $name, false);
         }
+        return null;
+    }
 
-        foreach ($matchers as $matcherName) {
-            // 校验所有的 matcher.
-            $matched = $cloner->container->call($matcherName, $injectionContext);
-            if ($matched === true) {
-                return true;
+    protected function hasDefinedEmotionIntents(Comprehension $comprehension, string $name) : ? bool
+    {
+        $intents = $this->meta->emotionalIntents;
+        $intention = $comprehension->intention;
+        // 检查是否有相关的 intents 命中了.
+        if (!empty($intents)) {
+            $matched = $intention->matchAnyIntent($intents);
+            if (isset($matched)) {
+                return $this->setEmotion($comprehension, $name, true);
             }
         }
-
-        return false;
+        return null;
     }
+
+    protected function hasEmotionComprehended(Comprehension $comprehension, string $name) : ? bool
+    {
+        return $comprehension->emotion->isEmotion($name);
+    }
+
+    protected function hasMatchedIntentEmotion(
+        Comprehension $comprehension,
+        Cloner $cloner,
+        string $name
+    ) : ? bool
+    {
+        $matched = $comprehension->intention->getMatchedIntent();
+        if (!isset($matched)) {
+            return null;
+        }
+
+        $reg = $cloner->mind->intentReg();
+        if (!$reg->hasDef($matched)) {
+            return null;
+        }
+
+        $def = $reg->getDef($matched);
+        $extends = $def->getEmotions();
+
+        return in_array($name, $extends)
+            ? $this->setEmotion($comprehension, $name, true)
+            : null;
+    }
+
+    protected function setEmotion(Comprehension $comprehension, string $name, bool $bool) : bool
+    {
+        $emotionModule = $comprehension->emotion;
+        $emotionModule->setEmotion($name, $bool);
+        $opposites = $this->meta->opposites;
+
+        if (!empty($opposites)) {
+            foreach ($opposites as $emotionName) {
+                $emotionModule->setEmotion($emotionName, !$bool);
+            }
+        }
+        return $bool;
+    }
+
 
     public function toMeta(): Meta
     {

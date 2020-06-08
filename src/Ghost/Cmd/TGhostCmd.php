@@ -71,12 +71,12 @@ trait TGhostCmd
             $this->cloner->output($input->output($message));
         }
 
-        if ($this->stillToNextPipe) {
+        if (!$this->stillToNextPipe) {
             $this->cloner->noState();
-            return null;
+            return $request->success($this->cloner);
 
         } else {
-            return $request->success($this->cloner);
+            return null;
         }
     }
 

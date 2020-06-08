@@ -21,12 +21,12 @@ class IConfirmation extends IAnswerMsg implements Confirmation
 {
     public function isPositive(): bool
     {
-        return $this->choice === '1';
+        return strval($this->choice) === '1';
     }
 
     public function isNegative(): bool
     {
-        return $this->choice === '0';
+        return strval($this->choice) === '0';
     }
 
 

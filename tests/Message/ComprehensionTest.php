@@ -49,7 +49,7 @@ class ComprehensionTest extends TestCase
         $emotions = ['positive', 'agreed'];
         $com->emotion->addEmotions(...$emotions);
         $this->assertEquals($emotions, $com->emotion->getEmotions());
-        $this->assertTrue($com->emotion->hasEmotion('agreed'));
+        $this->assertTrue($com->emotion->isEmotion('agreed'));
 
         // cmd
         $this->assertFalse($com->command->hasCmdStr());

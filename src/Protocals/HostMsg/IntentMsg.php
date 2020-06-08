@@ -47,13 +47,13 @@ interface IntentMsg extends HostMsg
     const GUEST_NAVIGATE_REPEAT = 'navigation.repeat';
     const GUEST_NAVIGATE_RESTART = 'navigation.restart';
 
-    const GUEST_ATTITUDES_AFFIRM = 'attitudes.affirm';
-    const GUEST_ATTITUDES_AGREE = 'attitudes.agree';
-    const GUEST_ATTITUDES_COMPLEMENT = 'attitudes.complement';
-    const GUEST_ATTITUDES_DENY = 'attitudes.deny';
-    const GUEST_ATTITUDES_DONT = 'attitudes.dont';
-    const GUEST_ATTITUDES_GREET = 'attitudes.greet';
-    const GUEST_ATTITUDES_THANKS = 'attitudes.thanks';
+    const GUEST_ATTITUDES_AFFIRM = 'attitude.affirm';
+    const GUEST_ATTITUDES_AGREE = 'attitude.agree';
+    const GUEST_ATTITUDES_COMPLEMENT = 'attitude.complement';
+    const GUEST_ATTITUDES_DENY = 'attitude.deny';
+    const GUEST_ATTITUDES_DONT = 'attitude.dont';
+    const GUEST_ATTITUDES_GREET = 'attitude.greet';
+    const GUEST_ATTITUDES_THANKS = 'attitude.thanks';
 
     const GUEST_DIALOG_ORDINAL = 'dialogue.ordinal';
     const GUEST_DIALOG_RANDOM = 'dialogue.random';

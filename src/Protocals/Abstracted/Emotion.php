@@ -27,7 +27,7 @@ interface Emotion
      * @param string $emotionName
      * @return null|bool
      */
-    public function hasEmotion(string $emotionName) : ? bool;
+    public function isEmotion(string $emotionName) : ? bool;
 
     /**
      * @return string[]

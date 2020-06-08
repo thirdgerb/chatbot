@@ -154,7 +154,7 @@ class IComprehension extends AbsMessage implements
 
     public function setEmotion(string $emotion, bool $bool): void
     {
-        $this->_data['emotions'][$emotion] = true;
+        $this->_data['emotions'][$emotion] = $bool;
     }
 
     public function getEmotions(): array
@@ -172,7 +172,7 @@ class IComprehension extends AbsMessage implements
     }
 
 
-    public function hasEmotion(string $emotionName): ? bool
+    public function isEmotion(string $emotionName): ? bool
     {
         return $this->_data['emotions'][$emotionName] ?? null;
     }

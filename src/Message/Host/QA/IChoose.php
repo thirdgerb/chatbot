@@ -20,6 +20,8 @@ use Commune\Protocals\HostMsg\Convo\VerbalMsg;
  */
 class IChoose extends IQuestionMsg implements Choose
 {
+    protected $acceptAnyTextAsValue = false;
+
     public function __construct(string $query, string $default = null, array $suggestions = [], array $routes = [])
     {
         parent::__construct($query, $default, $suggestions, $routes);

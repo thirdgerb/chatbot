@@ -18,6 +18,7 @@ use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\IOperate\AbsOperator;
 use Commune\Message\Host\SystemInt\DialogConfuseInt;
+use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
 
 /**
@@ -46,13 +47,40 @@ class OConfuse extends AbsOperator
     {
         $process = $this->dialog->process;
 
-        $next = $this->ifEventMsg()
+            // nlu 是否传入了回答
+        $next = $this->hasMiddlewareReplies()
+            // 是否是事件类消息. 事件类消息不触发.
+            ?? $this->ifEventMsg()
+            // 是否有可以 wake 的路由
             ?? $this->tryToWakeSleeping($process)
+            // 是否有可以 restore 的路由
             ?? $this->tryToRestoreDying($process)
+            // 是否有默认的理解程序
             ?? $this->tryDefaultConfuseAction()
+            // 默认的回复.
             ?? $this->reallyConfuse();
 
         return $next;
+    }
+
+    protected function hasMiddlewareReplies() : ? Operator
+    {
+        $replies = $this
+            ->cloner
+            ->input
+            ->comprehension
+            ->replies
+            ->getReplies();
+
+        if (!empty($replies)) {
+            $deliver = $this->dialog->send();
+            foreach ($replies as $reply) {
+                $deliver->message($reply);
+            }
+            return $deliver->over()->await();
+        }
+
+        return null;
     }
 
     protected function tryDefaultConfuseAction() : ? Operator

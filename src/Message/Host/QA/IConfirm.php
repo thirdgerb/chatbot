@@ -28,6 +28,8 @@ class IConfirm extends IQuestionMsg implements Confirm
     const POSITIVE_INDEX = 1;
     const NEGATIVE_INDEX = 0;
 
+    protected $acceptAnyTextAsValue = false;
+
     public function __construct(
         string $query,
         bool $default = null,
@@ -82,14 +84,13 @@ class IConfirm extends IQuestionMsg implements Confirm
 
     protected function parseAnswerByMatcher(Cloner $cloner): ? AnswerMsg
     {
-        $matcher = $cloner->matcher->refresh();
+        $matcher = $cloner->matcher;
 
-        if ($matcher->isPositive()->truly()) {
-            $matcher->refresh();
+        if ($matcher->refresh()->isPositive()->truly()) {
             return $this->newAnswer($this->_data['suggestions'][self::POSITIVE_INDEX], self::POSITIVE_INDEX);
+        }
 
-        } elseif($matcher->isNegative()->truly()) {
-            $matcher->refresh();
+        if($matcher->refresh()->isNegative()->truly()) {
             return $this->newAnswer($this->_data['suggestions'][self::NEGATIVE_INDEX], self::NEGATIVE_INDEX);
         }
 
@@ -104,7 +105,6 @@ class IConfirm extends IQuestionMsg implements Confirm
     protected function setAnswerToComprehension(AnswerMsg $answer, Comprehension $comprehension): AnswerMsg
     {
         $positive = $answer->isPositive();
-        $answer = parent::setAnswerToComprehension($answer, $comprehension);
 
         $comprehension->emotion->setEmotion(EmotionDef::EMO_POSITIVE, $positive);
         $comprehension->emotion->setEmotion(EmotionDef::EMO_NEGATIVE, !$positive);
@@ -119,6 +119,7 @@ class IConfirm extends IQuestionMsg implements Confirm
             'choice' => intval($choice) ? self::POSITIVE_INDEX : self::NEGATIVE_INDEX
         ]);
     }
+
 
     public function setPositive(string $suggestion, Ucl $ucl = null) : Confirm
     {

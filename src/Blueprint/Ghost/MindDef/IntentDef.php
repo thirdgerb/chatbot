@@ -92,4 +92,10 @@ interface IntentDef extends Def
      */
     public function getRegex() : array;
 
+    /**
+     * 意图所代表的情绪
+     * @return string[]
+     */
+    public function getEmotions() : array;
+
 }

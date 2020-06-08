@@ -428,25 +428,12 @@ class IMatcher implements Matcher
     protected function doFeels(string $emotionName) : bool
     {
         $reg = $this->cloner->mind->emotionReg();
-
         if (!$reg->hasDef($emotionName)) {
             return false;
         }
 
-        $emotion = $this
-            ->input
-            ->comprehension
-            ->emotion;
-
-        $has = $emotion->hasEmotion($emotionName);
-
-        if (!isset($has)) {
-            $def = $reg->getDef($emotionName);
-            $has = $def->feels($this->cloner, $this->injectionContext);
-            $emotion->setEmotion($emotionName, $has);
-        }
-
-        return $has;
+        $def = $reg->getDef($emotionName);
+        return $def->feels($this->cloner, $this->injectionContext);
     }
 
     public function isPositive(): Matcher

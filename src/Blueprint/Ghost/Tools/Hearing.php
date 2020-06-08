@@ -59,5 +59,9 @@ interface Hearing extends Matcher
      */
     public function fallback($action) : Hearing;
 
-    public function end() : Operator;
+    /**
+     * @param callable|string|null $action
+     * @return Operator
+     */
+    public function end($action = null) : Operator;
 }

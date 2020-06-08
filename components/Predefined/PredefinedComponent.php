@@ -12,6 +12,7 @@
 namespace Commune\Components\Predefined;
 
 use Commune\Blueprint\Framework\App;
+use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
 use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Ghost\Component\GhostComponent;
@@ -34,6 +35,16 @@ class PredefinedComponent extends GhostComponent
 
     public function bootstrap(App $app): void
     {
+        // 加载 emotion 配置.
+        $this->loadResourceOption(
+            $app,
+            EmotionMeta::class,
+            EmotionMeta::class,
+            __DIR__ . '/resources/emotions.yml',
+            false,
+            FileStorageOption::OPTION_YML
+        );
+
         // 加载 entity 配置.
         $this->loadResourceOption(
             $app,

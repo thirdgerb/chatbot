@@ -26,6 +26,7 @@ use Commune\Support\Option\Wrapper;
  * @property-read string $name                  情感的id.
  * @property-read string $title                 情感的标题
  * @property-read string $desc                  情感的简介
+ * @property-read string[] $opposites           对立的情绪
  * @property-read string[] $emotionalIntents    符合该情感的各种意图名称.
  * @property-read string[] $matchers            自定义的匹配逻辑.
  */
@@ -39,6 +40,7 @@ class EmotionMeta extends AbsOption implements DefMeta
             'name' => '',
             'title' => '',
             'desc' => '',
+            'opposites' => [],
             'emotionalIntents' => [],
             'matchers' => [],
         ];

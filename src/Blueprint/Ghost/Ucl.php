@@ -142,6 +142,27 @@ class Ucl implements UclInterface
         return $ucl->toInstance($cloner);
     }
 
+    public static function parseIntentName($ucl): ? string
+    {
+        if ($ucl instanceof Ucl) {
+            return $ucl->getStageFullname();
+        }
+
+        $parts = explode(self::QUERY_SEPARATOR, $ucl, 2);
+        $first = $parts[0] ?? '';
+
+        // 生成合法的 intentName
+        $intentName = str_replace(
+            self::STAGE_SEPARATOR,
+            Context::CONTEXT_STAGE_DELIMITER,
+            $first
+        );
+
+        return ContextUtils::isValidIntentName($intentName)
+            ? $intentName
+            : null;
+    }
+
 
     public function getContextId() : string
     {

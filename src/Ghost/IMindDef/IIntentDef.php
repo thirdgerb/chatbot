@@ -40,6 +40,7 @@ use Commune\Support\Utils\StringUtils;
  *
  * ## 意图内容.
  * @property-read string[] $examples
+ * @property-read string[] $emotions
  * @property-read string[] $entityNames
  *
  * ## 匹配规则
@@ -84,6 +85,9 @@ class IIntentDef extends AbsOption implements IntentDef
             // 意图的简介. 可以作为选项的内容.
             'desc' => '',
 
+            // 意图所代表的情绪
+            'emotions' => [],
+
             // 意图的别名. 允许别名中的意图作为精确匹配规则.
             'alias' => null,
 
@@ -116,14 +120,6 @@ class IIntentDef extends AbsOption implements IntentDef
         ];
     }
 
-    public static function toMetaConfig(array $data) : array
-    {
-        unset($data['name']);
-        unset($data['title']);
-        unset($data['desc']);
-        unset($data['examples']);
-        return $data;
-    }
 
     public static function relations(): array
     {
@@ -138,6 +134,11 @@ class IIntentDef extends AbsOption implements IntentDef
             $this->getEntityNames(),
             true
         );
+    }
+
+    public function getEmotions(): array
+    {
+        return $this->emotions;
     }
 
 
@@ -377,6 +378,8 @@ class IIntentDef extends AbsOption implements IntentDef
         $data['title'] = $config['title'];
         $data['desc'] = $config['desc'];
         $data['examples'] = $config['examples'];
+        $data['entityNames'] = $config['entityNames'];
+        $data['emotions'] = $config['emotions'];
         $data['wrapper'] = static::class;
         $data['config'] = static::toMetaConfig($config);
 
@@ -399,8 +402,24 @@ class IIntentDef extends AbsOption implements IntentDef
         $config['title'] = $meta->title;
         $config['desc'] = $meta->desc;
         $config['examples'] = $meta->examples;
+        $config['emotions'] = $meta->emotions;
+        $config['entityNames'] = $meta->entityNames;
+
 
         return new static($config);
     }
 
+
+
+    public static function toMetaConfig(array $data) : array
+    {
+        unset($data['name']);
+        unset($data['title']);
+        unset($data['desc']);
+        unset($data['examples']);
+        unset($data['entityNames']);
+        unset($data['emotions']);
+
+        return $data;
+    }
 }

@@ -34,16 +34,18 @@ use Commune\Protocals\HostMsg\Intents\OrdinalInt;
  */
 class IQuestionMsg extends AbsMessage implements QuestionMsg
 {
+    protected $acceptAnyTextAsValue = true;
+
     /**
      * IQuestionMsg constructor.
      * @param string $query
-     * @param string|null $default
+     * @param string|int|null $default
      * @param string[] $suggestions
      * @param Ucl[]|string[] $routes
      */
     public function __construct(
         string $query,
-        string $default = null,
+        $default = null,
         array $suggestions = [],
         array $routes = []
     )
@@ -98,12 +100,10 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             return null;
         }
 
-        $a = microtime(true);
-
         $answer = $this->isDefault($message)
-            ?? $this->parseAnswerByMatcher($cloner)
-            ?? $this->isInSuggestions($message)
             ?? $this->acceptAnyAnswer($message)
+            ?? $this->isInSuggestions($message)
+            ?? $this->parseAnswerByMatcher($cloner)
             ?? null;
 
         return isset($answer)
@@ -128,7 +128,10 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
     protected function acceptAnyAnswer(VerbalMsg $message) : ? AnswerMsg
     {
-        return $this->newAnswer($message->getText());
+        if ($this->acceptAnyTextAsValue) {
+            return $this->newAnswer($message->getText());
+        }
+        return null;
     }
 
     protected function isInSuggestions(VerbalMsg $message) : ? AnswerMsg
@@ -164,7 +167,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         }
 
         if (count($matchedSuggestions) === 1) {
-            $index = current($matchedSuggestions);
+            $index = $matchedSuggestions[0];
             return $this->newAnswer($this->suggestions[$index], $index);
         }
 
@@ -174,8 +177,8 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
     protected function isDefault(VerbalMsg $message) : ? AnswerMsg
     {
-        if (isset($this->_data['default']) && $message->isEmpty()) {
-            $default = $this->default;
+        $default = $this->default;
+        if (isset($default) && $message->isEmpty()) {
             return $this->newAnswer(
                 $this->_data['suggestions'][$default] ?? '',
                 $default

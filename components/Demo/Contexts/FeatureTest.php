@@ -138,7 +138,7 @@ class FeatureTest extends ACodeContext
                     [
                         $this->getStage('test_match'),
                         $this->getStage('test_memory'),
-                        'confirmation && emotion' => 'test_confirmation',
+                        $this->getStage('test_confirmation'),
                         'askContinue 机制' => 'test_ask_continue',
                         'gc 机制' => 'test_gc',
                         'stage exiting 事件' => 'test_exiting',
@@ -319,5 +319,51 @@ EOF
         );
     }
 
+
+    /**
+     * 情绪功能的测试. 目前测试 intent => emotion => confirmation
+     * @param Stage $stage
+     * @return Stage
+     *
+     *
+     * @desc confirmation && emotion
+     */
+    public function __on_test_confirmation(Stage $stage) : Stage
+    {
+
+        return $stage
+            ->onActivate(function(Dialog $dialog) {
+
+                return $dialog
+                    ->await()
+                    ->askConfirm(
+                        'try to confirm this. test positive emotion. '
+                    );
+
+            })
+            ->onReceive(function(Dialog $dialog) {
+
+                return $dialog
+                    ->hearing()
+                    ->isPositive()
+                    ->then(function(Dialog $dialog){
+                        $dialog->send()->info('is positive emotion');
+                        return $dialog->next('start');
+                    })
+                    ->isNegative()
+                    ->then(function(Dialog $dialog){
+                        $dialog->send()->info('is negative emotion');
+                        return $dialog->next('start');
+                    })
+                    ->end(function(Dialog $dialog){
+                        return $dialog->send()
+                            ->notice('nether yes nor no')
+                            ->info($dialog->cloner->input->comprehension->toPrettyJson())
+                            ->over()
+                            ->next('start');
+                    });
+                }
+            );
+    }
 
 }
