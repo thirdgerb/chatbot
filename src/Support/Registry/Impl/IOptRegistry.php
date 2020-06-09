@@ -97,6 +97,16 @@ class IOptRegistry implements OptRegistry
         }
     }
 
+    public function count(): int
+    {
+        return count($this->categoryOptions);
+    }
+
+    public function getCategoryOptions(): array
+    {
+        return $this->categoryOptions;
+    }
+
 
     public function __destruct()
     {

@@ -188,7 +188,7 @@ class IRuntime implements Runtime
 
     /*------ contextMsg ------*/
 
-    public function toContextMsg(): ? ContextMsg
+    public function toChangedContextMsg(): ? ContextMsg
     {
         if (!isset($this->process)) {
             return null;

@@ -50,6 +50,7 @@ class ICodeContextDef extends IContextDef
             'contextWrapper' => $contextClass,
 
             'priority' => $config['priority'] ?? $option->priority,
+            'auth' => $config['auth'] ?? $option->auth,
             'asIntent' => $config['asIntent'] ?? $contextAnnotation->asIntentMeta($contextName),
 
             'queryNames' => $config['queryNames'] ?? $option->queryNames,

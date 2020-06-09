@@ -24,7 +24,7 @@ use Commune\Support\Struct\Struct;
 class CommandListInt extends IIntentMsg
 {
     const DEFAULT_LEVEL = HostMsg::INFO;
-    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_COMMAND_LIST;
+    const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_COMMAND_LIST;
 
     public function __construct(string $cmdList)
     {

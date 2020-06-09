@@ -14,7 +14,7 @@ namespace Commune\Components\Predefined\Intent\Navigation;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\Context\AIntentContext;
-use Commune\Protocals\HostMsg\IntentMsg;
+use Commune\Protocals\HostMsg\DefaultIntents;
 
 
 /**
@@ -35,7 +35,7 @@ class RepeatInt extends AIntentContext
 
     public static function __name(): string
     {
-        return IntentMsg::GUEST_NAVIGATE_REPEAT;
+        return DefaultIntents::GUEST_NAVIGATE_REPEAT;
     }
 
     public static function __redirect(Dialog $prev): Operator

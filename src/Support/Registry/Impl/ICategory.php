@@ -77,6 +77,11 @@ class ICategory implements Category
         $this->storageOption = $categoryOption->storage->toWrapper();
     }
 
+    public function getConfig() : CategoryOption
+    {
+        return $this->categoryOption;
+    }
+
     public function has(string $optionId): bool
     {
         return $this->getStorage()->has(

@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\Dialog\Resume;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\IOperate\AbsOperator;
+use Commune\Message\Host\SystemInt\DialogForbidInt;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -26,6 +27,25 @@ abstract class AbsRedirect extends AbsOperator
 
     protected function redirect(Ucl $target, callable $creator, array $insertPath = []) : Operator
     {
+        $cloner = $this->dialog->cloner;
+
+        // 权限校验.
+        $auth = $target->findContextDef($cloner)->auth();
+        if (!empty($auth)) {
+            foreach ($auth as $ability) {
+                if (!$cloner->auth->allow($ability)) {
+                    return $this
+                        ->dialog
+                        ->send()
+                        ->message(new DialogForbidInt(
+                            $target->contextName,
+                            $ability
+                        ))
+                        ->over()->rewind();
+                }
+            }
+        }
+
         // 检查重定向是否被拦截.
         $intercepted = $target
             ->findStageDef($this->dialog->cloner)
@@ -51,8 +71,9 @@ abstract class AbsRedirect extends AbsOperator
 
     protected function activate(Activate $iActivate, array $insertPath) : Operator
     {
+        $cloner = $iActivate->cloner;
         $target = $iActivate->ucl;
-        $def = $target->findStageDef($this->dialog->cloner);
+        $def = $target->findStageDef($cloner);
 
         if (empty($insertPath)) {
             $iActivate->task->insertPaths($insertPath);
@@ -60,11 +81,9 @@ abstract class AbsRedirect extends AbsOperator
 
         // 正式运行.
         $iActivate->process->activate($target);
-
-        // todo ... exiting && auth
-
         return $def->onActivate($iActivate);
     }
+
 
     protected function resume(Resume $resume, Ucl $target) : Operator
     {

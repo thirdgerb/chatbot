@@ -1,55 +1,55 @@
-- value : juice_cup
-  desc : 果汁杯装
-  aliases :
+- name : juice_cup
+  title : 果汁杯装
+  synonyms :
     - 杯
-- value : juice_bowl
-  desc : 果汁碗装
-  aliases :
+- name : juice_bowl
+  title : 果汁碗装
+  synonyms :
     - 碗
-- value : juice_ice
-  desc : 果汁加冰
-  aliases :
+- name : juice_ice
+  title : 果汁加冰
+  synonyms :
     - 加冰
     - 要加
     - 加
-- value : juice_no_ice
-  desc : 果汁不加冰
-  aliases :
+- name : juice_no_ice
+  title : 果汁不加冰
+  synonyms :
     - 不加冰
     - 别加冰
     - 常温
-- value : 前
-  aliases :
+- name : 前
+  synonyms :
     - 前面
     - 前边
     - 前头
-- value : 后
-  aliases :
+- name : 后
+  synonyms :
     - 后面
     - 后边
     - 后头
-- value : 左
-  aliases :
+- name : 左
+  synonyms :
     - 左面
     - 左边
     - 左头
-- value : 右
-  aliases :
+- name : 右
+  synonyms :
     - 右面
     - 右边
     - 右头
-- value : today
-  aliases :
+- name : today
+  synonyms :
     - 今天
-- value : tomorrow
-  aliases :
+- name : tomorrow
+  synonyms :
     - 明天
-- value : yestoday
-  aliases :
+- name : yestoday
+  synonyms :
     - 昨天
-- value : "+2 day"
-  aliases :
+- name : "+2 day"
+  synonyms :
     - 后天
-- value : "+3 day"
-  aliases :
+- name : "+3 day"
+  synonyms :
     - 大后天

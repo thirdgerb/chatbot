@@ -28,7 +28,7 @@ use Commune\Support\Struct\Struct;
 class CommandDescInt extends IIntentMsg
 {
     const DEFAULT_LEVEL = HostMsg::INFO;
-    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_COMMAND_DESC;
+    const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_COMMAND_DESC;
 
     public function __construct(
         string $command,

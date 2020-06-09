@@ -9,7 +9,6 @@ use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Blueprint\Framework\Request\AppRequest;
 use Commune\Blueprint\Framework\Request\AppResponse;
-use Commune\Blueprint\Framework\Session;
 use Commune\Message\Host\SystemInt\CommandDescInt;
 use Commune\Message\Host\SystemInt\CommandListInt;
 use Commune\Message\Host\SystemInt\CommandMissInt;

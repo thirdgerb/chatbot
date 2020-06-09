@@ -26,7 +26,7 @@ use Commune\Blueprint\Framework\Request\AppResponse;
 class SessionFailInt extends IIntentMsg
 {
     const DEFAULT_LEVEL = HostMsg::ERROR;
-    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_SESSION_FAIL;
+    const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_SESSION_FAIL;
 
     public function __construct(string $errmsg = null)
     {

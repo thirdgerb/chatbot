@@ -69,7 +69,7 @@ interface Runtime
      * @param Cloner $cloner
      * @return ContextMsg|null
      */
-    public function toContextMsg() : ? ContextMsg;
+    public function toChangedContextMsg() : ? ContextMsg;
 
     /*------ memory -------*/
 

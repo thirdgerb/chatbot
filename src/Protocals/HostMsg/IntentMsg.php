@@ -21,51 +21,7 @@ use Commune\Protocals\HostMsg;
  */
 interface IntentMsg extends HostMsg
 {
-
-    /*----- system intents -----*/
-
-    const SYSTEM_SESSION_BUSY = 'system.session.busy';
-    const SYSTEM_SESSION_QUIT = 'system.session.quit';
-    const SYSTEM_SESSION_FAIL = 'system.session.fail';
-    const SYSTEM_REQUEST_FAILURE = 'system.request.fail';
-    
-    const SYSTEM_COMMAND_ERROR = 'system.command.error';
-    const SYSTEM_COMMAND_LIST = 'system.command.list';
-    const SYSTEM_COMMAND_MISS = 'system.command.miss';
-    const SYSTEM_COMMAND_DESC = 'system.command.desc';
-
-    const SYSTEM_DIALOG_YIELD = 'system.dialog.yield';
-    const SYSTEM_DIALOG_CONFUSE = 'system.dialog.confuse';
-    const SYSTEM_DIALOG_ASK = 'system.dialog.ask';
-
-    /*----- guest intents -----*/
-
-    const GUEST_NAVIGATE_CANCEL = 'navigation.cancel';
-    const GUEST_NAVIGATE_QUIT = 'navigation.quit';
-    const GUEST_NAVIGATE_HOME = 'navigation.home';
-    const GUEST_NAVIGATE_BACK = 'navigation.backward';
-    const GUEST_NAVIGATE_REPEAT = 'navigation.repeat';
-    const GUEST_NAVIGATE_RESTART = 'navigation.restart';
-
-    const GUEST_ATTITUDES_AFFIRM = 'attitude.affirm';
-    const GUEST_ATTITUDES_AGREE = 'attitude.agree';
-    const GUEST_ATTITUDES_COMPLEMENT = 'attitude.complement';
-    const GUEST_ATTITUDES_DENY = 'attitude.deny';
-    const GUEST_ATTITUDES_DONT = 'attitude.dont';
-    const GUEST_ATTITUDES_GREET = 'attitude.greet';
-    const GUEST_ATTITUDES_THANKS = 'attitude.thanks';
-
-    const GUEST_DIALOG_ORDINAL = 'dialogue.ordinal';
-    const GUEST_DIALOG_RANDOM = 'dialogue.random';
-    const GUEST_DIALOG_HELP = 'dialogue.help';
-
-    const GUEST_LOOP_BREAK = 'loop.break';
-    const GUEST_LOOP_NEXT = 'loop.next';
-    const GUEST_LOOP_PREVIOUS = 'loop.previous';
-    const GUEST_LOOP_REWIND = 'loop.rewind';
-
-
-    /*------ struct 特殊字段名常量 ------*/
+   /*------ struct 特殊字段名常量 ------*/
 
     const INTENT_NAME_FIELD = 'intentName';
     const LEVEL_FIELD = 'level';

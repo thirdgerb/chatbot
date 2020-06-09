@@ -27,6 +27,9 @@ abstract class AbsOption extends AStruct implements Option
      */
     const IDENTITY = '';
 
+    const TITLE_FIELD = 'title';
+    const DESC_FIELD = 'desc';
+
     public static function getIdentityName() : string
     {
         return static::IDENTITY;
@@ -96,12 +99,12 @@ abstract class AbsOption extends AStruct implements Option
 
     public function getTitle(): string
     {
-        return '';
+        return $this->_data[static::TITLE_FIELD] ?? '';
     }
 
     public function getDescription(): string
     {
-        return '';
+        return $this->_data[static::DESC_FIELD] ?? '';
     }
 
     public function __clone()

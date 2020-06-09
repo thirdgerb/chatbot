@@ -22,7 +22,7 @@ use Commune\Support\Struct\Struct;
 class SessionBusyInt extends IIntentMsg
 {
     const DEFAULT_LEVEL = HostMsg::WARNING;
-    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_SESSION_BUSY;
+    const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_SESSION_BUSY;
 
 
     public function __construct()

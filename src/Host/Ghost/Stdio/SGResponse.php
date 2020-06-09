@@ -14,6 +14,7 @@ namespace Commune\Host\Ghost\Stdio;
 use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Contracts\Log\ConsoleLogger;
+use Commune\Protocals\HostMsg\DefaultIntents;
 use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Protocals\IntercomMsg;
 
@@ -72,7 +73,7 @@ class SGResponse implements GhostResponse
             $level = $hostMsg->getLevel();
             $this->console->log($level, $hostMsg->getText() . "\n");
 
-            if ($hostMsg->getText() === IntentMsg::SYSTEM_SESSION_QUIT ) {
+            if ($hostMsg->getRenderId() === DefaultIntents::SYSTEM_SESSION_QUIT ) {
                 $quit = true;
             }
         }

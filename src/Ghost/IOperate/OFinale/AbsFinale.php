@@ -67,7 +67,7 @@ abstract class AbsFinale extends AbsOperator implements Finale
         }
 
         // 尝试同步状态变更.
-        $contextMsg = $this->cloner->runtime->toContextMsg();
+        $contextMsg = $this->cloner->runtime->toChangedContextMsg();
 
         if (isset($contextMsg)) {
             $this->cloner->output($input->output($contextMsg));

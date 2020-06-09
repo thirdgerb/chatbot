@@ -21,7 +21,6 @@ use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Support\Struct\Struct;
 use Commune\Support\Utils\StringUtils;
-use Commune\Protocals\HostMsg\Intents\OrdinalInt;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -191,7 +190,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
     protected function parseAnswerByMatcher(Cloner $cloner) : ? AnswerMsg
     {
         $matcher = $cloner->matcher->refresh();
-        $ordinalInt = HostMsg\IntentMsg::GUEST_DIALOG_ORDINAL;
+        $ordinalInt = HostMsg\DefaultIntents::GUEST_DIALOG_ORDINAL;
 
         if ($matcher->isIntent($ordinalInt)->truly() === true) {
             $entities = $cloner->input
@@ -199,7 +198,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
                 ->intention
                 ->getIntentEntities($ordinalInt);
 
-            $index = strval($entities[OrdinalInt::GUEST_DIALOG_ORDINAL][0] ?? 0);
+            $index = strval($entities[HostMsg\DefaultIntents::GUEST_DIALOG_ORDINAL][0] ?? 0);
 
             $suggestions = $this->suggestions;
             if (isset($suggestions[$index])) {

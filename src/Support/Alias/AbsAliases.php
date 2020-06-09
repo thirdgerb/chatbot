@@ -17,20 +17,24 @@ namespace Commune\Support\Alias;
  */
 abstract class AbsAliases
 {
-    /**
-     * @var string[][]
-     */
-    protected static $originToAlias = [];
+    const FUNC_GET_ORIGIN = 'getOriginFromAlias';
+
+    const FUNC_GET_ALIAS = 'getAliasOfOrigin';
 
     /**
      * @var string[][]
      */
-    protected static $aliasToOrigin = [];
+    private static $originToAlias = [];
+
+    /**
+     * @var string[][]
+     */
+    private static $aliasToOrigin = [];
 
     /**
      * @var bool[]
      */
-    protected static $loaded = [];
+    private static $loaded = [];
 
     abstract public static function preload() : void;
 
@@ -41,29 +45,29 @@ abstract class AbsAliases
     public static function setAlias(string $origin, string $alias) : void
     {
         $class = static::class;
-        static::$originToAlias[$class][$origin] = $alias;
-        static::$aliasToOrigin[$class][$alias] = $origin;
+        self::$originToAlias[$class][$origin] = $alias;
+        self::$aliasToOrigin[$class][$alias] = $origin;
     }
 
     public static function boot() : void
     {
         $class = static::class;
-        if (empty(static::$loaded[$class])) {
+        if (empty(self::$loaded[$class])) {
             static::preload();
-            static::$loaded[$class] = true;
+            self::$loaded[$class] = true;
         }
     }
 
-    public static function getOriginFromAlias(string $alias) : string
+    final public static function getOriginFromAlias(string $alias) : string
     {
-        static::boot();
-        return static::$aliasToOrigin[static::class][$alias] ?? $alias;
+        self::boot();
+        return self::$aliasToOrigin[static::class][$alias] ?? $alias;
     }
 
-    public static function getAliasOfOrigin(string $origin) : string
+    final public static function getAliasOfOrigin(string $origin) : string
     {
-        static::boot();
-        return static::$originToAlias[static::class][$origin] ?? $origin;
+        self::boot();
+        return self::$originToAlias[static::class][$origin] ?? $origin;
     }
 
 

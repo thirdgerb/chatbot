@@ -15,23 +15,23 @@ use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Struct\Struct;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @property-read string $ucl
+ * 
+ * @property-read string $attr
  */
-class SessionQuitInt extends IIntentMsg
+class DialogRequireInt extends IIntentMsg
 {
     const DEFAULT_LEVEL = HostMsg::INFO;
-    const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_SESSION_QUIT;
+    const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_DIALOG_REQUIRE;
 
-    public function __construct(string $await = '')
+
+    public function __construct(string $attr = '')
     {
         parent::__construct(
             '',
             [
-                'ucl' => $await
+                'attr' => $attr
             ]
         );
     }
@@ -39,13 +39,14 @@ class SessionQuitInt extends IIntentMsg
     public static function intentStub(): array
     {
         return [
-            'ucl' => ''
+            'attr' => '',
+            self::TEMPLATE_FIELD => '请输入 {attr}',
         ];
     }
 
     public static function create(array $data = []): Struct
     {
-        return new static($data['ucl'] ?? '');
+        return new static($data['attr'] ?? '');
     }
 
 }

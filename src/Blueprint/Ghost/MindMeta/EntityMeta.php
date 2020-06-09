@@ -24,7 +24,6 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string $title         标题
  * @property-read string $desc          摘要
  * @property-read string[] $values      entity 的值
- * @property-read string[] $synonyms    同义词的名称.
  * @property-read string[] $blacklist   黑名单.
  */
 class EntityMeta extends AbsOption implements DefMeta
@@ -39,7 +38,6 @@ class EntityMeta extends AbsOption implements DefMeta
             'title' => '',
             'desc' => '',
             'values' => [],
-            'synonyms' => [],
             'blacklist' => [],
         ];
     }

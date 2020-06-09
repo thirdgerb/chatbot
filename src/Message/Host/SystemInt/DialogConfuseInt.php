@@ -24,7 +24,7 @@ use Commune\Support\Struct\Struct;
 class DialogConfuseInt extends IIntentMsg
 {
     const DEFAULT_LEVEL = HostMsg::NOTICE;
-    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_DIALOG_CONFUSE;
+    const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_DIALOG_CONFUSE;
 
 
     public function __construct(string $await = '', string $matchedIntent = '')

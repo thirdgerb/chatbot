@@ -23,7 +23,7 @@ use Commune\Message\Host\IIntentMsg;
 class DialogYieldInt extends IIntentMsg
 {
     const DEFAULT_LEVEL = HostMsg::INFO;
-    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_DIALOG_YIELD;
+    const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_DIALOG_YIELD;
 
     public function __construct(string $await = '')
     {

@@ -15,23 +15,22 @@ use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Struct\Struct;
 
+
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- * 
- * @property-read string $attr
  */
-class DialogAskInt extends IIntentMsg
+class DialogForbidInt extends IIntentMsg
 {
     const DEFAULT_LEVEL = HostMsg::INFO;
-    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_DIALOG_ASK;
+    const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_DIALOG_FORBID;
 
-
-    public function __construct(string $attr = '')
+    public function __construct(string $contextName = '', string $policy = '')
     {
         parent::__construct(
             '',
             [
-                'attr' => $attr
+                'context' => $contextName,
+                'policy' => $policy
             ]
         );
     }
@@ -39,14 +38,16 @@ class DialogAskInt extends IIntentMsg
     public static function intentStub(): array
     {
         return [
-            'attr' => ''
+            'context' => '',
+            'policy' => '',
         ];
     }
 
     public static function create(array $data = []): Struct
     {
-        return new static($data['attr'] ?? '');
+        return new static(
+            $data['context'] ?? '',
+            $data['policy'] ?? ''
+        );
     }
-
-
 }

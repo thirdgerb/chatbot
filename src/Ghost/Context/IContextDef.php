@@ -14,6 +14,7 @@ namespace Commune\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\MindDef\AliasesForAuth;
 use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
@@ -25,6 +26,7 @@ use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Ghost\IMindDef\IMemoryDef;
 use Commune\Ghost\Stage\InitStage;
 use Commune\Ghost\Support\ContextUtils;
+use Commune\Support\Alias\AbsAliases;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
@@ -49,6 +51,7 @@ use Commune\Support\Utils\ArrayUtils;
  * @property-read int $priority                     语境的默认优先级
  * @property-read IntentMeta $asIntent
  *
+ * @property-read string[] $auth                    用户权限
  * @property-read string[] $queryNames              context 请求参数键名的定义, 如果是列表则要加上 []
  *
  *
@@ -100,6 +103,9 @@ class IContextDef extends AbsOption implements ContextDef
             'desc' => '',
             // context 的优先级. 若干个语境在 blocking 状态中, 根据优先级决定谁先恢复.
             'priority' => 0,
+
+            // auth, 访问时用户必须拥有的权限. 用类名表示.
+            'auth' => [],
 
             // context 的默认参数名, 类似 url 的 query 参数.
             // query 参数值默认是字符串.
@@ -202,6 +208,24 @@ class IContextDef extends AbsOption implements ContextDef
         $this->_data[$name] = AliasesForContext::getAliasOfOrigin($value);
     }
 
+    public function __set_auth($name, $value) : void
+    {
+        $this->_data[$name] = array_map(
+            [AliasesForAuth::class, AliasesForAuth::FUNC_GET_ALIAS],
+            $value
+        );
+
+    }
+
+    public function __get_auth() : array
+    {
+        $auth = $this->_data['auth'] ?? [];
+        return array_map(
+            [AliasesForAuth::class, AliasesForAuth::FUNC_GET_ORIGIN],
+            $auth
+        );
+    }
+
     /*------ wrap -------*/
 
     /**
@@ -269,6 +293,12 @@ class IContextDef extends AbsOption implements ContextDef
     {
         return $this->onCancel;
     }
+
+    public function auth(): array
+    {
+        return $this->auth;
+    }
+
 
     public function onQuitStage(): ? string
     {

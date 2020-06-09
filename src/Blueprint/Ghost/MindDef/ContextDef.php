@@ -39,6 +39,10 @@ interface ContextDef extends Def
      */
     public function comprehendPipes(Dialog $current) : ? array;
 
+    /**
+     * @return string[]
+     */
+    public function auth() : array;
 
     /*------- properties -------*/
 

@@ -13,6 +13,7 @@ namespace Commune\Support\Registry;
 
 use Commune\Support\Registry\Exceptions\OptionNotFoundException;
 use Commune\Support\Option\Option;
+use Commune\Support\Registry\Meta\CategoryOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -28,6 +29,12 @@ interface Category
     public function boot(bool $initialize = false) : void;
 
     /*---- 单个 Option 管理 ----*/
+
+    /**
+     * 当前分类的配置.
+     * @return CategoryOption
+     */
+    public function getConfig() : CategoryOption;
 
     /**
      * 检查 Option 是否存在.

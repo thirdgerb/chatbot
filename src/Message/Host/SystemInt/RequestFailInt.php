@@ -12,6 +12,7 @@
 namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
+use Commune\Protocals\HostMsg;
 use Commune\Support\Struct\Struct;
 use Commune\Blueprint\Framework\Request\AppResponse;
 
@@ -24,6 +25,9 @@ use Commune\Blueprint\Framework\Request\AppResponse;
  */
 class RequestFailInt extends IIntentMsg
 {
+    const DEFAULT_LEVEL = HostMsg::ERROR;
+    const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_REQUEST_FAILURE;
+
     public function __construct(string $errmsg = null)
     {
         $slots = isset($errmsg)

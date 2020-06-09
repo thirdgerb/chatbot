@@ -18,7 +18,7 @@ use Commune\Blueprint\Ghost\Dialog\Resume;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Message\Host\Convo\IText;
-use Commune\Message\Host\SystemInt\DialogAskInt;
+use Commune\Message\Host\SystemInt\DialogRequireInt;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 
 /**
@@ -57,7 +57,7 @@ class AttrStageDef extends AbsStageDef
 
         $query = $this->query;
         $queryMsg = empty($query)
-            ? new DialogAskInt($name)
+            ? new DialogRequireInt($name)
             : new IText($query);
 
         // 要求一个纯文字的输入.

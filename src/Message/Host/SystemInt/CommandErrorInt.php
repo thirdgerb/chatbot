@@ -25,7 +25,7 @@ use Commune\Support\Struct\Struct;
 class CommandErrorInt extends IIntentMsg
 {
     const DEFAULT_LEVEL = HostMsg::ERROR;
-    const INTENT_NAME = HostMsg\IntentMsg::SYSTEM_COMMAND_ERROR;
+    const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_COMMAND_ERROR;
 
     public function __construct(
         string $commandName = '',

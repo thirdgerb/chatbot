@@ -15,7 +15,6 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\MindDef\EntityDef;
 use Commune\Blueprint\Ghost\MindReg\SynonymReg;
 use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
-use Commune\Blueprint\Ghost\MindMeta\SynonymMeta;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
 use Commune\Support\WordSearch\Tree;
@@ -64,24 +63,19 @@ class IEntityDef implements EntityDef
             return $this->tree;
         }
 
-        $synonyms = $this->getSynonymNames();
-
-        if (!empty($synonyms)) {
-            $this->prepareSynonyms($synonyms, $reg);
-        }
-
         $values = $this->getValues();
 
         $keywords = [];
         foreach ($values as $value) {
-            $keywords[strval($value)] = strval($value);
-        }
+            $value = strval($value);
+            $keywords[$value] = $value;
 
-        foreach ($synonyms as $synonym) {
-            $def = $reg->getDef($synonym);
-            foreach ($def->getValues() as $alias) {
-                $key = strval($alias);
-                $keywords[$key] = strval($synonym);
+            // 同义词
+            if ($reg->hasDef($value)) {
+                $synonyms = $reg->getDef($value)->getValues();
+                foreach ($synonyms as  $synonym) {
+                    $keywords[$synonym] =  $value;
+                }
             }
         }
 
@@ -96,18 +90,7 @@ class IEntityDef implements EntityDef
         return array_keys($matches);
     }
 
-    protected function prepareSynonyms(array $synonyms, SynonymReg $reg) : void
-    {
-        foreach ($synonyms as $value) {
-            if (!$reg->hasDef($value)) {
-                $meta = new SynonymMeta([
-                    'name' => $value,
-                    'synonyms' => [$value]
-                ]);
-                $reg->registerDef($meta->toWrapper(), true);
-            }
-        }
-    }
+
 
     public function getName(): string
     {

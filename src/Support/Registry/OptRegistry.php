@@ -58,8 +58,17 @@ interface OptRegistry
     public function getCategory(string $categoryName) : Category;
 
     /**
-     * @return \Generator
+     * @return \Generator|Category[]
      */
     public function eachCategory() : \Generator;
 
+    /**
+     * @return int
+     */
+    public function count() : int;
+
+    /**
+     * @return CategoryOption[]
+     */
+    public function getCategoryOptions() : array;
 }

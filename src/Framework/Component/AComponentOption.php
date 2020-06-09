@@ -24,7 +24,6 @@ use Commune\Support\Registry\Storage\FileStorageOption;
 abstract class AComponentOption extends AbsOption implements ComponentOption
 {
 
-
     /**
      * 当前组件依赖另一个组件.
      *

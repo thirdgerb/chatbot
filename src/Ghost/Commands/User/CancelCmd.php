@@ -14,7 +14,7 @@ namespace Commune\Ghost\Commands\User;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Ghost\Cmd\AGhostCmd;
-use Commune\Protocals\HostMsg\IntentMsg;
+use Commune\Protocals\HostMsg\DefaultIntents;
 
 
 /**
@@ -32,7 +32,7 @@ class CancelCmd extends AGhostCmd
             ->input
             ->comprehension
             ->intention
-            ->setMatchedIntent(IntentMsg::GUEST_NAVIGATE_CANCEL);
+            ->setMatchedIntent(DefaultIntents::GUEST_NAVIGATE_CANCEL);
 
         $this->goNext();
     }

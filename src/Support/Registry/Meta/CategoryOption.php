@@ -51,4 +51,13 @@ class CategoryOption extends AbsOption
         ];
     }
 
+    public function getDescription(): string
+    {
+        return $this->desc;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
 }

@@ -1,10 +1,10 @@
 - name : juice_pack
-  desc : 果汁的包装
+  title : 果汁的包装
   values :
     - juice_cup
     - juice_bowl
 - name : juice_fruit
-  desc : 果汁的水果类型
+  title : 果汁的水果类型
   values : 
     - "苹果"
     - "哈密瓜"
@@ -16,24 +16,24 @@
     - "芒果"
     - "菠萝"
 - name : juice_ice
-  desc : 果汁是否加冰
+  title : 果汁是否加冰
   values :
     - juice_ice
     - juice_no_ice
 - name : juice_pack
-  desc : 果汁碗装还是杯装
+  title : 果汁碗装还是杯装
   values :
     - juice_bowl
     - juice_cup
 - name : towards
-  desc : 方向
+  title : 方向
   values :
     - 前
     - 后
     - 左
     - 右
 - name : date
-  desc : 日期
+  title : 日期
   values :
     - today
     - tomorrow
@@ -41,7 +41,7 @@
     - "+2 day"
     - "+3 day"
 - name : city
-  desc : 城市
+  title : 城市
   values :
     - 北京
     - 上海
