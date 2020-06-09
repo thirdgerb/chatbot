@@ -12,6 +12,7 @@
 namespace Commune\Framework\Providers;
 
 use Commune\Container\ContainerContract;
+use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\ServiceProvider;
 use Commune\Support\Registry\Impl\IOptRegistry;
 use Commune\Support\Registry\Meta\CategoryOption;
@@ -70,9 +71,26 @@ class OptRegistryProvider extends ServiceProvider
 
         });
 
-        $app->singleton(JsonFileStorage::class);
-        $app->singleton(PHPFileStorage::class);
-        $app->singleton(YmlFileStorage::class);
+        $app->singleton(
+            JsonFileStorage::class,
+            function(ContainerContract $app) {
+                return new JsonFileStorage($app->get(ConsoleLogger::class));
+            }
+        );
+
+        $app->singleton(
+            PHPFileStorage::class,
+            function(ContainerContract $app) {
+                return new PHPFileStorage($app->get(ConsoleLogger::class));
+            }
+        );
+
+        $app->singleton(
+            YmlFileStorage::class,
+            function(ContainerContract $app) {
+                return new YmlFileStorage($app->get(ConsoleLogger::class));
+            }
+        );
     }
 
 

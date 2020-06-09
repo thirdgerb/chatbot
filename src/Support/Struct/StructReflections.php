@@ -86,6 +86,7 @@ class StructReflections
             throw new InvalidStructException("reflection class must be subclass of $expect, $className given.");
         }
 
+        // 从注解中获取变量的定义
         $defines = StringUtils::fetchVariableAnnotationsWithType($doc, '@property', false);
 
         $fields = [];

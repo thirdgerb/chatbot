@@ -43,7 +43,7 @@ class ParameterTest extends TestCase
         $a = $defs->getParam('a');
         $this->assertTrue($a->isValid('abc'));
         // 123 could be string
-        $this->assertTrue($a->isValid(123));
+        $this->assertFalse($a->isValid(123));
         $this->assertEquals('123', $a->parse(123));
     }
 

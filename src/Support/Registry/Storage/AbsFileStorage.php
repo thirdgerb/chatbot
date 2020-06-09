@@ -134,7 +134,11 @@ abstract class AbsFileStorage implements Storage
         array $optionArr
     ) : ? Option
     {
+
+        $id = '';
         try {
+            $identity = constant($optionClass . '::IDENTITY');
+            $id = $optionArr[$identity] ?? '';
 
             return call_user_func(
                 [$optionClass, Option::CREATE_FUNC],
@@ -143,7 +147,12 @@ abstract class AbsFileStorage implements Storage
 
         } catch (\Exception $e) {
 
-            $this->logger->error($e->getMessage());
+            $this->logger->error(
+                'fail to new option  '
+                . $optionClass
+                . ", which id may be $id"
+                . ', error: ' . $e->getMessage()
+            );
 
             return null;
         }
@@ -185,10 +194,9 @@ abstract class AbsFileStorage implements Storage
         }
 
         $className = $category->optionClass;
+
         foreach ($data as $optionArr) {
-
             $option = $this->newOption($className, $optionArr);
-
             if (isset($option)) {
                 $optionId = $option->getId();
                 $this->optionCaches[$cateId][$optionId] = $option;

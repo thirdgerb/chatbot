@@ -91,7 +91,6 @@ class FeatureTest extends ACodeContext
      */
     public function __on_cancel(StageBuilder $builder): StageBuilder
     {
-        // var_dump(get_class($builder->dialog));
         return $builder->always(function(Dialog $dialog) {
             return $dialog->send()
                 ->info('cancel from event')

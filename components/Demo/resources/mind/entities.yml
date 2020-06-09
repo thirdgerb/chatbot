@@ -40,9 +40,9 @@
     - yestoday
     - "+2 day"
     - "+3 day"
-- name : city
-  title : 城市
-  values :
+- name: city
+  title: 城市
+  values:
     - 北京
     - 上海
     - 重庆
@@ -417,7 +417,6 @@
     - 凌海
     - 灯塔
     - 营口
-    -
     - 西宁
     - 格尔木
     - 德令哈
@@ -664,5 +663,3 @@
     - 特别行政区
     - 香港
     - 澳门
-
-

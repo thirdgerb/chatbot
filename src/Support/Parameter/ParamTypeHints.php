@@ -76,10 +76,7 @@ class ParamTypeHints
             };
         }
 
-        return $isList
-            ? TypeUtils::listValidate($type, $value)
-            : TypeUtils::validate($type, $value);
-
+        return TypeUtils::validate($type, $value ,true);
     }
 
     public static function parse(string $type, $value)

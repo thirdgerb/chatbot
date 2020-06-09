@@ -15,7 +15,6 @@ use Commune\Ghost\IMindDef\IEntityDef;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Wrapper;
-use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -44,7 +43,7 @@ class EntityMeta extends AbsOption implements DefMeta
 
     public static function validate(array $data): ? string /* errorMsg */
     {
-        if (!StringUtils::isNotEmptyStr($data['name'] ?? null)) {
+        if (empty($data['name'])) {
             return "name is required";
         }
 
@@ -53,10 +52,10 @@ class EntityMeta extends AbsOption implements DefMeta
         }
 
         $name = $data['name'] ?? '';
-
         if (!ContextUtils::isValidEntityName($name)) {
             return "entity name $name is invalid";
         }
+
 
         return parent::validate($data);
     }

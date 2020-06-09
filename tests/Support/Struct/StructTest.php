@@ -71,8 +71,11 @@ class StructTest extends TestCase
             $obj = new A(['a' => 1.1 ]);
         } catch (\Exception $e) {
         }
+
         $this->assertTrue($e instanceof InvalidStructException);
+
         $b = new B(['a' => 123, 'b' => null, 'c' => 1.1]);
+
         // 经过了弱类型转换.
         $this->assertTrue('123' === $b->a);
         $this->assertTrue(1 === $b->c);

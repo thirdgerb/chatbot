@@ -106,7 +106,7 @@ class ContextUtils
 
     public static function isValidEntityName(string $str) : bool
     {
-        return self::isValidContextName($str);
+        return true;
     }
 
     public static function isCallableClass($value) : bool

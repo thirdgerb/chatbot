@@ -126,7 +126,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
             return;
         }
 
-        // 弱类型转换
+        // 弱类型, 则允许转换
         if (!static::STRICT) {
             $value = $reflector->filterValue($value);
         }
@@ -134,7 +134,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
         // 校验.
         $error = $reflector->validateValue($value);
         if (isset($error)) {
-            throw new InvalidStructException("set field $name fail : $error");
+            throw new InvalidStructException(static::class . " set field [$name] fail : $error");
         }
 
         $this->_data[$name] = $value;

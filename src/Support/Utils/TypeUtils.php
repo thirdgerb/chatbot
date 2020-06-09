@@ -123,11 +123,12 @@ class TypeUtils
     }
 
     /**
-     * @param string|callable $validator
+     * @param $validator
      * @param $value
+     * @param bool $strict
      * @return bool
      */
-    public static function listValidate($validator, $value) : bool
+    public static function listValidate($validator, $value, bool $strict = false) : bool
     {
         if (!is_array($value)) {
             return false;
@@ -139,7 +140,7 @@ class TypeUtils
         }
 
         foreach ($value as $val) {
-            if (!self::validate($validator, $val)) {
+            if (!self::validate($validator, $val, $strict)) {
                 return false;
             }
         }
@@ -149,23 +150,32 @@ class TypeUtils
     /**
      * 注解中常用类型的参数校验.
      *
-     * @param string|callable $validator
+     * @param $type
      * @param $value
      * @param bool $strict
      * @return bool
      */
-    public static function validate($validator, $value, bool $strict = false) : bool
+    public static function validate($type, $value, bool $strict = false) : bool
     {
-        if (is_callable($validator)) {
-            return $validator($value);
+        if (self::isListTypeHint($type)) {
+            $type = self::pureListTypeHint($type);
+            return self::listValidate($type, $value, $strict);
         }
 
-        if (class_exists($validator)) {
-            return is_object($value) && is_a($value, $validator, TRUE);
+        return self::standardTypeValidate($type, $value, $strict);
+    }
+
+    public static function standardTypeValidate(string $type, $value, bool $strict = false) : bool
+    {
+        if (is_callable($type)) {
+            return $type($value);
         }
 
+        if (class_exists($type)) {
+            return is_object($value) && is_a($value, $type, TRUE);
+        }
 
-        switch($validator) {
+        switch($type) {
             case 'mixed' :
                 return true;
             case 'null' :
@@ -173,10 +183,10 @@ class TypeUtils
             case 'object' :
                 return is_object($value);
             case 'string' :
-                return self::isString($value, $strict);
+                return $strict ? is_string($value) : self::maybeString($value);
             case 'bool' :
             case 'boolean' :
-                return self::isBool($value);
+                return $strict ? is_bool($value) : self::maybeBool($value);
             case 'int' :
             case 'integer' :
                 return is_int($value);
@@ -194,28 +204,16 @@ class TypeUtils
 
     }
 
-    public static function isString($value, bool $strict = false)
+    public static function maybeString($value) : bool
     {
-        if ($strict) {
-            return is_string($value);
-        }
-
-        return is_string($value)
-            || is_scalar($value)
-            || (is_object($value) && method_exists($value, '__toString'));
+        return is_scalar($value)
+            || StringUtils::isString($value);
     }
 
-    public static function isBool($value, bool $strict = false)
+    public static function maybeBool($value) : bool
     {
-        if ($strict) {
-            return is_bool($value);
-        }
-
         return is_bool($value)
-            || $value === 1
-            || $value === 0
-            || $value === 'y'
-            || $value === 'n';
+            || $value === 'true'
+            || $value === 'false';
     }
-
 }
