@@ -58,8 +58,6 @@ class IEmotionDef implements EmotionDef
      * @param Cloner $cloner
      * @param array $injectionContext
      * @return bool
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     * @throws \ReflectionException
      */
     public function feels(
         Cloner $cloner,
@@ -69,11 +67,16 @@ class IEmotionDef implements EmotionDef
         $comprehension = $cloner->input->comprehension;
         $name = $this->getName();
 
+
+                // 是否已经有匹配结果了
         $feel = $this->hasEmotionComprehended($comprehension, $name)
+                // 是否有相反的情绪
             ?? $this->hasOppositeEmotions($comprehension, $name)
+                // 是否命中的意图是该情绪的子集
             ?? $this->hasMatchedIntentEmotion($comprehension, $cloner, $name)
-            ?? $this->hasDefinedEmotionIntents($comprehension, $name)
+                // 运行自定义的情绪校验器.
             ?? $this->runEmotionMatchers($comprehension, $name)
+                // 没匹配到就是没有.
             ?? false;
         return $feel;
     }
@@ -104,22 +107,7 @@ class IEmotionDef implements EmotionDef
         }
         return null;
     }
-
-    protected function hasDefinedEmotionIntents(Comprehension $comprehension, string $name) : ? bool
-    {
-        $intents = $this->meta->emotionalIntents;
-        $intention = $comprehension->intention;
-        // 检查是否有相关的 intents 命中了.
-        if (!empty($intents)) {
-            $matched = $intention->matchAnyIntent($intents);
-            if (isset($matched)) {
-                return $this->setEmotion($comprehension, $name, true);
-            }
-        }
-        return null;
-    }
-
-    protected function hasEmotionComprehended(Comprehension $comprehension, string $name) : ? bool
+   protected function hasEmotionComprehended(Comprehension $comprehension, string $name) : ? bool
     {
         return $comprehension->emotion->isEmotion($name);
     }

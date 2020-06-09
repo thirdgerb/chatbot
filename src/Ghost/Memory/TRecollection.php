@@ -52,6 +52,11 @@ trait TRecollection
         return $this->_def->isLongTerm();
     }
 
+    public function isChanged() : bool
+    {
+        return $this->_memory->isChanged();
+    }
+
     public function offsetExists($offset)
     {
         return $this->_memory->offsetExists($offset);

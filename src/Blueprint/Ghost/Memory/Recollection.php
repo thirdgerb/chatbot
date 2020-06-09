@@ -28,6 +28,8 @@ interface Recollection extends \ArrayAccess, ArrayAndJsonAble, ClonerInstance, \
 
     public function isLongTerm() : bool;
 
+    public function isChanged() : bool;
+
     public function toData() : array;
 
     public function keys() : array;

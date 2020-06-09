@@ -60,6 +60,9 @@ abstract class AbsRedirect extends AbsOperator
 
         // 正式运行.
         $iActivate->process->activate($target);
+
+        // todo ... exiting && auth
+
         return $def->onActivate($iActivate);
     }
 

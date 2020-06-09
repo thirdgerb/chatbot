@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\MindSelfRegister;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Ghost\Support\ContextUtils;
@@ -21,12 +22,14 @@ use Commune\Support\Arr\TArrayAccessToMutator;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * 不受多轮对话限制的记忆单元
  * 根据 Scopes 决定是长程的还是短程(session 级别)的.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
  */
 abstract class AbsRecall implements Recall, MindSelfRegister
 {
@@ -87,10 +90,15 @@ abstract class AbsRecall implements Recall, MindSelfRegister
 
         if (!$memoryReg->hasDef($name)) {
 
+            $doc = (new \ReflectionClass(static::class))->getDocComment();
+
+            $title = StringUtils::fetchAnnotation($doc, 'title')[0] ?? '';
+            $desc = StringUtils::fetchAnnotation($doc, 'desc')[0] ?? '';
+
             $memoryMeta = new MemoryMeta([
                 'name' => $name,
-                'title' => static::class,
-                'desc' => '',
+                'title' => $title,
+                'desc' => $desc,
                 'scopes' => static::__scopes(),
                 'attrs' => static::__attrs(),
             ]);
@@ -100,6 +108,16 @@ abstract class AbsRecall implements Recall, MindSelfRegister
 
         return $memoryReg->getDef($name);
     }
+
+    /**
+     * @param Context $context
+     * @return static
+     */
+    public static function from(Context $context): Recall
+    {
+        return static::find($context->getCloner());
+    }
+
 
     public function toInstanceStub(): ClonerInstanceStub
     {

@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Context\Codable;
 
 use Commune\Blueprint\Exceptions\CommuneLogicException;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Context\CodeContext;
 use Commune\Blueprint\Ghost\Context\CodeContextOption;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
@@ -122,6 +123,14 @@ class CodeDefCreator
         $annotation = AnnotationReflector::create($doc);
         $fullName = ContextUtils::makeFullStageName($contextName, $shortName);
 
+        $matcher = null;
+        if (method_exists(
+            $this->contextClass,
+            $method = CodeContext::STAGE_STATIC_MATCHER_PREFIX . $shortName
+        )) {
+            $matcher = $this->contextClass . '::' . $method;
+        }
+
         $config = [
             'name' => $fullName,
             'title' => $annotation->title,
@@ -129,7 +138,7 @@ class CodeDefCreator
 
             'contextName' => $contextName,
             'stageName' => $shortName,
-            'asIntent' => $annotation->asIntentMeta($fullName),
+            'asIntent' => $annotation->asIntentMeta($fullName, $matcher),
 
             'events' => [],
             'ifRedirect' => null,

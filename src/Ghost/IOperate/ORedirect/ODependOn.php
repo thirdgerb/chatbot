@@ -42,24 +42,13 @@ class ODependOn extends AbsRedirect
 
     protected function toNext(): Operator
     {
-        $dependContext = $this->dependUcl->findContext($this->dialog->cloner);
-
         if (isset($this->fieldName)) {
             $this->dialog
                 ->context
                 ->offsetSet(
                     $this->fieldName,
-                    $dependContext
+                    $this->dependUcl
                 );
-        }
-
-        // 如果数据已经完整, 则不必重定向.
-        $self = $this->dialog->ucl;
-        if ($dependContext->isPrepared()) {
-            $resume = new ICallback($this->dialog, $self);
-            return $self
-                ->findStageDef($this->dialog->cloner)
-                ->onResume($resume);
         }
 
         return $this->redirect($this->dependUcl, function (Ucl $ucl) {

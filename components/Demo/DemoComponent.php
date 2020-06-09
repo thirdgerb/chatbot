@@ -12,7 +12,11 @@
 namespace Commune\Components\Demo;
 
 use Commune\Blueprint\Framework\App;
+use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
+use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
+use Commune\Blueprint\Ghost\MindMeta\SynonymMeta;
 use Commune\Ghost\Component\GhostComponent;
+use Commune\Support\Registry\Storage\FileStorageOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -37,8 +41,26 @@ class DemoComponent extends GhostComponent
             [
                 'Commune\Components\Demo\Contexts' => __DIR__ . '/Contexts',
                 'Commune\Components\Demo\Recall' => __DIR__ . '/Recall',
+                'Commune\Components\Demo\Maze' => __DIR__ . '/Maze',
             ]
         );
+
+        $mindset = [
+            'entities' => EntityMeta::class,
+            'intents' => IntentMeta::class,
+            'synonyms' => SynonymMeta::class,
+        ];
+
+        foreach ($mindset as $file => $optionClass) {
+            $this->loadResourceOption(
+                $app,
+                $optionClass,
+                $optionClass,
+                __DIR__ . '/resources/mind/' . $file . '.yml',
+                false,
+                FileStorageOption::OPTION_YML
+            );
+        }
     }
 
 }

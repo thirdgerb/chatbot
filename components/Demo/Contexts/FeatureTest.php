@@ -139,9 +139,8 @@ class FeatureTest extends ACodeContext
                         $this->getStage('test_match'),
                         $this->getStage('test_memory'),
                         $this->getStage('test_confirmation'),
+//                        $this->getStage('test_exiting'),
                         'askContinue 机制' => 'test_ask_continue',
-                        'gc 机制' => 'test_gc',
-                        'stage exiting 事件' => 'test_exiting',
                     ]
                 );
         });
@@ -366,4 +365,9 @@ EOF
             );
     }
 
+//
+//    public function __on_test_exiting(Stage $stage) : Stage
+//    {
+//        return $stage
+//    }
 }

@@ -108,10 +108,9 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
     }
 
 
-    public function withMessage(HostMsg $message): IntercomMsg
+    public function setMessage(HostMsg $message): void
     {
         $this->message = $message;
-        return $this;
     }
 
 

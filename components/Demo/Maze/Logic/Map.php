@@ -1,11 +1,13 @@
 <?php
 
 
-namespace Commune\Components\Demo\Cases\Maze\Logic;
+namespace Commune\Components\Demo\Maze\Logic;
 
 
 class Map
 {
+
+
     public static function initializeMap() : array
     {
         $map = self::initialize();

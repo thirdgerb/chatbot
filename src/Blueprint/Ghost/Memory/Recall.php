@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost\Memory;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context;
 
 /**
  * 静态的回忆工具, 用静态方法来定义和获取记忆体.
@@ -28,4 +29,9 @@ interface Recall extends Recollection
      */
     public static function find(Cloner $cloner, string $id = null) : Recall;
 
+    /**
+     * @param Context $context
+     * @return static
+     */
+    public static function from(Context $context) : Recall;
 }

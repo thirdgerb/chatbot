@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Commune\Components\Demo\Cases\Maze\Logic;
+namespace Commune\Components\Demo\Maze\Logic;
 
 
 /**

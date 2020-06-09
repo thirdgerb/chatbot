@@ -77,15 +77,14 @@ interface IntercomMsg extends Message, Protocal
      */
     public function getDeliverAt() : int;
 
-    /*------- with -------*/
+    /*------- methods -------*/
 
     /**
      * @param HostMsg $message
-     * @return static
+     * @return void
      */
-    public function withMessage(HostMsg $message) : IntercomMsg;
+    public function setMessage(HostMsg $message) : void;
 
-    /*------- methods -------*/
 
     /**
      * 产生新的渠道消息.

@@ -123,6 +123,13 @@ interface Context extends
     public function isPrepared() : bool;
 
     /**
+     * @return bool
+     */
+    public function isChanged() : bool;
+
+    /*----- query -----*/
+
+    /**
      * @return array
      */
     public function getQuery() : array;

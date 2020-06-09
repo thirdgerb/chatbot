@@ -43,8 +43,10 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string[] $emotions
  * @property-read string[] $entityNames
  *
- * ## 匹配规则
+ * ## 自定义匹配规则
+ *
  * @property-read string|null $alias
+ * @property-read string[] $extends
  * @property-read string $spell
  * @property-read string $signature
  * @property-read string[] $keywords
@@ -90,6 +92,9 @@ class IIntentDef extends AbsOption implements IntentDef
 
             // 意图的别名. 允许别名中的意图作为精确匹配规则.
             'alias' => null,
+
+            // 其它的意图名如果在中间件中命中, 则也可以算作命中.
+            'extends' => [],
 
             // 意图的精确命中命令.
             'spell' => '',
@@ -246,6 +251,7 @@ class IIntentDef extends AbsOption implements IntentDef
         }
 
         // 别名检查.
+        // 一旦有别名, 就不检查其它的规则了.
         $alias = $this->alias;
         if (!empty($alias)) {
             $reg = $cloner->mind->intentReg();
@@ -253,9 +259,13 @@ class IIntentDef extends AbsOption implements IntentDef
                 ? $reg->getDef($alias)->match($cloner)
                 : $intention->hasPossibleIntent($alias, true);
 
-            if ($matched) {
-                return true;
-            }
+            return $matched;
+        }
+
+        // extends 检查. 只检查一个匹配的意图.
+        $matched = $intention->getMatchedIntent();
+        if (isset($matched) && in_array($matched, $this->extends)) {
+            return true;
         }
 
         // 自定义的匹配器优先级相对高.

@@ -185,6 +185,15 @@ class IContext implements Context
         return is_null($depending);
     }
 
+    public function isChanged(): bool
+    {
+        if (isset($this->_recollection)) {
+            return $this->_recollection->isChanged();
+        }
+
+        return false;
+    }
+
 
     /*----- memory -----*/
 

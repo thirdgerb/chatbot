@@ -86,6 +86,7 @@ class SGConfig extends GhostConfig
                 Commands\Super\ScopeCmd::class,
                 Commands\Super\ProcessCmd::class,
                 Commands\Super\IntentCmd::class,
+                Commands\Super\RedirectCmd::class,
             ],
             'comprehensionPipes' => [
 

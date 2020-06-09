@@ -65,6 +65,11 @@ class AnnotationReflector
     /**
      * @var string[]
      */
+    public $extends = [];
+
+    /**
+     * @var string[]
+     */
     public $regex = [];
 
     /**
@@ -72,7 +77,7 @@ class AnnotationReflector
      */
     public $signature = '';
 
-    public function asIntentMeta(string $name) : IntentMeta
+    public function asIntentMeta(string $name, string $matcher = null) : IntentMeta
     {
         $def = new IIntentDef([
             // 意图的名称
@@ -87,6 +92,8 @@ class AnnotationReflector
             'spell' => $this->spell,
             // 例句, 用 []() 标记, 例如 "我想知道[北京](city)[明天](date)天气怎么样"
             'examples' => $this->examples,
+            // 如果命中其它意图, 也会命中当前意图.
+            'extends' => $this->extends,
             // 作为命令.
             'signature' => $this->signature,
             // entityNames
@@ -98,7 +105,7 @@ class AnnotationReflector
             // 命中任意 entity
             'ifEntity' => [],
             // 自定义校验器. 字符串, 通常是类名或者方法名.
-            'matcher' => null,
+            'matcher' => $matcher,
         ]);
 
         return $def->toMeta();
@@ -122,9 +129,10 @@ class AnnotationReflector
 
         $ins->spell = StringUtils::fetchAnnotation($docComment, 'spell')[0] ?? '';
 
-        $entities = StringUtils::fetchAnnotation($docComment, 'entities')[0] ?? [];
+        $entities = StringUtils::fetchAnnotation($docComment, 'entity') ?? [];
         $ins->entities = array_filter($entities, [StringUtils::class, 'isNotEmptyStr']);
 
+        $ins->extends = StringUtils::fetchAnnotation($docComment, 'extend') ?? [];
 
         return $ins;
     }

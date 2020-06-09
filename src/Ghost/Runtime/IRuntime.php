@@ -198,16 +198,17 @@ class IRuntime implements Runtime
         $prevWaiter =isset($prev) ? $prev->waiter : null;
 
         $changed = !isset($prevWaiter) || ($prevWaiter->await !== $waiter->await);
+        $changed = $changed || $this->process
+                ->getAwait()
+                ->findContext($this->cloner)
+                ->isChanged();
 
         if ($changed) {
             $ucl = $this->process->getAwait();
             $ucl = $ucl->toInstance($this->cloner);
             $context = $ucl->findContext($this->cloner);
 
-            $message = $context->toContextMsg();
-
-
-            return $message;
+            return $context->toContextMsg();
         }
 
         return null;
