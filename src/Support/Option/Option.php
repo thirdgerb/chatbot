@@ -89,5 +89,4 @@ interface Option extends Struct, Injectable
      */
     public function getDescription() : string;
 
-
 }

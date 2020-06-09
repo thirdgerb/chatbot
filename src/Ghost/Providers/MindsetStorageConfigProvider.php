@@ -70,9 +70,9 @@ class MindsetStorageConfigProvider extends ServiceProvider
         return [
             'contexts' => [MindMeta\ContextMeta::class, PHPStorageOption::class, '语境', '上下文语境配置'],
             'stages' => [MindMeta\StageMeta::class, PHPStorageOption::class, 'stage', '多轮对话节点逻辑配置'],
-            'intents' => [MindMeta\IntentMeta::class, YmlStorageOption::class, '意图', '对话意图配置'],
-            'memories' => [MindMeta\MemoryMeta::class, YmlStorageOption::class, '记忆', '上下文记忆配置'],
-            'emotions' => [MindMeta\EmotionMeta::class, YmlStorageOption::class, '情绪', '情绪逻辑配置, 用于复杂意图匹配'],
+            'intents' => [MindMeta\IntentMeta::class, PHPStorageOption::class, '意图', '对话意图配置'],
+            'memories' => [MindMeta\MemoryMeta::class, PHPStorageOption::class, '记忆', '上下文记忆配置'],
+            'emotions' => [MindMeta\EmotionMeta::class, PHPStorageOption::class, '情绪', '情绪逻辑配置, 用于复杂意图匹配'],
             'entities' => [MindMeta\EntityMeta::class, YmlStorageOption::class, '实体词典', '实体词典配置'],
             'synonyms' => [MindMeta\SynonymMeta::class, YmlStorageOption::class, '同义词词典', '同义词词典配置'],
         ];

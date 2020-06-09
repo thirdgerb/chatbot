@@ -127,7 +127,7 @@ class PlayMaze extends ACodeContext
         return new CodeContextOption([
 
             'memoryAttrs' => [
-                'map' => Manager::initializeMap(),
+                'map' => [],
                 'steps' => 0,
                 'direction' => Manager::DIRECTION_NORTH,
                 'cell' => Manager::CELL_BORN,

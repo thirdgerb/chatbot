@@ -54,6 +54,11 @@ class IRuntime implements Runtime
     protected $process;
 
     /**
+     * @var Process|null
+     */
+    protected $prev;
+
+    /**
      * @var array
      */
     protected $sessionMemories = [];
@@ -139,6 +144,7 @@ class IRuntime implements Runtime
             $process = $this->ioFetchCurrentProcess();
             if (isset($process)) {
                 // 生成一个新的 Snapshot
+                $this->prev = $process;
                 $this->process = $process
                     ->nextSnapshot(
                         $this->cloner->getTraceId(),
@@ -194,10 +200,15 @@ class IRuntime implements Runtime
         }
 
         // prev 不存在时.
-        $prev = $this->process->prev;
-        $prevWaiter =isset($prev) ? $prev->waiter : null;
+        $prev = $this->prev;
+        $prevWaiter = isset($prev) ? $prev->waiter : null;
 
-        $changed = !isset($prevWaiter) || ($prevWaiter->await !== $waiter->await);
+        // 两个 await 不一致.
+        $changed = !isset($prevWaiter) // 上一帧的 waiter 不存在.
+            || ($prevWaiter->await !== $waiter->await); // 两个帧的 await 一致.
+
+
+        // 当前的 context 数据变更过.
         $changed = $changed || $this->process
                 ->getAwait()
                 ->findContext($this->cloner)
@@ -401,6 +412,7 @@ class IRuntime implements Runtime
         unset($this->sessionMemories);
         unset($this->trace);
         unset($this->contexts);
+        unset($this->prev);
         SpyAgency::decr(static::class);
     }
 }

@@ -196,12 +196,14 @@ class IIntentDef extends AbsOption implements IntentDef
 
     public function getTitle(): string
     {
-        return $this->title;
+        $title = $this->title;
+        return empty($title) ? $this->name : $title;
     }
 
     public function getDescription(): string
     {
-        return $this->desc;
+        $desc = $this->desc;
+        return empty($desc) ? $this->name : $desc;
     }
 
     public function getIntentName(): string
@@ -408,6 +410,7 @@ class IIntentDef extends AbsOption implements IntentDef
             );
         }
         $config = $meta->config;
+
         $config['name'] = $meta->name;
         $config['title'] = $meta->title;
         $config['desc'] = $meta->desc;
@@ -419,8 +422,6 @@ class IIntentDef extends AbsOption implements IntentDef
         return new static($config);
     }
 
-
-
     public static function toMetaConfig(array $data) : array
     {
         unset($data['name']);
@@ -429,7 +430,6 @@ class IIntentDef extends AbsOption implements IntentDef
         unset($data['examples']);
         unset($data['entityNames']);
         unset($data['emotions']);
-
         return $data;
     }
 }

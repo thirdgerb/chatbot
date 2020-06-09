@@ -103,6 +103,7 @@ class IMemoryDef implements MemoryDef
         );
     }
 
+
     public function toMeta(): Meta
     {
         return $this->meta;

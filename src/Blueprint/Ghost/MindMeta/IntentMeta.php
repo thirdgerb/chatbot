@@ -110,7 +110,6 @@ class IntentMeta extends AbsMeta implements DefMeta
         $this->_data[$name] = AliasesForIntent::getAliasOfOrigin(strval($wrapper));
     }
 
-
     public static function relations(): array
     {
         return [];
