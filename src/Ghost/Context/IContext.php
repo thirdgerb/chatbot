@@ -167,7 +167,7 @@ class IContext implements Context
     {
         $depending = $this
             ->getDef()
-            ->getDependingAttrs();
+            ->getDependingNames();
 
 
         foreach ($depending as $name) {

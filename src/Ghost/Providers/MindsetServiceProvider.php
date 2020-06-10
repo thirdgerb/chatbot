@@ -53,7 +53,7 @@ class MindsetServiceProvider extends ServiceProvider
             $mindset->reset();
         }
 
-        foreach ($config->psr4MindRegister as $namespace => $path) {
+        foreach ($config->mindPsr4Registers as $namespace => $path) {
             Psr4SelfRegisterLoader::loadSelfRegister(
                 $mindset,
                 $namespace,

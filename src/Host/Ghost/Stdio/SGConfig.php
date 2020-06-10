@@ -11,6 +11,7 @@
 
 namespace Commune\Host\Ghost\Stdio;
 
+use Commune\Blueprint\Configs\Nest\ProtocalOption;
 use Commune\Framework;
 use Commune\Components;
 use Commune\Ghost\Commands;
@@ -20,15 +21,17 @@ use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Ghost\Handlers\GhostRequestHandler;
 use Commune\Ghost\Providers as GhostProviders;
-use Commune\Host\Ghost\Stdio\Context\HelloWorld;
 use Commune\Components\Predefined\Intent\Navigation;
+use Commune\Support\Option\AbsOption;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SGConfig extends GhostConfig
+class SGConfig extends AbsOption implements GhostConfig
 {
+    const IDENTITY = 'id';
+
     public static function stub(): array
     {
         return [
@@ -91,7 +94,7 @@ class SGConfig extends GhostConfig
             'comprehensionPipes' => [
 
             ],
-            'psr4MindRegister' => [
+            'mindPsr4Registers' => [
                 "Commune\\Host\\Ghost\\Stdio\\Context" => __DIR__ . '/Context'
 
             ],
@@ -114,5 +117,13 @@ class SGConfig extends GhostConfig
             ]
         ];
     }
+
+    public static function relations(): array
+    {
+        return [
+            'protocals[]' => ProtocalOption::class
+        ];
+    }
+
 
 }

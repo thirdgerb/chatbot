@@ -58,7 +58,7 @@ use Commune\Support\Utils\ArrayUtils;
  * @property-read string[] $memoryScopes
  *
  * @property-read array $memoryAttrs
- * @property-read array $dependingAttrs
+ * @property-read array $dependingNames
  *
  * @property-read null|array $comprehendPipes
  *
@@ -129,7 +129,7 @@ class IContextDef extends AbsOption implements ContextDef
             'memoryAttrs' => [],
 
             // Context 启动时, 会依次检查的参数. 当这些参数都不是 null 时, 认为 Context::isPrepared
-            'dependingAttrs' => [],
+            'dependingNames' => [],
 
             'comprehendPipes' => null,
 
@@ -320,9 +320,9 @@ class IContextDef extends AbsOption implements ContextDef
         return $this->memoryScopes;
     }
 
-    public function getDependingAttrs(): array
+    public function getDependingNames(): array
     {
-        return $this->dependingAttrs;
+        return $this->dependingNames;
     }
 
     public function getQueryNames(): array

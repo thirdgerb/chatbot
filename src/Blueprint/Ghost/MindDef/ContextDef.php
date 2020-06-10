@@ -65,7 +65,7 @@ interface ContextDef extends Def
      * 依赖字段. 启动的时候默认会走这些字段来.
      * @return string[]
      */
-    public function getDependingAttrs() : array;
+    public function getDependingNames() : array;
 
     /*------- redirect -------*/
 

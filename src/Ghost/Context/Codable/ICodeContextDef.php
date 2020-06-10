@@ -11,56 +11,124 @@
 
 namespace Commune\Ghost\Context\Codable;
 
+use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Context\CodeContext;
+use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
+use Commune\Blueprint\Ghost\MindDef\MemoryDef;
+use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
+use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
+use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Context\IContextDef;
+use Commune\Ghost\IMindDef\IMemoryDef;
+use Commune\Ghost\Stage\InitStage;
+use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $name      当前配置的 ID
+ * @property-read string $title     标题
+ * @property-read string $desc      简介
+ *
+ *
+ * ## 基础属性
+ * @property-read int $priority                     语境的默认优先级
+ *
+ * @property-read string[] $auth                    用户权限
+ * @property-read string[] $queryNames              context 请求参数键名的定义, 如果是列表则要加上 []
+ *
+ *
+ * @property-read string[] $memoryScopes
+ * @property-read array $memoryAttrs
+ *
+ * @property-read array $dependingNames
+ *
+ * @property-read null|array $comprehendPipes
+ *
+ * @property-read null|string $onCancel
+ * @property-read null|string $onQuit
+ *
+ * @property-read string|null $firstStage
+ * @property-read string[] $stageRoutes
+ * @property-read string[] $contextRoutes
+ *
  */
-class ICodeContextDef extends IContextDef
+class ICodeContextDef extends AbsOption implements  ContextDef
 {
-    protected $contextClass;
+    /**
+     * @var string
+     */
+    protected $_contextClass;
+
+    /**
+     * @var CodeDefCreator
+     */
+    protected $_creator;
+
+    /**
+     * @var Depending
+     */
+    protected $_depending;
+
+    /**
+     * @var AnnotationReflector
+     */
+    protected $_annotation;
+
+
+    /**
+     * @var MemoryDef
+     */
+    protected $_asMemoryDef;
+
+    /**
+     * @var StageDef
+     */
+    protected $_asStageDef;
+
+    /**
+     * @var StageMeta[]
+     */
+    protected $_stageMetaMap;
+
 
     public function __construct(string $contextClass, ContextMeta $meta = null)
     {
-        $this->contextClass = $contextClass;
-        $creator = new CodeDefCreator($contextClass);
+        $this->_contextClass = $contextClass;
+        $this->_creator = $creator = new CodeDefCreator($contextClass);
+        $this->_depending = $creator->getDependingBuilder();
+
         $contextName = isset($meta) ? $meta->name : $creator->getContextName();
 
         $option = $creator->getCodeContextOption();
         $config = isset($meta) ? $meta->config : [];
-        $contextAnnotation = $creator->getContextAnnotation();
 
-        $stages = $creator->getMethodStageMetas();
-        $depending = $creator->getDependingBuilder();
+        $this->_annotation = $contextAnnotation = $creator->getContextAnnotation();
 
         parent::__construct([
             'name' => $contextName,
             'title' => isset($meta) ? $meta->title : $contextAnnotation->title,
             'desc' => isset($meta) ? $meta->desc : $contextAnnotation->desc,
 
-            'contextWrapper' => $contextClass,
-
             'priority' => $config['priority'] ?? $option->priority,
             'auth' => $config['auth'] ?? $option->auth,
-            'asIntent' => $config['asIntent'] ?? $contextAnnotation->asIntentMeta($contextName),
 
             'queryNames' => $config['queryNames'] ?? $option->queryNames,
 
             'memoryScopes' => $config['memoryScopes'] ?? $option->memoryScopes,
 
             'memoryAttrs' => $config['memoryAttrs']
-                    ?? $depending->attrs + $option->memoryAttrs,
+                    ?? $this->_depending->attrs + $option->memoryAttrs,
 
-            'dependingAttrs' => $config['dependingNames'] ?? array_keys($depending->attrs),
+            'dependingNames' => $config['dependingNames'] ?? array_keys($this->_depending->attrs),
 
             'comprehendPipes' => $config['comprehendPipes'] ?? $option->comprehendPipes,
 
@@ -69,12 +137,219 @@ class ICodeContextDef extends IContextDef
 
             'stageRoutes' => $config['stageRoutes'] ?? $option->stageRoutes,
             'contextRoutes' => $config['contextRoutes'] ?? $option->contextRoutes,
-
-            'stages' => $stages + $depending->stages,
-            'firstStage' => CodeContext::FIRST_STAGE
         ]);
         unset($creator);
     }
+
+    public static function relations(): array
+    {
+        return [];
+    }
+
+
+    public static function stub(): array
+    {
+        return [
+            // context 的全名. 同时也是意图名称.
+            'name' => '',
+            // context 的标题. 可以用于 精确意图校验.
+            'title' => '',
+            // context 的简介. 通常用于 askChoose 的选项.
+            'desc' => '',
+            // context 的优先级. 若干个语境在 blocking 状态中, 根据优先级决定谁先恢复.
+            'priority' => 0,
+
+            // auth, 访问时用户必须拥有的权限. 用类名表示.
+            'auth' => [],
+
+            // context 的默认参数名, 类似 url 的 query 参数.
+            // query 参数值默认是字符串.
+            // query 参数如果是数组, 则定义参数名时应该用 [] 做后缀, 例如 ['key1', 'key2', 'key3[]']
+            'queryNames' => [],
+
+            // 定义 context 上下文记忆的作用域.
+            // 相关作用域参数, 会自动添加到 query 参数中.
+            // 作用域为空, 则是一个 session 级别的短程记忆.
+            // 不为空, 则是长程记忆, 会持久化保存.
+            'memoryScopes' => null,
+
+            // memory 记忆体的默认值.
+            'memoryAttrs' => [],
+
+            // Context 启动时, 会依次检查的参数. 当这些参数都不是 null 时, 认为 Context::isPrepared
+            'dependingNames' => [],
+
+            'comprehendPipes' => null,
+
+            'onCancel' => null,
+            'onQuit' => null,
+            'stageRoutes' => [],
+            'contextRoutes' => [],
+        ];
+    }
+
+    public function asStageDef() : StageDef
+    {
+        return $this->_asStageDef
+            ?? $this->_asStageDef = new InitStage([
+                'name' => $this->name,
+                'contextName' => $this->name,
+                'title' => $this->title,
+                'desc' => $this->desc,
+                'stageName' => '',
+                'asIntent' => $this->_annotation->asIntentMeta($this->name),
+            ]);
+    }
+
+    public function asMemoryDef() : MemoryDef
+    {
+        return $this->_asMemoryDef
+            ?? $this->_asMemoryDef = new IMemoryDef(new MemoryMeta([
+                'name' => $this->name,
+                'title' => $this->title,
+                'desc' => $this->desc,
+                'scopes' => $this->memoryScopes,
+                'attrs' => $this->memoryAttrs,
+            ]));
+    }
+
+
+    /**
+     * @return StageMeta[]
+     */
+    public function getStageMetaMap(): array
+    {
+        if (isset($this->_stageMetaMap)) {
+            return $this->_stageMetaMap;
+        }
+
+        $stages = $this->_creator->getMethodStageMetas();
+        $dependingStages = $this->_depending->stages;
+        $stages = $stages + $dependingStages;
+
+        foreach ($stages as $stageMeta) {
+            $shortName = $stageMeta->stageName;
+            $this->_stageMetaMap[$shortName] = $stageMeta;
+        }
+
+        return $this->_stageMetaMap;
+    }
+
+    public function wrapContext(Cloner $cloner, Ucl $ucl): Context
+    {
+        return call_user_func(
+            [$this->_contextClass, Context::CREATE_FUNC],
+            $cloner,
+            $ucl
+        );
+    }
+
+    public function firstStage(): ? string
+    {
+        return CodeContext::FIRST_STAGE;
+    }
+
+    public function eachPredefinedStage(): \Generator
+    {
+        foreach ($this->getStageMetaMap() as $name => $stage) {
+            yield $stage->toWrapper();
+        }
+    }
+
+    public function getPredefinedStageNames(bool $isFullname = false): array
+    {
+        $map = $this->getStageMetaMap();
+        return $isFullname
+            ? array_map(function(StageMeta $meta) { return $meta->name;}, $map)
+            : array_keys($map);
+    }
+
+    public function getPredefinedStage(string $name): ? StageDef
+    {
+        $meta = $this->getStageMetaMap()[$name] ?? null;
+        return isset($meta)
+            ? $meta->toWrapper()
+            : null;
+    }
+
+
+    /*------ properties -------*/
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->desc;
+    }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function onCancelStage(): ? string
+    {
+        return $this->onCancel;
+    }
+
+    public function auth(): array
+    {
+        return $this->auth;
+    }
+
+
+    public function onQuitStage(): ? string
+    {
+        return $this->onQuit;
+    }
+
+    public function commonStageRoutes(): array
+    {
+        return $this->stageRoutes;
+    }
+
+    public function commonContextRoutes(): array
+    {
+        return $this->contextRoutes;
+    }
+
+    public function getScopes(): array
+    {
+        return $this->memoryScopes;
+    }
+
+    public function getDependingNames(): array
+    {
+        return $this->dependingNames;
+    }
+
+    public function getQueryNames(): array
+    {
+        return $this->queryNames;
+    }
+
+    public function comprehendPipes(Dialog $current): ? array
+    {
+        return $this->comprehendPipes;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getFirstStage(): ? string
+    {
+        return CodeContext::FIRST_STAGE;
+    }
+
+    /*-------- meta wrap --------*/
 
     public function toMeta(): Meta
     {
@@ -87,10 +362,12 @@ class ICodeContextDef extends IContextDef
             'name' => $this->name,
             'title' => $this->title,
             'desc' => $this->desc,
-            'wrapper' => $this->contextClass,
+            'wrapper' => $this->_contextClass,
             'config' => $config
         ]);
     }
+
+
 
     /**
      * @param Meta $meta
@@ -111,6 +388,6 @@ class ICodeContextDef extends IContextDef
 
     public function onRedirect(Dialog $prev, Ucl $current): ? Operator
     {
-        return call_user_func([$this->contextClass, CodeContext::FUNC_REDIRECT], $prev, $current);
+        return call_user_func([$this->_contextClass, CodeContext::FUNC_REDIRECT], $prev, $current);
     }
 }
