@@ -11,7 +11,6 @@
 
 namespace Commune\Framework\Component\Providers;
 
-use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\ServiceProvider;
 use Commune\Container\ContainerContract;

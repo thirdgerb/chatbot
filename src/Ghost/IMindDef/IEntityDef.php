@@ -118,11 +118,6 @@ class IEntityDef implements EntityDef
         return $this->meta->blacklist;
     }
 
-    public function getSynonymNames(): array
-    {
-        return $this->meta->synonyms;
-    }
-
     public function toMeta(): Meta
     {
         return $this->meta;

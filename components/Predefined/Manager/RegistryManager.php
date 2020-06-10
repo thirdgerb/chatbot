@@ -16,6 +16,7 @@ use Commune\Blueprint\Ghost\Context\CodeContextOption;
 use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Components\Predefined\Intent\Navigation\CancelInt;
 use Commune\Components\Predefined\Manager\OptRegistry\ViewCategory;
 use Commune\Ghost\Context\ACodeContext;
 use Commune\Protocals\HostMsg\Convo\QA\Choice;
@@ -93,8 +94,11 @@ class RegistryManager extends ACodeContext
                         $categories = array_values($categories);
 
                         $choice = $isAnswered->getChoice();
-                        $category = $categories[(int) $choice] ?? null;
 
+
+                        $category = is_numeric($choice)
+                            ? ($categories[(int) $choice] ?? null)
+                            : null;
 
                         if (isset($category)) {
                             return $dialog->blockTo(
@@ -138,6 +142,8 @@ class RegistryManager extends ACodeContext
         if ($page > 1) {
             $menu['b'] = '上一页';
         }
+
+        $menu['c'] = CancelInt::makeUcl();
         return $menu;
     }
 

@@ -209,7 +209,7 @@ class IProcess implements Process, HasIdGenerator, \Serializable
 
     public function getRoot(): Ucl
     {
-        return $this->decoded($this->_root);
+        return $this->decode($this->_root);
     }
 
 
@@ -220,7 +220,7 @@ class IProcess implements Process, HasIdGenerator, \Serializable
     {
         if (isset($this->_waiter)) {
             $await = $this->_waiter->await;
-            return $this->decoded($await);
+            return $this->decode($await);
         }
 
         return null;
@@ -240,7 +240,7 @@ class IProcess implements Process, HasIdGenerator, \Serializable
             : [];
 
         return array_map(function(string $contextName) {
-            return $this->decoded($contextName);
+            return $this->decode($contextName);
         }, $contexts);
     }
 
@@ -342,7 +342,7 @@ class IProcess implements Process, HasIdGenerator, \Serializable
         $result = [];
         foreach ($this->_depending as $dependingId => $dependedContextId) {
             if ($dependedContextId === $dependedContextId) {
-                $result[] = $dependingId;
+                $result[] = $this->decode($dependingId);
             }
         }
 
@@ -447,7 +447,7 @@ class IProcess implements Process, HasIdGenerator, \Serializable
         }
 
         if (isset($this->_waiter)) {
-            $id = $this->decoded($this->_waiter->await)->getContextId();
+            $id = $this->decode($this->_waiter->await)->getContextId();
             $tasks[$id] = $this->getTaskById($id);
         }
 
@@ -461,7 +461,7 @@ class IProcess implements Process, HasIdGenerator, \Serializable
 
     /*-------- methods --------*/
 
-    protected function decoded(string $str)
+    protected function decode(string $str)
     {
         return $this->_decoded[$str]
             ?? $this->_decoded[$str] = Ucl::decode($str);

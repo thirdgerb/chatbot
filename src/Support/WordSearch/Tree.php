@@ -42,8 +42,11 @@ class Tree
 
         $length = mb_strlen($text);
         $result = [];
-        for ( $i = 0; $i < $length ; $i++ ) {
-            $this->root->search($text, $i, $result);
+        $i = 0 ;
+
+        while ($i < $length) {
+            $i = $this->root->search($text, $i, $result);
+            $i ++;
         }
 
         return $result;

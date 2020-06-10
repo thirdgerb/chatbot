@@ -21,7 +21,7 @@ use Commune\Protocals\HostMsg\DefaultIntents;
  * @author thirdgerb <thirdgerb@gmail.com>
  * 
  * @title 取消
- * @desc 取消当前语境
+ * @desc 取消语境
  *
  * @example 退出
  * @example 我要退出

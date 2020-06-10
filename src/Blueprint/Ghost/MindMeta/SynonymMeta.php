@@ -31,6 +31,8 @@ use Commune\Support\Utils\StringUtils;
  */
 class SynonymMeta extends AbsOption implements DefMeta
 {
+    const IDENTITY = 'name';
+
     public static function stub(): array
     {
         return [

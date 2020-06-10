@@ -138,6 +138,8 @@ class FeatureTest extends ACodeContext
                         $this->getStage('test_match'),
                         $this->getStage('test_memory'),
                         $this->getStage('test_confirmation'),
+                        $this->getStage('test_entity'),
+
 //                        $this->getStage('test_exiting'),
                         'askContinue 机制' => 'test_ask_continue',
                     ]
@@ -362,6 +364,54 @@ EOF
                     });
                 }
             );
+    }
+
+    /**
+     * @param Stage $stage
+     * @return Stage
+     *
+     * @title 测试entity
+     * @desc 测试 entity 匹配功能.
+     */
+    public function __on_test_entity(Stage $stage) : Stage
+    {
+        return $stage
+            ->onActivate(function(Dialog $dialog) {
+                return $dialog
+                    ->await()
+                    ->askVerbal('测试 entity 相关功能. 匹配 city, date');
+            })
+            ->onReceive(function(Dialog $dialog) {
+
+                return $dialog
+                    ->hearing()
+                    ->matchEntity('city')
+                    ->then(function(Dialog $dialog, array $matchEntity) {
+
+                        return $dialog
+                            ->send()
+                            ->info('匹配 city : ' . implode('|', $matchEntity))
+                            ->over()
+                            ->rewind();
+
+
+                    })
+                    ->matchEntity('date')
+                    ->then(function (Dialog $dialog, array $matchEntity) {
+
+                        return $dialog
+                            ->send()
+                            ->info('匹配 date : ' . implode('|', $matchEntity))
+                            ->over()
+                            ->rewind();
+
+
+                    })
+                    ->end();
+
+
+            });
+
     }
 
 //

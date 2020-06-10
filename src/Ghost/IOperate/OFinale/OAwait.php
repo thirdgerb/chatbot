@@ -213,7 +213,7 @@ class OAwait extends AbsFinale implements Await
         $suggestion
     ) : bool
     {
-        if (!TypeUtils::isString($suggestion)) {
+        if (!TypeUtils::maybeString($suggestion)) {
             return false;
         }
 

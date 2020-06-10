@@ -42,10 +42,4 @@ interface EntityDef extends Def
      */
     public function getBlacklist() : array;
 
-    /**
-     * 获取默认值对应的同义词词典.
-     * @return string[]
-     */
-    public function getSynonymNames() : array;
-
 }

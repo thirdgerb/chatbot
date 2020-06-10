@@ -54,11 +54,18 @@ class Branch
     }
 
 
+    /**
+     * 返回值是新的 start
+     * @param string $haystack
+     * @param int $start
+     * @param array $result
+     * @return int
+     */
     public function search(
         string &$haystack,
         int $start,
         array &$result
-    ) : void
+    ) : int
     {
         $character = mb_substr($haystack, $start, 1);
 
@@ -70,16 +77,16 @@ class Branch
 
         // 为空不继续.
         if ($character === '') {
-            return;
+            return $start;
         }
 
         // 没有子节点, 放弃.
         if (!$this->hasBranch($character)) {
-            return;
+            return $start;
         }
 
         $subBranch = $this->branches[$character];
-        $subBranch->search($haystack, $start + 1, $result);
+        return $subBranch->search($haystack, $start + 1, $result);
     }
 
     public function hasBranch(string $key) : bool
