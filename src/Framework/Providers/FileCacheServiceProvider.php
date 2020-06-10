@@ -9,14 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\FileCache;
+namespace Commune\Framework\Providers;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
+use Commune\Framework\FileCache\FileCacheOption;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Meta\StorageMeta;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Support\Registry\Storage\Json\JsonStorageOption;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -31,7 +34,10 @@ class FileCacheServiceProvider extends ServiceProvider
     public static function stub(): array
     {
         return [
-            'path' => realpath(__DIR__ . '/../../../demo/resources/caches'),
+            'path' => StringUtils::gluePath(
+                CommuneEnv::getResourcePath(),
+                'caches'
+            )
         ];
     }
 

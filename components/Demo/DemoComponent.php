@@ -61,6 +61,14 @@ class DemoComponent extends GhostComponent
                 FileStorageOption::OPTION_YML
             );
         }
+
+
+        $this->loadTranslation(
+            $app,
+            __DIR__ . '/resources/trans',
+            true,
+            false
+        );
     }
 
 }

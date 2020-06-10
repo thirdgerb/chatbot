@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Providers;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Ghost\MindMeta;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
@@ -27,6 +28,8 @@ use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
  *
  * @property-read string $resourcePath
  * @property-read int $cacheExpire
+ * @property-read StorageOption|null $storage
+ * @property-read StorageOption|null $initStorage
  *
  */
 class MindsetStorageConfigProvider extends ServiceProvider
@@ -34,8 +37,9 @@ class MindsetStorageConfigProvider extends ServiceProvider
     public static function stub(): array
     {
         return [
-            'resourcePath' => realpath(__DIR__ .'/../../../demo/resources'),
+            'resourcePath' => CommuneEnv::getResourcePath(),
             'cacheExpire' => 600,
+            'storage' => null,
         ];
     }
 
@@ -46,7 +50,10 @@ class MindsetStorageConfigProvider extends ServiceProvider
 
     public static function relations(): array
     {
-        return [];
+        return [
+            'storage' => StorageOption::class,
+            'initStorage' => StorageOption::class
+        ];
     }
 
     public function boot(ContainerContract $app): void
@@ -85,15 +92,20 @@ class MindsetStorageConfigProvider extends ServiceProvider
         // 遍历获取所有的 Category 配置.
         foreach ($metas as $type => list($metaName, $storageName, $title, $desc)) {
             /**
-             * @var StorageOption $storageOption
+             * @var StorageOption $storage
              */
-            $storageOption = new $storageName([
+            $storage = new $storageName([
                 'name' => $type,
                 'path' => $this->resourcePath . '/' . $type,
                 'isDir' => true,
             ]);
+            $initStorage = null;
 
-            $meta = $storageOption->toMeta();
+            $selfStorage = $this->storage;
+            if (isset($selfStorage)) {
+                $initStorage = $storage;
+                $storage = $selfStorage;
+            }
 
             yield new CategoryOption([
                 'name' => $metaName,
@@ -101,8 +113,8 @@ class MindsetStorageConfigProvider extends ServiceProvider
                 'title' => $title,
                 'desc' => $desc,
                 'cacheExpire' => $this->cacheExpire,
-                'storage' => $meta,
-                'initialStorage' => null,
+                'storage' => $storage->toMeta(),
+                'initialStorage' => isset($initStorage) ? $initStorage->toMeta() : null,
             ]);
         }
     }

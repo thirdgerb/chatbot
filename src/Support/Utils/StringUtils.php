@@ -6,6 +6,12 @@ namespace Commune\Support\Utils;
 
 class StringUtils
 {
+    public static function gluePath(string $dir, string $more) : string
+    {
+        return rtrim($dir, DIRECTORY_SEPARATOR)
+            . DIRECTORY_SEPARATOR
+            . ltrim($more, DIRECTORY_SEPARATOR);
+    }
 
     public static function isEmptyStr($str) : bool
     {

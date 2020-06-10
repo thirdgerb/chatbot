@@ -18,8 +18,10 @@ use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Components\Demo\Recall\Sandbox;
+use Commune\Contracts\Trans\Translator;
 use Commune\Ghost\Context\ACodeContext;
 use Commune\Protocals\HostMsg;
+use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -139,6 +141,7 @@ class FeatureTest extends ACodeContext
                         $this->getStage('test_memory'),
                         $this->getStage('test_confirmation'),
                         $this->getStage('test_entity'),
+                        $this->getStage('test_trans'),
 //                        $this->getStage('test_exiting'),
 //                        'askContinue 机制' => 'test_ask_continue',
                     ]
@@ -408,6 +411,43 @@ EOF
                     })
                     ->end();
 
+
+            });
+
+    }
+
+    /**
+     * @param Stage $stage
+     * @return Stage
+     *
+     * @title 测试翻译
+     * @desc 测试翻译功能
+     */
+    public function __on_test_trans(Stage $stage) : Stage
+    {
+        return $stage
+            ->onActivate(function(Dialog $dialog) {
+                return $dialog
+                    ->await()
+                    ->askVerbal('请输入需要翻译的字符串');
+
+            })
+            ->onReceive(function(Dialog $dialog) {
+
+                return $dialog
+                    ->hearing()
+                    ->isAnswered()
+                    ->then(function(Dialog $dialog, AnswerMsg $answer, Translator $translator) {
+
+                        $temp = $answer->getText();
+
+                        return $dialog
+                            ->send()
+                            ->info("翻译结果为: {t} ", ['t' => $translator->trans($temp)])
+                            ->over()
+                            ->rewind();
+                    })
+                    ->end();
 
             });
 

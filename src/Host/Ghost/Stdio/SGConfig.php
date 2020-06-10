@@ -40,8 +40,9 @@ class SGConfig extends AbsOption implements GhostConfig
 
             'configProviders' => [
                 Framework\Providers\OptRegistryProvider::class,
-                Framework\FileCache\FileCacheServiceProvider::class,
+                Framework\Providers\FileCacheServiceProvider::class,
                 GhostProviders\MindsetStorageConfigProvider::class,
+                Framework\Providers\TranslatorBySymfonyProvider::class,
             ],
             'procProviders' => [
                 Framework\Providers\ExpReporterByConsoleProvider::class,

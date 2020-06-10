@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Blueprint;
+
 use Commune\Blueprint\Exceptions\CommuneLogicException;
 
 
@@ -24,6 +25,7 @@ class CommuneEnv
 {
     const DEBUG = 'COMMUNE_DEBUG';
     const RESET_MIND = 'COMMUNE_RESET_MIND';
+    const RESOURCE_PATH = 'COMMUNE_RESOURCE_PATH';
 
     /*------- debug ------*/
 
@@ -35,6 +37,21 @@ class CommuneEnv
     public static function defineDebug(bool $debug) : void
     {
         self::set(self::DEBUG, $debug);
+    }
+
+    /*------- path ------*/
+
+    public static function getResourcePath() : string
+    {
+        return self::get(self::RESOURCE_PATH, __DIR__ . '/../../demo/resources');
+    }
+
+    public static function defineResourcePath(string $path) : void
+    {
+        if (!is_dir($path)) {
+            throw new CommuneLogicException("path $path is invalid dir");
+        }
+        self::set(self::RESOURCE_PATH, $path);
     }
 
     /*------- mind ------*/

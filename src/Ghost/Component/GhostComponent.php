@@ -45,4 +45,5 @@ abstract class GhostComponent extends AComponentOption
         $provider = new Psr4SelfRegisterLoader($option);
         $app->getServiceRegistrar()->registerProcProvider($provider, false);
     }
+
 }

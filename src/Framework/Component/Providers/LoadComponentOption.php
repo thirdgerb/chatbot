@@ -11,7 +11,6 @@
 
 namespace Commune\Framework\Component\Providers;
 
-use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
 use Commune\Support\Registry\Meta\CategoryOption;

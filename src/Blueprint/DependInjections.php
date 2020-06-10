@@ -38,6 +38,7 @@ interface DependInjections
     const APP_PROC_BINDINGS = [
         Framework\ProcContainer::class,
         Contracts\Log\ExceptionReporter::class,
+        Contracts\Trans\Translator::class,
         OptRegistry::class,
         LoggerInterface::class,
         SoundLikeInterface::class,

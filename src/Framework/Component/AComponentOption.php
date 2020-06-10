@@ -12,6 +12,7 @@
 namespace Commune\Framework\Component;
 
 use Commune\Blueprint\Framework\App;
+use Commune\Framework\Component\Providers\LoadTranslations;
 use Commune\Support\Option\AbsOption;
 use Commune\Blueprint\Framework\ComponentOption;
 use Commune\Framework\Component\Providers\LoadComponentOption;
@@ -76,4 +77,24 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
         ]), false);
     }
 
+
+    public function loadTranslation(
+        App $app,
+        string $langDir,
+        bool $intl = false,
+        bool $force = false
+    ) : void
+    {
+        $registrar = $app->getServiceRegistrar();
+
+        $registrar->registerProcProvider(
+            new LoadTranslations([
+                'id' => static::class . ':trans',
+                'path' =>  $langDir,
+                'intl' => $intl,
+                'force' => $force,
+            ]),
+            false
+        );
+    }
 }
