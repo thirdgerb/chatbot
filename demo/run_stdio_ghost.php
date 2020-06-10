@@ -11,9 +11,15 @@ use Commune\Host\Ghost\Stdio\SGConsoleLogger;
 
 require __DIR__ .'/../vendor/autoload.php';
 
+$options = $argv;
+array_shift($options);
 
-CommuneEnv::defineDebug(true);
-CommuneEnv::defineResetMind(true);
+$debug = in_array('-d', $options);
+$reset = in_array('-r', $options);
+
+// 设置
+CommuneEnv::defineDebug($debug);
+CommuneEnv::defineResetMind($reset);
 
 
 

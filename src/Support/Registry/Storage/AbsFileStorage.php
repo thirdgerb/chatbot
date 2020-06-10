@@ -11,6 +11,7 @@
 
 namespace Commune\Support\Registry\Storage;
 
+use Commune\Blueprint\Ghost\MindMeta\SynonymMeta;
 use Commune\Support\Option\Option;
 use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\Meta\CategoryOption;
@@ -46,7 +47,7 @@ abstract class AbsFileStorage implements Storage
      * option 与文件的关系. [categoryId][optionId] => fileName
      * @var string[][]
      */
-    protected $optionFromFile = [];
+    protected $optionPath = [];
 
     /**
      * @var string[][]
@@ -200,7 +201,7 @@ abstract class AbsFileStorage implements Storage
             if (isset($option)) {
                 $optionId = $option->getId();
                 $this->optionCaches[$cateId][$optionId] = $option;
-                $this->optionFromFile[$cateId][$optionId] = $path;
+                $this->optionPath[$cateId][$optionId] = $path;
             }
         }
     }
@@ -238,7 +239,7 @@ abstract class AbsFileStorage implements Storage
                 if (isset($option)) {
                     $optionId = $option->getId();
                     $this->optionCaches[$cateId][$optionId] = $option;
-                    $this->optionFromFile[$cateId][$optionId] = $filePath;
+                    $this->optionPath[$cateId][$optionId] = $filePath;
                 }
             }
         }
@@ -285,18 +286,26 @@ abstract class AbsFileStorage implements Storage
         // 如果是目录, 则删除对应配置的文件.
         $cateId = $category->getId();
         foreach ($deletes as $id) {
-            $fileName = $this->optionFromFile[$cateId][$id]
+            $fileName = $this->optionPath[$cateId][$id]
                 ?? $this->getFileName($storage, $id);
 
-            unset($this->optionFromFile[$cateId][$id]);
+            unset($this->optionPath[$cateId][$id]);
             @unlink($fileName);
         }
     }
 
     protected function getFileName(FileStorageOption $meta, string $id = null) : string
     {
-        $id = isset($id) ? DIRECTORY_SEPARATOR . $id : '';
-        return rtrim($meta->path, DIRECTORY_SEPARATOR) . $id . '.' . $this->ext;
+        $id = $id ?? '';
+        $id = $this->serializeId($id);
+        return rtrim($meta->path, DIRECTORY_SEPARATOR)
+            . DIRECTORY_SEPARATOR
+            . $id . '.' . $this->ext;
+    }
+
+    protected function serializeId(string $id) : string
+    {
+        return md5($id);
     }
 
     /**
@@ -335,13 +344,13 @@ abstract class AbsFileStorage implements Storage
         $cateId = $category->getId();
         $optionId = $option->getId();
 
-        $path = $this->optionFromFile[$cateId][$optionId] ?? null;
+        $path = $this->optionPath[$cateId][$optionId] ?? null;
         $path = $path ?? $this->getFileName($meta, $optionId);
 
         $content = $this->parseArrayToString($option->toArray(), $meta);
 
         file_put_contents($path, $content);
-        $this->optionFromFile[$cateId][$optionId] = $path;
+        $this->optionPath[$cateId][$optionId] = $path;
     }
 
     /*------ implements ------*/
@@ -548,7 +557,7 @@ abstract class AbsFileStorage implements Storage
     {
         $this->optionCaches = [];
         $this->resources = [];
-        $this->optionFromFile = [];
+        $this->optionPath = [];
         $this->allIds = [];
     }
 

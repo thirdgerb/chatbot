@@ -27,8 +27,8 @@ use Commune\Support\Option\Wrapper;
  */
 class EntityMeta extends AbsOption implements DefMeta
 {
-
     const IDENTITY = 'name';
+
 
     public static function stub(): array
     {
