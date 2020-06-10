@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Ghost\Support\ContextUtils;
@@ -500,6 +501,23 @@ class Ucl implements UclInterface
             'stageName' => $this->_stageName,
             'query' => $this->_query
         ];
+    }
+
+    /*------- dependable -------*/
+
+    public function toInstanceStub(): ClonerInstanceStub
+    {
+        return $this;
+    }
+
+    public function isFulfilled(): bool
+    {
+        return false;
+    }
+
+    public function toFulfillUcl(): Ucl
+    {
+        return $this;
     }
 
 

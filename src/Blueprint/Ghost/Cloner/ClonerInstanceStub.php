@@ -19,6 +19,10 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  */
 interface ClonerInstanceStub extends ArrayAndJsonAble
 {
-    public function toInstance(Cloner $cloner) : ClonerInstance;
+    /**
+     * @param Cloner $cloner
+     * @return mixed
+     */
+    public function toInstance(Cloner $cloner);
 
 }

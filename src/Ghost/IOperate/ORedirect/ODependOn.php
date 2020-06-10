@@ -11,11 +11,13 @@
 
 namespace Commune\Ghost\IOperate\ORedirect;
 
+use Commune\Blueprint\Ghost\Context\Dependable;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\IActivate\IDepend;
 use Commune\Ghost\Dialog\IResume\ICallback;
+use Commune\Ghost\IOperate\Flows\FallbackFlow;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -24,18 +26,18 @@ class ODependOn extends AbsRedirect
 {
 
     /**
-     * @var Ucl
+     * @var Dependable
      */
-    protected $dependUcl;
+    protected $dependable;
 
     /**
      * @var string|null
      */
     protected $fieldName;
 
-    public function __construct(Dialog $dialog, Ucl $dependUcl, string $fieldName = null)
+    public function __construct(Dialog $dialog, Dependable $dependable, string $fieldName = null)
     {
-        $this->dependUcl = $dependUcl;
+        $this->dependable = $dependable;
         $this->fieldName = $fieldName;
         parent::__construct($dialog);
     }
@@ -47,13 +49,24 @@ class ODependOn extends AbsRedirect
                 ->context
                 ->offsetSet(
                     $this->fieldName,
-                    $this->dependUcl
+                    $this->dependable
                 );
         }
 
-        return $this->redirect($this->dependUcl, function (Ucl $ucl) {
-            return new IDepend($this->dialog, $ucl);
-        });
+        // 如果依赖对象已经完成了, 则直接走 callback
+        if ($this->dependable->isFulfilled()) {
+            $ucl = $this->dialog->ucl;
+            $this->dialog->process->addCallback($ucl);
+            return new FallbackFlow($this->dialog);
+        }
+
+        // 否则重定向.
+        return $this->redirect(
+            $this->dependable->toFulfillUcl(),
+            function (Ucl $ucl) {
+                return new IDepend($this->dialog, $ucl);
+            }
+        );
     }
 
 

@@ -17,6 +17,7 @@ namespace Commune\Blueprint\Ghost\Cloner;
  */
 interface ClonerInstance
 {
+    public function isInstanced() : bool;
 
     public function toInstanceStub() : ClonerInstanceStub;
 

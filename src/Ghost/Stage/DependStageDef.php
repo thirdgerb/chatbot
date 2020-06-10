@@ -54,7 +54,7 @@ class DependStageDef extends AbsStageDef
         if (
             isset($value)
             && $value instanceof Context
-            && $value->isPrepared()
+            && $value->isFulfilled()
         ) {
             return $dialog->next();
         }
@@ -76,7 +76,7 @@ class DependStageDef extends AbsStageDef
 
         $depended = $ucl->findContext($dialog->cloner);
 
-        if (!$depended->isPrepared()) {
+        if (!$depended->isFulfilled()) {
             return $dialog->reactivate();
         }
 

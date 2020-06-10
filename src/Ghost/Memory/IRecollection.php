@@ -60,6 +60,12 @@ class IRecollection implements Recollection
         return $this->_def->getName();
     }
 
+    public function isInstanced(): bool
+    {
+        return isset($this->_cloner);
+    }
+
+
     public function __destruct()
     {
         SpyAgency::decr(static::class);

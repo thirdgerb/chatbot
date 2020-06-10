@@ -11,6 +11,8 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
+use Commune\Blueprint\Ghost\Context\Dependable;
 use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
@@ -30,7 +32,10 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  * @property-read string $stageName
  * @property-read string[] $query
  */
-interface UclInterface extends ArrayAndJsonAble
+interface UclInterface extends
+    ArrayAndJsonAble,
+    Dependable,
+    ClonerInstanceStub
 {
 
     /*------ create ------*/
@@ -90,12 +95,14 @@ interface UclInterface extends ArrayAndJsonAble
      */
     public function getContextId() : string;
 
-    /*------ compare ------*/
 
     /**
-     * @return bool
+     * @param string|null $stage
+     * @return string
      */
-    public function isInstanced() : bool;
+    public function getStageFullname(string $stage = null) : string;
+
+    /*------ compare ------*/
 
     /**
      * @param Ucl $ucl
@@ -115,7 +122,12 @@ interface UclInterface extends ArrayAndJsonAble
      */
     public function equals($ucl) : bool;
 
-    /*------ transformer ------*/
+    /*------ cloner instance ------*/
+
+    /**
+     * @return bool
+     */
+    public function isInstanced() : bool;
 
     /**
      * @param Cloner $cloner
@@ -124,12 +136,6 @@ interface UclInterface extends ArrayAndJsonAble
      * @throws DefNotDefinedException
      */
     public function toInstance(Cloner $cloner) : Ucl;
-
-    /**
-     * @param string|null $stage
-     * @return string
-     */
-    public function getStageFullname(string $stage = null) : string;
 
 
     /*------ redirect ------*/
@@ -150,6 +156,7 @@ interface UclInterface extends ArrayAndJsonAble
     /*------ validate ------*/
 
     /**
+     * 规则是否正确.
      * @return bool
      */
     public function isValidPattern() : bool;

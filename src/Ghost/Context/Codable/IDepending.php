@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Stage\AttrStageDef;
 use Commune\Ghost\Stage\DependStageDef;
 use Commune\Ghost\Support\ContextUtils;
+use Commune\Support\Struct\Struct;
 
 
 /**
@@ -46,6 +47,23 @@ class IDepending implements Depending
     public function __construct(string $contextName)
     {
         $this->contextName = $contextName;
+    }
+
+    public function onStage(
+        string $name,
+        StageMeta $meta
+    ): Depending
+    {
+        $this->attrs[$name]= null;
+
+        $metaArr = $meta->toArray();
+        $fullname = ContextUtils::makeFullStageName($this->contextName, $name);
+        $metaArr['name'] = $fullname;
+        $metaArr['contextName'] = $this->contextName;
+        return call_user_func(
+            [get_class($meta), Struct::CREATE_FUNC],
+            $metaArr
+        );
     }
 
 

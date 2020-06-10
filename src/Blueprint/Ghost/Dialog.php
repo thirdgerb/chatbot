@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Ghost\Context\Dependable;
 use Commune\Blueprint\Ghost\Operate;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Runtime\Process;
@@ -216,11 +217,11 @@ interface Dialog
      * 依赖一个目标 Context. 当目标 Context fulfill 时,
      * 会调用当前 Stage 的 onFulfill 方法.
      *
-     * @param Ucl $dependUcl
+     * @param Dependable $depend
      * @param string|null $fieldName
      * @return Operator
      */
-    public function dependOn(Ucl $dependUcl, string $fieldName = null) : Operator;
+    public function dependOn(Dependable $depend, string $fieldName = null) : Operator;
 
     /**
      * 将自己压入 block 状态, 然后进入 $to 语境.

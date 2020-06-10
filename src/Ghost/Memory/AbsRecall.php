@@ -129,6 +129,11 @@ abstract class AbsRecall implements Recall, MindSelfRegister
         $mindset->memoryReg()->registerDef(static::getMemoryDef($mindset), !$force);
     }
 
+    public function isInstanced(): bool
+    {
+        return isset($this->_cloner);
+    }
+
 
     private function __clone()
     {

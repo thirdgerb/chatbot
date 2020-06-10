@@ -12,9 +12,10 @@
 namespace Commune\Blueprint\Ghost;
 
 use ArrayAccess;
+use Commune\Blueprint\Ghost\Context\Dependable;
+use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Runtime\Task;
 use IteratorAggregate;
-use Commune\Blueprint\Ghost\Cloner\ClonerInstance;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Support\DI\Injectable;
@@ -27,7 +28,7 @@ use Commune\Support\DI\Injectable;
 interface Context extends
         ArrayAccess, // 默认用数组方式来获取参数. 也可以用 getter setter
         IteratorAggregate,
-        ClonerInstance,
+        Dependable,
         Injectable // Context 可以用各种方式依赖注入
 {
     const NAMESPACE_SEPARATOR = '.';
@@ -120,7 +121,7 @@ interface Context extends
     /**
      * @return bool
      */
-    public function isPrepared() : bool;
+    public function isFulfilled() : bool;
 
     /**
      * @return bool
@@ -137,9 +138,21 @@ interface Context extends
     /*----- assignment -----*/
 
     /**
+     * 没有 query 的属性部分.
+     *
+     * @return Recollection
+     */
+    public function getRecollection() : Recollection;
+
+    /**
      * @param array $data
      */
     public function merge(array $data) : void;
+
+    /**
+     * 主动保存当前数据.
+     */
+    public function save() : void;
 
     /*----- array -----*/
 

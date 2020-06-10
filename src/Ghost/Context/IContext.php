@@ -88,6 +88,12 @@ class IContext implements Context
         return new static($cloner, $ucl);
     }
 
+    /*----- cloner instance -----*/
+
+    public function isInstanced(): bool
+    {
+        return isset($this->_cloner);
+    }
 
     public function toInstanceStub(): ClonerInstanceStub
     {
@@ -179,11 +185,17 @@ class IContext implements Context
         return null;
     }
 
-    public function isPrepared(): bool
+    public function isFulfilled(): bool
     {
         $depending = $this->depending();
         return is_null($depending);
     }
+
+    public function toFulfillUcl(): Ucl
+    {
+        return $this->getUcl();
+    }
+
 
     public function isChanged(): bool
     {
@@ -197,7 +209,7 @@ class IContext implements Context
 
     /*----- memory -----*/
 
-    protected function getRecollection() : Recollection
+    public function getRecollection() : Recollection
     {
         return $this->_recollection
             ?? $this->_recollection = $this
@@ -206,6 +218,13 @@ class IContext implements Context
                 ->recall($this->_cloner, $this->_ucl->getContextId());
 
     }
+
+    public function save(): void
+    {
+        $this->_cloner->runtime->cacheContext($this);
+        return;
+    }
+
 
     /*----- ArrayAccess -----*/
 
@@ -276,7 +295,7 @@ class IContext implements Context
         }
 
         $value = $this->getRecollection()->offsetGet($offset);
-        return $value instanceof Context && !$value->isPrepared()
+        return $value instanceof Context && !$value->isFulfilled()
             ? null
             : $value;
     }

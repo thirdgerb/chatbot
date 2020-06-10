@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Dialog;
 
+use Commune\Blueprint\Ghost\Context\Dependable;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\Operate;
 use Commune\Blueprint\Ghost\Operate\Operator;
@@ -88,10 +89,12 @@ abstract class AbsDialog extends AbsBaseDialog
         return new ORedirect\OReset($this, $root);
     }
 
-    public function dependOn(Ucl $dependUcl, string $fieldName = null): Operator
+    public function dependOn(Dependable $dependable, string $fieldName = null): Operator
     {
+        $dependUcl = $dependable->toFulfillUcl();
         $this->shouldNotBeSameContext(__METHOD__, $dependUcl);
-        return new ORedirect\ODependOn($this, $dependUcl, $fieldName);
+
+        return new ORedirect\ODependOn($this, $dependable, $fieldName);
     }
 
     public function blockTo(Ucl $target, int $priority = null): Operator
