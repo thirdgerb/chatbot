@@ -11,7 +11,6 @@
 
 namespace Commune\Support\Registry\Storage;
 
-use Commune\Blueprint\Ghost\MindMeta\SynonymMeta;
 use Commune\Support\Option\Option;
 use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\Meta\CategoryOption;

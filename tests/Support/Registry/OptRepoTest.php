@@ -151,11 +151,14 @@ class OptRepoTest extends TestCase
         $t = $category->find('test1');
         $this->assertEquals('A', $t->a);
 
+        // 变更 test1 的值
         $category->save($t3, false);
         $t = $category->find('test1');
         $this->assertEquals('B', $t->a);
 
+        // 检查拥有的值.
         $ids = $category->searchIds('*');
+        sort($ids);
         $this->assertEquals(['test1', 'test2'], $ids);
 
         $category->delete(...$ids);

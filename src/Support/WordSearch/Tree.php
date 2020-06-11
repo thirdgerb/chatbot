@@ -45,7 +45,7 @@ class Tree
         $i = 0 ;
 
         while ($i < $length) {
-            $i = $this->root->search($text, $i, $result);
+            $i = $this->root->search($text, $i, $result) ?? $i;
             $i ++;
         }
 

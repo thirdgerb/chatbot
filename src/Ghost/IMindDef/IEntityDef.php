@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\MindReg\SynonymReg;
 use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
+use Commune\Support\Utils\StringUtils;
 use Commune\Support\WordSearch\Tree;
 
 
@@ -67,13 +68,14 @@ class IEntityDef implements EntityDef
 
         $keywords = [];
         foreach ($values as $value) {
-            $value = strval($value);
+            $value = strval(trim($value));
             $keywords[$value] = $value;
 
             // 同义词
             if ($reg->hasDef($value)) {
                 $synonyms = $reg->getDef($value)->getValues();
                 foreach ($synonyms as  $synonym) {
+                    $synonym = strval(trim($synonym));
                     $keywords[$synonym] =  $value;
                 }
             }
