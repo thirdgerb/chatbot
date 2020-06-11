@@ -220,11 +220,18 @@ EOF;
             $infoCities[$city] = $city;
         }
 
+        // 用来测试先序匹配
+        $infoCities['洲株'] = '洲株';
+
         $tree = new Tree($infoCities);
         $this->assertArrayHasKey('株洲', $tree->search('后天株洲是不是下雨'));
 
         $result =  $tree->search('明天西安不是下雨');
         $this->assertArrayHasKey('西安', $result);
+
+        $this->assertArrayHasKey('株洲', $tree->search('后天株株洲株是不是下雨'));
+        $this->assertArrayHasKey('洲株', $tree->search('后天洲株洲是不是下雨'));
+        $this->assertArrayNotHasKey('洲株', $tree->search('后天株株洲株是不是下雨'));
     }
 
 }
