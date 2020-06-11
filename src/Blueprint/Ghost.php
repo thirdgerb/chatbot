@@ -33,5 +33,12 @@ interface Ghost extends App
 
     public function newCloner(InputMsg $input) : Cloner;
 
+    /**
+     * 处理 Ghost 的输入请求.
+     * 仍然允许用协议的方式自定义各种处理逻辑.
+     *
+     * @param GhostRequest $request
+     * @return GhostResponse
+     */
     public function handle(GhostRequest $request) : GhostResponse;
 }

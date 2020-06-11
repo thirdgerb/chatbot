@@ -18,30 +18,7 @@ namespace Commune\Protocals\Abstracted;
  */
 interface Intention
 {
-    /*----- do match -----*/
 
-    public function matchAnyIntent(array $intents) : ? string;
-
-    /**
-     * @param string $intent
-     * @return bool
-     */
-    public function isWildcardIntent(string $intent) : bool;
-
-    /**
-     * 模糊匹配意图.
-     * @param string $intentPattern
-     * @return null|string[]
-     */
-    public function wildcardIntentMatch(string $intentPattern) : ? array;
-
-    /**
-     * @param string $intentName
-     * @return bool
-     */
-    public function exactIntentMatch(string $intentName) : bool;
-
-    /*----- matched intent -----*/
 
     /**
      * 获取已匹配到的 intentName

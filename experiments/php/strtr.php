@@ -9,16 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint;
 
-use Commune\Blueprint\Configs\ShellConfig;
-use Commune\Blueprint\Framework\App;
+var_dump(strtr('test', 'st', 'sting'));
 
-/**
- * @author thirdgerb <thirdgerb@gmail.com>
- */
-interface Shell extends App
-{
-    public function getConfig() : ShellConfig;
-
-}
+var_dump(strtr('test', ['st' =>'sting']));

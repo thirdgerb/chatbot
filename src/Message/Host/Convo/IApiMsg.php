@@ -39,7 +39,7 @@ class IApiMsg extends AbsMessage implements ApiMsg
         return [];
     }
 
-    public function getRenderId(): string
+    public function getProtocalId(): string
     {
         return $this->api;
     }

@@ -42,8 +42,4 @@ class DialogConfuseInt extends IIntentMsg
         return new static($data['await'] ?? '');
     }
 
-    public function getTextTemplate(): string
-    {
-        return "confused, await:{await}, matchedIntent:{matched}";
-    }
 }

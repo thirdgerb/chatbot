@@ -121,13 +121,13 @@ interface Storage
     /**
      * @param CategoryOption $categoryOption
      * @param StorageOption $storageOption
-     * @param string $wildCardId
+     * @param string $wildcardId
      * @return array
      */
     public function searchIds(
         CategoryOption $categoryOption,
         StorageOption $storageOption,
-        string $wildCardId
+        string $wildcardId
     ) : array;
 
     /**

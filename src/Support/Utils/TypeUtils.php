@@ -207,6 +207,7 @@ class TypeUtils
     public static function maybeString($value) : bool
     {
         return is_scalar($value)
+            || is_null($value)
             || StringUtils::isString($value);
     }
 

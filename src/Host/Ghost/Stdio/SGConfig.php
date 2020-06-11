@@ -11,7 +11,7 @@
 
 namespace Commune\Host\Ghost\Stdio;
 
-use Commune\Blueprint\Configs\Nest\ProtocalOption;
+use Commune\Support\Protocal\HandlerOption;
 use Commune\Framework;
 use Commune\Components;
 use Commune\Ghost\Commands;
@@ -122,7 +122,7 @@ class SGConfig extends AbsOption implements GhostConfig
     public static function relations(): array
     {
         return [
-            'protocals[]' => ProtocalOption::class
+            'protocals[]' => HandlerOption::class
         ];
     }
 

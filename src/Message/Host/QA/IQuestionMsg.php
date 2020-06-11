@@ -277,7 +277,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         return empty($this->_data['query']);
     }
 
-    public function getRenderId(): string
+    public function getProtocalId(): string
     {
         return $this->query;
     }

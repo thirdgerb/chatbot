@@ -55,6 +55,12 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
 
     /*------- properties -------*/
 
+    public function getProtocalId(): string
+    {
+        return $this->getMessage()->getProtocalId();
+    }
+
+
     public function getMessageId(): string
     {
         return $this->messageId;
@@ -141,7 +147,7 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
 
     public function getMsgRenderId(string $renderId): string
     {
-        return $this->message->getRenderId();
+        return $this->message->getProtocalId();
     }
 
     public function getMsgText(): string

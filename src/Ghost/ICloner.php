@@ -177,7 +177,7 @@ class ICloner extends ASession implements Cloner
 
     /*-------- properties ---------*/
 
-    protected function getProtocalOptions(): array
+    protected function getHandlerOptions(): array
     {
         return $this->ghostConfig->protocals;
     }

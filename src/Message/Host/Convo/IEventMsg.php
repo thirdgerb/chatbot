@@ -38,7 +38,7 @@ class IEventMsg extends AbsMessage implements EventMsg
         return [];
     }
 
-    public function getRenderId(): string
+    public function getProtocalId(): string
     {
         return $this->eventName;
     }

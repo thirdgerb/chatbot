@@ -20,7 +20,7 @@ use Commune\Support\Option\Option;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
- * @property-read string $id                        Ghost 的 Id, 必须纯字母
+ * @property-read string $id                        Ghost 的 Id, 必须纯字母+数字
  * @property-read string $name                      Ghost 的名称. 任意表达
  *
  * ## 服务注册
@@ -49,7 +49,7 @@ use Commune\Support\Option\Option;
  *
  * ## 协议定义.
  *
- * @property-read Nest\ProtocalOption[] $protocals   Ghost 处理协议的配置.
+ * @property-read Nest\HandlerOption[] $protocals   Ghost 处理协议的配置.
  * [
  *     [
  *         'group' => 'name',
@@ -64,17 +64,15 @@ use Commune\Support\Option\Option;
  * @property-read string[] $apiHandlers             api消息的处理器.
  * @property-read string[] $userCommands            用户命令
  * @property-read string[] $superCommands           管理员命令
- * @property-read string[] $comprehensionPipes      对输入信息进行抽象理解的管道.
  *
  * ## 会话配置
  *
  * @property-read int $sessionExpire                会话的过期时间, 秒
  * @property-read int $sessionLockerExpire          请求锁的过期时间, 为0 则不锁
  *
- *
- *
  * ## 多轮对话逻辑.
  *
+ * @property-read string[] $comprehensionPipes      对输入信息进行抽象理解的管道.
  * @property-read int $maxRedirectTimes             单词对话语境重定向的最大次数
  * @property-read int $maxRequestFailTimes          对话最大的请求异常次数, 超过了就会重启会话
  * @property-read int $mindsetCacheExpire           Mindset 的配置过期时间.

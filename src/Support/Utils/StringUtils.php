@@ -6,6 +6,23 @@ namespace Commune\Support\Utils;
 
 class StringUtils
 {
+    const REGEX_CHAR_REPLACE = [
+        '.' => '\.',
+        '?' => '\?',
+        '+' => '\+',
+        '$' => '\$',
+        '^' => '\^',
+        '[' => '\[',
+        ']' => '\]',
+        '(' => '\(',
+        ')' => '\)',
+        '{' => '\{',
+        '}' => '\}',
+        '|' => '\|',
+        '\\' => "\\\\",
+        '/' => '\/',
+    ];
+
     public static function gluePath(string $dir, string $more) : string
     {
         return rtrim($dir, DIRECTORY_SEPARATOR)
@@ -73,7 +90,7 @@ class StringUtils
      * @param string $string
      * @return bool
      */
-    public static function isWildCardPattern(string $string) : bool
+    public static function isWildcardPattern(string $string) : bool
     {
         return mb_strpos($string, '*') !== false;
     }
@@ -85,26 +102,33 @@ class StringUtils
      * @param string $replace
      * @return string
      */
-    public static function wildcardToRegex(string $string, string $replace = '\w+') : string
+    public static function wildcardToRegex(string $string, string $replace = '.+') : string
     {
+        $string = strtr($string, self::REGEX_CHAR_REPLACE);
         $string = str_replace('*', $replace, $string);
         return "/^$string$/";
     }
 
-    public static function wildcardSearch(string $wildcardId, array $ids) : array
+    public static function wildcardSearch(string $wildcardId, array $ids, string $replace = '.*') : array
     {
         if ($wildcardId === '*') {
             return $ids;
         }
 
-        if (self::isWildCardPattern($wildcardId)) {
-            $pattern = self::wildcardToRegex($wildcardId);
+        if (self::isWildcardPattern($wildcardId)) {
+            $pattern = self::wildcardToRegex($wildcardId, $replace);
             return array_filter($ids, function($id) use ($pattern) {
                 return (bool) preg_match($pattern, $id);
             });
         }
 
         return in_array($wildcardId, $ids) ? [$wildcardId] : [];
+    }
+
+    public static function wildcardMatch(string $wildcardId, string $actual, string $replace = '.+') : bool
+    {
+        $pattern = self::wildcardToRegex($wildcardId, $replace);
+        return (bool) preg_match($pattern, $actual);
     }
 
     /**

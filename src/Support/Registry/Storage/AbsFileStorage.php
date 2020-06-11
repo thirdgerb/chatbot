@@ -505,11 +505,11 @@ abstract class AbsFileStorage implements Storage
     public function searchIds(
         CategoryOption $categoryOption,
         StorageOption $storageOption,
-        string $wildCardId
+        string $wildcardId
     ): array
     {
         $ids = $this->getAllIds($categoryOption, $storageOption);
-        return StringUtils::wildcardSearch($wildCardId, $ids);
+        return StringUtils::wildcardSearch($wildcardId, $ids);
     }
 
     public function eachId(

@@ -23,7 +23,6 @@ use Illuminate\Support\Arr;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $intentName
- * @property-read string $textTemplate
  * @property-read string $level
  */
 class IIntentMsg extends AbsMessage implements IntentMsg
@@ -32,7 +31,6 @@ class IIntentMsg extends AbsMessage implements IntentMsg
 
     const INTENT_NAME = '';
     const DEFAULT_LEVEL = HostMsg::INFO;
-
 
     /**
      * @var string
@@ -62,7 +60,6 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         $intentStub = static::intentStub();
         $stub = [
             self::INTENT_NAME_FIELD => static::INTENT_NAME,
-            self::TEMPLATE_FIELD => '',
             self::LEVEL_FIELD => static::DEFAULT_LEVEL
         ];
         return $intentStub + $stub;
@@ -88,7 +85,7 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         );
     }
 
-    public function getRenderId(): string
+    public function getProtocalId(): string
     {
         return $this->intentName;
     }
@@ -98,41 +95,9 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         return $this->level;
     }
 
-    public function getTextTemplate() : string
-    {
-        $temp = $this->textTemplate;
-        return empty($temp)
-            ? $this->intentName
-            : $temp;
-    }
-
     public function getText(): string
     {
-        if (isset($this->_text)) {
-            return $this->_text;
-        }
-
-        $template = $this->getTextTemplate();
-        $slots = $this->getSlots();
-
-        // 不为空则翻译.
-        if (empty($slots)) {
-            return $template;
-        }
-
-
-        $trans = [];
-        foreach ($slots as $key => $val) {
-
-            $replace = '{' . $key . '}';
-            $trans[$replace] = $val;
-        }
-
-        return $this->_text = str_replace(
-            array_keys($trans),
-            array_values($trans),
-            $template
-        );
+        return $this->getIntentName();
     }
 
     public function isEmpty(): bool
@@ -149,7 +114,6 @@ class IIntentMsg extends AbsMessage implements IntentMsg
     {
         $data = $this->toArray();
         unset($data[self::INTENT_NAME_FIELD]);
-        unset($data[self::TEMPLATE_FIELD]);
         unset($data[self::LEVEL_FIELD]);
         return $data;
     }

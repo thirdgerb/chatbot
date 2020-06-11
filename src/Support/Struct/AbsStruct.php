@@ -98,7 +98,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
     public function __get($name)
     {
         if (method_exists($this, $method = static::GETTER_PREFIX . $name)) {
-            return $this->{$method}();
+            return $this->{$method}($name);
         }
 
         return $this->_data[$name] ?? null;

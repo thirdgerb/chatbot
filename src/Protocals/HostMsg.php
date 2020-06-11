@@ -43,7 +43,7 @@ interface HostMsg extends Message, Protocal
     /**
      * @return string
      */
-    public function getRenderId() : string;
+    public function getProtocalId() : string;
 
     /**
      * @return string

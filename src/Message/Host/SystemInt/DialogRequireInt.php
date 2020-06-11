@@ -40,7 +40,6 @@ class DialogRequireInt extends IIntentMsg
     {
         return [
             'attr' => '',
-            self::TEMPLATE_FIELD => '请输入 {attr}',
         ];
     }
 

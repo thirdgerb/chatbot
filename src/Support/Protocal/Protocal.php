@@ -15,15 +15,18 @@ namespace Commune\Support\Protocal;
 /**
  * 协议的抽象. 所有的协议都是 Interface.
  *
- * 协议的所有参数理论上只能使用 @"property-read" 或 @"property" 注解来做.
- *
- * 也可以定义方法, 但方法显然不能跨语言传输.
+ * 协议的所有参数建议使用 @"property-read" 或 @"property" 注解来定义.
+ * 也可以定义方法, 不过方法显然不能跨语言传输.
  *
  * 这个没有编译和运行时期的类型约束, 主要用于 IDE.
- * 未来可以开发一个语言, 专门来实现这套协议的定义.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Protocal
 {
+    /**
+     * 标记协议独立身份的 ID, 从而允许过滤协议使用的 handler
+     * @return string
+     */
+    public function getProtocalId() : string;
 }

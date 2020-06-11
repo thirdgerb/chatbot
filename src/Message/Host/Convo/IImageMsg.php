@@ -53,7 +53,7 @@ class IImageMsg extends AbsMessage implements ImageMsg
         return '';
     }
 
-    public function getRenderId(): string
+    public function getProtocalId(): string
     {
         return $this->resource;
     }

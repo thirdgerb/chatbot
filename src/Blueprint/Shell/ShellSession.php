@@ -9,20 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Request;
+namespace Commune\Blueprint\Shell;
 
-use Commune\Blueprint\Framework\Request\AppResponse;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Blueprint\Framework\Session;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhostResponse extends AppResponse
+interface ShellSession extends Session
 {
-
-//    public function getInput() : InputMsg;
-//
-//    public function getAsyncInputs() : array;
-//
-//    public function getOutputs() : array;
 }

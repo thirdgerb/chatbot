@@ -9,24 +9,24 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Configs\Nest;
+namespace Commune\Support\Protocal;
 
 use Commune\Support\Option\AbsOption;
-use Commune\Support\Protocal\Protocal;
 
 
 /**
- * Session 协议的配置.
+ * 协议 handler 的过滤配置.
+ * 挑选协议的原理是: group / protocal / protocalId
  *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
  *
  * @property-read string $group         协议所属的分组
  * @property-read string $protocal      协议的类名
  * @property-read string $handler       Handler 的类名
+ * @property-read string[] $filter      协议的过滤, 根据协议 ID 来判断.
  * @property-read array $params         Handler 构造器可以补充的参数, 依赖注入.
  */
-class ProtocalOption extends AbsOption
+class HandlerOption extends AbsOption
 {
     public static function stub(): array
     {
@@ -34,6 +34,7 @@ class ProtocalOption extends AbsOption
             'group' => '',
             'protocal' => '',
             'handler' => '',
+            'filter' => ['*'],
             'params' => [],
         ];
     }
@@ -48,11 +49,6 @@ class ProtocalOption extends AbsOption
             return 'protocal is required';
         }
 
-        $protocal = $data['protocal'] ?? '';
-        if (!is_a($protocal, $class = Protocal::class, TRUE)) {
-            return "protocal field should be subclass of $class, $protocal given";
-        }
-
         return parent::validate($data);
     }
 
@@ -61,4 +57,25 @@ class ProtocalOption extends AbsOption
         return [];
     }
 
+
+    public function __set_protocal(string $name, string $val)
+    {
+        $this->_data[$name] = AliasesForProtocal::getAliasOfOrigin($val);
+    }
+
+    public function __get_protocal(string $name) : string
+    {
+        return AliasesForProtocal::getOriginFromAlias($this->_data[$name] ?? '');
+    }
+
+    public function __set_handler(string $name, string $val) : void
+    {
+        $this->_data[$name] = AliasesForProtocal::getAliasOfOrigin($val);
+    }
+
+
+    public function __get_handler(string $name) : string
+    {
+        return AliasesForProtocal::getOriginFromAlias($this->_data[$name] ?? '');
+    }
 }

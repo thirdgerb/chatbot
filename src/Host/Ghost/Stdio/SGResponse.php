@@ -73,7 +73,7 @@ class SGResponse implements GhostResponse
             $level = $hostMsg->getLevel();
             $this->console->log($level, $hostMsg->getText() . "\n");
 
-            if ($hostMsg->getRenderId() === DefaultIntents::SYSTEM_SESSION_QUIT ) {
+            if ($hostMsg->getProtocalId() === DefaultIntents::SYSTEM_SESSION_QUIT ) {
                 $quit = true;
             }
         }

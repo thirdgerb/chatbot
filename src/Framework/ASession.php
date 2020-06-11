@@ -11,7 +11,7 @@
 
 namespace Commune\Framework;
 
-use Commune\Blueprint\Configs\Nest\ProtocalOption;
+use Commune\Support\Protocal\HandlerOption;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
 use Commune\Framework\Exceptions\SerializeForbiddenException;
@@ -71,7 +71,7 @@ abstract class ASession implements Session, HasIdGenerator
     protected $stateless = false;
 
     /**
-     * @var ProtocalOption[][]
+     * @var HandlerOption[][]
      */
     protected $protocalMap;
 
@@ -125,7 +125,7 @@ abstract class ASession implements Session, HasIdGenerator
     public function getProtocalHandler(string $group, Protocal $protocalInstance): ? callable
     {
         if (!isset($this->protocalMap)) {
-            $options = $this->getProtocalOptions();
+            $options = $this->getHandlerOptions();
             foreach ($options as $option) {
                 $this->protocalMap[$option->group][$option->protocal] = $option;
             }
@@ -151,9 +151,9 @@ abstract class ASession implements Session, HasIdGenerator
     }
 
     /**
-     * @return ProtocalOption[]
+     * @return HandlerOption[]
      */
-    abstract protected function getProtocalOptions() : array;
+    abstract protected function getHandlerOptions() : array;
 
 
     /*------ status ------*/

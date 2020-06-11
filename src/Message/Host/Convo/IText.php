@@ -46,7 +46,7 @@ class IText extends AbsMessage implements VerbalMsg
         ];
     }
 
-    public function getRenderId(): string
+    public function getProtocalId(): string
     {
         return $this->text;
     }

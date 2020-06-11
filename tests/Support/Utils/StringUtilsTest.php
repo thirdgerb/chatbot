@@ -5,7 +5,9 @@ namespace Commune\Test\Support\Utils;
 
 
 use Commune\Support\Utils\StringUtils;
+use Illuminate\Support\Arr;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Translation\Formatter\MessageFormatter;
 
 /**
  * @property int $abc
@@ -237,6 +239,48 @@ EOF;
     }
 
 
+    public function testWildCardMatch()
+    {
+        $this->assertTrue(StringUtils::wildcardMatch(
+            'hello*',
+            'hello world'
+        ));
+
+        $this->assertTrue(StringUtils::wildcardMatch(
+            'hello*world',
+            'hello ksjfdljwioerj world'
+        ));
+
+        $this->assertTrue(StringUtils::wildcardMatch(
+            'hello.world*',
+            'hello.world.*'
+        ));
+
+        $this->assertTrue(StringUtils::wildcardMatch(
+            'hello.world*',
+            'hello.world*'
+        ));
+
+        $this->assertTrue(StringUtils::wildcardMatch(
+            'hello.*.world',
+            'hello.+()[]\|/.world'
+        ));
+
+
+        // false
+
+        $this->assertFalse(StringUtils::wildcardMatch(
+            'hello.world*',
+            'hello.world'
+        ));
+
+        $this->assertFalse(StringUtils::wildcardMatch(
+            'hello.world.*',
+            'hello.world.'
+        ));
+    }
+
+
     public function testMatchKeywords()
     {
         $text = "今天天气不错, 数字1234, I am so depressing";
@@ -287,6 +331,18 @@ EOF;
             'commandName {arg1} {arg2}',
             StringUtils::fetchAnnotation($doc, 'signature')[0]
         );
+
+    }
+
+
+    public function testTranslation()
+    {
+        $trans = new MessageFormatter();
+        $l = 'zh';
+        $p = Arr::dot(['abc' => 123, 'd' => ['e'=> 'k']]);
+
+        $t = $trans->format('test %abc%, %d.e%', $l, $p);
+        $this->assertEquals('test %123%, %k%', $t);
 
     }
 }

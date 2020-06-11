@@ -13,10 +13,11 @@ namespace Commune\Framework\Trans;
 
 use Commune\Contracts\Trans\Translator;
 use Commune\Support\Registry\Category;
+use Commune\Support\Utils\TypeUtils;
 use Illuminate\Support\Arr;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\Formatter\IntlFormatter;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
+use Symfony\Component\Translation\Formatter\MessageFormatterInterface;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -24,9 +25,9 @@ use Symfony\Component\Translation\Formatter\MessageFormatter;
 class SymfonyTranslatorAdapter implements Translator
 {
     /**
-     * @var IntlFormatter
+     * @var MessageFormatter
      */
-    protected $intl;
+    protected $formatter;
 
     /**
      * @var Category
@@ -59,7 +60,7 @@ class SymfonyTranslatorAdapter implements Translator
     {
         $this->logger = $logger;
         $this->category = $category;
-        $this->intl = new IntlFormatter();
+        $this->formatter = new MessageFormatter();
         $this->defaultDomain = $domain;
         $this->defaultLocale = $locale;
 
@@ -104,8 +105,11 @@ class SymfonyTranslatorAdapter implements Translator
         $domain = $domain ?? $this->defaultDomain;
         $locale = $locale ?? $this->defaultLocale;
 
+        $parameters = Arr::dot($parameters);
+        $parameters = array_filter($parameters, [TypeUtils::class, 'maybeString']);
+
         return $this->transByTemp($id, $locale, $domain, $parameters)
-            ?? $this->transByIntl($id, $locale, $domain, $parameters);
+            ?? $this->transByIntlTemp($id, $locale, $domain, $parameters);
     }
 
     protected function getPrefix(string $locale, string $domain) : string
@@ -113,12 +117,12 @@ class SymfonyTranslatorAdapter implements Translator
         return "$locale:$domain:";
     }
 
-    protected function transByIntl(string $id, string $locale, string $domain, array $parameters) : string
+    protected function transByIntlTemp(string $id, string $locale, string $domain, array $parameters) : string
     {
         $temp = $this->intlTemps[$locale][$domain][$id] ?? $id;
         return extension_loaded('intl')
-            ? $this->intl->formatIntl($temp, $locale, $parameters)
-            : $this->transById($temp, $parameters);
+            ? $this->formatter->formatIntl($temp, $locale, $parameters)
+            : self::mustacheTrans($this->formatter, $temp, $locale, $parameters);
     }
 
     protected function transByTemp(string $id, string $locale, string $domain, array $parameters) : ? string
@@ -126,21 +130,29 @@ class SymfonyTranslatorAdapter implements Translator
         $temp = $this->temps[$locale][$domain][$id] ?? null;
 
         return isset($temp)
-            ? $this->transById($temp, $parameters)
+            ? self::mustacheTrans($this->formatter, $temp, $locale, $parameters)
             : null;
     }
 
-    protected function transById(string $id, array $parameters) : string
+    public static function mustacheTrans(
+        MessageFormatterInterface $formatter,
+        string $text,
+        string $locale,
+        array $parameters
+    ) : string
     {
-        $parameters = Arr::dot($parameters);
-        $replaces = [];
-        foreach ($parameters as $key => $val) {
-            if (is_scalar($val)) {
-                $replaces["\{$key\}"] = strval($val);
-            }
+        return $formatter->format($text, $locale, self::addMustache($parameters));
+    }
+
+    public static function addMustache(array $parameters) : array
+    {
+        $result = [];
+        foreach ($parameters as $key => $parameter) {
+            $key = '{' . $key. '}';
+            $result[$key] = $parameter;
         }
 
-        return str_replace(array_keys($replaces), array_values($replaces), $id);
+        return $result;
     }
 
     public function saveMessages(

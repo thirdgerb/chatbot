@@ -47,7 +47,7 @@ class IAudioMsg extends AbsMessage implements AudioMsg
         return new static($data['resource'] ?? '');
     }
 
-    public function getRenderId(): string
+    public function getProtocalId(): string
     {
         return $this->resource;
     }

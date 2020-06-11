@@ -46,11 +46,10 @@ class IContextMsg extends AbsMessage implements ContextMsg
         return [];
     }
 
-    public function getRenderId(): string
+    public function getProtocalId(): string
     {
         return $this->contextName;
     }
-
 
     public function toContext(Cloner $cloner): Context
     {

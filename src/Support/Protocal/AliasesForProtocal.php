@@ -9,20 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Request;
+namespace Commune\Support\Protocal;
 
-use Commune\Blueprint\Framework\Request\AppResponse;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Support\Alias\AbsAliases;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhostResponse extends AppResponse
+class AliasesForProtocal extends AbsAliases
 {
-
-//    public function getInput() : InputMsg;
-//
-//    public function getAsyncInputs() : array;
-//
-//    public function getOutputs() : array;
+    public static function preload(): void
+    {
+    }
 }

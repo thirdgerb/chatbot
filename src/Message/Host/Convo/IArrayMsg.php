@@ -40,7 +40,7 @@ class IArrayMsg extends AbsMessage implements ArrayMsg
         return $this->toArray();
     }
 
-    public function getRenderId(): string
+    public function getProtocalId(): string
     {
         return TypeUtils::normalizeClassName(ArrayMsg::class);
     }

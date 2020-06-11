@@ -9,22 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Framework\Render;
-
-use Commune\Protocals\HostMsg\ConvoMsg;
-use Commune\Protocals\HostMsg\IntentMsg;
+namespace Commune\Blueprint\Shell;
 
 
 /**
- * 渲染模板.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Template
+interface Server
 {
 
-    /**
-     * @param IntentMsg $msg
-     * @return ConvoMsg[]
-     */
-    public function render(IntentMsg $msg) : array;
 }

@@ -56,7 +56,7 @@ class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
         return $this->type;
     }
 
-    public function getRenderId(): string
+    public function getProtocalId(): string
     {
         return TypeUtils::normalizeClassName(UnsupportedMsg::class);
     }

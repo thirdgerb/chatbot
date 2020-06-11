@@ -49,7 +49,7 @@ class IAnswerMsg extends AbsMessage implements AnswerMsg
             : null;
     }
 
-    public function getRenderId(): string
+    public function getProtocalId(): string
     {
         return $this->answer;
     }

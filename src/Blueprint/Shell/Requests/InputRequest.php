@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Shell;
+namespace Commune\Blueprint\Shell\Requests;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Shell
+interface InputRequest
 {
 
 }

@@ -16,7 +16,6 @@ use Commune\Protocals\Abstracted\Intention;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;
-use Illuminate\Support\Arr;
 
 /**
  * 意图的理解. 可以来自 NLU 或者其它的解析策略.
@@ -58,61 +57,6 @@ class IIntention extends AbsMessage implements Intention
             && empty($this->_data['publicEntities'])
             && empty($this->_data['intentEntities']);
     }
-
-    /*----- do match -----*/
-
-    public function matchAnyIntent(array $intents): ? string
-    {
-        $possible = $this->getPossibleIntentNames();
-        if (empty($possible)) {
-            return null;
-        }
-
-        foreach ($intents as $intent) {
-            if (StringUtils::isWildCardPattern($intent)) {
-                $pattern = StringUtils::wildcardToRegex($intent);
-                foreach ($possible as $maybe) {
-                    if (preg_match($pattern, $maybe)) {
-                        return $maybe;
-                    }
-                }
-
-            } elseif($this->hasPossibleIntent($intent)) {
-                return $intent;
-            }
-        }
-
-        return null;
-    }
-
-
-    public function isWildcardIntent(string $intent): bool
-    {
-        return StringUtils::isWildCardPattern($intent);
-    }
-
-    public function wildcardIntentMatch(string $intentPattern): ? array
-    {
-        $pattern = StringUtils::wildcardToRegex($intentPattern);
-        $intents = $this->getPossibleIntentNames(true);
-
-        if (!empty($intents)) {
-            $matched = array_filter($intents, function($name) use ($pattern){
-                $matched = preg_match($pattern, $name);
-                return $matched > 0;
-            });
-
-            return empty($matched) ? null : $matched;
-        }
-
-        return null;
-    }
-
-    public function exactIntentMatch(string $intentName): bool
-    {
-        return $this->hasPossibleIntent($intentName);
-    }
-
 
     public function getMatchedIntent(): ? string
     {

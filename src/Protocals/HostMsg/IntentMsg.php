@@ -25,7 +25,6 @@ interface IntentMsg extends HostMsg
 
     const INTENT_NAME_FIELD = 'intentName';
     const LEVEL_FIELD = 'level';
-    const TEMPLATE_FIELD = 'textTemplate';
 
 
     public function getIntentName() : string;

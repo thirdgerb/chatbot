@@ -27,6 +27,7 @@ use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Commune\Support\Utils\ArrayUtils;
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Utils\StringUtils;
 
 /**
@@ -494,7 +495,7 @@ class IMatcher implements Matcher
 
     protected function singleIntentMatch(string $intentName) : ? string
     {
-        return StringUtils::isWildCardPattern($intentName)
+        return ContextUtils::isWildcardIntentPattern($intentName)
             ? $this->singleWildcardIntentMatch($intentName)
             : $this->singleExactlyIntentMatch($intentName);
     }
@@ -520,8 +521,13 @@ class IMatcher implements Matcher
     protected function singleWildcardIntentMatch(string $intent) : ? string
     {
         $intention = $this->cloner->input->comprehension->intention;
-        $matched = $intention->wildcardIntentMatch($intent);
-        return $matched[0] ?? null;
+        $possibles = $intention->getPossibleIntentNames(true);
+        foreach ($possibles as $possible) {
+            if (ContextUtils::wildcardIntentMatch($intent, $possible)) {
+                return $possible;
+            }
+        }
+        return null;
     }
 
 
@@ -553,10 +559,10 @@ class IMatcher implements Matcher
 
         // 进行批量匹配.
         foreach ($intents as $intentName) {
-            if (StringUtils::isWildCardPattern($intentName)) {
+            if (ContextUtils::isWildcardIntentPattern($intentName)) {
                 $matched = array_merge(
                     $matched,
-                    StringUtils::wildcardSearch($intentName, $possibleIntents)
+                    ContextUtils::wildcardIntentSearch($intentName, $possibleIntents)
                 );
             } elseif ($this->singleExactlyIntentMatch($intentName)) {
                 $matched[] = $intentName;

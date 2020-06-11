@@ -116,4 +116,19 @@ class ContextUtils
             && method_exists($value, '__invoke');
     }
 
+    public static function isWildcardIntentPattern(string $pattern) : bool
+    {
+        return StringUtils::isWildcardPattern($pattern);
+    }
+
+    public static function wildcardIntentMatch(string $wildcardId, string $actual) : bool
+    {
+        return StringUtils::wildcardMatch($wildcardId, $actual, '\w+');
+    }
+
+    public static function wildcardIntentSearch(string $wildcardId, array $searches) : array
+    {
+        return StringUtils::wildcardSearch($wildcardId, $searches, '\w+');
+    }
+
 }
