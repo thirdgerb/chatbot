@@ -11,11 +11,13 @@
 
 namespace Commune\Blueprint\Shell\Render;
 
-use Commune\Blueprint\Framework\Session;
 use Commune\Protocals\HostMsg;
 
 
 /**
+ * 可以是进程级单例, 也可以是请求级单例.
+ * 都会由请求级容器来实例化.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Renderer
@@ -23,9 +25,8 @@ interface Renderer
 
     /**
      * @param HostMsg $message
-     * @param Session $session
      * @return HostMsg[]
      */
-    public function __invoke(HostMsg $message, Session $session) : array;
+    public function __invoke(HostMsg $message) : ? array;
 
 }

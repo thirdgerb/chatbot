@@ -96,7 +96,7 @@ class GhostRequestHandler implements GhtRequestHandler
         $end = microtime(true);
         $gap = round(($end - $start) * 1000000);
         $peak = memory_get_peak_usage();
-        $this->cloner->logger->info("finish request in $gap, memory peak $peak");
+        $this->cloner->logger->info("finish ghost request in $gap, memory peak $peak");
         return $response;
     }
 

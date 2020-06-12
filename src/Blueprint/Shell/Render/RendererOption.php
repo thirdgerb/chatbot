@@ -23,6 +23,8 @@ use Commune\Support\Option\AbsOption;
  */
 class RendererOption extends AbsOption
 {
+    const IDENTITY = 'id';
+
     public static function stub(): array
     {
         return [

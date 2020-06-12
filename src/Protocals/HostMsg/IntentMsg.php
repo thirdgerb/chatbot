@@ -12,6 +12,7 @@
 namespace Commune\Protocals\HostMsg;
 
 use Commune\Protocals\HostMsg;
+use Commune\Contracts\Trans\Translatable;
 
 /**
  * Ghost 对外发表的响应意图.
@@ -19,7 +20,7 @@ use Commune\Protocals\HostMsg;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface IntentMsg extends HostMsg
+interface IntentMsg extends HostMsg, Translatable
 {
    /*------ struct 特殊字段名常量 ------*/
 
@@ -34,11 +35,5 @@ interface IntentMsg extends HostMsg
      * @return array
      */
     public function getEntities() : array;
-
-    /**
-     * 用于翻译时的所有非对象参数, 并且均会转化为字符串.
-     * @return string[]
-     */
-    public function getSlots() : array;
 
 }

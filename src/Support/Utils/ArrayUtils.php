@@ -8,6 +8,29 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 class ArrayUtils
 {
 
+    public static function first($iterator)
+    {
+        if (is_iterable($iterator)) {
+            foreach ($iterator as $value) {
+                return $value;
+            }
+        }
+        return null;
+    }
+
+    public static function count($iterator)
+    {
+        if (!is_iterable($iterator)) {
+            return 1;
+        }
+
+        $i = 0;
+        foreach ($iterator as $each) {
+            $i ++;
+        }
+        return $i;
+    }
+
     public static function wrap($data) : array
     {
         if (is_null($data)) {

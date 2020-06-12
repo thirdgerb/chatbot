@@ -12,11 +12,21 @@
 namespace Commune\Blueprint\Shell\Responses;
 
 use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocals\Intercom\OutputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface ShlOutputResponse extends AppResponse
 {
+
+    public function getInput(): InputMsg;
+
+    /**
+     * @return OutputMsg[]
+     */
+    public function getOutputs() : array;
+
 
 }

@@ -9,16 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Shell\Handlers;
+namespace Commune\Contracts\Trans;
 
-use Commune\Blueprint\Shell\Requests\ShlInputRequest;
-use Commune\Blueprint\Shell\Responses\ShlInputResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlInputReqHandler
+interface SelfTranslatable
 {
 
-    public function __invoke(ShlInputRequest $request) : ShlInputResponse;
+    public function translate(Translator $translator) : void;
 }

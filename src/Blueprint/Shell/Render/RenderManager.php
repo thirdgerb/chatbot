@@ -11,7 +11,9 @@
 
 namespace Commune\Blueprint\Shell\Render;
 use Commune\Blueprint\Configs\RenderOption;
+use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
+use Commune\Blueprint\Shell\Exceptions\RendererNotFoundException;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Support\Protocal\ProtocalMatcher;
@@ -29,38 +31,34 @@ interface RenderManager
     public function register(RendererOption $option) : void;
 
     /**
-     * 根据 ID 获取一个 renderer
-     * @param string $id
-     * @return Renderer
-     */
-    public function getRenderer(string $id) : Renderer;
-
-    /**
      * @return RendererOption[]
      */
-    public function getOptions() : array;
+    public function getOptionMap() : array;
+
 
     /**
+     * 根据 ID 获取一个 renderer
+     *
+     * @param ReqContainer $container
+     * @param string $id        已经注册过的 ID, 或者 renderer 的类名.
+     * @param array $params
      * @return Renderer
      */
-    public function getDefaultRender() : Renderer;
+    public function getRenderer(
+        ReqContainer $container,
+        string $id,
+        array $params = []
+    ) : Renderer;
 
     /**
-     * @param HostMsg $message
-     * @param RenderOption[] $protocals
-     * @return Renderer
-     */
-    public function matchRenderer(HostMsg $message, array $protocals) : Renderer;
-
-    /**
-     * @param Session $session
-     * @param OutputMsg $message
+     * @param ReqContainer $container
+     * @param OutputMsg $output
      * @param ProtocalMatcher $matcher
-     * @return OutputMsg[]
+     * @return array
      */
     public function render(
-        Session $session,
-        OutputMsg $message,
+        ReqContainer $container,
+        OutputMsg $output,
         ProtocalMatcher $matcher
     ) : array;
 

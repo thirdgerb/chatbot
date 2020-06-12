@@ -11,6 +11,7 @@
 
 namespace Commune\Support\Protocal;
 
+use Commune\Support\Option\Option;
 use Commune\Support\Utils\StringUtils;
 
 /**
@@ -45,7 +46,7 @@ class ProtocalMatcher
      * @param Protocal $protocal
      * @return \Generator|ProtocalHandlerOpt[]
      */
-    public function matchHandler(Protocal $protocal) : \Generator
+    public function matchEach(Protocal $protocal) : \Generator
     {
         if (!empty($this->matchers)) {
             foreach ($this->matchers as $option) {
@@ -55,19 +56,40 @@ class ProtocalMatcher
                 }
 
                 $filterRules = $option->filters;
-                if (
-                    // 规则为空也表示通配.
-                    empty($filterRules)
-                    || $this->match($protocal->getProtocalId(), $filterRules)
-                ) {
+                if ($this->match($protocal->getProtocalId(), $filterRules)) {
                     yield $option;
                 }
             }
         }
     }
 
+    public function matchFirst(Protocal $protocal) : ? ProtocalHandlerOpt
+    {
+        if (!empty($this->matchers)) {
+            foreach ($this->matchers as $option) {
+                $protocalName = $option->protocal;
+                if (!is_a($protocal, $protocalName, TRUE)) {
+                    continue;
+                }
+
+                $filterRules = $option->filters;
+                $protocalId = $protocal->getProtocalId();
+
+                if ($this->match($protocalId, $filterRules)) {
+                    return $option;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function match(string $protocalId, array $rules) : bool
     {
+        if (empty($rules)) {
+            return true;
+        }
+
         foreach ($rules as $rule) {
 
             if ($rule === '*') {

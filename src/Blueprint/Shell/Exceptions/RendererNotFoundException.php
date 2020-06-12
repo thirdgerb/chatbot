@@ -9,14 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Shell\Responses;
+namespace Commune\Blueprint\Shell\Exceptions;
 
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlInputResponse extends ShellResponse
+class RendererNotFoundException extends BrokenSessionException
 {
-    public function getInput(): InputMsg;
+
 }

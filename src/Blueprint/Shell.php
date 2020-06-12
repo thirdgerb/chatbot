@@ -16,9 +16,10 @@ use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Shell\Handlers\InputMessageParser;
 use Commune\Blueprint\Shell\Handlers\ShlApiHandler;
-use Commune\Blueprint\Shell\Handlers\ShlInputReqHandler;
+use Commune\Blueprint\Shell\Handlers\ShellRequestHandler;
 use Commune\Blueprint\Shell\Handlers\ShlOutputReqHandler;
 use Commune\Blueprint\Shell\Render\Renderer;
+use Commune\Blueprint\Shell\Render\RenderManager;
 use Commune\Blueprint\Shell\Requests\ShellRequest;
 use Commune\Blueprint\Shell\Requests\ShlInputRequest;
 use Commune\Blueprint\Shell\Requests\ShlOutputRequest;
@@ -57,25 +58,20 @@ interface Shell extends App
 
     /**
      * @param ReqContainer $container
-     * @param ShlInputRequest $request
-     * @return ShlInputReqHandler|null
+     * @param ShellRequest $request
+     * @return ShellRequestHandler|null
      */
-    public function getInputReqHandler(
+    public function getRequestHandler(
         ReqContainer $container,
-        ShlInputRequest $request
-    ) : ? ShlInputReqHandler;
+        ShellRequest $request
+    ) : ? ShellRequestHandler;
+
 
     /**
      * @param ReqContainer $container
-     * @param ShlOutputRequest $request
-     * @return ShlOutputResponse|null
+     * @param ApiMsg $message
+     * @return ShlApiHandler|null
      */
-    public function getOutputReqHandler(
-        ReqContainer $container,
-        ShlOutputRequest $request
-    ) : ? ShlOutputReqHandler;
-
-
     public function getApiHandler(ReqContainer $container, ApiMsg $message) : ? ShlApiHandler;
 
     /**
@@ -91,12 +87,9 @@ interface Shell extends App
 
     /**
      * 输出消息的渲染器.
-     * 返回 InputMsg[]
      *
-     * @param ReqContainer $container
-     * @param HostMsg $message
-     * @return callable|null
+     * @return RenderManager
      */
-    public function getOutputRenderer(ReqContainer $container, HostMsg $message) : ? Renderer ;
+    public function getRenderManager() : RenderManager ;
 
 }

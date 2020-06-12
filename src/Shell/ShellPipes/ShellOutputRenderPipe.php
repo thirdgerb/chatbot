@@ -9,12 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Shell\ShellPipe;
+namespace Commune\Shell\ShellPipes;
 
 use Commune\Blueprint\Shell\Requests\ShellRequest;
 use Commune\Blueprint\Shell\Requests\ShlOutputRequest;
 use Commune\Blueprint\Shell\Responses\ShellResponse;
 use Commune\Blueprint\Shell\Responses\ShlOutputResponse;
+use Commune\Support\Protocal\ProtocalMatcher;
 
 
 /**
@@ -22,6 +23,10 @@ use Commune\Blueprint\Shell\Responses\ShlOutputResponse;
  */
 class ShellOutputRenderPipe extends AShellOutputPipe
 {
+    /**
+     * @var ProtocalMatcher
+     */
+    private static $matcher;
 
     /**
      * @param ShlOutputRequest $request
@@ -33,27 +38,31 @@ class ShellOutputRenderPipe extends AShellOutputPipe
         $outputs = $request->getOutputs();
 
         $shell = $this->session->shell;
+        $manager = $shell->getRenderManager();
         $container = $this->session->container;
 
-        $rendered = [];
+        $renderedOutputs = [];
         foreach ($outputs as $output) {
 
-            $message = $output->getMessage();
-            $render = $shell->getOutputRenderer($container, $message);
+            $rendered = $manager->render(
+                $container,
+                $output,
+                $this->getProtocalMatcher()
+            );
 
-            // 可以渲染.
-            if (isset($render)) {
-                $messages = $render($message, $this->session);
-                $rendered = array_merge($rendered, $output->derive(...$messages));
-
-            // 无法渲染
-            } else {
-                $rendered[] = $output;
-            }
+            $renderedOutputs = empty($rendered)
+                ? $renderedOutputs
+                : array_merge($renderedOutputs, $rendered);
         }
 
-        $request->setOutputs($rendered);
+        $request->setOutputs($renderedOutputs);
         return $next($request);
+    }
+
+    protected function getProtocalMatcher() : ProtocalMatcher
+    {
+        return self::$matcher
+            ?? self::$matcher = new ProtocalMatcher($this->session->config->outputRenderers);
     }
 
 

@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Shell\ShellPipe;
+namespace Commune\Shell\ShellPipes;
 
 use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;

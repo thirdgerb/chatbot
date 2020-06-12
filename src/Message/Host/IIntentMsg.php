@@ -122,12 +122,18 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         return $this->intentName;
     }
 
+
     public function getEntities(): array
     {
         $data = $this->toArray();
         unset($data[self::INTENT_NAME_FIELD]);
         unset($data[self::LEVEL_FIELD]);
         return $data;
+    }
+
+    public function getTransTemp(): string
+    {
+        return $this->getIntentName();
     }
 
 

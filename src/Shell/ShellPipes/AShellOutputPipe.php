@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Shell\ShellPipe;
+namespace Commune\Shell\ShellPipes;
 
 use Commune\Blueprint\Framework\Request\AppRequest;
 use Commune\Blueprint\Shell\Requests\ShellRequest;

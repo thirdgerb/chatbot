@@ -78,7 +78,7 @@ class SGResponse implements GhostResponse
     }
 
 
-    public function end(): void
+    public function end() : ? callable
     {
         $quit = false;
         foreach ($this->outputs as $output) {
@@ -99,6 +99,8 @@ class SGResponse implements GhostResponse
             $this->console->emergency($this->errmsg);
             $this->stdio->end($this->errcode);
         }
+
+        return null;
     }
 
     public function getErrcode(): int

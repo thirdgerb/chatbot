@@ -23,5 +23,9 @@ interface AppResponse extends CommuneErrorCode
 
     public function getErrmsg() : string;
 
-    public function end() : void;
+    /**
+     * 结束一个请求, 要么就是完全结束, 要么就还有下一步.
+     * @return callable|null
+     */
+    public function end() : ? callable;
 }

@@ -183,7 +183,7 @@ class IGhost extends AbsApp implements Ghost
             $this->requestProtoMatcher = new ProtocalMatcher($options);
         }
 
-        $gen = $this->requestProtoMatcher->matchHandler($request);
+        $gen = $this->requestProtoMatcher->matchEach($request);
         return $this->makeHandler($container, $gen);
     }
 
@@ -192,7 +192,7 @@ class IGhost extends AbsApp implements Ghost
         $matcher = $this->apiProtoMatcher
             ?? $this->apiProtoMatcher = new ProtocalMatcher($this->getConfig()->apiHandlers);
 
-        $gen = $matcher->matchHandler($message);
+        $gen = $matcher->matchEach($message);
         return $this->makeHandler($container, $gen);
     }
 

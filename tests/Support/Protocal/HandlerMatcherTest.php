@@ -14,6 +14,7 @@ namespace Commune\Test\Support\Protocal;
 use Commune\Message\Host\Convo\IText;
 use Commune\Support\Protocal\ProtocalMatcher;
 use Commune\Support\Protocal\ProtocalHandlerOpt;
+use Commune\Support\Utils\ArrayUtils;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -25,33 +26,38 @@ class HandlerMatcherTest extends TestCase
     public function testMatcher()
     {
         $option1 = new ProtocalHandlerOpt([
-            'group' => 'test1',
             'protocal' => IText::class,
             'handler' => 'a',
-            'filter' => ['*'],
+            'filters' => ['*'],
             'params' => [],
         ]);
 
         $option2 = new ProtocalHandlerOpt([
-            'group' => 'test2',
             'protocal' => IText::class,
             'handler' => 'b',
-            'filter' => ['hello.*.world'],
+            'filters' => ['hello.*.world'],
             'params' => [],
         ]);
 
-        $manager = new ProtocalMatcher([$option1, $option2]);
+        $manager = new ProtocalMatcher([$option2, $option1]);
 
         $p = new IText('hello.to.world');
 
-        $this->assertEquals('b', $manager->matchHandler('test2', $p));
-        $this->assertEquals('a', $manager->matchHandler('test1', $p));
+        $this->assertEquals(2, ArrayUtils::count($manager->matchEach($p)));
 
-        $p = new IText('hello.world');
-        // '*' 匹配
-        $this->assertEquals('a', $manager->matchHandler('test1', $p));
+        $first = ArrayUtils::first($manager->matchEach($p));
+        $this->assertTrue($first instanceof ProtocalHandlerOpt);
+        $this->assertEquals('b', $first->handler);
+        $this->assertEquals('b', $manager->matchFirst($p)->handler);
+
+
         // 正则不匹配
-        $this->assertNull($manager->matchHandler('test2', $p));
+        $p = new IText('hello.world');
+        $this->assertEquals(1, ArrayUtils::count($manager->matchEach($p)));
+        $first = ArrayUtils::first($manager->matchEach($p));
+        $this->assertTrue($first instanceof ProtocalHandlerOpt);
+        $this->assertEquals('a', $first->handler);
+        $this->assertEquals('a', $manager->matchFirst($p)->handler);
     }
 
 

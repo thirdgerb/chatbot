@@ -9,14 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Shell\Responses;
+namespace Commune\Shell\Render;
 
-use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShlInputResponse extends ShellResponse
+class SystemIntRenderer
 {
-    public function getInput(): InputMsg;
+
 }

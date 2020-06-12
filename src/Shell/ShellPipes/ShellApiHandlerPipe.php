@@ -16,7 +16,6 @@ use Commune\Blueprint\Shell\Requests\ShlInputRequest;
 use Commune\Blueprint\Shell\Responses\ShellResponse;
 use Commune\Blueprint\Shell\Responses\ShlInputResponse;
 use Commune\Protocals\HostMsg\Convo\ApiMsg;
-use Commune\Shell\ShellPipe\AShellInputPipe;
 
 
 /**

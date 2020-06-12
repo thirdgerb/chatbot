@@ -19,11 +19,8 @@ use Commune\Blueprint\Framework\ServiceRegistrar;
 use Commune\Blueprint\Shell;
 use Commune\Blueprint\Shell\Handlers\InputMessageParser;
 use Commune\Blueprint\Shell\Handlers\ShlApiHandler;
-use Commune\Blueprint\Shell\Handlers\ShlInputReqHandler;
-use Commune\Blueprint\Shell\Render\Renderer;
+use Commune\Blueprint\Shell\Handlers\ShellRequestHandler;
 use Commune\Blueprint\Shell\Requests\ShellRequest;
-use Commune\Blueprint\Shell\Requests\ShlInputRequest;
-use Commune\Blueprint\Shell\Requests\ShlOutputRequest;
 use Commune\Blueprint\Shell\Responses\ShellResponse;
 use Commune\Blueprint\Shell\ShellSession;
 use Commune\Container\ContainerContract;
@@ -54,12 +51,7 @@ class IShell extends AbsApp implements Shell
     /**
      * @var ProtocalMatcher
      */
-    protected $inputReqHandlerMatcher;
-
-    /**
-     * @var ProtocalMatcher
-     */
-    protected $outputReqMatcher;
+    protected $shellReqHandlerMatcher;
 
     /**
      * @var ProtocalMatcher
@@ -72,9 +64,9 @@ class IShell extends AbsApp implements Shell
     protected $inputParserMatcher;
 
     /**
-     * @var ProtocalMatcher
+     * @var Shell\Render\RenderManager
      */
-    protected $outputRendererMatcher;
+    protected $renderManager;
 
     public function __construct(
         ShellConfig $config,
@@ -157,15 +149,10 @@ class IShell extends AbsApp implements Shell
                 $session->noState();
             }
 
-            if ($request instanceof ShlInputRequest) {
-                $handler = $this->getInputReqHandler($session->container, $request);
-            } elseif($request instanceof ShlOutputRequest) {
-                $handler = $this->getOutputReqHandler($session->container, $request);
-            }
+            $handler = $this->getRequestHandler($session->container, $request);
 
             if (!isset($handler)) {
-                return $response = $request
-                    ->fail(AppResponse::HANDLER_NOT_FOUND);
+                return $response = $request->response(AppResponse::HANDLER_NOT_FOUND);
             }
 
             // 使用 Handler 来响应.
@@ -173,7 +160,7 @@ class IShell extends AbsApp implements Shell
 
         } catch (\Throwable $e) {
             $this->getExceptionReporter()->report($e);
-            $response = $request->fail(AppResponse::HOST_LOGIC_ERROR);
+            $response = $request->response(AppResponse::HOST_LOGIC_ERROR);
 
         } finally {
             if (isset($session)) {
@@ -182,33 +169,21 @@ class IShell extends AbsApp implements Shell
             }
 
             return $response
-                ?? $request->fail(AppResponse::HOST_LOGIC_ERROR);
+                ?? $request->response(AppResponse::HOST_LOGIC_ERROR);
         }
     }
 
-    public function getInputReqHandler(
+    public function getRequestHandler(
         ReqContainer $container,
-        ShlInputRequest $request
-    ): ? ShlInputReqHandler
+        ShellRequest $request
+    ): ? ShellRequestHandler
     {
-        if (!isset($this->inputReqHandlerMatcher)) {
+        if (!isset($this->shellReqHandlerMatcher)) {
             $options = $this->getConfig()->requestHandlers;
-            $this->inputReqHandlerMatcher = new ProtocalMatcher($options);
+            $this->shellReqHandlerMatcher = new ProtocalMatcher($options);
         }
 
-        $gen = $this->inputReqHandlerMatcher->matchHandler($request);
-        return $this->makeHandler($container, $gen);
-    }
-
-    public function getOutputReqHandler(
-        ReqContainer $container,
-        ShlOutputRequest $request
-    ): ? Shell\Handlers\ShlOutputReqHandler
-    {
-        $outputReqMatcher = $this->outputReqMatcher ?? $this->outputReqMatcher
-                = new ProtocalMatcher($this->getConfig()->apiHandlers);
-
-        $gen = $outputReqMatcher->matchHandler($request);
+        $gen = $this->shellReqHandlerMatcher->matchEach($request);
         return $this->makeHandler($container, $gen);
     }
 
@@ -218,27 +193,23 @@ class IShell extends AbsApp implements Shell
         $apiProtoMatcher = $this->apiProtoMatcher ?? $this->apiProtoMatcher
                 = new ProtocalMatcher($this->getConfig()->apiHandlers);
 
-        $gen = $apiProtoMatcher->matchHandler($message);
+        $gen = $apiProtoMatcher->matchEach($message);
         return $this->makeHandler($container, $gen);
     }
 
     public function getInputParser(ReqContainer $container, HostMsg $message): ? InputMessageParser
     {
         $inputParserMatcher = $this->inputParserMatcher ?? $this->inputParserMatcher
-                = new ProtocalMatcher($this->getConfig()->apiHandlers);
+                = new ProtocalMatcher($this->getConfig()->inputParsers);
 
-        $gen = $inputParserMatcher->matchHandler($message);
+        $gen = $inputParserMatcher->matchEach($message);
         return $this->makeHandler($container, $gen);
     }
 
-    public function getOutputRenderer(ReqContainer $container, HostMsg $message): ? Renderer
+    public function getRenderManager() : Shell\Render\RenderManager
     {
-        $outputRendererMatcher = $this->outputRendererMatcher
-            ?? $this->outputRendererMatcher
-                = new ProtocalMatcher($this->getConfig()->apiHandlers);
-
-        $gen = $outputRendererMatcher->matchHandler($message);
-        return $this->makeHandler($container, $gen);
+        return $this->renderManager
+            ?? $this->renderManager = $this->procC->get(Shell\Render\RenderManager::class);
     }
 
     /**
