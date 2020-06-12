@@ -41,7 +41,7 @@ class IApiMsg extends AbsMessage implements ApiMsg
 
     public function getProtocalId(): string
     {
-        return $this->api;
+        return $this->getApiName();
     }
 
 

@@ -12,9 +12,8 @@
 namespace Commune\Test\Support\Protocal;
 
 use Commune\Message\Host\Convo\IText;
-use Commune\Support\Protocal\HandlerMatcher;
-use Commune\Support\Protocal\HandlerOption;
-use Commune\Support\Protocal\Protocal;
+use Commune\Support\Protocal\ProtocalMatcher;
+use Commune\Support\Protocal\ProtocalHandlerOpt;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -25,7 +24,7 @@ class HandlerMatcherTest extends TestCase
 
     public function testMatcher()
     {
-        $option1 = new HandlerOption([
+        $option1 = new ProtocalHandlerOpt([
             'group' => 'test1',
             'protocal' => IText::class,
             'handler' => 'a',
@@ -33,7 +32,7 @@ class HandlerMatcherTest extends TestCase
             'params' => [],
         ]);
 
-        $option2 = new HandlerOption([
+        $option2 = new ProtocalHandlerOpt([
             'group' => 'test2',
             'protocal' => IText::class,
             'handler' => 'b',
@@ -41,7 +40,7 @@ class HandlerMatcherTest extends TestCase
             'params' => [],
         ]);
 
-        $manager = new HandlerMatcher([$option1, $option2]);
+        $manager = new ProtocalMatcher([$option1, $option2]);
 
         $p = new IText('hello.to.world');
 
@@ -49,6 +48,7 @@ class HandlerMatcherTest extends TestCase
         $this->assertEquals('a', $manager->matchHandler('test1', $p));
 
         $p = new IText('hello.world');
+        // '*' 匹配
         $this->assertEquals('a', $manager->matchHandler('test1', $p));
         // 正则不匹配
         $this->assertNull($manager->matchHandler('test2', $p));

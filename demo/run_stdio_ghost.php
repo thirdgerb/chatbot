@@ -11,6 +11,7 @@ use Commune\Host\Ghost\Stdio\SGConsoleLogger;
 
 require __DIR__ .'/../vendor/autoload.php';
 
+
 $options = $argv;
 array_shift($options);
 
@@ -20,8 +21,6 @@ $reset = in_array('-r', $options);
 // 设置
 CommuneEnv::defineDebug($debug);
 CommuneEnv::defineResetMind($reset);
-
-
 
 $loop = Factory::create();
 $stdio = new Stdio($loop);
@@ -35,7 +34,11 @@ $app = new IGhost(
     null,
     null,
     null,
-    new SGConsoleLogger($stdio)
+    new SGConsoleLogger(
+        $stdio,
+        true,
+        CommuneEnv::isDebug() ? \Psr\Log\LogLevel::DEBUG : \Psr\Log\LogLevel::INFO
+    )
 );
 
 // activate
@@ -44,7 +47,7 @@ $app->onFail([$stdio, 'end'])
     ->activate();
 
 // connect event
-$response = $app->handle(new SGRequest(
+$response = $app->handleRequest(new SGRequest(
     new Message\Host\Convo\IEventMsg(['eventName' => 'connected']),
     $stdio
 ));
@@ -57,7 +60,7 @@ $stdio->on('data', function($line) use ($app, $stdio) {
     $a = microtime(true);
 
     $request = new SGRequest(new Message\Host\Convo\IText($line), $stdio);
-    $response = $app->handle($request);
+    $response = $app->handleRequest($request);
 
     $response->end();
     $b = microtime(true);

@@ -17,7 +17,7 @@ use Commune\Blueprint\Framework\Session\SessionEvent;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class EndSession implements SessionEvent
+class StartRequest implements SessionEvent
 {
 
     /**
@@ -47,6 +47,5 @@ class EndSession implements SessionEvent
     {
         return $this->session;
     }
-
 
 }

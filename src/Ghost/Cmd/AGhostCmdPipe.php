@@ -29,12 +29,12 @@ abstract class AGhostCmdPipe extends AClonePipe implements RequestCmdPipe
 {
     use TRequestCmdPipe;
 
-    protected function doHandle(GhostRequest $request, \Closure $current): GhostResponse
+    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
-        $response = $this->tryHandleCommand($request, $current);
+        $response = $this->tryHandleCommand($request, $next);
         return $response instanceof GhostResponse
             ? $response
-            : $request->fail(AppResponse::HOST_LOGIC_ERROR);
+            : $request->response(AppResponse::HOST_LOGIC_ERROR);
     }
 
 

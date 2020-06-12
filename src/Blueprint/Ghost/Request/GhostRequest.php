@@ -32,28 +32,22 @@ interface GhostRequest extends AppRequest
 
     /**
      * @param HostMsg $message
-     * @param HostMsg ...$messages
+     * @param HostMsg[] $messages
      * @return GhostResponse
      */
     public function output(HostMsg $message, HostMsg ...$messages): AppResponse;
 
     /**
-     * @param Cloner $output
-     * @param int $errcode
-     * @param string $errmsg
+     * @param Cloner $cloner
      * @return GhostResponse
      */
-    public function success(
-        $output,
-        int $errcode = AppResponse::SUCCESS,
-        string $errmsg = ''
-    ) : AppResponse;
+    public function success(Cloner $cloner) : AppResponse;
 
     /**
      * @param int $errcode
      * @param string $errmsg
      * @return GhostResponse
      */
-    public function fail(int $errcode, string $errmsg = '') : AppResponse;
+    public function response(int $errcode, string $errmsg = '') : AppResponse;
 
 }

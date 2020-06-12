@@ -27,7 +27,7 @@ class QuitCmd extends AGhostCmd
 
     protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
     {
-        $this->cloner->endSession();
+        $this->cloner->endConversation();
     }
 
 

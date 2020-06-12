@@ -18,7 +18,6 @@ use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\IOperate\AbsOperator;
 use Commune\Message\Host\SystemInt\DialogConfuseInt;
-use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
 
 /**

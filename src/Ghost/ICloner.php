@@ -53,7 +53,7 @@ class ICloner extends ASession implements Cloner
     /**
      * @var Ghost
      */
-    protected $ghost;
+    protected $_ghost;
 
     /**
      * @var GhostConfig
@@ -63,7 +63,12 @@ class ICloner extends ASession implements Cloner
     /**
      * @var InputMsg
      */
-    protected $input;
+    protected $_input;
+
+    /**
+     * @var string
+     */
+    protected $inputConvoId;
 
     /*------- cached -------*/
 
@@ -90,9 +95,10 @@ class ICloner extends ASession implements Cloner
 
     public function __construct(Ghost $ghost, ReqContainer $container, InputMsg $input)
     {
-        $this->ghost = $ghost;
+        $this->_ghost = $ghost;
         $this->ghostConfig = $ghost->getConfig();
-        $this->input = $input;
+        $this->_input = $input;
+        $this->inputConvoId = $input->getConversationId();
 
         // expire
         $this->expire = $this->ghostConfig->sessionExpire;
@@ -101,13 +107,13 @@ class ICloner extends ASession implements Cloner
 
     public function getApp(): App
     {
-        return $this->ghost;
+        return $this->_ghost;
     }
 
     public function replaceInput(InputMsg $input): void
     {
         $this->container->share(InputMsg::class, $input);
-        $this->input = $input;
+        $this->_input = $input;
     }
 
     /*-------- conversation id ---------*/
@@ -119,7 +125,7 @@ class ICloner extends ASession implements Cloner
         }
 
         if ($this->isStateless()) {
-            $convoId = $this->input->getConversationId();
+            $convoId = $this->inputConvoId;
             $convoId = empty($convoId)
                 ? $this->makeConvoId()
                 : $convoId;
@@ -127,7 +133,7 @@ class ICloner extends ASession implements Cloner
             return $this->conversationId = $convoId;
         }
 
-        $inputCid = $this->input->getConversationId();
+        $inputCid = $this->inputConvoId;
         $cachedCid = $this->getConvoIdFromCache();
 
         // 如果没有缓存, 重新生成一个
@@ -146,8 +152,8 @@ class ICloner extends ASession implements Cloner
 
     protected function makeConvoId() : string
     {
-        $clonerId = $this->getId();
-        $messageId = $this->input->getMessageId();
+        $clonerId = $this->getSessionId();
+        $messageId = $this->_input->getMessageId();
         return sha1("cloner:$clonerId:message:$messageId");
     }
 
@@ -171,16 +177,12 @@ class ICloner extends ASession implements Cloner
 
     protected function getConvoCacheKey() : string
     {
-        $cloneId = $this->getId();
+        $cloneId = $this->getSessionId();
         return "clone:$cloneId:convo:id";
     }
 
     /*-------- properties ---------*/
 
-    protected function getHandlerOptions(): array
-    {
-        return $this->ghostConfig->protocals;
-    }
 
     public function getStorage(): SessionStorage
     {
@@ -197,7 +199,7 @@ class ICloner extends ASession implements Cloner
     public function __get($name)
     {
         if ($name === 'ghost') {
-            return $this->ghost;
+            return $this->_ghost;
         }
 
         if ($name === 'config') {
@@ -205,7 +207,7 @@ class ICloner extends ASession implements Cloner
         }
 
         if ($name === 'input') {
-            return $this->input;
+            return $this->_input;
         }
 
         return parent::__get($name);
@@ -215,8 +217,8 @@ class ICloner extends ASession implements Cloner
 
     protected function getGhostClonerLockerKey() : string
     {
-        $ghostId = $this->ghostConfig->id;
-        $clonerId = $this->getId();
+        $ghostId = $this->getAppId();
+        $clonerId = $this->getSessionId();
         return "ghost:$ghostId:clone:$clonerId:locker";
     }
 
@@ -268,14 +270,15 @@ class ICloner extends ASession implements Cloner
     public function output(IntercomMsg $output, IntercomMsg ...$outputs): void
     {
         array_unshift($outputs, $output);
-        $this->outputs = array_reduce(
-            $outputs,
-            function($outputs, IntercomMsg $output){
-                $outputs[] = $output;
-                return $outputs;
-            },
-            $this->outputs
-        );
+        $this->outputs = array_merge($this->outputs, $outputs);
+//        $this->outputs = array_reduce(
+//            $outputs,
+//            function($outputs, IntercomMsg $output){
+//                $outputs[] = $output;
+//                return $outputs;
+//            },
+//            $this->outputs
+//        );
     }
 
     public function getOutputs(): array
@@ -288,23 +291,23 @@ class ICloner extends ASession implements Cloner
         $this->asyncInputs[] = $input;
     }
 
-    public function getAsyncInput(): array
+    public function getAsyncInputs(): array
     {
         return $this->asyncInputs;
     }
 
     /*------- quit -------*/
 
-    public function endSession(): void
+    public function endConversation(): void
     {
         $this->output(
-            $this->input->output(new SessionQuitInt())
+            $this->_input->output(new SessionQuitInt())
         );
 
         $this->quit = true;
     }
 
-    public function isSessionEnd(): bool
+    public function isConversationEnd(): bool
     {
         return $this->quit;
     }
@@ -313,9 +316,9 @@ class ICloner extends ASession implements Cloner
 
     protected function flushInstances(): void
     {
-        unset($this->ghost);
+        unset($this->_ghost);
         unset($this->ghostConfig);
-        unset($this->input);
+        unset($this->_input);
         unset($this->outputs);
         unset($this->asyncInputs);
     }
@@ -324,7 +327,7 @@ class ICloner extends ASession implements Cloner
 
     protected function saveSession(): void
     {
-        if ($this->isSessionEnd()) {
+        if ($this->isConversationEnd()) {
             $this->ioDeleteConvoIdCache();
             return;
         }

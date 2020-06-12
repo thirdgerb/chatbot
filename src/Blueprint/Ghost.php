@@ -13,9 +13,13 @@ namespace Commune\Blueprint;
 
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\App;
+use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Handlers\GhtApiHandler;
+use Commune\Blueprint\Ghost\Handlers\GhtRequestHandler;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
+use Commune\Protocals\HostMsg\Convo\ApiMsg;
 use Commune\Protocals\Intercom\InputMsg;
 
 /**
@@ -31,6 +35,10 @@ interface Ghost extends App
      */
     public function getConfig() : GhostConfig;
 
+    /**
+     * @param InputMsg $input
+     * @return Cloner
+     */
     public function newCloner(InputMsg $input) : Cloner;
 
     /**
@@ -40,5 +48,24 @@ interface Ghost extends App
      * @param GhostRequest $request
      * @return GhostResponse
      */
-    public function handle(GhostRequest $request) : GhostResponse;
+    public function handleRequest(GhostRequest $request) : GhostResponse;
+
+
+    /*------ 协议 ------*/
+
+    /**
+     * 根据协议获取请求的 handler
+     *
+     * @param ReqContainer $container
+     * @param GhostRequest $request
+     * @return callable|GhtRequestHandler|null
+     */
+    public function getRequestHandler(ReqContainer $container, GhostRequest $request) : ? GhtRequestHandler;
+
+    /**
+     * @param ReqContainer $container
+     * @param ApiMsg $input
+     * @return GhtApiHandler|null
+     */
+    public function getApiHandler(ReqContainer $container, ApiMsg $input) : ? GhtApiHandler;
 }

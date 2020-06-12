@@ -73,6 +73,12 @@ class BridgeOperator implements Operator
         return $this;
     }
 
+    public function isTicked(): bool
+    {
+        return $this->current->isTicked();
+    }
+
+
     public function __destruct()
     {
         unset($this->current);

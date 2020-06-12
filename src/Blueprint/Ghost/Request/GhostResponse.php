@@ -20,9 +20,9 @@ use Commune\Protocals\Intercom\InputMsg;
 interface GhostResponse extends AppResponse
 {
 
-//    public function getInput() : InputMsg;
-//
-//    public function getAsyncInputs() : array;
-//
-//    public function getOutputs() : array;
+    public function getInput() : InputMsg;
+
+    public function getAsyncInputs() : array;
+
+    public function getOutputs() : array;
 }

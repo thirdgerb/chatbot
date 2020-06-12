@@ -97,7 +97,19 @@ class IIntentMsg extends AbsMessage implements IntentMsg
 
     public function getText(): string
     {
-        return $this->getIntentName();
+        $template = $this->getIntentName();
+        $slots = $this->getSlots();
+
+        if (empty($slots)) {
+            return $template;
+        }
+
+        $trans = [];
+        foreach ($slots as $key => $val) {
+            $trans['{' . $key . '}'] = $val;
+        }
+
+        return strtr($template, $trans);
     }
 
     public function isEmpty(): bool

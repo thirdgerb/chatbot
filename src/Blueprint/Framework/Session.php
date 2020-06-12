@@ -24,32 +24,28 @@ use Psr\Log\LoggerInterface;
  */
 interface Session
 {
-    // 协议分组.
-    const PROTOCAL_GROUP_REQUEST = 'request';
-    const PROTOCAL_GROUP_INPUT = 'input';
-    const PROTOCAL_GROUP_RENDER = 'render';
 
     /*----- properties -----*/
 
     /**
      * 每个 Session 实例都是在请求中生成的.
      * 因此每个实例拥有一个 traceId, 应该是全局唯一的ID.
-     * 用来标记不同的实例.
+     * 用这个 ID 来追踪上下文.
      *
      * @return string
      */
     public function getTraceId() : string;
 
     /**
-     * session 的 id 是 session 的唯一标识
+     * sessionId 是会话的唯一标识.
+     *
      * 用于追踪交互的历史记录.
      * 对于 1 对 1 会话, sessionId 对于用户是唯一的, 和用户相关
      * 对于 1 对多 会话, sessionId 则相当于群的 ID.
      *
      * @return string
      */
-    public function getId() : string;
-
+    public function getSessionId() : string;
 
     /**
      * Session 的名称. 如果一个应用有多个 Session, 考虑到缓存等, 可以做区别.
@@ -101,23 +97,6 @@ interface Session
     /*------ logger ------*/
 
     public function getLogger() : LoggerInterface;
-
-
-    /*----- run 运行逻辑 -----*/
-
-    /**
-     * 根据配置, 基于协议获取一个 Handler
-     * 调用 $handler($request) : $response 可以得到结果.
-     * 用这种策略避免去开发复杂的通用 Kernel, 而可以适用于各种情况.
-     *
-     * @param string $group         假设协议处理器是分组的.
-     * @param Protocal $protocalInstance
-     * @return callable|null
-     */
-    public function getProtocalHandler(
-        string $group,
-        Protocal $protocalInstance
-    ) : ? callable ;
 
 
     /*------ pipe ------*/

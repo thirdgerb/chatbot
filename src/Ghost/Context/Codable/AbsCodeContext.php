@@ -35,7 +35,7 @@ abstract class AbsCodeContext extends IContext implements CodeContext
      */
     private static $_defs = [];
 
-    public static function makeUcl(array $query = [], string $stage = ''): Ucl
+    public static function genUcl(array $query = [], string $stage = ''): Ucl
     {
         $name = static::__name();
         return Ucl::make($name, $query, $stage);

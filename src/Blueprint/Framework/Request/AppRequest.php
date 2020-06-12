@@ -33,39 +33,15 @@ interface AppRequest extends Protocal
     public function isStateless() : bool;
 
     /**
-     * @return bool
-     */
-    public function noOutputs() : bool;
-
-    /**
      * @return InputMsg
      */
     public function getInput() : InputMsg;
 
     /**
-     * @param HostMsg $message
-     * @param HostMsg[] $messages
-     * @return AppResponse
-     */
-    public function output(HostMsg $message, HostMsg ...$messages) : AppResponse;
-
-    /**
-     * @param $output
      * @param int $errcode
      * @param string $errmsg
      * @return AppResponse
      */
-    public function success(
-        $output,
-        int $errcode = AppResponse::SUCCESS,
-        string $errmsg = ''
-    ) : AppResponse;
-
-    /**
-     * @param int $errcode
-     * @param string $errmsg
-     * @return AppResponse
-     */
-    public function fail(int $errcode, string $errmsg = '') : AppResponse;
+    public function response(int $errcode, string $errmsg = '');
 
 }

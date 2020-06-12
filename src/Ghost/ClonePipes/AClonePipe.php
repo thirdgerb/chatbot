@@ -34,6 +34,9 @@ abstract class AClonePipe implements RequestPipe
      */
     protected $logger;
 
+    /**
+     * @var Cloner
+     */
     protected $cloner;
 
     public function __construct(Cloner $cloner)
@@ -43,7 +46,7 @@ abstract class AClonePipe implements RequestPipe
         SpyAgency::incr(self::class);
     }
 
-    abstract protected function doHandle(GhostRequest $request, \Closure $current): GhostResponse;
+    abstract protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse;
 
     /**
      * @param AppRequest $request
@@ -63,7 +66,7 @@ abstract class AClonePipe implements RequestPipe
         }
 
         // 如果已经 quit, 就不往后走了.
-        if ($this->cloner->isSessionEnd()) {
+        if ($this->cloner->isConversationEnd()) {
             return $request->success($this->cloner);
         }
 

@@ -11,11 +11,24 @@
 
 namespace Commune\Blueprint\Shell;
 
+use Commune\Blueprint\Configs\ShellConfig;
+use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
+use Commune\Blueprint\Shell;
+use Commune\Contracts\Cache;
+use Psr\Log\LoggerInterface;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ *
+ * @property-read Shell $shell
+ * @property-read ShellConfig $config
+ * @property-read Session\SessionStorage $storage
+ * @property-read LoggerInterface $logger
+ * @property-read Cache $cache
+ * @property-read ReqContainer $container
  */
 interface ShellSession extends Session
 {

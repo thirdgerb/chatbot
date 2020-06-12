@@ -11,7 +11,6 @@
 
 namespace Commune\Ghost\ClonePipes;
 
-use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Protocals\HostMsg\Convo\ApiMsg;
@@ -25,25 +24,24 @@ use Commune\Protocals\HostMsg\Convo\ApiMsg;
 class CloneApiHandlePipe extends AClonePipe
 {
 
-    protected function doHandle(GhostRequest $request, \Closure $current): GhostResponse
+    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
         $message = $request->getInput()->getMessage();
 
         if (!$message instanceof ApiMsg) {
-            return $current($request);
+            return $next($request);
         }
 
-        $apiName = $message->getApiName();
+        $handler = $this->cloner->ghost->getApiHandler(
+            $this->cloner->container,
+            $message
+        );
 
-        $handlers = $this->cloner->config->apiHandlers;
-        if (!isset($handlers[$apiName])) {
-            return $request->fail(AppResponse::HANDLER_NOT_FOUND);
+        if (isset($handler)) {
+            return $handler($request, $message);
         }
 
-        $handlerName = $handlers[$apiName];
-        $handler = $this->cloner->container->make($handlerName);
-
-        return $handler($request);
+        return $next($request);
     }
 
 

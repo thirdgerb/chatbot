@@ -20,33 +20,38 @@ use Commune\Support\Option\AbsOption;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $group         协议所属的分组
  * @property-read string $protocal      协议的类名
  * @property-read string $handler       Handler 的类名
- * @property-read string[] $filter      协议的过滤, 根据协议 ID 来判断.
+ * @property-read string[] $filters      协议的过滤, 根据协议 ID 来判断.
  * @property-read array $params         Handler 构造器可以补充的参数, 依赖注入.
  */
-class HandlerOption extends AbsOption
+class ProtocalHandlerOpt extends AbsOption
 {
+    protected $_id;
+
     public static function stub(): array
     {
         return [
-            'group' => '',
             'protocal' => '',
             'handler' => '',
-            'filter' => ['*'],
+            'filters' => [],
             'params' => [],
         ];
     }
 
+    public function getId(): string
+    {
+        return $this->_id ?? $this->_id = $this->getHash();
+    }
+
     public static function validate(array $data): ? string /* errorMsg */
     {
-        if (empty($data['group'])) {
-            return 'group is required';
-        }
 
         if (empty($data['protocal'])) {
             return 'protocal is required';
+        }
+        if (empty($data['handler'])) {
+            return 'handler is required';
         }
 
         return parent::validate($data);

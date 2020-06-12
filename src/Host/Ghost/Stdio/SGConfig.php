@@ -11,12 +11,11 @@
 
 namespace Commune\Host\Ghost\Stdio;
 
-use Commune\Support\Protocal\HandlerOption;
+use Commune\Support\Protocal\ProtocalHandlerOpt;
 use Commune\Framework;
 use Commune\Components;
 use Commune\Ghost\Commands;
 use Commune\Ghost\Cmd\GhostHelpCmd;
-use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Ghost\Handlers\GhostRequestHandler;
@@ -62,10 +61,9 @@ class SGConfig extends AbsOption implements GhostConfig
             ],
             'options' => [
             ],
-            // protocals
-            'protocals' => [
+            // request protocals
+            'requestHandlers' => [
                 [
-                    'group' => Session::PROTOCAL_GROUP_REQUEST,
                     'protocal' => GhostRequest::class,
                     'handler' => GhostRequestHandler::class,
                 ]
@@ -105,16 +103,16 @@ class SGConfig extends AbsOption implements GhostConfig
             'maxRedirectTimes' => 255,
             'mindsetCacheExpire' => 600,
             'maxBacktrace' => 3,
-            'defaultContextName' => Components\Demo\Contexts\DemoHome::makeUcl()->encode(),
+            'defaultContextName' => Components\Demo\Contexts\DemoHome::genUcl()->encode(),
             'sceneContextNames' => [
             ],
             'globalContextRoutes' => [
-                Navigation\CancelInt::makeUcl(),
-                Navigation\RepeatInt::makeUcl(),
-                Navigation\QuitInt::makeUcl(),
-                Navigation\HomeInt::makeUcl(),
-                Navigation\BackwardInt::makeUcl(),
-                Navigation\RestartInt::makeUcl(),
+                Navigation\CancelInt::genUcl(),
+                Navigation\RepeatInt::genUcl(),
+                Navigation\QuitInt::genUcl(),
+                Navigation\HomeInt::genUcl(),
+                Navigation\BackwardInt::genUcl(),
+                Navigation\RestartInt::genUcl(),
             ]
         ];
     }
@@ -122,7 +120,8 @@ class SGConfig extends AbsOption implements GhostConfig
     public static function relations(): array
     {
         return [
-            'protocals[]' => HandlerOption::class
+            'requestHandlers[]' => ProtocalHandlerOpt::class,
+            'apiHandlers[]' => ProtocalHandlerOpt::class
         ];
     }
 

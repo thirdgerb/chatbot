@@ -15,7 +15,7 @@ use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Ghost\Request\GhostResponse;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Protocals\HostMsg\DefaultIntents;
-use Commune\Protocals\HostMsg\IntentMsg;
+use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\IntercomMsg;
 
 /**
@@ -32,6 +32,16 @@ class SGResponse implements GhostResponse
      * @var ConsoleLogger
      */
     protected $console;
+
+    /**
+     * @var InputMsg
+     */
+    protected $input;
+
+    /**
+     * @var InputMsg[]
+     */
+    protected $asyncInputs;
 
     /**
      * @var IntercomMsg[]
@@ -51,6 +61,8 @@ class SGResponse implements GhostResponse
     public function __construct(
         Stdio $stdio,
         ConsoleLogger $console,
+        InputMsg $input,
+        array $asyncInputs,
         array $outputs,
         int $code = 0,
         string $message = ''
@@ -58,7 +70,8 @@ class SGResponse implements GhostResponse
     {
         $this->stdio = $stdio;
         $this->console = $console;
-        $this->outputs = $outputs;
+        $this->input = $input;
+        $this->asyncInputs = $asyncInputs;
         $this->outputs = $outputs;
         $this->errcode = $code;
         $this->errmsg = $message;
@@ -96,6 +109,21 @@ class SGResponse implements GhostResponse
     public function getErrmsg(): string
     {
         return $this->errmsg;
+    }
+
+    public function getInput(): InputMsg
+    {
+        return $this->input;
+    }
+
+    public function getAsyncInputs(): array
+    {
+        return $this->asyncInputs;
+    }
+
+    public function getOutputs(): array
+    {
+        return $this->outputs;
     }
 
 

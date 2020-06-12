@@ -76,7 +76,15 @@ abstract class AbsOperator implements Operator
 
         // 尝试拦截.
         $next = $this->toNext();
+
+        $this->ticking = false;
+        $this->ticked = true;
         return $next;
+    }
+
+    public function isTicked(): bool
+    {
+        return $this->ticked;
     }
 
 

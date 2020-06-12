@@ -51,7 +51,7 @@ class IClonerScope implements ClonerScope
 
     public function __construct(Cloner $cloner)
     {
-        $this->clonerId = $cloner->getId();
+        $this->clonerId = $cloner->getSessionId();
         $this->guestId = $cloner->input->getGuestId();
         $this->convoId = $cloner->getConversationId();
         $this->sceneId = $cloner->scene->sceneId;

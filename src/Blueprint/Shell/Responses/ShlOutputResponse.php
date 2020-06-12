@@ -11,11 +11,12 @@
 
 namespace Commune\Blueprint\Shell\Responses;
 
+use Commune\Blueprint\Framework\Request\AppResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface OutputResponse
+interface ShlOutputResponse extends AppResponse
 {
 
 }

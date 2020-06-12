@@ -16,7 +16,6 @@ use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Framework\ServiceRegistrar;
-use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
@@ -25,13 +24,15 @@ use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Contracts\Log\LogInfo;
-use Commune\Framework\Event\EndSession;
-use Commune\Framework\Event\StartSession;
+use Commune\Framework\Event\FinishRequest;
+use Commune\Framework\Event\StartRequest;
 use Commune\Ghost\Bootstrap;
 use Commune\Framework\AbsApp;
 use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg;
+use Commune\Protocals\HostMsg\Convo\ApiMsg;
 use Commune\Protocals\Intercom\InputMsg;
+use Commune\Support\Protocal\ProtocalMatcher;
+use Commune\Blueprint\Ghost\Handlers;
 
 
 /**
@@ -54,6 +55,17 @@ class IGhost extends AbsApp implements Ghost
      * @var GhostConfig
      */
     protected $config;
+
+    /**
+     * @var ProtocalMatcher
+     */
+    protected $requestProtoMatcher;
+
+    /**
+     * @var ProtocalMatcher
+     */
+    protected $apiProtoMatcher;
+
 
     public function __construct(
         GhostConfig $config,
@@ -96,49 +108,44 @@ class IGhost extends AbsApp implements Ghost
                 'Ghost not activated'
             );
         }
+
         // MessageId 应该是唯一的.
-        $container = $this->newReqContainerInstance($input->getMessageId());
+        $container = $this->newReqContainerIns($input->getMessageId());
 
         $cloner = new ICloner($this, $container, $input);
 
         $container->share(ReqContainer::class, $container);
         $container->share(InputMsg::class, $input);
-        $container->share(HostMsg::class, $input->getMessage());
         $container->share(Comprehension::class, $input->comprehension);
         $container->share(Cloner::class, $cloner);
-        $container->share(Session::class, $cloner);
 
         // boot 请求容器.
         $this->getServiceRegistrar()->bootReqServices($container);
-
         return $cloner;
     }
 
-    public function handle(GhostRequest $request): GhostResponse
+    public function handleRequest(GhostRequest $request): GhostResponse
     {
         try {
 
             if (!$request->isValid()) {
-                return $response = $request->fail(AppResponse::BAD_REQUEST);
+                return $response = $request->response(AppResponse::BAD_REQUEST);
             }
 
             $input = $request->getInput();
             $cloner = $this->newCloner($input);
-            $cloner->fire(new StartSession($cloner));
+            $cloner->fire(new StartRequest($cloner));
 
             // 如果是无状态请求.
             if ($request->isStateless()) {
                 $cloner->noState();
             }
 
-            $handler = $cloner->getProtocalHandler(
-                Session::PROTOCAL_GROUP_REQUEST,
-                $request
-            );
+            $handler = $this->getRequestHandler($cloner->container, $request);
 
             if (!isset($handler)) {
                 return $response = $request
-                    ->fail(AppResponse::HANDLER_NOT_FOUND);
+                    ->response(AppResponse::HANDLER_NOT_FOUND);
             }
 
             // 使用 Handler 来响应.
@@ -146,16 +153,16 @@ class IGhost extends AbsApp implements Ghost
 
         } catch (\Throwable $e) {
             $this->getExceptionReporter()->report($e);
-            $response = $request->fail(AppResponse::HOST_LOGIC_ERROR);
+            $response = $request->response(AppResponse::HOST_LOGIC_ERROR);
 
         } finally {
             if (isset($cloner)) {
-                $cloner->fire(new EndSession($cloner));
+                $cloner->fire(new FinishRequest($cloner));
                 $cloner->finish();
             }
 
             return $response
-                ?? $request->fail(AppResponse::HOST_LOGIC_ERROR);
+                ?? $request->response(AppResponse::HOST_LOGIC_ERROR);
         }
     }
 
@@ -163,5 +170,48 @@ class IGhost extends AbsApp implements Ghost
     {
         return $this->getProcContainer()->get(ExceptionReporter::class);
     }
+
+    /*--------- protocals ---------*/
+
+    public function getRequestHandler(
+        ReqContainer $container,
+        GhostRequest $request
+    ): ? Handlers\GhtRequesthandler
+    {
+        if (!isset($this->requestProtoMatcher)) {
+            $options = $this->getConfig()->requestHandlers;
+            $this->requestProtoMatcher = new ProtocalMatcher($options);
+        }
+
+        $gen = $this->requestProtoMatcher->matchHandler($request);
+        return $this->makeHandler($container, $gen);
+    }
+
+    public function getApiHandler(ReqContainer $container, ApiMsg $message): ? Handlers\GhtApiHandler
+    {
+        $matcher = $this->apiProtoMatcher
+            ?? $this->apiProtoMatcher = new ProtocalMatcher($this->getConfig()->apiHandlers);
+
+        $gen = $matcher->matchHandler($message);
+        return $this->makeHandler($container, $gen);
+    }
+
+    /**
+     * @param ReqContainer $container
+     * @param \Generator $gen
+     * @return null|callable
+     */
+    protected function makeHandler(ReqContainer $container, \Generator $gen)
+    {
+        foreach ($gen as $option) {
+            $abstract = $option->handler;
+            $params = $option->params;
+            $handlerIns = $container->make($abstract, $params);
+            return $handlerIns;
+        }
+
+        return null;
+    }
+
 
 }

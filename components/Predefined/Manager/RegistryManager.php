@@ -102,7 +102,7 @@ class RegistryManager extends ACodeContext
 
                         if (isset($category)) {
                             return $dialog->blockTo(
-                                ViewCategory::makeUcl(['categoryName' => $category->name])
+                                ViewCategory::genUcl(['categoryName' => $category->name])
                             );
 
                         } elseif ($choice === 'n') {
@@ -143,7 +143,7 @@ class RegistryManager extends ACodeContext
             $menu['b'] = '上一页';
         }
 
-        $menu['c'] = CancelInt::makeUcl();
+        $menu['c'] = CancelInt::genUcl();
         return $menu;
     }
 

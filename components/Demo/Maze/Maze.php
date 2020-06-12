@@ -207,7 +207,7 @@ class Maze extends ACodeContext
             ->onActivate(function(Dialog $dialog) {
 
                 return $dialog->dependOn(
-                    PlayMaze::makeUcl(),
+                    PlayMaze::genUcl(),
                     'play'
                 );
             })

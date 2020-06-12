@@ -67,7 +67,7 @@ interface App
      * @param string $uuid
      * @return ReqContainer
      */
-    public function newReqContainerInstance(string $uuid) : ReqContainer;
+    public function newReqContainerIns(string $uuid) : ReqContainer;
 
     /*------ container ------*/
 

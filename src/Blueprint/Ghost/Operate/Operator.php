@@ -27,6 +27,11 @@ interface Operator
     public function tick() : Operator;
 
     /**
+     * @return bool
+     */
+    public function isTicked() : bool;
+
+    /**
      * @return Dialog
      */
     public function getDialog() : Dialog;

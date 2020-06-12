@@ -55,7 +55,7 @@ interface CodeContext extends Context, Wrapper, MindSelfRegister
     const STAGE_BUILDER_PREFIX = '__on_';
     const STAGE_STATIC_MATCHER_PREFIX = '__match_';
 
-    public static function makeUcl(array $query = [], string $stage = '') : Ucl;
+    public static function genUcl(array $query = [], string $stage = '') : Ucl;
 
     /**
      * 定义 context name

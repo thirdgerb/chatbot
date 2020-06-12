@@ -48,7 +48,7 @@ class CloneMessengerPipe extends AClonePipe
     }
 
 
-    protected function doHandle(GhostRequest $request, Closure $current) : GhostResponse
+    protected function doHandle(GhostRequest $request, Closure $next) : GhostResponse
     {
         $message = $request->getInput()->getMessage();
 
@@ -58,12 +58,12 @@ class CloneMessengerPipe extends AClonePipe
         }
 
         if ($message instanceof UnsupportedMsg) {
-            return $request->fail(AppResponse::NO_CONTENT);
+            return $request->response(AppResponse::NO_CONTENT);
         }
 
         try {
 
-            $response = $current($request);
+            $response = $next($request);
             $this->resetFailureCount();
             return $response;
 
@@ -111,7 +111,7 @@ class CloneMessengerPipe extends AClonePipe
         $this->cloner->output(
             $this->cloner->input->output($message)
         );
-        $this->cloner->endSession();
+        $this->cloner->endConversation();
         $this->resetFailureCount();
 
         return $request->success($this->cloner);

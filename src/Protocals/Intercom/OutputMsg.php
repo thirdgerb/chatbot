@@ -21,11 +21,10 @@ interface OutputMsg extends IntercomMsg
 {
 
     /**
-     * @param HostMsg $message
-     * @param HostMsg ...$messages
+     * @param HostMsg[] $messages
      * @return static[]
      */
-    public function derive(HostMsg $message, HostMsg ...$messages) : array;
+    public function derive(HostMsg ...$messages) : array;
 
 
 }

@@ -83,10 +83,8 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
         );
     }
 
-    public function derive(HostMsg $message, HostMsg ...$messages): array
+    public function derive(HostMsg ...$messages): array
     {
-        array_unshift($messages, $message);
-
         return array_map(function(HostMsg $message) {
             return $this->divide($message);
         }, $messages);

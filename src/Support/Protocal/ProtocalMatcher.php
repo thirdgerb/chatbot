@@ -16,14 +16,17 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class HandlerMatcher
+class ProtocalMatcher
 {
 
+    /**
+     * @var ProtocalHandlerOpt[]
+     */
     protected $matchers = [];
 
     /**
      * HandlerMatcher constructor.
-     * @param HandlerOption[] $options
+     * @param ProtocalHandlerOpt[] $options
      */
     public function __construct(array $options = [])
     {
@@ -32,35 +35,35 @@ class HandlerMatcher
         }
     }
 
-    public function addOption(HandlerOption $option) : void
+    public function addOption(ProtocalHandlerOpt $option) : void
     {
-        $group = $option->group;
-        $protocal = $option->protocal;
-        $handler = $option->handler;
-        $filter = $option->filter;
-        $this->matchers[$group][] = [$protocal, $filter, $handler];
+        $id = $option->getId();
+        $this->matchers[$id] = $option;
     }
 
-    public function matchHandler(string $group, Protocal $protocal) : ? string
+    /**
+     * @param Protocal $protocal
+     * @return \Generator|ProtocalHandlerOpt[]
+     */
+    public function matchHandler(Protocal $protocal) : \Generator
     {
-        if (empty($this->matchers[$group])) {
-            return null;
-        }
+        if (!empty($this->matchers)) {
+            foreach ($this->matchers as $option) {
+                $protocalName = $option->protocal;
+                if (!is_a($protocal, $protocalName, TRUE)) {
+                    continue;
+                }
 
-        $matchers = $this->matchers[$group];
-
-        foreach ($matchers as list($protocalName, $filterRules, $handlerName)) {
-
-            if (!is_a($protocal, $protocalName, TRUE)) {
-                continue;
+                $filterRules = $option->filters;
+                if (
+                    // 规则为空也表示通配.
+                    empty($filterRules)
+                    || $this->match($protocal->getProtocalId(), $filterRules)
+                ) {
+                    yield $option;
+                }
             }
-
-            if ($this->match($protocal->getProtocalId(), $filterRules)) {
-                return $handlerName;
-            }
         }
-
-        return null;
     }
 
     public function match(string $protocalId, array $rules) : bool
@@ -72,6 +75,7 @@ class HandlerMatcher
             }
 
             $matched = StringUtils::isWildcardPattern($rule)
+                // 只匹配字母的情况. 暂时不做更复杂的匹配逻辑.
                 ? StringUtils::wildcardMatch($rule, $protocalId, '\w+')
                 : $rule === $protocalId;
 

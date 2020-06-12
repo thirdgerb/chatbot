@@ -72,7 +72,7 @@ abstract class ASessionStorage implements SessionStorage
 
         $key = $this->getSessionKey(
             $this->session->getAppId(),
-            $this->session->getId()
+            $this->session->getSessionId()
         );
 
         $cached = $this->cache->get($key);
@@ -123,7 +123,7 @@ abstract class ASessionStorage implements SessionStorage
         $str = serialize($data);
         $key = $this->getSessionKey(
             $this->session->getAppId(),
-            $this->session->getId()
+            $this->session->getSessionId()
         );
 
         $ttl = $this->session->getSessionExpire();

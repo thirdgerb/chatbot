@@ -9,13 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Shell\Requests;
+namespace Commune\Blueprint\Shell\Handlers;
 
+use Commune\Protocals\HostMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface InputRequest
+interface InputMessageParser
 {
+    public function __invoke(HostMsg $message) : ? HostMsg;
 
 }

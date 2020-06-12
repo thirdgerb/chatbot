@@ -9,13 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Shell\Requests;
+namespace Commune\Blueprint\Shell\Handlers;
 
+use Commune\Blueprint\Shell\Requests\ShlOutputRequest;
+use Commune\Blueprint\Shell\Responses\ShlOutputResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface OutputRequest
+interface ShlOutputReqHandler
 {
 
+    public function __invoke(ShlOutputRequest $request) : ShlOutputResponse;
 }

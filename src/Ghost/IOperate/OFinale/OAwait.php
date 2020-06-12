@@ -75,7 +75,6 @@ class OAwait extends AbsFinale implements Await
         $this->current = $this->dialog->ucl;
         $contextDef = $this->current->findContextDef($this->cloner);
 
-
         // todo routes with stage routes
         $config = $this->cloner->config;
         $this->routes = array_merge(

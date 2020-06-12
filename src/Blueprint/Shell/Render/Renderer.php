@@ -20,21 +20,12 @@ use Commune\Protocals\HostMsg;
  */
 interface Renderer
 {
-    /**
-     * @return string
-     */
-    public function getId() : string;
-
-    /**
-     * @return string
-     */
-    public function getTitle() : string;
 
     /**
      * @param HostMsg $message
      * @param Session $session
      * @return HostMsg[]
      */
-    public function render(HostMsg $message, Session $session) : array;
+    public function __invoke(HostMsg $message, Session $session) : array;
 
 }

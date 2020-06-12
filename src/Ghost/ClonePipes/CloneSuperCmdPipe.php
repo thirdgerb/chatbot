@@ -33,13 +33,13 @@ class CloneSuperCmdPipe extends AGhostCmdPipe
         return $this->cloner->config->superCommands;
     }
 
-    protected function doHandle(GhostRequest $request, \Closure $current): GhostResponse
+    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
         if ($this->cloner->auth->allow(Supervise::class)) {
-            return parent::doHandle($request, $current);
+            return parent::doHandle($request, $next);
         }
 
-        return $current($request);
+        return $next($request);
     }
 
 

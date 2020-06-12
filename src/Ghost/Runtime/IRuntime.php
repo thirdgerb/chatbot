@@ -263,7 +263,7 @@ class IRuntime implements Runtime
             }
 
             return $this->driver->fetchProcess(
-                $this->cloner->getId(),
+                $this->cloner->getSessionId(),
                 $this->cloner->getConversationId()
             );
 
@@ -288,7 +288,7 @@ class IRuntime implements Runtime
             $this->process->gc();
 
             return $this->driver->cacheProcess(
-                $this->cloner->getId(),
+                $this->cloner->getSessionId(),
                 $this->cloner->getConversationId(),
                 $this->process,
                 $expire
@@ -316,7 +316,7 @@ class IRuntime implements Runtime
 
         try {
             return $this->driver->cacheSessionMemories(
-                $this->cloner->getId(),
+                $this->cloner->getSessionId(),
                 $this->cloner->getConversationId(),
                 $memories,
                 $expire
@@ -337,7 +337,7 @@ class IRuntime implements Runtime
 
             return $this->driver
                 ->fetchSessionMemory(
-                    $this->cloner->getId(),
+                    $this->cloner->getSessionId(),
                     $this->cloner->getConversationId(),
                     $id
                 );
@@ -365,7 +365,7 @@ class IRuntime implements Runtime
         try {
 
             return $this->driver->saveLongTermMemories(
-                $this->cloner->getId(),
+                $this->cloner->getSessionId(),
                 $memories
             );
 
@@ -383,7 +383,7 @@ class IRuntime implements Runtime
 
         try {
             return $this->driver->findLongTermMemories(
-                $this->cloner->getId(),
+                $this->cloner->getSessionId(),
                 $id
             );
 

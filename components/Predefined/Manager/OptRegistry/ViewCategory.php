@@ -79,7 +79,7 @@ class ViewCategory extends ACodeContext
                         [
                             $this->getStage('config'),
                             $this->getStage('list_options'),
-                            CancelInt::makeUcl(),
+                            CancelInt::genUcl(),
                         ]
                     );
             });

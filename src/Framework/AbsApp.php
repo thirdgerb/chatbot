@@ -26,6 +26,7 @@ use Commune\Contracts\Log\LogInfo;
 use Commune\Framework\Log\IConsoleLogger;
 use Commune\Framework\Log\ILogInfo;
 use Commune\Framework\Spy\SpyAgency;
+use Psr\Log\LogLevel;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -87,9 +88,17 @@ abstract class AbsApp implements App
     )
     {
         $this->procC = $procC ?? new Container();
+
         $this->reqC = $reqC ?? new IReqContainer($this->procC);
-        $this->console = $consoleLogger ?? new IConsoleLogger();
+
+        $startLevel = CommuneEnv::isDebug() ? LogLevel::DEBUG : LogLevel::INFO;
+        $this->console = $consoleLogger ?? new IConsoleLogger(
+            true,
+                $startLevel
+            );
+
         $this->logInfo = $logInfo ?? new ILogInfo();
+
         $this->registrar = $registrar ?? new IServiceRegistrar(
             $this->procC,
             $this->reqC,
@@ -117,7 +126,7 @@ abstract class AbsApp implements App
         $this->reqC->instance($abstract, $instance);
     }
 
-    public function newReqContainerInstance(string $uuid): ReqContainer
+    public function newReqContainerIns(string $uuid): ReqContainer
     {
         $container = $this->reqC->newInstance($uuid, $this->procC);
         $container->share(ReqContainer::class, $container);

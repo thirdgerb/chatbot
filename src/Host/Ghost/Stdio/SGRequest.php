@@ -16,12 +16,11 @@ use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Request\GhostRequest;
 use Commune\Contracts\Log\ConsoleLogger;
-use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
-use Commune\Protocals\IntercomMsg;
 use Commune\Support\DI\TInjectable;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -119,7 +118,11 @@ class SGRequest implements GhostRequest
         return new SGResponse(
             $this->stdio,
             $this->console,
-            $outputs
+            $input,
+            [],
+            $outputs,
+            AppResponse::SUCCESS,
+            AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::SUCCESS]
         );
     }
 
@@ -134,33 +137,25 @@ class SGRequest implements GhostRequest
         return $this->getInput()->getMessage() instanceof HostMsg\Convo\ApiMsg;
     }
 
-    public function noOutputs(): bool
-    {
-        return false;
-    }
 
     /**
      * @param Cloner $output
-     * @param int $errcode
-     * @param string $errmsg
      * @return AppResponse
      */
-    public function success(
-        $output,
-        int $errcode = AppResponse::SUCCESS,
-        string $errmsg = ''
-    ): AppResponse
+    public function success(Cloner $output): AppResponse
     {
         return new SGResponse(
             $this->stdio,
             $this->console,
+            $this->input,
+            $output->getAsyncInputs(),
             $output->getOutputs(),
-            $errcode,
-            $errmsg
+            AppResponse::SUCCESS,
+          AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::SUCCESS]
         );
     }
 
-    public function fail(int $errcode, string $errmsg = ''): AppResponse
+    public function response(int $errcode, string $errmsg = ''): AppResponse
     {
         $errmsg = !empty($errmsg)
             ? $errmsg
@@ -169,10 +164,17 @@ class SGRequest implements GhostRequest
         return new SGResponse(
             $this->stdio,
             $this->console,
+            $this->input,
+            [],
             [],
             $errcode,
             $errmsg
         );
+    }
+
+    public function getProtocalId(): string
+    {
+        return StringUtils::normalizeString(get_class($this->message));
     }
 
 

@@ -21,7 +21,7 @@ class OCloseSession extends AbsFinale
 
     protected function toNext(): Operator
     {
-        $this->dialog->cloner->endSession();
+        $this->dialog->cloner->endConversation();
         return $this;
     }
 }

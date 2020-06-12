@@ -88,7 +88,7 @@ class DemoHome extends ACodeContext
                     ->askChoose(
                         '请您选择',
                         [
-                            FeatureTest::makeUcl(),
+                            FeatureTest::genUcl(),
                         ]
                     );
 

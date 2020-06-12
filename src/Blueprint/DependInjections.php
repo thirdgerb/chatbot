@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Contracts;
 use Commune\Protocals;
+use Commune\Blueprint\Shell;
 use Commune\Blueprint\Framework;
 use Commune\Blueprint\Configs;
 use Commune\Support\Registry\OptRegistry;
@@ -69,11 +70,30 @@ interface DependInjections
     // ghost 请求创建时绑定的实例.
     const GHOST_REQ_INSTANCES = [
         Cloner::class,
-        Framework\Session::class,
         Framework\ReqContainer::class,
         Protocals\Intercom\InputMsg::class,
-        Protocals\HostMsg::class,
         Protocals\Comprehension::class,
+    ];
 
+    /*------- shell -------*/
+
+    const SHELL_PROC_BINDINGS = [
+        Shell::class,
+        Configs\ShellConfig::class,
+        Shell\Render\RenderManager::class,
+    ];
+
+    const SHELL_REQ_BINDINGS = [
+        Shell::class,
+        Contracts\Cache::class,
+        Shell\Session\ShellLogger::class,
+        Shell\Session\ShellStorage::class,
+    ];
+
+    const SHELL_REQ_INSTANCES = [
+        Shell\ShellSession::class,
+        Framework\ReqContainer::class,
+        Protocals\Intercom\InputMsg::class,
+        Protocals\Comprehension::class,
     ];
 }

@@ -66,11 +66,20 @@ use Commune\Support\Registry\OptRegistry;
 interface Cloner extends Session
 {
 
+    /**
+     * @return string
+     */
     public function getConversationId() : string;
 
-    public function endSession() : void;
+    /**
+     * 退出当前多轮对话.
+     */
+    public function endConversation() : void;
 
-    public function isSessionEnd() : bool;
+    /**
+     * @return bool
+     */
+    public function isConversationEnd() : bool;
 
     /*----- 手动输出 -----*/
 
@@ -99,7 +108,7 @@ interface Cloner extends Session
      * 获取异步的输入消息
      * @return InputMsg[]
      */
-    public function getAsyncInput() : array;
+    public function getAsyncInputs() : array;
 
 
 }

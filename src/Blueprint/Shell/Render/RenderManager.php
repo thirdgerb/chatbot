@@ -14,6 +14,7 @@ use Commune\Blueprint\Configs\RenderOption;
 use Commune\Blueprint\Framework\Session;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\OutputMsg;
+use Commune\Support\Protocal\ProtocalMatcher;
 
 
 /**
@@ -22,14 +23,22 @@ use Commune\Protocals\Intercom\OutputMsg;
 interface RenderManager
 {
     /**
-     * @param Renderer $renderer
+     * 注册一个 Renderer
+     * @param RendererOption $option
      */
-    public function register(Renderer $renderer) : void;
+    public function register(RendererOption $option) : void;
 
     /**
-     * @return Renderer[]
+     * 根据 ID 获取一个 renderer
+     * @param string $id
+     * @return Renderer
      */
-    public function getRenders() : array;
+    public function getRenderer(string $id) : Renderer;
+
+    /**
+     * @return RendererOption[]
+     */
+    public function getOptions() : array;
 
     /**
      * @return Renderer
@@ -46,13 +55,13 @@ interface RenderManager
     /**
      * @param Session $session
      * @param OutputMsg $message
-     * @param RenderOption[] $protocals
+     * @param ProtocalMatcher $matcher
      * @return OutputMsg[]
      */
     public function render(
         Session $session,
         OutputMsg $message,
-        array $protocals
+        ProtocalMatcher $matcher
     ) : array;
 
 }

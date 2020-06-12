@@ -582,7 +582,9 @@ class IProcess implements Process, HasIdGenerator, \Serializable
             $this->_tasks[$id] = clone $val;
         }
 
-        $this->_waiter = clone $this->_waiter;
+        $this->_waiter = isset($this->_waiter)
+            ? clone $this->_waiter
+            : null;
 
         foreach ($this->_backtrace as $id => $val) {
             $this->_backtrace[$id] = clone $val;

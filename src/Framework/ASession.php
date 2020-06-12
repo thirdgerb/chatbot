@@ -11,13 +11,13 @@
 
 namespace Commune\Framework;
 
-use Commune\Support\Protocal\HandlerOption;
+use Commune\Support\Protocal\ProtocalMatcher;
+use Commune\Support\Protocal\ProtocalHandlerOpt;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
 use Commune\Framework\Exceptions\SerializeForbiddenException;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Support\Pipeline\OnionPipeline;
-use Commune\Support\Protocal\Protocal;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
 
@@ -71,11 +71,6 @@ abstract class ASession implements Session, HasIdGenerator
     protected $stateless = false;
 
     /**
-     * @var HandlerOption[][]
-     */
-    protected $protocalMap;
-
-    /**
      * ASession constructor.
      * @param ReqContainer $container
      * @param string $sessionId
@@ -91,11 +86,10 @@ abstract class ASession implements Session, HasIdGenerator
 
     /*------ id ------*/
 
-    public function getId(): string
+    public function getSessionId(): string
     {
         return $this->sessionId;
     }
-
 
     /*------ abstract ------*/
 
@@ -121,39 +115,6 @@ abstract class ASession implements Session, HasIdGenerator
         $pipeline->via($via);
         return $pipeline->buildPipeline($destination);
     }
-
-    public function getProtocalHandler(string $group, Protocal $protocalInstance): ? callable
-    {
-        if (!isset($this->protocalMap)) {
-            $options = $this->getHandlerOptions();
-            foreach ($options as $option) {
-                $this->protocalMap[$option->group][$option->protocal] = $option;
-            }
-        }
-
-        $options = $this->protocalMap[$group] ?? [];
-
-        if (empty($options)) {
-            return null;
-        }
-
-        foreach ($options as $name => $option) {
-            $protocal = $option->protocal;
-            if (is_a($protocalInstance, $protocal, TRUE)) {
-                $abstract = $option->handler;
-                $params = $option->params;
-                $handlerIns = $this->getContainer()->make($abstract, $params);
-                return $handlerIns;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @return HandlerOption[]
-     */
-    abstract protected function getHandlerOptions() : array;
 
 
     /*------ status ------*/
@@ -249,7 +210,7 @@ abstract class ASession implements Session, HasIdGenerator
         unset($this->listened);
         unset($this->singletons);
         unset($this->finished);
-        unset($this->protocalMap);
+        unset($this->protocalMatcher);
         $this->flushInstances();
 
         // container
