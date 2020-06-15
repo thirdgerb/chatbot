@@ -217,4 +217,16 @@ class TypeUtils
             || $value === 'true'
             || $value === 'false';
     }
+
+
+    public static function requireFields(array $data, array $fields) : ? string
+    {
+        foreach ($fields as $field) {
+            if (empty($data[$field])) {
+                return "$field is required";
+            }
+        }
+
+        return null;
+    }
 }

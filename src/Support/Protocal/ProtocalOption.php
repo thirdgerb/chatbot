@@ -12,6 +12,7 @@
 namespace Commune\Support\Protocal;
 
 use Commune\Support\Option\AbsOption;
+use Commune\Support\Utils\TypeUtils;
 
 
 /**
@@ -20,12 +21,11 @@ use Commune\Support\Option\AbsOption;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $protocal      协议的类名
- * @property-read string $handler       Handler 的类名
- * @property-read string[] $filters      协议的过滤, 根据协议 ID 来判断.
- * @property-read array $params         Handler 构造器可以补充的参数, 依赖注入.
+ * @property-read string $protocal              协议的名称.
+ * @property-read string $interface             Handler 的 interface, 同时也可作为分组. 允许为空.
+ * @property-read HandlerOption[] $handlers     定义的 handlers.
  */
-class ProtocalHandlerOpt extends AbsOption
+class ProtocalOption extends AbsOption
 {
     protected $_id;
 
@@ -33,9 +33,9 @@ class ProtocalHandlerOpt extends AbsOption
     {
         return [
             'protocal' => '',
-            'handler' => '',
-            'filters' => [],
-            'params' => [],
+            'interface' => '',
+            'handlers' => [
+            ],
         ];
     }
 
@@ -44,22 +44,17 @@ class ProtocalHandlerOpt extends AbsOption
         return $this->_id ?? $this->_id = $this->getHash();
     }
 
-    public static function validate(array $data): ? string /* errorMsg */
-    {
-
-        if (empty($data['protocal'])) {
-            return 'protocal is required';
-        }
-        if (empty($data['handler'])) {
-            return 'handler is required';
-        }
-
-        return parent::validate($data);
-    }
-
     public static function relations(): array
     {
-        return [];
+        return [
+            'handlers[]' => HandlerOption::class,
+        ];
+    }
+
+    public static function validate(array $data): ? string /* errorMsg */
+    {
+        return TypeUtils::requireFields($data, ['protocal', 'handlers'])
+            ?? parent::validate($data);
     }
 
 
@@ -73,13 +68,13 @@ class ProtocalHandlerOpt extends AbsOption
         return AliasesForProtocal::getOriginFromAlias($this->_data[$name] ?? '');
     }
 
-    public function __set_handler(string $name, string $val) : void
+    public function __set_interface(string $name, string $val) : void
     {
         $this->_data[$name] = AliasesForProtocal::getAliasOfOrigin($val);
     }
 
 
-    public function __get_handler(string $name) : string
+    public function __get_interface(string $name) : string
     {
         return AliasesForProtocal::getOriginFromAlias($this->_data[$name] ?? '');
     }

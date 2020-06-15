@@ -494,4 +494,10 @@ class StringUtils
 
         return $all;
     }
+
+    public static function isRegexPattern(string $text) : bool
+    {
+        $len = strlen($text);
+        return $len > 2 && $text[0] === '/' && $text[$len - 1] === '/';
+    }
 }

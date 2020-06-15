@@ -18,7 +18,7 @@ class ArrayUtils
         return null;
     }
 
-    public static function count($iterator)
+    public static function countIterable($iterator)
     {
         if (!is_iterable($iterator)) {
             return 1;
