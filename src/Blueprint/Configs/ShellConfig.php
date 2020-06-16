@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Configs;
 
 use Commune\Support\Option\Option;
-use Commune\Support\Protocal\ProtocalHandlerOpt;
+use Commune\Support\Protocal\ProtocalOption;
 
 /**
  * 对话机器人消息层的配置.
@@ -50,7 +50,7 @@ use Commune\Support\Protocal\ProtocalHandlerOpt;
  *
  * ## 协议定义.
  *
- * @property-read ProtocalHandlerOpt[] $requestHandlers     请求的处理协议
+ * @property-read ProtocalOption[] $requestHandlers     请求的处理协议
  * [
  *     [
  *         'protocal' => Protocal::class,
@@ -60,9 +60,9 @@ use Commune\Support\Protocal\ProtocalHandlerOpt;
  *     ],
  * ]
  *
- * @property-read ProtocalHandlerOpt[] $apiHandlers         输入消息的处理协议.
- * @property-read ProtocalHandlerOpt[] $inputParsers        输入消息的处理协议.
- * @property-read ProtocalHandlerOpt[] $outputRenderers     输出消息的处理协议
+ * @property-read ProtocalOption[] $apiHandlers         输入消息的处理协议.
+ * @property-read ProtocalOption[] $inputParsers        输入消息的处理协议.
+ * @property-read ProtocalOption[] $outputRenderers     输出消息的处理协议
  *
  * ## Session 配置
  *

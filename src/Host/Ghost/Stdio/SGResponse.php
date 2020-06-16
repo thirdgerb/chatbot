@@ -12,7 +12,7 @@
 namespace Commune\Host\Ghost\Stdio;
 
 use Clue\React\Stdio\Stdio;
-use Commune\Blueprint\Ghost\Request\GhostResponse;
+use Commune\Blueprint\Kernel\Protocals\CloneResponse;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Protocals\HostMsg\DefaultIntents;
 use Commune\Protocals\Intercom\InputMsg;
@@ -21,7 +21,7 @@ use Commune\Protocals\IntercomMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SGResponse implements GhostResponse
+class SGResponse implements CloneResponse
 {
     /**
      * @var Stdio

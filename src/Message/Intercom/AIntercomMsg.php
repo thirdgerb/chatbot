@@ -21,15 +21,15 @@ use Commune\Support\Uuid\IdGeneratorHelper;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property string $messageId
- * @property string $traceId
- * @property string $sessionId
- * @property string $convoId
- * @property string $guestId
- * @property string $guestName
- * @property HostMsg $message
- * @property int $createdAt
- * @property int $deliverAt
+ * @property string $messageId  为空则自动生成.
+ * @property string $traceId    允许为空
+ * @property string $sessionId  会话Id, 为空则是 guestId
+ * @property string $convoId    多轮会话的 ID. 允许为空. 除非客户端有指定的 conversation.
+ * @property string $guestId    用户的ID. 不可以为空.
+ * @property string $guestName  用户的姓名. 可以为空.
+ * @property HostMsg $message   输入消息. 不可以为空.
+ * @property int $createdAt     创建时间.
+ * @property int $deliverAt     发送时间. 默认为0.
  *
  */
 abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGenerator
@@ -73,14 +73,6 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
         return empty($traceId)
             ? $this->messageId
             : $traceId;
-    }
-
-    public function getSessionId(): string
-    {
-        $sessionId = $this->sessionId;
-        return empty($sessionId)
-            ? $this->guestId
-            : $sessionId;
     }
 
     public function getConversationId(): string
@@ -159,6 +151,19 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
     {
         return $this->_normalizedText
             ?? $this->_normalizedText = StringUtils::normalizeString($this->getMsgText());
+    }
+
+    public function setConvoId(string $convoId): void
+    {
+        $this->convoId = $convoId;
+    }
+
+
+    public function __set_messageId(string $name, string $value) : void
+    {
+        $this->_data[$name] = empty($value)
+            ? $this->createUuId()
+            : $value;
     }
 
 

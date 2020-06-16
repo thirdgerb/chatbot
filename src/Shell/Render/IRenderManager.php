@@ -12,7 +12,6 @@
 namespace Commune\Shell\Render;
 
 use Commune\Blueprint\Framework\ReqContainer;
-use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Shell\Render\Renderer;
 use Commune\Blueprint\Shell\Render\RendererOption;
 use Commune\Blueprint\Shell\Render\RenderManager;

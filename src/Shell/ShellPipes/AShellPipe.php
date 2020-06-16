@@ -73,7 +73,7 @@ abstract class AShellPipe implements RequestPipe
             $b = microtime(true);
             $gap = round(($b - $a) * 1000000);
             $pipeName = static::class;
-            $this->logger->debug("$pipeName end pipe gap: {$gap}ws");
+            $this->logger->debug("$pipeName end pipe gap: {$gap}us");
         }
 
         return $response;

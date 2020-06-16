@@ -13,8 +13,8 @@ namespace Commune\Ghost\Cmd;
 
 use Commune\Blueprint\Framework\Request\AppRequest;
 use Commune\Blueprint\Framework\Request\AppResponse;
-use Commune\Blueprint\Ghost\Request\GhostRequest;
-use Commune\Blueprint\Ghost\Request\GhostResponse;
+use Commune\Blueprint\Kernel\Protocals\CloneRequest;
+use Commune\Blueprint\Kernel\Protocals\CloneResponse;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Command\TRequestCmdPipe;
 use Commune\Ghost\ClonePipes\AClonePipe;
@@ -29,12 +29,12 @@ abstract class AGhostCmdPipe extends AClonePipe implements RequestCmdPipe
 {
     use TRequestCmdPipe;
 
-    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
+    protected function doHandle(CloneRequest $request, \Closure $next): CloneResponse
     {
         $response = $this->tryHandleCommand($request, $next);
-        return $response instanceof GhostResponse
+        return $response instanceof CloneResponse
             ? $response
-            : $request->response(AppResponse::HOST_LOGIC_ERROR);
+            : $request->fail(AppResponse::HOST_LOGIC_ERROR);
     }
 
 
@@ -50,7 +50,7 @@ abstract class AGhostCmdPipe extends AClonePipe implements RequestCmdPipe
 
     public function getInputText(AppRequest $request): ? string
     {
-        if (!$request instanceof GhostRequest) {
+        if (!$request instanceof CloneRequest) {
             return null;
         }
 

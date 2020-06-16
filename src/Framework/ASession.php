@@ -11,8 +11,6 @@
 
 namespace Commune\Framework;
 
-use Commune\Support\Protocal\ProtocalMatcher;
-use Commune\Support\Protocal\ProtocalHandlerOpt;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
 use Commune\Framework\Exceptions\SerializeForbiddenException;
@@ -145,7 +143,6 @@ abstract class ASession implements Session, HasIdGenerator
 
         // 执行所有的事件.
         foreach ($this->listened[$id] as $handler) {
-
             call_user_func($handler, $this, $event);
         }
     }
@@ -210,7 +207,6 @@ abstract class ASession implements Session, HasIdGenerator
         unset($this->listened);
         unset($this->singletons);
         unset($this->finished);
-        unset($this->protocalMatcher);
         $this->flushInstances();
 
         // container

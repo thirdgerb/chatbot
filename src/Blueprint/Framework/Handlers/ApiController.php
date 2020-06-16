@@ -9,17 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Handlers;
+namespace Commune\Blueprint\Framework\Handlers;
 
-use Commune\Blueprint\Ghost\Request\GhostRequest;
-use Commune\Blueprint\Ghost\Request\GhostResponse;
+use Commune\Blueprint\Framework\Request\AppRequest;
+use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Protocals\HostMsg\Convo\ApiMsg;
 
+
 /**
+ * 处理 Api 消息的控制器.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhtApiHandler
+interface ApiController
 {
 
-    public function __invoke(GhostRequest $request, ApiMsg $message) : GhostResponse;
+    public function __invoke(AppRequest $request, ApiMsg $message) : AppResponse;
+
 }

@@ -14,8 +14,8 @@ namespace Commune\Ghost\Handlers;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Ghost\ClonePipes;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Request\GhostRequest;
-use Commune\Blueprint\Ghost\Request\GhostResponse;
+use Commune\Blueprint\Kernel\Protocals\CloneRequest;
+use Commune\Blueprint\Kernel\Protocals\CloneResponse;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Ghost\Handlers\GhtRequestHandler;
@@ -62,13 +62,13 @@ class GhostRequestHandler implements GhtRequestHandler
     }
 
 
-    public function __invoke(GhostRequest $request) : GhostResponse
+    public function __invoke(CloneRequest $request) : CloneResponse
     {
         $start = microtime(true);
 
         // 不接受异常请求.
         if (!$request->isValid()) {
-            return $request->response(AppResponse::BAD_REQUEST);
+            return $request->fail(AppResponse::BAD_REQUEST);
         }
 
         // 无状态标记
@@ -76,8 +76,8 @@ class GhostRequestHandler implements GhtRequestHandler
             $this->cloner->noState();
         }
 
-        $end = function(GhostRequest $request) : GhostResponse {
-            return $request->response(AppResponse::NO_CONTENT);
+        $end = function(CloneRequest $request) : CloneResponse {
+            return $request->fail(AppResponse::NO_CONTENT);
         };
 
         if (empty($this->middleware)) {

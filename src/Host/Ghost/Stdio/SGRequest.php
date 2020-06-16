@@ -14,7 +14,7 @@ namespace Commune\Host\Ghost\Stdio;
 use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Request\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\CloneRequest;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\HostMsg;
@@ -26,7 +26,7 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SGRequest implements GhostRequest
+class SGRequest implements CloneRequest
 {
     use TInjectable;
 
@@ -155,7 +155,7 @@ class SGRequest implements GhostRequest
         );
     }
 
-    public function response(int $errcode, string $errmsg = ''): AppResponse
+    public function fail(int $errcode, string $errmsg = ''): AppResponse
     {
         $errmsg = !empty($errmsg)
             ? $errmsg

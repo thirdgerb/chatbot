@@ -37,7 +37,7 @@ interface ShlInputRequest extends ShellRequest
      * @param string $errmsg
      * @return ShlInputResponse
      */
-    public function response(
+    public function fail(
         int $errcode,
         string $errmsg = ''
     ) : ShlInputResponse;

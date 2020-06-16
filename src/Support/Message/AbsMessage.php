@@ -29,8 +29,14 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
 
     /*------ config ------*/
 
+    /**
+     * @var bool  如果某个 relation 对象为空, 可设置 Babel 序列化时不包含该值. 则当前类的 stub 中应该有空的默认值.
+     */
     protected $transferNoEmptyRelations = true;
 
+    /**
+     * @var bool  如果自身的数据为空, Babel 序列化时不传入 attr && relation 的结构, 以减少空间.
+     */
     protected $transferNoEmptyData = true;
 
     /*------ inner ------*/
@@ -57,7 +63,7 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
                 empty($dataVal)
                 // 条件2 : 简单值
                 && (is_scalar($dataVal) || is_array($dataVal) || is_null($dataVal))
-                // 条件3 : 必须和原来的值相等.
+                // 条件3 : 必须和 stub 的默认值相等.
                 && $dataVal === $val
             ) {
                 unset($data[$key]);
@@ -80,6 +86,7 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
         if (!empty($relationNames)) {
             foreach ($relationNames as $name) {
                 $relationVal = $data[$name] ?? null;
+                // 如果某个关联数据不存在
                 if (empty($relationVal)) {
                     continue;
                 }

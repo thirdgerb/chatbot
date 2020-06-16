@@ -242,6 +242,15 @@ class IRuntime implements Runtime
             return;
         }
 
+
+        // gc, 不过现在简单了, 只要删除掉 dying 就足够了.
+        $this->process->gc();
+
+        // Context 调度各自的存储方案.
+        foreach ($this->contexts as $context) {
+            $context->isChanged() and $context->save();
+        }
+
         $expire = $this->cloner->getSessionExpire();
         $success = $this->ioSaveLongTermMemories()
             && $this->ioSaveSessionMemories($expire)
@@ -283,9 +292,6 @@ class IRuntime implements Runtime
         }
 
         try {
-
-            // gc, 不过现在简单了, 只要删除掉 dying 就足够了.
-            $this->process->gc();
 
             return $this->driver->cacheProcess(
                 $this->cloner->getSessionId(),

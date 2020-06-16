@@ -39,7 +39,7 @@ class TranslatorRenderer implements Renderer
         $this->translator = $translator;
     }
 
-    public function __invoke(HostMsg $message, Session $session): ? array
+    public function __invoke(HostMsg $message): ? array
     {
         // 消息标注为可以自翻译.
         if ($message instanceof SelfTranslatable) {

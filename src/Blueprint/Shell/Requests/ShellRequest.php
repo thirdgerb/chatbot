@@ -38,5 +38,5 @@ interface ShellRequest extends AppRequest
      * @param string $errmsg
      * @return ShellResponse
      */
-    public function response(int $errcode, string $errmsg = '');
+    public function fail(int $errcode, string $errmsg = '');
 }

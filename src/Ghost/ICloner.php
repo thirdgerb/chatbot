@@ -58,7 +58,7 @@ class ICloner extends ASession implements Cloner
     /**
      * @var GhostConfig
      */
-    protected $ghostConfig;
+    protected $_config;
 
     /**
      * @var InputMsg
@@ -92,28 +92,26 @@ class ICloner extends ASession implements Cloner
      */
     protected $quit = false;
 
+    /**
+     * @var bool
+     */
+    protected $noConversationState = false;
 
     public function __construct(Ghost $ghost, ReqContainer $container, InputMsg $input)
     {
         $this->_ghost = $ghost;
-        $this->ghostConfig = $ghost->getConfig();
+        $this->_config = $ghost->getConfig();
         $this->_input = $input;
         $this->inputConvoId = $input->getConversationId();
 
         // expire
-        $this->expire = $this->ghostConfig->sessionExpire;
+        $this->expire = $this->_config->sessionExpire;
         parent::__construct($container, $input->getSessionId());
     }
 
     public function getApp(): App
     {
         return $this->_ghost;
-    }
-
-    public function replaceInput(InputMsg $input): void
-    {
-        $this->container->share(InputMsg::class, $input);
-        $this->_input = $input;
     }
 
     /*-------- conversation id ---------*/
@@ -203,7 +201,7 @@ class ICloner extends ASession implements Cloner
         }
 
         if ($name === 'config') {
-            return $this->ghostConfig;
+            return $this->_config;
         }
 
         if ($name === 'input') {
@@ -224,7 +222,7 @@ class ICloner extends ASession implements Cloner
 
     public function lock(int $second): bool
     {
-        $ttl = $this->ghostConfig->sessionLockerExpire;
+        $ttl = $this->_config->sessionLockerExpire;
         if ($ttl > 0) {
             $locker = $this->getGhostClonerLockerKey();
             return $this->__get('cache')->lock($locker, $ttl);
@@ -236,7 +234,7 @@ class ICloner extends ASession implements Cloner
 
     public function isLocked(): bool
     {
-        $ttl = $this->ghostConfig->sessionLockerExpire;
+        $ttl = $this->_config->sessionLockerExpire;
         if ($ttl > 0) {
             $locker = $this->getGhostClonerLockerKey();
             return $this->__get('cache')->has($locker);
@@ -246,7 +244,7 @@ class ICloner extends ASession implements Cloner
 
     public function unlock(): bool
     {
-        $ttl = $this->ghostConfig->sessionLockerExpire;
+        $ttl = $this->_config->sessionLockerExpire;
         if ($ttl > 0) {
             $locker = $this->getGhostClonerLockerKey();
             return $this->__get('cache')->unlock($locker);
@@ -305,6 +303,7 @@ class ICloner extends ASession implements Cloner
         );
 
         $this->quit = true;
+        $this->noConversationState = true;
     }
 
     public function isConversationEnd(): bool
@@ -312,29 +311,28 @@ class ICloner extends ASession implements Cloner
         return $this->quit;
     }
 
+    public function noConversationState(): void
+    {
+        $this->noConversationState = true;
+    }
+
+
     /*------- flush -------*/
 
     protected function flushInstances(): void
     {
         unset($this->_ghost);
-        unset($this->ghostConfig);
+        unset($this->_config);
         unset($this->_input);
         unset($this->outputs);
         unset($this->asyncInputs);
     }
 
-
-
     protected function saveSession(): void
     {
         if ($this->isConversationEnd()) {
             $this->ioDeleteConvoIdCache();
-            return;
-        }
 
-        // runtime 更新.
-        if ($this->isSingletonInstanced('runtime')) {
-            $this->__get('runtime')->save();
         }
 
         // storage 更新.
@@ -342,7 +340,16 @@ class ICloner extends ASession implements Cloner
             $this->__get('storage')->save();
         }
 
-        // 更新 sessionId 缓存.
+        // 可以允许其它的状态不保存.
+        if ($this->noConversationState) {
+            return;
+        }
+
+        if ($this->isSingletonInstanced('runtime')) {
+            $this->__get('runtime')->save();
+        }
+
+        // 更新 conversationId 缓存.
         if (isset($this->conversationId)) {
             $this->cacheConvoId($this->conversationId);
         }

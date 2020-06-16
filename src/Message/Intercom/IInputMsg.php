@@ -17,93 +17,81 @@ use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\Intercom\OutputMsg;
-use Commune\Support\Struct\Struct;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property string $shellName
+ * @property string $shellName  不可为空.
  * @property string $sceneId
  * @property array $env
+ *
+ * @property string $messageId  为空则自动生成.
+ * @property string $traceId    允许为空
+ * @property string $sessionId  会话Id, 为空则是 guestId
+ * @property string $convoId    多轮会话的 ID. 允许为空. 除非客户端有指定的 conversation.
+ * @property string $guestId    用户的ID. 不可以为空.
+ * @property string $guestName  用户的姓名. 可以为空.
+ * @property HostMsg $message   输入消息. 不可以为空.
+ * @property int $createdAt     创建时间.
+ * @property int $deliverAt     发送时间. 默认为0.
+ *
+ * @property Comprehension $comprehension   对输入消息的抽象理解. 允许为空.
  */
 class IInputMsg extends AIntercomMsg implements InputMsg
 {
 
+    /**
+     * 由于定义的 HostMsg 是 interface, 所以任何时候都要保留该对象的结构.
+     * @var bool
+     */
     protected $transferNoEmptyRelations = false;
 
+    /**
+     * 自身为空数据时, 不需要保留结构.
+     * @var bool
+     */
     protected $transferNoEmptyData = true;
-
-    public function __construct(
-        string $shellName,
-        HostMsg $message,
-        string $guestId,
-        string $messageId = null,
-        string $convoId = null,
-        string $sessionId = null,
-        string $guestName = null,
-        int $deliverAt = 0,
-        string $sceneId = '',
-        array $env = [],
-        Comprehension $comprehension = null
-    )
-    {
-        $data = [
-            'shellName' => $shellName,
-            'messageId' => empty($messageId)
-                ? $this->createUuId()
-                : $messageId,
-            'traceId' => '',
-            'sessionId' => $sessionId ?? '',
-            'convoId' => $convoId ?? '',
-            'guestId' => $guestId,
-            'guestName' => $guestName ?? '',
-            'message' => $message,
-            'deliverAt' => $deliverAt,
-            'createdAt' => time(),
-            'sceneId' => $sceneId,
-            'env' => $env,
-            'comprehension' => $comprehension ?? new IComprehension()
-
-        ];
-        parent::__construct($data);
-    }
-
 
     public static function stub(): array
     {
         return [
-            'shellName' => 'demo',
+            // 不可为空.
+            'shellName' => '',
+
+            // 如果为空, 会自动生成一个 uuid
             'messageId' => '',
+
+            // 为空, 则默认是 messageId
             'traceId' => '',
+
+            // 传入值允许为空, 则会用 guestId 替代.
             'sessionId' => '',
+
+            // 通常为空. 除非是客户端传来一个明确的 conversationId
             'convoId' => '',
+
+            // 不可为空.
             'guestId' => '',
+
+            // 允许为空. 有的客户端没有 guestName
             'guestName' => '',
+
+            // 默认的消息
             'message' => new IText(),
+
+            // 决定消息发送的时间点.
             'deliverAt' => 0,
+
             'createdAt' => time(),
             'sceneId' => '',
             'env' => [],
+
+            // 可以为空. 除非客户端传来时已经带有理解信息了.
             'comprehension' => new IComprehension(),
         ];
     }
 
-    public static function create(array $data = []): Struct
-    {
-        return new static(
-            $data['shellName'],
-            $data['message'],
-            $data['guestId'] ?? '',
-            $data['messageId'] ?? null,
-            $data['convoId'] ?? null,
-            $data['sessionId'] ?? null,
-            $data['guestName'] ?? null,
-            $data['deliverAt'] ?? 0,
-            $data['sceneId'] ?? '',
-            $data['env'] ?? [],
-            $data['comprehension'] ?? null
-        );
-    }
 
     public static function relations(): array
     {
@@ -112,6 +100,21 @@ class IInputMsg extends AIntercomMsg implements InputMsg
             'message' => HostMsg::class,
         ];
     }
+
+
+    public function getBatchId(): string
+    {
+        return $this->getMessageId();
+    }
+
+    public function isInvalid(): ? string
+    {
+        return TypeUtils::requireFields(
+            $this->_data,
+            ['guestId', 'messageId', 'shellName', 'message']
+        );
+    }
+
 
     public function getSceneId(): string
     {
@@ -128,24 +131,38 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         return $this->comprehension;
     }
 
+    /**
+     * @param HostMsg $message
+     * @param int $deliverAt
+     * @param string|null $guestId
+     * @param string|null $shellName
+     * @param string|null $sessionId
+     * @param string|null $messageId
+     * @return OutputMsg
+     */
     public function output(
         HostMsg $message,
         int $deliverAt = 0,
         string $guestId = null,
+        string $shellName = null,
         string $sessionId = null,
         string $messageId = null
     ): OutputMsg
     {
-        return new IOutputMsg(
-            $message,
-            $this->getTraceId(),
-            $guestId ?? $this->guestId,
-            $messageId,
-            $this->convoId,
-            $sessionId ?? $this->sessionId,
-            $this->guestName,
-            $deliverAt
-        );
+        $shellName = empty($shellName) ? $this->getShellName() : $shellName;
+
+        return new IOutputMsg([
+            'messageId' => empty($messageId) ? $this->createUuId() : $messageId,
+            'shellName' => $shellName,
+            'traceId' => $this->getTraceId(),
+            'sessionId' => empty($sessionId) ? $this->getSessionId() : $sessionId,
+            'batchId' => $this->getBatchId(),
+            'convoId' => $this->getConversationId(),
+            'guestId' => $guestId ?? $this->getGuestId(),
+            'guestName' => $this->getGuestName(),
+            'message' => $message,
+            'deliverAt' => $deliverAt,
+        ]);
     }
 
     public function getShellName(): string
@@ -153,9 +170,37 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         return $this->shellName;
     }
 
+
+    public function getSessionId(): string
+    {
+        $sessionId = $this->sessionId;
+        if (empty($sessionId)) {
+            $sessionId = $this->sessionId = empty($sessionId)
+                ? static::makeSessionId($this->getShellName(), $this->getGuestId())
+                : $sessionId;
+        }
+
+        return $sessionId;
+    }
+
+    public static function makeSessionId(string $shellName, string $guestId) : string
+    {
+        return sha1("shell:$shellName:guest:$guestId");
+    }
+
     public function setSceneId(string $sceneId): void
     {
         $this->sceneId = $sceneId;
+    }
+
+    public function asResponseInput(): InputMsg
+    {
+        $data = $this->toArray();
+        unset($data['comprehension']);
+        unset($data['sceneId']);
+        unset($data['env']);
+
+        return static::create($data);
     }
 
 

@@ -12,12 +12,12 @@
 namespace Commune\Ghost;
 
 use Commune\Blueprint\Configs\GhostConfig;
-use Commune\Blueprint\Ghost\Request\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\CloneRequest;
 use Commune\Ghost\Cmd\GhostHelpCmd;
 use Commune\Ghost\Handlers\GhostRequestHandler;
 use Commune\Host\Ghost\Stdio\StdioReqServiceProvider;
 use Commune\Support\Option\AbsOption;
-use Commune\Support\Protocal\ProtocalHandlerOpt;
+use Commune\Support\Protocal\ProtocalOption;
 use Commune\Framework;
 use Commune\Ghost\Providers as GhostProviders;
 use Commune\Components\Predefined\Intent\Navigation;
@@ -61,7 +61,7 @@ class IGhostConfig extends AbsOption implements GhostConfig
             // request protocals
             'requestHandlers' => [
                 [
-                    'protocal' => GhostRequest::class,
+                    'protocal' => CloneRequest::class,
                     'handler' => GhostRequestHandler::class,
                 ]
             ],
@@ -117,8 +117,8 @@ class IGhostConfig extends AbsOption implements GhostConfig
     public static function relations(): array
     {
         return [
-            'requestHandlers[]' => ProtocalHandlerOpt::class,
-            'apiHandlers[]' => ProtocalHandlerOpt::class
+            'requestHandlers[]' => ProtocalOption::class,
+            'apiHandlers[]' => ProtocalOption::class
         ];
     }
 

@@ -12,7 +12,7 @@
 namespace Commune\Ghost\IMindDef;
 
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
-use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenConversationException;
 use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindDef\Intent\ExampleEntity;
@@ -286,7 +286,7 @@ class IIntentDef extends AbsOption implements IntentDef
                 return $predict === true;
 
             } catch (\Exception $e) {
-                throw new BrokenSessionException(
+                throw new BrokenConversationException(
                     "invalid intent matcher",
                     $e
                 );

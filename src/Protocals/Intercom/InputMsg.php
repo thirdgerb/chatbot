@@ -23,9 +23,8 @@ use Commune\Protocals\IntercomMsg;
  */
 interface InputMsg extends IntercomMsg
 {
-    /*----- 额外的信息 -----*/
 
-    public function getShellName() : string;
+    /*----- 额外的信息 -----*/
 
     public function getSceneId() : string;
 
@@ -46,6 +45,7 @@ interface InputMsg extends IntercomMsg
      * @param HostMsg $message
      * @param int $deliverAt
      * @param string|null $guestId
+     * @param string|null $shellName
      * @param string|null $sessionId
      * @param string|null $messageId
      * @return OutputMsg
@@ -54,9 +54,16 @@ interface InputMsg extends IntercomMsg
         HostMsg $message,
         int $deliverAt = 0,
         string $guestId = null,
+        string $shellName = null,
         string $sessionId = null,
         string $messageId = null
     ) : OutputMsg;
 
+
+    /**
+     * 去掉 Comprehend, Env 等信息后的请求.
+     * @return InputMsg
+     */
+    public function asResponseInput() : InputMsg;
 
 }

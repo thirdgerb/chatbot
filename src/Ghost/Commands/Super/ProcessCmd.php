@@ -89,7 +89,7 @@ class ProcessCmd extends AGhostCmd
         $serializedTime = round(($b - $a) * 1000000);
 
         $this->info(
-            "process to serialized string length : {len}, time: {time}ws ",
+            "process to serialized string length : {len}, time: {time}us ",
             ['len' => strlen($serialized), 'time' => $serializedTime]
         );
 
@@ -117,7 +117,7 @@ class ProcessCmd extends AGhostCmd
         );
 
         $this->info(
-            "process unserialize time is {time}ws",
+            "process unserialize time is {time}us",
             ['time' => $time]
         );
     }

@@ -31,6 +31,8 @@ interface CommuneErrorCode
 
     const HOST_LOGIC_ERROR = 600;
 
+    const FAILURE_CODE_START = 300;
+
     const DEFAULT_ERROR_MESSAGES = [
         0 => 'SUCCESS',
         204 => 'NO_CONTENT',

@@ -38,7 +38,7 @@ abstract class ContractsValidator implements Bootstrapper
         }
 
         $reqBindings = $this->getReqBindings();
-        $req = $app->getReqContainer();
+        $req = $app->getBasicReqContainer();
         foreach ($reqBindings as $abstract) {
             if (!$req->bound($abstract)) {
                 throw new CommuneBootingException(

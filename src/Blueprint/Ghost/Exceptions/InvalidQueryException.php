@@ -11,12 +11,12 @@
 
 namespace Commune\Blueprint\Ghost\Exceptions;
 
-use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenConversationException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class InvalidQueryException extends BrokenSessionException
+class InvalidQueryException extends BrokenConversationException
 {
 
     public function __construct(string $contextName, string $key = null, string $error = null)

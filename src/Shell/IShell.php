@@ -136,7 +136,7 @@ class IShell extends AbsApp implements Shell
         try {
 
             if (!$request->isValid()) {
-                return $response = $request->response(AppResponse::BAD_REQUEST);
+                return $response = $request->fail(AppResponse::BAD_REQUEST);
             }
 
             $input = $request->getInput();
@@ -152,7 +152,7 @@ class IShell extends AbsApp implements Shell
             $handler = $this->getRequestHandler($session->container, $request);
 
             if (!isset($handler)) {
-                return $response = $request->response(AppResponse::HANDLER_NOT_FOUND);
+                return $response = $request->fail(AppResponse::HANDLER_NOT_FOUND);
             }
 
             // 使用 Handler 来响应.
@@ -160,7 +160,7 @@ class IShell extends AbsApp implements Shell
 
         } catch (\Throwable $e) {
             $this->getExceptionReporter()->report($e);
-            $response = $request->response(AppResponse::HOST_LOGIC_ERROR);
+            $response = $request->fail(AppResponse::HOST_LOGIC_ERROR);
 
         } finally {
             if (isset($session)) {
@@ -169,7 +169,7 @@ class IShell extends AbsApp implements Shell
             }
 
             return $response
-                ?? $request->response(AppResponse::HOST_LOGIC_ERROR);
+                ?? $request->fail(AppResponse::HOST_LOGIC_ERROR);
         }
     }
 

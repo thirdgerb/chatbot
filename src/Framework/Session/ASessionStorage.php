@@ -16,6 +16,8 @@ use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Framework\Session\SessionStorage;
 use Commune\Blueprint\Exceptions\IO\SaveDataFailException;
 use Commune\Framework\Spy\SpyAgency;
+use Commune\Support\Arr\TArrayAccessToMutator;
+use Commune\Support\Arr\TArrayData;
 
 
 /**
@@ -23,6 +25,7 @@ use Commune\Framework\Spy\SpyAgency;
  */
 abstract class ASessionStorage implements SessionStorage
 {
+    use TArrayData, TArrayAccessToMutator;
 
     /**
      * @var string
@@ -38,11 +41,6 @@ abstract class ASessionStorage implements SessionStorage
      * @var Cache|null
      */
     protected $cache;
-
-    /**
-     * @var array
-     */
-    protected $data = [];
 
     /**
      * AStorage constructor.
@@ -61,6 +59,8 @@ abstract class ASessionStorage implements SessionStorage
 
         SpyAgency::incr(static::class);
     }
+
+
 
     abstract public function getSessionKey(string $sessionName, string $sessionId) : string;
 
@@ -83,28 +83,8 @@ abstract class ASessionStorage implements SessionStorage
 
         $data = unserialize($cached);
         if (is_array($data)) {
-            $this->data = $data;
+            $this->_data = $data;
         }
-    }
-
-    public function offsetExists($offset)
-    {
-        return array_key_exists($offset, $this->data);
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->data[$offset] ?? null;
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        $this->data[$offset] = $value;
-    }
-
-    public function offsetUnset($offset)
-    {
-        unset($this->data[$offset]);
     }
 
     public function save(): void
@@ -117,8 +97,7 @@ abstract class ASessionStorage implements SessionStorage
             return;
         }
 
-        // 去掉上次请求的 once 数据.
-        $data = $this->data;
+        $data = $this->_data;
 
         $str = serialize($data);
         $key = $this->getSessionKey(
@@ -140,7 +119,7 @@ abstract class ASessionStorage implements SessionStorage
     {
         $this->session = null;
         $this->cache = null;
-        $this->data = [];
+        unset($this->_data);
 
         SpyAgency::decr(static::class);
     }

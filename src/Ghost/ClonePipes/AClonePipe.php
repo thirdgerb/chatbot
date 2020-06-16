@@ -18,8 +18,8 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
 use Commune\Blueprint\Framework\Request\AppRequest;
 use Commune\Blueprint\Framework\Request\AppResponse;
-use Commune\Blueprint\Ghost\Request\GhostRequest;
-use Commune\Blueprint\Ghost\Request\GhostResponse;
+use Commune\Blueprint\Kernel\Protocals\CloneRequest;
+use Commune\Blueprint\Kernel\Protocals\CloneResponse;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 
@@ -46,17 +46,17 @@ abstract class AClonePipe implements RequestPipe
         SpyAgency::incr(self::class);
     }
 
-    abstract protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse;
+    abstract protected function doHandle(CloneRequest $request, \Closure $next): CloneResponse;
 
     /**
      * @param AppRequest $request
      * @param \Closure $next
-     * @return GhostResponse
+     * @return CloneResponse
      */
     public function handle(AppRequest $request, \Closure $next): AppResponse
     {
-        if (!$request instanceof GhostRequest) {
-            throw new InvalidArgumentException('request is not instance of '. GhostRequest::class);
+        if (!$request instanceof CloneRequest) {
+            throw new InvalidArgumentException('request is not instance of '. CloneRequest::class);
         }
 
         $debug = CommuneEnv::isDebug();
@@ -76,7 +76,7 @@ abstract class AClonePipe implements RequestPipe
             $b = microtime(true);
             $gap = round(($b - $a) * 1000000);
             $pipeName = static::class;
-            $this->logger->debug("$pipeName end pipe gap: {$gap}ws");
+            $this->logger->debug("$pipeName end pipe gap: {$gap}us");
         }
         return $response;
     }

@@ -69,7 +69,7 @@ class IShellRequestHandler implements ShellRequestHandler
 
         // 不接受异常请求.
         if (!$request->isValid()) {
-            return $request->response(AppResponse::BAD_REQUEST);
+            return $request->fail(AppResponse::BAD_REQUEST);
         }
 
         // 无状态标记
@@ -78,7 +78,7 @@ class IShellRequestHandler implements ShellRequestHandler
         }
 
         $end = function(ShellRequest $request) : ShellResponse {
-            return $request->response(AppResponse::NO_CONTENT);
+            return $request->fail(AppResponse::NO_CONTENT);
         };
 
         $middleware = $this->middlware

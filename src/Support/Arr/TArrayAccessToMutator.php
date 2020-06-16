@@ -26,13 +26,7 @@ trait TArrayAccessToMutator
 
     public function __isset($name)
     {
-        $method = $this->_getter_prefix . $name;
-        if (method_exists($this, $method)) {
-            $value = $this->{$method}();
-            return isset($value);
-        }
-
-        return $this->offsetGet($name);
+        return $this->offsetExists($name);
     }
 
     public function __unset($name)
@@ -44,7 +38,7 @@ trait TArrayAccessToMutator
     {
         $method = $this->_getter_prefix . $name;
         if (method_exists($this, $method)) {
-            return $this->{$method}();
+            return $this->{$method}($name);
         }
 
         return $this->offsetGet($name);
@@ -54,7 +48,7 @@ trait TArrayAccessToMutator
     {
         $method = $this->_setter_prefix . $name;
         if (method_exists($this, $method)) {
-            $this->{$method}($value);
+            $this->{$method}($name, $value);
         } else {
             $this->offsetSet($name, $value);
         }

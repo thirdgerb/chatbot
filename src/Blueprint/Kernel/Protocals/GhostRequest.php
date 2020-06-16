@@ -9,45 +9,43 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Request;
-
+namespace Commune\Blueprint\Kernel\Protocals;
 
 use Commune\Protocals\HostMsg;
-use Commune\Blueprint\Ghost\Cloner;
-use Commune\Protocals\Intercom\InputMsg;
-use Commune\Blueprint\Framework\Request\AppRequest;
-use Commune\Blueprint\Framework\Request\AppResponse;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface GhostRequest extends AppRequest
 {
+    /**
+     * 是否是异步消息.
+     * @return bool
+     */
+    public function isAsync() : bool;
 
     /**
-     * @return InputMsg
+     * 要求极简的回复, 不需要消息体.
+     * @return bool
      */
-    public function getInput() : InputMsg;
+    public function requireTinyResponse() : bool;
 
     /**
      * @param HostMsg $message
-     * @param HostMsg[] $messages
-     * @return GhostResponse
+     * @param HostMsg ...$messages
+     * @return CloneResponse
      */
-    public function output(HostMsg $message, HostMsg ...$messages): AppResponse;
+    public function output(HostMsg $message, HostMsg ...$messages) : CloneResponse;
 
     /**
-     * @param Cloner $cloner
      * @return GhostResponse
      */
-    public function success(Cloner $cloner) : AppResponse;
+    public function noContent() : GhostResponse;
 
     /**
      * @param int $errcode
      * @param string $errmsg
      * @return GhostResponse
      */
-    public function response(int $errcode, string $errmsg = '') : AppResponse;
-
+    public function fail(int $errcode, string $errmsg = '') : GhostResponse;
 }

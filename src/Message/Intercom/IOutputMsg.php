@@ -14,10 +14,23 @@ namespace Commune\Message\Intercom;
 use Commune\Message\Host\Convo\IText;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\OutputMsg;
-use Commune\Support\Struct\Struct;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $messageId  为空则自动生成.
+ * @property-read string $traceId    允许为空
+ * @property-read string $shellName
+ * @property-read string $batchId    批次ID, 为空则是 messageId
+ * @property-read string $sessionId  会话Id, 为空则是 guestId
+ * @property-read string $guestId    用户的ID. 不可以为空.
+ * @property-read string $guestName  用户的姓名. 可以为空.
+ * @property-read int $createdAt     创建时间.
+ * @property-read int $deliverAt     发送时间. 默认为0.
+ *
+ * @property HostMsg $message   输入消息. 不可以为空.
+ * @property string $convoId    多轮会话的 ID. 允许为空. 除非客户端有指定的 conversation.
  */
 class IOutputMsg extends AIntercomMsg implements OutputMsg
 {
@@ -26,62 +39,61 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
 
     protected $transferNoEmptyData = true;
 
-    public function __construct(
-        HostMsg $message,
-        string $traceId,
-        string $guestId,
-        string $messageId = null,
-        string $convoId = null,
-        string $sessionId = null,
-        string $guestName = null,
-        int $deliverAt = 0
-    )
-    {
-        $data = [
-            'messageId' => empty($messageId)
-                ? $this->createUuId()
-                : $messageId,
-            'traceId' => $traceId,
-            'sessionId' => $sessionId ?? '',
-            'convoId' => $convoId ?? '',
-            'guestId' => $guestId,
-            'guestName' => $guestName ?? '',
-            'message' => $message,
-            'deliverAt' => $deliverAt,
-            'createdAt' => time(),
-        ];
-        parent::__construct($data);
-    }
-
-
     public static function stub(): array
     {
         return [
             'messageId' => '',
+
+            // 不可为空.
+            'shellName' => '',
+
+            // 不可为空
             'traceId' => '',
+
+            // 不可为空
             'sessionId' => '',
+
+            // 不可为空
+            'batchId' => '',
+
             'convoId' => '',
+
+            // 不可为空
             'guestId' => '',
+
             'guestName' => '',
+
+            // 不可为空
             'message' => new IText(),
             'deliverAt' => 0,
             'createdAt' => time(),
         ];
     }
 
-    public static function create(array $data = []): Struct
+    public function isInvalid(): ? string
     {
-        return new static(
-            $data['message'],
-            $data['traceId'] ?? '',
-            $data['guestId'] ?? '',
-            $data['messageId'] ?? null,
-            $data['convoId'] ?? null,
-            $data['sessionId'] ?? null,
-            $data['guestName'] ?? null,
-            $data['deliverAt'] ?? 0
+        return TypeUtils::requireFields(
+            $this->_data,
+            ['messageId', 'traceId', 'sessionId', 'batchId', 'guestId', 'convoId', 'message', 'shellName']
         );
     }
+
+
+    public function getBatchId(): string
+    {
+        return $this->batchId;
+    }
+
+    public function getShellName(): string
+    {
+        return $this->shellName;
+    }
+
+    public function getSessionId(): string
+    {
+        return $this->sessionId;
+    }
+
 
     public function derive(HostMsg ...$messages): array
     {

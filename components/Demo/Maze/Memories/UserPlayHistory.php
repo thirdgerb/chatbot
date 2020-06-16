@@ -9,8 +9,6 @@ namespace Commune\Components\Demo\Maze\Memories;
 
 
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
-use Commune\Chatbot\App\Memories\MemoryDef;
-use Commune\Chatbot\OOHost\Session\Scope;
 use Commune\Ghost\Memory\AbsRecall;
 
 /**

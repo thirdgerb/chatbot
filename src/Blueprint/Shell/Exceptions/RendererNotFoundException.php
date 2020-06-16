@@ -11,12 +11,12 @@
 
 namespace Commune\Blueprint\Shell\Exceptions;
 
-use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenConversationException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RendererNotFoundException extends BrokenSessionException
+class RendererNotFoundException extends BrokenConversationException
 {
 
 }

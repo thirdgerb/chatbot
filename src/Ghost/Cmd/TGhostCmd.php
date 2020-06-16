@@ -13,7 +13,7 @@ namespace Commune\Ghost\Cmd;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Framework\Request\AppRequest;
-use Commune\Blueprint\Ghost\Request\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\CloneRequest;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Container\ContainerContract;
@@ -46,8 +46,8 @@ trait TGhostCmd
 
     protected function checkRequest(AppRequest $request): void
     {
-        if (!$request instanceof GhostRequest) {
-            throw new InvalidArgumentException('ghost command only accept ' . GhostRequest::class);
+        if (!$request instanceof CloneRequest) {
+            throw new InvalidArgumentException('ghost command only accept ' . CloneRequest::class);
         }
     }
 
@@ -62,7 +62,7 @@ trait TGhostCmd
             return null;
         }
 
-        if (!$request instanceof GhostRequest) {
+        if (!$request instanceof CloneRequest) {
             return null;
         }
 

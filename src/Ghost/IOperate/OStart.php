@@ -193,6 +193,7 @@ class OStart extends AbsOperator
         return null;
     }
 
+    // todo 也许不用管道来做.
     protected function runComprehendPipeline(InputMsg $input, array $pipes) : void
     {
         if (empty($pipes)) {
@@ -202,12 +203,11 @@ class OStart extends AbsOperator
         $pipeline = $this->cloner->buildPipeline(
             $pipes,
             ComprehendPipe::HANDLE,
-            function(InputMsg $input) : InputMsg{
-                return $input;
+            function(Cloner $cloner) : Cloner{
+                return $cloner;
             });
 
-        $input = $pipeline($input);
-        $this->cloner->replaceInput($input);
+        $pipeline($this->cloner);
     }
 
 

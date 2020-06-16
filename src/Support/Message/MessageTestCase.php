@@ -58,8 +58,10 @@ class MessageTestCase extends TestCase
             $isList = call_user_func([$name, 'isListRelation'], $relationName);
 
             if ($isList) {
+
                 // 拿到的数据也是数组
-                $this->assertIsArray($values = $message->{$relationName}, $name);
+                $values = $message->{$relationName};
+                $this->assertTrue(is_array($values), $name);
 
                 $relationClass = call_user_func([$name, 'getRelationClass'], $relationName);
 

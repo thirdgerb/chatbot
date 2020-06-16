@@ -65,7 +65,6 @@ use Commune\Support\Registry\OptRegistry;
  */
 interface Cloner extends Session
 {
-
     /**
      * @return string
      */
@@ -77,13 +76,17 @@ interface Cloner extends Session
     public function endConversation() : void;
 
     /**
+     * 当前多轮对话是否已经结束.
      * @return bool
      */
     public function isConversationEnd() : bool;
 
-    /*----- 手动输出 -----*/
+    /**
+     * 多轮对话不记录状态 (主要是 Runtime), 但不影响 Session
+     */
+    public function noConversationState(): void;
 
-    public function replaceInput(InputMsg $input) : void;
+    /*----- 手动输出 -----*/
 
     /**
      * 同步输出一个消息.

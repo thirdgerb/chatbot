@@ -11,8 +11,8 @@
 
 namespace Commune\Ghost\ClonePipes;
 
-use Commune\Blueprint\Ghost\Request\GhostRequest;
-use Commune\Blueprint\Ghost\Request\GhostResponse;
+use Commune\Blueprint\Kernel\Protocals\CloneRequest;
+use Commune\Blueprint\Kernel\Protocals\CloneResponse;
 use Commune\Message\Host\SystemInt\SessionBusyInt;
 
 /**
@@ -23,12 +23,12 @@ use Commune\Message\Host\SystemInt\SessionBusyInt;
 class CloneLockerPipe extends AClonePipe
 {
     /**
-     * @param GhostRequest $request
+     * @param CloneRequest $request
      * @param \Closure $next
-     * @return GhostResponse
+     * @return CloneResponse
      * @throws \Exception
      */
-    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
+    protected function doHandle(CloneRequest $request, \Closure $next): CloneResponse
     {
 
         if ($this->cloner->isStateless()) {

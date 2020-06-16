@@ -16,15 +16,15 @@ use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
-use Commune\Blueprint\Ghost\Request\GhostRequest;
-use Commune\Blueprint\Ghost\Request\GhostResponse;
+use Commune\Blueprint\Kernel\Protocals\CloneRequest;
+use Commune\Blueprint\Kernel\Protocals\CloneResponse;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Message\Host\SystemInt\RequestFailInt;
 use Commune\Message\Host\SystemInt\SessionFailInt;
 use Commune\Protocals\HostMsg\Convo\UnsupportedMsg;
 use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
-use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenConversationException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -48,7 +48,7 @@ class CloneMessengerPipe extends AClonePipe
     }
 
 
-    protected function doHandle(GhostRequest $request, Closure $next) : GhostResponse
+    protected function doHandle(CloneRequest $request, Closure $next) : CloneResponse
     {
         $message = $request->getInput()->getMessage();
 
@@ -58,7 +58,7 @@ class CloneMessengerPipe extends AClonePipe
         }
 
         if ($message instanceof UnsupportedMsg) {
-            return $request->response(AppResponse::NO_CONTENT);
+            return $request->fail(AppResponse::NO_CONTENT);
         }
 
         try {
@@ -67,7 +67,7 @@ class CloneMessengerPipe extends AClonePipe
             $this->resetFailureCount();
             return $response;
 
-        } catch (BrokenSessionException $e) {
+        } catch (BrokenConversationException $e) {
             $this->expReporter->report($e);
             return $this->quitSession($request, $e);
 
@@ -79,9 +79,9 @@ class CloneMessengerPipe extends AClonePipe
     }
 
     protected function requestFail(
-        GhostRequest $request,
+        CloneRequest $request,
         CommuneRuntimeException $e
-    ) : GhostResponse
+    ) : CloneResponse
     {
 
         $storage = $this->cloner->storage;
@@ -100,9 +100,9 @@ class CloneMessengerPipe extends AClonePipe
     }
 
     protected function quitSession(
-        GhostRequest $request,
+        CloneRequest $request,
         CommuneRuntimeException $e
-    ) : GhostResponse
+    ) : CloneResponse
     {
         $message = new SessionFailInt(
             $e->getMessage()

@@ -9,18 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Handlers;
+namespace Commune\Blueprint\Kernel\Protocals;
 
-use Commune\Blueprint\Ghost\Request\GhostRequest;
-use Commune\Blueprint\Ghost\Request\GhostResponse;
-
+use Commune\Support\Protocal\Protocal;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhtRequestHandler
+interface AppProtocal extends Protocal
 {
 
-    public function __invoke(GhostRequest $request) : GhostResponse;
+    public function getTraceId() : string;
 
 }

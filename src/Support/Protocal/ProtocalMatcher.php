@@ -52,7 +52,7 @@ class ProtocalMatcher
     /**
      * @param Protocal $protocal
      * @param string|null $interface
-     * @return \Generator
+     * @return \Generator|HandlerOption[]
      */
     public function matchEach(Protocal $protocal, string $interface = null) : \Generator
     {
@@ -94,7 +94,7 @@ class ProtocalMatcher
                     $handler = $handlerOption->handler;
 
                     // 检查 handler 是否和定义中预期的一致.
-                    if ($checkInterface && !is_a($handler, $optInt, TRUE)) {
+                    if (!empty($optInt) && !is_a($handler, $optInt, TRUE)) {
                         $this->logger->error(
                             "protocal option get invalid handler $handler which is not subclass of interface $interface"
                         );

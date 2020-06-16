@@ -11,13 +11,14 @@
 
 namespace Commune\Host\Ghost\Stdio;
 
-use Commune\Support\Protocal\ProtocalHandlerOpt;
+use Commune\Blueprint\Ghost\Handlers\GhtRequestHandler;
+use Commune\Support\Protocal\ProtocalOption;
 use Commune\Framework;
 use Commune\Components;
 use Commune\Ghost\Commands;
 use Commune\Ghost\Cmd\GhostHelpCmd;
 use Commune\Blueprint\Configs\GhostConfig;
-use Commune\Blueprint\Ghost\Request\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\CloneRequest;
 use Commune\Ghost\Handlers\GhostRequestHandler;
 use Commune\Ghost\Providers as GhostProviders;
 use Commune\Components\Predefined\Intent\Navigation;
@@ -61,17 +62,19 @@ class SGConfig extends AbsOption implements GhostConfig
             ],
             'options' => [
             ],
-            // request protocals
-            'requestHandlers' => [
+
+            'protocals' => [
+
+                // request protocals
                 [
-                    'protocal' => GhostRequest::class,
-                    'handler' => GhostRequestHandler::class,
+                    'protocal' => CloneRequest::class,
+                    'interface' => GhtRequestHandler::class,
+                    'handlers' => [
+                        [ 'handler' => GhostRequestHandler::class],
+                    ]
                 ]
             ],
 
-            'apiHandler' => [
-
-            ],
             'userCommands' => [
                 GhostHelpCmd::class,
                 Commands\User\HelloCmd::class,
@@ -120,8 +123,8 @@ class SGConfig extends AbsOption implements GhostConfig
     public static function relations(): array
     {
         return [
-            'requestHandlers[]' => ProtocalHandlerOpt::class,
-            'apiHandlers[]' => ProtocalHandlerOpt::class
+            'requestHandlers[]' => ProtocalOption::class,
+            'apiHandlers[]' => ProtocalOption::class
         ];
     }
 

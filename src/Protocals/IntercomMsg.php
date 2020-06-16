@@ -21,13 +21,26 @@ use Commune\Support\Protocal\Protocal;
 interface IntercomMsg extends Message, Protocal
 {
 
+    /**
+     * 检查是否不合法.
+     * @return null|string
+     */
+    public function isInvalid() : ? string;
+
     /*------- properties -------*/
+
+    public function getShellName() : string;
 
     /**
      * 传输消息的唯一ID
      * @return string
      */
     public function getMessageId() : string;
+
+    /**
+     * @return string
+     */
+    public function getBatchId() : string;
 
     /**
      * 消息的追踪 ID.
@@ -77,7 +90,7 @@ interface IntercomMsg extends Message, Protocal
      */
     public function getDeliverAt() : int;
 
-    /*------- methods -------*/
+    /*------- setter -------*/
 
     /**
      * @param HostMsg $message
@@ -85,6 +98,9 @@ interface IntercomMsg extends Message, Protocal
      */
     public function setMessage(HostMsg $message) : void;
 
+    public function setConvoId(string $convoId) : void;
+
+    /*------- methods -------*/
 
     /**
      * 产生新的渠道消息.

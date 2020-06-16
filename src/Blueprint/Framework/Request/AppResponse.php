@@ -11,21 +11,35 @@
 
 namespace Commune\Blueprint\Framework\Request;
 
+use Commune\Protocals\IntercomMsg;
 use Commune\Blueprint\Exceptions\CommuneErrorCode;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface AppResponse extends CommuneErrorCode
+interface AppResponse extends CommuneErrorCode, AppProtocal
 {
 
+    /**
+     * 异常码. @see CommuneErrorCode
+     * @return int
+     */
     public function getErrcode() : int;
 
+    /**
+     * 异常消息.
+     * @return string
+     */
     public function getErrmsg() : string;
 
     /**
-     * 结束一个请求, 要么就是完全结束, 要么就还有下一步.
-     * @return callable|null
+     * @return IntercomMsg[]
      */
-    public function end() : ? callable;
+    public function getOutputs() : array;
+
+    /**
+     * @return int
+     */
+    public function getMessageCount() : int;
+
 }
