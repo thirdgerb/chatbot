@@ -13,20 +13,18 @@ namespace Commune\Platform\StdioDemo;
 
 use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Configs\HostConfig;
+use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Host;
 use Commune\Blueprint\Platform;
-use Commune\Support\Struct\AbsStruct;
 use React\EventLoop\Factory;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $shellName
- * @property-read string $guestId
- * @property-read string $guestName
+
  */
-class StdioDemoPlatform extends AbsStruct implements Platform
+class StdioDemoPlatform implements Platform
 {
     /**
      * @var Host
@@ -34,31 +32,18 @@ class StdioDemoPlatform extends AbsStruct implements Platform
     protected $host;
 
     /**
-     * @var HostConfig
+     * @var StdioDemoOption
      */
-    protected $config;
+    protected $option;
 
-    public function __construct(Host $host, HostConfig $hostConfig, array $config)
+    public function __construct(
+        Host $host,
+        StdioDemoOption $option
+    )
     {
         $this->host = $host;
-        $this->config = $hostConfig;
-        parent::__construct($config);
+        $this->option = $option;
     }
-
-    public static function stub(): array
-    {
-        return [
-            'shellName' => 'stdioTestName',
-            'guestId' => 'stdioTestGuestId',
-            'guestName' => 'stdioTestGuestName',
-        ];
-    }
-
-    public static function relations(): array
-    {
-        return [];
-    }
-
 
     public function serve(): void
     {

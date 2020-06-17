@@ -11,11 +11,12 @@
 
 namespace Commune\Blueprint\Framework;
 
+use Commune\Container\ContainerContract;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ProcContainer
+interface ProcContainer extends ContainerContract
 {
 
 }

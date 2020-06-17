@@ -19,10 +19,8 @@ use Commune\Support\Option\Option;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
- * @property-read string $id                    平台 ID
- *
+ * @property-read string $id                    平台名称
  * @property-read string $concrete              Platform 的实现.
- * @property-read array $config                 Kernel 的 config 参数的配置.
  *
  * @property-read string|null $bootShell        平台初始化时要启动的 Shell
  * @property-read bool $bootGhost               平台初始化时要启动的 Ghost

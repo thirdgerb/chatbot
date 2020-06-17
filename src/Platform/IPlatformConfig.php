@@ -18,9 +18,7 @@ use Commune\Blueprint\Configs\PlatformConfig;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $id                    平台 id
- *
  * @property-read string $concrete              Platform 的实现.
- * @property-read array $config                 Kernel 的 config 参数的配置.
  *
  * @property-read string|null $bootShell        平台初始化时要启动的 Shell
  * @property-read bool $bootGhost               平台初始化时要启动的 Ghost
@@ -37,7 +35,6 @@ class IPlatformConfig extends AbsOption implements PlatformConfig
         return [
             'id' => '',
             'concrete' => '',
-            'config' => [],
             'bootShell' => null,
             'bootGhost' => false,
             'providers' => [],

@@ -16,6 +16,7 @@ use Commune\Blueprint\Configs\HostConfig;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Configs\ShellConfig;
 use Commune\Ghost\IGhostConfig;
+use Commune\Platform\IPlatformConfig;
 use Commune\Shell\IShellConfig;
 use Commune\Support\Option\AbsOption;
 
@@ -56,6 +57,7 @@ class IHostConfig extends AbsOption implements HostConfig
             'options' => [],
             'ghost' => [],
             'shells' => [],
+            'platforms' => [],
         ];
     }
 
@@ -64,6 +66,7 @@ class IHostConfig extends AbsOption implements HostConfig
         return [
             'ghost' => IGhostConfig::class,
             'shells[]' => IShellConfig::class,
+            'platforms[]' => IPlatformConfig::class,
         ];
     }
 
@@ -89,13 +92,13 @@ class IHostConfig extends AbsOption implements HostConfig
     {
         if (!isset($this->_platformMap)) {
             $this->_platformMap = [];
-            foreach ($this->_platformMap as $platformConfig) {
+            foreach ($this->platforms as $platformConfig) {
                 $id = $platformConfig->getId();
                 $this->_platformMap[$id] = $platformConfig;
             }
         }
 
-        return $this->_platformMap[$platformId];
+        return $this->_platformMap[$platformId] ?? null;
     }
 
 

@@ -137,10 +137,7 @@ class IHost extends AbsApp implements Host
          */
         $platform = $this
             ->getProcContainer()
-            ->make(
-                Platform::class,
-                [Platform::KEY_CONFIG => $platformConfig->config]
-            );
+            ->make(Platform::class);
 
         // 启动服务
         $platform->serve();
@@ -235,10 +232,6 @@ class IHost extends AbsApp implements Host
         parent::doActivate();
 
         $container = $this->getProcContainer();
-
-        if (isset($this->platformConfig)) {
-            $container->get(Platform::class)->activate();
-        }
 
         if (isset($this->ghostConfig)) {
             $container->get(Ghost::class)->activate();
