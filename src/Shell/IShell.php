@@ -23,7 +23,7 @@ use Commune\Blueprint\Shell\ShellSession;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
-use Commune\Framework\App\AppForRequest;
+use Commune\Framework\App\AbsAppKernel;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Shell\Bootstrap;
@@ -32,7 +32,7 @@ use Commune\Shell\Bootstrap;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IShell extends AppForRequest implements Shell
+class IShell extends AbsAppKernel implements Shell
 {
     protected $bootstrappers = [
         // 注册配置 Option 单例到进程中.

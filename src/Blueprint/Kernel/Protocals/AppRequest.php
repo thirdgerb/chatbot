@@ -55,11 +55,4 @@ interface AppRequest extends AppProtocal
      */
     public function noContent();
 
-    /**
-     * @param HostMsg $message
-     * @param HostMsg[] $messages
-     * @return AppResponse
-     */
-    public function output(HostMsg $message, HostMsg ...$messages);
-
 }

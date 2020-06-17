@@ -9,7 +9,7 @@ require __DIR__ . '/../vendor/autoload.php';
 $options = $argv;
 array_shift($options);
 
-$debug = in_array('-d', $options);
+$debug = !in_array('-p', $options);
 $reset = in_array('-r', $options);
 
 $platformName = end($options);

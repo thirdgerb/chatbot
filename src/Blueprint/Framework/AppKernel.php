@@ -11,15 +11,32 @@
 
 namespace Commune\Blueprint\Framework;
 
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\Protocal\ProtocalMatcher;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface AppForProtocal
+interface AppKernel
 {
+    /*------ request ------*/
+
+    /**
+     * 运行一个状态机, 直到给出预期的结果, 否则抛出异常.
+     *
+     * @param AppRequest $request
+     * @param string $expect        预期的返回类型.
+     * @param int $turns
+     * @return AppResponse
+     */
+    public function handleRequest(
+        AppRequest $request,
+        string $expect,
+        int $turns = 0
+    ) : AppResponse;
+
 
     /*------ protocal ------*/
 
@@ -44,6 +61,7 @@ interface AppForProtocal
         Protocal $protocal,
         string $handlerInterface = null
     ) : \Generator;
+
 
 
 }

@@ -12,7 +12,7 @@
 namespace Commune\Ghost;
 
 use Commune\Ghost\Bootstrap;
-use Commune\Framework\App\AppForRequest;
+use Commune\Framework\App\AbsAppKernel;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Blueprint\Framework\ReqContainer;
@@ -33,7 +33,7 @@ use Commune\Support\Protocal\ProtocalMatcher;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IGhost extends AppForRequest implements Ghost
+class IGhost extends AbsAppKernel implements Ghost
 {
 
     protected $bootstrappers = [

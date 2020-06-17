@@ -12,9 +12,9 @@
 namespace Commune\Platform\StdioDemo;
 
 use Clue\React\Stdio\Stdio;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Platform\PlatformAdapter;
-use Commune\Blueprint\Shell\Requests\ShellRequest;
-use Commune\Blueprint\Shell\Responses\ShellResponse;
 
 
 /**
@@ -39,6 +39,11 @@ class StdioDemoAdapter implements PlatformAdapter
     protected $line;
 
     /**
+     * @var AppRequest|null
+     */
+    protected $request;
+
+    /**
      * StdioDemoAdapter constructor.
      * @param Stdio $stdio
      * @param string $line
@@ -49,15 +54,38 @@ class StdioDemoAdapter implements PlatformAdapter
         $this->line = $line;
     }
 
-
-    public function getRequest(): ShellRequest
+    public function getRequest(): AppRequest
     {
         // TODO: Implement getRequest() method.
     }
 
-    public function sendResponse(): ShellResponse
+    public function sendResponse(AppResponse $response): void
     {
-        // TODO: Implement sendResponse() method.
+
+
+
+
+        $quit = false;
+        foreach ($this->outputs as $output) {
+            $hostMsg = $output->getMessage();
+            $level = $hostMsg->getLevel();
+            $this->console->log($level, $hostMsg->getText() . "\n");
+
+            if ($hostMsg->getProtocalId() === DefaultIntents::SYSTEM_SESSION_QUIT ) {
+                $quit = true;
+            }
+        }
+
+        if ($quit) {
+            $this->stdio->end('quit');
+        }
+
+        if ($this->errcode > 399) {
+            $this->console->emergency($this->errmsg);
+            $this->stdio->end($this->errcode);
+        }
+
+        return null;
     }
 
 

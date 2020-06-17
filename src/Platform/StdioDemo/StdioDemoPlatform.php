@@ -12,11 +12,12 @@
 namespace Commune\Platform\StdioDemo;
 
 use Clue\React\Stdio\Stdio;
-use Commune\Blueprint\Configs\HostConfig;
-use Commune\Blueprint\Configs\PlatformConfig;
+use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Host;
 use Commune\Blueprint\Platform;
+use Commune\Blueprint\Shell;
 use React\EventLoop\Factory;
+use React\EventLoop\LoopInterface;
 
 
 /**
@@ -32,9 +33,24 @@ class StdioDemoPlatform implements Platform
     protected $host;
 
     /**
+     * @var Shell
+     */
+    protected $shell;
+
+    /**
      * @var StdioDemoOption
      */
     protected $option;
+
+    /**
+     * @var LoopInterface
+     */
+    protected $loop;
+
+    /**
+     * @var Stdio
+     */
+    protected $stdio;
 
     public function __construct(
         Host $host,
@@ -43,26 +59,51 @@ class StdioDemoPlatform implements Platform
     {
         $this->host = $host;
         $this->option = $option;
+
+        $procC = $host->getProcContainer();
+        $this->shell = $procC->get(Shell::class);
+
+        $this->loop = Factory::create();
+        $this->stdio = new Stdio($this->loop);
     }
 
     public function serve(): void
     {
-        $loop = Factory::create();
-        $stdio = new Stdio($loop);
-        $stdio->setPrompt('> ');
-
+        $this->stdio->setPrompt('> ');
         // each message
-        $stdio->on('data', function($line) use ($stdio) {
-            $stdio->write("receive: $line");
-        });
+        $this->stdio->on('data', [$this, 'onData']);
+        $this->loop->run();
+    }
 
-        $loop->run();
+    public function onData($line) : void
+    {
+
+        try {
+
+            $adapter = new StdioDemoAdapter($this->stdio, $line);
+//            $request = $adapter->getRequest();
+//            $response = $this->shell->handleRequest($request);
+//            $adapter->sendResponse($response);
+
+            $this->stdio->write('hello.world');
+
+        } catch (\Throwable $e) {
+            $this->catchExp($e);
+
+        }
+
     }
 
     public function sleep(float $seconds): void
     {
         usleep(intval($seconds * 1000));
     }
+
+    public function catchExp(\Throwable $e): void
+    {
+        $this->host->getConsoleLogger()->error(strval($e));
+    }
+
 
     public function shutdown(): void
     {

@@ -11,15 +11,15 @@
 
 namespace Commune\Blueprint\Platform;
 
-use Commune\Blueprint\Shell\Requests\ShellRequest;
-use Commune\Blueprint\Shell\Responses\ShellResponse;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface PlatformAdapter
 {
-    public function getRequest() : ShellRequest;
+    public function getRequest() : AppRequest;
 
-    public function sendResponse() : ShellResponse;
+    public function sendResponse(AppResponse $response) : void;
 }

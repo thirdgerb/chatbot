@@ -47,4 +47,6 @@ interface Platform
      */
     public function shutdown() : void;
 
+
+    public function catchExp(\Throwable $e) : void;
 }
