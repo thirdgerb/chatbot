@@ -13,12 +13,10 @@ namespace Commune\Shell;
 
 use Commune\Blueprint\Shell;
 use Commune\Contracts\Cache;
-use Commune\Protocals\Intercom\OutputMsg;
 use Psr\Log\LoggerInterface;
 use Commune\Framework\ASession;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Shell\Session;
-use Commune\Protocals\Intercom\InputMsg;
 use Commune\Blueprint\Shell\ShellSession;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session\SessionStorage;
@@ -27,22 +25,22 @@ use Commune\Blueprint\Configs\ShellConfig;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read Shell $shell
+ * @property-read ShellConfig $config
+ * @property-read ReqContainer $container
+ * @property-read Session\ShellStorage $storage
+ * @property-read LoggerInterface $logger
+ * @property-read Cache $cache
  */
 class IShellSession extends ASession implements ShellSession
 {
 
     const SINGLETONS =  [
-
         'logger' => Session\ShellLogger::class,
         'storage' => Session\ShellStorage::class,
         'cache' => Cache::class,
     ];
-
-
-    /**
-     * @var InputMsg
-     */
-    protected $_input;
 
     /**
      * @var ReqContainer
@@ -65,13 +63,16 @@ class IShellSession extends ASession implements ShellSession
     protected $_cacheExpire;
 
 
-    public function __construct(Shell $shell, ReqContainer $container, InputMsg $input)
+    public function __construct(
+        Shell $shell,
+        ReqContainer $container,
+        string $sessionId
+    )
     {
-        $this->_input = $input;
         $this->_shell = $shell;
         $this->_container = $container;
         $this->_config = $shell->getConfig();
-        parent::__construct($container, $input->getSessionId());
+        parent::__construct($container, $sessionId);
     }
 
     /*------ getter ------*/
@@ -89,48 +90,6 @@ class IShellSession extends ASession implements ShellSession
     public function getLogger(): LoggerInterface
     {
         return $this->__get('logger');
-    }
-
-    /*------ lock ------*/
-
-    public function lock(int $second): bool
-    {
-        $ttl = $this->_config->sessionLockerExpire;
-        if ($ttl > 0) {
-            $locker = $this->getShellLockerKey();
-            return $this->__get('cache')->lock($locker, $ttl);
-        } else {
-            return true;
-        }
-    }
-
-    protected function getShellLockerKey() : string
-    {
-        $shellId = $this->getAppId();
-        $shellSessionId = $this->getSessionId();
-
-        return "shell:$shellId:session:$shellSessionId:locker";
-    }
-
-    public function isLocked(): bool
-    {
-        $ttl = $this->_config->sessionLockerExpire;
-        if ($ttl > 0) {
-            $locker = $this->getShellLockerKey();
-            return $this->__get('cache')->lock($locker, $ttl);
-        } else {
-            return true;
-        }
-    }
-
-    public function unlock(): bool
-    {
-        $ttl = $this->_config->sessionLockerExpire;
-        if ($ttl > 0) {
-            $locker = $this->getShellLockerKey();
-            return $this->__get('cache')->has($locker);
-        }
-        return false;
     }
 
     /*------ expire ------*/
@@ -165,5 +124,20 @@ class IShellSession extends ASession implements ShellSession
         }
     }
 
+    /*------- getter -------*/
+
+    public function __get($name)
+    {
+        switch ($name) {
+            case 'config' :
+                return $this->_config;
+            case 'container' :
+                return $this->_container;
+            case 'shell' :
+                return $this->_shell;
+            default :
+                return parent::__get($name);
+        }
+    }
 
 }

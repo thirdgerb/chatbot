@@ -9,17 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Configs;
+namespace Commune\Platform;
 
-use Commune\Support\Option\Option;
+use Commune\Support\Option\AbsOption;
+use Commune\Blueprint\Configs\PlatformConfig;
 
 /**
- * 服务端的配置.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
- * @property-read string $id                    平台 ID
+ * @property-read string $id                    平台 id
  *
  * @property-read string $concrete              Platform 的实现.
  * @property-read array $config                 Kernel 的 config 参数的配置.
@@ -29,10 +27,28 @@ use Commune\Support\Option\Option;
  *
  * @property-read array $providers
  * @property-read array $options
- *
- *
  */
-interface PlatformConfig extends Option
+class IPlatformConfig extends AbsOption implements PlatformConfig
 {
+    const IDENTITY = 'id';
+
+    public static function stub(): array
+    {
+        return [
+            'id' => '',
+            'concrete' => '',
+            'config' => [],
+            'bootShell' => null,
+            'bootGhost' => false,
+            'providers' => [],
+            'options' => [],
+        ];
+    }
+
+    public static function relations(): array
+    {
+        return [];
+    }
+
 
 }

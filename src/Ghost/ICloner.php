@@ -196,19 +196,18 @@ class ICloner extends ASession implements Cloner
 
     public function __get($name)
     {
-        if ($name === 'ghost') {
-            return $this->_ghost;
+        switch ($name) {
+            case 'ghost' :
+                return $this->_ghost;
+            case 'container' :
+                return $this->_container;
+            case 'config' :
+                return $this->_config;
+            case 'input' :
+                return $this->_input;
+            default:
+                return parent::__get($name);
         }
-
-        if ($name === 'config') {
-            return $this->_config;
-        }
-
-        if ($name === 'input') {
-            return $this->_input;
-        }
-
-        return parent::__get($name);
     }
 
     /*------- cache -------*/

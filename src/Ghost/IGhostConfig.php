@@ -11,31 +11,57 @@
 
 namespace Commune\Ghost;
 
-use Commune\Blueprint\Configs\GhostConfig;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Ghost\Cmd\GhostHelpCmd;
-use Commune\Ghost\Handlers\GhostRequestHandler;
-use Commune\Host\Ghost\Stdio\StdioReqServiceProvider;
-use Commune\Support\Option\AbsOption;
-use Commune\Support\Protocal\ProtocalOption;
 use Commune\Framework;
+use Commune\Components;
+use Commune\Ghost\Cmd\GhostHelpCmd;
+use Commune\Support\Option\AbsOption;
+use Commune\Blueprint\Configs\GhostConfig;
+use Commune\Support\Protocal\ProtocalOption;
 use Commune\Ghost\Providers as GhostProviders;
 use Commune\Components\Predefined\Intent\Navigation;
-use Commune\Components;
+use Commune\Host\Ghost\Stdio\StdioReqServiceProvider;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class IGhostConfig extends AbsOption implements GhostConfig
 {
-    public static function stub(): array
+    const IDENTITY = 'id';
+
+    public static function stub() : array
+    {
+        return [
+            'id' => '',
+            'name' => '',
+            'providers' => [],
+            'components' => [],
+            'options' => [],
+            'protocals' => [],
+            'userCommands' => [],
+            'superCommands' => [],
+            'comprehensionPipes' => [],
+            'mindPsr4Registers' => [],
+            // session
+            'sessionExpire' => 3600,
+            'sessionLockerExpire' => 3,
+            'maxRedirectTimes' => 255,
+            'mindsetCacheExpire' => 600,
+            'maxBacktrace' => 3,
+            'defaultContextName' => '',
+            'sceneContextNames' => [],
+            'globalContextRoutes' => [],
+        ];
+    }
+
+
+    public static function demo(): array
     {
         return [
             'id' => 'demo',
 
             'name' => 'demo',
 
-            'configProviders' => [
+            'providers' => [
                 // config providers
                 Framework\Providers\OptRegistryProvider::class,
                 Framework\Providers\FileCacheServiceProvider::class,

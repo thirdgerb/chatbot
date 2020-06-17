@@ -33,7 +33,7 @@ abstract class ASession implements Session, HasIdGenerator
     /**
      * @var ReqContainer
      */
-    protected $container;
+    protected $_container;
 
     /**
      * @var string
@@ -68,6 +68,7 @@ abstract class ASession implements Session, HasIdGenerator
      */
     protected $stateless = false;
 
+
     /**
      * ASession constructor.
      * @param ReqContainer $container
@@ -75,7 +76,7 @@ abstract class ASession implements Session, HasIdGenerator
      */
     public function __construct(ReqContainer $container, string $sessionId = null)
     {
-        $this->container = $container;
+        $this->_container = $container;
         $this->traceId = $container->getId();
         // 允许为 null
         $this->sessionId = $sessionId ?? $this->createUuId();
@@ -99,7 +100,7 @@ abstract class ASession implements Session, HasIdGenerator
 
     public function getContainer(): ReqContainer
     {
-        return $this->container;
+        return $this->_container;
     }
 
 
@@ -108,7 +109,7 @@ abstract class ASession implements Session, HasIdGenerator
 
     public function buildPipeline(array $pipes, string $via, \Closure $destination): \Closure
     {
-        $pipeline = new OnionPipeline($this->container);
+        $pipeline = new OnionPipeline($this->_container);
         $pipeline->through(...$pipes);
         $pipeline->via($via);
         return $pipeline->buildPipeline($destination);
@@ -163,20 +164,15 @@ abstract class ASession implements Session, HasIdGenerator
         return $this->stateless;
     }
 
-
-    /*------ getter ------*/
+   /*------ getter ------*/
 
     public function __get($name)
     {
-        if ($name === 'container') {
-            return $this->container;
-        }
-
         $injectable = static::SINGLETONS[$name] ?? null;
 
         if (!empty($injectable)) {
             return $this->singletons[$name]
-                ?? $this->singletons[$name] = $this->container->get($injectable);
+                ?? $this->singletons[$name] = $this->_container->get($injectable);
         }
 
         return null;
@@ -210,8 +206,8 @@ abstract class ASession implements Session, HasIdGenerator
         $this->flushInstances();
 
         // container
-        $container = $this->container;
-        unset($this->container);
+        $container = $this->_container;
+        unset($this->_container);
         $container->destroy();
     }
 

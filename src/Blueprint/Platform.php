@@ -24,8 +24,9 @@ use Commune\Blueprint\Framework\App;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Platform extends App
+interface Platform
 {
+    const KEY_CONFIG = 'config';
 
     /**
      * 运行 Platform

@@ -139,7 +139,7 @@ class IHost extends AbsApp implements Host
             ->getProcContainer()
             ->make(
                 Platform::class,
-                ['config' => $platformConfig->config]
+                [Platform::KEY_CONFIG => $platformConfig->config]
             );
 
         // 启动服务

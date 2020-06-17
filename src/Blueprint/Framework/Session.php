@@ -13,8 +13,6 @@ namespace Commune\Blueprint\Framework;
 
 use Commune\Blueprint\Framework\Session\SessionEvent;
 use Commune\Blueprint\Framework\Session\SessionStorage;
-use Commune\Support\Protocal\Protocal;
-use Commune\Support\Protocal\ProtocalMatcher;
 use Psr\Log\LoggerInterface;
 
 
@@ -124,27 +122,6 @@ interface Session
      */
     public function listen(string $eventName, callable $handler) : void;
 
-
-    /*----- 锁 -----*/
-
-    /**
-     * 锁定一个 session 用于禁止通讯.
-     *
-     * @param int $second
-     * @return bool
-     */
-    public function lock(int $second) : bool;
-
-    /**
-     * @return bool
-     */
-    public function isLocked() : bool;
-
-    /**
-     * 解锁一个机器人的分身. 允许通讯.
-     * @return bool
-     */
-    public function unlock() : bool;
 
 
     /*------ expire ------*/

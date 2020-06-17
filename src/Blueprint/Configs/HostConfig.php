@@ -36,6 +36,6 @@ interface HostConfig
 
     public function getShellConfig(string $shellName) : ? ShellConfig;
 
-    public function getPlatformConfig(string $platformName) : ? PlatformConfig;
+    public function getPlatformConfig(string $platformId) : ? PlatformConfig;
 
 }
