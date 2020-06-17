@@ -13,11 +13,13 @@ namespace Commune\Blueprint;
 
 use Commune\Blueprint\Configs\ShellConfig;
 use Commune\Blueprint\Framework\App;
+use Commune\Blueprint\Framework\AppForProtocal;
+use Commune\Blueprint\Framework\AppForRequest;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Shell extends App
+interface Shell extends App, AppForProtocal, AppForRequest
 {
     /**
      * @return ShellConfig

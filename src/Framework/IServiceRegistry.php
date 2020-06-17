@@ -15,7 +15,7 @@ use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\ComponentOption;
 use Commune\Blueprint\Framework\ReqContainer;
-use Commune\Blueprint\Framework\ServiceRegistrar;
+use Commune\Blueprint\Framework\ServiceRegistry;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
@@ -25,7 +25,7 @@ use Commune\Contracts\ServiceProvider;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IServiceRegistrar implements ServiceRegistrar
+class IServiceRegistry implements ServiceRegistry
 {
 
     /**

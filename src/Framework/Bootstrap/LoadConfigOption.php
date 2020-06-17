@@ -31,18 +31,23 @@ use Commune\Support\Option\Option;
 abstract class LoadConfigOption implements Bootstrapper
 {
 
+    abstract protected function getConfigOptions(App $app) : array;
+
     public function bootstrap(App $app) : void
+    {
+        $configBindings = $this->getConfigOptions($app);
+        static::registerConfigBinding($app, $configBindings);
+    }
+
+    public static function registerConfigBinding(App $app, array $configBindings) : void
     {
         $container = $app->getProcContainer();
         $logger = $app->getConsoleLogger();
         $logInfo = $app->getLogInfo();
 
-        $configBindings = $this->getConfigOptions($app);
-
         // 绑定所有用类来标记的配置数据. 方便依赖注入.
         foreach($configBindings as $key => $value) {
-
-            $this->registerAndValidateOption(
+            static::registerAndValidateOption(
                 $logger,
                 $logInfo,
                 $container,
@@ -51,8 +56,6 @@ abstract class LoadConfigOption implements Bootstrapper
             );
         }
     }
-
-    abstract protected function getConfigOptions(App $app) : array;
 
     /**
      * 注册并检查一个配置.
@@ -64,7 +67,7 @@ abstract class LoadConfigOption implements Bootstrapper
      * @param $key
      * @param $value
      */
-    protected function registerAndValidateOption(
+    protected static function registerAndValidateOption(
         ConsoleLogger $logger,
         LogInfo $logInfo,
         ContainerContract $container,

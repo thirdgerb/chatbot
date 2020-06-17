@@ -11,30 +11,31 @@
 
 namespace Commune\Ghost;
 
+use Commune\Ghost\Bootstrap;
+use Commune\Framework\App\AppForRequest;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Blueprint\Framework\ReqContainer;
-use Commune\Blueprint\Framework\Request\AppProtocal;
-use Commune\Blueprint\Framework\ServiceRegistrar;
+use Commune\Blueprint\Kernel\Protocals\AppProtocal;
+use Commune\Blueprint\Framework\ServiceRegistry;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
-use Commune\Ghost\Bootstrap;
-use Commune\Framework\AbsApp;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\InputMsg;
-use Commune\Support\Protocal\Protocal;
 use Commune\Support\Protocal\ProtocalMatcher;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IGhost extends AbsApp implements Ghost
+class IGhost extends AppForRequest implements Ghost
 {
+
     protected $bootstrappers = [
         // 注册配置 Option 单例到进程中.
         Bootstrap\GhostLoadConfigOption::class,
@@ -42,8 +43,6 @@ class IGhost extends AbsApp implements Ghost
         Bootstrap\GhostRegisterProviders::class,
         // 注册相关组件
         Bootstrap\GhostLoadComponent::class,
-        // 检验默认的组件是否都实现了绑定
-        Bootstrap\GhostContractsValidator::class,
     ];
 
     /**
@@ -66,7 +65,7 @@ class IGhost extends AbsApp implements Ghost
         GhostConfig $config,
         ContainerContract $procC = null,
         ReqContainer $reqC = null,
-        ServiceRegistrar $registrar = null,
+        ServiceRegistry $registrar = null,
         ConsoleLogger $consoleLogger = null,
         LogInfo $logInfo = null
     )
@@ -127,7 +126,7 @@ class IGhost extends AbsApp implements Ghost
 
     protected function isValidFinaleResponse(AppProtocal $protocal): bool
     {
-        return $protocal instanceof Ghost\AppProtocals\CloneResponse;
+        return $protocal instanceof GhostResponse;
     }
 
 

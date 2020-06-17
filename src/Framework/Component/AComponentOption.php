@@ -38,7 +38,7 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
         array $params = []
     ) : void
     {
-        $registrar = $app->getServiceRegistrar();
+        $registrar = $app->getServiceRegistry();
         $registrar->dependComponent(static::class, $componentName, $params);
     }
 
@@ -60,7 +60,7 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
         string $loader = FileStorageOption::OPTION_PHP
     ) : void
     {
-        $registrar = $app->getServiceRegistrar();
+        $registrar = $app->getServiceRegistry();
 
         $registrar->registerConfigProvider(new LoadComponentOption([
             'componentName' => static::class,
@@ -85,7 +85,7 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
         bool $force = false
     ) : void
     {
-        $registrar = $app->getServiceRegistrar();
+        $registrar = $app->getServiceRegistry();
 
         $registrar->registerProcProvider(
             new LoadTranslations([

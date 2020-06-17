@@ -23,16 +23,4 @@ use Commune\Blueprint\Framework\Session\SessionStorage;
  */
 interface ClonerStorage extends SessionStorage
 {
-    const REQUEST_FAIL_TIME_KEY = 'requestFailTimes';
-
-    const SHELL_SESSION_IDS = 'shellSessionIds';
-
-
-    /**
-     * 从路由关系中获取真实的 ShellSessionId.
-     * @param string $shellName
-     * @return string
-     */
-    public function getShellSessionId(string $shellName) : string;
-
 }

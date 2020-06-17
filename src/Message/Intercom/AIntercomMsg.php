@@ -22,6 +22,7 @@ use Commune\Support\Uuid\IdGeneratorHelper;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property string $messageId  为空则自动生成.
+ * @property string $shellName
  * @property string $traceId    允许为空
  * @property string $sessionId  会话Id, 为空则是 guestId
  * @property string $convoId    多轮会话的 ID. 允许为空. 除非客户端有指定的 conversation.
@@ -114,6 +115,7 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
 
     public function divide(
         HostMsg $message = null,
+        string $shellName = null,
         string $sessionId = null,
         string $convoId = null,
         string $guestId = null,
@@ -122,13 +124,19 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
     ): IntercomMsg
     {
         $map = get_defined_vars();
-
         $message = clone $this;
         foreach ($map as $key => $val) {
             if (isset($val)) {
-                $message->{$key} = $val;
+                $message->__set($key, $val);
             }
         }
+
+        if (is_null($message)) {
+            $message->message = clone $message->message;
+        } else {
+            $message->messageId = $this->createUuId();
+        }
+
         return $message;
     }
 

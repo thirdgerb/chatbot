@@ -13,33 +13,29 @@ namespace Commune\Blueprint\Configs;
 
 /**
  * 对话机器人的基础配置
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @property-read string $id
+ * @property-read string $name
  *
- * # 基础配置
- * @property-read string $chatbotName           机器人的内部名称. 用于在资源内区别各个不同的机器人
- * @property-read bool $isDebugging             是否调试模式.
- *
+ * @property-read array $providers              所有 组件共享的服务配置.
+ * @property-read array $options
  *
  * # 关联配置
- * @property-read GhostConfig[] $ghosts         Ghost 的配置
+ * @property-read GhostConfig $ghost            Ghost 的配置
  * @property-read ShellConfig[] $shells         Shell 的配置
  * @property-read PlatformConfig[] $platforms   Platform 的配置
  */
 interface HostConfig
 {
 
-
-
-
-
-
     /*------ 获取关联配置 ------*/
 
-    public function getShell(string $shellName) : ? ShellConfig;
+    public function getGhostConfig() : GhostConfig;
 
-    public function getGhost(string $ghostName) : ? GhostConfig;
+    public function getShellConfig(string $shellName) : ? ShellConfig;
 
-    public function getPlatform(string $platformName) : ? PlatformConfig;
+    public function getPlatformConfig(string $platformName) : ? PlatformConfig;
 
 }

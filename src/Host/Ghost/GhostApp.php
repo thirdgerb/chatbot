@@ -43,7 +43,7 @@ class GhostApp extends IGhost
             $config,
             $set ? $app->getProcContainer() : $procC,
             $set ? $app->getBasicReqContainer() : null,
-            $set ? $app->getServiceRegistrar() : null,
+            $set ? $app->getServiceRegistry() : null,
             $set ? $app->getConsoleLogger() : null,
             $set ? $app->getLogInfo() : null
         );

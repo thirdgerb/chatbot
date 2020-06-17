@@ -92,9 +92,9 @@ interface App
 
     /**
      * 服务注册中心.
-     * @return ServiceRegistrar
+     * @return ServiceRegistry
      */
-    public function getServiceRegistrar() : ServiceRegistrar;
+    public function getServiceRegistry() : ServiceRegistry;
 
     /*------ logger ------*/
 
@@ -109,36 +109,5 @@ interface App
     public function getLogInfo() : LogInfo;
 
 
-    /*------ request ------*/
-
-    /**
-     * @param AppRequest $request
-     * @return AppResponse
-     */
-    public function handleRequest(AppRequest $request) : AppResponse;
-
-    /*------ protocal ------*/
-
-    /**
-     * 协议的匹配器.
-     * @return ProtocalMatcher
-     */
-    public function getProtocalMatcher() : ProtocalMatcher;
-
-    /**
-     * 遍历定义的协议, 轮流获取可能的 handler
-     *
-     * 建议所有的协议 handler 都应该是一个 callable 对象.
-     *
-     * @param ReqContainer $container
-     * @param Protocal $protocal
-     * @param string|null $handlerInterface
-     * @return \Generator  $handlerInterface[]
-     */
-    public function eachProtocalHandler(
-        ReqContainer $container,
-        Protocal $protocal,
-        string $handlerInterface = null
-    ) : \Generator;
 
 }

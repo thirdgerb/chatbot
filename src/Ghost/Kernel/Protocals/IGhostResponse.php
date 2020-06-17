@@ -29,6 +29,7 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string $batchId
  * @property-read int $count
  * @property-read bool $tiny
+ * @property-read bool $async
  * @property-read IntercomMsg[] $messages
  */
 class IGhostResponse extends AbsMessage implements GhostResponse
@@ -43,12 +44,13 @@ class IGhostResponse extends AbsMessage implements GhostResponse
         return [
             'traceId' => '',
             'errcode' => AppResponse::SUCCESS,
-            'errmsg' => AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::SUCCESS],
+            'errmsg' => '',
             'shellName' => '',
             'shellId' => '',
             'batchId' => '',
             'count' => 0,
-            'tiny' => false,
+            'tiny' => true,
+            'async' => true,
             'messages' => []
         ];
     }
@@ -59,6 +61,7 @@ class IGhostResponse extends AbsMessage implements GhostResponse
             'messages[]' => IntercomMsg::class
         ];
     }
+
 
     public function __get_errmsg(string $name) : string
     {
@@ -131,6 +134,11 @@ class IGhostResponse extends AbsMessage implements GhostResponse
     public function isEmpty(): bool
     {
         return false;
+    }
+
+    public function isAsync(): bool
+    {
+        return $this->async;
     }
 
 

@@ -25,10 +25,8 @@ use Commune\Support\Protocal\ProtocalOption;
  * @property-read string $name                              Ghost 的名称. 任意表达
  *
  * ## 服务注册
- *
- * @property-read array $configProviders                    需要绑定的配置服务.
- * @property-read array $procProviders                      需要绑定的进程级服务.
- * @property-read array $reqProviders                       需要绑定的请求级服务
+
+ * @property-read array $providers                          需要绑定的服务
  *
  * [   ServiceProvider::class,
  *      ServiceProvider1::class => [ configs ]]
@@ -51,7 +49,7 @@ use Commune\Support\Protocal\ProtocalOption;
  * ## 协议定义.
  *
  * @property-read ProtocalOption[] $protocals               Ghost 处理协议的配置.
-
+ *
  * ## 管道配置
  *
  * @property-read string[] $userCommands                    用户命令

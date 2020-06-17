@@ -11,16 +11,14 @@
 
 namespace Commune\Contracts\Messenger;
 
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Broadcast
 {
-    public function publish(
-        string $shellName,
-        string $sessionId,
-        string $batchId
-    ) : bool;
+    public function publish(GhostResponse $ghostResponse) : bool;
 
     public function subscribe(
         callable $callback,

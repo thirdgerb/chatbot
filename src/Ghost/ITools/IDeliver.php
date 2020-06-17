@@ -38,16 +38,6 @@ class IDeliver implements Deliver
     protected $slots = [];
 
     /**
-     * @var null|string
-     */
-    protected $guestId = null;
-
-    /**
-     * @var null|string
-     */
-    protected $clonerId = null;
-
-    /**
      * @var int
      */
     protected $deliverAt = 0;
@@ -67,19 +57,6 @@ class IDeliver implements Deliver
     public function withSlots(array $slots): Deliver
     {
         $this->slots = $slots;
-        return $this;
-    }
-
-    public function toGuest(string $guestId): Deliver
-    {
-        $this->guestId = $guestId;
-        return $this;
-    }
-
-    public function toClone(string $cloneId, string $guestId = ''): Deliver
-    {
-        $this->clonerId = $cloneId;
-        $this->guestId = $guestId;
         return $this;
     }
 
@@ -129,14 +106,12 @@ class IDeliver implements Deliver
 
     public function message(HostMsg $message): Deliver
     {
-        $ghostMsg = $this->input->output(
+        $cloner = $this->dialog->cloner;
+        $output = $this->input->output(
             $message,
-            $this->deliverAt,
-            $this->guestId,
-            $this->clonerId
+            $this->deliverAt
         );
-
-        $this->dialog->cloner->output($ghostMsg);
+        $cloner->output($output);
         return $this;
     }
 

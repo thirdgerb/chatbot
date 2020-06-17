@@ -21,14 +21,12 @@ use Commune\Support\Protocal\ProtocalOption;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
- * @property-read string $id                id, 需要纯字母加数字
- * @property-read string $name              Shell 的名称
+ * @property-read string $id                                id, 需要纯字母加数字
+ * @property-read string $name                              Shell 的名称
  *
  * ## 服务注册
  *
- * @property-read array $configProviders                    需要绑定的配置服务.
- * @property-read array $procProviders                      需要绑定的进程级服务.
- * @property-read array $reqProviders                       需要绑定的请求级服务
+ * @property-read array $providers                          需要绑定的服务
  *
  * [   ServiceProvider::class,
  *      ServiceProvider1::class => [ configs ]]
@@ -50,19 +48,7 @@ use Commune\Support\Protocal\ProtocalOption;
  *
  * ## 协议定义.
  *
- * @property-read ProtocalOption[] $requestHandlers     请求的处理协议
- * [
- *     [
- *         'protocal' => Protocal::class,
- *         'filters' => ['*'],
- *         'handler' => Handler::class,
- *         'params' => [ param1, param2...]
- *     ],
- * ]
- *
- * @property-read ProtocalOption[] $apiHandlers         输入消息的处理协议.
- * @property-read ProtocalOption[] $inputParsers        输入消息的处理协议.
- * @property-read ProtocalOption[] $outputRenderers     输出消息的处理协议
+ * @property-read ProtocalOption[] $protocals               Ghost 处理协议的配置.
  *
  * ## Session 配置
  *

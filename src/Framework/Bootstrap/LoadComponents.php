@@ -27,7 +27,7 @@ abstract class LoadComponents implements Bootstrapper
     public function bootstrap(App $app): void
     {
         $configs = $this->getComponentConfigs($app);
-        $registrar = $app->getServiceRegistrar();
+        $registrar = $app->getServiceRegistry();
 
         foreach ($configs as $key => $value) {
             $component = $this->wrapComponent($key, $value);

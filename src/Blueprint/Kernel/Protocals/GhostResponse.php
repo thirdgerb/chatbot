@@ -27,6 +27,14 @@ interface GhostResponse extends AppResponse
     public function getBatchId() : string;
 
     /**
+     * 异步的消息, shell 不用渲染.
+     * 免得增加逻辑上的复杂度.
+     *
+     * @return bool
+     */
+    public function isAsync() : bool;
+
+    /**
      * Shell 的名称.
      * @return string
      */

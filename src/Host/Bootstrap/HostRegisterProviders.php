@@ -9,24 +9,26 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Bootstrap;
+namespace Commune\Host\Bootstrap;
 
+use Commune\Blueprint\Host;
 use Commune\Blueprint\Framework\App;
-use Commune\Blueprint\Ghost;
+use Commune\Ghost\Support\ValidateUtils;
 use Commune\Framework\Bootstrap\RegisterProviders;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class GhostRegisterProviders extends RegisterProviders
+class HostRegisterProviders extends RegisterProviders
 {
     /**
-     * @param Ghost $app
+     * @param Host $app
      * @return array
      */
     public function getProviderConfigs(App $app): array
     {
+        ValidateUtils::isArgInstanceOf($app, Host::class, true);
         return $app->getConfig()->providers;
     }
 

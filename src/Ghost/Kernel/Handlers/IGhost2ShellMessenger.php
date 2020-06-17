@@ -12,13 +12,18 @@
 namespace Commune\Ghost\Kernel\Handlers;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Contracts\Messenger\MessageDB;
 use Commune\Contracts\Messenger\Messenger;
 use Commune\Blueprint\Kernel\Handlers\Ghost2ShellMessenger;
 use Commune\Blueprint\Kernel\Protocals\CloneRequest;
 use Commune\Blueprint\Kernel\Protocals\CloneResponse;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Contracts\Messenger\Broadcast;
+use Commune\Ghost\IGhost;
+use Commune\Ghost\Kernel\Protocals\IGhostResponse;
 use Commune\Ghost\Support\ValidateUtils;
+use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
@@ -41,14 +46,23 @@ class IGhost2ShellMessenger implements Ghost2ShellMessenger
     {
         ValidateUtils::isArgInstanceOf($protocal, CloneResponse::class, true);
 
-        // 发送异步消息.
-        $asyncInputs = $protocal->getAsyncInputs();
-        if (!empty($asyncInputs)) {
-            /**
-             * @var Messenger $messenger
-             */
-            $messenger = $this->cloner->container->get(Messenger::class);
-            $messenger->asyncSendInput2Ghost(...$asyncInputs);
+        // 设置 convoId
+        $convoId = $this->cloner->getConversationId();
+        $protocal->setConvoId($convoId);
+
+        // 保存消息.
+        $this->recordBatchMessages($protocal);
+        // 发送异步输入消息.
+        $this->sendAsyncInput($protocal);
+
+
+        $outputMap = [];
+        $outputs = $protocal->getOutputs();
+
+        // 区分不同发送对象的消息.
+        foreach ($outputs as $output) {
+            $key = $output->getShellName() . ':' . $output->getSessionId();
+            $outputMap[$key] = $output;
         }
 
         // 如果请求不成功, 或者请求做了无状态处理, 都直接返回结果.
@@ -61,17 +75,73 @@ class IGhost2ShellMessenger implements Ghost2ShellMessenger
 
     }
 
+
     protected function directResponse(CloneResponse $cloneResponse) : GhostResponse
     {
-        $ghostRequest = $cloneResponse->getRequest()->getRequest();
-        $tiny = $ghostRequest->requireTinyResponse();
 
         $input = $cloneResponse->getInput();
-        $shellName = $input->getShellName();
-        $shellSessionId = $this->cloner->storage->getShellSessionId($shellName);
 
+        $routes = $this->cloner->storage->shellSessionRoutes;
+        $shellSessionId = $routes[$shellName] ?? $input->getSessionId();
 
+        $outputs = $cloneResponse->getOutputs();
+
+        $outputs = array_filter($outputs, function(OutputMsg $message) use ($shellName) {
+            return $message->getShellName() === $shellName;
+        });
+
+        if ($cloneResponse->isAsync()) {
+            $broadcast = $this->cloner->container->get(Broadcast::class);
+            $response = new IGhostResponse([
+                'traceId' => $cloneResponse->getTraceId(),
+                'shellName' => $shellName,
+                'shellId' => $shellSessionId,
+                'batchId' => $input->getBatchId(),
+                'count' => count($outputs),
+                'tiny' => true,
+            ]);
+            $this->broadcastGhostResponse($broadcast, $response);
+            return $response;
+        }
+
+        $tiny = $cloneResponse->requireTinyResponse();
+    }
+
+    protected function broadcastResponse(CloneResponse $cloneResponse) : GhostResponse
+    {
 
     }
 
+    protected function broadcastGhostResponse(Broadcast $broadcast, GhostResponse $response) : void
+    {
+        if (!$response->isTinyResponse()) {
+            $this->cloner->logger->error(__METHOD__ . ' should not accept tiny ghost response');
+            return;
+        }
+        $broadcast->publish($response);
+    }
+
+    protected function sendAsyncInput(CloneResponse $response) : void
+    {
+        $asyncInputs = $response->getAsyncInputs();
+        if (!empty($asyncInputs)) {
+            /**
+             * @var Messenger $messenger
+             */
+            $messenger = $this->cloner->container->get(Messenger::class);
+            $messenger->asyncSendInput2Ghost(...$asyncInputs);
+        }
+    }
+
+    protected function recordBatchMessages(CloneResponse $response) : void
+    {
+        $input = $response->getInput();
+        $outputs = $response->getOutputs();
+
+        /**
+         * @var MessageDB $messageDB
+         */
+        $messageDB = $this->cloner->container->get(MessageDB::class);
+        $messageDB->recordBatch($input, $outputs);
+    }
 }

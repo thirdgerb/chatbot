@@ -43,7 +43,7 @@ abstract class GhostComponent extends AComponentOption
             'psr4' => $namespaceToPaths,
         ];
         $provider = new Psr4SelfRegisterLoader($option);
-        $app->getServiceRegistrar()->registerProcProvider($provider, false);
+        $app->getServiceRegistry()->registerProcProvider($provider, false);
     }
 
 }

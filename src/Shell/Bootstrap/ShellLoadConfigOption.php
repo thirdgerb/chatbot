@@ -9,25 +9,27 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Bootstrap;
+namespace Commune\Shell\Bootstrap;
 
 use Commune\Blueprint\Framework\App;
-use Commune\Blueprint\Ghost;
-use Commune\Framework\Bootstrap\RegisterProviders;
+use Commune\Blueprint\Shell;
+use Commune\Framework\Bootstrap\LoadConfigOption;
+use Commune\Ghost\Support\ValidateUtils;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class GhostRegisterProviders extends RegisterProviders
+class ShellLoadConfigOption extends LoadConfigOption
 {
     /**
-     * @param Ghost $app
+     * @param Shell $app
      * @return array
      */
-    public function getProviderConfigs(App $app): array
+    protected function getConfigOptions(App $app): array
     {
-        return $app->getConfig()->providers;
+        ValidateUtils::isArgInstanceOf($app, Shell::class, true);
+        return $app->getConfig()->options;
     }
 
 

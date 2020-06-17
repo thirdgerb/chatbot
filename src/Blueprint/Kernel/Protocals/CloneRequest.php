@@ -22,6 +22,11 @@ interface CloneRequest extends AppRequest
 {
 
     /**
+     * @return bool
+     */
+    public function isAsync() : bool;
+
+    /**
      * 要求极简的回复, 不需要消息体.
      * @return bool
      */

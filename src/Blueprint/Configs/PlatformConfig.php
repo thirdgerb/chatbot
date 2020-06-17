@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Configs;
 
+use Commune\Support\Option\Option;
 
 /**
  * 服务端的配置.
@@ -20,11 +21,17 @@ namespace Commune\Blueprint\Configs;
  *
  * @property-read string $name                  平台名称
  *
- * @property-read string|null $withShell        平台初始化时要启动的 Shell
- * @property-read string|null $withGhost        平台初始化时要启动的 Ghost
+ * @property-read string $concrete              Platform 的实现.
+ * @property-read array $config                 Kernel 的 config 参数的配置.
+ *
+ * @property-read array $providers
+ * @property-read array $options
+ *
+ * @property-read string|null $bootShell        平台初始化时要启动的 Shell
+ * @property-read bool $bootGhost               平台初始化时要启动的 Ghost
  *
  */
-interface PlatformConfig
+interface PlatformConfig extends Option
 {
 
 }

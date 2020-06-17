@@ -15,13 +15,11 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Contracts;
 use Commune\Protocals;
-use Commune\Blueprint\Shell;
 use Commune\Blueprint\Framework;
 use Commune\Blueprint\Configs;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Psr\Log\LoggerInterface;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -30,19 +28,24 @@ interface DependInjections
 {
 
     const BASIC_APP_BINDINGS = [
-        Framework\ProcContainer::class,
-        Framework\ServiceRegistrar::class,
+        Framework\ServiceRegistry::class,
         Contracts\Log\ConsoleLogger::class,
         Contracts\Log\LogInfo::class,
     ];
 
     const APP_PROC_BINDINGS = [
-        Framework\ProcContainer::class,
         Contracts\Log\ExceptionReporter::class,
         Contracts\Trans\Translator::class,
         OptRegistry::class,
         LoggerInterface::class,
         SoundLikeInterface::class,
+    ];
+
+    /*------- host -------*/
+
+    const HOST_PROC_BINDINGS = [
+        Host::class,
+        Configs\HostConfig::class,
     ];
 
     /*------- ghost -------*/
@@ -60,7 +63,6 @@ interface DependInjections
         Ghost\Cloner\ClonerScene::class,
         Ghost\Cloner\ClonerScope::class,
         Ghost\Cloner\ClonerLogger::class,
-
         Ghost\Cloner\ClonerStorage::class,
         Ghost\Runtime\Runtime::class,
         Contracts\Ghost\RuntimeDriver::class,
@@ -80,7 +82,6 @@ interface DependInjections
     const SHELL_PROC_BINDINGS = [
         Shell::class,
         Configs\ShellConfig::class,
-        Shell\Render\RenderManager::class,
     ];
 
     const SHELL_REQ_BINDINGS = [

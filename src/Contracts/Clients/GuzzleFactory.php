@@ -9,15 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Shell\Handlers;
+namespace Commune\Contracts\Clients;
 
-use Commune\Protocals\HostMsg;
+use GuzzleHttp\Client;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface InputMessageParser
+interface GuzzleFactory
 {
-    public function __invoke(HostMsg $message) : ? HostMsg;
+
+    public function getClient() : Client;
 
 }

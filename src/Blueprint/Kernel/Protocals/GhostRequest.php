@@ -31,6 +31,11 @@ interface GhostRequest extends AppRequest
     public function requireTinyResponse() : bool;
 
     /**
+     * @return string
+     */
+    public function getShellSessionId() : string;
+
+    /**
      * @param HostMsg $message
      * @param HostMsg ...$messages
      * @return CloneResponse

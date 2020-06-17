@@ -32,21 +32,23 @@ class IGhostConfig extends AbsOption implements GhostConfig
     {
         return [
             'id' => 'demo',
+
             'name' => 'demo',
 
             'configProviders' => [
+                // config providers
                 Framework\Providers\OptRegistryProvider::class,
                 Framework\Providers\FileCacheServiceProvider::class,
                 GhostProviders\MindsetStorageConfigProvider::class,
                 Framework\Providers\TranslatorBySymfonyProvider::class,
-            ],
-            'procProviders' => [
+
+                // proc providers
                 Framework\Providers\ExpReporterByConsoleProvider::class,
                 Framework\Providers\LoggerByMonologProvider::class,
                 Framework\Providers\SoundLikeServiceProvider::class,
                 GhostProviders\MindsetServiceProvider::class,
-            ],
-            'reqProviders' => [
+
+                // req providers
                 Framework\Providers\CacheByArrProvider::class,
                 Framework\Providers\RuntimeDriverDemoProvider::class,
                 GhostProviders\ClonerServiceProvider::class,
@@ -59,16 +61,13 @@ class IGhostConfig extends AbsOption implements GhostConfig
             'options' => [
             ],
             // request protocals
-            'requestHandlers' => [
-                [
-                    'protocal' => CloneRequest::class,
-                    'handler' => GhostRequestHandler::class,
-                ]
+            'protocals' => [
+//                [
+//                    'protocal' => CloneRequest::class,
+//                    'handler' => GhostRequestHandler::class,
+//                ]
             ],
 
-            'apiHandler' => [
-
-            ],
             'userCommands' => [
                 GhostHelpCmd::class,
                 Commands\User\HelloCmd::class,
@@ -79,6 +78,7 @@ class IGhostConfig extends AbsOption implements GhostConfig
                 Commands\User\RepeatCmd::class,
                 Commands\User\RestartCmd::class,
             ],
+
             'superCommands' => [
                 GhostHelpCmd::class,
                 Commands\Super\SpyCmd::class,
@@ -87,13 +87,15 @@ class IGhostConfig extends AbsOption implements GhostConfig
                 Commands\Super\IntentCmd::class,
                 Commands\Super\RedirectCmd::class,
             ],
+
             'comprehensionPipes' => [
 
             ],
+
             'mindPsr4Registers' => [
                 "Commune\\Host\\Ghost\\Stdio\\Context" => __DIR__ . '/Context'
-
             ],
+
             // session
             'sessionExpire' => 3600,
             'sessionLockerExpire' => 3,
@@ -104,12 +106,12 @@ class IGhostConfig extends AbsOption implements GhostConfig
             'sceneContextNames' => [
             ],
             'globalContextRoutes' => [
-                Navigation\CancelInt::genUcl(),
-                Navigation\RepeatInt::genUcl(),
-                Navigation\QuitInt::genUcl(),
-                Navigation\HomeInt::genUcl(),
-                Navigation\BackwardInt::genUcl(),
-                Navigation\RestartInt::genUcl(),
+                Navigation\CancelInt::genUcl()->encode(),
+                Navigation\RepeatInt::genUcl()->encode(),
+                Navigation\QuitInt::genUcl()->encode(),
+                Navigation\HomeInt::genUcl()->encode(),
+                Navigation\BackwardInt::genUcl()->encode(),
+                Navigation\RestartInt::genUcl()->encode(),
             ]
         ];
     }
@@ -117,8 +119,7 @@ class IGhostConfig extends AbsOption implements GhostConfig
     public static function relations(): array
     {
         return [
-            'requestHandlers[]' => ProtocalOption::class,
-            'apiHandlers[]' => ProtocalOption::class
+            'protocals[]' => ProtocalOption::class,
         ];
     }
 

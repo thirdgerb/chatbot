@@ -9,13 +9,15 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Shell;
+namespace Commune\Contracts\Clients;
 
+use Redis;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Server
+interface RedisFactory
 {
+    public function getClient() : Redis;
 
 }

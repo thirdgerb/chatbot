@@ -19,9 +19,9 @@ use Commune\Blueprint\Exceptions\CommuneBootingException;
  */
 class AppNotDefinedException extends CommuneBootingException
 {
-    public function __construct(string $method, string $appName)
+    public function __construct(string $appType, string $appId)
     {
-        $message = "app not defined, appName: $appName, method: $method";
+        $message = "app not defined, type $appType, id $appId";
         parent::__construct($message);
     }
 

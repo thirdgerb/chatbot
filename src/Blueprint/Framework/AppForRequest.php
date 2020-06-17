@@ -9,20 +9,24 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Framework\Request;
+namespace Commune\Blueprint\Framework;
 
-use Commune\Support\Protocal\Protocal;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
+
 
 /**
- * 应用级的协议.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface AppProtocal extends Protocal
+interface AppForRequest
 {
+    /*------ request ------*/
+
     /**
-     * @return string
+     * @param AppRequest $request
+     * @return AppResponse
      */
-    public function getTraceId() : string;
+    public function handleRequest(AppRequest $request) : AppResponse;
+
 
 }

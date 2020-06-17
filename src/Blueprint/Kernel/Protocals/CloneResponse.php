@@ -21,11 +21,15 @@ interface CloneResponse extends AppResponse
 {
 
     /**
+     * @return bool
+     */
+    public function isAsync() : bool;
+
+    /**
      * 要求极简的回复, 不需要消息体.
      * @return bool
      */
     public function requireTinyResponse() : bool;
-
 
     /**
      * @return InputMsg
@@ -43,4 +47,9 @@ interface CloneResponse extends AppResponse
     public function getOutputs() : array;
 
 
+    /**
+     * 给所有的输出设置 convoId
+     * @param string $convoId
+     */
+    public function setConvoId(string $convoId) : void;
 }

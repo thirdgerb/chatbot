@@ -12,6 +12,7 @@
 namespace Commune\Blueprint;
 
 use Commune\Blueprint\Configs\PlatformConfig;
+use Commune\Blueprint\Framework\App;
 
 /**
  * 平台是 Host 在服务器上启动的服务端程序.
@@ -23,33 +24,19 @@ use Commune\Blueprint\Configs\PlatformConfig;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Platform
+interface Platform extends App
 {
-    /**
-     * 平台的名称, 也是对客户端的名称.
-     * @return string
-     */
-    public function getName() : string;
-
-    /**
-     * 同一个 Platform 在不同服务器上也会有不同的实例.
-     * 所以区别实例的关系, 还需要一个 Platform ID
-     * @return string
-     */
-    public function getId() : string;
-
-    /**
-     * 平台的配置
-     * @return PlatformConfig
-     */
-    public function getConfig() : PlatformConfig;
-
-    /*----- 运行 -----*/
 
     /**
      * 运行 Platform
      */
-    public function start() : void;
+    public function serve() : void;
+
+
+    /**
+     * @param float $seconds
+     */
+    public function sleep(float $seconds) : void;
 
     /*----- 内部命令 -----*/
 

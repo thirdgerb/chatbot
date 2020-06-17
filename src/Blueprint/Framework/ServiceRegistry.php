@@ -11,9 +11,8 @@
 
 namespace Commune\Blueprint\Framework;
 
-use Commune\Blueprint\Exceptions\CommuneBootingException;
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Contracts\ServiceProvider;
+use Commune\Blueprint\Exceptions\CommuneBootingException;
 
 
 /**
@@ -32,7 +31,7 @@ use Commune\Contracts\ServiceProvider;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ServiceRegistrar
+interface ServiceRegistry
 {
 
     /*----------- 服务注册 -----------*/

@@ -35,14 +35,13 @@ class IGhostInputReceiver implements GhostInputReceiver
      */
     protected $clone;
 
-    protected function wrapCloneRequest(GhostRequest $request) : CloneRequest
+    /**
+     * IGhostInputReceiver constructor.
+     * @param Cloner $clone
+     */
+    public function __construct(Cloner $clone)
     {
-        return new ICloneRequest(
-            $request->getInput(),
-            $request->isAsync(),
-            $request->requireTinyResponse(),
-            $request->isStateless()
-        );
+        $this->clone = $clone;
     }
 
     /**
@@ -65,8 +64,11 @@ class IGhostInputReceiver implements GhostInputReceiver
             $this->clone->noState();
         }
 
+        $input = $protocal->getInput();
+
+
         // 如果是不支持的消息, 则无响应.
-        $message = $protocal->getInput()->getMessage();
+        $message = $input->getMessage();
         if ($message instanceof UnsupportedMsg) {
             $this->clone->noState();
             return $protocal->fail(AppResponse::NO_CONTENT);
@@ -77,8 +79,10 @@ class IGhostInputReceiver implements GhostInputReceiver
             return $this->wrapCloneRequest($protocal);
         }
 
-        $ttl = $this->clone->config->sessionLockerExpire;
+        // 设置好 shell session ID, 方便广播时处理.
+        $this->setShellSessionId($protocal);
 
+        $ttl = $this->clone->config->sessionLockerExpire;
         // 锁 clone
         if ($this->clone->lock($ttl)) {
             // 注册解锁逻辑.
@@ -86,6 +90,7 @@ class IGhostInputReceiver implements GhostInputReceiver
                 $clone->unlock();
             });
 
+            // 成功则都往后走.
             return $this->wrapCloneRequest($protocal);
         }
 
@@ -93,7 +98,19 @@ class IGhostInputReceiver implements GhostInputReceiver
         return $protocal->isAsync()
             ? $this->asyncLockFail($protocal)
             : $this->lockFail($protocal);
+    }
 
+    /**
+     * 设置好路由关系.
+     * @param GhostRequest $request
+     */
+    protected function setShellSessionId(GhostRequest $request) : void
+    {
+        $storage = $this->clone->storage;
+        $routes = $storage->shellSessionRoutes ?? [];
+        $shellName = $request->getInput()->getShellName();
+        $routes[$shellName] = $request->getShellSessionId();
+        $storage->shellSessionRoutes = $routes;
     }
 
     /**
@@ -123,4 +140,16 @@ class IGhostInputReceiver implements GhostInputReceiver
         $this->clone->noState();
         return $request->output(new SessionBusyInt());
     }
+
+
+    protected function wrapCloneRequest(GhostRequest $request) : CloneRequest
+    {
+        return new ICloneRequest(
+            $request->getInput(),
+            $request->isAsync(),
+            $request->requireTinyResponse(),
+            $request->isStateless()
+        );
+    }
+
 }

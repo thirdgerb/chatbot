@@ -103,9 +103,10 @@ interface IntercomMsg extends Message, Protocal
     /*------- methods -------*/
 
     /**
-     * 产生新的渠道消息.
+     * 衍生新的消息.
      *
      * @param HostMsg|null $message
+     * @param string|null $shellName
      * @param string|null $sessionId
      * @param string|null $convoId
      * @param string|null $guestId
@@ -115,6 +116,7 @@ interface IntercomMsg extends Message, Protocal
      */
     public function divide(
         HostMsg $message = null,
+        string $shellName = null,
         string $sessionId = null,
         string $convoId = null,
         string $guestId = null,

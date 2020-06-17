@@ -27,22 +27,6 @@ interface Deliver
     public function withSlots(array $slots) : Deliver;
 
     /**
-     * 指定消息发送的用户. 默认是 空字符串.
-     * @param string $guestId
-     * @return Deliver
-     */
-    public function toGuest(string $guestId) : Deliver;
-
-    /**
-     * 指定消息发送的 CloneId. 与当前 Clone 不同的消息不会同步发送.
-     *
-     * @param string $cloneId
-     * @param string $guestId
-     * @return Deliver
-     */
-    public function toClone(string $cloneId, string $guestId = '') : Deliver;
-
-    /**
      * 指定发送的时间.
      * @param int $timestamp
      * @return Deliver
@@ -101,5 +85,8 @@ interface Deliver
      */
     public function debug(string $intent, array $slots = array()) : Deliver;
 
+    /**
+     * @return Dialog
+     */
     public function over() : Dialog;
 }

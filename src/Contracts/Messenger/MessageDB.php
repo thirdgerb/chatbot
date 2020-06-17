@@ -12,6 +12,7 @@
 namespace Commune\Contracts\Messenger;
 
 use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
 
 
@@ -22,18 +23,11 @@ interface MessageDB
 {
 
     /**
-     * 记录一个 Input 消息.
+     * 记录一组消息. 通常是一个异步或者协程行为.
      * @param InputMsg $input
-     * @return bool
+     * @param OutputMsg ...$outputs
      */
-    public function recordInput(InputMsg $input) : bool;
-
-    /**
-     * 记录一个消息
-     * @param IntercomMsg $message
-     * @return bool
-     */
-    public function record(IntercomMsg $message) : bool;
+    public function recordBatch(InputMsg $input, OutputMsg ...$outputs) : void;
 
     /**
      * @param callable $fetcher

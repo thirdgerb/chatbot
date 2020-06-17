@@ -23,16 +23,26 @@ use Commune\Protocals\IntercomMsg;
  */
 interface InputMsg extends IntercomMsg
 {
+    const ENV_KEY_QUERY = 'query';
 
     /*----- 额外的信息 -----*/
 
+    /**
+     * @return string
+     */
     public function getSceneId() : string;
 
+    /**
+     * @return array
+     */
     public function getEnv() : array;
 
+    /**
+     * @return Comprehension
+     */
     public function getComprehension() : Comprehension;
 
-    /*----- with -----*/
+    /*----- setter -----*/
 
     /**
      * @param string $sceneId

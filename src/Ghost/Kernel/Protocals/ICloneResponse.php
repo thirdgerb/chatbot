@@ -37,6 +37,11 @@ class ICloneResponse implements CloneResponse
     protected $tiny;
 
     /**
+     * @var bool
+     */
+    protected $async;
+
+    /**
      * @var int
      */
     protected $errcode;
@@ -65,6 +70,7 @@ class ICloneResponse implements CloneResponse
      * ICloneResponse constructor.
      * @param string $traceId
      * @param bool $tiny
+     * @param bool $async
      * @param int $errcode
      * @param string $errmsg
      * @param InputMsg|null $input
@@ -74,6 +80,7 @@ class ICloneResponse implements CloneResponse
     public function __construct(
         string $traceId,
         bool $tiny,
+        bool $async,
         int $errcode = AppResponse::SUCCESS,
         string $errmsg = '',
         InputMsg $input = null,
@@ -83,6 +90,7 @@ class ICloneResponse implements CloneResponse
     {
         $this->traceId = $traceId;
         $this->tiny = $tiny;
+        $this->async = $async;
         $this->errcode = $errcode;
 
         $this->errmsg = empty($errmsg)
@@ -95,6 +103,12 @@ class ICloneResponse implements CloneResponse
 
         SpyAgency::incr(static::class);
     }
+
+    public function isAsync(): bool
+    {
+        return $this->async;
+    }
+
 
     public function requireTinyResponse(): bool
     {
@@ -142,6 +156,22 @@ class ICloneResponse implements CloneResponse
     {
         return StringUtils::namespaceSlashToDot(static::class);
     }
+
+    public function setConvoId(string $convoId): void
+    {
+        $this->input->setConvoId($convoId);
+
+        $this->asyncInputs = array_map(function(InputMsg $input) use ($convoId) {
+            $input->setConvoId($convoId);
+            return $input;
+        }, $this->asyncInputs);
+
+        $this->outputs = array_map(function(OutputMsg $output) use ($convoId) {
+            $output->setConvoId($convoId);
+            return $output;
+        }, $this->asyncInputs);
+    }
+
 
     public function __destruct()
     {
