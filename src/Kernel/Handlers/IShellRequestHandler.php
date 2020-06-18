@@ -38,7 +38,7 @@ class IShellRequestHandler implements ShellRequestHandler
 {
     protected $middleware = [
         // guard
-        ShellPipes\InputGuardPipe::class,
+        ShellPipes\ShellGuardPipe::class,
         // api 管道
         ShellPipes\InputApiPipe::class,
         // command

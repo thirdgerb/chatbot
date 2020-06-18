@@ -11,9 +11,6 @@
 
 namespace Commune\Blueprint;
 
-use Commune\Blueprint\Configs\PlatformConfig;
-use Commune\Blueprint\Framework\App;
-
 /**
  * 平台是 Host 在服务器上启动的服务端程序.
  * 一个异构的 Host 可能在不同服务器上有多种 Platform
@@ -26,7 +23,6 @@ use Commune\Blueprint\Framework\App;
  */
 interface Platform
 {
-    const KEY_CONFIG = 'config';
 
     /**
      * 运行 Platform

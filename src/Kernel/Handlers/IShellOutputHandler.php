@@ -29,6 +29,7 @@ class IShellOutputHandler implements ShellOutputHandler
 {
 
     protected $middleware = [
+        ShellPipes\ShellGuardPipe::class,
         ShellPipes\OutputRenderPipe::class,
     ];
 

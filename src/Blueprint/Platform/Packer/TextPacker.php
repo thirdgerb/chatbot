@@ -9,13 +9,27 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Kernel\ShellOutputPipes;
+namespace Commune\Blueprint\Platform\Packer;
+
+use Commune\Blueprint\Platform\Packer;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class OutputGuardPIpe
+interface TextPacker extends Packer
 {
+
+    /**
+     * @return string
+     */
+    public function getRequest() : string;
+
+    /**
+     * @param string[] $response
+     * @return void
+     */
+    public function sendResponse($response) : void;
+
 
 }

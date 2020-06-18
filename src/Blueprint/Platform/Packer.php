@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Blueprint\Platform;
+
 use Commune\Blueprint\Platform;
 
 

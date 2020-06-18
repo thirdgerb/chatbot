@@ -20,7 +20,7 @@ use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class InputGuardPipe extends AShellPipe
+class ShellGuardPipe extends AShellPipe
 {
     protected function handleInput(
         ShellInputRequest $request,
