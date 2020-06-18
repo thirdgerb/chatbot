@@ -18,12 +18,6 @@ use Commune\Protocals\IntercomMsg;
  */
 interface ShellOutputRequest extends AppRequest
 {
-
-    /**
-     * @return ShellOutputResponse|null
-     */
-    public function validate() : ? ShellOutputResponse;
-
     /**
      * @return bool
      */

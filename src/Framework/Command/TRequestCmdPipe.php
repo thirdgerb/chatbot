@@ -11,7 +11,9 @@
 
 namespace Commune\Framework\Command;
 
-use Commune\Blueprint\Framework\Auth\Policy;
+use Commune\Blueprint\Kernel\Protocals\HasInput;
+use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocals\Intercom\InputMsg;
 use Psr\Log\LoggerInterface;
 use Illuminate\Console\Parser;
 use Commune\Protocals\Comprehension;
@@ -24,6 +26,7 @@ use Commune\Blueprint\Exceptions\Logic\InvalidClassException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
  */
 trait TRequestCmdPipe
 {
@@ -38,28 +41,32 @@ trait TRequestCmdPipe
 
     abstract public function getLogger() : LoggerInterface;
 
-    abstract public function getCommandMark() : string;
 
-    abstract public function getInputText(AppRequest $request) : ? string;
+    public function getInputText(InputMsg $input): ? string
+    {
+        $message = $input->getMessage();
+        if ($message instanceof VerbalMsg) {
+            // 区分大小写
+            return $message->getText();
+        }
+
+        return null;
+    }
+
+
 
     /**
-     * 身份校验相关的权限名.
-     * @see Policy
-     * @return string[]
+     * @param AppRequest $request
+     * @param \Closure $next
+     * @return AppResponse
      */
-    abstract public function getAuthPolicies() : array;
-
-    /**
-     * @return string[]
-     *  [
-     *    commandName => commandClassName
-     *  ]
-     */
-    abstract public function getCommands(): array;
-
-
     public function tryHandleCommand(AppRequest $request, \Closure $next) : AppResponse
     {
+
+        if (!$request instanceof HasInput) {
+            return $next($request);
+        }
+
         $this->init();
 
         $input = $request->getInput();
@@ -71,7 +78,7 @@ trait TRequestCmdPipe
         // 不存在的话, 尝试检查一下.
         if (!$command->hasCmdStr()) {
 
-            $text = $this->getInputText($request);
+            $text = $this->getInputText($input);
 
             $cmdStr = null;
             if (!empty($text)) {
@@ -95,7 +102,7 @@ trait TRequestCmdPipe
 
         $cmdStr = $command->getCmdStr();
         return isset($cmdStr)
-            ? $this->matchCommand($request, $cmdStr, $next)
+            ? $this->runMatchedCommand($request, $cmdStr, $next)
             : $next($request);
     }
 
@@ -136,7 +143,7 @@ trait TRequestCmdPipe
         return self::$commandNames[$name] ?? [];
     }
 
-    public function matchCommand(
+    public function runMatchedCommand(
         AppRequest $request,
         string $cmdStr,
         \Closure $next

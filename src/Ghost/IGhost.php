@@ -11,6 +11,8 @@
 
 namespace Commune\Ghost;
 
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\HasInput;
 use Commune\Ghost\Bootstrap;
 use Commune\Framework\App\AbsAppKernel;
 use Commune\Blueprint\Configs\GhostConfig;
@@ -26,6 +28,7 @@ use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
 use Commune\Protocals\Comprehension;
+use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Protocal\ProtocalMatcher;
 
@@ -97,10 +100,15 @@ class IGhost extends AbsAppKernel implements Ghost
 
     /**
      * @param ReqContainer $container
-     * @param InputMsg $input
+     * @param string $sessionId
+     * @param string|null $convoId
      * @return Cloner
      */
-    public function makeSession(ReqContainer $container, InputMsg $input): Session
+    public function newCloner(
+        ReqContainer $container,
+        string $sessionId,
+        string $convoId = null
+    ): Cloner
     {
         if (!$this->activated) {
             throw new CommuneBootingException(
@@ -108,14 +116,30 @@ class IGhost extends AbsAppKernel implements Ghost
             );
         }
 
-        $cloner = new ICloner($this, $container, $input);
-
-        $container->share(InputMsg::class, $input);
-        $container->share(Comprehension::class, $input->comprehension);
-        $container->share(Cloner::class, $cloner);
+        $cloner = new ICloner($this, $container, $sessionId, $convoId);
 
         return $cloner;
     }
+
+    protected function makeSession(ReqContainer $container, AppRequest $request): Session
+    {
+        // share
+        $container->share(AppRequest::class, $request);
+        $container->share(get_class($request), $request);
+
+        $convoId = null;
+        if ($request instanceof HasInput) {
+            $input = $request->getInput();
+            $container->share(InputMsg::class, $input);
+            $container->share(Comprehension::class, $input->comprehension);
+            $container->share(HostMsg::class, $input->getMessage());
+        }
+
+        $cloner = $this->newCloner($container, $request->getSessionId());
+        $container->share(Cloner::class, $cloner);
+        return $cloner;
+    }
+
 
     /*--------- protocals ---------*/
 

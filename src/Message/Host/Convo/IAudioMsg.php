@@ -14,7 +14,6 @@ namespace Commune\Message\Host\Convo;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\Convo\Media\AudioMsg;
-use Commune\Support\Struct\Struct;
 
 
 /**
@@ -24,11 +23,6 @@ use Commune\Support\Struct\Struct;
  */
 class IAudioMsg extends AbsMessage implements AudioMsg
 {
-
-    public function __construct(string $resource)
-    {
-        parent::__construct(['resource' => $resource]);
-    }
 
     public static function stub(): array
     {
@@ -40,11 +34,6 @@ class IAudioMsg extends AbsMessage implements AudioMsg
     public static function relations(): array
     {
         return [];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['resource'] ?? '');
     }
 
     public function getProtocalId(): string

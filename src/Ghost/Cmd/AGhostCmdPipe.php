@@ -40,7 +40,6 @@ abstract class AGhostCmdPipe extends AClonePipe implements RequestCmdPipe
             }
         }
 
-
         $response = $this->tryHandleCommand($request, $next);
         return $response instanceof GhostResponse
             ? $response
@@ -58,20 +57,6 @@ abstract class AGhostCmdPipe extends AClonePipe implements RequestCmdPipe
         return $this->cloner->logger;
     }
 
-    public function getInputText(AppRequest $request): ? string
-    {
-        if (!$request instanceof GhostRequest) {
-            return null;
-        }
-
-        $message = $request->getInput()->getMessage();
-        if ($message instanceof VerbalMsg) {
-            // 区分大小写
-            return $message->getText();
-        }
-
-        return null;
-    }
 
 
 }

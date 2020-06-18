@@ -18,15 +18,9 @@ interface AppRequest extends AppProtocal
 {
 
     /**
-     * 自己校验, 如果出错则返回响应.
-     * @return AppResponse|null
+     * @return null|string
      */
-    public function validate();
-
-    /**
-     * @return bool
-     */
-    public function isStateless() : bool;
+    public function isInvalid() : ? string;
 
     /**
      * @return string

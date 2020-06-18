@@ -9,44 +9,41 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Kernel\ClonePipes;
+namespace Commune\Kernel\ShellPipes;
 
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Contracts\Api\ApiController;
 use Commune\Protocals\HostMsg\Convo\ApiMsg;
 use Commune\Support\Utils\TypeUtils;
-
+use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 
 /**
- * Api 请求的管道. 将 Ghost 作为 API Server 来响应.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class CloneApiHandlePipe extends AClonePipe
+class InputApiPipe extends AShellPipe
 {
-
-    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
+    protected function handleInput(
+        ShellInputRequest $request,
+        \Closure $next
+    ): ShellInputResponse
     {
         $message = $request->getInput();
         if (!$message instanceof ApiMsg) {
             return $next($request);
         }
 
-        // 无状态请求.
-        $this->cloner->noState();
-
         $response = $this->runApi($request);
 
-        // ghost 不允许处理 api message.
+        // shell 处理不了的 api 消息给 ghost
         if (!isset($response)) {
-            return $request->response(AppResponse::HANDLER_NOT_FOUND);
+            return $next($request);
         }
 
-        if (!$response instanceof GhostResponse) {
+        if (!$response instanceof ShellOutputResponse) {
             $type = TypeUtils::getType($response);
-            $this->cloner->logger->error(
+            $this->session->logger->error(
                 __METHOD__
                 . ' invalid response from api handler, api '
                 . $message->getApiName()
@@ -54,11 +51,10 @@ class CloneApiHandlePipe extends AClonePipe
             );
         }
 
-
         return $response;
     }
 
-    protected function runApi(GhostRequest $request)
+    protected function runApi(ShellInputRequest $request)
     {
         $input = $request->getInput();
         $message = $input->getMessage();
@@ -66,8 +62,8 @@ class CloneApiHandlePipe extends AClonePipe
             return null;
         }
 
-        $controller = $this->cloner->ghost->firstProtocalHandler(
-            $this->cloner->container,
+        $controller = $this->session->shell->firstProtocalHandler(
+            $this->session->container,
             $message,
             ApiController::class
         );
@@ -81,5 +77,15 @@ class CloneApiHandlePipe extends AClonePipe
          */
         return $controller($request, $message);
     }
+
+    protected function handleOutput(
+        ShellOutputRequest $request,
+        \Closure $next
+    ): ShellOutputResponse
+    {
+        return $next($request);
+    }
+
+
 
 }

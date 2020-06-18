@@ -27,7 +27,9 @@ class CloneMessageFilterPipe extends AClonePipe
     /**
      * @var  string[]
      */
-    protected $unsupportedMessages = [];
+    protected $unsupportedMessages = [
+
+    ];
 
     protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
@@ -63,16 +65,17 @@ class CloneMessageFilterPipe extends AClonePipe
 
         foreach ($this->unsupportedMessages as $messageType) {
             if (is_a($messageType, $messageType, TRUE)) {
-                return $this->unsupported($request);
+                return $this->unsupported($request, $messageType);
             }
         }
 
         return null;
     }
 
-    protected function unsupported(GhostRequest $request) : GhostResponse
+    protected function unsupported(GhostRequest $request, string $messageType = null) : GhostResponse
     {
-        return $request->output(new IUnsupportedMsg());
+        $data = isset($messageType) ? ['type' => $messageType] : [];
+        return $request->output(new IUnsupportedMsg($data));
     }
 
 

@@ -17,6 +17,7 @@ use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Shell;
 use Commune\Contracts\Cache;
 use Psr\Log\LoggerInterface;
+use Commune\Blueprint\Shell\Session\ShellStorage;
 
 
 /**
@@ -25,12 +26,12 @@ use Psr\Log\LoggerInterface;
  *
  * @property-read Shell $shell
  * @property-read ShellConfig $config
- * @property-read Session\SessionStorage $storage
+ * @property-read ShellStorage $storage
  * @property-read LoggerInterface $logger
  * @property-read Cache $cache
  * @property-read ReqContainer $container
  */
 interface ShellSession extends Session
 {
-
+    public function isSingletonInstanced($name) : bool;
 }

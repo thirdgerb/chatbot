@@ -45,7 +45,7 @@ class ProtocalMatcher
 
     public function addOption(ProtocalOption $option) : void
     {
-        $id = $option->interface;
+        $id = $option->getId();
         $this->options[$id] = $option;
     }
 
@@ -63,13 +63,7 @@ class ProtocalMatcher
                 $optInt = $option->interface;
 
                 $checkInterface = isset($interface);
-                // interface 校验要求定义的 option 必须是传入的 interface 的子集.
-                $validInterface = !empty($optInt)
-                    && (
-                        // 绝大多数情况是全等的.
-                        $optInt === $interface
-                        || is_a($optInt, $interface, true)
-                    );
+                $validInterface = $this->isValidInterface($optInt, $interface);
 
                 // 需要检查 interface, 但是不一致.
                 if ($checkInterface && !$validInterface) {
@@ -103,8 +97,23 @@ class ProtocalMatcher
 
                     yield $handlerOption;
                 }
+
+                // 默认的 handler
+                $defaultHandler = $option->getDefaultHandler();
+                if (isset($defaultHandler)) {
+                    yield $defaultHandler;
+                }
             }
         }
+    }
+
+    protected function isValidInterface(string $optInt, string $interface = null) : bool
+    {
+        // interface 校验要求定义的 option 必须是传入的 interface 的子集.
+        return  $optInt === $interface
+            || (
+                !empty($optInt) && is_a($optInt, $interface, true)
+            );
     }
 
     public function matchFirst(Protocal $protocal, string $interface = null) : ? HandlerOption

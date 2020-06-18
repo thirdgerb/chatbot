@@ -52,26 +52,6 @@ interface Session
      */
     public function getAppId() : string;
 
-    /*----- status -----*/
-
-    /**
-     * 设置为无状态请求
-     */
-    public function noState() : void;
-
-    /**
-     * 是否是无状态的 session
-     * @return bool
-     */
-    public function isStateless() : bool;
-
-
-    /**
-     * @return bool
-     */
-    public function isFinished() : bool;
-
-
     /*----- component -----*/
 
     /**

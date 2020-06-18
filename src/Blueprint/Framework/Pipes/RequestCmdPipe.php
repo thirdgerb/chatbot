@@ -25,6 +25,16 @@ interface RequestCmdPipe extends RequestPipe
      */
     public function hasCommand(string $commandName) : bool;
 
+
+    /**
+     * @return string[]
+     *  [
+     *    commandClassName
+     *  ]
+     */
+    public function getCommands(): array;
+
+
     /**
      * 命令的类名, 在 ioc 容器里用它来生成命令对象.
      * @param string $commandName
@@ -50,5 +60,13 @@ interface RequestCmdPipe extends RequestPipe
      * @return string
      */
     public function getCommandDesc(string $commandName) : string;
+
+
+    /**
+     * 身份校验相关的权限名.
+     * @see Policy
+     * @return string[]
+     */
+    public function getAuthPolicies() : array;
 
 }

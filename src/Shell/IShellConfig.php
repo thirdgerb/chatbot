@@ -12,7 +12,13 @@
 namespace Commune\Shell;
 
 use Commune\Blueprint\Configs\ShellConfig;
+use Commune\Blueprint\Kernel\Handlers\ShellOutputHandler;
+use Commune\Blueprint\Kernel\Handlers\ShellRequestHandler;
+use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
+use Commune\Kernel\Handlers\IShellRequestHandler;
 use Commune\Support\Option\AbsOption;
+use Commune\Support\Protocal\ProtocalOption;
 
 
 /**
@@ -30,7 +36,23 @@ class IShellConfig extends AbsOption implements ShellConfig
             'providers' => [],
             'options' => [],
             'components' => [],
-            'protocals' => [],
+            'protocals' => [
+                [
+                    'protocal' => ShellInputRequest::class,
+                    'interface' => ShellRequestHandler::class,
+                    'handlers' => [
+                        'handler' => IShellRequestHandler::class,
+                    ],
+                ],
+                [
+                    'protocal' => ShellOutputRequest::class,
+                    'interface' => ShellOutputHandler::class,
+                    'handlers' => [
+
+                    ],
+                ]
+
+            ],
             'sessionExpire' => 864000,
             'sessionLockerExpire' => 0,
         ];
@@ -38,7 +60,9 @@ class IShellConfig extends AbsOption implements ShellConfig
 
     public static function relations(): array
     {
-        return [];
+        return [
+            'protocals[]' => ProtocalOption::class,
+        ];
     }
 
 

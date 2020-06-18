@@ -49,7 +49,7 @@ use Commune\Support\Protocal\ProtocalOption;
  * ## 协议定义.
  *
  * @property-read ProtocalOption[] $protocals               Ghost 处理协议的配置.
- *
+
  * ## Session 配置
  *
  * @property-read int $sessionExpire                        会话的过期时间, 秒

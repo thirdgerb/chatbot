@@ -16,9 +16,6 @@ use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Kernel\AppKernel;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
-use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * Host 的灵魂. 对话机器人的内核.
@@ -34,14 +31,15 @@ interface Ghost extends App, AppKernel
 
     /**
      * @param ReqContainer $container
-     * @param InputMsg $input
+     * @param string $sessionId
+     * @param string|null $convoId
      * @return Cloner
      */
-    public function newCloner(ReqContainer $container, InputMsg $input) : Cloner;
+    public function newCloner(
+        ReqContainer $container,
+        string $sessionId,
+        string $convoId = null
+    ): Cloner;
 
-    /**
-     * @param GhostRequest $request
-     * @return GhostResponse
-     */
-    public function handleRequest(GhostRequest $request) : GhostResponse;
+
 }

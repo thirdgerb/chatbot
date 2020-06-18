@@ -218,11 +218,28 @@ class TypeUtils
             || $value === 'false';
     }
 
+    /**
+     * 字段不能是 empty
+     * @param array $data
+     * @param array $fields
+     * @return null|string
+     */
     public static function requireFields(array $data, array $fields) : ? string
     {
         foreach ($fields as $field) {
             if (empty($data[$field])) {
                 return "$field is required";
+            }
+        }
+
+        return null;
+    }
+
+    public static function issetFields(array $data, array $fields) : ? string
+    {
+        foreach ($fields as $field) {
+            if (!isset($data[$field])) {
+                return "$field should not be null";
             }
         }
 

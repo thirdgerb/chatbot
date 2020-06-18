@@ -20,6 +20,7 @@ use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Framework\Event\FinishRequest;
 use Commune\Framework\Event\StartRequest;
+use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\TypeUtils;
 use Psr\Log\LoggerInterface;
 use Commune\Blueprint\Exceptions\CommuneLogicException;
@@ -82,6 +83,23 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
         }
     }
 
+    public function firstProtocalHandler(
+        ReqContainer $container,
+        Protocal $protocal,
+        string $handlerInterface = null
+    ): ? callable
+    {
+        $each = $this->eachProtocalHandler(
+            $container,
+            $protocal,
+            $handlerInterface
+        );
+
+        $caller = ArrayUtils::first($each);
+        return is_callable($caller) ? $caller : null;
+    }
+
+
     /**
      * 廉价地生成一个 container 的唯一ID
      * @param AppRequest $request
@@ -120,29 +138,11 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
         $requestStart = microtime(true);
 
         try {
-
-            $failedResponse = $request->validate();
-
-            if (isset($failedResponse)) {
-                $error = $failedResponse->getErrmsg();
-                $this->requestLog($logger, "badRequest: $error", $traceId);
-                return $failedResponse;
-            }
-
             // 根据请求衍生的唯一ID 来生成 container 的容器.
             $container = $this->newReqContainerIns($this->makeContainerId($request));
 
-            // share
-            $container->share(AppRequest::class, $request);
-            $container->share(get_class($request), $request);
-
             // 创建 Session
             $session = $this->makeSession($container, $request);
-
-            // 如果是无状态请求.
-            if ($request->isStateless()) {
-                $session->noState();
-            }
 
             // boot 所有请求级服务.
             $this->getServiceRegistry()->bootReqServices($container);

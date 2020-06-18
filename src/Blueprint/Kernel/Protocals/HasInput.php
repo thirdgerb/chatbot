@@ -9,13 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Kernel\ShellInputPipes;
+namespace Commune\Blueprint\Kernel\Protocals;
 
+use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ShellInputParserPipe
+interface HasInput
 {
+
+    public function getInput() : InputMsg;
 
 }

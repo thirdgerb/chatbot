@@ -11,9 +11,7 @@
 
 namespace Commune\Message\Host\Convo;
 
-use Commune\Ghost\Support\ContextUtils;
 use Commune\Protocals\HostMsg;
-use Commune\Support\Struct\Struct;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\Convo\UnsupportedMsg;
 use Commune\Support\Utils\StringUtils;
@@ -29,9 +27,9 @@ use Commune\Support\Utils\TypeUtils;
 class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
 {
 
-    public function __construct(string $type = '')
+    public static function instance(string $type = '')
     {
-        parent::__construct(['type' => $type]);
+        return new static(['type' => $type]);
     }
 
     public static function stub(): array
@@ -39,11 +37,6 @@ class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
         return [
             'type' => '',
         ];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['type'] ?? '');
     }
 
     public static function relations(): array
@@ -58,13 +51,13 @@ class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
 
     public function getProtocalId(): string
     {
-        return TypeUtils::normalizeClassName(UnsupportedMsg::class);
+        return StringUtils::namespaceSlashToDot(UnsupportedMsg::class);
     }
 
 
     public function getText(): string
     {
-        return TypeUtils::normalizeClassName(static::class);
+        return $this->getProtocalId();
     }
 
     public function isEmpty(): bool

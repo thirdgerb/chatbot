@@ -21,8 +21,6 @@ namespace Commune\Blueprint\Framework\Session;
  */
 interface SessionStorage extends \ArrayAccess
 {
-    const FIELD_ONCE_NAME = 'onceData';
-
     public function save() : void;
 
 }

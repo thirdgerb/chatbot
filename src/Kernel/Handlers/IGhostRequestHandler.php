@@ -12,11 +12,12 @@
 namespace Commune\Kernel\Handlers;
 
 use Commune\Blueprint\CommuneEnv;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Framework\Spy\SpyAgency;
@@ -75,10 +76,17 @@ class IGhostRequestHandler implements GhostRequestHandler
 
     public function __invoke(GhostRequest $request): GhostResponse
     {
-        $response = $request->validate();
+        $invalid = $request->isInvalid();
+        if (isset($invalid)) {
+            return $request->response(
+                AppResponse::BAD_REQUEST,
+                $invalid
+            );
+        }
 
-        if (isset($response)) {
-            return $response;
+
+        if ($request->isStateless()) {
+            $this->cloner->noState();
         }
 
         $middleware = $this->middleware;

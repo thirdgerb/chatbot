@@ -11,20 +11,12 @@
 
 namespace Commune\Blueprint\Kernel\Protocals;
 
-use Commune\Protocals\Intercom\InputMsg;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellInputResponse extends AppResponse
+interface ShellInputResponse extends AppResponse, HasInput
 {
 
     public function isAsync() : bool;
-
-    /**
-     * @return InputMsg
-     */
-    public function getInput() : InputMsg;
-
 }

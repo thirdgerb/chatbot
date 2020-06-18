@@ -58,16 +58,6 @@ abstract class ASession implements Session, HasIdGenerator
      */
     protected $traceId;
 
-    /**
-     * @var bool
-     */
-    protected $finished = false;
-
-    /**
-     * @var bool
-     */
-    protected $stateless = false;
-
 
     /**
      * ASession constructor.
@@ -128,10 +118,6 @@ abstract class ASession implements Session, HasIdGenerator
         return $this->getApp()->getId();
     }
 
-    public function isFinished(): bool
-    {
-        return $this->finished;
-    }
 
     /*------ event ------*/
 
@@ -154,15 +140,6 @@ abstract class ASession implements Session, HasIdGenerator
     }
 
 
-    public function noState(): void
-    {
-        $this->stateless = true;
-    }
-
-    public function isStateless(): bool
-    {
-        return $this->stateless;
-    }
 
    /*------ getter ------*/
 
@@ -178,7 +155,7 @@ abstract class ASession implements Session, HasIdGenerator
         return null;
     }
 
-    protected function isSingletonInstanced($name) : bool
+    public function isSingletonInstanced($name) : bool
     {
         $injectable = static::SINGLETONS[$name] ?? null;
 
@@ -196,13 +173,10 @@ abstract class ASession implements Session, HasIdGenerator
 
     public function finish(): void
     {
-        if (!$this->isStateless()) {
-            $this->saveSession();
-        }
+        $this->saveSession();
 
         unset($this->listened);
         unset($this->singletons);
-        unset($this->finished);
         $this->flushInstances();
 
         // container

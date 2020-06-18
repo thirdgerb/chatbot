@@ -12,7 +12,6 @@
 namespace Commune\Message\Host\Convo;
 
 use Commune\Protocals\HostMsg;
-use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\Convo\ArrayMsg;
 use Commune\Support\Utils\TypeUtils;

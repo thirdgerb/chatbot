@@ -26,10 +26,6 @@ use Commune\Support\Utils\StringUtils;
 class IImageMsg extends AbsMessage implements ImageMsg
 {
 
-    public function __construct(string $resource)
-    {
-        parent::__construct(['resource' => $resource]);
-    }
 
     public static function stub(): array
     {
@@ -41,11 +37,6 @@ class IImageMsg extends AbsMessage implements ImageMsg
     public static function relations(): array
     {
         return [];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['resource'] ?? '');
     }
 
     public function getText(): string

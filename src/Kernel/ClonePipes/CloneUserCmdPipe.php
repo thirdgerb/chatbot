@@ -30,7 +30,6 @@ class CloneUserCmdPipe extends AGhostCmdPipe
         return [];
     }
 
-
     public function getCommands(): array
     {
         return $this->cloner->config->userCommands;

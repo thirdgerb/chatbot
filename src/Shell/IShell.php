@@ -111,10 +111,12 @@ class IShell extends AbsAppKernel implements Shell
         return $session;
     }
 
-
     protected function isValidFinaleResponse(AppProtocal $protocal): bool
     {
         return $protocal instanceof ShellOutputResponse;
     }
+
+
+
 
 }

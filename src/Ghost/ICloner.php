@@ -18,6 +18,7 @@ use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Contracts\Cache;
 use Commune\Framework\ASession;
+use Commune\Protocals\Intercom\OutputMsg;
 use Psr\Log\LoggerInterface;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\IntercomMsg;
@@ -35,6 +36,7 @@ class ICloner extends ASession implements Cloner
         'logger' => Cloner\ClonerLogger::class,
         'storage' => Cloner\ClonerStorage::class,
 
+        'input' => InputMsg::class,
         'scene' => Cloner\ClonerScene::class,
         'scope' => Cloner\ClonerScope::class,
         'matcher' => Ghost\Tools\Matcher::class,
@@ -59,11 +61,6 @@ class ICloner extends ASession implements Cloner
      * @var GhostConfig
      */
     protected $_config;
-
-    /**
-     * @var InputMsg
-     */
-    protected $_input;
 
     /**
      * @var string
@@ -92,26 +89,49 @@ class ICloner extends ASession implements Cloner
      */
     protected $quit = false;
 
+
+    /**
+     * @var bool
+     */
+    protected $stateless = false;
+
     /**
      * @var bool
      */
     protected $noConversationState = false;
 
-    public function __construct(Ghost $ghost, ReqContainer $container, InputMsg $input)
+    public function __construct(
+        Ghost $ghost,
+        ReqContainer $container,
+        string $sessionId,
+        string $convoId = null
+    )
     {
         $this->_ghost = $ghost;
         $this->_config = $ghost->getConfig();
-        $this->_input = $input;
-        $this->inputConvoId = $input->getConversationId();
+        $this->inputConvoId = $convoId ?? '';
 
         // expire
         $this->expire = $this->_config->sessionExpire;
-        parent::__construct($container, $input->getSessionId());
+        parent::__construct($container, $sessionId);
     }
 
     public function getApp(): App
     {
         return $this->_ghost;
+    }
+
+
+    /*-------- session 的状态. 完全无状态的, session 不会读取状态相关的缓存 ---------*/
+
+    public function noState(): void
+    {
+        $this->stateless = true;
+    }
+
+    public function isStateless(): bool
+    {
+        return $this->stateless;
     }
 
     /*-------- conversation id ---------*/
@@ -151,8 +171,8 @@ class ICloner extends ASession implements Cloner
     protected function makeConvoId() : string
     {
         $clonerId = $this->getSessionId();
-        $messageId = $this->_input->getMessageId();
-        return sha1("cloner:$clonerId:message:$messageId");
+        $traceId = $this->_container->getId();
+        return sha1("cloner:$clonerId:req:$traceId");
     }
 
     protected function getConvoIdFromCache() : ? string
@@ -203,8 +223,6 @@ class ICloner extends ASession implements Cloner
                 return $this->_container;
             case 'config' :
                 return $this->_config;
-            case 'input' :
-                return $this->_input;
             default:
                 return parent::__get($name);
         }
@@ -264,18 +282,10 @@ class ICloner extends ASession implements Cloner
     /*------- output -------*/
 
 
-    public function output(IntercomMsg $output, IntercomMsg ...$outputs): void
+    public function output(OutputMsg $output, OutputMsg ...$outputs): void
     {
         array_unshift($outputs, $output);
         $this->outputs = array_merge($this->outputs, $outputs);
-//        $this->outputs = array_reduce(
-//            $outputs,
-//            function($outputs, IntercomMsg $output){
-//                $outputs[] = $output;
-//                return $outputs;
-//            },
-//            $this->outputs
-//        );
     }
 
     public function getOutputs(): array
@@ -325,9 +335,13 @@ class ICloner extends ASession implements Cloner
 
     protected function saveSession(): void
     {
+        // 无状态的请求不做任何缓存.
+        if ($this->isStateless()) {
+            return;
+        }
+
         if ($this->isConversationEnd()) {
             $this->ioDeleteConvoIdCache();
-
         }
 
         // storage 更新.

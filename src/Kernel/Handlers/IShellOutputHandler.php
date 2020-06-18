@@ -13,11 +13,13 @@ namespace Commune\Kernel\Handlers;
 
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
 use Commune\Blueprint\Kernel\Handlers\ShellOutputHandler;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 use Commune\Blueprint\Shell\ShellSession;
 use Commune\Contracts\Messenger\MessageDB;
 use Commune\Framework\Spy\SpyAgency;
+use Commune\Kernel\ShellPipes;
 
 
 /**
@@ -27,7 +29,7 @@ class IShellOutputHandler implements ShellOutputHandler
 {
 
     protected $middleware = [
-
+        ShellPipes\OutputRenderPipe::class,
     ];
 
     /**
@@ -46,15 +48,19 @@ class IShellOutputHandler implements ShellOutputHandler
 
     public function __invoke(ShellOutputRequest $request): ShellOutputResponse
     {
-        $response = $request->validate();
-
-        if (isset($response)) {
-            return $response;
+        $invalid = $request->isInvalid();
+        if (isset($invalid)) {
+            return $request->response(
+                AppResponse::BAD_REQUEST,
+                $invalid
+            );
         }
 
         if ($request->isAsync()) {
             $request = $this->fillOutputsInRequest($request);
         }
+
+        $middleware = $this->middleware;
 
         if (empty($middleware)) {
             return $this->finale($request);

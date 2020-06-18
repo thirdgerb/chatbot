@@ -20,6 +20,7 @@ use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Framework\Auth\Authority;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\Registry\OptRegistry;
 
@@ -66,6 +67,22 @@ use Commune\Support\Registry\OptRegistry;
  */
 interface Cloner extends Session
 {
+
+    /*----- status -----*/
+
+    /**
+     * 设置为无状态请求
+     */
+    public function noState() : void;
+
+    /**
+     * 是否是无状态的 session
+     * @return bool
+     */
+    public function isStateless() : bool;
+
+    /*----- conversation -----*/
+
     /**
      * @return string
      */
@@ -91,10 +108,10 @@ interface Cloner extends Session
 
     /**
      * 输出消息.
-     * @param HostMsg $output
-     * @param HostMsg[] $outputs
+     * @param OutputMsg $output
+     * @param OutputMsg[] $outputs
      */
-    public function output(HostMsg $output, HostMsg ...$outputs) : void;
+    public function output(OutputMsg $output, OutputMsg ...$outputs) : void;
 
     /**
      * 获得所有的输出消息.
@@ -136,5 +153,10 @@ interface Cloner extends Session
      */
     public function unlock() : bool;
 
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function isSingletonInstanced($name) : bool;
 
 }

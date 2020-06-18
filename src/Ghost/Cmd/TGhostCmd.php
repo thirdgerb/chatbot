@@ -66,16 +66,17 @@ trait TGhostCmd
             return null;
         }
 
-        $input = $request->getInput();
-        foreach ($messages as $message) {
-            $this->cloner->output($input->output($message));
-        }
-
         if (!$this->stillToNextPipe) {
             $this->cloner->noState();
-            return $request->success($this->cloner);
+            return $request->output(...$this->outputs);
 
         } else {
+
+            $input = $request->getInput();
+            foreach ($messages as $message) {
+                $this->cloner->output($input->output($message));
+            }
+
             return null;
         }
     }

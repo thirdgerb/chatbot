@@ -24,10 +24,13 @@ use Commune\Support\Utils\TypeUtils;
  * @property-read string $protocal              协议的名称.
  * @property-read string $interface             Handler 的 interface, 同时也可作为分组. 允许为空.
  * @property-read HandlerOption[] $handlers     定义的 handlers.
+ * @property-read string|null $default
  */
 class ProtocalOption extends AbsOption
 {
     protected $_id;
+
+    protected $_default;
 
     public static function stub(): array
     {
@@ -36,6 +39,7 @@ class ProtocalOption extends AbsOption
             'interface' => '',
             'handlers' => [
             ],
+            'default' => null,
         ];
     }
 
@@ -77,5 +81,21 @@ class ProtocalOption extends AbsOption
     public function __get_interface(string $name) : string
     {
         return AliasesForProtocal::getOriginFromAlias($this->_data[$name] ?? '');
+    }
+
+    public function getDefaultHandler() : ? HandlerOption
+    {
+        if (isset($this->_default)) {
+            return $this->_default;
+        }
+
+        $default = $this->default;
+        if (empty($default)) {
+            return null;
+        }
+
+        return $this->_default = new HandlerOption([
+            'handler' => $default,
+        ]);
     }
 }

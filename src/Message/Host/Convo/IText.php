@@ -13,7 +13,6 @@ namespace Commune\Message\Host\Convo;
 
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Support\Struct\Struct;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 
 /**
@@ -25,19 +24,6 @@ use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 class IText extends AbsMessage implements VerbalMsg
 {
 
-    /**
-     * Text constructor.
-     * @param string $text
-     * @param string $level
-     */
-    public function __construct($text = '', string $level = HostMsg::INFO)
-    {
-        parent::__construct([
-            'text' => (string) $text,
-            'level' => $level
-        ]);
-    }
-
     public static function stub(): array
     {
         return [
@@ -46,19 +32,16 @@ class IText extends AbsMessage implements VerbalMsg
         ];
     }
 
+    public static function relations(): array
+    {
+        return [];
+    }
+
     public function getProtocalId(): string
     {
         return $this->text;
     }
 
-
-    public static function create(array $data = []): Struct
-    {
-        return new static(
-            $data['text'] ?? '',
-            $data['level'] ?? HostMsg::INFO
-        );
-    }
 
     public function getText(): string
     {
@@ -74,11 +57,6 @@ class IText extends AbsMessage implements VerbalMsg
     public function isEmpty(): bool
     {
         return empty($this->_data['text']);
-    }
-
-    public static function relations(): array
-    {
-        return [];
     }
 
     public function __toString()

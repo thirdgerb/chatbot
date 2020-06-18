@@ -12,18 +12,12 @@
 namespace Commune\Blueprint\Kernel\Protocals;
 
 use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhostRequest extends AppRequest
+interface GhostRequest extends AppRequest, HasInput
 {
-
-    /**
-     * @return GhostResponse|null
-     */
-    public function validate() : ? GhostResponse;
 
     /**
      * @return bool
@@ -31,9 +25,9 @@ interface GhostRequest extends AppRequest
     public function isAsync() : bool;
 
     /**
-     * @return InputMsg
+     * @return bool
      */
-    public function getInput() : InputMsg;
+    public function isStateless() : bool;
 
     /**
      * @param int $errcode

@@ -16,6 +16,8 @@ use Commune\Blueprint\Framework\Session\SessionStorage;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property string $cloneSessionId
  */
 interface ShellStorage extends SessionStorage
 {

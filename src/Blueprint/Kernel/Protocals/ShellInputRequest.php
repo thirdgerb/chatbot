@@ -11,24 +11,11 @@
 
 namespace Commune\Blueprint\Kernel\Protocals;
 
-use Commune\Protocals\Intercom\InputMsg;
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellInputRequest extends AppRequest
+interface ShellInputRequest extends AppRequest, HasInput
 {
-
-    /**
-     * @return ShellInputResponse|null
-     */
-    public function validate() : ? ShellInputResponse;
-
-    /**
-     * @return InputMsg
-     */
-    public function getInput() : InputMsg;
-
     /**
      * @param int $errcode
      * @param string $errmsg
