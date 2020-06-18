@@ -30,11 +30,6 @@ interface ShellOutputRequest extends AppRequest
     public function isAsync() : bool;
 
     /**
-     * @return string
-     */
-    public function getBatchId() : string;
-
-    /**
      * @return IntercomMsg[]
      */
     public function getOutputs() : array;
@@ -44,4 +39,13 @@ interface ShellOutputRequest extends AppRequest
      */
     public function setOutputs(array $messages) : void;
 
+    /**
+     * @param int $errcode
+     * @param string $errmsg
+     * @return ShellOutputResponse
+     */
+    public function response(
+        int $errcode = AppResponse::SUCCESS,
+        string $errmsg = ''
+    ) : ShellOutputResponse;
 }

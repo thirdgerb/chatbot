@@ -78,12 +78,6 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
         );
     }
 
-
-    public function getBatchId(): string
-    {
-        return $this->batchId;
-    }
-
     public function getShellName(): string
     {
         return $this->shellName;
@@ -92,6 +86,11 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
     public function getSessionId(): string
     {
         return $this->sessionId;
+    }
+
+    public function getTraceId(): string
+    {
+        return $this->traceId;
     }
 
 

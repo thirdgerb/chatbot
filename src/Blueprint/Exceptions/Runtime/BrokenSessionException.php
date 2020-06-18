@@ -18,7 +18,7 @@ use Throwable;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class BrokenConversationException extends CommuneRuntimeException
+class BrokenSessionException extends CommuneRuntimeException
 {
     public function __construct(string $message = "",  Throwable $previous = null)
     {

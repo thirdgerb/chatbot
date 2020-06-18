@@ -67,15 +67,6 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
         return $this->messageId;
     }
 
-    public function getTraceId(): string
-    {
-        $traceId = $this->traceId;
-
-        return empty($traceId)
-            ? $this->messageId
-            : $traceId;
-    }
-
     public function getConversationId(): string
     {
         return $this->convoId;

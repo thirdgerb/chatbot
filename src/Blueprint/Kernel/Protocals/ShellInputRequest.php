@@ -20,6 +20,11 @@ interface ShellInputRequest extends AppRequest
 {
 
     /**
+     * @return ShellInputResponse|null
+     */
+    public function validate() : ? ShellInputResponse;
+
+    /**
      * @return InputMsg
      */
     public function getInput() : InputMsg;

@@ -14,6 +14,7 @@ namespace Commune\Kernel\ClonePipes;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Contracts\Messenger\Messenger;
 use Commune\Framework\Event\FinishRequest;
 use Commune\Message\Host\SystemInt\SessionBusyInt;
 
@@ -51,7 +52,7 @@ class CloneLockerPipe extends AClonePipe
             return $next($request);
         }
 
-
+        $this->cloner->noState();
         // 异步请求和同步请求最大的区别在于锁失败后的处理逻辑
         return $request->isAsync()
             ? $this->asyncLockFail($request)
@@ -65,7 +66,11 @@ class CloneLockerPipe extends AClonePipe
      */
     protected function asyncLockFail(GhostRequest $request) : GhostResponse
     {
-        $this->cloner->asyncInput($this->cloner->input);
+        /**
+         * @var Messenger $messenger
+         */
+        $messenger = $this->cloner->container->get(Messenger::class);
+        $messenger->asyncSendGhostInputs($request->getInput(), $request->getSessionId());
         return $request->response();
     }
 

@@ -9,22 +9,24 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Kernel\Protocals;
+namespace Commune\Blueprint\Platform\Packer;
 
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Blueprint\Platform\Packer;
 
 
 /**
+ * 通常用于 TCP, 或者命令行. 输入输出都会解析成字符串.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellInputResponse extends AppResponse
+interface StringPacker extends Packer
 {
 
-    public function isAsync() : bool;
+    public function getRequest() : string;
 
     /**
-     * @return InputMsg
+     * @param string $response
      */
-    public function getInput() : InputMsg;
+    public function sendResponse($response): void;
+
 
 }

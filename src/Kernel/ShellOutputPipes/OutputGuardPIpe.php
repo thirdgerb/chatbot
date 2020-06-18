@@ -9,18 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Platform;
+namespace Commune\Kernel\ShellOutputPipes;
 
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhostAdapter
+class OutputGuardPIpe
 {
 
-    public function getRequest() : GhostRequest;
-
-    public function sendResponse(GhostResponse $response) : void;
 }

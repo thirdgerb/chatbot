@@ -22,7 +22,7 @@ use Commune\Message\Host\SystemInt\RequestFailInt;
 use Commune\Message\Host\SystemInt\SessionFailInt;
 use Commune\Message\Host\SystemInt\SessionQuitInt;
 use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
-use Commune\Blueprint\Exceptions\Runtime\BrokenConversationException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -50,7 +50,7 @@ class CloneGuardPipe extends AClonePipe
 
             return $response;
 
-        } catch (BrokenConversationException $e) {
+        } catch (BrokenSessionException $e) {
             $this->report($e);
             $this->cloner->noState();
             return $this->quitSession($request, $e);

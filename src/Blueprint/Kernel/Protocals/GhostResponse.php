@@ -18,13 +18,6 @@ use Commune\Protocals\Intercom\OutputMsg;
  */
 interface GhostResponse extends AppResponse
 {
-
-    /**
-     * 消息的批次 ID
-     * @return string
-     */
-    public function getBatchId() : string;
-
     /**
      * @return OutputMsg[]
      */

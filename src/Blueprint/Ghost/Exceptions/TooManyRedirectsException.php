@@ -11,12 +11,12 @@
 
 namespace Commune\Blueprint\Ghost\Exceptions;
 
-use Commune\Blueprint\Exceptions\Runtime\BrokenConversationException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class TooManyRedirectsException extends BrokenConversationException
+class TooManyRedirectsException extends BrokenSessionException
 {
     public function __construct(int $max)
     {

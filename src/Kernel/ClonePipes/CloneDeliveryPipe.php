@@ -132,7 +132,9 @@ class CloneDeliveryPipe extends AClonePipe
          * @var Messenger $messenger
          */
         $messenger = $this->cloner->container->get(Messenger::class);
-        $messenger->asyncSendGhostInputs(...$inputs);
+        foreach ($inputs as $input) {
+            $messenger->asyncSendGhostInputs($input);
+        }
     }
 
     /**

@@ -9,22 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Kernel\Protocals;
-
-use Commune\Protocals\Intercom\InputMsg;
+namespace Commune\Kernel\ShellInputPipes;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellInputResponse extends AppResponse
+class ShlInputGuardPipe
 {
-
-    public function isAsync() : bool;
-
-    /**
-     * @return InputMsg
-     */
-    public function getInput() : InputMsg;
 
 }

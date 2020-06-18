@@ -14,7 +14,7 @@ namespace Commune\Ghost\Kernel\Handlers;
 use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
-use Commune\Blueprint\Exceptions\Runtime\BrokenConversationException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Ghost\Cloner;
@@ -110,7 +110,7 @@ class ICloneDialogManager implements CloneDialogManager
             return $pipeline($request);
 
         // 会话级异常.
-        } catch (BrokenConversationException $e) {
+        } catch (BrokenSessionException $e) {
             $this->report($e);
             return $this->failConversation($request, $e);
 

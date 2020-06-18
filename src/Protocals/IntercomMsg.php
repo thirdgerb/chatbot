@@ -38,11 +38,6 @@ interface IntercomMsg extends Message, Protocal
     public function getMessageId() : string;
 
     /**
-     * @return string
-     */
-    public function getBatchId() : string;
-
-    /**
      * 消息的追踪 ID.
      * @return string
      */

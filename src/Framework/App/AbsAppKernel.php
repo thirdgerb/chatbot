@@ -103,12 +103,12 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
 
     /**
      * @param AppRequest $request
-     * @param string $interface
+     * @param string|null $interface
      * @return AppResponse
      */
     public function handleRequest(
         AppRequest $request,
-        string $interface
+        string $interface = null
     ) : AppResponse
     {
         $traceId = $request->getTraceId();

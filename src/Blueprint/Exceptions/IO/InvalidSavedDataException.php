@@ -11,13 +11,13 @@
 
 namespace Commune\Blueprint\Exceptions\IO;
 
-use Commune\Blueprint\Exceptions\Runtime\BrokenConversationException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 use Throwable;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class InvalidSavedDataException extends BrokenConversationException
+class InvalidSavedDataException extends BrokenSessionException
 {
     public function __construct(
         string $error,

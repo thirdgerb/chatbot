@@ -34,9 +34,9 @@ interface Messenger
      * 不必关心返回值.
      *
      * @param InputMsg $input
-     * @param InputMsg ...$inputs
+     * @param string|null $sessionId
      */
-    public function asyncSendGhostInputs(InputMsg $input, InputMsg ...$inputs) : void;
+    public function asyncSendGhostInputs( InputMsg $input, string $sessionId = null) : void;
 
     /**
      * @return GhostRequest|null

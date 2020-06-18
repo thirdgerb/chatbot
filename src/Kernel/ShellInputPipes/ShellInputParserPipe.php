@@ -9,17 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Platform;
+namespace Commune\Kernel\ShellInputPipes;
 
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellAdapter
+class ShellInputParserPipe
 {
-    public function getRequest() : ShellInputRequest;
 
-    public function sendResponse(ShellOutputResponse $response) : void;
 }

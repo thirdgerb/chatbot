@@ -92,7 +92,6 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         ];
     }
 
-
     public static function relations(): array
     {
         return [
@@ -101,11 +100,6 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         ];
     }
 
-
-    public function getBatchId(): string
-    {
-        return $this->getMessageId();
-    }
 
     public function isInvalid(): ? string
     {
@@ -170,6 +164,10 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         return $this->shellName;
     }
 
+    public function getTraceId(): string
+    {
+        return $this->getMessageId();
+    }
 
     public function getSessionId(): string
     {
