@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Exceptions\Runtime;
 
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
-use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Throwable;
 
 /**

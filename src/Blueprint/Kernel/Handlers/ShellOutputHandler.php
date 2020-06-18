@@ -11,19 +11,15 @@
 
 namespace Commune\Blueprint\Kernel\Handlers;
 
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface CloneDialogManager extends AppProtocalHandler
+interface ShellOutputHandler
 {
 
-    /**
-     * @param CloneRequest $protocal
-     * @return CloneResponse
-     */
-    public function __invoke($protocal);
+    public function __invoke(ShellOutputRequest $request) : ShellOutputResponse;
 
 }

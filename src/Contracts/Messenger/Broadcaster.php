@@ -16,10 +16,19 @@ use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Broadcast
+interface Broadcaster
 {
-    public function publish(GhostResponse $ghostResponse) : bool;
+    /**
+     * @param GhostResponse $response
+     * @param GhostResponse[] $responses
+     */
+    public function publish(GhostResponse $response, GhostResponse ...$responses) : void;
 
+    /**
+     * @param callable $callback        传入参数, GhostResponse
+     * @param string $shellName
+     * @param string|null $sessionId
+     */
     public function subscribe(
         callable $callback,
         string $shellName,

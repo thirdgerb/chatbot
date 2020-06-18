@@ -15,10 +15,10 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Contracts\Messenger\MessageDB;
 use Commune\Contracts\Messenger\Messenger;
 use Commune\Blueprint\Kernel\Handlers\Ghost2ShellMessenger;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
-use Commune\Contracts\Messenger\Broadcast;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Ghost\IGhost;
 use Commune\Ghost\Kernel\Protocals\IGhostResponse;
 use Commune\Ghost\Support\ValidateUtils;
@@ -39,12 +39,12 @@ class IGhost2ShellMessenger implements Ghost2ShellMessenger
     protected $cloner;
 
     /**
-     * @param CloneResponse $protocal
+     * @param GhostResponse $protocal
      * @return GhostResponse
      */
     public function __invoke($protocal)
     {
-        ValidateUtils::isArgInstanceOf($protocal, CloneResponse::class, true);
+        ValidateUtils::isArgInstanceOf($protocal, GhostResponse::class, true);
 
         // 设置 convoId
         $convoId = $this->cloner->getConversationId();
@@ -76,7 +76,7 @@ class IGhost2ShellMessenger implements Ghost2ShellMessenger
     }
 
 
-    protected function directResponse(CloneResponse $cloneResponse) : GhostResponse
+    protected function directResponse(GhostResponse $cloneResponse) : GhostResponse
     {
 
         $input = $cloneResponse->getInput();
@@ -91,7 +91,7 @@ class IGhost2ShellMessenger implements Ghost2ShellMessenger
         });
 
         if ($cloneResponse->isAsync()) {
-            $broadcast = $this->cloner->container->get(Broadcast::class);
+            $broadcast = $this->cloner->container->get(Broadcaster::class);
             $response = new IGhostResponse([
                 'traceId' => $cloneResponse->getTraceId(),
                 'shellName' => $shellName,
@@ -107,12 +107,12 @@ class IGhost2ShellMessenger implements Ghost2ShellMessenger
         $tiny = $cloneResponse->requireTinyResponse();
     }
 
-    protected function broadcastResponse(CloneResponse $cloneResponse) : GhostResponse
+    protected function broadcastResponse(GhostResponse $cloneResponse) : GhostResponse
     {
 
     }
 
-    protected function broadcastGhostResponse(Broadcast $broadcast, GhostResponse $response) : void
+    protected function broadcastGhostResponse(Broadcaster $broadcast, GhostResponse $response) : void
     {
         if (!$response->isTinyResponse()) {
             $this->cloner->logger->error(__METHOD__ . ' should not accept tiny ghost response');
@@ -121,7 +121,7 @@ class IGhost2ShellMessenger implements Ghost2ShellMessenger
         $broadcast->publish($response);
     }
 
-    protected function sendAsyncInput(CloneResponse $response) : void
+    protected function sendAsyncInput(GhostResponse $response) : void
     {
         $asyncInputs = $response->getAsyncInputs();
         if (!empty($asyncInputs)) {
@@ -129,11 +129,11 @@ class IGhost2ShellMessenger implements Ghost2ShellMessenger
              * @var Messenger $messenger
              */
             $messenger = $this->cloner->container->get(Messenger::class);
-            $messenger->asyncSendInput2Ghost(...$asyncInputs);
+            $messenger->asyncSendGhostInputs(...$asyncInputs);
         }
     }
 
-    protected function recordBatchMessages(CloneResponse $response) : void
+    protected function recordBatchMessages(GhostResponse $response) : void
     {
         $input = $response->getInput();
         $outputs = $response->getOutputs();

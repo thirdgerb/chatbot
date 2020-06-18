@@ -11,20 +11,15 @@
 
 namespace Commune\Framework\App;
 
-use Commune\Blueprint\Exceptions\Runtime\BrokenConversationException;
-use Commune\Blueprint\Framework\AppKernel;
+use Commune\Framework\AbsApp;
+use Commune\Blueprint\Kernel\AppKernel;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
-use Commune\Blueprint\Kernel\Handlers\AppProtocalHandler;
-use Commune\Blueprint\Kernel\Protocals\AppProtocal;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Contracts\Log\ExceptionReporter;
-use Commune\Framework\AbsApp;
 use Commune\Framework\Event\FinishRequest;
 use Commune\Framework\Event\StartRequest;
-use Commune\Protocals\Intercom\InputMsg;
-use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\TypeUtils;
 use Psr\Log\LoggerInterface;
 use Commune\Blueprint\Exceptions\CommuneLogicException;
@@ -41,13 +36,6 @@ use Commune\Support\Protocal\ProtocalOption;
 abstract class AbsAppKernel extends AbsApp implements AppKernel
 {
 
-    /**
-     * @param ReqContainer $container
-     * @param InputMsg $input
-     * @return Session
-     */
-    abstract protected function makeInputSession(ReqContainer $container, InputMsg $input) : Session;
-
 
 
     /**
@@ -59,6 +47,15 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
      * @return ProtocalOption[]
      */
     abstract protected function getProtocalOptions() : array;
+
+
+    /**
+     * @param ReqContainer $container
+     * @param AppRequest $request
+     * @return Session
+     */
+    abstract protected function makeSession(ReqContainer $container, AppRequest $request) : Session;
+
 
     /*------ protocal ------*/
 
@@ -106,17 +103,16 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
 
     /**
      * @param AppRequest $request
-     * @param string|null $expect
-     * @param int $turns
+     * @param string $interface
      * @return AppResponse
      */
     public function handleRequest(
         AppRequest $request,
-        string $expect,
-        int $turns = 0
+        string $interface
     ) : AppResponse
     {
         $traceId = $request->getTraceId();
+
         /**
          * @var LoggerInterface $logger
          */
@@ -125,10 +121,12 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
 
         try {
 
-            $error = $request->isInvalid();
-            if (isset($error)) {
+            $failedResponse = $request->validate();
+
+            if (isset($failedResponse)) {
+                $error = $failedResponse->getErrmsg();
                 $this->requestLog($logger, "badRequest: $error", $traceId);
-                return $response = $request->fail(AppResponse::BAD_REQUEST);
+                return $failedResponse;
             }
 
             // 根据请求衍生的唯一ID 来生成 container 的容器.
@@ -139,8 +137,7 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
             $container->share(get_class($request), $request);
 
             // 创建 Session
-            $input = $request->getInput();
-            $session = $this->makeInputSession($container, $input);
+            $session = $this->makeSession($container, $request);
 
             // 如果是无状态请求.
             if ($request->isStateless()) {
@@ -150,22 +147,29 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
             // boot 所有请求级服务.
             $this->getServiceRegistry()->bootReqServices($container);
 
+            // 寻找 handler
+            $handler = $this->firstProtocalHandler(
+                $container,
+                $request,
+                $interface
+            );
+
+            if (!isset($handler)) {
+                throw new CommuneLogicException(
+                    "request handler not found for " . TypeUtils::getType($request)
+                );
+            }
+
+
             // 抛出启动事件.
             $session->fire(new StartRequest($session));
 
-            $response = $this->runAppProtocalHandlers(
-                $container,
-                $request,
-                $logger,
-                $traceId,
-                $expect,
-                $turns
-            );
+            $response = $handler($request);
 
             // 通用异常管理.
         } catch (\Throwable $e) {
             $this->report($e);
-            $response = $request->fail(AppResponse::HOST_LOGIC_ERROR);
+            $response = $request->response(AppResponse::HOST_LOGIC_ERROR);
 
             // 垃圾回收与日志.
         } finally {
@@ -186,9 +190,10 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
 
             // 默认 response.
             return $response
-                ?? $request->fail(AppResponse::HOST_LOGIC_ERROR);
+                ?? $request->response(AppResponse::HOST_LOGIC_ERROR);
         }
     }
+
 
     protected function report(\Throwable $e) : void
     {
@@ -210,80 +215,6 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
         $context['trace'] = $traceId;
         $logger->info($message, $context);
     }
-
-    protected function runAppProtocalHandlers(
-        ReqContainer $container,
-        AppProtocal $request,
-        LoggerInterface $logger,
-        string $traceId,
-        string $expect,
-        int $turns = 0
-    ) : AppProtocal
-    {
-        // 循环处理协议, 直到有正确结果为止.
-        $protocal = $request;
-
-        // 计数器
-        $i = 0;
-        $turns = $turns > 10 ? 10 : $turns;
-
-        // 准备计时
-        $start = microtime(true);
-
-        // 多次协议调度. 20 是一个不可能的值, 用于排查死循环. 未来可能改为配置.
-        while ($turns > 0 && $i < $turns) {
-
-            // 获取处理协议的 handler
-            $each = $this->eachProtocalHandler(
-                $container,
-                $protocal,
-                AppProtocalHandler::class
-            );
-
-            /**
-             * @var AppProtocalHandler $handler
-             */
-            $handler = ArrayUtils::first($each);
-            unset($each);
-
-            $exists = isset($handler);
-            // Handler 不存在的情况
-            // 无法处理, 又没有期待时, 直接报错.
-            if (!$exists) {
-                throw new BrokenConversationException(
-                    ' handler not found for protocal '. TypeUtils::getType($protocal)
-                );
-            }
-
-
-            // 记录日志准备.
-            $protocalType = TypeUtils::getType($protocal);
-            $handlerType = TypeUtils::getType($handler);
-
-
-            // 使用 Handler 来响应.
-            $protocal = $handler($protocal);
-            unset($handler);
-
-            // 记录 handler 日志, 方便排查问题.
-            $gap = round((microtime(true) - $start) * 1000000, 0);
-            $this->requestLog($logger, "AppProtocalHandler $handlerType for $protocalType done in {$gap}us", $traceId);
-
-            // 检查是否为最终的合法 response.
-            // 否则继续运行寻找可以处理的响应.
-            if (is_a($protocal, $expect, true)) {
-                return $protocal;
-            }
-
-            $i++ ;
-        }
-
-        throw new CommuneLogicException(
-            "too many handler called, expect $expect, times $i, max $turns"
-        );
-    }
-
-
 
 
 }

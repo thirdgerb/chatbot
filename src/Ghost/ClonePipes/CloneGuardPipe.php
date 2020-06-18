@@ -12,114 +12,101 @@
 namespace Commune\Ghost\ClonePipes;
 
 use Closure;
+use Commune\Protocals\HostMsg;
 use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
-use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Message\Host\SystemInt\RequestFailInt;
 use Commune\Message\Host\SystemInt\SessionFailInt;
-use Commune\Protocals\HostMsg\Convo\UnsupportedMsg;
-use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Message\Host\SystemInt\SessionQuitInt;
 use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 use Commune\Blueprint\Exceptions\Runtime\BrokenConversationException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class CloneMessengerPipe extends AClonePipe
+class CloneGuardPipe extends AClonePipe
 {
     /**
-     * @var ExceptionReporter
+     * @var string[]
      */
-    protected $expReporter;
+    protected $unsupportedMessages = [];
 
-    /**
-     * CloneMessengerPipe constructor.
-     * @param Cloner $cloner
-     * @param ExceptionReporter $expReporter
-     */
-    public function __construct(Cloner $cloner, ExceptionReporter $expReporter)
-    {
-        $this->expReporter = $expReporter;
-        parent::__construct($cloner);
-    }
-
-
-    protected function doHandle(CloneRequest $request, Closure $next) : CloneResponse
+    protected function doHandle(GhostRequest $request, Closure $next) : GhostResponse
     {
         $message = $request->getInput()->getMessage();
 
         if (CommuneEnv::isDebug()) {
             $text = $message->getText();
-            $this->logger->debug("receive message : \"$text\"");
-        }
-
-        if ($message instanceof UnsupportedMsg) {
-            return $request->fail(AppResponse::NO_CONTENT);
+            $this->cloner->logger->debug("receive message : \"$text\"");
         }
 
         try {
 
             $response = $next($request);
             $this->resetFailureCount();
+
             return $response;
 
         } catch (BrokenConversationException $e) {
-            $this->expReporter->report($e);
+            $this->report($e);
             return $this->quitSession($request, $e);
 
         } catch (BrokenRequestException $e) {
-            $this->expReporter->report($e);
+            $this->report($e);
 
             return $this->requestFail($request, $e);
         }
     }
 
+    protected function report(\Throwable $e) : void
+    {
+        /**
+         * @var ExceptionReporter $expHandler
+         */
+        $expHandler = $this->cloner->container->get(ExceptionReporter::class);
+        $expHandler->report($e);
+    }
+
     protected function requestFail(
-        CloneRequest $request,
+        GhostRequest $request,
         CommuneRuntimeException $e
-    ) : CloneResponse
+    ) : GhostResponse
     {
 
         $storage = $this->cloner->storage;
-        $times = $storage[ClonerStorage::REQUEST_FAIL_TIME_KEY] ?? 0;
+        $times = $storage->requestFailTimes ?? 0;
         $times ++;
         if ($times >= $this->cloner->config->maxRequestFailTimes) {
             return $this->quitSession($request, $e);
         }
 
-        $storage[ClonerStorage::REQUEST_FAIL_TIME_KEY] = $times;
-        $this->cloner->output(
-            $this->cloner->input->output(new RequestFailInt($e->getMessage()))
-        );
-        return $request->success($this->cloner);
+        $storage->requestFailTimes = $times;
 
+        return $request->output(new RequestFailInt($e->getMessage()));
     }
 
     protected function quitSession(
-        CloneRequest $request,
+        GhostRequest $request,
         CommuneRuntimeException $e
-    ) : CloneResponse
+    ) : GhostResponse
     {
-        $message = new SessionFailInt(
-            $e->getMessage()
-        );
+        $messages = [
+            new SessionFailInt($e->getMessage()),
+            new SessionQuitInt(),
+        ];
 
-        $this->cloner->output(
-            $this->cloner->input->output($message)
-        );
         $this->cloner->endConversation();
         $this->resetFailureCount();
 
-        return $request->success($this->cloner);
+        return $request->output(...$messages);
     }
 
     protected function resetFailureCount() : void
     {
         $storage = $this->cloner->storage;
-        $storage->offsetUnset(ClonerStorage::REQUEST_FAIL_TIME_KEY);
+        $storage->requestFailTimes = 0;
     }
 }

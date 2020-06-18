@@ -13,15 +13,15 @@ namespace Commune\Ghost\Kernel\Protocals;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ICloneRequest implements CloneRequest
+class IGhostRequest implements GhostRequest
 {
     use TAppRequest;
 
@@ -87,7 +87,7 @@ class ICloneRequest implements CloneRequest
         return $this->input;
     }
 
-    public function noContent(): CloneResponse
+    public function noContent(): GhostResponse
     {
         return new ICloneResponse(
             $this->getTraceId(),
@@ -95,7 +95,7 @@ class ICloneRequest implements CloneRequest
         );
     }
 
-    public function success(Cloner $cloner): CloneResponse
+    public function success(Cloner $cloner): GhostResponse
     {
         return new ICloneResponse(
             $this->getTraceId(),
@@ -109,7 +109,7 @@ class ICloneRequest implements CloneRequest
     }
 
 
-    public function output(HostMsg $message, HostMsg ...$messages): CloneResponse
+    public function output(HostMsg $message, HostMsg ...$messages): GhostResponse
     {
         $input = $this->getInput();
         $outputs = array_reduce($messages, function($outputs, HostMsg $message) use ($input){
@@ -128,7 +128,7 @@ class ICloneRequest implements CloneRequest
         );
     }
 
-    public function fail(int $errcode, string $errmsg = ''): CloneResponse
+    public function fail(int $errcode, string $errmsg = ''): GhostResponse
     {
         return new ICloneResponse(
             $this->getTraceId(),

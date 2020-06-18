@@ -12,7 +12,7 @@
 namespace Commune\Ghost\Kernel\Protocals;
 
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\HostMsg\Convo\ApiMsg;
@@ -68,7 +68,7 @@ class IGhostRequest extends AbsMessage implements GhostRequest
         return $this->tiny;
     }
 
-    public function output(HostMsg $message, HostMsg ...$messages): CloneResponse
+    public function output(HostMsg $message, HostMsg ...$messages): GhostResponse
     {
         array_unshift($messages, $message);
 

@@ -9,21 +9,18 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Kernel\Handlers;
+namespace Commune\Blueprint\Platform;
 
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhostInputReceiver extends AppProtocalHandler
+interface GhostAdapter
 {
-    /**
-     * @param GhostRequest $protocal
-     * @return GhostResponse|CloneRequest
-     */
-    public function __invoke($protocal);
 
+    public function getRequest() : GhostRequest;
+
+    public function sendResponse(GhostResponse $response) : void;
 }

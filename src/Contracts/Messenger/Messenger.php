@@ -36,7 +36,7 @@ interface Messenger
      * @param InputMsg $input
      * @param InputMsg ...$inputs
      */
-    public function asyncSendInput2Ghost(InputMsg $input, InputMsg ...$inputs) : void;
+    public function asyncSendGhostInputs(InputMsg $input, InputMsg ...$inputs) : void;
 
     /**
      * @return GhostRequest|null

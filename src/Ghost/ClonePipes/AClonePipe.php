@@ -13,13 +13,12 @@ namespace Commune\Ghost\ClonePipes;
 
 use Commune\Blueprint\CommuneEnv;
 use Commune\Framework\Spy\SpyAgency;
-use Psr\Log\LoggerInterface;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
-use Commune\Blueprint\Framework\Request\AppRequest;
-use Commune\Blueprint\Framework\Request\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 
@@ -30,11 +29,6 @@ abstract class AClonePipe implements RequestPipe
 {
 
     /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * @var Cloner
      */
     protected $cloner;
@@ -42,21 +36,20 @@ abstract class AClonePipe implements RequestPipe
     public function __construct(Cloner $cloner)
     {
         $this->cloner = $cloner;
-        $this->logger = $cloner->logger;
         SpyAgency::incr(self::class);
     }
 
-    abstract protected function doHandle(CloneRequest $request, \Closure $next): CloneResponse;
+    abstract protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse;
 
     /**
      * @param AppRequest $request
      * @param \Closure $next
-     * @return CloneResponse
+     * @return GhostResponse
      */
     public function handle(AppRequest $request, \Closure $next): AppResponse
     {
-        if (!$request instanceof CloneRequest) {
-            throw new InvalidArgumentException('request is not instance of '. CloneRequest::class);
+        if (!$request instanceof GhostRequest) {
+            throw new InvalidArgumentException('request is not instance of '. GhostRequest::class);
         }
 
         $debug = CommuneEnv::isDebug();
@@ -76,7 +69,7 @@ abstract class AClonePipe implements RequestPipe
             $b = microtime(true);
             $gap = round(($b - $a) * 1000000);
             $pipeName = static::class;
-            $this->logger->debug("$pipeName end pipe gap: {$gap}us");
+            $this->cloner->logger->debug("$pipeName end pipe gap: {$gap}us");
         }
         return $response;
     }

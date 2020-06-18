@@ -11,8 +11,10 @@
 
 namespace Commune\Ghost\ClonePipes;
 
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Framework\Event\FinishRequest;
 use Commune\Message\Host\SystemInt\SessionBusyInt;
 
 /**
@@ -23,33 +25,60 @@ use Commune\Message\Host\SystemInt\SessionBusyInt;
 class CloneLockerPipe extends AClonePipe
 {
     /**
-     * @param CloneRequest $request
+     * @param GhostRequest $request
      * @param \Closure $next
-     * @return CloneResponse
+     * @return GhostResponse
      * @throws \Exception
      */
-    protected function doHandle(CloneRequest $request, \Closure $next): CloneResponse
+    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
-
         if ($this->cloner->isStateless()) {
+            $this->cloner->noState();
+            return $next($request);
+        }
+
+        $ttl = $this->cloner->config->sessionLockerExpire;
+        // 锁 clone
+        if ($this->cloner->lock($ttl)) {
+            // 注册解锁逻辑.
+            $this->cloner->listen(
+                FinishRequest::class,
+                function(Cloner $cloner){
+                    $cloner->unlock();
+                }
+            );
+
             return $next($request);
         }
 
 
-        try {
-
-            if (!$this->cloner->lock($this->cloner->config->sessionLockerExpire)) {
-                return $request->output(new SessionBusyInt());
-            }
-            $response = $next($request);
-            $this->cloner->unlock();
-            return $response;
-
-        } catch (\Exception $e) {
-            $this->cloner->unlock();
-            throw $e;
-        }
+        // 异步请求和同步请求最大的区别在于锁失败后的处理逻辑
+        return $request->isAsync()
+            ? $this->asyncLockFail($request)
+            : $this->lockFail($request);
     }
 
+    /**
+     * 异步消息锁失败.
+     * @param GhostRequest $request
+     * @return GhostResponse
+     */
+    protected function asyncLockFail(GhostRequest $request) : GhostResponse
+    {
+        $this->cloner->asyncInput($this->cloner->input);
+        return $request->response();
+    }
+
+    /**
+     * 同步消息锁失败.
+     *
+     * @param GhostRequest $request
+     * @return GhostResponse
+     */
+    protected function lockFail(GhostRequest $request) : GhostResponse
+    {
+        $this->cloner->noState();
+        return $request->output(new SessionBusyInt());
+    }
 
 }

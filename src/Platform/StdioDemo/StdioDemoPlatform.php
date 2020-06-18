@@ -14,6 +14,7 @@ namespace Commune\Platform\StdioDemo;
 use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Host;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 use Commune\Blueprint\Platform;
 use Commune\Blueprint\Shell;
 use React\EventLoop\Factory;
@@ -81,9 +82,13 @@ class StdioDemoPlatform implements Platform
         try {
 
             $adapter = new StdioDemoAdapter($this->stdio, $line);
-//            $request = $adapter->getRequest();
-//            $response = $this->shell->handleRequest($request);
-//            $adapter->sendResponse($response);
+
+            $request = $adapter->getRequest();
+            $response = $this->shell->handleRequest(
+                $request,
+                ShellOutputResponse::class
+            );
+            $adapter->sendResponse($response);
 
             $this->stdio->write('hello.world');
 

@@ -17,7 +17,8 @@ use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
-use Commune\Blueprint\Ghost\Auth\Authority;
+use Commune\Blueprint\Framework\Auth\Authority;
+use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\Registry\OptRegistry;
@@ -89,11 +90,11 @@ interface Cloner extends Session
     /*----- 手动输出 -----*/
 
     /**
-     * 同步输出一个消息.
-     * @param IntercomMsg $output
-     * @param IntercomMsg[] $outputs
+     * 输出消息.
+     * @param HostMsg $output
+     * @param HostMsg[] $outputs
      */
-    public function output(IntercomMsg $output, IntercomMsg ...$outputs) : void;
+    public function output(HostMsg $output, HostMsg ...$outputs) : void;
 
     /**
      * 获得所有的输出消息.

@@ -98,6 +98,9 @@ interface IntercomMsg extends Message, Protocal
      */
     public function setMessage(HostMsg $message) : void;
 
+    /**
+     * @param string $convoId
+     */
     public function setConvoId(string $convoId) : void;
 
     /*------- methods -------*/

@@ -11,18 +11,14 @@
 
 namespace Commune\Blueprint\Kernel\Handlers;
 
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellOutputReceiver extends AppProtocalHandler
+interface ShellRequestHandler
 {
-    /**
-     * @param GhostResponse $protocal
-     * @return ShellOutputRequest
-     */
-    public function __invoke($protocal);
 
+    public function __invoke(ShellInputRequest $request) : ShellOutputResponse;
 }

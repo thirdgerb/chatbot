@@ -14,8 +14,9 @@ namespace Commune\Framework\Api;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\Handlers\ApiController;
 use Commune\Blueprint\Framework\ReqContainer;
-use Commune\Blueprint\Framework\Request\AppRequest;
-use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Blueprint\Kernel\AppKernel;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Protocals\HostMsg\Convo\ApiMsg;
 
 
@@ -25,7 +26,7 @@ use Commune\Protocals\HostMsg\Convo\ApiMsg;
 class ApiRunner
 {
 
-    public static function runApi(App $app, ReqContainer $container, AppRequest $request) : ? AppResponse
+    public static function runApi(AppKernel $app, ReqContainer $container, AppRequest $request) : ? AppResponse
     {
         $input = $request->getInput();
         $message = $input->getMessage();

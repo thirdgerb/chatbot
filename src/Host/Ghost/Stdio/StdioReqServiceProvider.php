@@ -11,7 +11,7 @@
 
 namespace Commune\Host\Ghost\Stdio;
 
-use Commune\Blueprint\Ghost\Auth\Supervise;
+use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
 

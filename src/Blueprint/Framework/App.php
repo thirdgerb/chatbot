@@ -12,8 +12,8 @@
 namespace Commune\Blueprint\Framework;
 
 use Commune\Blueprint\Exceptions\CommuneBootingException;
-use Commune\Blueprint\Framework\Request\AppRequest;
-use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;

@@ -11,11 +11,17 @@
 
 namespace Commune\Blueprint\Kernel\Protocals;
 
+use Commune\Protocals\Intercom\InputMsg;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface ShellInputResponse extends AppResponse
 {
+    /**
+     * @return InputMsg
+     */
+    public function getInput() : InputMsg;
 
 }

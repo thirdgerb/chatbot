@@ -11,11 +11,17 @@
 
 namespace Commune\Blueprint\Kernel\Protocals;
 
+use Commune\Protocals\IntercomMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface ShellOutputResponse extends AppResponse
 {
+
+    /**
+     * @return IntercomMsg[]
+     */
+    public function getOutputs() : array;
 
 }

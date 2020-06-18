@@ -12,9 +12,9 @@
 namespace Commune\Host\Ghost\Stdio;
 
 use Clue\React\Stdio\Stdio;
-use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\HostMsg;
@@ -26,7 +26,7 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SGRequest implements CloneRequest
+class SGRequest implements GhostRequest
 {
     use TInjectable;
 

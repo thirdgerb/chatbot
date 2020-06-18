@@ -32,4 +32,5 @@ use Psr\Log\LoggerInterface;
  */
 interface ShellSession extends Session
 {
+
 }

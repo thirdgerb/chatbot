@@ -13,11 +13,11 @@ namespace Commune\Ghost;
 
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\App;
+use Commune\Blueprint\Framework\Auth\Authority;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Contracts\Cache;
 use Commune\Framework\ASession;
-use Commune\Message\Host\SystemInt\SessionQuitInt;
 use Psr\Log\LoggerInterface;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\IntercomMsg;
@@ -40,7 +40,7 @@ class ICloner extends ASession implements Cloner
         'matcher' => Ghost\Tools\Matcher::class,
 
         'cache' => Cache::class,
-        'auth' => Ghost\Auth\Authority::class,
+        'auth' => Authority::class,
 
         'mind' => Ghost\Mindset::class,
         'runtime' => Ghost\Runtime\Runtime::class,
@@ -297,10 +297,6 @@ class ICloner extends ASession implements Cloner
 
     public function endConversation(): void
     {
-        $this->output(
-            $this->_input->output(new SessionQuitInt())
-        );
-
         $this->quit = true;
         $this->noConversationState = true;
     }

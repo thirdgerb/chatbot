@@ -9,19 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Auth;
+namespace Commune\Platform\Adapters;
+
+use Commune\Blueprint\Platform\ShellAdapter;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Authority
+class StdioAdapter implements ShellAdapter
 {
-
-    /**
-     * @param string $policy
-     * @param array $payload
-     * @return bool
-     */
-    public function allow(string $policy, array $payload = []) : bool;
 
 }

@@ -13,7 +13,7 @@ namespace Commune\Ghost\Kernel\Protocals;
 
 use Commune\Blueprint\Exceptions\CommuneErrorCode;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\Intercom\OutputMsg;
@@ -22,7 +22,7 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ICloneResponse implements CloneResponse
+class ICloneResponse implements GhostResponse
 {
 
     /**

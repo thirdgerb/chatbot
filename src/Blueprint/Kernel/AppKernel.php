@@ -9,11 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Framework;
+namespace Commune\Blueprint\Kernel;
 
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Support\Protocal\Protocal;
+use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Support\Protocal\ProtocalMatcher;
 
 /**
@@ -23,18 +25,31 @@ interface AppKernel
 {
     /*------ request ------*/
 
+//    /**
+//     * 运行一个状态机, 直到给出预期的结果, 否则抛出异常.
+//     *
+//     * @param AppRequest $request
+//     * @param string $expect
+//     * @param int $turns
+//     * @return AppProtocal
+//     */
+//    public function handleRequest(
+//        AppRequest $request,
+//        string $expect,
+//        int $turns = 0
+//    ) : AppProtocal;
+
+
     /**
-     * 运行一个状态机, 直到给出预期的结果, 否则抛出异常.
+     * 运行一个请求, 获得响应.
      *
-     * @param AppRequest $request
-     * @param string $expect        预期的返回类型.
-     * @param int $turns
+     * @param AppRequest $protocal
+     * @param string|null $interface
      * @return AppResponse
      */
     public function handleRequest(
-        AppRequest $request,
-        string $expect,
-        int $turns = 0
+        AppRequest $protocal,
+        string $interface = null
     ) : AppResponse;
 
 
@@ -62,6 +77,16 @@ interface AppKernel
         string $handlerInterface = null
     ) : \Generator;
 
-
-
+    /**
+     * 获取第一个 handler . 所有的handler 都应该是 callable 对象.
+     * @param ReqContainer $container
+     * @param Protocal $protocal
+     * @param string|null $handlerInterface
+     * @return callable|null
+     */
+    public function firstProtocalHandler(
+        ReqContainer $container,
+        Protocal $protocal,
+        string $handlerInterface = null
+    ) : ? callable;
 }

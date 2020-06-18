@@ -9,20 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Kernel\Handlers;
+namespace Commune\Blueprint\Platform;
 
-use Commune\Blueprint\Kernel\Protocals\AppProtocal;
-
+use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface AppProtocalHandler
+interface ShellAdapter
 {
+    public function getRequest() : ShellInputRequest;
 
-    /**
-     * @param AppProtocal $protocal
-     * @return AppProtocal
-     */
-    public function __invoke($protocal);
+    public function sendResponse(ShellOutputResponse $response) : void;
 }

@@ -15,8 +15,8 @@ use Commune\Container\ContainerContract;
 use Psr\Log\LoggerInterface;
 use Commune\Protocals\HostMsg;
 use Commune\Blueprint\Framework\Command\CommandDef;
-use Commune\Blueprint\Framework\Request\AppRequest;
-use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

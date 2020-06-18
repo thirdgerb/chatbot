@@ -11,14 +11,15 @@
 
 namespace Commune\Framework\Command;
 
+use Commune\Blueprint\Framework\Auth\Policy;
 use Psr\Log\LoggerInterface;
 use Illuminate\Console\Parser;
 use Commune\Protocals\Comprehension;
 use Commune\Ghost\Support\CommandUtils;
 use Commune\Container\ContainerContract;
 use Commune\Blueprint\Framework\Pipes\RequestCmd;
-use Commune\Blueprint\Framework\Request\AppRequest;
-use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Exceptions\Logic\InvalidClassException;
 
 /**
@@ -40,6 +41,13 @@ trait TRequestCmdPipe
     abstract public function getCommandMark() : string;
 
     abstract public function getInputText(AppRequest $request) : ? string;
+
+    /**
+     * 身份校验相关的权限名.
+     * @see Policy
+     * @return string[]
+     */
+    abstract public function getAuthPolicies() : array;
 
     /**
      * @return string[]

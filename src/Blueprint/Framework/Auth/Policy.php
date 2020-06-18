@@ -9,21 +9,19 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Kernel\Handlers;
-
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
-
+namespace Commune\Blueprint\Framework\Auth;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellOutputRender extends AppProtocalHandler
+interface Policy
 {
     /**
-     * @param ShellOutputRequest $protocal
-     * @return ShellOutputResponse
+     * 没有消息表示拥有权限.
+     * 有消息表示拒绝的消息.
+     *
+     * @param array $payload
+     * @return bool
      */
-    public function __invoke($protocal);
-
+    public function invoke(array $payload = []) : bool;
 }

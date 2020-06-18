@@ -12,45 +12,40 @@
 namespace Commune\Blueprint\Kernel\Protocals;
 
 use Commune\Protocals\HostMsg;
+use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface GhostRequest extends AppRequest
 {
+
     /**
-     * 是否是异步消息.
+     * @return GhostResponse|null
+     */
+    public function validate() : ? GhostResponse;
+
+    /**
      * @return bool
      */
     public function isAsync() : bool;
 
     /**
-     * 要求极简的回复, 不需要消息体.
-     * @return bool
+     * @return InputMsg
      */
-    public function requireTinyResponse() : bool;
-
-    /**
-     * @return string
-     */
-    public function getShellSessionId() : string;
-
-    /**
-     * @param HostMsg $message
-     * @param HostMsg ...$messages
-     * @return CloneResponse
-     */
-    public function output(HostMsg $message, HostMsg ...$messages) : CloneResponse;
-
-    /**
-     * @return GhostResponse
-     */
-    public function noContent() : GhostResponse;
+    public function getInput() : InputMsg;
 
     /**
      * @param int $errcode
      * @param string $errmsg
      * @return GhostResponse
      */
-    public function fail(int $errcode, string $errmsg = '') : GhostResponse;
+    public function response(int $errcode = AppResponse::SUCCESS, string $errmsg = '') : GhostResponse;
+
+    /**
+     * @param HostMsg $message
+     * @param HostMsg ...$messages
+     * @return GhostResponse
+     */
+    public function output(HostMsg $message, HostMsg ...$messages) : GhostResponse;
 }

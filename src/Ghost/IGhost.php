@@ -100,7 +100,7 @@ class IGhost extends AbsAppKernel implements Ghost
      * @param InputMsg $input
      * @return Cloner
      */
-    public function makeInputSession(ReqContainer $container, InputMsg $input): Session
+    public function makeSession(ReqContainer $container, InputMsg $input): Session
     {
         if (!$this->activated) {
             throw new CommuneBootingException(

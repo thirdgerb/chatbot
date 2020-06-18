@@ -11,8 +11,7 @@
 
 namespace Commune\Blueprint\Kernel\Protocals;
 
-use Commune\Protocals\IntercomMsg;
-
+use Commune\Protocals\Intercom\OutputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -27,40 +26,8 @@ interface GhostResponse extends AppResponse
     public function getBatchId() : string;
 
     /**
-     * 异步的消息, shell 不用渲染.
-     * 免得增加逻辑上的复杂度.
-     *
-     * @return bool
+     * @return OutputMsg[]
      */
-    public function isAsync() : bool;
-
-    /**
-     * Shell 的名称.
-     * @return string
-     */
-    public function getShellName() : string;
-
-    /**
-     * 对应 Shell 的 Session
-     * @return string
-     */
-    public function getShellSessionId() : string;
-
-    /**
-     * @return int
-     */
-    public function getMessageCount() : int;
-
-    /**
-     * 没有消息体的回复.
-     * @return bool
-     */
-    public function isTinyResponse() : bool;
-
-    /**
-     * 获取响应中的消息. 不一定携带消息.
-     * @return IntercomMsg[]
-     */
-    public function getMessages() : array;
+    public function getOutputs() : array;
 
 }

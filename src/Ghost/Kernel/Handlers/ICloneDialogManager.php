@@ -16,11 +16,11 @@ use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 use Commune\Blueprint\Exceptions\Runtime\BrokenConversationException;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
-use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Kernel\Handlers\CloneDialogManager;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Ghost\ClonePipes\CloneApiHandlePipe;
 use Commune\Ghost\ClonePipes\CloneSuperCmdPipe;
@@ -70,12 +70,12 @@ class ICloneDialogManager implements CloneDialogManager
 
 
     /**
-     * @param CloneRequest $request
-     * @return CloneResponse
+     * @param GhostRequest $request
+     * @return GhostResponse
      */
     public function __invoke($request)
     {
-        ValidateUtils::isArgInstanceOf($request, CloneRequest::class, true);
+        ValidateUtils::isArgInstanceOf($request, GhostRequest::class, true);
 
         // 尝试记录日志.
         $message = $request->getInput()->getMessage();
@@ -101,7 +101,7 @@ class ICloneDialogManager implements CloneDialogManager
             $pipeline = $this->cloner->buildPipeline(
                 $middleware,
                 RequestPipe::HANDLER_FUNC,
-                function(CloneRequest $request) : CloneResponse{
+                function(GhostRequest $request) : GhostResponse{
                     return $this->runDialogManager($request);
                 }
             );
@@ -124,9 +124,9 @@ class ICloneDialogManager implements CloneDialogManager
 
 
     protected function failRequest(
-        CloneRequest $request,
+        GhostRequest $request,
         CommuneRuntimeException $e
-    ) : CloneResponse
+    ) : GhostResponse
     {
         $storage = $this->cloner->storage;
         $times = $storage->requestFailTimes ?? 0;
@@ -152,9 +152,9 @@ class ICloneDialogManager implements CloneDialogManager
     }
 
     protected function failConversation(
-        CloneRequest $request,
+        GhostRequest $request,
         CommuneRuntimeException $e
-    ) : CloneResponse
+    ) : GhostResponse
     {
 
         $message = new SessionFailInt(
@@ -182,10 +182,10 @@ class ICloneDialogManager implements CloneDialogManager
     /**
      * 运行多轮对话内核逻辑.
      *
-     * @param CloneRequest $request
-     * @return CloneResponse
+     * @param GhostRequest $request
+     * @return GhostResponse
      */
-    protected function runDialogManager(CloneRequest $request) : CloneResponse
+    protected function runDialogManager(GhostRequest $request) : GhostResponse
     {
         $operator = new OStart($this->cloner);
         $tracer = $this->cloner->runtime->trace;

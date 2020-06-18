@@ -9,20 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Framework\Handlers;
-
-use Commune\Blueprint\Framework\Request\AppRequest;
-use Commune\Blueprint\Framework\Request\AppResponse;
-use Commune\Protocals\HostMsg\Convo\ApiMsg;
+namespace Commune\Blueprint\Framework\Auth;
 
 
 /**
- * 处理 Api 消息的控制器.
+ * 是否是超级管理员.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ApiController
+interface Supervise extends Policy
 {
-
-    public function __invoke(AppRequest $request, ApiMsg $message) : AppResponse;
-
 }

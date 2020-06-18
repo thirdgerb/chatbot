@@ -11,10 +11,10 @@
 
 namespace Commune\Ghost\Cmd;
 
-use Commune\Blueprint\Framework\Request\AppRequest;
-use Commune\Blueprint\Framework\Request\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Command\TRequestCmdPipe;
 use Commune\Ghost\ClonePipes\AClonePipe;
@@ -29,12 +29,22 @@ abstract class AGhostCmdPipe extends AClonePipe implements RequestCmdPipe
 {
     use TRequestCmdPipe;
 
-    protected function doHandle(CloneRequest $request, \Closure $next): CloneResponse
+    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
+        // 默认权限校验.
+        $policies = $this->getAuthPolicies();
+        if (!empty($policies)) {
+            $auth = $this->cloner->auth;
+            foreach ($policies as $policy) {
+                if (!$auth->allow($policy)) return $next($request);
+            }
+        }
+
+
         $response = $this->tryHandleCommand($request, $next);
-        return $response instanceof CloneResponse
+        return $response instanceof GhostResponse
             ? $response
-            : $request->fail(AppResponse::HOST_LOGIC_ERROR);
+            : $request->response(AppResponse::HOST_LOGIC_ERROR);
     }
 
 
@@ -50,7 +60,7 @@ abstract class AGhostCmdPipe extends AClonePipe implements RequestCmdPipe
 
     public function getInputText(AppRequest $request): ? string
     {
-        if (!$request instanceof CloneRequest) {
+        if (!$request instanceof GhostRequest) {
             return null;
         }
 

@@ -19,6 +19,8 @@ use Commune\Blueprint\Exceptions\CommuneErrorCode;
 interface AppResponse extends AppProtocal, CommuneErrorCode
 {
 
+    public function getSessionId() : string;
+
     /**
      * 异常码. @see CommuneErrorCode
      * @return int
@@ -31,8 +33,10 @@ interface AppResponse extends AppProtocal, CommuneErrorCode
      */
     public function getErrmsg() : string;
 
+    /*------- 状态判断 --------*/
 
     /**
+     * 响应完成成功.
      * @return bool
      */
     public function isSuccess() : bool;

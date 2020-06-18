@@ -33,13 +33,24 @@ interface Platform
      */
     public function serve() : void;
 
+    /**
+     * @param string $sessionId
+     * @return bool
+     */
+    public function isSessionAvailable(string $sessionId) : bool;
+
+    /**
+     * @param bool $available
+     */
+    public function setSessionAvailable(bool $available) : void;
+
+    /*----- 内部命令 -----*/
 
     /**
      * @param float $seconds
      */
     public function sleep(float $seconds) : void;
 
-    /*----- 内部命令 -----*/
 
     /**
      * 从系统内部通过逻辑指令来关闭整个平台.
@@ -48,5 +59,8 @@ interface Platform
     public function shutdown() : void;
 
 
+    /**
+     * @param \Throwable $e
+     */
     public function catchExp(\Throwable $e) : void;
 }

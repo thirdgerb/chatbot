@@ -9,19 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Auth;
+namespace Commune\Blueprint\Kernel\Handlers;
+
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Policy
+interface GhostRequestHandler
 {
-    /**
-     * 没有消息表示拥有权限.
-     * 有消息表示拒绝的消息.
-     *
-     * @param array $payload
-     * @return bool
-     */
-    public function invoke(array $payload = []) : bool;
+
+    public function __invoke(GhostRequest $request) : GhostResponse;
+
 }

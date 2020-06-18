@@ -9,22 +9,20 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Kernel\Handlers;
+namespace Commune\Kernel\Handlers;
 
+use Commune\Blueprint\Kernel\Handlers\ShellRequestHandler;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellInputParser extends AppProtocalHandler
+class IShellRequestHandler implements ShellRequestHandler
 {
-    /**
-     * @param ShellInputRequest
-     * @return ShellOutputRequest|ShellOutputResponse|ShellInputResponse
-     */
-    public function __invoke($protocal);
+    public function __invoke(ShellInputRequest $request): ShellOutputResponse
+    {
+    }
+
+
 }

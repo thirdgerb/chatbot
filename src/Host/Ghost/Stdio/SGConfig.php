@@ -18,7 +18,7 @@ use Commune\Components;
 use Commune\Ghost\Commands;
 use Commune\Ghost\Cmd\GhostHelpCmd;
 use Commune\Blueprint\Configs\GhostConfig;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Ghost\Handlers\GhostRequestHandler;
 use Commune\Ghost\Providers as GhostProviders;
 use Commune\Components\Predefined\Intent\Navigation;
@@ -67,7 +67,7 @@ class SGConfig extends AbsOption implements GhostConfig
 
                 // request protocals
                 [
-                    'protocal' => CloneRequest::class,
+                    'protocal' => GhostRequest::class,
                     'interface' => GhtRequestHandler::class,
                     'handlers' => [
                         [ 'handler' => GhostRequestHandler::class],

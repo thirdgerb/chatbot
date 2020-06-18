@@ -9,17 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Platform;
+namespace Commune\Contracts\Api;
 
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Protocals\HostMsg\Convo\ApiMsg;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface PlatformAdapter
+interface ApiController
 {
-    public function getRequest() : AppRequest;
-
-    public function sendResponse(AppResponse $response) : void;
+    public function __invoke(AppRequest $request, ApiMsg $message) : AppResponse;
 }

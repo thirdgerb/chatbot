@@ -11,9 +11,6 @@
 
 namespace Commune\Blueprint\Kernel\Protocals;
 
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\InputMsg;
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
@@ -21,15 +18,10 @@ interface AppRequest extends AppProtocal
 {
 
     /**
-     * @return bool
+     * 自己校验, 如果出错则返回响应.
+     * @return AppResponse|null
      */
-    public function isValid() : bool;
-
-    /**
-     * 如果不合法, 给出错误提示.
-     * @return null|string
-     */
-    public function isInvalid() : ? string;
+    public function validate();
 
     /**
      * @return bool
@@ -37,22 +29,15 @@ interface AppRequest extends AppProtocal
     public function isStateless() : bool;
 
     /**
-     * @return InputMsg
+     * @return string
      */
-    public function getInput() : InputMsg;
+    public function getSessionId() : string;
 
     /**
-     * 可以是不同类型的 response. 方便进行处理.
-     *
      * @param int $errcode
      * @param string $errmsg
      * @return AppResponse
      */
-    public function fail(int $errcode, string $errmsg = '');
-
-    /**
-     * @return AppResponse
-     */
-    public function noContent();
+    public function response(int $errcode = AppResponse::SUCCESS, string $errmsg = '');
 
 }

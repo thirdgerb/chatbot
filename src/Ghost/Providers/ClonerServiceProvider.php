@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Providers;
 
-use Commune\Blueprint\Ghost\Auth\Authority;
+use Commune\Blueprint\Framework\Auth\Authority;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Blueprint\Ghost\Cloner\ClonerLogger;

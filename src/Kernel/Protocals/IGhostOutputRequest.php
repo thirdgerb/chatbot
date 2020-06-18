@@ -9,20 +9,16 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Kernel\Handlers;
+namespace Commune\Kernel\Protocals;
 
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostOutputRequest;
+use Commune\Support\Message\AbsMessage;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Ghost2ShellMessenger extends AppProtocalHandler
+class IGhostOutputRequest extends AbsMessage implements GhostOutputRequest
 {
-    /**
-     * @param CloneResponse $protocal
-     * @return GhostResponse
-     */
-    public function __invoke($protocal);
 
 }

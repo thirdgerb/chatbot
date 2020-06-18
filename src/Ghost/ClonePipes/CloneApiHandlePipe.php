@@ -11,9 +11,9 @@
 
 namespace Commune\Ghost\ClonePipes;
 
-use Commune\Blueprint\Framework\Request\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Framework\Api\ApiRunner;
 use Commune\Protocals\HostMsg\Convo\ApiMsg;
 
@@ -26,7 +26,7 @@ use Commune\Protocals\HostMsg\Convo\ApiMsg;
 class CloneApiHandlePipe extends AClonePipe
 {
 
-    protected function doHandle(CloneRequest $request, \Closure $next): CloneResponse
+    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
         $response = ApiRunner::runApi(
             $this->cloner->ghost,
@@ -38,14 +38,14 @@ class CloneApiHandlePipe extends AClonePipe
             return $next($request);
         }
 
-        if (!$response instanceof CloneResponse) {
-            $this->logger->error(
+        if (!$response instanceof GhostResponse) {
+            $this->cloner->logger->error(
                 __METHOD__
                 . ' invalid response from api handler, message is '
                 . $request->getInput()->getMessage()->toJson()
             );
 
-            return $request->fail(AppResponse::HOST_LOGIC_ERROR);
+            return $request->fail(AppResponse::HANDLER_NOT_FOUND);
         }
 
         return $response;

@@ -12,7 +12,7 @@
 namespace Commune\Shell\Handlers;
 
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
-use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Shell\Handlers\ShellRequestHandler;
 use Commune\Blueprint\Shell\Requests\ShellRequest;
 use Commune\Blueprint\Shell\Requests\ShlInputRequest;

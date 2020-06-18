@@ -11,7 +11,7 @@
 
 namespace Commune\Components\Predefined\Manager;
 
-use Commune\Blueprint\Ghost\Auth\Supervise;
+use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Blueprint\Ghost\Context\CodeContextOption;
 use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Context\StageBuilder;

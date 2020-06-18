@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\MindDef;
 
-use Commune\Blueprint\Ghost\Auth\Supervise;
+use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Support\Alias\AbsAliases;
 
 /**

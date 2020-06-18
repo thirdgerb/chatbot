@@ -11,16 +11,7 @@
 
 namespace Commune\Ghost\ClonePipes;
 
-use Commune\Blueprint\Framework\Request\AppResponse;
 use Commune\Ghost\Cmd\AGhostCmdPipe;
-use Psr\Log\LoggerInterface;
-use Commune\Container\ContainerContract;
-use Commune\Blueprint\Framework\Request\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
-use Commune\Framework\Command\TRequestCmdPipe;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
-use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 
 /**
  * 用户命令管道.

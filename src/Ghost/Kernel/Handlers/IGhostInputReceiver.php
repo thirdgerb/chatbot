@@ -15,12 +15,12 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Kernel\Handlers\GhostInputReceiver;
 use Commune\Blueprint\Kernel\Protocals\AppProtocal;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Contracts\Messenger\Messenger;
 use Commune\Framework\Event\FinishRequest;
-use Commune\Ghost\Kernel\Protocals\ICloneRequest;
+use Commune\Ghost\Kernel\Protocals\IGhostRequest;
 use Commune\Ghost\Support\ValidateUtils;
 use Commune\Message\Host\SystemInt\SessionBusyInt;
 use Commune\Protocals\HostMsg\Convo\UnsupportedMsg;
@@ -46,13 +46,14 @@ class IGhostInputReceiver implements GhostInputReceiver
 
     /**
      * @param GhostRequest $protocal
-     * @return CloneRequest|GhostResponse
+     * @return GhostRequest|GhostResponse
      */
     public function __invoke($protocal)
     {
         // 类型校验.
         ValidateUtils::isArgInstanceOf($protocal, GhostRequest::class, true);
 
+        // 请求非法
         $error = $protocal->isInvalid();
         if (isset($error)) {
             $this->clone->logger->warning("bad request $error");
@@ -124,7 +125,7 @@ class IGhostInputReceiver implements GhostInputReceiver
          * @var Messenger $messenger
          */
         $messenger = $this->clone->container->get(Messenger::class);
-        $messenger->asyncSendInput2Ghost($request->getInput());
+        $messenger->asyncSendGhostInputs($request->getInput());
 
         return $request->noContent();
     }
@@ -133,7 +134,7 @@ class IGhostInputReceiver implements GhostInputReceiver
      * 同步消息锁失败.
      *
      * @param GhostRequest $request
-     * @return GhostResponse|CloneRequest
+     * @return GhostResponse|GhostRequest
      */
     protected function lockFail(GhostRequest $request) : AppProtocal
     {
@@ -142,9 +143,9 @@ class IGhostInputReceiver implements GhostInputReceiver
     }
 
 
-    protected function wrapCloneRequest(GhostRequest $request) : CloneRequest
+    protected function wrapCloneRequest(GhostRequest $request) : GhostRequest
     {
-        return new ICloneRequest(
+        return new IGhostRequest(
             $request->getInput(),
             $request->isAsync(),
             $request->requireTinyResponse(),

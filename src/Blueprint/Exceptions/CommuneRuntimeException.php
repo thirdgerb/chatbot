@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Exceptions;
 
 use Throwable;
-use Commune\Blueprint\Framework\Request\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 
 /**
  * 机器人运行时异常.

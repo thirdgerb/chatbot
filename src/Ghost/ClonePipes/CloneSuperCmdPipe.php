@@ -11,10 +11,10 @@
 
 namespace Commune\Ghost\ClonePipes;
 
-use Commune\Blueprint\Ghost\Auth\Supervise;
+use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Ghost\Cmd\AGhostCmdPipe;
-use Commune\Blueprint\Kernel\Protocals\CloneRequest;
-use Commune\Blueprint\Kernel\Protocals\CloneResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 
 /**
  * 管理员命令的管道.
@@ -33,7 +33,7 @@ class CloneSuperCmdPipe extends AGhostCmdPipe
         return $this->cloner->config->superCommands;
     }
 
-    protected function doHandle(CloneRequest $request, \Closure $next): CloneResponse
+    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
         if ($this->cloner->auth->allow(Supervise::class)) {
             return parent::doHandle($request, $next);

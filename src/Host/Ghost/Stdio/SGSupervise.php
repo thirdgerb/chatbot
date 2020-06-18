@@ -11,7 +11,7 @@
 
 namespace Commune\Host\Ghost\Stdio;
 
-use Commune\Blueprint\Ghost\Auth\Supervise;
+use Commune\Blueprint\Framework\Auth\Supervise;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

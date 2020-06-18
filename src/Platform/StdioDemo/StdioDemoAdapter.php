@@ -14,13 +14,13 @@ namespace Commune\Platform\StdioDemo;
 use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Platform\PlatformAdapter;
+use Commune\Blueprint\Platform\ShellAdapter;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StdioDemoAdapter implements PlatformAdapter
+class StdioDemoAdapter implements ShellAdapter
 {
 
     /**

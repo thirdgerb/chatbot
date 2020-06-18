@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\ShellPipes;
 
-use Commune\Blueprint\Framework\Request\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Shell\Requests\ShellRequest;
 use Commune\Blueprint\Shell\Requests\ShlOutputRequest;
 use Commune\Blueprint\Shell\Responses\ShellResponse;

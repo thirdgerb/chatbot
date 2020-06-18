@@ -17,25 +17,29 @@ namespace Commune\Blueprint\Exceptions;
  */
 interface CommuneErrorCode
 {
+    // success
     const SUCCESS = 0;
-    const NO_CONTENT = 204;
 
+
+
+    // request failure
     const BAD_REQUEST = 400;
     const UNAUTHORIZED = 401;
     const FORBIDDEN = 403;
     const HANDLER_NOT_FOUND = 404;
 
+    // runtime failure
     const HOST_RUNTIME_ERROR = 500;
     const HOST_REQUEST_FAIL = 501;
     const HOST_SESSION_FAIL = 502;
 
+    // logic failure
     const HOST_LOGIC_ERROR = 600;
 
-    const FAILURE_CODE_START = 300;
+    const FAILURE_CODE_START = 400;
 
     const DEFAULT_ERROR_MESSAGES = [
         0 => 'SUCCESS',
-        204 => 'NO_CONTENT',
         400 => 'BAD_REQUEST',
         401 => 'UNAUTHORIZED',
         403 => 'FORBIDDEN',

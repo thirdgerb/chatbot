@@ -13,8 +13,8 @@ namespace Commune\Ghost\Auth;
 
 use Commune\Blueprint\Exceptions\Logic\InvalidClassException;
 use Commune\Blueprint\Framework\ReqContainer;
-use Commune\Blueprint\Ghost\Auth\Authority;
-use Commune\Blueprint\Ghost\Auth\Policy;
+use Commune\Blueprint\Framework\Auth\Authority;
+use Commune\Blueprint\Framework\Auth\Policy;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

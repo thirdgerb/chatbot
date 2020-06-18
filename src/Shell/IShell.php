@@ -90,7 +90,7 @@ class IShell extends AbsAppKernel implements Shell
         return $this->getConfig()->protocals;
     }
 
-    protected function makeInputSession(ReqContainer $container, InputMsg $input): Session
+    protected function makeSession(ReqContainer $container, InputMsg $input): Session
     {
         if (!$this->activated) {
             throw new CommuneBootingException(
