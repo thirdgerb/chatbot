@@ -27,7 +27,6 @@ use Commune\Support\Utils\TypeUtils;
  * @property array $env
  *
  * @property string $messageId  为空则自动生成.
- * @property string $traceId    允许为空
  * @property string $sessionId  会话Id, 为空则是 guestId
  * @property string $convoId    多轮会话的 ID. 允许为空. 除非客户端有指定的 conversation.
  * @property string $guestId    用户的ID. 不可以为空.
@@ -61,9 +60,6 @@ class IInputMsg extends AIntercomMsg implements InputMsg
 
             // 如果为空, 会自动生成一个 uuid
             'messageId' => '',
-
-            // 为空, 则默认是 messageId
-            'traceId' => '',
 
             // 传入值允许为空, 则会用 guestId 替代.
             'sessionId' => '',
@@ -150,7 +146,6 @@ class IInputMsg extends AIntercomMsg implements InputMsg
             'shellName' => $shellName,
             'traceId' => $this->getTraceId(),
             'sessionId' => empty($sessionId) ? $this->getSessionId() : $sessionId,
-            'batchId' => $this->getBatchId(),
             'convoId' => $this->getConversationId(),
             'guestId' => $guestId ?? $this->getGuestId(),
             'guestName' => $this->getGuestName(),

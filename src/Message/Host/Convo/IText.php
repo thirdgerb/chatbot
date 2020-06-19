@@ -24,6 +24,14 @@ use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 class IText extends AbsMessage implements VerbalMsg
 {
 
+    public static function instance(string $text, string $level = HostMsg::INFO) : IText
+    {
+        return new static([
+            'text' => $text,
+            'level' => $level,
+        ]);
+    }
+
     public static function stub(): array
     {
         return [

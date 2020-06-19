@@ -12,7 +12,7 @@ array_shift($options);
 $debug = !in_array('-p', $options);
 $reset = in_array('-r', $options);
 
-$platformName = end($options);
+$platformName = end($options) ;
 
 // 设置
 CommuneEnv::defineDebug($debug);
@@ -22,6 +22,7 @@ CommuneEnv::defineResetMind($reset);
 $config = include __DIR__ . '/configs/host.php';
 
 $hostConfig = new IHostConfig($config);
+
 $host = new IHost($hostConfig);
 
 // 运行平台.

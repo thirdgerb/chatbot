@@ -17,6 +17,8 @@ use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\ServiceRegistry;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Kernel\Protocals\AppProtocal;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\HasInput;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 use Commune\Blueprint\Shell;
 use Commune\Blueprint\Shell\ShellSession;
@@ -90,7 +92,7 @@ class IShell extends AbsAppKernel implements Shell
         return $this->getConfig()->protocals;
     }
 
-    protected function makeSession(ReqContainer $container, InputMsg $input): Session
+    public function newSession(ReqContainer $container, string $sessionId): ShellSession
     {
         if (!$this->activated) {
             throw new CommuneBootingException(
@@ -98,11 +100,33 @@ class IShell extends AbsAppKernel implements Shell
             );
         }
 
-        $session = new IShellSession($this, $container, $input);
+        return new IShellSession($this, $container, $sessionId);
+    }
+
+
+    protected function makeSession(ReqContainer $container, AppRequest $request): Session
+    {
+        if (!$this->activated) {
+            throw new CommuneBootingException(
+                'shell not activated'
+            );
+        }
 
         $container->share(ReqContainer::class, $container);
-        $container->share(InputMsg::class, $input);
-        $container->share(Comprehension::class, $input->comprehension);
+        $container->share(AppRequest::class, $request);
+        $container->share(get_class($request), $request);
+
+        $sessionId = null;
+
+        if ($request instanceof HasInput) {
+            $input = $request->getInput();
+            $sessionId = $input->getSessionId();
+            $container->share(InputMsg::class, $input);
+            $container->share(Comprehension::class, $input->comprehension);
+        }
+        $sessionId = $sessionId ?? $request->getSessionId();
+
+        $session = $this->newSession($container, $sessionId);
         $container->share(ShellSession::class, $session);
 
         // boot 请求容器.

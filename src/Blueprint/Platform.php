@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Blueprint;
+use Commune\Blueprint\Configs\PlatformConfig;
 
 /**
  * 平台是 Host 在服务器上启动的服务端程序.
@@ -23,6 +24,13 @@ namespace Commune\Blueprint;
  */
 interface Platform
 {
+
+    public function getId() : string;
+
+    /**
+     * @return PlatformConfig
+     */
+    public function getConfig() : PlatformConfig;
 
     /**
      * 运行 Platform

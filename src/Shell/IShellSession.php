@@ -43,11 +43,6 @@ class IShellSession extends ASession implements ShellSession
     ];
 
     /**
-     * @var ReqContainer
-     */
-    protected $_container;
-
-    /**
      * @var Shell
      */
     protected $_shell;
@@ -112,7 +107,6 @@ class IShellSession extends ASession implements ShellSession
     {
         unset($this->_config);
         unset($this->_shell);
-        unset($this->_container);
         unset($this->_input);
     }
 

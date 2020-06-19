@@ -17,6 +17,11 @@ namespace Commune\Blueprint\Kernel\Protocals;
 interface ShellInputRequest extends AppRequest, HasInput
 {
     /**
+     * @return bool
+     */
+    public function isAsync() : bool;
+
+    /**
      * @param int $errcode
      * @param string $errmsg
      * @return ShellInputResponse

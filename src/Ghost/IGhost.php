@@ -135,7 +135,14 @@ class IGhost extends AbsAppKernel implements Ghost
             $container->share(HostMsg::class, $input->getMessage());
         }
 
-        $cloner = $this->newCloner($container, $request->getSessionId());
+        // Input 的 session 是 clone 的 session
+        // request 的 session 是 shell 的 session
+        // 可以不是同一个.
+        $sessionId = isset($input)
+            ? $input->getSessionId()
+            : $request->getSessionId();
+
+        $cloner = $this->newCloner($container, $sessionId);
         $container->share(Cloner::class, $cloner);
         return $cloner;
     }

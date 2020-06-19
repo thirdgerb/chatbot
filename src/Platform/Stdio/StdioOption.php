@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Platform\StdioDemo;
+namespace Commune\Platform\Stdio;
 
 use Commune\Support\Option\AbsOption;
 
@@ -21,9 +21,8 @@ use Commune\Support\Option\AbsOption;
  * @property-read string $guestId
  * @property-read string $guestName
  */
-class StdioDemoOption extends AbsOption
+class StdioOption extends AbsOption
 {
-
     public static function stub(): array
     {
         return [
@@ -37,4 +36,6 @@ class StdioDemoOption extends AbsOption
     {
         return [];
     }
+
+
 }

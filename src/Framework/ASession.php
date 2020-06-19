@@ -174,14 +174,15 @@ abstract class ASession implements Session, HasIdGenerator
     public function finish(): void
     {
         $this->saveSession();
+        $container = $this->_container;
 
-        unset($this->listened);
-        unset($this->singletons);
         $this->flushInstances();
 
         // container
-        $container = $this->_container;
+        unset($this->listened);
+        unset($this->singletons);
         unset($this->_container);
+
         $container->destroy();
     }
 

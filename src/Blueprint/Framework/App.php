@@ -12,13 +12,9 @@
 namespace Commune\Blueprint\Framework;
 
 use Commune\Blueprint\Exceptions\CommuneBootingException;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
-use Commune\Support\Protocal\Protocal;
-use Commune\Support\Protocal\ProtocalMatcher;
 
 /**
  * 基于双容器策略的基本框架.

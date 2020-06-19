@@ -107,7 +107,7 @@ class IDeliver implements Deliver
     public function message(HostMsg $message): Deliver
     {
         $cloner = $this->dialog->cloner;
-        $cloner->output($message);
+        $cloner->output($this->input->output($message));
         return $this;
     }
 

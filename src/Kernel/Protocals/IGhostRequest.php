@@ -35,14 +35,14 @@ class IGhostRequest extends AbsMessage implements GhostRequest
         return [
             'sessionId' => '',
             'async' => false,
-            'input' => IInputMsg::stub()
+            'input' => []
         ];
     }
 
     public static function relations(): array
     {
         return [
-            'input' => InputMsg::class
+            'input' => IInputMsg::class
         ];
     }
 
@@ -93,12 +93,29 @@ class IGhostRequest extends AbsMessage implements GhostRequest
 
     public function response(int $errcode = AppResponse::SUCCESS, string $errmsg = ''): GhostResponse
     {
-        // TODO: Implement response() method.
+        return new IGhostResponse([
+            'traceId' => $this->getTraceId(),
+            'sessionId' => $this->getSessionId(),
+            'errcode' => $errcode,
+            'errmsg' => $errmsg,
+            'outputs' => [],
+        ]);
     }
 
     public function output(HostMsg $message, HostMsg ...$messages): GhostResponse
     {
-        // TODO: Implement output() method.
+        array_unshift($messages, $message);
+        $input = $this->getInput();
+
+        $outputs = array_map(function(HostMsg $message) use ($input) {
+            return $input->output($message);
+        }, $messages);
+
+        return new IGhostResponse([
+            'traceId' => $this->getTraceId(),
+            'sessionId' => $this->getSessionId(),
+            'outputs' => $outputs,
+        ]);
     }
 
     public function getInput(): InputMsg

@@ -83,7 +83,7 @@ class SGRequest implements GhostRequest
     {
         $this->message = $message;
         $this->stdio = $stdio;
-        $this->console = new SGConsoleLogger($stdio, false);
+        $this->console = new StdioConsole($stdio, false);
         $this->shellName = $shellName;
         $this->sessionId = $sessionId;
         $this->guestId = $guestId;

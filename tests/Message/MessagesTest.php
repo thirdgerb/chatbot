@@ -11,10 +11,9 @@
 
 namespace Commune\Test\Message;
 
-use Commune\Ghost\Kernel\Protocals\IGhostResponse;
 use Commune\Message;
 use Commune\Support\Message\MessageTestCase;
-use Commune\Ghost\Kernel\Protocals\IGhostRequest;
+use Commune\Kernel\Protocals;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -57,9 +56,14 @@ class MessagesTest extends MessageTestCase
         Message\Host\QA\IConfirm::class,
         Message\Host\QA\IConfirmation::class,
 
-        // request protocal
-        IGhostRequest::class,
-        IGhostResponse::class,
+
+        // kernel protocals
+        Protocals\IGhostRequest::class,
+        Protocals\IGhostResponse::class,
+        Protocals\IShellInputRequest::class,
+        Protocals\IShellInputResponse::class,
+        Protocals\IShellOutputRequest::class,
+        Protocals\IShellOutputResponse::class,
     ];
 
 

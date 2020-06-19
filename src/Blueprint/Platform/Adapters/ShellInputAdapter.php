@@ -9,24 +9,23 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Platform\Packer;
+namespace Commune\Blueprint\Platform\Adapters;
 
-use Commune\Blueprint\Platform\Packer;
+use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Platform\Adapter;
 
 
 /**
- * 通常用于 TCP, 或者命令行. 输入输出都会解析成字符串.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface StringPacker extends Packer
+interface ShellInputAdapter extends Adapter
 {
 
-    public function getRequest() : string;
+    public function getRequest() : ShellInputRequest;
 
     /**
-     * @param string $response
+     * @param ShellOutputResponse
      */
     public function sendResponse($response): void;
-
-
 }

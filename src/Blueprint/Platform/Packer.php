@@ -11,8 +11,6 @@
 
 namespace Commune\Blueprint\Platform;
 
-use Commune\Blueprint\Platform;
-
 
 /**
  * 将平台的输入输出打包, 传给 adapter
@@ -32,24 +30,15 @@ interface Packer
     public function isInvalid() : ? string;
 
     /**
-     * @return mixed
-     */
-    public function getRequest();
-
-    /**
-     * @param mixed $response
-     * @return mixed
-     */
-    public function sendResponse($response) : void;
-
-    /**
-     * @return Platform
-     */
-    public function getPlatform() : Platform;
-
-    /**
      * @param string $adapterName
      * @return Adapter
      */
     public function adapt(string $adapterName) : Adapter;
+
+    /**
+     * 关闭请求.
+     * @param \Throwable $e
+     */
+    public function fail(\Throwable $e) : void;
+
 }

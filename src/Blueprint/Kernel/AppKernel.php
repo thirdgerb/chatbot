@@ -23,22 +23,6 @@ use Commune\Support\Protocal\ProtocalMatcher;
  */
 interface AppKernel
 {
-    /*------ request ------*/
-
-//    /**
-//     * 运行一个状态机, 直到给出预期的结果, 否则抛出异常.
-//     *
-//     * @param AppRequest $request
-//     * @param string $expect
-//     * @param int $turns
-//     * @return AppProtocal
-//     */
-//    public function handleRequest(
-//        AppRequest $request,
-//        string $expect,
-//        int $turns = 0
-//    ) : AppProtocal;
-
 
     /**
      * 运行一个请求, 获得响应.

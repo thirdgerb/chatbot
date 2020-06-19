@@ -56,7 +56,7 @@ class ProtocalMatcherTest extends TestCase
         $manager = new ProtocalMatcher($logger, [$option1, $option2]);
 
         // 没有设置任何特殊规则, 所以两个都会匹配到.
-        $p = new IText('hello.to.world');
+        $p = IText::instance('hello.to.world');
         $gen = $manager->matchEach($p);
         $this->assertEquals(2, ArrayUtils::countIterable($gen));
 
@@ -71,7 +71,7 @@ class ProtocalMatcherTest extends TestCase
         $this->assertEquals(static::class, $manager->matchFirst($p, TestCase::class)->handler);
 
         // 正则不匹配
-        $p = new IText('hello.world');
+        $p = IText::instance('hello.world');
         $this->assertEquals(1, ArrayUtils::countIterable($manager->matchEach($p)));
 
         $first = ArrayUtils::first($manager->matchEach($p));

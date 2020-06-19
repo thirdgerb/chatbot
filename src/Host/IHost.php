@@ -119,9 +119,15 @@ class IHost extends AbsApp implements Host
         $platformConfig = $this->config->getPlatformConfig($platformId);
 
         if (empty($platformConfig)) {
+
+            $ids = array_map(function(PlatformConfig $config) {
+                return $config->id;
+            }, $this->config->platforms);
+
             throw new AppNotDefinedException(
                 'platform',
-                $platformId
+                $platformId,
+                'available: ' . implode(',', $ids)
             );
         }
 

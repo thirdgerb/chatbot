@@ -1,10 +1,6 @@
 <?php
 
-use Commune\Platform\StdioDemo\StdioDemoPlatform;
 
-return [
-    'id' => 'stdio',
-    'concrete' => StdioDemoPlatform::class,
+return new \Commune\Platform\Stdio\StdioPlatformConfig([
     'bootShell' => 'demo',
-    'bootGhost' => true,
-];
+]);

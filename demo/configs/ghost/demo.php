@@ -3,4 +3,8 @@
 use Commune\Demo\Config\Ghost\DemoGhostConfig;
 
 
-return DemoGhostConfig::stub();
+return new DemoGhostConfig([
+
+    'id' => 'demo',
+    'name' => 'demo',
+]);

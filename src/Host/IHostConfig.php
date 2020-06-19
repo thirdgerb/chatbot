@@ -80,7 +80,7 @@ class IHostConfig extends AbsOption implements HostConfig
         if (!isset($this->_shellMap)) {
             $this->_shellMap = [];
             foreach ($this->shells as $shellConfig) {
-                $id = $shellConfig->getId();
+                $id = $shellConfig->id;
                 $this->_shellMap[$id] = $shellConfig;
             }
         }
@@ -93,7 +93,7 @@ class IHostConfig extends AbsOption implements HostConfig
         if (!isset($this->_platformMap)) {
             $this->_platformMap = [];
             foreach ($this->platforms as $platformConfig) {
-                $id = $platformConfig->getId();
+                $id = $platformConfig->id;
                 $this->_platformMap[$id] = $platformConfig;
             }
         }

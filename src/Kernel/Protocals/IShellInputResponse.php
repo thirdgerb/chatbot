@@ -11,74 +11,61 @@
 
 namespace Commune\Kernel\Protocals;
 
-use Commune\Protocals\Intercom\OutputMsg;
-use Commune\Protocals\IntercomMsg;
-use Commune\Support\Message\AbsMessage;
-use Commune\Support\Utils\StringUtils;
-use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Message\Intercom\IInputMsg;
+use Commune\Protocals\Intercom\InputMsg;
+use Commune\Support\Message\AbsMessage;
+use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
+use Commune\Support\Utils\StringUtils;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
  * @property-read string $sessionId
- * @property-read string $traceId
+ * @property-read bool $async
  * @property-read int $errcode
  * @property-read string $errmsg
- * @property-read OutputMsg[] $outputs
+ * @property-read InputMsg $input
  */
-class IShellOutputResponse extends AbsMessage implements ShellOutputResponse
+class IShellInputResponse extends AbsMessage implements ShellInputResponse
 {
-
     public static function stub(): array
     {
         return [
             'sessionId' => '',
-            'traceId' => '',
+            'async' => false,
             'errcode' => 0,
             'errmsg' => '',
-            'outputs' => []
+            'input' => [],
         ];
     }
 
     public static function relations(): array
     {
         return [
-            'outputs[]' => IntercomMsg::class,
+            'input' => IInputMsg::class,
         ];
     }
-
-    /*------ message ------*/
 
     public function isEmpty(): bool
     {
         return false;
     }
 
-    /*------ protocal ------*/
-
-    public function getProtocalId(): string
-    {
-        return StringUtils::namespaceSlashToDot(static::class);
-    }
-
-    /*------ request ------*/
-
-    public function getOutputs(): array
-    {
-        return $this->outputs;
-    }
+    /*-------- request --------*/
 
     public function getTraceId(): string
     {
-        return $this->traceId;
+        return $this->getInput()->getMessageId();
     }
 
     public function getSessionId(): string
     {
-        return $this->sessionId;
+        $sessionId = $this->sessionId;
+        return empty($sessionId)
+            ? $this->getInput()->getSessionId()
+            : $sessionId;
     }
 
     public function getErrcode(): int
@@ -97,6 +84,24 @@ class IShellOutputResponse extends AbsMessage implements ShellOutputResponse
     public function isSuccess(): bool
     {
         return $this->errcode < AppResponse::FAILURE_CODE_START;
+    }
+
+    public function getInput(): InputMsg
+    {
+        return $this->input;
+    }
+
+    public function isAsync(): bool
+    {
+        return $this->async;
+    }
+
+
+    /*-------- protocal --------*/
+
+    public function getProtocalId(): string
+    {
+        return StringUtils::namespaceSlashToDot(static::class);
     }
 
 

@@ -11,17 +11,15 @@
 
 namespace Commune\Kernel\Protocals;
 
-use Commune\Protocals\Intercom\OutputMsg;
-use Commune\Protocals\IntercomMsg;
-use Commune\Support\Message\AbsMessage;
-use Commune\Support\Utils\StringUtils;
-use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Protocals\Intercom\OutputMsg;
+use Commune\Support\Message\AbsMessage;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Support\Utils\StringUtils;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
  *
  * @property-read string $sessionId
  * @property-read string $traceId
@@ -29,47 +27,34 @@ use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
  * @property-read string $errmsg
  * @property-read OutputMsg[] $outputs
  */
-class IShellOutputResponse extends AbsMessage implements ShellOutputResponse
+class IGhostResponse extends AbsMessage implements GhostResponse
 {
-
     public static function stub(): array
     {
         return [
-            'sessionId' => '',
             'traceId' => '',
+            'sessionId' => '',
             'errcode' => 0,
             'errmsg' => '',
-            'outputs' => []
+            'outputs' => [],
         ];
     }
 
     public static function relations(): array
     {
         return [
-            'outputs[]' => IntercomMsg::class,
+            'outputs[]' => OutputMsg::class,
         ];
     }
 
-    /*------ message ------*/
+    /*-------- message --------*/
 
     public function isEmpty(): bool
     {
         return false;
     }
 
-    /*------ protocal ------*/
-
-    public function getProtocalId(): string
-    {
-        return StringUtils::namespaceSlashToDot(static::class);
-    }
-
-    /*------ request ------*/
-
-    public function getOutputs(): array
-    {
-        return $this->outputs;
-    }
+    /*-------- request --------*/
 
     public function getTraceId(): string
     {
@@ -97,6 +82,19 @@ class IShellOutputResponse extends AbsMessage implements ShellOutputResponse
     public function isSuccess(): bool
     {
         return $this->errcode < AppResponse::FAILURE_CODE_START;
+    }
+
+    public function getOutputs(): array
+    {
+        return $this->outputs;
+    }
+
+
+    /*-------- protocal --------*/
+
+    public function getProtocalId(): string
+    {
+        return StringUtils::namespaceSlashToDot(static::class);
     }
 
 

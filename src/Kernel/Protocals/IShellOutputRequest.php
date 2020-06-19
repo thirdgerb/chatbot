@@ -14,7 +14,6 @@ namespace Commune\Kernel\Protocals;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
-use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Utils\StringUtils;
@@ -47,7 +46,7 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
     public static function relations(): array
     {
         return [
-            'outputs[]' => OutputMsg::class,
+            'outputs[]' => IntercomMsg::class,
         ];
     }
 
