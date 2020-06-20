@@ -11,27 +11,27 @@
 
 namespace Commune\Contracts\Messenger;
 
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Broadcaster
 {
-    /**
-     * @param GhostResponse $response
-     * @param GhostResponse[] $responses
-     */
-    public function publish(GhostResponse $response, GhostResponse ...$responses) : void;
 
     /**
-     * @param callable $callback        传入参数, GhostResponse
-     * @param string $shellName
+     * @param ShellOutputRequest $request
+     */
+    public function publish(ShellOutputRequest $request) : void;
+
+    /**
+     * @param callable $callback        传入参数, ShellOutputRequest
+     * @param string $shellId
      * @param string|null $sessionId
      */
     public function subscribe(
         callable $callback,
-        string $shellName,
+        string $shellId,
         string $sessionId = null
     ) : void;
 

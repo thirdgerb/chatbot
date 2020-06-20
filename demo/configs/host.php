@@ -1,20 +1,20 @@
 <?php
 
+use Commune\Host\Prototype\HostProtoConfig;
 
-/**
- * @see \Commune\Blueprint\Configs\HostConfig
- */
-return [
+return new HostProtoConfig([
 
     'id' => 'demo',
+
     'name' => 'demo',
-    'providers' => [],
-    'options' => [],
-    'ghost' => include __DIR__ . '/ghost/demo.php',
-    'shells' => [
-        include __DIR__ .'/shells/demo.php',
-    ],
-    'platforms' => [
-        include __DIR__ . '/platforms/stdio.php',
-    ],
-];
+
+    // ghost 的配置
+    'ghost' => include __DIR__ . '/includes/ghost.php',
+
+    // shell 的配置
+    'shells' => include __DIR__ . '/includes/shells.php',
+
+    // 平台的配置.
+    'platforms' => include __DIR__ . '/includes/platforms.php',
+
+]);

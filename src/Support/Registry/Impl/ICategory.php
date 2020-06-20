@@ -31,11 +31,6 @@ class ICategory implements Category
     protected $container;
 
     /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * @var CategoryOption
      */
     protected $categoryOption;
@@ -62,17 +57,14 @@ class ICategory implements Category
     /**
      * ICategory constructor.
      * @param ContainerInterface $container
-     * @param LoggerInterface $logger
      * @param CategoryOption $categoryOption
      */
     public function __construct(
         ContainerInterface $container,
-        LoggerInterface $logger,
         CategoryOption $categoryOption
     )
     {
         $this->container = $container;
-        $this->logger = $logger;
         $this->categoryOption = $categoryOption;
         $this->storageOption = $categoryOption->storage->toWrapper();
     }

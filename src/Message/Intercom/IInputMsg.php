@@ -22,15 +22,16 @@ use Commune\Support\Utils\TypeUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property string $shellName  不可为空.
- * @property string $sceneId
+ * @property string $scene
  * @property array $env
  *
- * @property string $messageId  为空则自动生成.
+ * @property string $shellId  不可为空.
  * @property string $sessionId  会话Id, 为空则是 guestId
  * @property string $convoId    多轮会话的 ID. 允许为空. 除非客户端有指定的 conversation.
  * @property string $guestId    用户的ID. 不可以为空.
  * @property string $guestName  用户的姓名. 可以为空.
+ *
+ * @property string $messageId  为空则自动生成.
  * @property HostMsg $message   输入消息. 不可以为空.
  * @property int $createdAt     创建时间.
  * @property int $deliverAt     发送时间. 默认为0.
@@ -56,10 +57,7 @@ class IInputMsg extends AIntercomMsg implements InputMsg
     {
         return [
             // 不可为空.
-            'shellName' => '',
-
-            // 如果为空, 会自动生成一个 uuid
-            'messageId' => '',
+            'shellId' => '',
 
             // 传入值允许为空, 则会用 guestId 替代.
             'sessionId' => '',
@@ -73,6 +71,9 @@ class IInputMsg extends AIntercomMsg implements InputMsg
             // 允许为空. 有的客户端没有 guestName
             'guestName' => '',
 
+            // 如果为空, 会自动生成一个 uuid
+            'messageId' => '',
+
             // 默认的消息
             'message' => new IText(),
 
@@ -80,7 +81,9 @@ class IInputMsg extends AIntercomMsg implements InputMsg
             'deliverAt' => 0,
 
             'createdAt' => time(),
-            'sceneId' => '',
+
+            'scene' => '',
+
             'env' => [],
 
             // 可以为空. 除非客户端传来时已经带有理解信息了.
@@ -106,9 +109,9 @@ class IInputMsg extends AIntercomMsg implements InputMsg
     }
 
 
-    public function getSceneId(): string
+    public function getScene(): string
     {
-        return $this->sceneId;
+        return $this->scene;
     }
 
     public function getEnv(): array
@@ -124,18 +127,18 @@ class IInputMsg extends AIntercomMsg implements InputMsg
     /**
      * @param HostMsg $message
      * @param int $deliverAt
-     * @param string|null $guestId
      * @param string|null $shellName
      * @param string|null $sessionId
+     * @param string|null $guestId
      * @param string|null $messageId
      * @return OutputMsg
      */
     public function output(
         HostMsg $message,
         int $deliverAt = 0,
-        string $guestId = null,
         string $shellName = null,
         string $sessionId = null,
+        string $guestId = null,
         string $messageId = null
     ): OutputMsg
     {
@@ -156,7 +159,7 @@ class IInputMsg extends AIntercomMsg implements InputMsg
 
     public function getShellName(): string
     {
-        return $this->shellName;
+        return $this->shellId;
     }
 
     public function getTraceId(): string
@@ -166,27 +169,16 @@ class IInputMsg extends AIntercomMsg implements InputMsg
 
     public function getSessionId(): string
     {
-        $sessionId = $this->sessionId;
-        if (empty($sessionId)) {
-            $sessionId = $this->sessionId = empty($sessionId)
-                ? static::makeSessionId($this->getShellName(), $this->getGuestId())
-                : $sessionId;
-        }
-
-        return $sessionId;
+        return $this->sessionId;
     }
 
-    public static function makeSessionId(string $shellName, string $guestId) : string
-    {
-        return sha1("shell:$shellName:guest:$guestId");
-    }
 
     public function setSceneId(string $sceneId): void
     {
-        $this->sceneId = $sceneId;
+        $this->scene = $sceneId;
     }
 
-    public function asResponseInput(): InputMsg
+    public function asBareIntercom(): InputMsg
     {
         $data = $this->toArray();
         unset($data['comprehension']);

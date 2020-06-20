@@ -27,6 +27,7 @@ use Commune\Blueprint\Exceptions\CommuneLogicException;
 use Commune\Support\Protocal\Protocal;
 use Commune\Support\Protocal\ProtocalMatcher;
 use Commune\Support\Protocal\ProtocalOption;
+use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 
 
 
@@ -57,6 +58,17 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
      */
     abstract protected function makeSession(ReqContainer $container, AppRequest $request) : Session;
 
+    abstract protected function failResponse(
+        string $traceId,
+        int $errcode = AppResponse::HOST_REQUEST_FAIL,
+        string $errmsg = ''
+    ) : AppResponse;
+
+    /**
+     * @param AppRequest $request
+     * @throws CommuneRuntimeException
+     */
+    abstract protected function validateAppRequest(AppRequest $request) : void;
 
     /*------ protocal ------*/
 
@@ -79,7 +91,16 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
         foreach ($matcher->matchEach($protocal, $handlerInterface) as $handlerOption) {
             $handler = $handlerOption->handler;
             $params = $handlerOption->params;
-            yield $container->make($handler, $params);
+            $handler = $container->make($handler, $params);
+
+            if (isset($handlerInterface) && !is_a($handler, $handlerInterface, TRUE)) {
+                $actual = TypeUtils::getType($handler);
+                throw new CommuneLogicException(
+                    "invalid protocal handler, expect $handlerInterface, $actual given"
+                );
+            }
+
+            yield $handler;
         }
     }
 
@@ -129,8 +150,8 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
         string $interface = null
     ) : AppResponse
     {
-        $traceId = $request->getTraceId();
 
+        $traceId = $request->getTraceId();
         /**
          * @var LoggerInterface $logger
          */
@@ -138,6 +159,8 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
         $requestStart = microtime(true);
 
         try {
+            $this->validateAppRequest($request);
+
             // 根据请求衍生的唯一ID 来生成 container 的容器.
             $container = $this->newReqContainerIns($this->makeContainerId($request));
 
@@ -160,16 +183,19 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
                 );
             }
 
-
             // 抛出启动事件.
             $session->fire(new StartRequest($session));
 
             $response = $handler($request);
 
-            // 通用异常管理.
+        } catch (CommuneRuntimeException $e) {
+            $this->report($e);
+            $response = $this->failResponse($traceId, $e->getCode(), $e->getMessage());
+
+        // 通用异常管理.
         } catch (\Throwable $e) {
             $this->report($e);
-            $response = $request->response(AppResponse::HOST_LOGIC_ERROR);
+            $response = $this->failResponse($traceId);
 
             // 垃圾回收与日志.
         } finally {
@@ -189,8 +215,7 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
             unset ($logger);
 
             // 默认 response.
-            return $response
-                ?? $request->response(AppResponse::HOST_LOGIC_ERROR);
+            return $response ?? $this->failResponse($traceId);
         }
     }
 

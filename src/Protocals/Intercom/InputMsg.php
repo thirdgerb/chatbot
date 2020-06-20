@@ -30,7 +30,7 @@ interface InputMsg extends IntercomMsg
     /**
      * @return string
      */
-    public function getSceneId() : string;
+    public function getScene() : string;
 
     /**
      * @return array
@@ -54,18 +54,18 @@ interface InputMsg extends IntercomMsg
     /**
      * @param HostMsg $message
      * @param int $deliverAt
-     * @param string|null $guestId
      * @param string|null $shellName
      * @param string|null $sessionId
+     * @param string|null $guestId
      * @param string|null $messageId
      * @return OutputMsg
      */
     public function output(
         HostMsg $message,
         int $deliverAt = 0,
-        string $guestId = null,
         string $shellName = null,
         string $sessionId = null,
+        string $guestId = null,
         string $messageId = null
     ) : OutputMsg;
 
@@ -74,6 +74,6 @@ interface InputMsg extends IntercomMsg
      * 去掉 Comprehend, Env 等信息后的请求.
      * @return InputMsg
      */
-    public function asResponseInput() : InputMsg;
+    public function asBareIntercom() : InputMsg;
 
 }

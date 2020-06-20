@@ -51,8 +51,7 @@ abstract class ASessionStorage implements SessionStorage
         $this->session = $session;
         $this->traceId = $session->getTraceId();
 
-        if (!$session->isStateless()) {
-            // 延迟加载, 免得不必要的创建了 Cache 的连接.
+        if (! $this->isStateless()) {
             $this->cache = $session->getContainer()->make(Cache::class);
             $this->initDataFromCache();
         }
@@ -62,7 +61,9 @@ abstract class ASessionStorage implements SessionStorage
 
 
 
-    abstract public function getSessionKey(string $sessionName, string $sessionId) : string;
+    abstract public function isStateless() : bool;
+
+    abstract public function getSessionKey(string $appId, string $sessionId) : string;
 
     protected function initDataFromCache() : void
     {
@@ -89,10 +90,6 @@ abstract class ASessionStorage implements SessionStorage
 
     public function save(): void
     {
-        if ($this->session->isStateless()) {
-            return;
-        }
-
         if (!isset($this->cache)) {
             return;
         }

@@ -53,6 +53,17 @@ class IShellInputResponse extends AbsMessage implements ShellInputResponse
         return false;
     }
 
+
+    public function fill(array $data): void
+    {
+        if (empty($data['errmsg'])) {
+            $errcode = $data['errcode'] ?? 0;
+            $data['errmsg'] = AppResponse::DEFAULT_ERROR_MESSAGES[$errcode];
+        }
+
+        parent::fill($data);
+    }
+
     /*-------- request --------*/
 
     public function getTraceId(): string
@@ -75,10 +86,7 @@ class IShellInputResponse extends AbsMessage implements ShellInputResponse
 
     public function getErrmsg(): string
     {
-        $errmsg = $this->errmsg;
-        return empty($errmsg)
-            ? AppResponse::DEFAULT_ERROR_MESSAGES[$this->errcode]
-            : $errmsg;
+        return $this->errmsg;
     }
 
     public function isSuccess(): bool

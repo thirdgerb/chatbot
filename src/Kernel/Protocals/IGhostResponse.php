@@ -47,6 +47,16 @@ class IGhostResponse extends AbsMessage implements GhostResponse
         ];
     }
 
+    public function fill(array $data): void
+    {
+        if (empty($data['errmsg'])) {
+            $errcode = $data['errcode'] ?? 0;
+            $data['errmsg'] = AppResponse::DEFAULT_ERROR_MESSAGES[$errcode];
+        }
+
+        parent::fill($data);
+    }
+
     /*-------- message --------*/
 
     public function isEmpty(): bool
@@ -73,10 +83,7 @@ class IGhostResponse extends AbsMessage implements GhostResponse
 
     public function getErrmsg(): string
     {
-        $errmsg = $this->errmsg;
-        return empty($errmsg)
-            ? AppResponse::DEFAULT_ERROR_MESSAGES[$this->errcode]
-            : $errmsg;
+        return $this->errmsg;
     }
 
     public function isSuccess(): bool

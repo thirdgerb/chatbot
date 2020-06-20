@@ -100,7 +100,7 @@ class IShellOutputHandler implements ShellOutputHandler
         $db = $this->session->container->get(MessageDB::class);
 
         $outputs = $db->where()
-            ->batchIdIs($request->getTraceId())
+            ->traceIdIs($request->getTraceId())
             ->get();
 
         $request->setOutputs($outputs);

@@ -11,6 +11,7 @@
 
 namespace Commune\Framework\Component\Providers;
 
+use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
 use Commune\Support\Registry\Meta\CategoryOption;
@@ -76,10 +77,19 @@ class LoadComponentOption extends ServiceProvider
             $this->optionClass
         );
 
-        /**
-         * @var OptRegistry $registry
-         */
-        $registry = $app->get(OptRegistry::class);
+        try {
+
+            /**
+             * @var OptRegistry $registry
+             */
+            $registry = $app->get(OptRegistry::class);
+
+        } catch (\Throwable $e) {
+            throw new CommuneBootingException(
+                OptRegistry::class . ' not registered',
+                $e
+            );
+        }
 
         $registry->registerCategory(new CategoryOption([
             'name' => $name,

@@ -20,7 +20,6 @@ use Commune\Support\Registry\OptRegistry;
 use Commune\Support\Registry\Storage\Json\JsonFileStorage;
 use Commune\Support\Registry\Storage\PHP\PHPFileStorage;
 use Commune\Support\Registry\Storage\Yaml\YmlFileStorage;
-use Psr\Log\LoggerInterface;
 
 /**
  * 配置注册表模块. 能够从指定的存储介质中获得配置.
@@ -63,12 +62,7 @@ class OptRegistryProvider extends ServiceProvider
     public function register(ContainerContract $app): void
     {
         $app->singleton(OptRegistry::class, function(ContainerContract $app){
-
-            return new IOptRegistry(
-                $app,
-                $app->get(LoggerInterface::class)
-            );
-
+            return new IOptRegistry($app);
         });
 
         $app->singleton(

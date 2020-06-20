@@ -12,7 +12,7 @@
 namespace Commune\Kernel\ClonePipes;
 
 use Commune\Blueprint\Framework\Auth\Supervise;
-use Commune\Ghost\Cmd\AGhostCmdPipe;
+use Commune\Kernel\GhostCmd\AGhostCmdPipe;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 

@@ -11,7 +11,7 @@
 
 namespace Commune\Kernel\ClonePipes;
 
-use Commune\Ghost\Cmd\AGhostCmdPipe;
+use Commune\Kernel\GhostCmd\AGhostCmdPipe;
 
 /**
  * 用户命令管道.

@@ -13,6 +13,7 @@ namespace Commune\Kernel\Handlers;
 
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
 use Commune\Blueprint\Ghost;
+use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
 use Commune\Blueprint\Kernel\Handlers\ShellOutputHandler;
 use Commune\Blueprint\Kernel\Handlers\ShellRequestHandler;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
@@ -56,6 +57,7 @@ class IShellRequestHandler implements ShellRequestHandler
     /**
      * IShellRequestHandler constructor.
      * @param ShellSession $session
+     * @param array|null $middleware
      */
     public function __construct(ShellSession $session, array $middleware = null)
     {
@@ -92,6 +94,7 @@ class IShellRequestHandler implements ShellRequestHandler
 
         // 如果 ghost 端的响应异常.
         $ghostRes = $this->send2Ghost($inputRes);
+
         if (!$ghostRes->isSuccess()) {
             return $this->emptyResponse($ghostRes);
         }
@@ -199,9 +202,11 @@ class IShellRequestHandler implements ShellRequestHandler
         if ($container->bound(Ghost::class)) {
             /**
              * @var Ghost $ghost
+             * @var GhostResponse $response
              */
             $ghost = $container->make(Ghost::class);
-            return $ghost->handleRequest($request);
+            $response = $ghost->handleRequest($request, GhostRequestHandler::class);
+            return $response;
         }
 
         /**
@@ -254,6 +259,7 @@ class IShellRequestHandler implements ShellRequestHandler
     protected function wrapOutputRequest(GhostResponse $response) : ShellOutputRequest
     {
         return new IShellOutputRequest([
+            'shellId' => $this->session->shell->getId(),
             'sessionId' => $response->getSessionId(),
             'traceId' => $response->getTraceId(),
             'async' => false,

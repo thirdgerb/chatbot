@@ -16,7 +16,6 @@ use Commune\Support\Registry\Exceptions\CategoryNotFoundException;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\OptRegistry;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
 
 
 /**
@@ -36,11 +35,6 @@ class IOptRegistry implements OptRegistry
     protected $categoryOptions = [];
 
     /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * @var Category[]
      */
     protected $categories = [];
@@ -48,12 +42,10 @@ class IOptRegistry implements OptRegistry
     /**
      * OptionRepositoryImpl constructor.
      * @param ContainerInterface $container
-     * @param LoggerInterface $logger
      */
-    public function __construct(ContainerInterface $container, LoggerInterface $logger)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->logger = $logger;
     }
 
     public function registerCategory(CategoryOption $meta, bool $initialize = false): void
@@ -87,7 +79,7 @@ class IOptRegistry implements OptRegistry
         }
 
         $option = $this->getCategoryOption($categoryName);
-        return $this->categories[$categoryName] = new ICategory($this->container, $this->logger, $option);
+        return $this->categories[$categoryName] = new ICategory($this->container, $option);
     }
 
     public function eachCategory(): \Generator
@@ -107,15 +99,11 @@ class IOptRegistry implements OptRegistry
         return $this->categoryOptions;
     }
 
-
     public function __destruct()
     {
-        $this->container = null;
-        $this->logger = null;
-
-        // 否则不能垃圾回收.
-        $this->categories = [];
-        $this->categoryOptions = [];
+        unset($this->container);
+        unset($this->categories);
+        unset($this->categoryOptions);
     }
 
 }

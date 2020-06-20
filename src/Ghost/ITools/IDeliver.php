@@ -22,6 +22,9 @@ use Commune\Protocals\Intercom\InputMsg;
  */
 class IDeliver implements Deliver
 {
+
+    /*----- property -----*/
+
     /**
      * @var InputMsg
      */
@@ -33,24 +36,57 @@ class IDeliver implements Deliver
     protected $dialog;
 
     /**
-     * @var array
+     * @var bool
      */
-    protected $slots = [];
+    protected $immediately;
+
+    /*----- output config -----*/
 
     /**
      * @var int
      */
     protected $deliverAt = 0;
 
+    /**
+     * @var array
+     */
+    protected $slots = [];
 
     /**
-     * ITyper constructor.
-     * @param Dialog $dialog
+     * @var null|string
      */
-    public function __construct(Dialog $dialog)
+    protected $shellName = null;
+
+    /**
+     * @var null|string
+     */
+    protected $sessionId = null;
+
+    /**
+     * @var null|string
+     */
+    protected $guestId = null;
+
+
+    /*---- cached ----*/
+
+    /**
+     * @var HostMsg[]
+     */
+    protected $buffer = [];
+
+
+
+    /**
+     * IDeliver constructor.
+     * @param Dialog $dialog
+     * @param bool $immediately
+     */
+    public function __construct(Dialog $dialog, bool $immediately)
     {
         $this->dialog = $dialog;
         $this->input = $this->dialog->cloner->input;
+        $this->immediately = $immediately;
     }
 
 
@@ -106,13 +142,40 @@ class IDeliver implements Deliver
 
     public function message(HostMsg $message): Deliver
     {
-        $cloner = $this->dialog->cloner;
-        $cloner->output($this->input->output($message));
+        if ($this->immediately) {
+            $this->output($message);
+
+        } else {
+            $this->buffer[] = $message;
+        }
+
         return $this;
+    }
+
+    protected function output(HostMsg $message, HostMsg ...$messages) : void
+    {
+        // 有可能要做异步.
+
+        array_unshift($messages, $message);
+
+        $messages = array_map(function(HostMsg $message){
+            return $this->input->output(
+                $message,
+                $this->deliverAt,
+                $this->shellName,
+                $this->sessionId,
+                $this->guestId
+            );
+        }, $messages);
+
+        $cloner = $this->dialog->cloner;
+        $cloner->output(...$messages);
     }
 
     public function over(): Dialog
     {
+        $this->__invoke();
+
         return $this->dialog;
     }
 
@@ -123,5 +186,15 @@ class IDeliver implements Deliver
         $this->input = null;
         $this->slots = [];
     }
+
+    public function __invoke(): void
+    {
+        if (!empty($this->buffer)) {
+            $buffer = $this->buffer;
+            $this->output(...$buffer);
+            $this->buffer = [];
+        }
+    }
+
 
 }

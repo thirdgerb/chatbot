@@ -14,8 +14,6 @@ namespace Commune\Support\Arr;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- *
- * @mixin \ArrayAccess
  */
 trait TArrayAccessToMutator
 {

@@ -106,9 +106,9 @@ abstract class AbsBaseDialog implements
 
     /*-------- dialog tool --------*/
 
-    public function send(): Tools\Deliver
+    public function send(bool $immediately = true): Tools\Deliver
     {
-        return new ITools\IDeliver($this);
+        return new ITools\IDeliver($this, $immediately);
     }
 
     /*-------- operators --------*/

@@ -51,16 +51,6 @@ class IHost extends AbsApp implements Host
     protected $config;
 
     /**
-     * @var string
-     */
-    protected $shellConcrete = IShell::class;
-
-    /**
-     * @var string
-     */
-    protected $ghostConcrete = IGhost::class;
-
-    /**
      * @var null|GhostConfig
      */
     protected $ghostConfig;
@@ -138,12 +128,18 @@ class IHost extends AbsApp implements Host
         $this->bootstrap();
         $this->activate();
 
-        /**
-         * @var Platform $platform
-         */
-        $platform = $this
-            ->getProcContainer()
-            ->make(Platform::class);
+        try {
+
+            /**
+             * @var Platform $platform
+             */
+            $platform = $this
+                ->getProcContainer()
+                ->make(Platform::class);
+
+        } catch (\Throwable $e) {
+            $this->getConsoleLogger()->critical(strval($e));
+        }
 
         // 启动服务
         $platform->serve();
@@ -174,7 +170,16 @@ class IHost extends AbsApp implements Host
 
         $this->getProcContainer()->singleton(
             Ghost::class,
-            $this->ghostConcrete
+            function() {
+                return new IGhost(
+                    $this->ghostConfig,
+                    $this->getProcContainer(),
+                    $this->getBasicReqContainer(),
+                    $this->getServiceRegistry(),
+                    $this->getConsoleLogger(),
+                    $this->getLogInfo()
+                );
+            }
         );
     }
 
@@ -198,7 +203,16 @@ class IHost extends AbsApp implements Host
 
         $this->getProcContainer()->singleton(
             Shell::class,
-            $this->shellConcrete
+            function() {
+                return new IShell(
+                    $this->shellConfig,
+                    $this->getProcContainer(),
+                    $this->getBasicReqContainer(),
+                    $this->getServiceRegistry(),
+                    $this->getConsoleLogger(),
+                    $this->getLogInfo()
+                );
+            }
         );
     }
 

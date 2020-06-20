@@ -106,9 +106,11 @@ interface Dialog
 
     /**
      * 发送消息给用户
+     *
+     * @param bool $immediately
      * @return Deliver
      */
-    public function send() : Deliver;
+    public function send(bool $immediately = true) : Deliver;
 
 
     /*----- memory -----*/

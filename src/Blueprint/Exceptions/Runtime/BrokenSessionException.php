@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Exceptions\Runtime;
 
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Exceptions\CommuneErrorCode;
 use Throwable;
 
 /**
@@ -23,10 +23,10 @@ class BrokenSessionException extends CommuneRuntimeException
     public function __construct(string $message = "",  Throwable $previous = null)
     {
         $message = empty($message)
-            ? AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_SESSION_FAIL]
+            ? CommuneErrorCode::DEFAULT_ERROR_MESSAGES[CommuneErrorCode::HOST_SESSION_FAIL]
             : $message;
 
-        parent::__construct($message, AppResponse::HOST_SESSION_FAIL, $previous);
+        parent::__construct($message, CommuneErrorCode::HOST_SESSION_FAIL, $previous);
     }
 
 }

@@ -40,10 +40,4 @@ class GhostLoadComponent extends LoadComponents
         return $config;
     }
 
-    public function getAppType(): string
-    {
-        return Ghost::class;
-    }
-
-
 }

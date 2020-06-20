@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Blueprint\Configs;
+use Commune\Support\Option\Option;
 
 /**
  * 对话机器人的基础配置
@@ -27,7 +28,7 @@ namespace Commune\Blueprint\Configs;
  * @property-read ShellConfig[] $shells         Shell 的配置
  * @property-read PlatformConfig[] $platforms   Platform 的配置
  */
-interface HostConfig
+interface HostConfig extends Option
 {
 
     /*------ 获取关联配置 ------*/

@@ -21,7 +21,9 @@ CommuneEnv::defineResetMind($reset);
 
 $config = include __DIR__ . '/configs/host.php';
 
-$hostConfig = new IHostConfig($config);
+$hostConfig = is_array($config)
+    ? new IHostConfig($config)
+    : $config;
 
 $host = new IHost($hostConfig);
 

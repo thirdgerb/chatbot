@@ -67,7 +67,6 @@ class StdioPlatform extends AbsPlatform
         $this->option = $option;
         parent::__construct($host, $config, $logger);
 
-
         $this->loop = Factory::create();
         $this->stdio = new Stdio($this->loop);
         $this->writer = new StdioConsole($this->stdio, true);
@@ -83,6 +82,7 @@ class StdioPlatform extends AbsPlatform
             $this->onPacker($packer);
 
         });
+
         $this->loop->run();
     }
 

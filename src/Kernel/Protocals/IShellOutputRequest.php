@@ -18,11 +18,10 @@ use Commune\Protocals\IntercomMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Utils\StringUtils;
 
-
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
+ * @property-read string $shellId
  * @property-read string $sessionId
  * @property-read string $traceId
  * @property-read bool $async
@@ -67,6 +66,12 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
     {
         return $this->traceId;
     }
+
+    public function getShellId(): string
+    {
+        return $this->shellId;
+    }
+
 
     public function getProtocalId(): string
     {

@@ -15,7 +15,6 @@ use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Utils\StringUtils;
-use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 
@@ -48,6 +47,17 @@ class IShellOutputResponse extends AbsMessage implements ShellOutputResponse
         return [
             'outputs[]' => IntercomMsg::class,
         ];
+    }
+
+
+    public function fill(array $data): void
+    {
+        if (empty($data['errmsg'])) {
+            $errcode = $data['errcode'] ?? 0;
+            $data['errmsg'] = AppResponse::DEFAULT_ERROR_MESSAGES[$errcode];
+        }
+
+        parent::fill($data);
     }
 
     /*------ message ------*/
@@ -88,10 +98,7 @@ class IShellOutputResponse extends AbsMessage implements ShellOutputResponse
 
     public function getErrmsg(): string
     {
-        $errmsg = $this->errmsg;
-        return empty($errmsg)
-            ? AppResponse::DEFAULT_ERROR_MESSAGES[$this->errcode]
-            : $errmsg;
+        return $this->errmsg;
     }
 
     public function isSuccess(): bool

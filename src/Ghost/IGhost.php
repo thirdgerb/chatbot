@@ -11,7 +11,10 @@
 
 namespace Commune\Ghost;
 
+use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\HasInput;
 use Commune\Ghost\Bootstrap;
 use Commune\Framework\App\AbsAppKernel;
@@ -27,10 +30,12 @@ use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
+use Commune\Kernel\Protocals\IGhostResponse;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Protocal\ProtocalMatcher;
+use Commune\Support\Utils\TypeUtils;
 
 
 /**
@@ -147,6 +152,36 @@ class IGhost extends AbsAppKernel implements Ghost
         return $cloner;
     }
 
+    /*--------- kernel ---------*/
+
+    protected function failResponse(
+        string $traceId,
+        int $errcode = AppResponse::HOST_REQUEST_FAIL,
+        string $errmsg = ''
+    ): AppResponse
+    {
+        return new IGhostResponse([
+            'traceId' => $traceId,
+            'errcode' => $errcode,
+            'errmsg' => $errmsg
+        ]);
+    }
+
+    protected function validateAppRequest(AppRequest $request): void
+    {
+        $valid = $request instanceof GhostRequest;
+
+        if (!$valid) {
+            $actual = TypeUtils::getType($request);
+
+            throw new CommuneRuntimeException(
+               "bad request, expect "
+                . GhostRequest::class
+                . ", $actual given"
+            );
+        }
+    }
+
 
     /*--------- protocals ---------*/
 
@@ -159,6 +194,4 @@ class IGhost extends AbsAppKernel implements Ghost
     {
         return $protocal instanceof GhostResponse;
     }
-
-
 }

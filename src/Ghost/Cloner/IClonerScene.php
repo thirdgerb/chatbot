@@ -36,7 +36,7 @@ class IClonerScene implements ClonerScene
 
     public function __construct(InputMsg $input, GhostConfig $config)
     {
-        $sceneId = $input->getSceneId();
+        $sceneId = $input->getScene();
 
         if (!isset($config->sceneContextNames[$sceneId])) {
             $sceneId = '';

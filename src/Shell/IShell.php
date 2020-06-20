@@ -13,12 +13,16 @@ namespace Commune\Shell;
 
 use Commune\Blueprint\Configs\ShellConfig;
 use Commune\Blueprint\Exceptions\CommuneBootingException;
+use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\ServiceRegistry;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Kernel\Protocals\AppProtocal;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\HasInput;
+use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 use Commune\Blueprint\Shell;
 use Commune\Blueprint\Shell\ShellSession;
@@ -26,9 +30,11 @@ use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
 use Commune\Framework\App\AbsAppKernel;
+use Commune\Kernel\Protocals\IShellOutputResponse;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Shell\Bootstrap;
+use Commune\Support\Utils\TypeUtils;
 
 
 /**
@@ -87,10 +93,44 @@ class IShell extends AbsAppKernel implements Shell
     }
 
     /*------- session -------*/
+
     protected function getProtocalOptions(): array
     {
         return $this->getConfig()->protocals;
     }
+
+    protected function failResponse(
+        string $traceId,
+        int $errcode = AppResponse::HOST_REQUEST_FAIL,
+        string $errmsg = ''
+    ): AppResponse
+    {
+        return new IShellOutputResponse([
+            'traceId' => $traceId,
+            'errcode' => $errcode,
+            'errmsg' => $errmsg
+        ]);
+
+    }
+
+    protected function validateAppRequest(AppRequest $request): void
+    {
+        $valid = $request instanceof ShellInputRequest
+            || $request instanceof ShellOutputRequest;
+
+        if (!$valid) {
+            $actual = TypeUtils::getType($request);
+
+            throw new CommuneRuntimeException(
+                "bad request, expect "
+                . ShellInputRequest::class
+                . ' or '
+                . ShellOutputRequest::class
+                . ", $actual given"
+            );
+        }
+    }
+
 
     public function newSession(ReqContainer $container, string $sessionId): ShellSession
     {

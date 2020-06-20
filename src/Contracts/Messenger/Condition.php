@@ -20,13 +20,6 @@ interface Condition
 {
 
     /**
-     * 获取指定 CloneId 的消息
-     * @param string $cloneId
-     * @return Condition
-     */
-    public function cloneIdIs(string $cloneId) : Condition;
-
-    /**
      * 获取指定 SessionId 的消息
      * @param string $sessionId
      * @return Condition
@@ -38,7 +31,7 @@ interface Condition
      * @param string $batchId
      * @return Condition
      */
-    public function batchIdIs(string $batchId) : Condition;
+    public function traceIdIs(string $batchId) : Condition;
 
     /**
      * 获取指定用户的消息.
@@ -49,17 +42,17 @@ interface Condition
 
     /**
      * 获取发送时间 T 之后需要发送的消息
-     * @param float $time
+     * @param int $time
      * @return Condition
      */
-    public function deliverAfter(float $time) : Condition;
+    public function isDeliverableAfter(int $time) : Condition;
 
     /**
      * 获取创建时间 T 之后的消息
-     * @param float $time
+     * @param int $time
      * @return Condition
      */
-    public function createdAfter(float $time) : Condition;
+    public function isCreatedAfter(int $time) : Condition;
 
     /**
      * 消息 Id 大于...

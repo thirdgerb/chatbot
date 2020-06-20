@@ -104,7 +104,10 @@ class StdioAdapter implements ShellInputAdapter
 
 
         if (!$response->isSuccess()) {
-            $writer->emergency($response->getErrmsg());
+            $code = $response->getErrcode();
+            $message = $response->getErrmsg();
+
+            $writer->emergency("code: $code, message: $message");
             $quit = true;
         }
 

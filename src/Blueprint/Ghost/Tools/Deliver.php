@@ -89,4 +89,9 @@ interface Deliver
      * @return Dialog
      */
     public function over() : Dialog;
+
+    /**
+     * 立刻发送消息.
+     */
+    public function __invoke() : void;
 }

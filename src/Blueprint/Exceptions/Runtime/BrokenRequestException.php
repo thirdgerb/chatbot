@@ -11,8 +11,8 @@
 
 namespace Commune\Blueprint\Exceptions\Runtime;
 
+use Commune\Blueprint\Exceptions\CommuneErrorCode;
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -22,10 +22,10 @@ class BrokenRequestException extends CommuneRuntimeException
     public function __construct(string $message = "",  \Throwable $previous = null)
     {
         $message = empty($message)
-            ? AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_REQUEST_FAIL]
+            ? CommuneErrorCode::DEFAULT_ERROR_MESSAGES[CommuneErrorCode::HOST_REQUEST_FAIL]
             : $message;
 
-        parent::__construct($message, AppResponse::HOST_REQUEST_FAIL, $previous);
+        parent::__construct($message, CommuneErrorCode::HOST_REQUEST_FAIL, $previous);
     }
 
 

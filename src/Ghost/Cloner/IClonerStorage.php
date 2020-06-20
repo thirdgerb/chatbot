@@ -25,31 +25,24 @@ class IClonerStorage extends ASessionStorage implements ClonerStorage
      */
     protected $session;
 
+    protected $_data = [
+        'requestFailTimes' => 0,
+        'shellSessionRoutes' => []
+    ];
+
     public function __construct(Cloner $session)
     {
         parent::__construct($session);
     }
 
-    public function getSessionKey(string $sessionName, string $sessionId): string
+    public function getSessionKey(string $appId, string $sessionId): string
     {
-        return "ghost:$sessionName:id:$sessionId:storage";
+        return "ghost:$appId:id:$sessionId:storage";
     }
 
-    protected function initDataFromCache(): void
+    public function isStateless(): bool
     {
-        parent::initDataFromCache();
-
-        // 从 env 中获取 shell data 并保存到 session storage 中.
-
-        $env = $this->session->scene->env;
-        $key = ClonerStorage::SHELL_DATA;
-        $shellData = $env[$key] ?? [];
-
-        if (!empty($shellData)) {
-            $stored = $this->data[$key] ?? [];
-            $stored = $shellData + $stored;
-            $this->data[$key] = $stored;
-        }
+        return $this->session->isStateless();
     }
 
 

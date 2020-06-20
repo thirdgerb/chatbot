@@ -86,7 +86,13 @@ abstract class RegisterProviders implements Bootstrapper
             return call_user_func([$name, Struct::CREATE_FUNC], $value);
         }
 
-        throw new InvalidArgumentException('invalid provider config');
+        throw new InvalidArgumentException(
+            "invalid provider config : "
+            . var_export([
+                'key' => $name,
+                'value' => $value,
+            ], true)
+        );
     }
 
     abstract public function getProviderConfigs(App $app) : array;

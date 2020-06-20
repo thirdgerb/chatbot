@@ -53,7 +53,6 @@ use Commune\Support\Protocal\ProtocalOption;
  * ## Session 配置
  *
  * @property-read int $sessionExpire                        会话的过期时间, 秒
- * @property-read int $sessionLockerExpire                  锁的时间
  */
 interface ShellConfig extends Option
 {

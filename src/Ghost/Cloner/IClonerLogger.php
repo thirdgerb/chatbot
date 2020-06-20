@@ -13,6 +13,7 @@ namespace Commune\Ghost\Cloner;
 
 use Commune\Blueprint\Ghost\Cloner\ClonerLogger;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Framework\Log\ContextLogger;
@@ -27,7 +28,7 @@ class IClonerLogger extends ContextLogger implements ClonerLogger
     /**
      * @var ContainerContract
      */
-    protected $app;
+    protected $container;
 
     /**
      * @var LoggerInterface
@@ -44,9 +45,9 @@ class IClonerLogger extends ContextLogger implements ClonerLogger
      */
     protected $context;
 
-    public function __construct(LoggerInterface $logger, ContainerContract $app)
+    public function __construct(LoggerInterface $logger, ContainerContract $container)
     {
-        $this->app = $app;
+        $this->container = $container;
         $this->logger = $logger;
         SpyAgency::incr(static::class);
     }
@@ -56,26 +57,38 @@ class IClonerLogger extends ContextLogger implements ClonerLogger
         return $this->logger;
     }
 
+    protected function report(\Throwable $e): void
+    {
+        $this->getReporter()->report($e);
+    }
+
     protected function getReporter(): ExceptionReporter
     {
         return $this->reporter
-            ?? $this->reporter = $this->app->get(ExceptionReporter::class);
+            ?? $this->reporter = $this->container->get(ExceptionReporter::class);
     }
 
-    protected function getContext(): array
+    protected function makeContext(): array
     {
-        if (isset($this->context)) {
-            return $this->context;
+        $context = [];
+        if ($this->container->bound(ClonerScope::class)) {
+            $context = $this->container->get(ClonerScope::class)->toArray() + $context;
         }
-        $context = $this->app->get(ClonerScope::class)->toArray();;
-        return $this->context = $context;
+
+        if ($this->container->bound(AppRequest::class)) {
+            $request = $this->container->get(AppRequest::class);
+            $context['traceId'] = $request->getTraceId();
+            $context['sessionId'] = $request->getSessionId();
+        }
+
+        return $context;
     }
 
     public function __destruct()
     {
-        $this->context = [];
-        $this->app = null;
-        $this->logger = null;
+        unset($this->context);
+        unset($this->container);
+        unset($this->logger);
         SpyAgency::decr(static::class);
     }
 

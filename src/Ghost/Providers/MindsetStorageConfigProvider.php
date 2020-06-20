@@ -91,6 +91,7 @@ class MindsetStorageConfigProvider extends ServiceProvider
 
         // 遍历获取所有的 Category 配置.
         foreach ($metas as $type => list($metaName, $storageName, $title, $desc)) {
+            var_dump($metaName);
             /**
              * @var StorageOption $storage
              */

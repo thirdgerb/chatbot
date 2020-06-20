@@ -5,17 +5,30 @@ namespace Commune\Framework\Log;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
-use Commune\Contracts\Log\ExceptionReporter;
 
 abstract class ContextLogger implements LoggerInterface
 {
     use LoggerTrait;
 
+    /**
+     * @var array|null
+     */
+    protected $context;
+
     abstract protected function getLogger() : LoggerInterface;
 
-    abstract protected function getReporter() : ExceptionReporter;
+    abstract protected function report(\Throwable $e) : void;
 
-    abstract protected function getContext() : array;
+    abstract protected function makeContext() : array;
+
+    protected function getContext(): array
+    {
+        if (isset($this->context)) {
+            return $this->context;
+        }
+
+        return $this->context = $this->makeContext();
+    }
 
     public function log($level, $message, array $context = array())
     {
