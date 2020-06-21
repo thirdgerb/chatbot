@@ -15,11 +15,12 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Message\Host\IIntentMsg;
-use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
 
 /**
+ * 投递消息的链式调用工具.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class IDeliver implements Deliver
@@ -62,11 +63,6 @@ class IDeliver implements Deliver
     /**
      * @var null|string
      */
-    protected $shellId = null;
-
-    /**
-     * @var null|string
-     */
     protected $sessionId = null;
 
     /**
@@ -78,6 +74,11 @@ class IDeliver implements Deliver
      * @var null|string
      */
     protected $creatorName = null;
+
+    /**
+     * @var bool
+     */
+    protected $isOutput = false;
 
     /*---- cached ----*/
 
@@ -108,9 +109,17 @@ class IDeliver implements Deliver
         return $this;
     }
 
-    public function withSessionId(string $sessionId) : Deliver
+    public function withSessionId(string $sessionId, bool $isOutput = false) : Deliver
     {
         $this->sessionId = $sessionId;
+        $this->isOutput = $isOutput;
+        return $this;
+    }
+
+    public function withCreator(string $creatorId, string $creatorName = '') : Deliver
+    {
+        $this->creatorId = $creatorId;
+        $this->creatorName = $creatorName;
         return $this;
     }
 
@@ -130,10 +139,6 @@ class IDeliver implements Deliver
         $this->deliverAt = time() + $sections;
         return $this;
     }
-
-
-
-
 
     public function error(string $intent, array $slots = array()): Deliver
     {
@@ -183,51 +188,64 @@ class IDeliver implements Deliver
         $selfSessionId = $this->cloner->getSessionId();
         $sessionId = $this->sessionId ?? $selfSessionId;
 
-        // is async ?
-        $async = $this->sessionId === $selfSessionId;
-
-        // 如果不是相同的 session, 则不设置 convoId
-        $convoId = $async
-            ? $this->cloner->getConversationId()
-            : '';
+        // is async ? 如果目标的 SessionId 不相同, 则是异步消息.
+        $async = $this->isOutput
+            || $this->sessionId !== $selfSessionId;
+        $isOutput = $this->isOutput;
 
         $app = $this->cloner->getApp();
-
-        $appId = $this->creatorId ?? $app->getId();
-        $appName = $this->creatorName ?? $app->getName();
+        $creatorId = $this->creatorId ?? $app->getId();
+        $creatorName = $this->creatorName ?? $app->getName();
         $deliverAt = $this->deliverAt;
 
 
         // 遍历赋值.
         $messages = array_map(
             function(HostMsg $message) use (
-                $async,
-                $deliverAt,
-                $sessionId,
-                $convoId,
-                $appId,
-                $appName
+                $async, // 异步发送
+                $deliverAt, // 投递时间
+                $sessionId, // 投递的目标 Session
+                $creatorId, // 投递的 creator 信息
+                $creatorName
             ){
+                // 异步时发送的都是 input 消息
                 if ($async) {
-                    return new IInputMsg([
-
-                    ]);
+                    return $this->input->divide(
+                        $message,
+                        $sessionId,
+                        '',
+                        $creatorId,
+                        $creatorName,
+                        $deliverAt
+                    );
                 }
 
+                // 否则发送同步消息.
                 return $this->input->output(
                     $message,
-                    $deliverAt,
-                    $sessionId,
-                    $convoId,
-                    $appId,
-                    $appName
+                    $creatorId,
+                    $creatorName,
+                    $deliverAt
                 );
+
             },
             $messages
         );
 
         $cloner = $this->dialog->cloner;
-        $cloner->output(...$messages);
+
+        // 正常 buffer 回复消息
+        if (! $async) {
+            $cloner->output(...$messages);
+
+        // buffer 异步投递的回复消息
+        } elseif ($isOutput ){
+            $cloner->asyncOutput(...$messages);
+
+        // buffer 异步的输入消息.
+        } else {
+            $cloner->asyncInput(...$messages);
+        }
     }
 
     public function over(): Dialog

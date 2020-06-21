@@ -122,15 +122,30 @@ interface Cloner extends Session
 
     /**
      * 提交一个异步输入消息.
+     *
      * @param InputMsg $input
+     * @param InputMsg ...$inputs
      */
-    public function asyncInput(InputMsg $input) : void;
+    public function asyncInput(InputMsg $input, InputMsg ...$inputs) : void;
 
     /**
      * 获取异步的输入消息
      * @return InputMsg[]
      */
     public function getAsyncInputs() : array;
+
+    /**
+     * 提交一个异步的投递消息, 会投递到目标 sessionId, 然后广播出去.
+     * @param InputMsg $input
+     * @param InputMsg ...$inputs
+     */
+    public function asyncOutput(InputMsg $input, InputMsg ...$inputs) : void;
+
+    /**
+     * @return InputMsg[]
+     */
+    public function getAsyncOutputs() : array;
+
 
 
     /*----- clone locker -----*/

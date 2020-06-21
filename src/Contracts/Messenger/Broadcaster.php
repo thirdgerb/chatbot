@@ -21,9 +21,14 @@ interface Broadcaster
 
     /**
      * @param string $shellId
+     * @param string $sessionId
      * @param ShellOutputRequest $request
      */
-    public function publish(string $shellId, ShellOutputRequest $request) : void;
+    public function publish(
+        string $shellId,
+        string $sessionId,
+        ShellOutputRequest $request
+    ) : void;
 
     /**
      * @param callable $callback        传入参数, ShellOutputRequest

@@ -28,6 +28,7 @@ use Commune\Support\Utils\StringUtils;
  *
  * @property-read string $traceId
  * @property-read bool $async
+ * @property-read bool $delivery
  *
  * @property-read string $fromApp
  * @property-read string $fromSession
@@ -45,6 +46,7 @@ class IGhostRequest extends AbsMessage implements GhostRequest
         string $fromApp,
         string $fromSession,
         bool $async = false,
+        bool $delivery = false,
         string $entry = '',
         array $env = [],
         Comprehension $comprehension = null,
@@ -57,6 +59,7 @@ class IGhostRequest extends AbsMessage implements GhostRequest
             'fromSession' => $fromSession,
             'traceId' => $traceId,
             'async' => $async,
+            'delivery' => $delivery,
             'entry' => $entry,
             'env' => $env
         ];
@@ -74,6 +77,7 @@ class IGhostRequest extends AbsMessage implements GhostRequest
             'fromApp' => '',
             'fromSession' => '',
             'async' => false,
+            'delivery' => false,
             'env' => [],
             'entry' => '',
             'input' => new IInputMsg(),
@@ -130,6 +134,12 @@ class IGhostRequest extends AbsMessage implements GhostRequest
     {
         return $this->async;
     }
+
+    public function isDelivery(): bool
+    {
+        return $this->delivery;
+    }
+
 
     public function isStateless(): bool
     {

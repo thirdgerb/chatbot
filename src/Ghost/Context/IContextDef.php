@@ -383,7 +383,7 @@ class IContextDef extends AbsOption implements ContextDef
 
         if (isset($redirect)) {
             return $prev
-                ->ioc()
+                ->invoker()
                 ->action($redirect, ['prev' => $prev, 'current' => $current]);
         }
 

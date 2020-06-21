@@ -46,7 +46,7 @@ use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 abstract class AbsBaseDialog implements
     Injectable,
     Dialog,
-    Ghost\Tools\Caller
+    Ghost\Tools\Invoker
 {
     use TInjectable;
 
@@ -111,6 +111,13 @@ abstract class AbsBaseDialog implements
         return new ITools\IDeliver($this, $immediately);
     }
 
+    public function chainCallable(callable $callable, callable ...$callableList): callable
+    {
+        array_unshift($callableList, $callable);
+        return new ITools\CallableChain($this->invoker(), $callableList);
+    }
+
+
     /*-------- operators --------*/
 
     public function hearing(): Tools\Hearing
@@ -120,7 +127,7 @@ abstract class AbsBaseDialog implements
 
     /*-------- caller --------*/
 
-    public function ioc(): Tools\Caller
+    public function invoker(): Tools\Invoker
     {
         return $this;
     }

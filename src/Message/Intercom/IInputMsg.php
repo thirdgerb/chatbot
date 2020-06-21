@@ -71,12 +71,12 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         $this->sessionId = $sessionId;
     }
 
-
     public function output(
         HostMsg $message,
         string $creatorId = '',
         string $creatorName = '',
-        int $deliverAt = 0
+        int $deliverAt = 0,
+        string $sessionId = null
     ): OutputMsg
     {
         return IOutputMsg::instance(

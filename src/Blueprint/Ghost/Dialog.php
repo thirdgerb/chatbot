@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Operate;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Task;
-use Commune\Blueprint\Ghost\Tools\Caller;
+use Commune\Blueprint\Ghost\Tools\Invoker;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Tools\Hearing;
@@ -97,9 +97,9 @@ interface Dialog
 
     /**
      * 上下文相关的 IoC 容器.
-     * @return Caller
+     * @return Invoker
      */
-    public function ioc() : Caller;
+    public function invoker() : Invoker;
 
 
     /*----- conversation -----*/
@@ -108,10 +108,23 @@ interface Dialog
      * 发送消息给用户
      *
      * @param bool $immediately
+     *
+     * 如果立即发送, 则消息体会立即 buffer起来.
+     * 否则, 只有当 Delivery 调用了 Over() 方法, 或者 __invoke() 方法时才会实际发送.
+     * 因此可以作为一个 callable 对象, 传递给某些需要特定条件下才执行的逻辑.
+     *
      * @return Deliver
      */
     public function send(bool $immediately = true) : Deliver;
 
+    /**
+     * 将多个 __invoke 的 callable 对象组成一个 callable 链条.
+     *
+     * @param callable $callable
+     * @param callable ...$callableList
+     * @return callable
+     */
+    public function chainCallable(callable $callable, callable ...$callableList) : callable ;
 
     /*----- memory -----*/
 

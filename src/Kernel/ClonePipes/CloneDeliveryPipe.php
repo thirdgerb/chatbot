@@ -29,7 +29,22 @@ class CloneDeliveryPipe extends AClonePipe
 {
     protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
+        // 如果消息是从别的 Session 传来的投递消息, 直接返回给 Shell.
+        // 用这种方式, 可以让不同的 SessionId 通过 AsyncInput 来传递消息给其它的 SessionId
+        $app = $this->cloner->getApp();
+        if ($request->isDelivery()) {
+            $response = $request->output(
+                $app->getId(),
+                $app->getName(),
+                $request->getInput()->getMessage()
+            );
+
+            $this->broadcast($request, $response);
+            return $response;
+        }
+
         /**
+         * 继续走后面的多轮对话逻辑.
          * @var GhostResponse $response
          */
         $response = $next($request);
@@ -54,8 +69,8 @@ class CloneDeliveryPipe extends AClonePipe
         // 广播消息
         $this->broadcast($request, $response);
 
-        // 判断是否携带消息体. 异步请求不带消息, 或者 shell 主动要求不带消息.
-        $noneOutputs = $request->isAsync() || $request->requireTinyResponse();
+        // 判断是否携带消息体. 异步请求不带消息.
+        $noneOutputs = $request->isAsync();
 
         // 携带消息体.
         if (!$noneOutputs) {
@@ -83,12 +98,12 @@ class CloneDeliveryPipe extends AClonePipe
         $routes = $this->cloner->storage->shellSessionRoutes;
 
         $includeSelf = $request->isAsync();
-        $selfShellName = $request->getShellName();
+        $selfShellId = $request->getFromApp();
 
         // 广播给所有渠道.
         $broadcasting = [];
         foreach ($routes as $shellName => $shellId) {
-            if ( $includeSelf || $shellName !== $selfShellName) {
+            if ( $includeSelf || $shellName !== $selfShellId) {
                 $broadcasting[$shellName] = $response->divide($shellName, $shellId);
             }
         }
@@ -101,7 +116,6 @@ class CloneDeliveryPipe extends AClonePipe
          * @var Broadcaster $broadcaster
          */
         $broadcaster = $this->cloner->container->get(Broadcaster::class);
-        $broadcaster->publish(...$broadcasting);
     }
 
 

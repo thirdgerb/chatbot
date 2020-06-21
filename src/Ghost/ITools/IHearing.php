@@ -64,7 +64,7 @@ class IHearing extends IMatcher implements Hearing
 
     protected function call($caller)
     {
-        return $this->dialog->ioc()->call($caller, $this->matchedParams);
+        return $this->dialog->invoker()->call($caller, $this->matchedParams);
     }
 
     public function action($action): Hearing

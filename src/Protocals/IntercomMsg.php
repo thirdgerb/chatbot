@@ -126,7 +126,8 @@ interface IntercomMsg extends Message, Protocal
      * @param string $creatorId
      * @param string $creatorName
      * @param int $deliverAt
-     * @return IntercomMsg
+     *
+     * @return static
      */
     public function divide(
         HostMsg $message,

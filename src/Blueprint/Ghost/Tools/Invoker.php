@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Caller
+interface Invoker
 {
     /**
      * @param callable|string $caller

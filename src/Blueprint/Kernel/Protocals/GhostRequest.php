@@ -20,9 +20,21 @@ interface GhostRequest extends AppRequest, InputRequest
 {
 
     /**
+     * 是否是异步的消息.
+     * 如果 GhostRequest 是异步的, 有以下的情况 :
+     *
+     * 1. 锁定的策略不同. 异步输入消息不会因为锁而丢弃, 而会重回队列.
+     * 2. 如果是异步消息, 输出时会广播给所有的 shell. 而同步消息不会给输入的 shell 做广播.
+     *
      * @return bool
      */
     public function isAsync() : bool;
+
+    /**
+     * 异步的投递消息, 通过 clone 再传递给 shell.
+     * @return bool
+     */
+    public function isDelivery() : bool;
 
     /**
      * @return bool

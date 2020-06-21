@@ -57,7 +57,7 @@ class IStageBuilder implements StageBuilder
             unset($caller);
             return  $this;
         }
-        $this->operator = $this->dialog->ioc()->call($caller);
+        $this->operator = $this->dialog->invoker()->call($caller);
         unset($caller);
         return $this;
     }
@@ -71,7 +71,7 @@ class IStageBuilder implements StageBuilder
         }
 
         if ($this->redirect) {
-            $this->operator = $this->dialog->ioc()->action($caller);
+            $this->operator = $this->dialog->invoker()->action($caller);
         }
 
         return  $this;
@@ -85,7 +85,7 @@ class IStageBuilder implements StageBuilder
         }
 
         if ($this->dialog->isEvent(Dialog::ACTIVATE)) {
-            $ioc = $this->dialog->ioc();
+            $ioc = $this->dialog->invoker();
             $this->operator = $ioc->action($caller);
         }
 
@@ -99,7 +99,7 @@ class IStageBuilder implements StageBuilder
         }
 
         if ($this->dialog->isEvent(Dialog::RECEIVE)) {
-            $this->operator = $this->dialog->ioc()->action($caller);
+            $this->operator = $this->dialog->invoker()->action($caller);
         }
 
         return  $this;
@@ -112,7 +112,7 @@ class IStageBuilder implements StageBuilder
         }
 
         if ($this->dialog->isEvent(Dialog::RESUME)) {
-            $this->operator = $this->dialog->ioc()->action($caller);
+            $this->operator = $this->dialog->invoker()->action($caller);
         }
 
         return $this;
@@ -127,7 +127,7 @@ class IStageBuilder implements StageBuilder
         }
 
         if ($this->dialog->isEvent($event)) {
-            $this->operator = $this->dialog->ioc()->action($caller);
+            $this->operator = $this->dialog->invoker()->action($caller);
         }
 
         return  $this;

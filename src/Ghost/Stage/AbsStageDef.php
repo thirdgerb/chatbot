@@ -118,7 +118,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
                 continue;
             }
 
-            $operator = $dialog->ioc()->action($action);
+            $operator = $dialog->invoker()->action($action);
 
             if (isset($operator)) {
                 return $operator;
@@ -134,7 +134,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
 
         if (isset($redirect)) {
             return $prev
-                ->ioc()
+                ->invoker()
                 ->action($redirect, ['prev' => $prev]);
         }
 
