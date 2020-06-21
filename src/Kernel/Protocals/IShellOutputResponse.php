@@ -23,6 +23,7 @@ use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
  *
  *
  * @property-read string $sessionId
+ * @property-read string $batchId
  * @property-read string $traceId
  * @property-read int $errcode
  * @property-read string $errmsg
@@ -31,13 +32,34 @@ use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 class IShellOutputResponse extends AbsMessage implements ShellOutputResponse
 {
 
+    public static function instance(
+        int $errcode,
+        string $errmsg,
+        array $outputs,
+        string $sessionId,
+        string $batchId,
+        string $traceId
+    ) : self
+    {
+        return new static([
+            'errcode' => $errcode,
+            'errmsg' => $errmsg,
+            'sessionId' => $sessionId,
+            'batchId' => $batchId,
+            'outputs' => $outputs,
+            'traceId' => $traceId,
+        ]);
+
+    }
+
     public static function stub(): array
     {
         return [
-            'sessionId' => '',
-            'traceId' => '',
             'errcode' => 0,
             'errmsg' => '',
+            'sessionId' => '',
+            'batchId' => '',
+            'traceId' => '',
             'outputs' => []
         ];
     }
@@ -80,6 +102,19 @@ class IShellOutputResponse extends AbsMessage implements ShellOutputResponse
     {
         return $this->outputs;
     }
+
+    public function __set_outputs(string $name, array $outputs)  :void
+    {
+        $this->_data[$name] = array_filter($outputs, function($message) {
+            return $message instanceof IntercomMsg;
+        });
+    }
+
+    public function getBatchId(): string
+    {
+        return $this->batchId;
+    }
+
 
     public function getTraceId(): string
     {

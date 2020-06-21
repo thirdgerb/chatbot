@@ -36,6 +36,33 @@ use Commune\Support\Utils\StringUtils;
  */
 class IShellInputResponse extends AbsMessage implements ShellInputResponse
 {
+
+    public static function instance(
+        int $errcode,
+        string $errmsg,
+        bool $async,
+        InputMsg $input,
+        string $entry = '',
+        array $env = [],
+        Comprehension $comprehension = null,
+        string $traceId = ''
+    ) : self
+    {
+        $data = [
+            'traceId' => $traceId,
+            'errcode' => $errcode,
+            'errmsg' => $errmsg,
+            'async' => $async,
+            'input' => $input,
+            'env' => $env,
+            'entry' => $entry,
+            'comprehension' => $comprehension ?? new IComprehension(),
+        ];
+
+        if (isset($comprehension)) $data['comprehension'] = $comprehension;
+        return new static($data);
+    }
+
     public static function stub(): array
     {
         return [
@@ -127,6 +154,11 @@ class IShellInputResponse extends AbsMessage implements ShellInputResponse
     public function getComprehension(): Comprehension
     {
         return $this->comprehension;
+    }
+
+    public function getSessionId(): string
+    {
+        return $this->getInput()->getSessionId();
     }
 
 

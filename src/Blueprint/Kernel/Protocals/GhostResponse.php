@@ -24,4 +24,8 @@ interface GhostResponse extends AppResponse
      */
     public function getOutputs() : array;
 
+    /**
+     * @param OutputMsg[] $outputs
+     */
+    public function mergeOutputs(array $outputs) : void;
 }

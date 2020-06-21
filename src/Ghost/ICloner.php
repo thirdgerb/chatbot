@@ -286,8 +286,7 @@ class ICloner extends ASession implements Cloner
 
     public function output(OutputMsg $output, OutputMsg ...$outputs): void
     {
-        array_unshift($outputs, $output);
-        $this->outputs = array_merge($this->outputs, $outputs);
+        array_push($this->outputs, $output, ...$outputs);
     }
 
     public function getOutputs(): array
@@ -295,9 +294,9 @@ class ICloner extends ASession implements Cloner
         return $this->outputs;
     }
 
-    public function asyncInput(InputMsg $input): void
+    public function asyncInput(InputMsg $input, InputMsg ...$inputs): void
     {
-        $this->asyncInputs[] = $input;
+        array_push($this->asyncInputs, $input, ...$inputs);
     }
 
     public function getAsyncInputs(): array

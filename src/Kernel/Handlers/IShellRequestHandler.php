@@ -160,14 +160,14 @@ class IShellRequestHandler implements ShellRequestHandler
             }, $outputs);
         }
 
-        return new IShellOutputResponse([
-            'sessionId' => $request->getSessionId(),
-            'traceId' => $request->getTraceId(),
-            'errcode' => 0,
-            'errmsg' => '',
-            'outputs' => $outputs
-        ]);
-
+        return IShellOutputResponse::instance(
+            AppResponse::SUCCESS,
+            '',
+            $outputs,
+            $this->session->getSessionId(),
+            $request->getBatchId(),
+            $request->getTraceId()
+        );
     }
 
 
@@ -224,13 +224,14 @@ class IShellRequestHandler implements ShellRequestHandler
      */
     protected function emptyResponse(AppResponse $response) : ShellOutputResponse
     {
-        return new IShellOutputResponse([
-            'sessionId' => $response->getSessionId(),
-            'traceId' => $response->getTraceId(),
-            'errcode' => $response->getErrcode(),
-            'errmsg' => $response->getErrmsg(),
-            'outputs' => []
-        ]);
+        return IShellOutputResponse::instance(
+            $response->getErrcode(),
+            $response->getErrmsg(),
+            [],
+            $response->getSessionId(),
+            $response->getBatchId(),
+            $response->getTraceId()
+        );
     }
 
     /**
@@ -239,17 +240,27 @@ class IShellRequestHandler implements ShellRequestHandler
      */
     protected function wrapInputRequest(ShellInputResponse $response) : GhostRequest
     {
-        $sessionId = '';
+        $request = IGhostRequest::instance(
+            $this->session->getAppId(),
+            $response->isAsync(),
+            $response->getInput(),
+            $response->getEntry(),
+            $response->getEnv(),
+            $response->getComprehension(),
+            false,
+            $response->getTraceId()
+        );
+
         if ($this->session->isSingletonInstanced('storage')) {
-            $sessionId = $this->session->storage->cloneSessionId
-                ?? $sessionId;
+            $sessionId = $this->session->storage->cloneSessionId;
+
+            // 设定前往 Clone 的目标 session id.
+            if (isset($sessionId)) {
+                $request->routeToSession($sessionId);
+            }
         }
 
-        return new IGhostRequest([
-            'sessionId' => $sessionId,
-            'async' => false,
-            'input' => $response->getInput(),
-        ]);
+        return $request;
     }
 
     /**
@@ -258,14 +269,13 @@ class IShellRequestHandler implements ShellRequestHandler
      */
     protected function wrapOutputRequest(GhostResponse $response) : ShellOutputRequest
     {
-        return new IShellOutputRequest([
-            'shellId' => $this->session->shell->getId(),
-            'sessionId' => $response->getSessionId(),
-            'traceId' => $response->getTraceId(),
-            'async' => false,
-            'stateless' => false,
-            'outputs' => [],
-        ]);
+        return IShellOutputRequest::instance(
+            false,
+            $response->getSessionId(),
+            $response->getTraceId(),
+            $response->getBatchId(),
+            $response->getOutputs()
+        );
     }
 
     public function __destruct()

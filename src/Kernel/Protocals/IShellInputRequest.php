@@ -34,14 +34,13 @@ use Commune\Support\Utils\StringUtils;
  */
 class IShellInputRequest extends AbsMessage implements ShellInputRequest
 {
-
     public static function instance(
+        bool $async,
         InputMsg $input,
-        bool $async = false,
-        string $traceId = '',
         string $entry = '',
         array $env = [],
-        Comprehension $comprehension = null
+        Comprehension $comprehension = null,
+        string $traceId = ''
     ) : self
     {
         $data = [
@@ -92,6 +91,12 @@ class IShellInputRequest extends AbsMessage implements ShellInputRequest
             : $traceId;
     }
 
+    public function getSessionId(): string
+    {
+        return $this->getInput()->getSessionId();
+    }
+
+
     public function isAsync(): bool
     {
         return $this->async;
@@ -135,6 +140,16 @@ class IShellInputRequest extends AbsMessage implements ShellInputRequest
         string $errmsg = ''
     ): ShellInputResponse
     {
+        return IShellInputResponse::instance(
+            $errcode,
+            $errmsg,
+            $this->input,
+            $this->entry,
+            $this->env,
+            $this->comprehension,
+            $this->async,
+            $this->traceId
+        );
 
     }
 

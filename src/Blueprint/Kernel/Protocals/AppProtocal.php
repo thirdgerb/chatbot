@@ -33,4 +33,12 @@ interface AppProtocal extends Protocal
      */
     public function getBatchId() : string;
 
+    /**
+     * 对于 Request 而言, 是处理消息的 SessionId
+     * 对于 Response 而言, 关系到投递消息的目标 Session
+     *
+     * @return string
+     */
+    public function getSessionId() : string;
+
 }

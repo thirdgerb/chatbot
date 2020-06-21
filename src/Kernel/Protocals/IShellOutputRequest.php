@@ -21,23 +21,40 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $shellId
  * @property-read string $sessionId
  * @property-read string $traceId
+ * @property-read string $batchId
  * @property-read bool $async
- * @property-read bool $stateless
  *
  * @property-read IntercomMsg[] $outputs
  */
 class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
 {
+
+    public static function instance(
+        bool $async,
+        string $sessionId,
+        string $traceId,
+        string $batchId,
+        array $outputs = []
+    ) : self
+    {
+        return new static([
+            'sessionId' => $sessionId,
+            'traceId' => $traceId,
+            'batchId' => $batchId,
+            'async' => $async,
+            'outputs' => $outputs,
+        ]);
+    }
+
     public static function stub(): array
     {
         return [
             'sessionId' => '',
             'traceId' => '',
+            'batchId' => '',
             'async' => false,
-            'stateless' => false,
             'outputs' => [],
         ];
     }
@@ -62,20 +79,19 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
 
     /*------ protocal ------*/
 
+    public function getBatchId(): string
+    {
+        return $this->batchId;
+    }
+
+    public function getSessionId(): string
+    {
+        return $this->sessionId;
+    }
+
     public function getTraceId(): string
     {
         return $this->traceId;
-    }
-
-    public function getShellId(): string
-    {
-        return $this->shellId;
-    }
-
-
-    public function getProtocalId(): string
-    {
-        return StringUtils::namespaceSlashToDot(static::class);
     }
 
     public function __set_outputs(string $name, array $outputs)  :void
@@ -86,16 +102,6 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
     }
 
     /*------ request ------*/
-
-    public function isStateless(): bool
-    {
-        return $this->stateless;
-    }
-
-    public function getSessionId(): string
-    {
-        return $this->sessionId;
-    }
 
     public function isAsync(): bool
     {
@@ -117,14 +123,20 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
         string $errmsg = ''
     ): ShellOutputResponse
     {
-        return new IShellOutputResponse([
-            'sessionId' => $this->getSessionId(),
-            'traceId' => $this->getTraceId(),
-            'errcode' => $errcode,
-            'errmsg' => $errmsg,
-            'outputs' => $this->getOutputs()
-        ]);
+        return IShellOutputResponse::instance(
+            $errcode,
+            $errmsg,
+            $this->outputs,
+            $this->sessionId,
+            $this->batchId,
+            $this->traceId
+        );
     }
 
+
+    public function getProtocalId(): string
+    {
+        return StringUtils::namespaceSlashToDot(static::class);
+    }
 
 }

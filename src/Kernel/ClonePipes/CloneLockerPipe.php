@@ -83,7 +83,11 @@ class CloneLockerPipe extends AClonePipe
     protected function lockFail(GhostRequest $request) : GhostResponse
     {
         $this->cloner->noState();
-        return $request->output(SessionBusyInt::instance());
+        return $request->output(
+            $this->cloner->getAppId(),
+            $this->cloner->getApp()->getName(),
+            SessionBusyInt::instance()
+        );
     }
 
 }

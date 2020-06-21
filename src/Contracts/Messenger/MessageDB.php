@@ -23,16 +23,18 @@ interface MessageDB
 {
 
     /**
-     * 记录一组消息. 通常是一个异步或者协程行为.
-     *
      * @param string $traceId
-     * @param InputMsg $input
-     * @param OutputMsg[] $outputs
+     * @param string $fromApp
+     * @param string $fromSession
+     * @param IntercomMsg $input
+     * @param IntercomMsg[] $outputs
      */
     public function recordMessages(
         string $traceId,
-        InputMsg $input,
-        OutputMsg ...$outputs
+        string $fromApp,
+        string $fromSession,
+        IntercomMsg $input,
+        IntercomMsg ...$outputs
     ) : void;
 
     /**

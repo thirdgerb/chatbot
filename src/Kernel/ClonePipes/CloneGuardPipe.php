@@ -12,7 +12,6 @@
 namespace Commune\Kernel\ClonePipes;
 
 use Closure;
-use Commune\Protocals\HostMsg;
 use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
@@ -86,7 +85,11 @@ class CloneGuardPipe extends AClonePipe
 
         $storage->requestFailTimes = $times;
 
-        return $request->output(RequestFailInt::instance($e->getMessage()));
+        return $request->output(
+            $this->cloner->getAppId(),
+            $this->cloner->getApp()->getName(),
+            RequestFailInt::instance($e->getMessage())
+        );
     }
 
     protected function quitSession(

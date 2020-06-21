@@ -21,6 +21,7 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @property-read string $sessionId
  * @property-read string $traceId
  * @property-read string $batchId
  * @property-read int $errcode
@@ -31,6 +32,7 @@ class IGhostResponse extends AbsMessage implements GhostResponse
 {
 
     public static function instance(
+        string $sessionId,
         string $traceId,
         string $batchId,
         array $outputs,
@@ -39,6 +41,7 @@ class IGhostResponse extends AbsMessage implements GhostResponse
     ) : self
     {
         return new static([
+            'sessionId' => $sessionId,
             'traceId' => $traceId,
             'batchId' => $batchId,
             'errcode' => $errcode,
@@ -47,10 +50,10 @@ class IGhostResponse extends AbsMessage implements GhostResponse
         ]);
     }
 
-
     public static function stub(): array
     {
         return [
+            'sessionId' => '',
             'traceId' => '',
             'batchId' => '',
             'errcode' => 0,
@@ -116,6 +119,26 @@ class IGhostResponse extends AbsMessage implements GhostResponse
         return $this->outputs;
     }
 
+    public function __set_outputs(string $name, $outputs) : void
+    {
+        $this->_data[$name] = array_filter($outputs, function($value) {
+            return $value instanceof OutputMsg;
+        });
+    }
+
+    public function getSessionId(): string
+    {
+        return $this->sessionId;
+    }
+
+    /*-------- methods --------*/
+
+    public function mergeOutputs(array $outputs): void
+    {
+        $outputs = $this->outputs;
+        array_push($outputs, ...$outputs);
+        $this->__set_outputs('outputs', array_merge($this->outputs, $outputs));
+    }
 
     /*-------- protocal --------*/
 

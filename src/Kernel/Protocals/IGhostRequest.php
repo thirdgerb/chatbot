@@ -42,21 +42,20 @@ use Commune\Support\Utils\StringUtils;
 class IGhostRequest extends AbsMessage implements GhostRequest
 {
     public static function instance(
-        InputMsg $input,
         string $fromApp,
-        string $fromSession,
-        bool $async = false,
-        bool $delivery = false,
+        bool $async,
+        InputMsg $input,
         string $entry = '',
         array $env = [],
         Comprehension $comprehension = null,
+        bool $delivery = false,
         string $traceId = ''
     ) : self
     {
+
         $data = [
             'input' => $input,
             'fromApp' => $fromApp,
-            'fromSession' => $fromSession,
             'traceId' => $traceId,
             'async' => $async,
             'delivery' => $delivery,
@@ -68,7 +67,6 @@ class IGhostRequest extends AbsMessage implements GhostRequest
 
         return new static($data);
     }
-
 
     public static function stub(): array
     {
@@ -113,6 +111,10 @@ class IGhostRequest extends AbsMessage implements GhostRequest
         return StringUtils::namespaceSlashToDot(static::class);
     }
 
+    public function getSessionId(): string
+    {
+        return $this->getInput()->getSessionId();
+    }
 
     public function getTraceId(): string
     {
@@ -168,18 +170,16 @@ class IGhostRequest extends AbsMessage implements GhostRequest
 
     public function getFromSession(): string
     {
-        return $this->fromSession;
+        $fromSession = $this->fromSession;
+        return empty($fromSession)
+            ? $this->getInput()->getSessionId()
+            : $fromSession;
     }
 
     public function routeToSession(string $sessionId): void
     {
-        $fromSession = $this->fromSession;
+        $fromSession = $this->getFromSession();
         $input = $this->getInput();
-
-        $fromSession = empty($fromSession)
-            ? $input->getSessionId()
-            : $fromSession;
-
         $input->setSessionId($sessionId);
         $this->fromSession = $fromSession;
     }
@@ -190,6 +190,7 @@ class IGhostRequest extends AbsMessage implements GhostRequest
     public function response(int $errcode = AppResponse::SUCCESS, string $errmsg = ''): GhostResponse
     {
         return IGhostResponse::instance(
+            $this->getSessionId(),
             $this->getTraceId(),
             $this->getBatchId(),
             [],
@@ -213,6 +214,7 @@ class IGhostRequest extends AbsMessage implements GhostRequest
         }, $messages);
 
         return IGhostResponse::instance(
+            $this->getSessionId(),
             $this->getTraceId(),
             $this->getBatchId(),
             $outputs
