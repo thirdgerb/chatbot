@@ -12,12 +12,11 @@
 namespace Commune\Support\Struct;
 
 use Commune\Support\Arr\ArrayAndJsonAble;
+use Commune\Support\Struct\Reflection\StructReflection;
 
 /**
- * PHP 结构体. 可以用注解 @"property" 或者 @"property-read" 的方式来定义强类型.
- * 实际上通过数组的方式来生成对象. 实际持有的也是一个数组.
- *
- * 自动生成关联关系.
+ * 结合 PHP 数组与强类型设计的通用结构体.
+ * 同时和多轮对话逻辑可以结合起来.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
@@ -25,7 +24,10 @@ interface Struct extends ArrayAndJsonAble, \IteratorAggregate
 {
     const GETTER_PREFIX = '__get_';
     const SETTER_PREFIX = '__set_';
-    const CREATE_FUNC = 'create';
+
+    const FUNC_CREATE = 'create';
+    const FUNC_STUB = 'stub';
+    const FUNC_VALIDATE = 'validate';
 
     /*------- construct -------*/
 
@@ -65,14 +67,6 @@ interface Struct extends ArrayAndJsonAble, \IteratorAggregate
     /*------- reflection -------*/
 
     /**
-     * 获得当前类的注解文档.
-     * 因为注解对于 Struct 的类型判断是有意义的, 所以可以考虑自己定义注解的获取源头.
-     *
-     * @return string
-     */
-    public static function getDocComment() : string;
-
-    /**
      * @return string[]
      */
     public static function getRelationNames() : array;
@@ -94,4 +88,11 @@ interface Struct extends ArrayAndJsonAble, \IteratorAggregate
      * @return null|string
      */
     public static function getRelationClass(string $fieldName) : ? string;
+
+    /**
+     * 获取当前 Struct 预定义的反射.
+     * @return StructReflection
+     */
+    public static function getReflection() : StructReflection;
+
 }

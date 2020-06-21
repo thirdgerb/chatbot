@@ -141,7 +141,7 @@ abstract class AbsFileStorage implements Storage
             $id = $optionArr[$identity] ?? '';
 
             return call_user_func(
-                [$optionClass, Option::CREATE_FUNC],
+                [$optionClass, Option::FUNC_CREATE],
                 $optionArr
             );
 

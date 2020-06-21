@@ -12,8 +12,6 @@
 namespace Commune\Support\Message;
 
 use Commune\Support\Babel\Babel;
-use Commune\Support\Protocal\Protocal;
-use Commune\Support\Struct\StructReflections;
 use PHPUnit\Framework\TestCase;
 
 
@@ -81,27 +79,28 @@ class MessageTestCase extends TestCase
 
     public function protocalsTest(string $name, Message $message)
     {
-        // 检查协议存在
-        foreach ($message->getProtocals() as $protocal) {
-            $this->assertTrue(is_a($message, $protocal, TRUE), $name);
-            $this->assertTrue(is_a($message, Protocal::class, TRUE), $name);
-        }
-
         // 协议校验通过
         $e = null;
         try {
             $docs = call_user_func([$name, 'getDocComment']);
         } catch (\Exception $e) {
         }
+
         $this->assertTrue(is_null($e), $name);
 
         // 协议属性正确.
-        $validators = StructReflections::getAllFieldReflectors($name);
+        $reflection = $message->getReflection();
 
-        foreach ($validators as $name => $validator) {
-            $error = $validator->validateValue($message->{$name});
-            $this->assertNull($error, $name);
+        $errors = [];
+        foreach ($reflection->getDefinedPropertyMap() as $name => $property) {
+            $error = $property->validateValue(
+                $property->get($message)
+            );
+
+            if (isset($error)) $errors[] = $error;
         }
+
+        $this->assertEmpty($errors, $name);
     }
 
     public function babelTest(string $name, Message $message)

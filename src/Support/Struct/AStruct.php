@@ -11,8 +11,13 @@
 
 namespace Commune\Support\Struct;
 
+use Commune\Support\Struct\Reflection\AnnotationFactory;
+use Commune\Support\Struct\Reflection\StructReflection;
+
 
 /**
+ * Struct 的基础实现.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 abstract class AStruct extends AbsStruct
@@ -36,6 +41,23 @@ abstract class AStruct extends AbsStruct
      */
     abstract public static function relations(): array;
 
+    /**
+     * @return StructReflection
+     * @throws \ReflectionException
+     */
+    protected static function makeReflection(): StructReflection
+    {
+        return AnnotationFactory::create(
+            static::class,
+            static::STRICT,
+            static::getDocComment()
+        );
+    }
+
+    protected static function getDocComment() : string
+    {
+        return (new \ReflectionClass(static::class))->getDocComment();
+    }
 
 
 }

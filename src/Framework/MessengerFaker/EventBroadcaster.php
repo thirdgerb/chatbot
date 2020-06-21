@@ -32,17 +32,16 @@ class BroadcasterByEvent implements Broadcaster
     ): void
     {
         $sessionId = $sessionId ?? '';
-        $id = "$shellId::$sessionId";
+        $id = "$shellId/$sessionId";
         $this->listeners[$id] = $callback;
     }
 
-    public function publish(ShellOutputRequest $request): void
+    public function publish(string $shellId, ShellOutputRequest $request): void
     {
-        $shellId = $request->getShellId();
         $sessionId = $request->getSessionId();
 
-        $id1 = "$shellId::$sessionId";
-        $id2 = "$shellId::";
+        $id1 = "$shellId/$sessionId";
+        $id2 = "$shellId/";
         $listener = $this->listeners[$id1] ?? $this->listeners[$id2] ?? null;
 
         if (isset($listener)) {

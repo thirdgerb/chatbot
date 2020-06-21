@@ -45,8 +45,8 @@ class MessagesTest extends MessageTestCase
         Message\Host\SystemInt\DialogForbidInt::class,
 
         // intercom
-        Message\Intercom\IInputMsg::class,
-        Message\Intercom\IOutputMsg::class,
+//        Message\Intercom\IInputMsg::class,
+//        Message\Intercom\IOutputMsg::class,
 
         // qa
         Message\Host\QA\IQuestionMsg::class,
@@ -58,12 +58,12 @@ class MessagesTest extends MessageTestCase
 
 
         // kernel protocals
-        Protocals\IGhostRequest::class,
-        Protocals\IGhostResponse::class,
-        Protocals\IShellInputRequest::class,
-        Protocals\IShellInputResponse::class,
-        Protocals\IShellOutputRequest::class,
-        Protocals\IShellOutputResponse::class,
+//        Protocals\IGhostRequest::class,
+//        Protocals\IGhostResponse::class,
+//        Protocals\IShellInputRequest::class,
+//        Protocals\IShellInputResponse::class,
+//        Protocals\IShellOutputRequest::class,
+//        Protocals\IShellOutputResponse::class,
     ];
 
 

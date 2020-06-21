@@ -12,55 +12,50 @@
 namespace Commune\Support\Struct;
 
 use ArrayAccess;
+use Commune\Support\Struct\Reflection\StructReflection;
 use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\TypeUtils;
-use InvalidArgumentException;
 use Commune\Support\Arr\ArrayAbleToJson;
 
 /**
+ * 结构体的基类.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
 {
     use ArrayAbleToJson;
 
+    /*------ 配置 ------*/
 
+    /**
+     * 是否是严格的类型校验.
+     * 严格的情况下, 不允许过滤
+     */
     const STRICT = true;
 
     /**
+     * 可以被访问的数据.
+     *
      * @var array
      */
     protected $_data = [];
+
+
+    /*------ 内部参数 ------*/
+
+    /**
+     * 所有反射的缓存.
+     * @var StructReflection[]
+     */
+    private static $reflections = [];
+
 
     public function __construct(array $data = [])
     {
         $stub = static::stub();
         $data = $data + $stub;
-
-        $this->_shouldBeArray($data);
-        $this->_constructData($data);
-    }
-
-    private function _shouldBeArray($data) : void
-    {
-        // 构建关系
-        if (!is_array($data)) {
-            throw new InvalidStructException(
-                static::class
-                . ' struct data should be array'
-            );
-        }
-    }
-
-    protected function _constructData(array $data) : void
-    {
         $this->fill($data);
-        $this->_shouldBeArray($this->_data);
-        $error = static::validate($this->_data);
-
-        if (!empty($error)) {
-            throw new InvalidStructException(static::class . ' invalid struct data , ' . $error);
-        }
     }
 
     /**
@@ -72,6 +67,13 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
         foreach ($data as $key => $val) {
             $this->__set($key, $val);
         }
+
+        //校验数据.
+        $error = static::validate($this->_data);
+
+        if (!empty($error)) {
+            throw new InvalidStructException(static::class . ' invalid struct data , ' . $error);
+        }
     }
 
     /**
@@ -81,7 +83,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
      */
     public static function validate(array $data): ? string /* errorMsg */
     {
-        return StructReflections::validate(static::class, $data);
+        return static::getReflection()->validate($data);
     }
 
     /**
@@ -112,27 +114,25 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
             return;
         }
 
-        // 关系类型转换.
-        if (static::isRelation($name)) {
-            $this->_data[$name] = $this->_parseRelation($name, $value);
-            return;
-        }
+        $reflection = static::getReflection();
 
-        // 默认的赋值.
-        $reflector = StructReflections::getFieldReflector(static::class, $name);
-        // 允许赋值
-        if (!isset($reflector)) {
+        if (!$reflection->isPropertyDefined($name)) {
             $this->_data[$name] = $value;
             return;
         }
 
-        // 弱类型, 则允许转换
-        if (!static::STRICT) {
-            $value = $reflector->filterValue($value);
+        $property = $reflection->getProperty($name);
+
+        $strict = $reflection->isStrict();
+
+        // 类型转换.
+        $value = $property->parseValue($value, $strict);
+
+        // 强类型下赋值也要做参数校验.
+        if ($strict) {
+            $error = $property->validateValue($value);
         }
 
-        // 校验.
-        $error = $reflector->validateValue($value);
         if (isset($error)) {
             throw new InvalidStructException(static::class . " set field [$name] fail : $error");
         }
@@ -183,53 +183,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
 
 
 
-    /*------- private --------*/
-
-    /**
-     * @param string $field
-     * @param $value
-     * @return Struct[]|Struct|null
-     */
-    private function _parseRelation(string $field, $value)
-    {
-        if (is_null($value)) {
-            return $value;
-        }
-
-        $structType = static::getRelationClass($field);
-        $isList = static::isListRelation($field);
-
-        if (!$isList) {
-
-            return $this->_buildRelatedStruct(
-                $field,
-                $structType,
-                $value
-            );
-
-        } elseif ($isList && is_array($value)) {
-            $result = [];
-            foreach ($value as $key => $val) {
-                // null
-                if (is_null($val)) {
-                    continue;
-                }
-
-                // build
-                $result[$key] = $this->_buildRelatedStruct(
-                    $field . '[' . $key . ']',
-                    $structType,
-                    $val
-                );
-            }
-
-            return $result;
-        }
-
-        throw new InvalidArgumentException("invalid relation value for $field");
-    }
-
-    /*------- relation --------*/
+   /*------- relation --------*/
 
     public static function isRelation(string $fieldName): bool
     {
@@ -281,23 +235,6 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
     }
 
 
-    private function _buildRelatedStruct(string $field, string $type, $data) : Struct
-    {
-        // 如果是封装好的对象.
-        if (is_object($data) && is_a($data, $type, TRUE)) {
-            return $data;
-        }
-
-        if (!is_array($data)) {
-            throw new InvalidArgumentException(static::class . " relation field $field only accept Struct object or array, ". TypeUtils::getType($data) . ' given');
-        }
-
-        return call_user_func(
-            [$type, 'create'],
-            $data
-        );
-    }
-
     /*------- array --------*/
 
     /**
@@ -312,11 +249,17 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
 
     /*------- doc --------*/
 
-    public static function getDocComment(): string
+    final public static function getReflection(): StructReflection
     {
-        $r = new \ReflectionClass(static::class);
-        return $r->getDocComment();
+        $name = static::class;
+        if (isset(self::$reflections[$name])) {
+            return self::$reflections[$name];
+        }
+
+        return self::$reflections[$name] = static::makeReflection();
     }
+
+    abstract protected static function makeReflection() : StructReflection;
 
     /*------- serialize --------*/
 
@@ -333,7 +276,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
 
     public function unserialize($serialized)
     {
-        $this->_constructData(json_decode($serialized, true));
+        $this->fill(json_decode($serialized, true));
     }
 
 
