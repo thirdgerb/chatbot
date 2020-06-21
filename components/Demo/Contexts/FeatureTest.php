@@ -360,7 +360,7 @@ EOF
                     ->end(function(Dialog $dialog){
                         return $dialog->send()
                             ->notice('nether yes nor no')
-                            ->info($dialog->cloner->input->comprehension->toPrettyJson())
+                            ->info($dialog->cloner->comprehension->toPrettyJson())
                             ->over()
                             ->next('start');
                     });

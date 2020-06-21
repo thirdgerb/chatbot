@@ -78,7 +78,7 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
         );
     }
 
-    public function getShellName(): string
+    public function getShellId(): string
     {
         return $this->shellName;
     }

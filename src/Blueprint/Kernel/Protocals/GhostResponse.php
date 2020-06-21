@@ -18,6 +18,12 @@ use Commune\Protocals\Intercom\OutputMsg;
  */
 interface GhostResponse extends AppResponse
 {
+
+    /**
+     * @return string
+     */
+    public function getBatchId() : string;
+
     /**
      * @return OutputMsg[]
      */

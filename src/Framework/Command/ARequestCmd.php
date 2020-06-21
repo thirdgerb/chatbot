@@ -113,7 +113,7 @@ abstract class ARequestCmd implements RequestCmd
             $text .= PHP_EOL . $msg;
         }
 
-        $this->output(new CommandErrorInt(
+        $this->output(CommandErrorInt::instance(
             $this->getCommandName(),
             $text
         ));

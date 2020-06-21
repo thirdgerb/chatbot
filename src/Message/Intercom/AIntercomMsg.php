@@ -67,17 +67,17 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
         return $this->messageId;
     }
 
-    public function getConversationId(): string
+    public function getConvoId(): string
     {
         return $this->convoId;
     }
 
-    public function getGuestId(): string
+    public function getCreatorId(): string
     {
         return $this->guestId;
     }
 
-    public function getGuestName(): string
+    public function getCreatorName(): string
     {
         return $this->guestName;
     }

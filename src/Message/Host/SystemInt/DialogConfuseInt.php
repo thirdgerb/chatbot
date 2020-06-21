@@ -13,7 +13,6 @@ namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
-use Commune\Support\Struct\Struct;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -27,19 +26,14 @@ class DialogConfuseInt extends IIntentMsg
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_DIALOG_CONFUSE;
 
 
-    public function __construct(string $await = '', string $matchedIntent = '')
+    public static function instance(string $await = '', string $matche = '')
     {
-        parent::__construct('', ['await' => $await, 'matched' => $matchedIntent]);
+        return new static(get_defined_vars());
     }
 
     public static function intentStub(): array
     {
         return ['await' => '', 'matched' => ''];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['await'] ?? '');
     }
 
 }

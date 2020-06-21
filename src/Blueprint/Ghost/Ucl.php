@@ -475,7 +475,7 @@ class Ucl implements UclInterface
         $context = $def->wrapContext($cloner, $this);
 
         // 是否意图匹配中命中了 entities
-        $entities = $cloner->input
+        $entities = $cloner
             ->comprehension
             ->intention
             ->getIntentEntities($this->getStageFullname());

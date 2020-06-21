@@ -19,6 +19,9 @@ use Commune\Protocals\Intercom\InputMsg;
 interface HasInput
 {
 
+    /**
+     * @return InputMsg
+     */
     public function getInput() : InputMsg;
 
 }

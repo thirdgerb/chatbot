@@ -57,8 +57,8 @@ class AttrStageDef extends AbsStageDef
 
         $query = $this->query;
         $queryMsg = empty($query)
-            ? new DialogRequireInt($name)
-            : new IText($query);
+            ? DialogRequireInt::instance($name)
+            : IText::instance($query);
 
         // 要求一个纯文字的输入.
         return $dialog

@@ -28,14 +28,11 @@ class RequestFailInt extends IIntentMsg
     const DEFAULT_LEVEL = HostMsg::ERROR;
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_REQUEST_FAILURE;
 
-    public function __construct(string $errmsg = null)
+    public static function instance(string $errmsg = null) : self
     {
-        $slots = isset($errmsg)
-            ? ['errmsg' => $errmsg]
-            : [];
-
-
-        parent::__construct('', $slots);
+        $data = [];
+        if (isset($errmsg)) $data['errmsg'] = $errmsg;
+        return new static($data);
     }
 
     public static function intentStub(): array
@@ -44,11 +41,6 @@ class RequestFailInt extends IIntentMsg
             'errcode' => AppResponse::HOST_REQUEST_FAIL,
             'errmsg' => AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_REQUEST_FAIL],
         ];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['errmsg'] ?? null);
     }
 
     public function getText(): string

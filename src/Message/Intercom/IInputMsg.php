@@ -142,22 +142,22 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         string $messageId = null
     ): OutputMsg
     {
-        $shellName = empty($shellName) ? $this->getShellName() : $shellName;
+        $shellName = empty($shellName) ? $this->getShellId() : $shellName;
 
         return new IOutputMsg([
             'messageId' => empty($messageId) ? $this->createUuId() : $messageId,
             'shellName' => $shellName,
             'traceId' => $this->getTraceId(),
             'sessionId' => empty($sessionId) ? $this->getSessionId() : $sessionId,
-            'convoId' => $this->getConversationId(),
-            'guestId' => $guestId ?? $this->getGuestId(),
-            'guestName' => $this->getGuestName(),
+            'convoId' => $this->getConvoId(),
+            'guestId' => $guestId ?? $this->getCreatorId(),
+            'guestName' => $this->getCreatorName(),
             'message' => $message,
             'deliverAt' => $deliverAt,
         ]);
     }
 
-    public function getShellName(): string
+    public function getShellId(): string
     {
         return $this->shellId;
     }

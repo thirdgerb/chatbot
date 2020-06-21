@@ -17,6 +17,8 @@ namespace Commune\Blueprint\Kernel\Protocals;
  */
 interface ShellInputResponse extends AppResponse, HasInput
 {
-
+    /**
+     * @return bool
+     */
     public function isAsync() : bool;
 }

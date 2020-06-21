@@ -13,7 +13,6 @@ namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
-use Commune\Support\Struct\Struct;
 
 
 /**
@@ -26,14 +25,9 @@ class CommandListInt extends IIntentMsg
     const DEFAULT_LEVEL = HostMsg::INFO;
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_COMMAND_LIST;
 
-    public function __construct(string $cmdList)
+    public static function instance(string $cmdList) : self
     {
-        parent::__construct('', ['cmdList' => $cmdList]);
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['cmdList'] ?? '');
+        return new static(get_defined_vars());
     }
 
     public static function intentStub(): array

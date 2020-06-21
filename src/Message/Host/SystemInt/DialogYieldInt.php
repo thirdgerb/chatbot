@@ -12,7 +12,6 @@
 namespace Commune\Message\Host\SystemInt;
 
 use Commune\Protocals\HostMsg;
-use Commune\Support\Struct\Struct;
 use Commune\Message\Host\IIntentMsg;
 
 /**
@@ -25,14 +24,9 @@ class DialogYieldInt extends IIntentMsg
     const DEFAULT_LEVEL = HostMsg::INFO;
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_DIALOG_YIELD;
 
-    public function __construct(string $await = '')
+    public static function instance(string $ucl = '') : self
     {
-        parent::__construct(
-            '',
-            [
-                'ucl' => $await
-            ]
-        );
+        return new static(get_defined_vars());
     }
 
     public static function intentStub(): array
@@ -41,11 +35,4 @@ class DialogYieldInt extends IIntentMsg
             'ucl' => ''
         ];
     }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['ucl'] ?? '');
-    }
-
-
 }

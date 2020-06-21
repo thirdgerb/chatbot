@@ -23,6 +23,10 @@ use Commune\Protocals\HostMsg\Convo\Media\AudioMsg;
  */
 class IAudioMsg extends AbsMessage implements AudioMsg
 {
+    public static function instance(string $resource)
+    {
+        return new static(['resource' => $resource]);
+    }
 
     public static function stub(): array
     {

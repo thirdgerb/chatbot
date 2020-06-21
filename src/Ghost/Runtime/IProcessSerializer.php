@@ -404,7 +404,7 @@ class IProcessSerializer implements ProcessSerializer
                 return $this->_unserializeUcl($route)->encode();
             }, $data['routes']);
 
-            return call_user_func([$className, Message::CREATE_FUNC], $data);
+            return call_user_func([$className, Message::FUNC_CREATE], $data);
         }
 
         return null;

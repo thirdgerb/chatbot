@@ -87,7 +87,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
     {
 
         $input = $cloner->input;
-        $comprehension = $input->comprehension;
+        $comprehension = $cloner->comprehension;
         $answer = $comprehension->answer->getAnswer();
 
         if (isset($answer)) {
@@ -193,7 +193,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         $ordinalInt = HostMsg\DefaultIntents::GUEST_DIALOG_ORDINAL;
 
         if ($matcher->isIntent($ordinalInt)->truly() === true) {
-            $entities = $cloner->input
+            $entities = $cloner
                 ->comprehension
                 ->intention
                 ->getIntentEntities($ordinalInt);

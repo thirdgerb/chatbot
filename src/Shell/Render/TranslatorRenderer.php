@@ -52,7 +52,7 @@ class TranslatorRenderer implements Renderer
             $slots = $message->getSlots();
             $id = $message->getProtocalId();
             $text = $this->translator->trans($id, $slots);
-            return [new IText($text, $message->getLevel())];
+            return [IText::instance($text, $message->getLevel())];
         }
 
         // 无法翻译的不渲染.

@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Blueprint;
+
 use Commune\Blueprint\Configs\PlatformConfig;
 
 /**

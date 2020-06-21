@@ -26,18 +26,13 @@ class CommandMissInt extends IIntentMsg
     const DEFAULT_LEVEL = HostMsg::ERROR;
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_COMMAND_MISS;
 
-    public function __construct(string $command)
+    public static function instance(string $command) : self
     {
-        parent::__construct('', ['command' => $command]);
+        return new static(get_defined_vars());
     }
 
     public static function intentStub(): array
     {
         return ['command' => ''];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['command'] ?? '');
     }
 }

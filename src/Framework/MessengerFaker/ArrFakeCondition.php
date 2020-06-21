@@ -20,30 +20,69 @@ use Commune\Protocals\IntercomMsg;
  */
 class ArrFakeCondition implements Condition
 {
+    /**
+     * @var ArrFakeMessageDB
+     */
+    protected $db;
+
+    /*------ 临时规则 -------*/
+
+    protected $traceId = null;
+
+    protected $sessionId = null;
+
+    protected $guestId = null;
+
+    /**
+     * @var null|int
+     */
+    protected $deliverAt = null;
+
+    /**
+     * @var null|int
+     */
+    protected $createdAfter = null;
+
+    /**
+     * @var null
+     */
+    protected $idAfter = null;
+
+    /**
+     * ArrFakeCondition constructor.
+     * @param ArrFakeMessageDB $db
+     */
+    public function __construct(ArrFakeMessageDB $db)
+    {
+        $this->db = $db;
+    }
+
+
+    public function traceIdIs(string $batchId): Condition
+    {
+        // TODO: Implement traceIdIs() method.
+    }
+
 
     public function sessionIdIs(string $sessionId): Condition
     {
         // TODO: Implement sessionIdIs() method.
     }
 
-    public function traceIdIs(string $batchId): Condition
-    {
-        // TODO: Implement batchIdIs() method.
-    }
 
     public function guestIdIs(string $guestId): Condition
     {
         // TODO: Implement guestIdIs() method.
     }
 
-    public function isDeliverableAfter(float $time): Condition
+    public function isDeliverableAfter(int $time): Condition
     {
-        // TODO: Implement deliverAfter() method.
+        // TODO: Implement isDeliverableAfter() method.
     }
 
-    public function isCreatedAfter(float $time): Condition
+    public function isCreatedAfter(int $time): Condition
     {
-        // TODO: Implement createdAfter() method.
+        // TODO: Implement isCreatedAfter() method.
     }
 
     public function afterId(string $messageId): Condition
@@ -69,6 +108,14 @@ class ArrFakeCondition implements Condition
     public function range(int $offset, int $limit): array
     {
         // TODO: Implement range() method.
+    }
+
+    /**
+     * @param array $message
+     * @return IntercomMsg[]
+     */
+    public function __invoke(array $message) : array
+    {
     }
 
 

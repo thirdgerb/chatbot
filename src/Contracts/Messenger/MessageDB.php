@@ -24,10 +24,16 @@ interface MessageDB
 
     /**
      * 记录一组消息. 通常是一个异步或者协程行为.
+     *
+     * @param string $traceId
      * @param InputMsg $input
-     * @param OutputMsg ...$outputs
+     * @param OutputMsg[] $outputs
      */
-    public function recordBatch(InputMsg $input, OutputMsg ...$outputs) : void;
+    public function recordMessages(
+        string $traceId,
+        InputMsg $input,
+        OutputMsg ...$outputs
+    ) : void;
 
     /**
      * @param callable $fetcher

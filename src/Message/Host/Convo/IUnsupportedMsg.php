@@ -15,7 +15,6 @@ use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\Convo\UnsupportedMsg;
 use Commune\Support\Utils\StringUtils;
-use Commune\Support\Utils\TypeUtils;
 
 /**
  * 系统不支持的消息.

@@ -37,7 +37,7 @@ abstract class AbsRedirect extends AbsOperator
                     return $this
                         ->dialog
                         ->send()
-                        ->message(new DialogForbidInt(
+                        ->message(DialogForbidInt::instance(
                             $target->contextName,
                             $ability
                         ))

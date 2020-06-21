@@ -26,6 +26,13 @@ use Commune\Support\Message\AbsMessage;
  */
 class IApiMsg extends AbsMessage implements ApiMsg
 {
+
+    public static function instance(string $api, array $params)
+    {
+        return new static(['api'=> $api, 'params' => $params]);
+    }
+
+
     public static function stub(): array
     {
         return [

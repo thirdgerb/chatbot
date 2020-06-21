@@ -13,7 +13,6 @@ namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
-use Commune\Support\Struct\Struct;
 
 
 /**
@@ -27,26 +26,12 @@ class CommandErrorInt extends IIntentMsg
     const DEFAULT_LEVEL = HostMsg::ERROR;
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_COMMAND_ERROR;
 
-    public function __construct(
-        string $commandName = '',
-        string $errorMsg = ''
-    )
+    public static function instance(
+        string $command = '',
+        string $error = ''
+    ) : self
     {
-        parent::__construct(
-            '',
-            [
-                'command' => $commandName,
-                'error' => $errorMsg,
-            ]
-        );
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static(
-            $data['command'] ?? '',
-            $data['error'] ?? ''
-        );
+        return new static(get_defined_vars());
     }
 
     public static function intentStub(): array

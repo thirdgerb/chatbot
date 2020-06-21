@@ -24,6 +24,7 @@ use Illuminate\Support\Arr;
  *
  * @property-read string $intentName
  * @property-read string $level
+ *
  */
 class IIntentMsg extends AbsMessage implements IntentMsg
 {
@@ -32,28 +33,17 @@ class IIntentMsg extends AbsMessage implements IntentMsg
     const INTENT_NAME = '';
     const DEFAULT_LEVEL = HostMsg::INFO;
 
-    /**
-     * @var string
-     */
-    protected $_text;
-
-    public function __construct(
+    public static function newIntent(
         string $intentName,
         array $entities = [],
-        string $level = null
-    )
+        string $level = HostMsg::INFO
+    ) : IntentMsg
     {
-        if (!empty($intentName)) {
-            $entities[self::INTENT_NAME_FIELD] = $intentName;
-        }
+        $entities[self::INTENT_NAME_FIELD] = $intentName;
+        $entities[self::LEVEL_FIELD] = $level;
 
-        if (isset($level)) {
-            $entities[self::LEVEL_FIELD] = $level;
-        }
-
-        parent::__construct($entities);
+        return new static($entities);
     }
-
 
     public static function stub(): array
     {
@@ -74,15 +64,6 @@ class IIntentMsg extends AbsMessage implements IntentMsg
     public static function relations(): array
     {
         return [];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static(
-            $data[self::INTENT_NAME_FIELD] ?? '',
-            $data,
-            $data[self::LEVEL_FIELD] ?? null
-        );
     }
 
     public function getProtocalId(): string

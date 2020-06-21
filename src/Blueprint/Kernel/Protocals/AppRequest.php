@@ -23,11 +23,6 @@ interface AppRequest extends AppProtocal
     public function isInvalid() : ? string;
 
     /**
-     * @return string
-     */
-    public function getSessionId() : string;
-
-    /**
      * @param int $errcode
      * @param string $errmsg
      * @return AppResponse

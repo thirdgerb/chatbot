@@ -64,7 +64,7 @@ class IEmotionDef implements EmotionDef
         array $injectionContext = []
     ): bool
     {
-        $comprehension = $cloner->input->comprehension;
+        $comprehension = $cloner->comprehension;
         $name = $this->getName();
 
 

@@ -22,6 +22,14 @@ interface IntercomMsg extends Message, Protocal
 {
 
     /**
+     * @return string
+     *
+     * @example Commune.Protocals.Intercom.InputMsg
+     * @example Commune.Protocals.Intercom.OutputMsg
+     */
+    public function getProtocalId(): string;
+
+    /**
      * 检查是否不合法.
      * @return null|string
      */
@@ -29,7 +37,35 @@ interface IntercomMsg extends Message, Protocal
 
     /*------- properties -------*/
 
-    public function getShellName() : string;
+    /**
+     * 消息所属的 SessionId.
+     * 与多轮对话的逻辑有关.
+     *
+     * @return string
+     */
+    public function getSessionId() : string;
+
+    /**
+     * 一次多轮对话的 ID.
+     * 可以用于定位消息.
+     *
+     * 在消息的座标维度里位置如下 :
+     *
+     * - HostId     : 机器人的名称.
+     * - SessionId  : 机器人的分身, 统筹这个分身的所有对话历史
+     * - ConvoId    : 一次多轮交互的 ID, 包含若干次多轮对话内容.
+     * - BatchId
+     * - MessageId
+     *
+     * @return string
+     */
+    public function getConvoId() : string;
+
+    /**
+     * 消息的批次 ID
+     * @return string
+     */
+    public function getBatchId() : string;
 
     /**
      * 传输消息的唯一ID
@@ -38,34 +74,17 @@ interface IntercomMsg extends Message, Protocal
     public function getMessageId() : string;
 
     /**
-     * 消息的追踪 ID.
+     * 创建消息的用户身份.
      * @return string
      */
-    public function getTraceId() : string;
+    public function getCreatorId() : string;
 
     /**
-     * 会话的 ID
+     * 创建消息的用户名称.
      * @return string
      */
-    public function getSessionId() : string;
+    public function getCreatorName() : string;
 
-    /**
-     * 一次多轮对话的 ID
-     * @return string
-     */
-    public function getConversationId() : string;
-
-    /**
-     * 用户的身份Id
-     * @return string
-     */
-    public function getGuestId() : string;
-
-    /**
-     * 用户的名称.
-     * @return string
-     */
-    public function getGuestName() : string;
 
     /**
      * 消息体
@@ -104,7 +123,6 @@ interface IntercomMsg extends Message, Protocal
      * 衍生新的消息.
      *
      * @param HostMsg|null $message
-     * @param string|null $shellName
      * @param string|null $sessionId
      * @param string|null $convoId
      * @param string|null $guestId
@@ -114,7 +132,6 @@ interface IntercomMsg extends Message, Protocal
      */
     public function divide(
         HostMsg $message = null,
-        string $shellName = null,
         string $sessionId = null,
         string $convoId = null,
         string $guestId = null,

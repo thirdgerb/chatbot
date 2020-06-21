@@ -13,7 +13,6 @@ namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
-use Commune\Support\Struct\Struct;
 
 
 /**
@@ -30,17 +29,14 @@ class CommandDescInt extends IIntentMsg
     const DEFAULT_LEVEL = HostMsg::INFO;
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_COMMAND_DESC;
 
-    public function __construct(
+    public static function instance(
         string $command,
         string $desc,
         string $arguments,
         string $options
-    )
+    ) : self
     {
-        parent::__construct(
-            '',
-            get_defined_vars()
-        );
+        return new static(get_defined_vars());
     }
 
     public static function intentStub(): array
@@ -51,16 +47,6 @@ class CommandDescInt extends IIntentMsg
             'arguments' => '',
             'options' => '',
         ];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static(
-            $data['command'] ?? '',
-            $data['desc'] ?? '',
-            $data['arguments'] ?? '',
-            $data['options'] ?? ''
-        );
     }
 
     public function getText(): string

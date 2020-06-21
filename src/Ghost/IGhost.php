@@ -89,7 +89,7 @@ class IGhost extends AbsAppKernel implements Ghost
 
     public function getId(): string
     {
-        return $this->config->id;
+        return 'ghost:' . $this->config->id;
     }
 
     protected function basicBindings(): void
@@ -145,7 +145,7 @@ class IGhost extends AbsAppKernel implements Ghost
         // 可以不是同一个.
         $sessionId = isset($input)
             ? $input->getSessionId()
-            : $request->getSessionId();
+            : $request->fromSession();
 
         $cloner = $this->newCloner($container, $sessionId);
         $container->share(Cloner::class, $cloner);

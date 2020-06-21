@@ -34,7 +34,7 @@ class IntentCmd extends AGhostCmd
         $intentName = $message['name'] ?? '';
         $intentName = trim($intentName);
         if (ContextUtils::isValidIntentName($intentName)) {
-            $this->cloner->input->comprehension->intention->setMatchedIntent($intentName);
+            $this->cloner->comprehension->intention->setMatchedIntent($intentName);
 
             $this->notice("设置命中意图 $intentName");
             $this->goNext();

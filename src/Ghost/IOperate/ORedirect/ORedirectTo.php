@@ -84,7 +84,7 @@ class ORedirectTo extends AbsRedirect
 
                 $this->dialog
                     ->send()
-                    ->message(new DialogYieldInt($target->encode()));
+                    ->message(DialogYieldInt::instance($target->encode()));
 
                 return $this->dialog->rewind();
 

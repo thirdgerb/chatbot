@@ -13,7 +13,6 @@ namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
-use Commune\Support\Struct\Struct;
 
 
 /**
@@ -26,14 +25,9 @@ class SessionQuitInt extends IIntentMsg
     const DEFAULT_LEVEL = HostMsg::INFO;
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_SESSION_QUIT;
 
-    public function __construct(string $await = '')
+    public static function instance(string $ucl = '') : self
     {
-        parent::__construct(
-            '',
-            [
-                'ucl' => $await
-            ]
-        );
+        return new static(get_defined_vars());
     }
 
     public static function intentStub(): array
@@ -41,11 +35,6 @@ class SessionQuitInt extends IIntentMsg
         return [
             'ucl' => ''
         ];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['ucl'] ?? '');
     }
 
 }

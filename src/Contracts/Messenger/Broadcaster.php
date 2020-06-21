@@ -20,9 +20,10 @@ interface Broadcaster
 {
 
     /**
+     * @param string $shellId
      * @param ShellOutputRequest $request
      */
-    public function publish(ShellOutputRequest $request) : void;
+    public function publish(string $shellId, ShellOutputRequest $request) : void;
 
     /**
      * @param callable $callback        传入参数, ShellOutputRequest

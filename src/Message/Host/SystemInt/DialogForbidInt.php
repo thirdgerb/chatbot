@@ -24,15 +24,9 @@ class DialogForbidInt extends IIntentMsg
     const DEFAULT_LEVEL = HostMsg::INFO;
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_DIALOG_FORBID;
 
-    public function __construct(string $contextName = '', string $policy = '')
+    public static function instance(string $context = '', string $policy = '') : self
     {
-        parent::__construct(
-            '',
-            [
-                'context' => $contextName,
-                'policy' => $policy
-            ]
-        );
+        return new static(get_defined_vars());
     }
 
     public static function intentStub(): array
@@ -41,13 +35,5 @@ class DialogForbidInt extends IIntentMsg
             'context' => '',
             'policy' => '',
         ];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static(
-            $data['context'] ?? '',
-            $data['policy'] ?? ''
-        );
     }
 }

@@ -28,9 +28,7 @@ class RepeatCmd extends AGhostCmd
 
     protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
     {
-        $this->cloner
-            ->input
-            ->comprehension
+        $this->cloner->comprehension
             ->intention
             ->setMatchedIntent(DefaultIntents::GUEST_NAVIGATE_REPEAT);
 

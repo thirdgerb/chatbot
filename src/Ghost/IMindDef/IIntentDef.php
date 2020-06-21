@@ -346,14 +346,14 @@ class IIntentDef extends AbsOption implements IntentDef
     public function toIntentMessage(Cloner $cloner): IntentMsg
     {
         $wrapper = $this->messageWrapper ?? IIntentMsg::class;
-        $entities = $cloner->input
+        $entities = $cloner
             ->comprehension
             ->intention
             ->getIntentEntities($this->getName());
         $data = $this->parseEntities($entities);
         $data[IntentMsg::INTENT_NAME_FIELD] = $this->getName();
 
-        return call_user_func([$wrapper, Struct::CREATE_FUNC], $data);
+        return call_user_func([$wrapper, Struct::FUNC_CREATE], $data);
     }
 
 

@@ -179,9 +179,11 @@ abstract class ASession implements Session, HasIdGenerator
         $this->flushInstances();
 
         // container
-        unset($this->listened);
-        unset($this->singletons);
-        unset($this->_container);
+        unset(
+            $this->listened,
+            $this->singletons,
+            $this->_container
+        );
 
         $container->destroy();
     }

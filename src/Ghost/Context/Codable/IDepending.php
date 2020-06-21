@@ -61,7 +61,7 @@ class IDepending implements Depending
         $metaArr['name'] = $fullname;
         $metaArr['contextName'] = $this->contextName;
         return call_user_func(
-            [get_class($meta), Struct::CREATE_FUNC],
+            [get_class($meta), Struct::FUNC_CREATE],
             $metaArr
         );
     }

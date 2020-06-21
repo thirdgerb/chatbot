@@ -12,7 +12,6 @@
 namespace Commune\Ghost\IOperate\OExiting;
 
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\IOperate\OFinale\OCloseSession;

@@ -18,7 +18,7 @@ use Commune\Support\Struct\Struct;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  * 
- * @property-read string $attr
+ * @property-read string $attrName
  */
 class DialogRequireInt extends IIntentMsg
 {
@@ -26,26 +26,16 @@ class DialogRequireInt extends IIntentMsg
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_DIALOG_REQUIRE;
 
 
-    public function __construct(string $attr = '')
+    public static function instance(string $attrName = '') : self
     {
-        parent::__construct(
-            '',
-            [
-                'attr' => $attr
-            ]
-        );
+        return new static(get_defined_vars());
     }
 
     public static function intentStub(): array
     {
         return [
-            'attr' => '',
+            'attrName' => '',
         ];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['attr'] ?? '');
     }
 
 }

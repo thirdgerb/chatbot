@@ -18,6 +18,7 @@ use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Contracts\Cache;
 use Commune\Framework\ASession;
+use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\OutputMsg;
 use Psr\Log\LoggerInterface;
 use Commune\Protocals\Intercom\InputMsg;
@@ -37,6 +38,7 @@ class ICloner extends ASession implements Cloner
         'storage' => Cloner\ClonerStorage::class,
 
         'input' => InputMsg::class,
+        'comprehension' => Comprehension::class,
         'scene' => Cloner\ClonerScene::class,
         'scope' => Cloner\ClonerScope::class,
         'matcher' => Ghost\Tools\Matcher::class,
@@ -326,11 +328,12 @@ class ICloner extends ASession implements Cloner
 
     protected function flushInstances(): void
     {
-        unset($this->_ghost);
-        unset($this->_config);
-        unset($this->_input);
-        unset($this->outputs);
-        unset($this->asyncInputs);
+        unset(
+            $this->_ghost,
+            $this->_config,
+            $this->outputs,
+            $this->asyncInputs
+        );
     }
 
     protected function saveSession(): void

@@ -18,7 +18,7 @@ use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Framework\Auth\Authority;
-use Commune\Protocals\HostMsg;
+use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
@@ -39,14 +39,15 @@ use Commune\Support\Registry\OptRegistry;
  * @property-read GhostConfig $config               机器人配置
  *
  * # Session
- * @property-read Cloner\ClonerLogger $logger         日志
- * @property-read Cloner\ClonerStorage $storage       Session Storage
+ * @property-read Cloner\ClonerLogger $logger       日志
+ * @property-read Cloner\ClonerStorage $storage     Session Storage
  *
  * # 容器
  * @property-read ReqContainer $container           容器
  *
  * # 请求相关
  * @property-read InputMsg $input                   输入
+ * @property-read Comprehension $comprehension      理解模块
  * @property-read Cloner\ClonerScene $scene         场景信息
  * @property-read Cloner\ClonerScope $scope         当前分身的维度.
  * @property-read Ghost\Tools\Matcher $matcher      默认的匹配逻辑工具

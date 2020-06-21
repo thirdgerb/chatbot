@@ -13,7 +13,6 @@ namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
 use Commune\Protocals\HostMsg;
-use Commune\Support\Struct\Struct;
 
 
 /**
@@ -24,13 +23,7 @@ class SessionBusyInt extends IIntentMsg
     const DEFAULT_LEVEL = HostMsg::WARNING;
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_SESSION_BUSY;
 
-
-    public function __construct()
-    {
-        parent::__construct('');
-    }
-
-    public static function create(array $data = []): Struct
+    public static function instance() : self
     {
         return new static();
     }

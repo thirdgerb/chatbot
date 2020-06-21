@@ -80,7 +80,7 @@ class ProtocalMatcherTest extends TestCase
         $this->assertEquals('a', $manager->matchFirst($p)->handler);
 
         // 协议不匹配.
-        $p = new IIntentMsg('hello.to.world');
+        $p = IIntentMsg::newIntent('hello.to.world');
         $this->assertEquals(0, ArrayUtils::countIterable($manager->matchEach($p)));
 
     }

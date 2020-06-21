@@ -16,6 +16,7 @@ use Commune\Contracts\Messenger\MessageDB;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
+use Commune\Support\Utils\ArrayUtils;
 
 
 /**
@@ -23,14 +24,36 @@ use Commune\Protocals\IntercomMsg;
  */
 class ArrFakeMessageDB implements MessageDB
 {
-    public function recordBatch(InputMsg $input, OutputMsg ...$outputs): void
+    public static $maxBatch = 10;
+
+    public static $maxMessages = 100;
+
+    public $batches = [];
+
+    public $messages = [];
+
+    public function recordMessages(
+        string $traceId,
+        InputMsg $input,
+        OutputMsg ...$outputs
+    ): void
     {
-        // TODO: Implement recordBatch() method.
+        $this->batches[$traceId] = [$input, $outputs];
+
+        $this->messages[$input->getMessageId()] = $input;
+
+        foreach ($outputs as $output) {
+            $this->messages[$output->getMessageId()] = $output;
+        }
+
+        ArrayUtils::maxLength($this->batches, self::$maxBatch);
+        ArrayUtils::maxLength($this->messages, self::$maxMessages);
     }
+
 
     public function fetch(callable $fetcher): array
     {
-        // TODO: Implement fetch() method.
+        return $fetcher($this);
     }
 
     public function where(): Condition
@@ -40,7 +63,7 @@ class ArrFakeMessageDB implements MessageDB
 
     public function find(string $messageId): ? IntercomMsg
     {
-        // TODO: Implement find() method.
+        return $this->messages[$messageId] ?? null;
     }
 
 

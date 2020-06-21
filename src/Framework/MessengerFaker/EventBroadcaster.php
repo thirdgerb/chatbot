@@ -18,7 +18,7 @@ use Commune\Contracts\Messenger\Broadcaster;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class BroadcasterByEvent implements Broadcaster
+class EventBroadcaster implements Broadcaster
 {
     /**
      * @var callable[]

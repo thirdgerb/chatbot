@@ -147,6 +147,6 @@ class CloneDeliveryPipe extends AClonePipe
          * @var MessageDB $messageDB
          */
         $messageDB = $this->cloner->container->get(MessageDB::class);
-        $messageDB->recordBatch($input, ...$outputs);
+        $messageDB->recordMessages($input, ...$outputs);
     }
 }

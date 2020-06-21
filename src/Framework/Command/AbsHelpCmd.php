@@ -59,7 +59,7 @@ abstract class AbsHelpCmd extends ARequestCmd
         }
 
         $cmdList = $this->rangeMessages($messages);
-        $this->output(new CommandListInt($cmdList));
+        $this->output(CommandListInt::instance($cmdList));
     }
 
     public function helpCommandName(
@@ -68,7 +68,7 @@ abstract class AbsHelpCmd extends ARequestCmd
     ) : void
     {
         if (!$pipe->hasCommand($commandName)) {
-            $this->output(new CommandMissInt($commandName));
+            $this->output(CommandMissInt::instance($commandName));
         }
 
         $id = $pipe->getCommandID($commandName);
@@ -107,7 +107,7 @@ abstract class AbsHelpCmd extends ARequestCmd
         }
 
         $this->output(
-            new CommandDescInt(
+             CommandDescInt::instance(
                 $commandName,
                 $desc,
                 $this->rangeMessages($args),

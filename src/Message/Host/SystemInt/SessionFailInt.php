@@ -28,16 +28,13 @@ class SessionFailInt extends IIntentMsg
     const DEFAULT_LEVEL = HostMsg::ERROR;
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_SESSION_FAIL;
 
-    public function __construct(string $errmsg = null)
+    public static function instance(string $errmsg = null) : self
     {
         $slots = isset($errmsg)
             ? ['errmsg' => $errmsg]
             : [];
 
-        parent::__construct(
-            '',
-            $slots
-        );
+        return new static($slots);
     }
 
     public static function intentStub(): array
@@ -46,11 +43,6 @@ class SessionFailInt extends IIntentMsg
             'errcode' => AppResponse::HOST_SESSION_FAIL,
             'errmsg' => AppResponse::DEFAULT_ERROR_MESSAGES[AppResponse::HOST_SESSION_FAIL],
         ];
-    }
-
-    public static function create(array $data = []): Struct
-    {
-        return new static($data['errmsg']);
     }
 
     public function getText(): string

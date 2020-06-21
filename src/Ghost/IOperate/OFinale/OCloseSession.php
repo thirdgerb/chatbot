@@ -12,6 +12,7 @@
 namespace Commune\Ghost\IOperate\OFinale;
 
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Message\Host\SystemInt\SessionQuitInt;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -21,6 +22,7 @@ class OCloseSession extends AbsFinale
 
     protected function toNext(): Operator
     {
+        $this->dialog->send()->message(SessionQuitInt::instance($this->dialog->ucl));
         $this->dialog->cloner->endConversation();
         return $this;
     }

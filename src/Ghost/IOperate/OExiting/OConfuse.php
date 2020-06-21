@@ -66,7 +66,6 @@ class OConfuse extends AbsOperator
     {
         $replies = $this
             ->cloner
-            ->input
             ->comprehension
             ->replies
             ->getReplies();
@@ -111,14 +110,13 @@ class OConfuse extends AbsOperator
         $uclStr = $this->dialog->ucl->encode();
         $matched = $this
                 ->cloner
-                ->input
                 ->comprehension
                 ->intention
                 ->getMatchedIntent() ?? '';
 
         $this->dialog
             ->send()
-            ->message(new DialogConfuseInt($uclStr, $matched));
+            ->message(DialogConfuseInt::instance($uclStr, $matched));
 
         return $this->dialog->rewind();
     }

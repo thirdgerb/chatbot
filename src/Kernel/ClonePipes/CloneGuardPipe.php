@@ -86,7 +86,7 @@ class CloneGuardPipe extends AClonePipe
 
         $storage->requestFailTimes = $times;
 
-        return $request->output(new RequestFailInt($e->getMessage()));
+        return $request->output(RequestFailInt::instance($e->getMessage()));
     }
 
     protected function quitSession(
@@ -95,8 +95,8 @@ class CloneGuardPipe extends AClonePipe
     ) : GhostResponse
     {
         $messages = [
-            new SessionFailInt($e->getMessage()),
-            new SessionQuitInt(),
+            SessionFailInt::instance($e->getMessage()),
+            SessionQuitInt::instance(),
         ];
 
         $this->cloner->endConversation();

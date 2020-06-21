@@ -170,11 +170,13 @@ class IHearing extends IMatcher implements Hearing
 
     protected function destroy()
     {
-        unset($this->faker);
-        unset($this->dialog);
-        unset($this->cloner);
-        unset($this->todo);
-        unset($this->fallback);
+        unset(
+            $this->faker,
+            $this->dialog,
+            $this->cloner,
+            $this->todo,
+            $this->fallback
+        );
     }
 
     public function getDialog(): Dialog
@@ -185,9 +187,12 @@ class IHearing extends IMatcher implements Hearing
 
     public function __destruct()
     {
-        unset($this->todo);
-        unset($this->fallback);
-        unset($this->nextOperator);
+        unset(
+            $this->todo,
+            $this->fallback,
+            $this->nextOperator
+        );
+
         parent::__destruct();
     }
 

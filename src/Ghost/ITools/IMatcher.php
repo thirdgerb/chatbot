@@ -20,6 +20,7 @@ use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Framework\Command\ICommandDef;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Message\Host\IIntentMsg;
+use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\HostMsg\IntentMsg;
@@ -46,6 +47,11 @@ class IMatcher implements Matcher
     protected $cloner;
 
     /**
+     * @var Comprehension
+     */
+    protected $comprehension;
+
+    /**
      * @var array
      */
     protected $injectionContext;
@@ -69,6 +75,7 @@ class IMatcher implements Matcher
     {
         $this->cloner = $cloner;
         $this->input = $cloner->input;
+        $this->comprehension = $cloner->comprehension;
         $this->injectionContext = $injectionContext;
         SpyAgency::incr(static::class);
     }
@@ -280,7 +287,7 @@ class IMatcher implements Matcher
 
     public function isAnswered(): Matcher
     {
-        $answer = $this->input->comprehension->answer->getAnswer();
+        $answer = $this->comprehension->answer->getAnswer();
         if (isset($answer)) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $answer;
@@ -291,7 +298,7 @@ class IMatcher implements Matcher
     public function isChoice($suggestionIndex): Matcher
     {
         $suggestionIndex = strval($suggestionIndex);
-        $answer = $this->input->comprehension->answer->getAnswer();
+        $answer = $this->comprehension->answer->getAnswer();
         if (isset($answer) && $answer->getChoice() === $suggestionIndex) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $answer;
@@ -302,7 +309,7 @@ class IMatcher implements Matcher
 
     public function isCommand(string $signature, bool $correct = false) : Matcher
     {
-        $cmd = $this->input
+        $cmd = $this
             ->comprehension
             ->command;
 
@@ -325,7 +332,7 @@ class IMatcher implements Matcher
 
     public function matchCommandDef(CommandDef $def, bool $correct = false): Matcher
     {
-        $cmd = $this->input
+        $cmd = $this
             ->comprehension
             ->command;
 
@@ -381,7 +388,7 @@ class IMatcher implements Matcher
         }
 
         // 先尝试用分词来做
-        $tokenize = $this->input->comprehension->tokens;
+        $tokenize = $this->comprehension->tokens;
         if ($tokenize->hasTokens()) {
             $tokens = $tokenize->getTokens();
             if (empty($tokens)) {
@@ -475,7 +482,6 @@ class IMatcher implements Matcher
         }
 
         $entities = $this->cloner
-            ->input
             ->comprehension
             ->intention
             ->getIntentEntities($intentName);
@@ -503,7 +509,7 @@ class IMatcher implements Matcher
     protected function singleExactlyIntentMatch(string $intent) : ? string
     {
         $reg = $this->cloner->mind->intentReg();
-        $intention = $this->cloner->input->comprehension->intention;
+        $intention = $this->cloner->comprehension->intention;
         if ($intention->hasPossibleIntent($intent)) {
             return $intent;
         }
@@ -520,7 +526,7 @@ class IMatcher implements Matcher
 
     protected function singleWildcardIntentMatch(string $intent) : ? string
     {
-        $intention = $this->cloner->input->comprehension->intention;
+        $intention = $this->cloner->comprehension->intention;
         $possibles = $intention->getPossibleIntentNames(true);
         foreach ($possibles as $possible) {
             if (ContextUtils::wildcardIntentMatch($intent, $possible)) {
@@ -550,7 +556,6 @@ class IMatcher implements Matcher
         }
 
         $possibleIntents = $this
-            ->input
             ->comprehension
             ->intention
             ->getPossibleIntentNames(true);
@@ -575,7 +580,6 @@ class IMatcher implements Matcher
     public function isAnyIntent(): Matcher
     {
         $intent = $this
-            ->input
             ->comprehension
             ->intention
             ->getMatchedIntent();
@@ -594,7 +598,7 @@ class IMatcher implements Matcher
 
         // 无参数情况.
         if (empty($intentName)) {
-            $matched = $this->cloner->input->comprehension->intention->getMatchedIntent();
+            $matched = $this->cloner->comprehension->intention->getMatchedIntent();
 
         // 只有一个参数
         } elseif (empty($intentNames)) {
@@ -617,7 +621,7 @@ class IMatcher implements Matcher
 
     public function hasPossibleIntent(string $intentName): Matcher
     {
-        $has = $this->input->comprehension->intention->hasPossibleIntent($intentName);
+        $has = $this->comprehension->intention->hasPossibleIntent($intentName);
         if ($has) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $intentName;
@@ -643,7 +647,7 @@ class IMatcher implements Matcher
 
     protected function doCheckEntity(string $entityName) : ? array
     {
-        $intention = $this->input->comprehension->intention;
+        $intention = $this->comprehension->intention;
 
         $entities = $intention->getMatchedEntities();
         return empty($entities[$entityName]) ? null : $entities[$entityName];
@@ -733,11 +737,13 @@ class IMatcher implements Matcher
 
     public function __destruct()
     {
-        unset($this->cloner);
-        unset($this->input);
-        $this->matched = false;
-        unset($this->matchedParams);
-        unset($this->injectionContext);
+        unset(
+            $this->cloner,
+            $this->input,
+            $this->matched,
+            $this->matchedParams,
+            $this->injectionContext
+        );
         SpyAgency::decr(static::class);
     }
 }

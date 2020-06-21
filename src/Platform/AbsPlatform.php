@@ -14,7 +14,6 @@ namespace Commune\Platform;
 use Commune\Blueprint\Host;
 use Commune\Blueprint\Platform;
 use Psr\Log\LoggerInterface;
-use Commune\Blueprint\Platform\Adapter;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 
@@ -89,7 +88,7 @@ abstract class AbsPlatform implements Platform
 
     public function getId(): string
     {
-        return $this->config->id;
+        return 'platform' . $this->config->id;
     }
 
     protected function invalidRequest(string $error) : void

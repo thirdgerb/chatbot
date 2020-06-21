@@ -41,7 +41,7 @@ abstract class LoadComponents implements Bootstrapper
             is_string($value)
             && is_a($value, ComponentOption::class, TRUE)
         ) {
-            return call_user_func([$value, Struct::CREATE_FUNC]);
+            return call_user_func([$value, Struct::FUNC_CREATE]);
         }
 
         if (
@@ -49,7 +49,7 @@ abstract class LoadComponents implements Bootstrapper
             && is_a($name, ComponentOption::class, TRUE)
             && is_array($value)
         ) {
-            return call_user_func([$name, Struct::CREATE_FUNC], $value);
+            return call_user_func([$name, Struct::FUNC_CREATE], $value);
         }
 
         throw new InvalidArgumentException('invalid component config');
