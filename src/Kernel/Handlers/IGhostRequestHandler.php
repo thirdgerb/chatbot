@@ -83,11 +83,15 @@ class IGhostRequestHandler implements GhostRequestHandler
             );
         }
 
-
         if ($request->isStateless()) {
             $this->cloner->noState();
         }
 
+        // 配置 convoId
+        $convoId = $this->cloner->getConversationId();
+        $this->cloner->input->setConvoId($convoId);
+
+        // 执行管道.
         $middleware = $this->middleware;
 
         if (empty($middleware)) {

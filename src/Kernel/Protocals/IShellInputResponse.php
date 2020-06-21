@@ -12,7 +12,9 @@
 namespace Commune\Kernel\Protocals;
 
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Message\Abstracted\IComprehension;
 use Commune\Message\Intercom\IInputMsg;
+use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
@@ -22,29 +24,37 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $sessionId
- * @property-read bool $async
+ * @property-read string $traceId
  * @property-read int $errcode
  * @property-read string $errmsg
+ * @property-read bool $async
+ *
  * @property-read InputMsg $input
+ * @property-read array $env
+ * @property-read string $entry
+ * @property-read Comprehension $comprehension
  */
 class IShellInputResponse extends AbsMessage implements ShellInputResponse
 {
     public static function stub(): array
     {
         return [
-            'sessionId' => '',
-            'async' => false,
+            'traceId' => '',
             'errcode' => 0,
             'errmsg' => '',
-            'input' => [],
+            'async' => false,
+            'input' => new IInputMsg(),
+            'env' => [],
+            'entry' => '',
+            'comprehension' => new IComprehension(),
         ];
     }
 
     public static function relations(): array
     {
         return [
-            'input' => IInputMsg::class,
+            'input' => InputMsg::class,
+            'comprehension' => Comprehension::class
         ];
     }
 
@@ -68,15 +78,10 @@ class IShellInputResponse extends AbsMessage implements ShellInputResponse
 
     public function getTraceId(): string
     {
-        return $this->getInput()->getMessageId();
-    }
-
-    public function getSessionId(): string
-    {
-        $sessionId = $this->sessionId;
-        return empty($sessionId)
-            ? $this->getInput()->getSessionId()
-            : $sessionId;
+        $traceId = $this->traceId;
+        return empty($traceId)
+            ? $this->getBatchId()
+            : $traceId;
     }
 
     public function getErrcode(): int
@@ -102,6 +107,26 @@ class IShellInputResponse extends AbsMessage implements ShellInputResponse
     public function isAsync(): bool
     {
         return $this->async;
+    }
+
+    public function getBatchId(): string
+    {
+        return $this->getInput()->getBatchId();
+    }
+
+    public function getEnv(): array
+    {
+        return $this->env;
+    }
+
+    public function getEntry(): string
+    {
+        return $this->entry;
+    }
+
+    public function getComprehension(): Comprehension
+    {
+        return $this->comprehension;
     }
 
 

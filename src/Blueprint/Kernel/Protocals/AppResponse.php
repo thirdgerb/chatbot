@@ -18,14 +18,6 @@ use Commune\Blueprint\Exceptions\CommuneErrorCode;
  */
 interface AppResponse extends AppProtocal, CommuneErrorCode
 {
-
-    /**
-     * 响应必须都携带 SessionId.
-     *
-     * @return string
-     */
-    public function getSessionId() : string;
-
     /**
      * 异常码. @see CommuneErrorCode
      * @return int

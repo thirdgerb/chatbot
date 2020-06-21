@@ -20,7 +20,6 @@ use Commune\Support\Protocal\Protocal;
  */
 interface IntercomMsg extends Message, Protocal
 {
-
     /**
      * @return string
      *
@@ -85,7 +84,6 @@ interface IntercomMsg extends Message, Protocal
      */
     public function getCreatorName() : string;
 
-
     /**
      * 消息体
      * @return HostMsg
@@ -122,21 +120,21 @@ interface IntercomMsg extends Message, Protocal
     /**
      * 衍生新的消息.
      *
-     * @param HostMsg|null $message
-     * @param string|null $sessionId
-     * @param string|null $convoId
-     * @param string|null $guestId
-     * @param string|null $guestName
-     * @param int|null $deliverAt
+     * @param HostMsg $message
+     * @param string $sessionId
+     * @param string $convoId
+     * @param string $creatorId
+     * @param string $creatorName
+     * @param int $deliverAt
      * @return IntercomMsg
      */
     public function divide(
-        HostMsg $message = null,
-        string $sessionId = null,
-        string $convoId = null,
-        string $guestId = null,
-        string $guestName = null,
-        int $deliverAt = null
+        HostMsg $message,
+        string $sessionId,
+        string $convoId = '',
+        string $creatorId = '',
+        string $creatorName = '',
+        int $deliverAt = 0
     ) : IntercomMsg;
 
 
@@ -152,12 +150,6 @@ interface IntercomMsg extends Message, Protocal
      * @return string
      */
     public function getMsgText() : string;
-
-    /**
-     * @param string $renderId
-     * @return string
-     */
-    public function getMsgRenderId(string $renderId) : string;
 
     /**
      * @return string

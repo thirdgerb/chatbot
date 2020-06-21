@@ -33,17 +33,4 @@ interface AppProtocal extends Protocal
      */
     public function getBatchId() : string;
 
-    /**
-     * Request 来自的 appId
-     * 通常是 PlatformId, ShellId, GhostId
-     * @return string
-     */
-    public function fromApp() : string;
-
-    /**
-     * 消息来自的 Session.
-     * @return string
-     */
-    public function fromSession() : string;
-
 }

@@ -21,19 +21,38 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $sessionId
  * @property-read string $traceId
+ * @property-read string $batchId
  * @property-read int $errcode
  * @property-read string $errmsg
  * @property-read OutputMsg[] $outputs
  */
 class IGhostResponse extends AbsMessage implements GhostResponse
 {
+
+    public static function instance(
+        string $traceId,
+        string $batchId,
+        array $outputs,
+        int $errcode = 0,
+        string $errmsg = ''
+    ) : self
+    {
+        return new static([
+            'traceId' => $traceId,
+            'batchId' => $batchId,
+            'errcode' => $errcode,
+            'errmsg' => $errmsg,
+            'outputs' => $outputs
+        ]);
+    }
+
+
     public static function stub(): array
     {
         return [
             'traceId' => '',
-            'sessionId' => '',
+            'batchId' => '',
             'errcode' => 0,
             'errmsg' => '',
             'outputs' => [],
@@ -71,10 +90,11 @@ class IGhostResponse extends AbsMessage implements GhostResponse
         return $this->traceId;
     }
 
-    public function getSessionId(): string
+    public function getBatchId(): string
     {
-        return $this->sessionId;
+        return $this->batchId;
     }
+
 
     public function getErrcode(): int
     {

@@ -15,7 +15,7 @@ namespace Commune\Blueprint\Kernel\Protocals;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellInputResponse extends AppResponse, HasInput
+interface ShellInputResponse extends AppResponse, InputRequest
 {
     /**
      * @return bool

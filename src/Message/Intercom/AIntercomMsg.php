@@ -11,6 +11,7 @@
 
 namespace Commune\Message\Intercom;
 
+use Commune\Message\Host\Convo\IText;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\Message\AbsMessage;
@@ -21,16 +22,16 @@ use Commune\Support\Uuid\IdGeneratorHelper;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property string $messageId  为空则自动生成.
- * @property string $shellName
- * @property string $traceId    允许为空
- * @property string $sessionId  会话Id, 为空则是 guestId
- * @property string $convoId    多轮会话的 ID. 允许为空. 除非客户端有指定的 conversation.
- * @property string $guestId    用户的ID. 不可以为空.
- * @property string $guestName  用户的姓名. 可以为空.
- * @property HostMsg $message   输入消息. 不可以为空.
- * @property int $createdAt     创建时间.
- * @property int $deliverAt     发送时间. 默认为0.
+ * @property string $batchId            batchId: 消息的批次ID
+ * @property string $messageId          messageId: 为空则自动生成.
+ * @property string $sessionId          sessionId: 会话Id, 为空则是 guestId
+ * @property string $convoId            convoId: 多轮会话的 ID. 允许为空. 除非客户端有指定的 conversation.
+ *
+ * @property string $creatorId          creatorId: 用户的ID. 不可以为空.
+ * @property string $creatorName        creatorName: 用户的姓名. 可以为空.
+ * @property HostMsg $message           message: 输入消息. 不可以为空.
+ * @property int $createdAt             createdAt: 创建时间.
+ * @property int $deliverAt             deliverAt: 发送时间. 默认为0.
  *
  */
 abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGenerator
@@ -42,6 +43,44 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
      */
     protected $_normalizedText;
 
+    /**
+     * 由于定义的 HostMsg 是 interface, 所以任何时候都要保留该对象的结构.
+     * @var bool
+     */
+    protected $transferNoEmptyRelations = false;
+
+
+    public static function stub(): array
+    {
+        return [
+            'messageId' => '',
+
+            // 不可为空
+            'sessionId' => '',
+
+            // 不可为空
+            'batchId' => '',
+
+            // 会话 id
+            'convoId' => '',
+
+            // 创建者
+            'creatorId' => '',
+
+            // 创建者名称.
+            'creatorName' => '',
+
+            // 消息体
+            'message' => new IText(),
+
+            // 发布时间
+            'deliverAt' => 0,
+
+            // 创建时间
+            'createdAt' => time(),
+        ];
+    }
+
     public static function relations(): array
     {
         return [
@@ -49,10 +88,39 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
         ];
     }
 
+    public function __set_messageId(string $name, string $value) : void
+    {
+        $this->_data[$name] = empty($value)
+            ? $this->createUuId()
+            : $value;
+    }
+
     public function isEmpty(): bool
     {
         return false;
     }
+
+    /*------- clone -------*/
+
+    public function divide(
+        HostMsg $message,
+        string $sessionId,
+        string $convoId = '',
+        string $creatorId = '',
+        string $creatorName = '',
+        int $deliverAt = 0
+    ): IntercomMsg
+    {
+        $vars = get_defined_vars();
+
+        $data = $this->_data;
+        foreach ($vars as $name => $val) {
+            $data[$name] = $val;
+        }
+
+        return new static($data);
+    }
+
 
     /*------- properties -------*/
 
@@ -61,6 +129,10 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
         return $this->getMessage()->getProtocalId();
     }
 
+    public function getSessionId(): string
+    {
+        return $this->sessionId;
+    }
 
     public function getMessageId(): string
     {
@@ -69,17 +141,17 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
 
     public function getConvoId(): string
     {
-        return $this->convoId;
+        return $this->cid;
     }
 
     public function getCreatorId(): string
     {
-        return $this->guestId;
+        return $this->creatorId;
     }
 
     public function getCreatorName(): string
     {
-        return $this->guestName;
+        return $this->creatorName;
     }
 
     public function getMessage(): HostMsg
@@ -103,42 +175,9 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
         $this->message = $message;
     }
 
-
-    public function divide(
-        HostMsg $message = null,
-        string $shellName = null,
-        string $sessionId = null,
-        string $convoId = null,
-        string $guestId = null,
-        string $guestName = null,
-        int $deliverAt = null
-    ): IntercomMsg
-    {
-        $map = get_defined_vars();
-        $message = clone $this;
-        foreach ($map as $key => $val) {
-            if (isset($val)) {
-                $message->__set($key, $val);
-            }
-        }
-
-        if (is_null($message)) {
-            $message->message = clone $message->message;
-        } else {
-            $message->messageId = $this->createUuId();
-        }
-
-        return $message;
-    }
-
     public function isMsgType(string $hostMessageType): bool
     {
         return is_a($this->message, $hostMessageType, TRUE);
-    }
-
-    public function getMsgRenderId(string $renderId): string
-    {
-        return $this->message->getProtocalId();
     }
 
     public function getMsgText(): string
@@ -156,14 +195,5 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
     {
         $this->convoId = $convoId;
     }
-
-
-    public function __set_messageId(string $name, string $value) : void
-    {
-        $this->_data[$name] = empty($value)
-            ? $this->createUuId()
-            : $value;
-    }
-
 
 }

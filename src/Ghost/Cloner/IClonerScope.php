@@ -11,7 +11,6 @@
 
 namespace Commune\Ghost\Cloner;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Framework\Spy\SpyAgency;
@@ -25,36 +24,15 @@ class IClonerScope implements ClonerScope
     use ArrayAbleToJson;
 
     /**
-     * @var string
+     * @var string[]
      */
-    protected $clonerId;
+    protected $data;
 
-    /**
-     * @var string
-     */
-    protected $guestId;
-
-    /**
-     * @var string
-     */
-    protected $convoId;
-
-    /**
-     * @var int
-     */
     protected $time;
 
-    /**
-     * @var string
-     */
-    protected $sceneId;
-
-    public function __construct(Cloner $cloner)
+    public function __construct(array $data)
     {
-        $this->clonerId = $cloner->getSessionId();
-        $this->guestId = $cloner->input->getCreatorId();
-        $this->convoId = $cloner->getConversationId();
-        $this->sceneId = $cloner->scene->sceneId;
+        $this->data = $data;
         $this->time = time();
         unset($cloner);
         SpyAgency::incr(static::class);
@@ -62,13 +40,10 @@ class IClonerScope implements ClonerScope
 
     public function toArray(): array
     {
-        return [
-            'clone' => $this->clonerId,
-            'convo' => $this->convoId,
-            'guest' => $this->guestId,
-            'scene' => $this->sceneId,
-            'time' => $this->time,
-        ];
+        $data = $this->data;
+        $data['time'] = $this->time;
+
+        return $data;
     }
 
 
@@ -105,11 +80,11 @@ class IClonerScope implements ClonerScope
     public function __get($name)
     {
         switch($name) {
-            case ClonerScope::CLONE_ID :
+            case ClonerScope::SHELL_ID :
+            case ClonerScope::SESSION_ID :
             case ClonerScope::GUEST_ID :
             case ClonerScope::CONVO_ID :
-            case ClonerScope::SCENE_ID :
-                return $this->{$name};
+                return $this->data[$name] ?? '';
             case ClonerScope::YEAR :
                 return date('Y', $this->time);
             case ClonerScope::MONTH :

@@ -493,7 +493,7 @@ class IMatcher implements Matcher
             $entities
         );
 
-        return new IIntentMsg(
+        return IIntentMsg::newIntent(
             $intentName,
             $entities
         );

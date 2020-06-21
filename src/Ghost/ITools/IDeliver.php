@@ -11,9 +11,11 @@
 
 namespace Commune\Ghost\ITools;
 
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Message\Host\IIntentMsg;
+use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
 
@@ -36,6 +38,11 @@ class IDeliver implements Deliver
     protected $dialog;
 
     /**
+     * @var Cloner
+     */
+    protected $cloner;
+
+    /**
      * @var bool
      */
     protected $immediately;
@@ -55,7 +62,7 @@ class IDeliver implements Deliver
     /**
      * @var null|string
      */
-    protected $shellName = null;
+    protected $shellId = null;
 
     /**
      * @var null|string
@@ -65,8 +72,12 @@ class IDeliver implements Deliver
     /**
      * @var null|string
      */
-    protected $guestId = null;
+    protected $creatorId = null;
 
+    /**
+     * @var null|string
+     */
+    protected $creatorName = null;
 
     /*---- cached ----*/
 
@@ -85,7 +96,8 @@ class IDeliver implements Deliver
     public function __construct(Dialog $dialog, bool $immediately)
     {
         $this->dialog = $dialog;
-        $this->input = $this->dialog->cloner->input;
+        $this->cloner = $dialog->cloner;
+        $this->input = $this->cloner->input;
         $this->immediately = $immediately;
     }
 
@@ -93,6 +105,12 @@ class IDeliver implements Deliver
     public function withSlots(array $slots): Deliver
     {
         $this->slots = $slots;
+        return $this;
+    }
+
+    public function withSessionId(string $sessionId) : Deliver
+    {
+        $this->sessionId = $sessionId;
         return $this;
     }
 
@@ -112,6 +130,10 @@ class IDeliver implements Deliver
         $this->deliverAt = time() + $sections;
         return $this;
     }
+
+
+
+
 
     public function error(string $intent, array $slots = array()): Deliver
     {
@@ -136,7 +158,7 @@ class IDeliver implements Deliver
     protected function log(string $level, string $intent, array $slots) : Deliver
     {
         $slots = $slots + $this->slots;
-        $intentMsg = new IIntentMsg($intent, $slots, $level);
+        $intentMsg = IIntentMsg::newIntent($intent, $slots, $level);
         return $this->message($intentMsg);
     }
 
@@ -155,18 +177,54 @@ class IDeliver implements Deliver
     protected function output(HostMsg $message, HostMsg ...$messages) : void
     {
         // 有可能要做异步.
-
         array_unshift($messages, $message);
 
-        $messages = array_map(function(HostMsg $message){
-            return $this->input->output(
-                $message,
-                $this->deliverAt,
-                $this->shellName,
-                $this->sessionId,
-                $this->guestId
-            );
-        }, $messages);
+        // 准备所有参数
+        $selfSessionId = $this->cloner->getSessionId();
+        $sessionId = $this->sessionId ?? $selfSessionId;
+
+        // is async ?
+        $async = $this->sessionId === $selfSessionId;
+
+        // 如果不是相同的 session, 则不设置 convoId
+        $convoId = $async
+            ? $this->cloner->getConversationId()
+            : '';
+
+        $app = $this->cloner->getApp();
+
+        $appId = $this->creatorId ?? $app->getId();
+        $appName = $this->creatorName ?? $app->getName();
+        $deliverAt = $this->deliverAt;
+
+
+        // 遍历赋值.
+        $messages = array_map(
+            function(HostMsg $message) use (
+                $async,
+                $deliverAt,
+                $sessionId,
+                $convoId,
+                $appId,
+                $appName
+            ){
+                if ($async) {
+                    return new IInputMsg([
+
+                    ]);
+                }
+
+                return $this->input->output(
+                    $message,
+                    $deliverAt,
+                    $sessionId,
+                    $convoId,
+                    $appId,
+                    $appName
+                );
+            },
+            $messages
+        );
 
         $cloner = $this->dialog->cloner;
         $cloner->output(...$messages);
@@ -175,16 +233,18 @@ class IDeliver implements Deliver
     public function over(): Dialog
     {
         $this->__invoke();
-
         return $this->dialog;
     }
 
 
     public function __destruct()
     {
-        $this->dialog = null;
-        $this->input = null;
-        $this->slots = [];
+        unset(
+            $this->cloner,
+            $this->input,
+            $this->dialog,
+            $this->buffer
+        );
     }
 
     public function __invoke(): void

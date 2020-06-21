@@ -20,11 +20,6 @@ interface GhostResponse extends AppResponse
 {
 
     /**
-     * @return string
-     */
-    public function getBatchId() : string;
-
-    /**
      * @return OutputMsg[]
      */
     public function getOutputs() : array;

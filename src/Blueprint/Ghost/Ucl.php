@@ -38,7 +38,6 @@ use Commune\Blueprint\Ghost\Exceptions\InvalidQueryException;
  * @property-read string $queryStr          query参数的字符串.
  *
  *
- *
  * 相关 API 文档:
  * @see UclInterface
  */

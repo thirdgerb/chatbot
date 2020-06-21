@@ -157,7 +157,7 @@ abstract class ARequestCmd implements RequestCmd
 
     public function log($level, $message, array $context = array())
     {
-        $this->output(new IIntentMsg(
+        $this->output(IIntentMsg::newIntent(
             $message,
             $context,
             $level

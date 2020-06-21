@@ -13,7 +13,9 @@ namespace Commune\Kernel\Protocals;
 
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
+use Commune\Message\Abstracted\IComprehension;
 use Commune\Message\Intercom\IInputMsg;
+use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
@@ -22,39 +24,56 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $sessionId
+ * @property-read string $traceId
  * @property-read bool $async
  * @property-read InputMsg $input
+ *
+ * @property-read array $env
+ * @property-read string $entry
+ * @property-read Comprehension $comprehension
  */
 class IShellInputRequest extends AbsMessage implements ShellInputRequest
 {
 
     public static function instance(
         InputMsg $input,
-        string $sessionId = '',
-        bool $async = false
+        bool $async = false,
+        string $traceId = '',
+        string $entry = '',
+        array $env = [],
+        Comprehension $comprehension = null
     ) : self
     {
-        return new static([
-            'sessionId' => $sessionId,
+        $data = [
+            'traceId' => $traceId,
             'async' => $async,
             'input' => $input,
-        ]);
+            'entry' => $entry,
+            'env' => $env,
+        ];
+
+        if (isset($comprehension)) $data['comprehension'] = $comprehension;
+
+        return new static($data);
     }
 
     public static function stub(): array
     {
         return [
-            'sessionId' => '',
+            'traceId' => '',
             'async' => false,
-            'input' => [],
+            'input' => new IInputMsg(),
+            'env' => [],
+            'entry' => '',
+            'comprehension' => new IComprehension(),
         ];
     }
 
     public static function relations(): array
     {
         return [
-            'input' => IInputMsg::class
+            'input' => InputMsg::class,
+            'comprehension' => Comprehension::class
         ];
     }
 
@@ -67,21 +86,15 @@ class IShellInputRequest extends AbsMessage implements ShellInputRequest
 
     public function getTraceId(): string
     {
-        return $this->getInput()->getMessageId();
+        $traceId = $this->traceId;
+        return empty($traceId)
+            ? $this->getInput()->getMessageId()
+            : $traceId;
     }
 
     public function isAsync(): bool
     {
         return $this->async;
-    }
-
-
-    public function getSessionId(): string
-    {
-        $sessionId = $this->sessionId;
-        return empty($sessionId)
-            ? $this->getInput()->getSessionId()
-            : $sessionId;
     }
 
     public function getInput(): InputMsg
@@ -94,18 +107,35 @@ class IShellInputRequest extends AbsMessage implements ShellInputRequest
         return $this->getInput()->isInvalid();
     }
 
+    public function getBatchId(): string
+    {
+        return $this->getInput()->getBatchId();
+    }
+
+    public function getEnv(): array
+    {
+        return $this->env;
+    }
+
+    public function getEntry(): string
+    {
+        return $this->entry;
+    }
+
+    public function getComprehension(): Comprehension
+    {
+        return $this->comprehension;
+    }
+
+
+    /*------- methods -------*/
+
     public function response(
         int $errcode = AppResponse::SUCCESS,
         string $errmsg = ''
     ): ShellInputResponse
     {
-        return new IShellInputResponse([
-            'sessionId' => '',
-            'async' => $this->isAsync(),
-            'errcode' => $errcode,
-            'errmsg' => $errmsg,
-            'input' => $this->getInput(),
-        ]);
+
     }
 
 

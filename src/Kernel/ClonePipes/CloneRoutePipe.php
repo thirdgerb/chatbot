@@ -29,8 +29,11 @@ class CloneRoutePipe extends AClonePipe
         // 设置路由关系.
         $storage = $this->cloner->storage;
         $routes = $storage->shellSessionRoutes ?? [];
-        $shellName = $request->getInput()->getShellId();
-        $routes[$shellName] = $request->getSessionId();
+
+
+        $shellName = $request->getFromApp();
+        $routes[$shellName] = $request->getFromSession();
+
         $storage->shellSessionRoutes = $routes;
 
         $response = $next($request);

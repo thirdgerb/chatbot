@@ -11,51 +11,27 @@
 
 namespace Commune\Ghost\Cloner;
 
-use Commune\Blueprint\Configs\GhostConfig;
-use Commune\Blueprint\Exceptions\Logic\InvalidConfigException;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Framework\Spy\SpyAgency;
-use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $sceneId
  * @property-read Ucl $root
- * @property-read array $env
+ * @property-read array $env        环境变量.
  */
 class IClonerScene implements ClonerScene
 {
-
-    protected $_sceneId;
 
     protected $_root;
 
     protected $_env;
 
-    public function __construct(InputMsg $input, GhostConfig $config)
+    public function __construct(Ucl $root, array $env)
     {
-        $sceneId = $input->getScene();
-
-        if (!isset($config->sceneContextNames[$sceneId])) {
-            $sceneId = '';
-        }
-
-        // 重置场景 ID
-        $this->_sceneId = $sceneId;
-        $input->setSceneId($sceneId);
-        $contextName = $config->sceneContextNames[$sceneId] ?? $config->defaultContextName;
-
-        if (empty($contextName)) {
-            throw new InvalidConfigException(
-                GhostConfig::class,
-                'sceneId'
-            );
-        }
-        $this->_root = Ucl::decode($contextName);
-        $this->_env = $input->getEnv();
-
+        $this->_root = $root;
+        $this->_env = $env;
         SpyAgency::incr(static::class);
     }
 
@@ -66,6 +42,7 @@ class IClonerScene implements ClonerScene
 
     public function __destruct()
     {
+        unset($this->_root);
         SpyAgency::decr(static::class);
     }
 }

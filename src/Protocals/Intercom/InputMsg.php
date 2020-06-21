@@ -22,26 +22,16 @@ interface InputMsg extends IntercomMsg
 {
 
     /**
-     * @param string $sceneId
+     * @param string $sessionId
      */
-    public function setSceneId(string $sceneId) : void;
+    public function setSessionId(string $sessionId) : void;
 
-    /*----- methods -----*/
 
-    /**
-     * @param HostMsg $message
-     * @param int $deliverAt
-     * @param string|null $shellName
-     * @param string|null $sessionId
-     * @param string|null $guestId
-     * @return OutputMsg
-     */
     public function output(
         HostMsg $message,
-        int $deliverAt = 0,
-        string $shellName = null,
-        string $sessionId = null,
-        string $guestId = null
+        string $creatorId = '',
+        string $creatorName = '',
+        int $deliverAt = 0
     ) : OutputMsg;
 
 }

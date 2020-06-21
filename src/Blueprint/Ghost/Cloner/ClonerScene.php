@@ -19,9 +19,8 @@ use Commune\Blueprint\Ghost\Ucl;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $sceneId
- * @property-read Ucl $root
- * @property-read array $env
+ * @property-read Ucl $entry        入口路径, 同时也作为根路径
+ * @property-read array $env        环境变量
  */
 interface ClonerScene
 {
