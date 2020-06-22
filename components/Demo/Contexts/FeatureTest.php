@@ -440,10 +440,11 @@ EOF
                     ->then(function(Dialog $dialog, AnswerMsg $answer, Translator $translator) {
 
                         $temp = $answer->getText();
+                        $trans = $translator->trans($temp);
 
                         return $dialog
                             ->send()
-                            ->info("翻译结果为: {t} ", ['t' => $translator->trans($temp)])
+                            ->info("翻译结果为: {t} ", ['t' => $trans])
                             ->over()
                             ->rewind();
                     })

@@ -84,8 +84,7 @@ class SymfonyTranslatorAdapter implements Translator
         $domain = $option->domain;
         $locale = $option->locale;
         $intl = $option->intl;
-        $len = strlen($this->getPrefix($locale, $domain));
-        $id = substr($option->id, $len);
+        $id = $option->transId;
 
         if ($intl) {
             $this->intlTemps[$locale][$domain][$id] = $temp;
@@ -172,6 +171,7 @@ class SymfonyTranslatorAdapter implements Translator
 
             $transOption = new TransOption([
                 'id' => $prefix . $id,
+                'transId' => $id,
                 'locale' => $locale,
                 'domain' => $domain,
                 'temp' => $template,

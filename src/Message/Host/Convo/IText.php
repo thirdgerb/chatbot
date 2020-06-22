@@ -14,6 +14,7 @@ namespace Commune\Message\Host\Convo;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -23,6 +24,10 @@ use Commune\Protocals\HostMsg\Convo\VerbalMsg;
  */
 class IText extends AbsMessage implements VerbalMsg
 {
+    /**
+     * @var string
+     */
+    protected $_text;
 
     public static function instance(string $text, string $level = HostMsg::INFO) : IText
     {
@@ -47,13 +52,13 @@ class IText extends AbsMessage implements VerbalMsg
 
     public function getProtocalId(): string
     {
-        return $this->text;
+        return $this->getText();
     }
-
 
     public function getText(): string
     {
-        return $this->text;
+        return $this->_text
+            ?? $this->_text = StringUtils::sbc2dbc(StringUtils::trim($this->text));
     }
 
 

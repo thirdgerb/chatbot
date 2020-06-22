@@ -17,6 +17,7 @@ use Commune\Support\Option\AbsOption;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $id
+ * @property-read string $transId
  * @property-read string $temp
  * @property-read string $locale
  * @property-read string $domain
@@ -30,6 +31,7 @@ class TransOption extends AbsOption
     {
         return [
             'id' => '',
+            'transId' => '',
             'temp' => '',
             'locale' => '',
             'domain' => '',
