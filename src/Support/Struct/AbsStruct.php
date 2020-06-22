@@ -83,7 +83,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
      */
     public static function validate(array $data): ? string /* errorMsg */
     {
-        return static::getReflection()->validate($data);
+        return static::getStructReflection()->validate($data);
     }
 
     /**
@@ -114,7 +114,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
             return;
         }
 
-        $reflection = static::getReflection();
+        $reflection = static::getStructReflection();
 
         if (!$reflection->isPropertyDefined($name)) {
             $this->_data[$name] = $value;
@@ -249,7 +249,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
 
     /*------- doc --------*/
 
-    final public static function getReflection(): StructReflection
+    final public static function getStructReflection(): StructReflection
     {
         $name = static::class;
         if (isset(self::$reflections[$name])) {

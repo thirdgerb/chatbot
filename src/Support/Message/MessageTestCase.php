@@ -85,7 +85,7 @@ class MessageTestCase extends TestCase
         $props = StringUtils::fetchPropertyAnnotations($docs);
 
         // 协议属性正确.
-        $reflection = $message->getReflection();
+        $reflection = $message->getStructReflection();
         $errors = [];
 
         $map = $reflection->getDefinedPropertyMap();

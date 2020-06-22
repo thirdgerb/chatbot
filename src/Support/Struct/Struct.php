@@ -96,6 +96,6 @@ interface Struct extends ArrayAndJsonAble, \IteratorAggregate
      * 获取当前 Struct 预定义的反射.
      * @return StructReflection
      */
-    public static function getReflection() : StructReflection;
+    public static function getStructReflection() : StructReflection;
 
 }

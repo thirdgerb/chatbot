@@ -101,10 +101,17 @@ class StructTest extends TestCase
         $obj = new C();
 
         $this->assertEquals('test', $obj->id);
+        $this->assertEquals('test', $obj->test_id);
+
+
         $b = $obj->b[0] ?? null;
         $this->assertNotNull($b);
 
         $this->assertTrue($b instanceof B);
+
+        $r = C::getStructReflection();
+
+        $this->assertFalse($r->isPropertyDefined('test_id'));
     }
 }
 
@@ -180,6 +187,7 @@ class A extends AStruct
  *
  * @property B[] $b
  * @property string $id
+ * @property string $test_id
  */
 class C extends AStruct {
 
@@ -191,6 +199,11 @@ class C extends AStruct {
                 B::stub(),
             ]
         ];
+    }
+
+    public function __get_test_id() : string
+    {
+        return $this->id;
     }
 
     public static function relations(): array
