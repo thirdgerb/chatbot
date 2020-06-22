@@ -68,7 +68,14 @@ trait TGhostCmd
 
         if (!$this->stillToNextPipe) {
             $this->cloner->noState();
-            return $request->output(...$this->outputs);
+            $app = $this->cloner->getApp();
+            $appId = $app->getId();
+            $appName = $app->getName();
+            return $request->output(
+                $appId,
+                $appName,
+                ...$this->outputs
+            );
 
         } else {
 

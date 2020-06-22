@@ -21,6 +21,8 @@ use Commune\Protocals\HostMsg\ConvoMsg;
  */
 interface EventMsg extends ConvoMsg
 {
+    const SYSTEM_EVENT_CONNECTION = 'system.connection';
+
     public function getEventName() : string;
 
     public function getPayload() : array;

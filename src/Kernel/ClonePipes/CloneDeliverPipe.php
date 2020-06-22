@@ -15,6 +15,7 @@ use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Contracts\Messenger\MessageDB;
+use Commune\Kernel\Protocals\IGhostRequest;
 use Commune\Kernel\Protocals\IShellOutputRequest;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\Intercom\OutputMsg;
@@ -27,7 +28,7 @@ use Commune\Protocals\IntercomMsg;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class CloneDeliveryPipe extends AClonePipe
+class CloneDeliverPipe extends AClonePipe
 {
     protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
@@ -50,29 +51,31 @@ class CloneDeliveryPipe extends AClonePipe
             $response = $next($request);
         }
 
-        // 请求不合法, 则不要响应.
+        // 请求不合法, 则不需要广播.
         if (!$response->isForward()) {
             return $response;
         }
 
         // 处理异步消息.
-        $asyncInputs = $this->cloner->getAsyncInputs();
-        $this->sendAsyncInputs($asyncInputs);
+        $this->sendAsyncMessages($request);
 
         // 获取所有的输出.
-        $response->mergeOutputs($this->cloner->getOutputs());
+        $outputs = $this->cloner->getOutputs();
+
+        $response->mergeOutputs($outputs);
         $outputs = $response->getOutputs();
 
         // 设置 convoId
         $input = $this->cloner->input;
         $this->setConvoId($input, ...$outputs);
 
+
         // 保存消息.
-        if (!$isDelivery) array_unshift($outputs, $input);
         $this->recordBatch(
             $request->getTraceId(),
             $request->getFromApp(),
             $request->getFromSession(),
+            $input,
             ...$outputs
         );
 
@@ -122,7 +125,6 @@ class CloneDeliveryPipe extends AClonePipe
         foreach ($routes as $shellId => $sessionId) {
             $broadcaster->publish(
                 $shellId,
-                $sessionId,
 
                 // 使用一个空的响应, 携带 ID 来作为事件发送.
                 IShellOutputRequest::instance(
@@ -152,12 +154,12 @@ class CloneDeliveryPipe extends AClonePipe
         }
     }
 
-    /**
-     * @param InputMsg[] $inputs
-     */
-    protected function sendAsyncInputs(array $inputs) : void
+    protected function sendAsyncMessages(GhostRequest $request) : void
     {
-        if (empty($inputs)) {
+        $inputs = $this->cloner->getAsyncInputs();
+        $deliveries = $this->cloner->getAsyncDeliveries();
+
+        if (empty($inputs) && $deliveries) {
             return;
         }
 
@@ -165,8 +167,43 @@ class CloneDeliveryPipe extends AClonePipe
          * @var Messenger $messenger
          */
         $messenger = $this->cloner->container->get(Messenger::class);
-        foreach ($inputs as $input) {
-            $messenger->asyncSendGhostInputs($input);
+
+        $appId = $this->cloner->getAppId();
+        $traceId = $request->getTraceId();
+
+        // 发送异步的输入消息
+        if (!empty($inputs)) {
+            $inputRequests = array_map(function(InputMsg $input) use ($appId, $traceId){
+                return IGhostRequest::instance(
+                    $appId,
+                    true,
+                    $input,
+                    '',
+                    [],
+                    null,
+                    false,
+                    $traceId
+                );
+            }, $inputs);
+            $messenger->asyncSend2Ghost(...$inputRequests);
+        }
+
+        // 发送异步的投递消息.
+        if (!empty($deliveries)) {
+            $deliveryRequests = array_map(function(InputMsg $input) use ($appId, $traceId) {
+                return IGhostRequest::instance(
+                    $appId,
+                    true,
+                    $input,
+                    '',
+                    [],
+                    null,
+                    true,
+                    $traceId
+                );
+
+            }, $deliveries);
+            $messenger->asyncSend2Ghost(...$deliveryRequests);
         }
     }
 

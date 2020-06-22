@@ -11,6 +11,7 @@
 
 namespace Commune\Host\Prototype;
 
+use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Framework;
 use Commune\Host\IHostConfig;
 use Commune\Ghost\Providers as GhostProviders;
@@ -50,10 +51,11 @@ class HostProtoConfig extends IHostConfig
                 // sound like 模块
                 Framework\Providers\SoundLikeServiceProvider::class,
 
+                // messenger
+                Framework\Providers\MessengerFakeByArrProvider::class,
 
                 /* req services */
                 Framework\Providers\CacheByArrProvider::class,
-
             ],
             'options' => [],
             'ghost' => [],

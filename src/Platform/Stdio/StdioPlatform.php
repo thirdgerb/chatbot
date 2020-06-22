@@ -15,8 +15,11 @@ use Commune\Blueprint\Platform;
 use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Host;
 use Commune\Blueprint\Shell;
+use Commune\Message\Host\Convo\IEventMsg;
+use Commune\Message\Host\Convo\IText;
 use Commune\Platform\AbsPlatform;
 use Commune\Platform\PlatformHandler;
+use Commune\Protocals\HostMsg\Convo\EventMsg;
 use Commune\Support\Utils\TypeUtils;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\Factory;
@@ -69,19 +72,26 @@ class StdioPlatform extends AbsPlatform
 
         $this->loop = Factory::create();
         $this->stdio = new Stdio($this->loop);
-        $this->writer = new StdioConsole($this->stdio, true);
+        // stdio 对话中不要显示消息级别.
+        $this->writer = new StdioConsole($this->stdio, false);
     }
 
     public function serve(): void
     {
         $this->stdio->setPrompt('> ');
+
         // each message
         $this->stdio->on('data', function($line) {
-
-            $packer = new StdioPacker($this, $line);
+            $packer = new StdioPacker($this, IText::instance($line));
             $this->onPacker($packer);
-
         });
+
+        // 启动连接.
+        $packer = new StdioPacker(
+            $this,
+            IEventMsg::instance(EventMsg::SYSTEM_EVENT_CONNECTION)
+        );
+        $this->onPacker($packer);
 
         $this->loop->run();
     }

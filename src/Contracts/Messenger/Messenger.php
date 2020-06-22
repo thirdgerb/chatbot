@@ -13,7 +13,6 @@ namespace Commune\Contracts\Messenger;
 
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
-use Commune\Protocals\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -33,13 +32,13 @@ interface Messenger
      * 这个环节没有设返回值, 比较适合用协程 Task 来实现.
      * 不必关心返回值.
      *
-     * @param InputMsg $input
-     * @param string|null $sessionId
+     * @param GhostRequest $request
+     * @param GhostRequest ...$requests
      */
-    public function asyncSendGhostInputs( InputMsg $input, string $sessionId = null) : void;
+    public function asyncSend2Ghost(GhostRequest $request, GhostRequest ...$requests) : void;
 
     /**
      * @return GhostRequest|null
      */
-    public function popAsyncGhostInput() : ? GhostRequest;
+    public function popAsyncGhostRequest() : ? GhostRequest;
 }

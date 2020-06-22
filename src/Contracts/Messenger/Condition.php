@@ -24,35 +24,35 @@ interface Condition
      * @param string $sessionId
      * @return Condition
      */
-    public function sessionIdIs(string $sessionId) : Condition;
+    public function sessionIs(string $sessionId) : Condition;
 
     /**
      * 获取指定批次的消息, 包括输入和输出消息.
      * @param string $batchId
      * @return Condition
      */
-    public function traceIdIs(string $batchId) : Condition;
+    public function batchIs(string $batchId) : Condition;
 
     /**
      * 获取指定用户的消息.
      * @param string $guestId
      * @return Condition
      */
-    public function guestIdIs(string $guestId) : Condition;
+    public function creatorIs(string $guestId) : Condition;
 
     /**
      * 获取发送时间 T 之后需要发送的消息
      * @param int $time
      * @return Condition
      */
-    public function isDeliverableAfter(int $time) : Condition;
+    public function deliverableAfter(int $time) : Condition;
 
     /**
      * 获取创建时间 T 之后的消息
      * @param int $time
      * @return Condition
      */
-    public function isCreatedAfter(int $time) : Condition;
+    public function createdAfter(int $time) : Condition;
 
     /**
      * 消息 Id 大于...
@@ -73,7 +73,7 @@ interface Condition
      * 获取第一条消息
      * @return IntercomMsg
      */
-    public function first() : IntercomMsg;
+    public function first() : ? IntercomMsg;
 
     /**
      * 计算消息的数量.

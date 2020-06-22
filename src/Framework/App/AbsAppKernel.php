@@ -210,7 +210,7 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
             if (isset($logger)) {
                 $requestEnd = microtime(true);
                 $gap = round(($requestEnd - $requestStart) * 1000000, 0);
-                $this->requestLog($logger, "finish request in $gap us", $traceId);
+                $this->requestLog($logger, static::class . " finish request in $gap us", $traceId);
             }
             unset ($logger);
 

@@ -137,7 +137,7 @@ class IGhost extends AbsAppKernel implements Ghost
             $input = $request->getInput();
             $container->share(GhostRequest::class, $request);
             $container->share(InputMsg::class, $input);
-            $container->share(Comprehension::class, $input->comprehension);
+            $container->share(Comprehension::class, $request->getComprehension());
             $container->share(HostMsg::class, $input->getMessage());
         }
 

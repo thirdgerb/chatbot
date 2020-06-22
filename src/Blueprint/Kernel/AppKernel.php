@@ -11,7 +11,6 @@
 
 namespace Commune\Blueprint\Kernel;
 
-use Commune\Blueprint\Exceptions\CommuneLogicException;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Support\Protocal\Protocal;

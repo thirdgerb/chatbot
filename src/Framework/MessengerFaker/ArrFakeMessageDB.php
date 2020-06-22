@@ -11,12 +11,10 @@
 
 namespace Commune\Framework\MessengerFaker;
 
-use Commune\Contracts\Messenger\Condition;
-use Commune\Contracts\Messenger\MessageDB;
-use Commune\Protocals\Intercom\InputMsg;
-use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\Utils\ArrayUtils;
+use Commune\Contracts\Messenger\Condition;
+use Commune\Contracts\Messenger\MessageDB;
 
 
 /**
@@ -24,29 +22,26 @@ use Commune\Support\Utils\ArrayUtils;
  */
 class ArrFakeMessageDB implements MessageDB
 {
-    public static $maxBatch = 10;
-
     public static $maxMessages = 100;
 
-    public $batches = [];
-
+    /**
+     * 越新的消息越在前面.
+     *
+     * @var IntercomMsg[]
+     */
     public $messages = [];
 
     public function recordMessages(
         string $traceId,
-        InputMsg $input,
-        OutputMsg ...$outputs
+        string $fromApp,
+        string $fromSession,
+        IntercomMsg $input,
+        IntercomMsg ...$outputs
     ): void
     {
-        $this->batches[$traceId] = [$input, $outputs];
+        array_unshift($this->messages, $input);
+        array_unshift($this->messages, ...$outputs);
 
-        $this->messages[$input->getMessageId()] = $input;
-
-        foreach ($outputs as $output) {
-            $this->messages[$output->getMessageId()] = $output;
-        }
-
-        ArrayUtils::maxLength($this->batches, self::$maxBatch);
         ArrayUtils::maxLength($this->messages, self::$maxMessages);
     }
 
@@ -58,7 +53,7 @@ class ArrFakeMessageDB implements MessageDB
 
     public function where(): Condition
     {
-        // TODO: Implement where() method.
+        return new ArrFakeCondition($this);
     }
 
     public function find(string $messageId): ? IntercomMsg

@@ -18,31 +18,42 @@ use Commune\Framework\Spy\SpyAgency;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read Ucl $root
+ * @property-read Ucl $entry
  * @property-read array $env        环境变量.
  */
 class IClonerScene implements ClonerScene
 {
 
-    protected $_root;
+    protected $_entry;
 
     protected $_env;
 
     public function __construct(Ucl $root, array $env)
     {
-        $this->_root = $root;
+        $this->_entry = $root;
         $this->_env = $env;
         SpyAgency::incr(static::class);
     }
 
     public function __get($name)
     {
-        return $this->{"_$name"};
+        switch ($name) {
+            case 'entry' :
+                return $this->_entry;
+            case 'env' :
+                return $this->_env;
+            default:
+                return null;
+        }
     }
 
     public function __destruct()
     {
-        unset($this->_root);
+        unset(
+            $this->_entry,
+            $this->_env
+        );
+
         SpyAgency::decr(static::class);
     }
 }

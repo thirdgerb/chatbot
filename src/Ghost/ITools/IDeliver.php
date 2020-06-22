@@ -184,14 +184,39 @@ class IDeliver implements Deliver
         // 有可能要做异步.
         array_unshift($messages, $message);
 
+
+        $cloner = $this->dialog->cloner;
+
         // 准备所有参数
         $selfSessionId = $this->cloner->getSessionId();
         $sessionId = $this->sessionId ?? $selfSessionId;
 
         // is async ? 如果目标的 SessionId 不相同, 则是异步消息.
         $async = $this->isOutput
-            || $this->sessionId !== $selfSessionId;
-        $isOutput = $this->isOutput;
+            || ($sessionId !== $selfSessionId);
+
+        $messages = $this->prepareOutputs($sessionId, $async, $messages);
+
+        // 正常 buffer 回复消息
+        if (! $async) {
+            $cloner->output(...$messages);
+
+        // buffer 异步投递的回复消息
+        } elseif ($this->isOutput ){
+            $cloner->asyncDeliver(...$messages);
+
+        // buffer 异步的输入消息.
+        } else {
+            $cloner->asyncInput(...$messages);
+        }
+    }
+
+    protected function prepareOutputs(
+        string $sessionId,
+        bool $async,
+        array $messages
+    ) : array
+    {
 
         $app = $this->cloner->getApp();
         $creatorId = $this->creatorId ?? $app->getId();
@@ -232,20 +257,7 @@ class IDeliver implements Deliver
             $messages
         );
 
-        $cloner = $this->dialog->cloner;
-
-        // 正常 buffer 回复消息
-        if (! $async) {
-            $cloner->output(...$messages);
-
-        // buffer 异步投递的回复消息
-        } elseif ($isOutput ){
-            $cloner->asyncOutput(...$messages);
-
-        // buffer 异步的输入消息.
-        } else {
-            $cloner->asyncInput(...$messages);
-        }
+        return $messages;
     }
 
     public function over(): Dialog

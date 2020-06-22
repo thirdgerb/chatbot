@@ -126,6 +126,7 @@ class CommandUtils
      */
     public static function matchCommandName(string $text, string $commandName) : bool
     {
+        $text = trim($text);
         return !empty($text)
             && (
                 $text === $commandName

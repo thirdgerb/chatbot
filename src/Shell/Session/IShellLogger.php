@@ -12,6 +12,7 @@
 namespace Commune\Shell\Session;
 
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Shell;
 use Commune\Blueprint\Shell\Session\ShellLogger;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ExceptionReporter;
@@ -80,6 +81,10 @@ class IShellLogger extends ContextLogger implements ShellLogger
             $request = $this->container->get(AppRequest::class);
             $context['traceId'] = $request->getTraceId();
             $context['sessionId'] = $request->getSessionId();
+        }
+
+        if ($this->container->bound(Shell::class)) {
+            $context['shellId'] = $this->container->get(Shell::class)->getId();
         }
 
         return $context;

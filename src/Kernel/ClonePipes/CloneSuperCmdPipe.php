@@ -30,7 +30,9 @@ class CloneSuperCmdPipe extends AGhostCmdPipe
 
     public function getAuthPolicies(): array
     {
-        return [Supervise::class];
+//        return [Supervise::class];
+        // todo
+        return [];
     }
 
 
@@ -38,15 +40,5 @@ class CloneSuperCmdPipe extends AGhostCmdPipe
     {
         return $this->cloner->config->superCommands;
     }
-
-    protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
-    {
-        if ($this->cloner->auth->allow(Supervise::class)) {
-            return parent::doHandle($request, $next);
-        }
-
-        return $next($request);
-    }
-
 
 }

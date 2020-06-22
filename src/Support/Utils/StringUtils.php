@@ -23,6 +23,18 @@ class StringUtils
         '/' => '\/',
     ];
 
+    public static function isStrGreaterThen(string $first, string $second) : bool
+    {
+        $firstLen = strlen($first);
+        $second = strlen($second);
+
+        if ($firstLen === $second) {
+            return $first > $second;
+        }
+
+        return $firstLen > $second;
+    }
+
     public static function gluePath(string $dir, string $more) : string
     {
         return rtrim($dir, DIRECTORY_SEPARATOR)

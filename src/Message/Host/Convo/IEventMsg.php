@@ -20,15 +20,20 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name
+ * @property-read string $eventName
  * @property-read array $payload
  */
 class IEventMsg extends AbsMessage implements EventMsg
 {
+    public static function instance(string $eventName, array $payload = [])
+    {
+        return new static(['eventName' => $eventName, 'payload' => $payload]);
+    }
+
     public static function stub(): array
     {
         return [
-            'name' => '',
+            'eventName' => '',
             'payload' => [],
         ];
     }
@@ -40,13 +45,13 @@ class IEventMsg extends AbsMessage implements EventMsg
 
     public function getProtocalId(): string
     {
-        return $this->name;
+        return $this->eventName;
     }
 
 
     public function getEventName(): string
     {
-        return $this->name;
+        return $this->eventName;
     }
 
     public function getPayload(): array
@@ -66,7 +71,7 @@ class IEventMsg extends AbsMessage implements EventMsg
 
     public function getText(): string
     {
-        return StringUtils::normalizeString($this->name);
+        return StringUtils::normalizeString($this->eventName);
     }
 
     public function isEmpty(): bool

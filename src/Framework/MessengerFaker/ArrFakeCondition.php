@@ -13,6 +13,7 @@ namespace Commune\Framework\MessengerFaker;
 
 use Commune\Contracts\Messenger\Condition;
 use Commune\Protocals\IntercomMsg;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -27,7 +28,7 @@ class ArrFakeCondition implements Condition
 
     /*------ 临时规则 -------*/
 
-    protected $traceId = null;
+    protected $batchId = null;
 
     protected $sessionId = null;
 
@@ -36,7 +37,7 @@ class ArrFakeCondition implements Condition
     /**
      * @var null|int
      */
-    protected $deliverAt = null;
+    protected $deliverAfter = null;
 
     /**
      * @var null|int
@@ -44,7 +45,7 @@ class ArrFakeCondition implements Condition
     protected $createdAfter = null;
 
     /**
-     * @var null
+     * @var null|string
      */
     protected $idAfter = null;
 
@@ -57,66 +58,110 @@ class ArrFakeCondition implements Condition
         $this->db = $db;
     }
 
-
-    public function traceIdIs(string $batchId): Condition
+    public function batchIs(string $batchId): Condition
     {
-        // TODO: Implement traceIdIs() method.
+        $this->batchId = $batchId;
+        return $this;
+    }
+
+    public function sessionIs(string $sessionId): Condition
+    {
+        $this->sessionId = $sessionId;
+        return $this;
     }
 
 
-    public function sessionIdIs(string $sessionId): Condition
+    public function creatorIs(string $guestId): Condition
     {
-        // TODO: Implement sessionIdIs() method.
+        $this->guestId = $guestId;
+        return $this;
     }
 
-
-    public function guestIdIs(string $guestId): Condition
+    public function deliverableAfter(int $time): Condition
     {
-        // TODO: Implement guestIdIs() method.
+        $this->deliverAfter = $time;
+        return $this;
     }
 
-    public function isDeliverableAfter(int $time): Condition
+    public function createdAfter(int $time): Condition
     {
-        // TODO: Implement isDeliverableAfter() method.
-    }
-
-    public function isCreatedAfter(int $time): Condition
-    {
-        // TODO: Implement isCreatedAfter() method.
+        $this->createdAfter = $time;
+        return $this;
     }
 
     public function afterId(string $messageId): Condition
     {
-        // TODO: Implement afterId() method.
+        $this->idAfter = $messageId;
+        return $this;
     }
 
     public function get(): array
     {
-        // TODO: Implement get() method.
+        $messages = $this->db->fetch(function(ArrFakeMessageDB $db) {
+
+            $selections = [];
+            foreach ($db->messages as $message) {
+
+                if (isset($this->batchId) && $message->getBatchId() !== $this->batchId) {
+                    continue;
+                }
+
+                if (isset($this->sessionId) && $message->getSessionId() !== $this->sessionId) {
+                    continue;
+                }
+
+                if (isset($this->guestId) && $message->getCreatorId() !== $this->guestId) {
+                    continue;
+                }
+
+                if (
+                    isset($this->deliverAfter)
+                    && $this->deliverAfter > $message->getDeliverAt()
+                ) {
+                    continue;
+                }
+
+                if (
+                    isset($this->createdAfter)
+                    && $this->createdAfter > $message->getCreatedAt()
+                ) {
+                    continue;
+                }
+
+                if (
+                    isset($this->idAfter)
+                    && StringUtils::isStrGreaterThen(
+                        $this->idAfter,
+                        $message->getMessageId()
+                    )
+                ) {
+                    continue;
+                }
+
+                $selections[] = $message;
+            }
+
+            return $selections;
+        });
+
+        // 输出的消息倒过来排序.
+        return array_reverse($messages);
     }
 
     public function first(): IntercomMsg
     {
-        // TODO: Implement first() method.
+        return $this->get()[0] ?? null;
     }
 
     public function count(): int
     {
-        // TODO: Implement count() method.
+        $messages = $this->get();
+        return count($messages);
     }
 
     public function range(int $offset, int $limit): array
     {
-        // TODO: Implement range() method.
+        $messages = $this->get();
+        return array_slice($messages, $offset, $limit);
     }
-
-    /**
-     * @param array $message
-     * @return IntercomMsg[]
-     */
-    public function __invoke(array $message) : array
-    {
-    }
-
-
 }

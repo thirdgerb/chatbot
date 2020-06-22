@@ -70,7 +70,7 @@ class CloneLockerPipe extends AClonePipe
          * @var Messenger $messenger
          */
         $messenger = $this->cloner->container->get(Messenger::class);
-        $messenger->asyncSendGhostInputs($request->getInput(), $request->getSessionId());
+        $messenger->asyncSend2Ghost($request->getInput(), $request->getSessionId());
         return $request->response();
     }
 

@@ -11,7 +11,9 @@
 
 namespace Commune\Shell\Session;
 
+use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Shell\Session\ShellStorage;
+use Commune\Blueprint\Shell\ShellSession;
 use Commune\Framework\Session\ASessionStorage;
 
 
@@ -24,6 +26,11 @@ class IShellStorage extends ASessionStorage implements ShellStorage
     protected $_data = [
         'cloneSessionId' => null,
     ];
+
+    public function __construct(ShellSession $session)
+    {
+        parent::__construct($session);
+    }
 
     public function isStateless(): bool
     {

@@ -145,6 +145,11 @@ abstract class AbsBaseDialog implements
         $parameters = $this->getContextualInjections($parameters);
 
         try {
+            $tests = [];
+            foreach ($parameters as $key => $val){
+                $tests[$key] = isset($val);
+            }
+
             return $this->_cloner->container->call($caller, $parameters);
         } catch (\Exception $e) {
             throw new BrokenRequestException('', $e);
@@ -175,7 +180,6 @@ abstract class AbsBaseDialog implements
     {
         $injections = [
             'context' => $this->context,
-            'prev' => $this->_prev,
             'dialog' => $this,
         ];
 
@@ -194,6 +198,7 @@ abstract class AbsBaseDialog implements
             }
         }
 
+        $parameters['dependencies'] = array_keys($parameters);
         return $parameters;
     }
 
@@ -302,7 +307,7 @@ abstract class AbsBaseDialog implements
     {
         return static::getInterfacesOf(
             Ghost\Dialog::class,
-            false
+            true
         );
     }
 

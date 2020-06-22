@@ -54,7 +54,7 @@ class StdioAdapter implements ShellInputAdapter
     {
         if (isset($this->request)) return $this->request;
 
-        $message = IText::instance($this->packer->getInput());
+        $message = $this->packer->getInput();
 
         $platform = $this->packer->getPlatform();
         $option = $platform->getOption();
@@ -91,7 +91,6 @@ class StdioAdapter implements ShellInputAdapter
 
         $writer = $this->packer->getPlatform()->getWriter();
         $outputs = $response->getOutputs();
-
 
         $quit = false;
         foreach ($outputs as $output) {

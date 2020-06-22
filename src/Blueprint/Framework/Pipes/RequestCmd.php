@@ -23,8 +23,17 @@ use Commune\Blueprint\Kernel\Protocals\AppResponse;
  */
 interface RequestCmd extends LoggerInterface
 {
+    /**
+     * @return ContainerContract
+     */
     public function getContainer() : ContainerContract;
 
+    /**
+     * @param AppRequest $request
+     * @param RequestCmdPipe $pipe
+     * @param string $cmdText
+     * @return AppResponse|null
+     */
     public function handleSession(
         AppRequest $request,
         RequestCmdPipe $pipe,

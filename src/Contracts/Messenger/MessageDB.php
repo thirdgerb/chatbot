@@ -11,8 +11,6 @@
 
 namespace Commune\Contracts\Messenger;
 
-use Commune\Protocals\Intercom\InputMsg;
-use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
 
 

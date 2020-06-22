@@ -247,7 +247,7 @@ class IIntentDef extends AbsOption implements IntentDef
         }
 
         // 检查理解模块的结果.
-        $intention = $input->comprehension->intention;
+        $intention = $cloner->comprehension->intention;
         if ($intention->hasPossibleIntent($selfName)) {
             return true;
         }

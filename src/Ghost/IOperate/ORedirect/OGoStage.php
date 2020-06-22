@@ -14,8 +14,6 @@ namespace Commune\Ghost\IOperate\ORedirect;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\Dialog\IActivate\IStaging;
-use Commune\Ghost\IOperate\AbsOperator;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

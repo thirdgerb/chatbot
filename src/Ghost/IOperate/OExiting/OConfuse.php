@@ -47,7 +47,7 @@ class OConfuse extends AbsOperator
         $process = $this->dialog->process;
 
             // nlu 是否传入了回答
-        $next = $this->hasMiddlewareReplies()
+        $next = $this->hasComprehensionReplies()
             // 是否是事件类消息. 事件类消息不触发.
             ?? $this->ifEventMsg()
             // 是否有可以 wake 的路由
@@ -62,7 +62,7 @@ class OConfuse extends AbsOperator
         return $next;
     }
 
-    protected function hasMiddlewareReplies() : ? Operator
+    protected function hasComprehensionReplies() : ? Operator
     {
         $replies = $this
             ->cloner

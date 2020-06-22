@@ -13,6 +13,8 @@ namespace Commune\Platform\Stdio;
 
 use Commune\Blueprint\Platform\Adapter;
 use Commune\Blueprint\Platform\Packer;
+use Commune\Framework\Spy\SpyAgency;
+use Commune\Protocals\HostMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -26,19 +28,15 @@ class StdioPacker implements Packer
     protected $platform;
 
     /**
-     * @var string
+     * @var HostMsg
      */
-    protected $line;
+    protected $message;
 
-    /**
-     * StdioPacker constructor.
-     * @param StdioPlatform $platform
-     * @param string $line
-     */
-    public function __construct(StdioPlatform $platform, string $line)
+    public function __construct(StdioPlatform $platform, HostMsg $message)
     {
         $this->platform = $platform;
-        $this->line = $line;
+        $this->message = $message;
+        SpyAgency::incr(static::class);
     }
 
     public function isInvalid(): ? string
@@ -51,9 +49,9 @@ class StdioPacker implements Packer
         return $this->platform;
     }
 
-    public function getInput() : string
+    public function getInput() : HostMsg
     {
-        return $this->line;
+        return $this->message;
     }
 
     public function getWriter() : StdioConsole
@@ -69,5 +67,10 @@ class StdioPacker implements Packer
     public function fail(\Throwable $e): void
     {
         $this->platform->getWriter()->error($e->getMessage());
+    }
+
+    public function __destruct()
+    {
+        SpyAgency::decr(static::class);
     }
 }

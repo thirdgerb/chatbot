@@ -119,11 +119,13 @@ class IGhostResponse extends AbsMessage implements GhostResponse
         return $this->outputs;
     }
 
-    public function __set_outputs(string $name, $outputs) : void
+    public function __set_outputs(string $name, array $outputs) : void
     {
-        $this->_data[$name] = array_filter($outputs, function($value) {
+        $outputs = array_filter($outputs, function($value) {
             return $value instanceof OutputMsg;
         });
+
+        $this->_data[$name] = $outputs;
     }
 
     public function getSessionId(): string
@@ -135,9 +137,10 @@ class IGhostResponse extends AbsMessage implements GhostResponse
 
     public function mergeOutputs(array $outputs): void
     {
-        $outputs = $this->outputs;
-        array_push($outputs, ...$outputs);
-        $this->__set_outputs('outputs', array_merge($this->outputs, $outputs));
+        $buffer = $this->outputs;
+
+        array_push($buffer, ...$outputs);
+        $this->__set_outputs('outputs', $buffer);
     }
 
     /*-------- protocal --------*/

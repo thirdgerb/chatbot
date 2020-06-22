@@ -11,7 +11,9 @@
 
 namespace Commune\Framework\Command;
 
+use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Blueprint\Kernel\Protocals\HasInput;
+use Commune\Blueprint\Kernel\Protocals\InputRequest;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Psr\Log\LoggerInterface;
@@ -63,14 +65,14 @@ trait TRequestCmdPipe
     public function tryHandleCommand(AppRequest $request, \Closure $next) : AppResponse
     {
 
-        if (!$request instanceof HasInput) {
+        if (!$request instanceof InputRequest) {
             return $next($request);
         }
 
-        $this->init();
 
+        $this->init();
         $input = $request->getInput();
-        $comprehension = $input->comprehension;
+        $comprehension = $request->getComprehension();
 
         // 处理过
         $command = $comprehension->command;
@@ -152,7 +154,7 @@ trait TRequestCmdPipe
         // 匹配原理很简单, 就看命令是否命中了.
         foreach (self::getCommandsMap() as $cmdName => $clazz) {
             if (CommandUtils::matchCommandName($cmdStr, $cmdName)) {
-
+                // 命中了的话就执行.
                 $res = $this->runCommand($request, $cmdName, $cmdStr)
                     ?? $next($request);
 
@@ -209,7 +211,9 @@ trait TRequestCmdPipe
         $commandID = $this->getCommandID($commandName);
         // session command
         $command = $this->getContainer()->make($commandID);
-        return $command->handleSession($request, $this, $cmdStr);
+        $response = $command->handleSession($request, $this, $cmdStr);
+
+        return $response;
     }
 
 

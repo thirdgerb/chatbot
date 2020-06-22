@@ -29,7 +29,6 @@ use Commune\Framework\Spy\SpyAgency;
 use Commune\Kernel\Protocals\IGhostRequest;
 use Commune\Kernel\Protocals\IShellOutputRequest;
 use Commune\Kernel\Protocals\IShellOutputResponse;
-use Commune\Protocals\HostMsg;
 use Commune\Kernel\ShellPipes;
 
 /**
@@ -154,11 +153,24 @@ class IShellInputReqHandler implements ShellInputReqHandler
     protected function asyncSend2Ghost(ShellInputResponse $response) : ShellOutputResponse
     {
         $input = $response->getInput();
+
         /**
          * @var Messenger $messenger
          */
         $messenger = $this->session->container->get(Messenger::class);
-        $messenger->asyncSendGhostInputs($input);
+
+        $request = IGhostRequest::instance(
+            $this->session->getAppId(),
+            false,
+            $input,
+            $response->getEntry(),
+            $response->getEnv(),
+            $response->getComprehension(),
+            false,
+            $response->getTraceId()
+        );
+
+        $messenger->asyncSend2Ghost($request);
 
         return $this->emptyResponse($response);
     }
@@ -180,6 +192,7 @@ class IShellInputReqHandler implements ShellInputReqHandler
              */
             $ghost = $container->make(Ghost::class);
             $response = $ghost->handleRequest($request, GhostRequestHandler::class);
+
             return $response;
         }
 

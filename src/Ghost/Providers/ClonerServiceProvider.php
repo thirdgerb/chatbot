@@ -111,7 +111,8 @@ class ClonerServiceProvider extends ServiceProvider
                 ? $entry
                 : Ucl::decode($config->defaultContextName);
 
-            return new IClonerScene($entry, $env);
+            $sceneObj = new IClonerScene($entry, $env);
+            return $sceneObj;
         });
     }
 

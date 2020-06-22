@@ -16,7 +16,6 @@ use Commune\Framework;
 use Commune\Components;
 use Commune\Kernel\GhostCmd;
 use Commune\Ghost\IGhostConfig;
-use Commune\Kernel\GhostCmd\GhostHelpCmd;
 use Commune\Ghost\Providers as GhostProviders;
 use Commune\Components\Predefined\Intent\Navigation;
 use Commune\Kernel\Handlers\IGhostRequestHandler;
@@ -72,24 +71,24 @@ class GhostProtoConfig extends IGhostConfig
 
             // 用户命令
             'userCommands' => [
-                GhostHelpCmd::class,
-                Commands\User\HelloCmd::class,
-                Commands\User\WhoCmd::class,
-                Commands\User\QuitCmd::class,
-                Commands\User\CancelCmd::class,
-                Commands\User\BackCmd::class,
-                Commands\User\RepeatCmd::class,
-                Commands\User\RestartCmd::class,
+                GhostCmd\GhostHelpCmd::class,
+                GhostCmd\User\HelloCmd::class,
+                GhostCmd\User\WhoCmd::class,
+                GhostCmd\User\QuitCmd::class,
+                GhostCmd\User\CancelCmd::class,
+                GhostCmd\User\BackCmd::class,
+                GhostCmd\User\RepeatCmd::class,
+                GhostCmd\User\RestartCmd::class,
             ],
 
             // 管理员命令
             'superCommands' => [
-                GhostHelpCmd::class,
-                Commands\Super\SpyCmd::class,
-                Commands\Super\ScopeCmd::class,
-                Commands\Super\ProcessCmd::class,
-                Commands\Super\IntentCmd::class,
-                Commands\Super\RedirectCmd::class,
+                GhostCmd\GhostHelpCmd::class,
+                GhostCmd\Super\SpyCmd::class,
+                GhostCmd\Super\ScopeCmd::class,
+                GhostCmd\Super\ProcessCmd::class,
+                GhostCmd\Super\IntentCmd::class,
+                GhostCmd\Super\RedirectCmd::class,
             ],
 
             'comprehensionPipes' => [

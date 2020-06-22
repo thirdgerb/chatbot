@@ -139,12 +139,12 @@ interface Cloner extends Session
      * @param InputMsg $input
      * @param InputMsg ...$inputs
      */
-    public function asyncOutput(InputMsg $input, InputMsg ...$inputs) : void;
+    public function asyncDeliver(InputMsg $input, InputMsg ...$inputs) : void;
 
     /**
      * @return InputMsg[]
      */
-    public function getAsyncOutputs() : array;
+    public function getAsyncDeliveries() : array;
 
 
 

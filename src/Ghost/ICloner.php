@@ -87,6 +87,11 @@ class ICloner extends ASession implements Cloner
     protected $asyncInputs = [];
 
     /**
+     * @var InputMsg[]
+     */
+    protected $asyncDeliveries = [];
+
+    /**
      * @var bool
      */
     protected $quit = false;
@@ -303,6 +308,18 @@ class ICloner extends ASession implements Cloner
     {
         return $this->asyncInputs;
     }
+
+    public function asyncDeliver(InputMsg $input, InputMsg ...$inputs): void
+    {
+        array_unshift($inputs, $input);
+        array_push($this->asyncDeliveries, ...$inputs);
+    }
+
+    public function getAsyncDeliveries(): array
+    {
+        return $this->asyncDeliveries;
+    }
+
 
     /*------- quit -------*/
 

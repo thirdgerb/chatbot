@@ -75,7 +75,7 @@ abstract class AbsRedirect extends AbsOperator
         $target = $iActivate->ucl;
         $def = $target->findStageDef($cloner);
 
-        if (empty($insertPath)) {
+        if (!empty($insertPath)) {
             $iActivate->task->insertPaths($insertPath);
         }
 
