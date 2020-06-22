@@ -14,8 +14,8 @@ namespace Commune\Kernel\Handlers;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
-use Commune\Blueprint\Kernel\Handlers\ShellOutputHandler;
-use Commune\Blueprint\Kernel\Handlers\ShellRequestHandler;
+use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
+use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
@@ -35,7 +35,7 @@ use Commune\Kernel\ShellPipes;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IShellRequestHandler implements ShellRequestHandler
+class IShellInputReqHandler implements ShellInputReqHandler
 {
     protected $middleware = [
         // guard
@@ -83,31 +83,35 @@ class IShellRequestHandler implements ShellRequestHandler
         $inputRes = $this->handleInputRequest($request);
 
         // 如果请求失败了, 直接返回结果.
-        if (!$inputRes->isSuccess()) {
-            return $this->emptyResponse($inputRes);
+        if ($inputRes->hasOutputs()) {
+            return $this->inputToOutputResponse($inputRes);
         }
+        if (!$inputRes->isForward()) {
+            return $this->emptyResponse($inputRes);
 
         // 如果是异步请求, 则异步发送响应, 并不等待结果.
-        if ($inputRes->isAsync()) {
+        } elseif ($inputRes->isAsync()) {
             return $this->asyncSend2Ghost($inputRes);
         }
 
-        // 如果 ghost 端的响应异常.
+        // 发送同步响应.
         $ghostRes = $this->send2Ghost($inputRes);
 
-        if (!$ghostRes->isSuccess()) {
+        // 如果 ghost 端的响应异常.
+        if (!$ghostRes->isForward()) {
             return $this->emptyResponse($ghostRes);
         }
 
+        // 处理响应逻辑.
         $outputRequest = $this->wrapOutputRequest($ghostRes);
 
         /**
-         * @var ShellOutputHandler $handler
+         * @var ShellOutputReqHandler $handler
          */
         $handler = $this->session->shell->firstProtocalHandler(
             $this->session->container,
             $outputRequest,
-            ShellOutputHandler::class
+            ShellOutputReqHandler::class
         );
 
         return $handler($outputRequest);
@@ -142,36 +146,6 @@ class IShellRequestHandler implements ShellRequestHandler
     }
 
     /**
-     * 直接给出最终的结果.
-     * @param ShellInputRequest $request
-     * @param HostMsg[] $outputs
-     * @return ShellOutputResponse
-     */
-    protected function inputToOutputResponse(
-        ShellInputRequest $request,
-        HostMsg ...$outputs
-    ) : ShellOutputResponse
-    {
-        $input = $request->getInput();
-
-        if (!empty($outputs)) {
-            $outputs = array_map(function(HostMsg $message) use ($input) {
-                return $input->output($message);
-            }, $outputs);
-        }
-
-        return IShellOutputResponse::instance(
-            AppResponse::SUCCESS,
-            '',
-            $outputs,
-            $this->session->getSessionId(),
-            $request->getBatchId(),
-            $request->getTraceId()
-        );
-    }
-
-
-    /**
      * 将消息异步地推送给 Ghost, 也会拿到异步的响应.
      *
      * @param ShellInputResponse $response
@@ -195,7 +169,7 @@ class IShellRequestHandler implements ShellRequestHandler
      */
     protected function send2Ghost(ShellInputResponse $response) : GhostResponse
     {
-        $request = $this->wrapInputRequest($response);
+        $request = $this->wrapGhostRequest($response);
 
         // 如果已经实例化了 Ghost, 就做同步响应.
         $container = $this->session->container;
@@ -235,10 +209,29 @@ class IShellRequestHandler implements ShellRequestHandler
     }
 
     /**
+     * input 直接变成 output
+     *
+     * @param ShellInputResponse $response
+     * @return ShellOutputResponse
+     */
+    protected function inputToOutputResponse(ShellInputResponse $response) : ShellOutputResponse
+    {
+        return IShellOutputResponse::instance(
+            $response->getErrcode(),
+            $response->getErrmsg(),
+            $response->getOutputs(),
+            $response->getSessionId(),
+            $response->getBatchId(),
+            $response->getTraceId()
+        );
+    }
+
+
+    /**
      * @param ShellInputResponse $response
      * @return GhostRequest
      */
-    protected function wrapInputRequest(ShellInputResponse $response) : GhostRequest
+    protected function wrapGhostRequest(ShellInputResponse $response) : GhostRequest
     {
         $request = IGhostRequest::instance(
             $this->session->getAppId(),
@@ -251,13 +244,12 @@ class IShellRequestHandler implements ShellRequestHandler
             $response->getTraceId()
         );
 
-        if ($this->session->isSingletonInstanced('storage')) {
-            $sessionId = $this->session->storage->cloneSessionId;
+        // 检查路由的目标 ID 是否存在.
+        $sessionId = $this->session->storage->cloneSessionId;
 
-            // 设定前往 Clone 的目标 session id.
-            if (isset($sessionId)) {
-                $request->routeToSession($sessionId);
-            }
+        // 设定前往 Clone 的目标 session id.
+        if (isset($sessionId)) {
+            $request->routeToSession($sessionId);
         }
 
         return $request;

@@ -172,7 +172,7 @@ class IGhostRequest extends AbsMessage implements GhostRequest
     {
         $fromSession = $this->fromSession;
         return empty($fromSession)
-            ? $this->getInput()->getSessionId()
+            ? $this->getSessionId()
             : $fromSession;
     }
 

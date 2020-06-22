@@ -16,6 +16,7 @@ use Commune\Message\Abstracted\IComprehension;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocals\IntercomMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
 use Commune\Support\Utils\StringUtils;
@@ -58,8 +59,25 @@ class IShellInputResponse extends AbsMessage implements ShellInputResponse
             'entry' => $entry,
             'comprehension' => $comprehension ?? new IComprehension(),
         ];
-
         if (isset($comprehension)) $data['comprehension'] = $comprehension;
+        return new static($data);
+    }
+
+    public static function outputResponse(
+        bool $async,
+        InputMsg $input,
+        array $outputs,
+        string $traceId = ''
+    ) : self
+    {
+        $data = [
+            'traceId' => $traceId,
+            'errcode' => AppResponse::SUCCESS,
+            'errmsg' => '',
+            'async' => $async,
+            'input' => $input,
+            'outputs' => $outputs,
+        ];
         return new static($data);
     }
 
@@ -74,6 +92,7 @@ class IShellInputResponse extends AbsMessage implements ShellInputResponse
             'env' => [],
             'entry' => '',
             'comprehension' => new IComprehension(),
+            'outputs' => [],
         ];
     }
 
@@ -81,7 +100,8 @@ class IShellInputResponse extends AbsMessage implements ShellInputResponse
     {
         return [
             'input' => InputMsg::class,
-            'comprehension' => Comprehension::class
+            'comprehension' => Comprehension::class,
+            'outputs[]' => IntercomMsg::class,
         ];
     }
 
@@ -121,9 +141,9 @@ class IShellInputResponse extends AbsMessage implements ShellInputResponse
         return $this->errmsg;
     }
 
-    public function isSuccess(): bool
+    public function isForward(): bool
     {
-        return $this->errcode < AppResponse::FAILURE_CODE_START;
+        return !$this->hasOutputs() && $this->errcode < AppResponse::FAILURE_CODE_START;
     }
 
     public function getInput(): InputMsg
@@ -150,6 +170,18 @@ class IShellInputResponse extends AbsMessage implements ShellInputResponse
     {
         return $this->entry;
     }
+
+    public function hasOutputs(): bool
+    {
+        $outputs = $this->getOutputs();
+        return count($outputs) > 0;
+    }
+
+    public function getOutputs(): array
+    {
+        return $this->outputs;
+    }
+
 
     public function getComprehension(): Comprehension
     {

@@ -29,32 +29,55 @@ class InputApiPipe extends AShellPipe
         \Closure $next
     ): ShellInputResponse
     {
-        $message = $request->getInput();
+        // 异步请求不处理 api.
+        if ($request->isAsync()) {
+            return $next($request);
+        }
+
+        // 只处理 Api Msg
+        $message = $request->getInput()->getMessage();
         if (!$message instanceof ApiMsg) {
             return $next($request);
         }
 
-        $response = $this->runApi($request);
+        // 获取响应.
+        $controller = $this->runApi($request);
 
         // shell 处理不了的 api 消息给 ghost
-        if (!isset($response)) {
+        if (!isset($controller)) {
             return $next($request);
         }
 
-        if (!$response instanceof ShellOutputResponse) {
-            $type = TypeUtils::getType($response);
+        $expect = ApiController::class;
+        $given = TypeUtils::getType($controller);
+        $apiName = $message->getApiName();
+
+        // 检查 handler 类型
+        if (!$controller instanceof ApiController) {
             $this->session->logger->error(
                 __METHOD__
-                . ' invalid response from api handler, api '
-                . $message->getApiName()
-                . ", $type given"
+                . " expect api controller extends $expect, $given given, api is $apiName"
             );
+
+            return $next($request);
         }
 
-        return $response;
+        $response = $controller($request, $message);
+
+        // 检查 response 类型.
+        if (!$response instanceof ShellInputResponse) {
+            $expect = ShellInputResponse::class;
+            $actual = TypeUtils::getType($response);
+            $this->session->logger->error(
+                __METHOD__
+                . " expect api controller response $expect, given $actual"
+            );
+        };
+
+        return $next($request);
     }
 
-    protected function runApi(ShellInputRequest $request)
+    protected function runApi(ShellInputRequest $request) : ? ApiController
     {
         $input = $request->getInput();
         $message = $input->getMessage();
@@ -72,10 +95,7 @@ class InputApiPipe extends AShellPipe
             return null;
         }
 
-        /**
-         * @var ApiController $controller
-         */
-        return $controller($request, $message);
+        return $controller;
     }
 
     protected function handleOutput(

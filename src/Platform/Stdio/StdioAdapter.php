@@ -103,7 +103,7 @@ class StdioAdapter implements ShellInputAdapter
         }
 
 
-        if (!$response->isSuccess()) {
+        if (!$response->isForward()) {
             $code = $response->getErrcode();
             $message = $response->getErrmsg();
 

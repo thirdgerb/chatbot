@@ -33,10 +33,10 @@ interface AppResponse extends AppProtocal, CommuneErrorCode
     /*------- 状态判断 --------*/
 
     /**
-     * 响应完成成功.
+     * 响应成功, 继续走链式调用流程.
      * @return bool
      */
-    public function isSuccess() : bool;
+    public function isForward() : bool;
 
 
 }

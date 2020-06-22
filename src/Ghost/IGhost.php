@@ -15,7 +15,6 @@ use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\InputRequest;
 use Commune\Ghost\Bootstrap;
 use Commune\Framework\App\AbsAppKernel;
 use Commune\Blueprint\Configs\GhostConfig;
@@ -140,16 +139,10 @@ class IGhost extends AbsAppKernel implements Ghost
             $container->share(InputMsg::class, $input);
             $container->share(Comprehension::class, $input->comprehension);
             $container->share(HostMsg::class, $input->getMessage());
-
-            // Input 的 session 是 clone 的 session
-            // request 的 session 是 shell 的 session
-            // 可以不是同一个.
-            $sessionId = isset($input)
-                ? $input->getSessionId()
-                : $request->getFromSession();
         }
 
-        $cloner = $this->newCloner($container, $sessionId ?? '');
+        $sessionId = $request->getSessionId();
+        $cloner = $this->newCloner($container, $sessionId);
         $container->share(Cloner::class, $cloner);
 
         return $cloner;

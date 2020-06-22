@@ -37,15 +37,15 @@ class ShellProtoConfig extends IShellConfig
             'protocals' => [
                 [
                     'protocal' => Protocals\ShellInputRequest::class,
-                    'interface' => Handlers\ShellRequestHandler::class,
+                    'interface' => Handlers\ShellInputReqHandler::class,
                     // 默认的 handler
-                    'default' => Kernel\Handlers\IShellRequestHandler::class,
+                    'default' => Kernel\Handlers\IShellInputReqHandler::class,
                 ],
                 [
                     'protocal' => Protocals\ShellOutputRequest::class,
-                    'interface' => Handlers\ShellOutputHandler::class,
+                    'interface' => Handlers\ShellOutputReqHandler::class,
                     // 默认的 handler
-                    'default' => Kernel\Handlers\IShellOutputHandler::class,
+                    'default' => Kernel\Handlers\IShellOutputReqHandler::class,
                 ],
             ],
             'sessionExpire' => 864000,

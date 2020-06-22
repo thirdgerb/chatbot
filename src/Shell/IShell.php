@@ -21,6 +21,7 @@ use Commune\Blueprint\Kernel\Protocals\AppProtocal;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\HasInput;
+use Commune\Blueprint\Kernel\Protocals\InputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
@@ -156,15 +157,12 @@ class IShell extends AbsAppKernel implements Shell
         $container->share(AppRequest::class, $request);
         $container->share(get_class($request), $request);
 
-        $sessionId = null;
-
-        if ($request instanceof HasInput) {
+        if ($request instanceof InputRequest) {
             $input = $request->getInput();
-            $sessionId = $input->getSessionId();
             $container->share(InputMsg::class, $input);
-            $container->share(Comprehension::class, $input->comprehension);
+            $container->share(Comprehension::class, $request->getComprehension());
         }
-        $sessionId = $sessionId ?? $request->getSessionId();
+        $sessionId = $request->getSessionId();
 
         $session = $this->newSession($container, $sessionId);
         $container->share(ShellSession::class, $session);

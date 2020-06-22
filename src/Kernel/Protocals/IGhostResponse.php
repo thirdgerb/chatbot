@@ -109,7 +109,7 @@ class IGhostResponse extends AbsMessage implements GhostResponse
         return $this->errmsg;
     }
 
-    public function isSuccess(): bool
+    public function isForward(): bool
     {
         return $this->errcode < AppResponse::FAILURE_CODE_START;
     }

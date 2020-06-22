@@ -29,7 +29,11 @@ class CloneApiHandlePipe extends AClonePipe
 
     protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
-        $message = $request->getInput();
+        if ($request->isAsync()) {
+            return $next($request);
+        }
+
+        $message = $request->getInput()->getMessage();
         if (!$message instanceof ApiMsg) {
             return $next($request);
         }
@@ -37,6 +41,7 @@ class CloneApiHandlePipe extends AClonePipe
         // 无状态请求.
         $this->cloner->noState();
 
+        // 运行获取 controller
         $response = $this->runApi($request);
 
         // ghost 不允许处理 api message.

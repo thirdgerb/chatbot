@@ -11,15 +11,14 @@
 
 namespace Commune\Blueprint\Kernel\Handlers;
 
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellOutputHandler
+interface ShellInputReqHandler
 {
 
-    public function __invoke(ShellOutputRequest $request) : ShellOutputResponse;
-
+    public function __invoke(ShellInputRequest $request) : ShellOutputResponse;
 }

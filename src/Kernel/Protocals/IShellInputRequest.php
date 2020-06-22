@@ -16,6 +16,7 @@ use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
 use Commune\Message\Abstracted\IComprehension;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\Comprehension;
+use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
@@ -143,14 +144,33 @@ class IShellInputRequest extends AbsMessage implements ShellInputRequest
         return IShellInputResponse::instance(
             $errcode,
             $errmsg,
+            $this->async,
             $this->input,
             $this->entry,
             $this->env,
             $this->comprehension,
-            $this->async,
             $this->traceId
         );
+    }
 
+    public function output(HostMsg $message, HostMsg ...$messages): ShellInputResponse
+    {
+        array_unshift($messages, $message);
+
+        $input = $this->getInput();
+        $outputs = array_map(
+            function(HostMsg $message) use ($input){
+                return $input->output($message);
+            },
+            $messages
+        );
+
+        return IShellInputResponse::outputResponse(
+            $this->async,
+            $input,
+            $outputs,
+            $this->traceId
+        );
     }
 
 

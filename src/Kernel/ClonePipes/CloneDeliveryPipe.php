@@ -51,7 +51,7 @@ class CloneDeliveryPipe extends AClonePipe
         }
 
         // 请求不合法, 则不要响应.
-        if (!$response->isSuccess()) {
+        if (!$response->isForward()) {
             return $response;
         }
 
@@ -93,7 +93,7 @@ class CloneDeliveryPipe extends AClonePipe
     protected function broadcast(GhostRequest $request, GhostResponse $response) : void
     {
         // 无状态则不需要广播.
-        if ($this->cloner->isStateless() || !$response->isSuccess()) {
+        if ($this->cloner->isStateless() || !$response->isForward()) {
             return;
         }
 

@@ -12,6 +12,7 @@
 namespace Commune\Protocals\HostMsg\Convo;
 
 use Commune\Protocals\HostMsg\ConvoMsg;
+use Commune\Blueprint\Exceptions\CommuneErrorCode;
 
 
 /**
@@ -19,10 +20,9 @@ use Commune\Protocals\HostMsg\ConvoMsg;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ApiMsg extends ConvoMsg
+interface ApiMsg extends ConvoMsg, CommuneErrorCode
 {
     public function getApiName() : string;
 
     public function getParams() : array;
-
 }

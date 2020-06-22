@@ -36,7 +36,10 @@ class EventBroadcaster implements Broadcaster
         $this->listeners[$id] = $callback;
     }
 
-    public function publish(string $shellId, ShellOutputRequest $request): void
+    public function publish(
+        string $shellId,
+        ShellOutputRequest $request
+    ): void
     {
         $sessionId = $request->getSessionId();
 

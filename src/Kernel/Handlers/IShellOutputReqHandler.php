@@ -12,7 +12,7 @@
 namespace Commune\Kernel\Handlers;
 
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
-use Commune\Blueprint\Kernel\Handlers\ShellOutputHandler;
+use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
@@ -25,7 +25,7 @@ use Commune\Kernel\ShellPipes;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IShellOutputHandler implements ShellOutputHandler
+class IShellOutputReqHandler implements ShellOutputReqHandler
 {
 
     protected $middleware = [

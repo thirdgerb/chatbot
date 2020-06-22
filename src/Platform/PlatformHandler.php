@@ -11,7 +11,7 @@
 
 namespace Commune\Platform;
 
-use Commune\Blueprint\Kernel\Handlers\ShellRequestHandler;
+use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
@@ -42,7 +42,7 @@ class PlatformHandler
         /**
          * @var ShellOutputResponse $response
          */
-        $response = $shell->handleRequest($request, ShellRequestHandler::class);
+        $response = $shell->handleRequest($request, ShellInputReqHandler::class);
 
         $adapter->sendResponse($response);
         unset($adapter);

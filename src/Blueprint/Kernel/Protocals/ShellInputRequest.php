@@ -11,6 +11,8 @@
 
 namespace Commune\Blueprint\Kernel\Protocals;
 
+use Commune\Protocals\HostMsg;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -21,6 +23,13 @@ interface ShellInputRequest extends AppRequest, InputRequest
      * @return bool
      */
     public function isAsync() : bool;
+
+    /**
+     * @param HostMsg $message
+     * @param HostMsg ...$messages
+     * @return ShellInputResponse
+     */
+    public function output(HostMsg $message, HostMsg ...$messages) : ShellInputResponse;
 
     /**
      * @param int $errcode
