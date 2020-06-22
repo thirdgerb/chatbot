@@ -13,6 +13,7 @@ namespace Commune\Support\Struct;
 
 use Commune\Support\Struct\Reflection\AnnotationFactory;
 use Commune\Support\Struct\Reflection\StructReflection;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -47,16 +48,17 @@ abstract class AStruct extends AbsStruct
      */
     protected static function makeReflection(): StructReflection
     {
+        $doc = static::getDocComment();
         return AnnotationFactory::create(
             static::class,
             static::STRICT,
-            static::getDocComment()
+            $doc
         );
     }
 
-    protected static function getDocComment() : string
+    public static function getDocComment() : string
     {
-        return (new \ReflectionClass(static::class))->getDocComment();
+        return AnnotationFactory::getRecursivelyPropertyDoc(static::class);
     }
 
 

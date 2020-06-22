@@ -97,7 +97,8 @@ class IShell extends AbsAppKernel implements Shell
 
     protected function getProtocalOptions(): array
     {
-        return $this->getConfig()->protocals;
+        $protocals = $this->getConfig()->protocals;
+        return $protocals;
     }
 
     protected function failResponse(

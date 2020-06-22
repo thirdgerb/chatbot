@@ -28,6 +28,9 @@ interface Struct extends ArrayAndJsonAble, \IteratorAggregate
     const FUNC_CREATE = 'create';
     const FUNC_STUB = 'stub';
     const FUNC_VALIDATE = 'validate';
+    const FUNC_GET_RELATIONS = 'getRelationNames';
+    const FUNC_GET_RELATION_CLASS = 'getRelationClass';
+    const FUNC_IS_LIST_RELATION = 'isListRelation';
 
     /*------- construct -------*/
 

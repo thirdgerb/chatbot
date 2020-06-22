@@ -22,7 +22,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * # 协议的部分.
  *
- * @property-read Abstracted\Answer         $answer         回答
+ * @property-read Abstracted\Answer|null    $answer         回答
  * @property-read Abstracted\Cmd            $command        命令模块, 检查是否是命令.
  * @property-read Abstracted\Emotion        $emotion        情绪模块, 从各种模块中得到的综合抽象, 可以代表多种模块
  *

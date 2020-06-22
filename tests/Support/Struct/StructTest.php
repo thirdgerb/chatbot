@@ -95,6 +95,17 @@ class StructTest extends TestCase
 
         $this->assertTrue(isset($e));
     }
+
+    public function testListRelations()
+    {
+        $obj = new C();
+
+        $this->assertEquals('test', $obj->id);
+        $b = $obj->b[0] ?? null;
+        $this->assertNotNull($b);
+
+        $this->assertTrue($b instanceof B);
+    }
 }
 
 /**
@@ -163,4 +174,31 @@ class A extends AStruct
     {
         return strval($this->a);
     }
+}
+
+/**
+ *
+ * @property B[] $b
+ * @property string $id
+ */
+class C extends AStruct {
+
+    public static function stub(): array
+    {
+        return [
+            'id' => 'test',
+            'b' => [
+                B::stub(),
+            ]
+        ];
+    }
+
+    public static function relations(): array
+    {
+        return [
+            'b[]' => B::class,
+        ];
+    }
+
+
 }

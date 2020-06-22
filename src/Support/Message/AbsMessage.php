@@ -11,6 +11,7 @@
 
 namespace Commune\Support\Message;
 
+use Commune\Message\Abstracted\IComprehension;
 use Commune\Support\Babel\Babel;
 use Commune\Support\Babel\BabelSerializable;
 use Commune\Support\DI\Injectable;
@@ -38,11 +39,6 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
      * @var bool  如果自身的数据为空, Babel 序列化时不传入 attr && relation 的结构, 以减少空间.
      */
     protected $transferNoEmptyData = true;
-
-    /*------ inner ------*/
-
-    private static $docComments = [];
-
 
     public function toTransferArr(): array
     {
@@ -143,94 +139,8 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
         return StringUtils::namespaceSlashToDot(static::class);
     }
 
-    final public static function getProtocals(): array
-    {
-        return static::getInterfacesOf(
-            Protocal::class,
-            false,
-            true,
-            false
-        );
-    }
-
     final public function getInterfaces(): array
     {
         return static::getInterfacesOf(Message::class);
-    }
-
-    public static function getDocComment(): string
-    {
-        $self = static::class;
-        if (isset(self::$docComments[$self])) {
-            return self::$docComments[$self];
-        }
-
-        // 自己的 property 注解.
-        $selfR = new \ReflectionClass(static::class);
-        $selfProps = StringUtils::fetchVariableAnnotationsWithType(
-            $selfR->getDocComment(),
-            '@property',
-            false
-        );
-
-        // 协议的 property 注解.
-        $protocals = static::getProtocals();
-        $protocalProps = [];
-
-        foreach ($protocals as $protocal) {
-            if ($protocal === $self) {
-                continue;
-            }
-
-            $r = new \ReflectionClass($protocal);
-
-            $protocalProps[$protocal] = StringUtils::fetchVariableAnnotationsWithType($r->getDocComment(), '@property', false);
-        }
-
-        // 格式化
-        $selfPropsMap = [];
-        foreach ($selfProps as list($name, $type, $desc)) {
-            $selfPropsMap[$name] = $type;
-        }
-
-        // 格式化.
-        $protocalPropsMap = [];
-        foreach ($protocalProps as $protocal => $props) {
-            foreach($props as list($name, $type, $desc)) {
-                $protocalPropsMap[$protocal][$name] = $type;
-            }
-        }
-
-        if (!empty($selfPropsMap)) {
-            $protocalPropsMap[$self] = $selfPropsMap;
-        }
-
-        // 先检查协议之间是否有冲突. 子协议不允许和父协议不一样.
-        $realProps = [];
-        foreach ($protocalPropsMap as $protocal => $props) {
-            foreach($props as $name => $type) {
-                if (!isset($realProps[$name])) {
-                    $realProps[$name] = $type;
-                    continue;
-                }
-
-                if ($realProps[$name] !== $type) {
-                    throw new \LogicException(
-                        'message class '
-                        . static::class
-                        . 'get conflict protocal definition, '
-                        . "field \"$name\" has two type \"$type\" and \"{$realProps[$name]}\""
-                    );
-                }
-            }
-        }
-
-        $doc = '';
-
-        foreach ($realProps as $name => $type) {
-            $doc .= "@property $type $" . $name . "\n";
-        }
-
-        return self::$docComments[$self] = $doc;
     }
 }

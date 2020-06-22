@@ -12,6 +12,7 @@
 namespace Commune\Support\Message;
 
 use Commune\Support\Babel\Babel;
+use Commune\Support\Utils\StringUtils;
 use PHPUnit\Framework\TestCase;
 
 
@@ -37,7 +38,7 @@ class MessageTestCase extends TestCase
             $this->assertTrue(is_a($message, $name, TRUE));
 
             // 分别测试.
-            $this->protocalsTest($name ,$message);
+            $this->ReflectionOfPropertiesTest($name ,$message);
             $this->babelTest($name, $message);
             $this->relationsTest($name, $message);
         }
@@ -77,30 +78,43 @@ class MessageTestCase extends TestCase
         }
     }
 
-    public function protocalsTest(string $name, Message $message)
+    public function ReflectionOfPropertiesTest(string $name, Message $message)
     {
         // 协议校验通过
-        $e = null;
-        try {
-            $docs = call_user_func([$name, 'getDocComment']);
-        } catch (\Exception $e) {
-        }
-
-        $this->assertTrue(is_null($e), $name);
+        $docs = call_user_func([$name, 'getDocComment']);
+        $props = StringUtils::fetchPropertyAnnotations($docs);
 
         // 协议属性正确.
         $reflection = $message->getReflection();
-
         $errors = [];
-        foreach ($reflection->getDefinedPropertyMap() as $name => $property) {
+
+        $map = $reflection->getDefinedPropertyMap();
+
+        $errorDoc = '';
+        foreach ($map as $propName => $property) {
             $error = $property->validateValue(
                 $property->get($message)
             );
 
-            if (isset($error)) $errors[] = $error;
+            if (isset($error)) {
+                $errors[] = $error;
+                $errorDoc .= $error;
+            }
+        }
+        $this->assertEmpty($errors, $name . ':' . $errorDoc);
+
+        if (empty($map)) {
+            $this->assertEmpty($props, $propName . ' property annotation exits but no reflection property defined');
         }
 
-        $this->assertEmpty($errors, $name);
+        $propError = '';
+        foreach ($props as list($propName, $desc)) {
+            if (!array_key_exists($propName, $map)) {
+                $propError .= ", property $propName not found in reflection";
+            }
+        }
+
+        $this->assertEmpty($propError, $name . $propError);
     }
 
     public function babelTest(string $name, Message $message)

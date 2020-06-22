@@ -22,6 +22,57 @@ use Commune\Support\Utils\StringUtils;
  */
 class AnnotationFactory
 {
+    private static $docComments = [];
+
+    public static function getRecursivelyPropertyDoc(string $className) : string
+    {
+        if (isset(self::$docComments[$className])) {
+            return self::$docComments[$className];
+        }
+
+        // 自己的 property 注解.
+        $r = new \ReflectionClass($className);
+        $reflections = [];
+
+        // 抽象父类.
+        do  {
+            if ($r->isSubclassOf(Struct::class)) {
+                array_unshift($reflections, $r);
+
+                // 所有 interface 里继承 message 的.
+                foreach ( $r->getInterfaces() as $interfaceReflect ) {
+                    if ($interfaceReflect->isSubclassOf(Struct::class)) {
+                        array_unshift($reflections, $r);
+                    }
+                }
+            }
+
+        } while ($r = $r->getParentClass());
+
+
+        $realProps = [];
+
+        foreach ($reflections as $reflection) {
+            $props = StringUtils::fetchVariableAnnotationsWithType(
+                $reflection->getDocComment(),
+                '@property',
+                false
+            );
+
+            foreach($props as list($name, $type, $desc)) {
+                $realProps[$name] = [$type, $desc];
+            }
+        }
+
+        $doc = '';
+        foreach ($realProps as $name => list($type, $desc )) {
+            $doc .= "@property $type $" . $name . " $desc\n";
+        }
+
+        return self::$docComments[$className] = $doc;
+    }
+
+
     /**
      * 使用 DocComment 来注册目标 Struct 类
      *
@@ -37,6 +88,7 @@ class AnnotationFactory
             throw new InvalidStructException("reflection class must be subclass of $expect, $className given.");
         }
 
+        // 准备 stub 参数.
         $stub = call_user_func([$className, Struct::FUNC_STUB]);
 
         // 从注解中获取变量的定义
@@ -44,6 +96,7 @@ class AnnotationFactory
 
         $fields = [];
 
+        // 准备注解.
         foreach ($defines as list($name, $types, $desc)) {
             // 跳过 getter 方法
             $getter = constant($className.'::GETTER_PREFIX') . $name;
@@ -60,16 +113,38 @@ class AnnotationFactory
 
         $properties = [];
 
+        // 从注解中先创建好 property
         foreach ($fields as $field => list($rules, $desc, $default)) {
-            $properties[] = new IStructProperty(
+            $properties[$field] = new IStructProperty(
                 $className,
                 $field,
                 $rules,
-                call_user_func([$className, 'getRelationClass'], $field),
-                call_user_func([$className, 'isListRelation'], $field),
+                call_user_func([$className, Struct::FUNC_GET_RELATION_CLASS], $field),
+                call_user_func([$className, Struct::FUNC_IS_LIST_RELATION], $field),
                 $default,
                 $desc
             );
+        }
+
+        // relations 补遗.
+        $relationNames = call_user_func([$className, Struct::FUNC_GET_RELATIONS]);
+        foreach ($relationNames as $relationName) {
+            // 如果忘记定义了 protocals
+            if (!array_key_exists($relationName, $properties)) {
+
+                $relationsClass = call_user_func([$className, Struct::FUNC_GET_RELATION_CLASS], $relationName);
+
+                $properties[$relationName] = new IStructProperty(
+                    $className,
+                    $relationName,
+                    [$relationsClass],
+                    $relationsClass,
+                    call_user_func([$className, Struct::FUNC_IS_LIST_RELATION], $relationName),
+                    [],
+                    ''
+                );
+
+            }
         }
 
         return new IStructReflection(

@@ -75,7 +75,10 @@ class StdioAdapter implements ShellInputAdapter
             'message' => $message,
         ]);
 
-        return $this->request = IShellInputRequest::instance($input);
+        return $this->request = IShellInputRequest::instance(
+            false,
+            $input
+        );
     }
 
     /**

@@ -223,7 +223,7 @@ class StringUtils
      *
      * @param string $docComment
      * @param string $prefix       @"param"|@"property" 等注解.
-     * @param bool $noSuffix
+     * @param bool $noSuffix       是否允许有后缀
      * @return array [ [propertyName, type, desc], ]
      */
     public static function fetchVariableAnnotationsWithType(string $docComment, string $prefix = '@property', bool $noSuffix = false) : array

@@ -86,7 +86,6 @@ class ProtocalOption extends AbsOption
         if (empty($default)) {
             return null;
         }
-
         return $this->_default = new HandlerOption([
             'handler' => $default,
         ]);
