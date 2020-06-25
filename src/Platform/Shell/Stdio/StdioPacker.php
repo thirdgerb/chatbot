@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Platform\Stdio;
+namespace Commune\Platform\Shell\Stdio;
 
 use Commune\Blueprint\Platform\Adapter;
 use Commune\Blueprint\Platform\Packer;

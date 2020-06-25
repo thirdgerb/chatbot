@@ -14,12 +14,12 @@ namespace Commune\Kernel\ClonePipes;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Contracts\Messenger\Broadcaster;
+use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Contracts\Messenger\MessageDB;
 use Commune\Kernel\Protocals\IGhostRequest;
 use Commune\Kernel\Protocals\IShellOutputRequest;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\Intercom\OutputMsg;
-use Commune\Contracts\Messenger\Messenger;
 use Commune\Protocals\IntercomMsg;
 
 
@@ -28,7 +28,7 @@ use Commune\Protocals\IntercomMsg;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class CloneDeliverPipe extends AClonePipe
+class CloneBroadcastPipe extends AClonePipe
 {
     protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
@@ -164,9 +164,9 @@ class CloneDeliverPipe extends AClonePipe
         }
 
         /**
-         * @var Messenger $messenger
+         * @var GhostMessenger $messenger
          */
-        $messenger = $this->cloner->container->get(Messenger::class);
+        $messenger = $this->cloner->container->get(GhostMessenger::class);
 
         $appId = $this->cloner->getAppId();
         $traceId = $request->getTraceId();
@@ -185,7 +185,7 @@ class CloneDeliverPipe extends AClonePipe
                     $traceId
                 );
             }, $inputs);
-            $messenger->asyncSend2Ghost(...$inputRequests);
+            $messenger->asyncSendRequest(...$inputRequests);
         }
 
         // 发送异步的投递消息.
@@ -203,7 +203,7 @@ class CloneDeliverPipe extends AClonePipe
                 );
 
             }, $deliveries);
-            $messenger->asyncSend2Ghost(...$deliveryRequests);
+            $messenger->asyncSendGhostRequest(...$deliveryRequests);
         }
     }
 

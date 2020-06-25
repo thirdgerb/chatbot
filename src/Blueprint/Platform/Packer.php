@@ -35,10 +35,10 @@ interface Packer
      */
     public function adapt(string $adapterName) : Adapter;
 
-    /**
-     * 关闭请求.
-     * @param \Throwable $e
-     */
-    public function fail(\Throwable $e) : void;
+    public function fail(string $error) : void;
 
+    /**
+     * 避免垃圾回收有问题, 提供一个主动清除持有对象的机会.
+     */
+    public function destroy() : void;
 }

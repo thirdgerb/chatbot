@@ -14,10 +14,10 @@ namespace Commune\Framework\Providers;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Contracts\Messenger\MessageDB;
-use Commune\Contracts\Messenger\Messenger;
+use Commune\Contracts\Messenger\ShellMessenger;
 use Commune\Contracts\ServiceProvider;
 use Commune\Framework\MessengerFaker\ArrFakeMessageDB;
-use Commune\Framework\MessengerFaker\ArrMessenger;
+use Commune\Framework\MessengerFaker\ArrShellMessenger;
 use Commune\Framework\MessengerFaker\EventBroadcaster;
 
 
@@ -45,8 +45,8 @@ class MessengerFakeByArrProvider extends ServiceProvider
     public function register(ContainerContract $app): void
     {
         $app->singleton(
-            Messenger::class,
-            ArrMessenger::class
+            ShellMessenger::class,
+            ArrShellMessenger::class
         );
 
         $app->singleton(

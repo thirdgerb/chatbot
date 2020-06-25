@@ -21,7 +21,6 @@ use Commune\Support\Option\Option;
  *
  * @property-read string $id                    平台名称
  * @property-read string $concrete              Platform 的实现.
- * @property-read string $adapter               平台上对输入输出进行处理的适配器.
  *
  * @property-read string|null $bootShell        平台初始化时要启动的 Shell
  * @property-read bool $bootGhost               平台初始化时要启动的 Ghost

@@ -9,15 +9,24 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Contracts\Clients;
+namespace Commune\Support\Swoole;
 
-use Redis;
+use Commune\Support\Option\AbsOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface RedisFactory
+class TcpServerOption extends AbsOption
 {
-    public function getClient() : Redis;
+    public static function stub(): array
+    {
+        return [];
+    }
+
+    public static function relations(): array
+    {
+        return [];
+    }
+
 
 }

@@ -108,6 +108,14 @@ class TranslatorBySymfonyProvider extends ServiceProvider
             'storage' => $storage->toMeta(),
             'initialStorage' => isset($initStorage) ? $initStorage->toMeta() : null,
         ]));
+
+        $logger = $app->get(ConsoleLogger::class);
+
+        if (CommuneEnv::isResetRegistry()) {
+            $logger->warning("reset trans data!!");
+            $registry->getCategory(TransOption::class)->flush();
+        }
+
     }
 
 }

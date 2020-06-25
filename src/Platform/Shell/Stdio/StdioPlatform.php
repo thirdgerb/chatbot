@@ -9,10 +9,12 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Platform\Stdio;
+namespace Commune\Platform\Shell\Stdio;
 
 use Commune\Blueprint\Platform;
 use Clue\React\Stdio\Stdio;
+use React\EventLoop\Factory;
+use React\EventLoop\LoopInterface;
 use Commune\Blueprint\Host;
 use Commune\Blueprint\Shell;
 use Commune\Message\Host\Convo\IEventMsg;
@@ -22,8 +24,6 @@ use Commune\Platform\PlatformHandler;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
 use Commune\Support\Utils\TypeUtils;
 use Psr\Log\LoggerInterface;
-use React\EventLoop\Factory;
-use React\EventLoop\LoopInterface;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;

@@ -12,6 +12,7 @@
 namespace Commune\Ghost;
 
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
+use Commune\Blueprint\Framework\ProcContainer;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
@@ -70,7 +71,7 @@ class IGhost extends AbsAppKernel implements Ghost
 
     public function __construct(
         GhostConfig $config,
-        ContainerContract $procC = null,
+        ProcContainer $procC = null,
         ReqContainer $reqC = null,
         ServiceRegistry $registrar = null,
         ConsoleLogger $consoleLogger = null,

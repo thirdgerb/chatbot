@@ -59,7 +59,7 @@ class LoadTranslations extends ServiceProvider
             $translator,
             $logger,
             $this->intl,
-            $this->force || CommuneEnv::isResetMind()
+            $this->force || CommuneEnv::isResetRegistry()
         );
     }
 

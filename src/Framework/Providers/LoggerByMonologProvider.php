@@ -11,6 +11,8 @@
 
 namespace Commune\Framework\Providers;
 
+use Commune\Blueprint\CommuneEnv;
+use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Framework\Log\MonologWriter;
 use Monolog\Handler\RotatingFileHandler;
@@ -27,7 +29,8 @@ use Monolog\Logger as Monolog;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $name 日志的名称
- * @property-read string $path 日志文件存储的目录
+ * @property-read string $logDir 日志文件所在的目录.
+ * @property-read string $file   日志文件的相对路径.
  * @property-read int $days  为0 表示不轮换, 否则会按日换文件.
  * @property-read string $level 日志级别.
  * @property-read bool $bubble 是否冒泡到别的handler
@@ -40,7 +43,8 @@ class LoggerByMonologProvider extends ServiceProvider
     {
         return [
             'name' => 'commune',
-            'path' => realpath(__DIR__ . '/../../../demo/log/') . '/commune.log',
+            'logDir' => CommuneEnv::getResourcePath(),
+            'file' => 'commune.log',
             'days' => 7,
             'level' => LogLevel::DEBUG,
             'bubble' => true,
@@ -72,13 +76,21 @@ class LoggerByMonologProvider extends ServiceProvider
     }
 
 
+    /**
+     * @param ContainerContract $app
+     * @return LoggerInterface
+     */
     protected function makeLogger(ContainerContract $app) : LoggerInterface
     {
         $level = Monolog::toMonologLevel($this->level);
 
+        $path = rtrim($this->logDir, DIRECTORY_SEPARATOR)
+            . DIRECTORY_SEPARATOR
+            . ltrim($this->file, DIRECTORY_SEPARATOR);
+
         if ($this->days > 0) {
             $handler = new RotatingFileHandler(
-                $this->path,
+                $path,
                 $this->days,
                 $level,
                 $this->bubble,
@@ -87,13 +99,22 @@ class LoggerByMonologProvider extends ServiceProvider
             );
 
         } else {
-            $handler = new StreamHandler(
-                $this->path,
-                $level,
-                $this->bubble,
-                $this->permission,
-                $this->locking
-            );
+            try {
+
+                $handler = new StreamHandler(
+                    $path,
+                    $level,
+                    $this->bubble,
+                    $this->permission,
+                    $this->locking
+                );
+
+            } catch (\Exception $e) {
+                throw new CommuneBootingException(
+                    "initialize Logger StreamHandler fail",
+                    $e
+                );
+            }
         }
 
         $logger = new Monolog(

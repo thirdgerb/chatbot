@@ -78,8 +78,16 @@ abstract class AbsApp implements App
      */
     protected $fail;
 
+    /**
+     * AbsApp constructor.
+     * @param ProcContainer|null $procC
+     * @param ReqContainer|null $reqC
+     * @param ServiceRegistry|null $registry
+     * @param ConsoleLogger|null $consoleLogger
+     * @param LogInfo|null $logInfo
+     */
     public function __construct(
-        ContainerContract $procC = null,
+        ProcContainer $procC = null,
         ReqContainer $reqC = null,
         ServiceRegistry $registry = null,
         ConsoleLogger $consoleLogger = null,
@@ -118,7 +126,7 @@ abstract class AbsApp implements App
         SpyAgency::incr(static::class);
     }
 
-    protected function instance($abstract, $instance) : void
+    public function instance($abstract, $instance) : void
     {
         $this->procC->instance($abstract, $instance);
         $this->reqC->instance($abstract, $instance);
@@ -138,7 +146,7 @@ abstract class AbsApp implements App
     /*------ getter ------*/
 
 
-    public function getProcContainer(): ContainerContract
+    public function getProcContainer(): ProcContainer
     {
         return $this->procC;
     }

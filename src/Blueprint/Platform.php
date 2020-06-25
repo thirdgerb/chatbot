@@ -12,6 +12,8 @@
 namespace Commune\Blueprint;
 
 use Commune\Blueprint\Configs\PlatformConfig;
+use Commune\Blueprint\Framework\ProcContainer;
+use Psr\Log\LoggerInterface;
 
 /**
  * 平台是 Host 在服务器上启动的服务端程序.
@@ -34,20 +36,19 @@ interface Platform
     public function getConfig() : PlatformConfig;
 
     /**
+     * @return ProcContainer
+     */
+    public function getContainer() : ProcContainer;
+
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger() : LoggerInterface;
+
+    /**
      * 运行 Platform
      */
     public function serve() : void;
-
-    /**
-     * @param string $sessionId
-     * @return bool
-     */
-    public function isSessionAvailable(string $sessionId) : bool;
-
-    /**
-     * @param bool $available
-     */
-    public function setSessionAvailable(bool $available) : void;
 
     /*----- 内部命令 -----*/
 

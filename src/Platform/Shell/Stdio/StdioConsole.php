@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Platform\Stdio;
+namespace Commune\Platform\Shell\Stdio;
 
 use Clue\React\Stdio\Stdio;
 use Commune\Framework\Log\IConsoleLogger;

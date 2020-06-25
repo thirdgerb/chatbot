@@ -15,12 +15,12 @@ use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
-use Commune\Contracts\Messenger\Messenger;
+use Commune\Contracts\Messenger\ShellMessenger;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ArrMessenger implements Messenger
+class ArrShellMessenger implements ShellMessenger
 {
 
     /**
@@ -43,7 +43,7 @@ class ArrMessenger implements Messenger
     }
 
 
-    public function sendInput2Ghost(GhostRequest $request): GhostResponse
+    public function sendGhostRequest(GhostRequest $request): GhostResponse
     {
         /**
          * @var GhostResponse $response
@@ -52,7 +52,7 @@ class ArrMessenger implements Messenger
         return $response;
     }
 
-    public function asyncSend2Ghost(GhostRequest $request, GhostRequest ...$requests): void
+    public function asyncSendGhostRequest(GhostRequest $request, GhostRequest ...$requests): void
     {
         array_unshift($requests, $request);
         array_push($this->requests, ...$requests);

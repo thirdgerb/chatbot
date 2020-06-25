@@ -11,7 +11,6 @@
 
 namespace Commune\Host\Prototype;
 
-use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Framework;
 use Commune\Host\IHostConfig;
 use Commune\Ghost\Providers as GhostProviders;

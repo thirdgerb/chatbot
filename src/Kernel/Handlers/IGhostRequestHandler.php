@@ -47,7 +47,7 @@ class IGhostRequestHandler implements GhostRequestHandler
         ClonePipes\CloneLockerPipe::class,
 
         // 消息广播
-        ClonePipes\CloneDeliverPipe::class,
+        ClonePipes\CloneBroadcastPipe::class,
 
         /* 多轮对话逻辑相关 */
 

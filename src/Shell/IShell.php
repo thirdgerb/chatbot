@@ -14,6 +14,7 @@ namespace Commune\Shell;
 use Commune\Blueprint\Configs\ShellConfig;
 use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
+use Commune\Blueprint\Framework\ProcContainer;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\ServiceRegistry;
 use Commune\Blueprint\Framework\Session;
@@ -58,9 +59,18 @@ class IShell extends AbsAppKernel implements Shell
     protected $config;
 
 
+    /**
+     * IShell constructor.
+     * @param ShellConfig $config
+     * @param ProcContainer|null $procC
+     * @param ReqContainer|null $reqC
+     * @param ServiceRegistry|null $registrar
+     * @param ConsoleLogger|null $consoleLogger
+     * @param LogInfo|null $logInfo
+     */
     public function __construct(
         ShellConfig $config,
-        ContainerContract $procC = null,
+        ProcContainer $procC = null,
         ReqContainer $reqC = null,
         ServiceRegistry $registrar = null,
         ConsoleLogger $consoleLogger = null,

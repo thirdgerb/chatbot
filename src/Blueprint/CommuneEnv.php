@@ -24,8 +24,9 @@ use Commune\Blueprint\Exceptions\CommuneLogicException;
 class CommuneEnv
 {
     const DEBUG = 'COMMUNE_DEBUG';
-    const RESET_MIND = 'COMMUNE_RESET_MIND';
+    const RESET_REGISTRY = 'COMMUNE_RESET_REGISTRY';
     const RESOURCE_PATH = 'COMMUNE_RESOURCE_PATH';
+    const LOG_PATH = 'COMMUNE_LOG_PATH';
 
     /*------- debug ------*/
 
@@ -37,6 +38,22 @@ class CommuneEnv
     public static function defineDebug(bool $debug) : void
     {
         self::set(self::DEBUG, $debug);
+    }
+
+    /*------- log path ------*/
+
+
+    public static function getLogPath() : string
+    {
+        return self::get(self::LOG_PATH, __DIR__ . '/../../demo/log');
+    }
+
+    public static function defineLogPath(string $path) : void
+    {
+        if (!is_dir($path)) {
+            throw new CommuneLogicException("path $path is invalid dir");
+        }
+        self::set(self::LOG_PATH, $path);
     }
 
     /*------- path ------*/
@@ -56,14 +73,14 @@ class CommuneEnv
 
     /*------- mind ------*/
 
-    public static function isResetMind() : bool
+    public static function isResetRegistry() : bool
     {
-        return self::get(self::RESET_MIND, false);
+        return self::get(self::RESET_REGISTRY, false);
     }
 
     public static function defineResetMind(bool $boolean) : void
     {
-        self::set(self::RESET_MIND, $boolean);
+        self::set(self::RESET_REGISTRY, $boolean);
     }
 
     /*------- private ------*/

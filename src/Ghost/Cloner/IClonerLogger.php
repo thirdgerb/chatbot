@@ -12,12 +12,12 @@
 namespace Commune\Ghost\Cloner;
 
 use Commune\Blueprint\Ghost\Cloner\ClonerLogger;
-use Commune\Blueprint\Ghost\Cloner\ClonerScope;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Framework\Log\ContextLogger;
 use Commune\Framework\Spy\SpyAgency;
+use Commune\Kernel\Protocals\IGhostRequest;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -71,14 +71,10 @@ class IClonerLogger extends ContextLogger implements ClonerLogger
     protected function makeContext(): array
     {
         $context = [];
-        if ($this->container->bound(ClonerScope::class)) {
-            $context = $this->container->get(ClonerScope::class)->toArray() + $context;
-        }
 
-        if ($this->container->bound(AppRequest::class)) {
-            $request = $this->container->get(AppRequest::class);
-            $context['traceId'] = $request->getTraceId();
-            $context['sessionId'] = $request->getSessionId();
+        if ($this->container->bound(GhostRequest::class)) {
+            $request = $this->container->get(GhostRequest::class);
+            $context = IGhostRequest::toLogContext($request);
         }
 
         return $context;

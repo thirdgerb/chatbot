@@ -9,16 +9,25 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Contracts\Clients;
+namespace Commune\Platform\Packers;
 
-use GuzzleHttp\Client;
+use Commune\Blueprint\Platform\Packer;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GuzzleFactory
+interface TcpPacker extends Packer
 {
 
-    public function getClient() : Client;
+    /**
+     * @return string
+     */
+    public function input() : string;
+
+    /**
+     * @param string $output
+     */
+    public function output(string $output) : void;
 
 }

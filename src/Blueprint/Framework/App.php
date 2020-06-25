@@ -75,14 +75,22 @@ interface App
     /*------ container ------*/
 
     /**
-     * @return ContainerContract
+     * @return ProcContainer
      */
-    public function getProcContainer() : ContainerContract;
+    public function getProcContainer() : ProcContainer;
 
     /**
      * @return ReqContainer
      */
     public function getBasicReqContainer() : ReqContainer;
+
+    /**
+     * 同时在进程和请求级容器中绑定一个单例.
+     *
+     * @param $abstract
+     * @param $instance
+     */
+    public function instance($abstract, $instance) : void;
 
     /*------ services ------*/
 

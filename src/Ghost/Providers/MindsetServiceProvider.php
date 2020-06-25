@@ -48,7 +48,7 @@ class MindsetServiceProvider extends ServiceProvider
         $mindset = $app->get(Mindset::class);
         $logger = $app->get(ConsoleLogger::class);
 
-        if (CommuneEnv::isResetMind()) {
+        if (CommuneEnv::isResetRegistry()) {
             $logger->warning("reset all mindset data!!");
             $mindset->reset();
         }

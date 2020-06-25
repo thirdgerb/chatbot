@@ -9,27 +9,38 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Platform\Stdio;
+namespace Commune\Platform\SwooleCo;
 
 use Commune\Platform\IPlatformConfig;
+use Commune\Platform\SwooleCo\TcpGhost\SCTGhostOption;
+use Commune\Platform\SwooleCo\TcpGhost\SCTGhostPlatform;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StdioPlatformConfig extends IPlatformConfig
+class TcpGhostPlatformConfig extends IPlatformConfig
 {
 
     public static function stub(): array
     {
         return [
-            'id' => 'stdio',
-            'concrete' => StdioPlatform::class,
-            'adapter' => StdioAdapter::class,
+
+            'id' => 'tcpGhost',
+            'concrete' => SCTGhostPlatform::class,
+
             'bootShell' => null,
             'bootGhost' => true,
             'providers' => [],
             'options' => [
-                StdioOption::class => [],
+                SCTGhostOption::class => [
+                    'adapterOption' => [
+
+                    ],
+                    'poolOption' => [
+
+                    ]
+                ],
             ],
         ];
     }

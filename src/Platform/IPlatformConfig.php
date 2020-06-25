@@ -19,7 +19,6 @@ use Commune\Blueprint\Configs\PlatformConfig;
  *
  * @property-read string $id                    平台 id
  * @property-read string $concrete              Platform 的实现.
- * @property-read string $adapter               平台上对输入输出进行处理的适配器.
  *
  * @property-read string|null $bootShell        平台初始化时要启动的 Shell
  * @property-read bool $bootGhost               平台初始化时要启动的 Ghost
@@ -36,7 +35,6 @@ class IPlatformConfig extends AbsOption implements PlatformConfig
         return [
             'id' => '',
             'concrete' => '',
-            'adapter' => '',
             'bootShell' => null,
             'bootGhost' => false,
             'providers' => [],

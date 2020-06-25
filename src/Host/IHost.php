@@ -11,8 +11,6 @@
 
 namespace Commune\Host;
 
-use Commune\Framework\Bootstrap\LoadConfigOption;
-use Commune\Framework\Bootstrap\RegisterProviders;
 use Commune\Ghost\IGhost;
 use Commune\Host\Bootstrap;
 use Commune\Shell\IShell;
@@ -22,7 +20,6 @@ use Commune\Blueprint\Shell;
 use Commune\Framework\AbsApp;
 use Commune\Blueprint\Platform;
 use Commune\Contracts\Log\LogInfo;
-use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Configs\HostConfig;
@@ -30,6 +27,9 @@ use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Configs\ShellConfig;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\ServiceRegistry;
+use Commune\Blueprint\Framework\ProcContainer;
+use Commune\Framework\Bootstrap\LoadConfigOption;
+use Commune\Framework\Bootstrap\RegisterProviders;
 use Commune\Blueprint\Exceptions\Boot\AppNotDefinedException;
 
 
@@ -67,7 +67,7 @@ class IHost extends AbsApp implements Host
 
     public function __construct(
         HostConfig $config,
-        ContainerContract $procC = null,
+        ProcContainer $procC = null,
         ReqContainer $reqC = null,
         ServiceRegistry $registry = null,
         ConsoleLogger $consoleLogger = null,

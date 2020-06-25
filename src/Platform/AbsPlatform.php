@@ -11,6 +11,7 @@
 
 namespace Commune\Platform;
 
+use Commune\Blueprint\Framework\ProcContainer;
 use Commune\Blueprint\Host;
 use Commune\Blueprint\Platform;
 use Psr\Log\LoggerInterface;
@@ -39,6 +40,11 @@ abstract class AbsPlatform implements Platform
     protected $logger;
 
     /**
+     * @var ProcContainer
+     */
+    protected $procC;
+
+    /**
      * AbsPlatform constructor.
      * @param Host $host
      * @param PlatformConfig $config
@@ -51,34 +57,77 @@ abstract class AbsPlatform implements Platform
         $this->logger = $logger;
     }
 
+    /**
+     * 响应请求.
+     * @param Platform\Adapter $adapter
+     * @param AppRequest $request
+     */
     abstract protected function handleRequest(Platform\Adapter $adapter, AppRequest $request) : void;
 
+    /**
+     * @return ProcContainer
+     */
+    public function getContainer(): ProcContainer
+    {
+        return $this->procC
+            ?? $this->procC = $this->host->getProcContainer();
+    }
 
-    public function onPacker(Platform\Packer $packer) : void
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->logger;
+    }
+
+
+    public function onPacker(Platform\Packer $packer, string $adapterName) : bool
     {
         try {
             // 检查数据包是否合法.
             $requestError = $packer->isInvalid();
             if (isset($requestError)) {
-                $this->invalidRequest($requestError);
+                return $this->donePacker($packer, $requestError);
             }
 
             // 检查协议是否合法.
-            $adapter = $packer->adapt($this->getConfig()->adapter);
+            $adapter = $packer->adapt($adapterName);
+
             $requestError = $adapter->isInvalid();
             if (isset($requestError)) {
-                $this->invalidRequest($requestError);
+                $adapter->destroy();
+                return $this->donePacker($packer, $requestError);
             }
 
             $request = $adapter->getRequest();
+
             $this->handleRequest($adapter, $request);
+            $adapter->destroy();
+
+            return $this->donePacker($packer);
 
         } catch (\Throwable $e) {
-            $packer->fail($e);
+
             $this->catchExp($e);
+            if (isset($adapter)) $adapter->destroy();
+
+            return $this->donePacker($packer, $e->getMessage());
         }
     }
 
+    protected function donePacker(Platform\Packer $packer, string $error = null) : bool
+    {
+        $failed = isset($failed);
+        if ($failed) {
+            $packer->fail($error);
+            // 记录日志.
+            $this->invalidRequest($error);
+        }
+
+        $packer->destroy();
+        return ! $failed;
+    }
 
 
     public function getConfig(): PlatformConfig

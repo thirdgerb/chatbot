@@ -24,7 +24,7 @@ use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 use Commune\Blueprint\Shell\ShellSession;
-use Commune\Contracts\Messenger\Messenger;
+use Commune\Contracts\Messenger\ShellMessenger;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Kernel\Protocals\IGhostRequest;
 use Commune\Kernel\Protocals\IShellOutputRequest;
@@ -155,9 +155,9 @@ class IShellInputReqHandler implements ShellInputReqHandler
         $input = $response->getInput();
 
         /**
-         * @var Messenger $messenger
+         * @var ShellMessenger $messenger
          */
-        $messenger = $this->session->container->get(Messenger::class);
+        $messenger = $this->session->container->get(ShellMessenger::class);
 
         $request = IGhostRequest::instance(
             $this->session->getAppId(),
@@ -170,7 +170,7 @@ class IShellInputReqHandler implements ShellInputReqHandler
             $response->getTraceId()
         );
 
-        $messenger->asyncSend2Ghost($request);
+        $messenger->asyncSendGhostRequest($request);
 
         return $this->emptyResponse($response);
     }
@@ -197,10 +197,10 @@ class IShellInputReqHandler implements ShellInputReqHandler
         }
 
         /**
-         * @var Messenger $messenger
+         * @var ShellMessenger $messenger
          */
-        $messenger = $container->get(Messenger::class);
-        $response = $messenger->sendInput2Ghost($request);
+        $messenger = $container->get(ShellMessenger::class);
+        $response = $messenger->sendGhostRequest($request);
         return $response;
     }
 

@@ -37,4 +37,8 @@ interface Adapter
      */
     public function sendResponse($response) : void;
 
+    /**
+     * 为方便垃圾回收, 主动清除绑定.
+     */
+    public function destroy() : void;
 }
