@@ -42,6 +42,10 @@ class OStart extends AbsOperator
      */
     protected $start;
 
+    /**
+     * @var IReceive
+     */
+    protected $dialog;
 
     /**
      * OStart constructor.
@@ -188,9 +192,10 @@ class OStart extends AbsOperator
 
     protected function runGhostComprehendPipes(InputMsg $input) : ? Operator
     {
-        $pipes = $this->cloner->ghost->getConfig()->comprehensionPipes;
-        $this->runComprehendPipeline($input, $pipes);
         return null;
+//        $pipes = $this->cloner->ghost->getConfig()->comprehensionPipes;
+//        $this->runComprehendPipeline($input, $pipes);
+//        return null;
     }
 
     // todo 也许不用管道来做.

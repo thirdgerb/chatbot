@@ -11,9 +11,10 @@
 
 namespace Commune\Kernel\GhostCmd\User;
 
+use Commune\Kernel\GhostCmd\AGhostCmd;
+use Commune\Protocals\HostMsg\DefaultIntents;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
-use Commune\Kernel\GhostCmd\AGhostCmd;
 
 
 /**
@@ -27,7 +28,12 @@ class QuitCmd extends AGhostCmd
 
     protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
     {
-        $this->cloner->endConversation();
+        $this->cloner
+            ->comprehension
+            ->intention
+            ->setMatchedIntent(DefaultIntents::GUEST_NAVIGATE_QUIT);
+
+        $this->goNext();
     }
 
 

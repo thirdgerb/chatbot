@@ -19,8 +19,11 @@ use React\EventLoop\Factory;
 require __DIR__ .'/../vendor/autoload.php';
 
 
+Swoole\Coroutine::set([
+    'enable_coroutine' => true,
+]);
 
-Coroutine::create(function() {
+Coroutine\run(function() {
 
     $loop = Factory::create();
     $stdio = new Stdio($loop);

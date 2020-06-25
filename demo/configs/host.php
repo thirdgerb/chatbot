@@ -56,11 +56,16 @@ return new IHostConfig([
     // 平台的配置.
     'platforms' => [
 
+        // 基于 Stdio 实现的单点对话机器人.
+        'stdio_shell' => include __DIR__ . '/platforms/stdio_shell.php',
+
         // ghost 端, 监听 9501 端口
         'ghost' => include __DIR__ . '/platforms/ghost.php',
 
         // 同步 shell 端, 监听 9502 端口.
         'sync_shell' => include __DIR__ . '/platforms/sync_shell.php',
+
+
     ],
 
 ]);
