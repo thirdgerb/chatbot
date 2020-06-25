@@ -13,6 +13,7 @@ namespace Commune\Platform;
 
 use Commune\Support\Option\AbsOption;
 use Commune\Blueprint\Configs\PlatformConfig;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -47,5 +48,10 @@ class IPlatformConfig extends AbsOption implements PlatformConfig
         return [];
     }
 
+    public static function validate(array $data): ? string /* errorMsg */
+    {
+        return TypeUtils::requireFields($data, ['id', 'concrete'])
+            ?? parent::validate($data);
+    }
 
 }

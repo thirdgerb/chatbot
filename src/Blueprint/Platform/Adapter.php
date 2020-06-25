@@ -29,13 +29,12 @@ interface Adapter
     /**
      * @return AppRequest
      */
-    public function getRequest();
+    public function getRequest() : AppRequest;
 
     /**
-     * @param AppResponse
-     * @return void
+     * @param AppResponse $response
      */
-    public function sendResponse($response) : void;
+    public function sendResponse(AppResponse $response) : void;
 
     /**
      * 为方便垃圾回收, 主动清除绑定.

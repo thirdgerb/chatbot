@@ -201,11 +201,20 @@ class IServiceRegistry implements ServiceRegistry
             return false;
         }
 
-        foreach ($this->configProviders as $id => $provider) {
-            $provider->boot($this->procC);
-            // 初始化服务
-            $this->consoleLogger->debug(
-                $this->logInfo->bootingBootProvider($id)
+
+        try {
+            foreach ($this->configProviders as $id => $provider) {
+                $provider->boot($this->procC);
+                // 初始化服务
+                $this->consoleLogger->debug(
+                    $this->logInfo->bootingBootProvider($id)
+                );
+            }
+
+        } catch (\Throwable $e) {
+            throw new CommuneBootingException(
+                "boot proc service provider $id fail",
+                $e
             );
         }
 
@@ -218,12 +227,22 @@ class IServiceRegistry implements ServiceRegistry
             return false;
         }
 
-        foreach ($this->procProviders as $id => $provider) {
-            $provider->boot($this->procC);
-            // 初始化服务
-            $this->consoleLogger->debug(
-                $this->logInfo->bootingBootProvider($id)
+        try {
+
+            foreach ($this->procProviders as $id => $provider) {
+                $provider->boot($this->procC);
+                // 初始化服务
+                $this->consoleLogger->debug(
+                    $this->logInfo->bootingBootProvider($id)
+                );
+            }
+        } catch (\Throwable $e) {
+
+            throw new CommuneBootingException(
+                "boot proc service provider $id fail",
+                $e
             );
+
         }
 
         return $this->procBooted = true;
@@ -245,6 +264,7 @@ class IServiceRegistry implements ServiceRegistry
         foreach ($this->reqProviders as $id => $provider) {
             $provider->boot($container);
         }
+
         $container->booted();
         return true;
     }

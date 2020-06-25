@@ -28,7 +28,16 @@ use Psr\Log\LoggerInterface;
 interface Platform
 {
 
+    /**
+     * @return string
+     */
     public function getId() : string;
+
+    /**
+     * 获取运行在 Platform 上的 App Id. 通常是 ShellId 或者 GhostId
+     * @return string
+     */
+    public function getAppId() : string;
 
     /**
      * @return PlatformConfig

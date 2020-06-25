@@ -92,7 +92,8 @@ abstract class AbsPlatform implements Platform
             }
 
             // 检查协议是否合法.
-            $adapter = $packer->adapt($adapterName);
+            $appId = $this->getAppId();
+            $adapter = $packer->adapt($adapterName, $appId);
 
             $requestError = $adapter->isInvalid();
             if (isset($requestError)) {

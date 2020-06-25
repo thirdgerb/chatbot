@@ -31,10 +31,15 @@ interface Packer
 
     /**
      * @param string $adapterName
+     * @param string $appId
      * @return Adapter
      */
-    public function adapt(string $adapterName) : Adapter;
+    public function adapt(string $adapterName, string $appId) : Adapter;
 
+    /**
+     * 将错误信息发送给客户端. 不需要记录日志.
+     * @param string $error
+     */
     public function fail(string $error) : void;
 
     /**

@@ -15,6 +15,7 @@ use Commune\Components;
 use Commune\Support\Option\AbsOption;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Support\Protocal\ProtocalOption;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -113,5 +114,10 @@ class IGhostConfig extends AbsOption implements GhostConfig
         ];
     }
 
+    public static function validate(array $data): ? string /* errorMsg */
+    {
+        return TypeUtils::requireFields($data, ['id', 'name'])
+            ?? parent::validate($data);
+    }
 
 }

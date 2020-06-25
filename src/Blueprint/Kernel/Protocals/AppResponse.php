@@ -38,5 +38,4 @@ interface AppResponse extends AppProtocal, CommuneErrorCode
      */
     public function isForward() : bool;
 
-
 }

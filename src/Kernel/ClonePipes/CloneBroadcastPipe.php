@@ -105,6 +105,7 @@ class CloneBroadcastPipe extends AClonePipe
 
         // 如果是同步消息, 则不广播.
         unset($routes[$selfShellId]);
+        // 异步消息的话, 自己要获取.
         if ($request->isAsync()) {
             $routes[$selfShellId] = $request->getFromSession();
         }

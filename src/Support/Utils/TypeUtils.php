@@ -69,6 +69,10 @@ class TypeUtils
      */
     public static function getType($value) : string
     {
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
         return is_object($value) ? get_class($value) : gettype($value);
     }
 

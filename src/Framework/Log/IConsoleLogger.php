@@ -11,7 +11,6 @@
 
 namespace Commune\Framework\Log;
 
-use Commune\Blueprint\CommuneEnv;
 use Commune\Contracts\Log\ConsoleLogger;
 use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;

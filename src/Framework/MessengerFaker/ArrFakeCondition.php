@@ -71,9 +71,9 @@ class ArrFakeCondition implements Condition
     }
 
 
-    public function creatorIs(string $guestId): Condition
+    public function creatorIs(string $creatorId): Condition
     {
-        $this->guestId = $guestId;
+        $this->guestId = $creatorId;
         return $this;
     }
 

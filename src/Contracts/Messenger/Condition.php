@@ -35,10 +35,10 @@ interface Condition
 
     /**
      * 获取指定用户的消息.
-     * @param string $guestId
+     * @param string $creatorId
      * @return Condition
      */
-    public function creatorIs(string $guestId) : Condition;
+    public function creatorIs(string $creatorId) : Condition;
 
     /**
      * 获取发送时间 T 之后需要发送的消息

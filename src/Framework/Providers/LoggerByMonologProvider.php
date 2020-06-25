@@ -43,7 +43,7 @@ class LoggerByMonologProvider extends ServiceProvider
     {
         return [
             'name' => 'commune',
-            'logDir' => CommuneEnv::getResourcePath(),
+            'logDir' => CommuneEnv::getLogPath(),
             'file' => 'commune.log',
             'days' => 7,
             'level' => LogLevel::DEBUG,

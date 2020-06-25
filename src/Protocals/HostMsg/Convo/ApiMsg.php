@@ -22,6 +22,8 @@ use Commune\Blueprint\Exceptions\CommuneErrorCode;
  */
 interface ApiMsg extends ConvoMsg, CommuneErrorCode
 {
+
+
     public function getApiName() : string;
 
     public function getParams() : array;
