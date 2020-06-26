@@ -53,6 +53,11 @@ class LoggerByMonologProvider extends ServiceProvider
         ];
     }
 
+    public function getId(): string
+    {
+        return LoggerInterface::class;
+    }
+
     public function getDefaultScope(): string
     {
         return self::SCOPE_PROC;
@@ -65,13 +70,11 @@ class LoggerByMonologProvider extends ServiceProvider
 
     public function register(ContainerContract $app): void
     {
-        if ($app->bound(LoggerInterface::class)) {
-            return;
-        }
-
-        $app->instance(
+        $app->singleton(
             LoggerInterface::class,
-            $this->makeLogger($app)
+            function($app) {
+                return $this->makeLogger($app);
+            }
         );
     }
 
@@ -80,7 +83,7 @@ class LoggerByMonologProvider extends ServiceProvider
      * @param ContainerContract $app
      * @return LoggerInterface
      */
-    protected function makeLogger(ContainerContract $app) : LoggerInterface
+    public function makeLogger(ContainerContract $app) : LoggerInterface
     {
         $level = Monolog::toMonologLevel($this->level);
 

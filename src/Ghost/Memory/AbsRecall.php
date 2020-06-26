@@ -76,8 +76,10 @@ abstract class AbsRecall implements Recall, MindSelfRegister
     public static function find(Cloner $cloner, string $id = null) : Recall
     {
         $def = static::getMemoryDef($cloner->mind);
+        $id = $id ?? $def->makeScopeId($cloner);
+
         return new static(
-            $id ?? $def->makeScopeId($cloner),
+            $id,
             $def,
             $cloner
         );

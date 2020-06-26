@@ -11,7 +11,7 @@
 
 namespace Commune\Platform\Shell;
 
-use Commune\Framework\Providers\CacheByArrProvider;
+use Commune\Framework\Providers;
 use Commune\Platform\IPlatformConfig;
 use Commune\Platform\Shell\Stdio\StdioSinglePlatform;
 use Commune\Support\Utils\TypeUtils;
@@ -31,7 +31,7 @@ class StdioSinglePlatformConfig extends IPlatformConfig
             'bootGhost' => true,
             'providers' => [
                 // 用数组来做缓存.
-                CacheByArrProvider::class,
+                Providers\CacheByArrProvider::class,
             ],
             'options' => [
             ],

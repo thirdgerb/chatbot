@@ -59,7 +59,8 @@ interface RuntimeDriver
     public function fetchSessionMemory(
         string $cloneId,
         string $convoId,
-        string $memoryId) : ? Memory;
+        string $memoryId
+    ) : ? Memory;
 
     /**
      * @param string $clonerId

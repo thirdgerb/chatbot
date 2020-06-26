@@ -11,14 +11,14 @@
 
 namespace Commune\Framework\Cache;
 
-use Commune\Blueprint\Exceptions\CommuneLogicException;
-use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Redis;
+use Commune\Contracts\Cache;
+use Commune\Contracts\Redis\RedisPool;
 use Commune\Framework\Spy\SpyAgency;
 use Psr\SimpleCache\CacheInterface;
-use Commune\Contracts\Cache;
 use Commune\Blueprint\Exceptions\IO\DataIOException;
-use Commune\Contracts\Redis\RedisPool;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
+use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 
 
 /**
@@ -230,10 +230,9 @@ class RedisPoolCache implements Cache
 
     public function hMSet(string $key, array $values, int $ttl = null): bool
     {
-        foreach ($values as $key => $val) {
-            $this->checkKey(__METHOD__, $key);
+        foreach ($values as $valKey => $val) {
+            $this->checkKey(__METHOD__, $valKey);
         }
-
 
         return $this->call(
             __METHOD__,

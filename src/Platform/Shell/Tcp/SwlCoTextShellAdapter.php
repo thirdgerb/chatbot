@@ -114,7 +114,6 @@ class SwlCoTextShellAdapter extends TcpAdapterAbstract
     protected function checkWouldClose(AppResponse $response): void
     {
         if ($this->shouldClose) {
-            var_dump('quit');
             $this->packer->conn->close();
         }
     }

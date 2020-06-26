@@ -231,12 +231,14 @@ abstract class AbsBaseDialog implements
 
     public function recall(string $name): Ghost\Memory\Recollection
     {
-        return $this
+        $recollection = $this
             ->cloner
             ->mind
             ->memoryReg()
             ->getDef($name)
             ->recall($this->_cloner);
+        
+        return $recollection;
     }
 
 

@@ -24,7 +24,7 @@ use Commune\Blueprint\Exceptions\IO\InvalidSavedDataException;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class DemoRuntimeDriver extends ARuntimeDriver
+class CacheRuntimeDriver extends ARuntimeDriver
 {
     /**
      * @var Cache
@@ -47,7 +47,11 @@ class DemoRuntimeDriver extends ARuntimeDriver
      * @param ClonerLogger $logger
      * @param OptRegistry $registry
      */
-    public function __construct(Cache $cache, ClonerLogger $logger, OptRegistry $registry)
+    public function __construct(
+        Cache $cache,
+        ClonerLogger $logger,
+        OptRegistry $registry
+    )
     {
         $this->cache = $cache;
         $this->logger = $logger;
@@ -93,9 +97,9 @@ class DemoRuntimeDriver extends ARuntimeDriver
         throw new InvalidSavedDataException($error);
     }
 
-    protected function getSessionMemoriesCacheKey(string $cloneId, string $sessionId) : string
+    protected function getSessionMemoriesCacheKey(string $cloneId, string $convoId) : string
     {
-        return "clone:$cloneId:ss:$sessionId:mem";
+        return "clone:$cloneId:cv:$convoId:mem";
     }
 
     /**

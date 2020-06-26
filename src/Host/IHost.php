@@ -139,6 +139,7 @@ class IHost extends AbsApp implements Host
 
         } catch (\Throwable $e) {
             $this->getConsoleLogger()->critical(strval($e));
+            $this->fail();
         }
 
         // 启动服务

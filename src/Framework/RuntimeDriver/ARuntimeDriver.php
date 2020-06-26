@@ -32,7 +32,7 @@ abstract class ARuntimeDriver implements RuntimeDriver
     abstract protected function doFetchProcess(string $key) : ? Process;
 
 
-    abstract protected function getSessionMemoriesCacheKey(string $cloneId, string $sessionId) : string;
+    abstract protected function getSessionMemoriesCacheKey(string $cloneId, string $convoId) : string;
 
     abstract protected function doCacheSessionMemories(string $key, array $map, int $expire) : bool;
 
@@ -61,10 +61,11 @@ abstract class ARuntimeDriver implements RuntimeDriver
         $saving = [];
 
         foreach ($memories as $memory) {
+            $id = $memory->getId();
             /**
              * @var Memory $memory
              */
-            $saving[$memory->getId()] = serialize($memory);
+            $saving[$id] = serialize($memory);
         }
 
         return $this->doCacheSessionMemories($key, $saving, $expire);

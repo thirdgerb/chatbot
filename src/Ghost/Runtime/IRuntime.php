@@ -113,7 +113,8 @@ class IRuntime implements Runtime
         }
 
         // 不存在则生成
-        return $this->sessionMemories[$id] = $this->ioFindSessionMemory($id) ?? new IMemory($id, false, $defaults);
+        return $this->sessionMemories[$id] = $this->ioFindSessionMemory($id)
+            ?? new IMemory($id, false, $defaults);
     }
 
     protected function findLongTermMemory(string $id, array $defaults) : Memory
@@ -341,7 +342,8 @@ class IRuntime implements Runtime
 
         try {
 
-            return $this->driver
+            return $this
+                ->driver
                 ->fetchSessionMemory(
                     $this->cloner->getSessionId(),
                     $this->cloner->getConversationId(),
@@ -349,7 +351,7 @@ class IRuntime implements Runtime
                 );
 
         } catch (\Exception $e) {
-            throw new LoadDataException('session memories', $e);
+            throw new LoadDataException('load session memories failed', $e);
         }
     }
 
@@ -411,14 +413,17 @@ class IRuntime implements Runtime
     public function __destruct()
     {
         // 清空数据
-        unset($this->driver);
-        unset($this->cloner);
-        unset($this->process);
-        unset($this->longTermMemories);
-        unset($this->sessionMemories);
-        unset($this->trace);
-        unset($this->contexts);
-        unset($this->prev);
+        unset(
+            $this->driver,
+            $this->cloner,
+            $this->process,
+            $this->longTermMemories,
+            $this->sessionMemories,
+            $this->trace,
+            $this->contexts,
+            $this->prev
+        );
+
         SpyAgency::decr(static::class);
     }
 }

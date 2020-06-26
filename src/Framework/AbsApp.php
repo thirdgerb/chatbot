@@ -98,11 +98,8 @@ abstract class AbsApp implements App
 
         $this->reqC = $reqC ?? new IReqContainer($this->procC);
 
-        $startLevel = CommuneEnv::isDebug() ? LogLevel::DEBUG : LogLevel::INFO;
-        $this->console = $consoleLogger ?? new IConsoleLogger(
-            true,
-                $startLevel
-            );
+        $startLevel = LogLevel::DEBUG ;
+        $this->console = $consoleLogger ?? new IConsoleLogger(true, $startLevel);
 
         $this->logInfo = $logInfo ?? new ILogInfo();
 
