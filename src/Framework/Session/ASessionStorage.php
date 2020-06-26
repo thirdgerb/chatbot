@@ -14,7 +14,7 @@ namespace Commune\Framework\Session;
 use Commune\Contracts\Cache;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Framework\Session\SessionStorage;
-use Commune\Blueprint\Exceptions\IO\SaveDataFailException;
+use Commune\Blueprint\Exceptions\IO\SaveDataException;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Support\Arr\TArrayAccessToMutator;
 use Commune\Support\Arr\TArrayData;
@@ -108,7 +108,7 @@ abstract class ASessionStorage implements SessionStorage
 
         // Storage 是 Session 的关键数据, 不能丢失.
         if (!$success) {
-            throw new SaveDataFailException('storage data');
+            throw new SaveDataException('save session storage data fail');
         }
     }
 

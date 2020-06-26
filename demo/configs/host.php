@@ -17,30 +17,41 @@ return new IHostConfig([
         /* config services */
 
         // 配置中心
-        Framework\Providers\OptRegistryProvider::class,
+        Framework\Providers\OptRegistryByFileProvider::class,
+
+        // Redis 连接池.
+        Framework\Providers\RedisPoolBySwooleProvider::class,
+
+        // 基于 Redis 连接池的缓存
+        Framework\Providers\CacheByRedisPoolProvider::class,
 
         /* proc services */
 
         // 文件缓存.
         Framework\Providers\FileCacheServiceProvider::class,
+
         // i18n 模块
         Framework\Providers\TranslatorBySymfonyProvider::class,
 
-        // mind set
+        // 多轮对话逻辑的 Mindset 模块
         GhostProviders\MindsetStorageConfigProvider::class,
 
-        // exception reporter
+        // 基于 ConsoleLogger 的异常上报
         Framework\Providers\ExpReporterByConsoleProvider::class,
-        // logger
+
+        // 基于 monolog 实现的日志.
         Framework\Providers\LoggerByMonologProvider::class,
+
         // sound like 模块
         Framework\Providers\SoundLikeServiceProvider::class,
 
-        // messenger
+        // 假的消息发送器.
         Framework\Providers\MessengerFakeByArrProvider::class,
 
         /* req services */
-        Framework\Providers\CacheByArrProvider::class,
+
+        // 用数组实现的缓存.
+        // Framework\Providers\CacheByArrProvider::class,
     ],
 
     // ghost 的配置
@@ -65,7 +76,15 @@ return new IHostConfig([
         // 同步 shell 端, 监听 9502 端口.
         'sync_shell' => include __DIR__ . '/platforms/sync_shell.php',
 
+        // 双工 Shell 端, 监听 9503 端口.
 
+        // http 端, 监听 9504 端口.
+
+        // websocket 端, 监听 9505 端口.
+
+        // Broadcaster 模拟广播端.
+
+        // MessageDB 模拟消息存储库.
     ],
 
 ]);

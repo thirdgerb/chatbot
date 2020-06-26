@@ -18,7 +18,7 @@ use Commune\Contracts\Messenger\Broadcaster;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class EventBroadcaster implements Broadcaster
+class FakeBroadcaster implements Broadcaster
 {
     /**
      * @var callable[]
@@ -31,9 +31,6 @@ class EventBroadcaster implements Broadcaster
         string $sessionId = null
     ): void
     {
-        $sessionId = $sessionId ?? '';
-        $id = "$shellId/$sessionId";
-        $this->listeners[$id] = $callback;
     }
 
     public function publish(
@@ -41,15 +38,6 @@ class EventBroadcaster implements Broadcaster
         ShellOutputRequest $request
     ): void
     {
-        $sessionId = $request->getSessionId();
-
-        $id1 = "$shellId/$sessionId";
-        $id2 = "$shellId/";
-        $listener = $this->listeners[$id1] ?? $this->listeners[$id2] ?? null;
-
-        if (isset($listener)) {
-            $listener($request);
-        }
     }
 
 

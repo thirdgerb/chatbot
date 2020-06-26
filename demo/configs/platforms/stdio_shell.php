@@ -10,8 +10,6 @@ return new Platform\Shell\StdioSinglePlatformConfig([
     'bootShell' => 'demo_shell',
     'bootGhost' => true,
 
-    'providers' => [
-    ],
     'options' => [
     ],
 ]);

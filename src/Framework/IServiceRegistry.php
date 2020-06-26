@@ -63,6 +63,10 @@ class IServiceRegistry implements ServiceRegistry
      */
     protected $reqProviders = [];
 
+    /**
+     * @var string[]
+     */
+    protected $providerIds =[];
 
     /**
      * @var ComponentOption[]
@@ -161,9 +165,12 @@ class IServiceRegistry implements ServiceRegistry
     ) : void
     {
         $id = $provider->getId();
-        if (isset($providers[$id])) {
+        $providerClass = get_class($provider);
+
+        if (isset($this->providerIds[$id])) {
+            $exists = $this->providerIds[$id];
             $this->consoleLogger->warning(
-                $this->logInfo->bootingRegisterExistsProvider($id)
+                $this->logInfo->bootingRegisterExistsProvider($id, $exists, $providerClass)
             );
         }
 
@@ -174,9 +181,12 @@ class IServiceRegistry implements ServiceRegistry
             $providers[$id] = $provider;
         }
 
+        // 记录已加载
+        $this->providerIds[$id] = $providerClass;
+
         // 日志
         $this->consoleLogger->debug(
-            $this->logInfo->bootingRegisterProvider($id)
+            $this->logInfo->bootingRegisterProvider($id, $providerClass)
         );
     }
 
@@ -207,7 +217,7 @@ class IServiceRegistry implements ServiceRegistry
                 $provider->boot($this->procC);
                 // 初始化服务
                 $this->consoleLogger->debug(
-                    $this->logInfo->bootingBootProvider($id)
+                    $this->logInfo->bootingBootProvider($id, get_class($provider))
                 );
             }
 
@@ -233,7 +243,7 @@ class IServiceRegistry implements ServiceRegistry
                 $provider->boot($this->procC);
                 // 初始化服务
                 $this->consoleLogger->debug(
-                    $this->logInfo->bootingBootProvider($id)
+                    $this->logInfo->bootingBootProvider($id, get_class($provider))
                 );
             }
         } catch (\Throwable $e) {

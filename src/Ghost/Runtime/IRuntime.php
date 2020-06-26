@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\Runtime;
 
-use Commune\Blueprint\Exceptions\IO\LoadDataFailException;
+use Commune\Blueprint\Exceptions\IO\LoadDataException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Memory\Memory;
@@ -23,7 +23,7 @@ use Commune\Contracts\Ghost\RuntimeDriver;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Ghost\Memory\IMemory;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
-use Commune\Blueprint\Exceptions\IO\SaveDataFailException;
+use Commune\Blueprint\Exceptions\IO\SaveDataException;
 
 
 /**
@@ -257,7 +257,7 @@ class IRuntime implements Runtime
             && $this->ioCacheProcess($expire);
 
         if (empty($success)) {
-            throw new SaveDataFailException('cloner status');
+            throw new SaveDataException('save cloner session data failed');
         }
 
     }
@@ -277,7 +277,7 @@ class IRuntime implements Runtime
             );
 
         } catch (\Exception $e) {
-            throw new LoadDataFailException('current process', $e);
+            throw new LoadDataException('current process', $e);
         }
     }
 
@@ -300,7 +300,7 @@ class IRuntime implements Runtime
                 $expire
             );
         } catch (\Exception $e) {
-            throw new SaveDataFailException('process', $e);
+            throw new SaveDataException('save process data failed', $e);
         }
 
     }
@@ -329,7 +329,7 @@ class IRuntime implements Runtime
             );
 
         } catch (\Exception $e) {
-            throw new SaveDataFailException('session memories', $e);
+            throw new SaveDataException('save session memories failed', $e);
         }
     }
 
@@ -349,7 +349,7 @@ class IRuntime implements Runtime
                 );
 
         } catch (\Exception $e) {
-            throw new LoadDataFailException('session memories', $e);
+            throw new LoadDataException('session memories', $e);
         }
     }
 
@@ -376,7 +376,7 @@ class IRuntime implements Runtime
             );
 
         } catch (\Exception $e) {
-            throw new SaveDataFailException('long term memory', $e);
+            throw new SaveDataException('save long term memory failed', $e);
         }
 
     }
@@ -395,7 +395,7 @@ class IRuntime implements Runtime
 
         // 请求级别的影响.
         } catch (\Exception $e) {
-            throw new LoadDataFailException('long term memory', $e);
+            throw new LoadDataException('long term memory', $e);
         }
     }
 

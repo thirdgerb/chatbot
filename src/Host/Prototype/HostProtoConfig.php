@@ -31,7 +31,7 @@ class HostProtoConfig extends IHostConfig
                 /* config services */
 
                 // 配置中心
-                Framework\Providers\OptRegistryProvider::class,
+                Framework\Providers\OptRegistryByFileProvider::class,
 
                 /* proc services */
 

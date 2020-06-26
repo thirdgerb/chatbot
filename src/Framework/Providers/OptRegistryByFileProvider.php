@@ -28,7 +28,7 @@ use Commune\Support\Registry\Storage\Yaml\YmlFileStorage;
  *
  * @property-read CategoryOption[] $categories 系统默认的配置.
  */
-class OptRegistryProvider extends ServiceProvider
+class OptRegistryByFileProvider extends ServiceProvider
 {
     public static function stub(): array
     {

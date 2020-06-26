@@ -11,9 +11,6 @@
 
 namespace Commune\Platform\Shell\Stdio;
 
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Contracts\Messenger\GhostMessenger;
-use Commune\Platform\Libs\Stdio\StdioTextAdapter;
 use Swoole\Coroutine;
 use React\EventLoop\Factory;
 use Clue\React\Stdio\Stdio;
@@ -27,6 +24,9 @@ use Commune\Platform\Libs\Stdio\StdioPacker;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Contracts\Messenger\GhostMessenger;
+use Commune\Platform\Libs\Stdio\StdioTextAdapter;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -79,32 +79,25 @@ class StdioSinglePlatform extends AbsPlatform
     public function serve(): void
     {
 
-        Coroutine::set([
-            'enable_coroutine' => true,
-        ]);
+        $this->stdio->setPrompt('> ');
 
-        Coroutine\run(function() {
+        $this->host->instance(
+            GhostMessenger::class,
+            $this->makeGhostMessenger()
+        );
 
-            $this->stdio->setPrompt('> ');
-
-            $this->host->instance(
-                GhostMessenger::class,
-                $this->makeGhostMessenger()
-            );
-
-            $initPacker = $this->makePacker('');
-            $this->onPacker($initPacker, StdioTextAdapter::class);
-            unset($initPacker);
+        $initPacker = $this->makePacker('');
+        $this->onPacker($initPacker, StdioTextAdapter::class);
+        unset($initPacker);
 
 
-            $this->stdio->on('data', function($line) {
+        $this->stdio->on('data', function($line) {
 
-                $packer = $this->makePacker($line);
-                $this->onPacker($packer, StdioTextAdapter::class);
-            });
-
-            $this->loop->run();
+            $packer = $this->makePacker($line);
+            $this->onPacker($packer, StdioTextAdapter::class);
         });
+
+        $this->loop->run();
 
     }
 
@@ -123,7 +116,7 @@ class StdioSinglePlatform extends AbsPlatform
 
     public function sleep(float $seconds): void
     {
-        Coroutine::sleep($seconds);
+        usleep($seconds * 1000000);
     }
 
     public function shutdown(): void

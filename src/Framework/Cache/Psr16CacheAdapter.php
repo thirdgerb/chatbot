@@ -5,6 +5,7 @@ namespace Commune\Framework\Cache;
 
 
 use Commune\Contracts\Cache;
+use Commune\Framework\Spy\SpyAgency;
 use Psr\SimpleCache\CacheInterface;
 
 class Psr16CacheAdapter implements CacheInterface
@@ -21,6 +22,7 @@ class Psr16CacheAdapter implements CacheInterface
     public function __construct(Cache $cache)
     {
         $this->cache = $cache;
+        SpyAgency::incr(static::class);
     }
 
     protected function checkKey(string $method, $key) : void
@@ -93,4 +95,9 @@ class Psr16CacheAdapter implements CacheInterface
     }
 
 
+    public function __destruct()
+    {
+        unset($this->cache);
+        SpyAgency::decr(static::class);
+    }
 }

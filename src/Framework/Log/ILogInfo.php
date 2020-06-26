@@ -39,9 +39,9 @@ class ILogInfo implements LogInfo
     }
 
 
-    public function bootingRegisterExistsProvider(string $id): string
+    public function bootingRegisterExistsProvider(string $id, string $exists, string $challenger): string
     {
-        return "registering service provider $id already exists";
+        return "registering provider id [$id] already registered by $exists, challenger is $challenger";
     }
 
 //    public function bootRegisterInvalidProvider(string $providerClass, string $validation = ''): string
@@ -49,9 +49,10 @@ class ILogInfo implements LogInfo
 //        return "register service provider $providerClass fail: $validation";
 //    }
 //
-    public function bootingBootProvider(string $id): string
+    public function bootingBootProvider(string $id, string $name): string
     {
-        return "boot service provider: $id";
+        $id = $id === $name ? '' : " [$id]";
+        return "boot provider: $name$id";
     }
 
     public function bootingRegisterProviderWarning(string $providerId, string $except, string $given): string
@@ -60,9 +61,10 @@ class ILogInfo implements LogInfo
     }
 
 
-    public function bootingRegisterProvider(string $id): string
+    public function bootingRegisterProvider(string $id, string $name): string
     {
-        return "register service provider : $id";
+        $id = $id === $name ? '' : " [$id]";
+        return "register provider: $name$id";
     }
 
     public function bootContractNotBound(string $abstract): string

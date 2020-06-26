@@ -22,6 +22,7 @@ use Commune\Framework\Event\FinishRequest;
 use Commune\Framework\Event\StartRequest;
 use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\TypeUtils;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Psr\Log\LoggerInterface;
 use Commune\Blueprint\Exceptions\CommuneLogicException;
 use Commune\Support\Protocal\Protocal;
@@ -188,7 +189,20 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
 
             $response = $handler($request);
 
+        // 容器绑定关系的问题.
+        } catch (BindingResolutionException $e) {
+            $this->report($e);
+            $response = $this->failResponse(
+                $traceId,
+                $code = AppResponse::HOST_LOGIC_ERROR,
+                AppResponse::DEFAULT_ERROR_MESSAGES[$code]
+            );
+
         } catch (CommuneRuntimeException $e) {
+            $this->report($e);
+            $response = $this->failResponse($traceId, $e->getCode(), $e->getMessage());
+
+        } catch (CommuneLogicException $e) {
             $this->report($e);
             $response = $this->failResponse($traceId, $e->getCode(), $e->getMessage());
 

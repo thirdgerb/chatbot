@@ -11,21 +11,20 @@
 
 namespace Commune\Framework\Providers;
 
-use Commune\Container\ContainerContract;
 use Commune\Contracts\Cache;
+use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
-use Commune\Framework\Cache\ArrayCache;
-
+use Commune\Framework\Cache\RedisPoolCache;
 
 /**
- * 用数组模拟缓存的模块. 也可以用于单体机器人中. 但不存在过期功能.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class CacheByArrProvider extends ServiceProvider
+class CacheByRedisPoolProvider extends ServiceProvider
 {
-    public static function stub(): array
+    public function getDefaultScope(): string
     {
-        return [];
+        // 如果使用连接池, 就可以作为进程级单例.
+        return self::SCOPE_PROC;
     }
 
     public function getId(): string
@@ -33,23 +32,24 @@ class CacheByArrProvider extends ServiceProvider
         return Cache::class;
     }
 
+    public static function stub(): array
+    {
+        return [
+        ];
+    }
+
     public function boot(ContainerContract $app): void
     {
     }
-
-    public function getDefaultScope(): string
-    {
-        return self::SCOPE_REQ;
-    }
-
 
     public function register(ContainerContract $app): void
     {
         $app->singleton(
             Cache::class,
-            ArrayCache::class
+            RedisPoolCache::class
         );
     }
+
 
 
 }

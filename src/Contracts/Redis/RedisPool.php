@@ -9,14 +9,14 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Exceptions\IO;
+namespace Commune\Contracts\Redis;
 
-use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class LoadDataFailException extends BrokenRequestException
+interface RedisPool
 {
 
+    public function get() : RedisConnection;
 }

@@ -84,7 +84,7 @@ class IShell extends AbsAppKernel implements Shell
 
     public function getId(): string
     {
-        return 'shell:' . $this->config->id;
+        return 'shell-' . $this->config->id;
     }
 
     public function getName(): string

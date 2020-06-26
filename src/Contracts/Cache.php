@@ -51,10 +51,10 @@ interface Cache
 
     /**
      * @param array $keys
-     * @param null $default
+     * @param array|null $default
      * @return array
      */
-    public function getMultiple(array $keys, $default = null) : array;
+    public function getMultiple(array $keys, array $default = null) : array;
 
     /**
      * @param array $values

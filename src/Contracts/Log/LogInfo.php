@@ -31,11 +31,11 @@ interface LogInfo
 
     public function bootingEndBootstrapper(string $bootstrapper) : string;
 
-    public function bootingRegisterExistsProvider(string $id) : string;
+    public function bootingRegisterExistsProvider(string $id, string $exists, string $challenger) : string;
 
-    public function bootingRegisterProvider(string $id) : string;
+    public function bootingRegisterProvider(string $id, string $name) : string;
 
-    public function bootingBootProvider(string $id) : string;
+    public function bootingBootProvider(string $id, string $name) : string;
 
     public function bootingRegisterProviderWarning(string $providerId, string $except, string $given) : string;
 

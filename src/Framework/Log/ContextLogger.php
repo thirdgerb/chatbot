@@ -34,11 +34,21 @@ abstract class ContextLogger implements LoggerInterface
     {
         // 尝试报告异常.
         if ($message instanceof \Throwable) {
-            $this->getReporter()->report($message);
-            $message = get_class($message) . ' : ' . $message->getMessage();
+            $this->report($message);
+            $error = get_class($message) . ' : ' . $message->getMessage();
+            $exp = $message;
+
+            while($prev = $exp->getPrevious()) {
+                $error .= ', prev ' . $prev->getMessage();
+                $exp = $prev;
+            }
+
+
+        } else {
+            $error = strval($message);
         }
 
-        $this->getLogger()->log($level, $message, $context + $this->getContext());
+        $this->getLogger()->log($level, $error, $context + $this->getContext());
     }
 
 

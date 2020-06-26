@@ -138,7 +138,7 @@ abstract class AbsPlatform implements Platform
 
     public function getId(): string
     {
-        return 'platform:' . $this->config->id;
+        return 'platform-' . $this->config->id;
     }
 
     protected function invalidRequest(string $error) : void

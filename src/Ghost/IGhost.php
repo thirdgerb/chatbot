@@ -89,7 +89,7 @@ class IGhost extends AbsAppKernel implements Ghost
 
     public function getId(): string
     {
-        return 'ghost:' . $this->config->id;
+        return 'ghost-' . $this->config->id;
     }
 
     protected function basicBindings(): void

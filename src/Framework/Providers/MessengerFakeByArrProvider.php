@@ -18,7 +18,7 @@ use Commune\Contracts\Messenger\ShellMessenger;
 use Commune\Contracts\ServiceProvider;
 use Commune\Framework\MessengerFaker\ArrFakeMessageDB;
 use Commune\Framework\MessengerFaker\ArrShellMessenger;
-use Commune\Framework\MessengerFaker\EventBroadcaster;
+use Commune\Framework\MessengerFaker\FakeBroadcaster;
 
 
 /**
@@ -56,7 +56,7 @@ class MessengerFakeByArrProvider extends ServiceProvider
 
         $app->singleton(
             Broadcaster::class,
-            EventBroadcaster::class
+            FakeBroadcaster::class
         );
     }
 
