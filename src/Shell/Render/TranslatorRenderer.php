@@ -11,7 +11,6 @@
 
 namespace Commune\Shell\Render;
 
-use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Shell\Render\Renderer;
 use Commune\Contracts\Trans\SelfTranslatable;
 use Commune\Contracts\Trans\Translatable;

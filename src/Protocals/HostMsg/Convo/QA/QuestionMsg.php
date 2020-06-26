@@ -13,12 +13,13 @@ namespace Commune\Protocals\HostMsg\Convo\QA;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Contracts\Trans\SelfTranslatable;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface QuestionMsg extends VerbalMsg
+interface QuestionMsg extends VerbalMsg, SelfTranslatable
 {
     /**
      * @return string

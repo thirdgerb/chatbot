@@ -11,10 +11,14 @@
 
 namespace Commune\Kernel\ShellPipes;
 
+use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Shell;
+use Commune\Blueprint\Shell\Render\Renderer;
+use Commune\Protocals\HostMsg;
 
 
 /**
@@ -35,8 +39,92 @@ class OutputRenderPipe extends AShellPipe
         \Closure $next
     ): ShellOutputResponse
     {
+
+        $outputs = $request->getOutputs();
+
+        if (empty($outputs)) {
+            return $next($request);
+        }
+
+        $shell = $this->session->shell;
+        $container = $this->session->container;
+
+        // 输出消息.
+        $renderedOutputs = [];
+
+        $sessionId = $request->getSessionId();
+
+        foreach ($outputs as $output) {
+
+            $message = $output->getMessage();
+
+            // 用协议中定义过的渲染器渲染一遍.
+            $rendered = $this->eachRenderer($shell, $container, $message);
+
+            // 最终也没有结果.
+            if (!isset($rendered)) {
+                $renderedOutputs[] = $output;
+                continue;
+            }
+
+            // 消息渲染出来没了
+            if (empty($rendered)) {
+                continue;
+            }
+
+            // 有渲染结果.
+            $renderedOutputs = array_reduce(
+                $rendered,
+                function($renderedOutputs, HostMsg $message) use ($output, $sessionId){
+                    $renderedOutputs[] = $output->divide($message, $sessionId);
+                    return $renderedOutputs;
+                },
+                $renderedOutputs
+            );
+        }
+
+        $request->setOutputs($renderedOutputs);
+
+        // 进入下一节.
         return $next($request);
     }
+
+    /**
+     * @param Shell $shell
+     * @param ReqContainer $container
+     * @param HostMsg $message
+     * @return HostMsg[]|null
+     */
+    protected function eachRenderer(
+        Shell $shell,
+        ReqContainer $container,
+        HostMsg $message
+    ) : ? array
+    {
+
+        // 遍历寻找所有的 renderer
+        $gen = $shell->eachProtocalHandler(
+            $container,
+            $message,
+            Renderer::class
+        );
+
+        // 遍历.
+        foreach ($gen as $renderer) {
+            /**
+             * @var Renderer $renderer
+             */
+            $rendered = $renderer($message);
+
+            // 没有渲染结果, 跳过去
+            if (isset($rendered)) {
+                return $rendered;
+            }
+        }
+
+        return null;
+    }
+
 
 
 }

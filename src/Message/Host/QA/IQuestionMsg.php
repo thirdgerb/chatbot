@@ -13,6 +13,7 @@ namespace Commune\Message\Host\QA;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Contracts\Trans\Translator;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
@@ -30,6 +31,9 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string[] $suggestions
  * @property-read string[] $routes
  * @property-read string|null $default
+ *
+ *
+ * @property-read bool $translated
  */
 class IQuestionMsg extends AbsMessage implements QuestionMsg
 {
@@ -67,6 +71,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             'suggestions' => [],
             'routes' => [],
             'default' => null,
+            'translated' => false,
         ];
     }
 
@@ -296,6 +301,28 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         }
 
         return $text;
+    }
+
+    public function translate(Translator $translator): void
+    {
+        if ($this->translated) {
+            return;
+        }
+
+        $slots = $this->toArray();
+
+        // query
+        $this->query = $translator->trans($this->query, $slots);
+
+        // suggestions
+        $this->suggestions = array_map(
+            function($suggestion) use ($translator, $slots) {
+                return $translator->trans($suggestion, $slots);
+            },
+            $this->suggestions
+        );
+
+        $this->translated = true;
     }
 
 

@@ -100,7 +100,7 @@ class SymfonyTranslatorAdapter implements Translator
         string $lang = null
     ): string
     {
-        $id = strval($id);
+        $id = trim(strval($id));
         $domain = $domain ?? $this->defaultDomain;
         $locale = $locale ?? $this->defaultLocale;
 
@@ -127,7 +127,6 @@ class SymfonyTranslatorAdapter implements Translator
     protected function transByTemp(string $id, string $locale, string $domain, array $parameters) : ? string
     {
         $temp = $this->temps[$locale][$domain][$id] ?? null;
-
         return isset($temp)
             ? self::mustacheTrans($this->formatter, $temp, $locale, $parameters)
             : null;

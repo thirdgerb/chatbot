@@ -17,6 +17,8 @@ use Commune\Blueprint\Framework\Auth\Authority;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Contracts\Cache;
+use Commune\Contracts\Trans\SelfTranslatable;
+use Commune\Contracts\Trans\Translator;
 use Commune\Framework\ASession;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\OutputMsg;
@@ -106,6 +108,11 @@ class ICloner extends ASession implements Cloner
      * @var bool
      */
     protected $noConversationState = false;
+
+    /**
+     * @var Translator
+     */
+    protected $translator;
 
     public function __construct(
         Ghost $ghost,
@@ -291,7 +298,22 @@ class ICloner extends ASession implements Cloner
 
     public function output(OutputMsg $output, OutputMsg ...$outputs): void
     {
-        array_push($this->outputs, $output, ...$outputs);
+        array_unshift($outputs, $output);
+        foreach ($outputs as $output) {
+            $message = $output->getMessage();
+            if ($message instanceof SelfTranslatable) {
+                $message->translate($this->getTranslator());
+            }
+
+            $this->outputs[] = $output;
+        }
+    }
+
+    protected function getTranslator() : Translator
+    {
+        return $this->translator
+            ?? $this->translator = $this->getContainer()
+                ->make(Translator::class);
     }
 
     public function getOutputs(): array
@@ -342,16 +364,6 @@ class ICloner extends ASession implements Cloner
 
     /*------- flush -------*/
 
-    protected function flushInstances(): void
-    {
-        unset(
-            $this->_ghost,
-            $this->_config,
-            $this->outputs,
-            $this->asyncInputs
-        );
-    }
-
     protected function saveSession(): void
     {
         // 无状态的请求不做任何缓存.
@@ -381,6 +393,18 @@ class ICloner extends ASession implements Cloner
         if (isset($this->conversationId)) {
             $this->cacheConvoId($this->conversationId);
         }
+    }
+
+
+    protected function flushInstances(): void
+    {
+        unset(
+            $this->_ghost,
+            $this->_config,
+            $this->outputs,
+            $this->asyncInputs,
+            $this->translator
+        );
     }
 
 }

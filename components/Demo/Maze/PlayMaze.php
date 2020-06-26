@@ -22,7 +22,7 @@ use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 /**
  * 进行迷宫
  *
- * @property-read  UserPlayHistory $played
+ * @property-read UserPlayHistory $played
  *
  * @property-read int $steps
  * @property-read int $direction
@@ -414,8 +414,9 @@ class PlayMaze extends ACodeContext
         ];
 
         $this->merge($props);
+
         // 游戏次数增加.
-        $this->played->total += 1;
+        $this->played->total = $this->played->total + 1;
     }
 
     protected function parseTowardAndGo(Dialog $dialog, string $input) : ? Operator
@@ -529,7 +530,7 @@ class PlayMaze extends ACodeContext
 
     /*------------ mutator ---------*/
 
-    public function __getPlayed() : UserPlayHistory
+    public function __get_played() : UserPlayHistory
     {
         return $this->playedHistory
             ?? $this->playedHistory = UserPlayHistory::from($this);

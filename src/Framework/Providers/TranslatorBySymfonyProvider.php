@@ -21,6 +21,7 @@ use Commune\Framework\Trans\TransOption;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\OptRegistry;
+use Commune\Support\Registry\Storage\Json\JsonStorageOption;
 use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
 use Commune\Support\Utils\StringUtils;
 
@@ -92,10 +93,10 @@ class TranslatorBySymfonyProvider extends ServiceProvider
         $initStorage = $this->initStorage;
 
         $storage = $storage
-            ?? new YmlStorageOption([
+            ?? new JsonStorageOption([
                 'path' => StringUtils::gluePath(
                     CommuneEnv::getResourcePath(),
-                    'trans/lang.yml'
+                    'trans/lang.json'
                 ),
                 'isDir' => false,
             ]);

@@ -38,8 +38,6 @@ return [
         ],
 
 
-
-
         'maze' => [
             'toward' => [
                 'front' => '推开了面前的门.',
@@ -60,8 +58,6 @@ return [
                 'welcomeOldPlayer' => '欢迎您再次来到方向迷宫! 您玩过{total}次, 最好成绩{score}分.',
 
                 'quit' => '迷宫游戏退出, 欢迎再来挑战!',
-
-
 
             ],
 

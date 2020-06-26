@@ -19,6 +19,7 @@ use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Framework\Auth\Authority;
 use Commune\Protocals\Comprehension;
+use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;

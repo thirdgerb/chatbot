@@ -43,6 +43,11 @@ class ProtocalMatcher
         }
     }
 
+    public function getOptions() : array
+    {
+        return $this->options;
+    }
+
     public function addOption(ProtocalOption $option) : void
     {
         $id = $option->getId();

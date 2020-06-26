@@ -89,10 +89,12 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
     ): \Generator
     {
         $matcher = $this->getProtocalMatcher();
+
         foreach ($matcher->matchEach($protocal, $handlerInterface) as $handlerOption) {
-            $handler = $handlerOption->handler;
+            $handlerName = $handlerOption->handler;
             $params = $handlerOption->params;
-            $handler = $container->make($handler, $params);
+
+            $handler = $container->make($handlerName, $params);
 
             if (isset($handlerInterface) && !is_a($handler, $handlerInterface, TRUE)) {
                 $actual = TypeUtils::getType($handler);

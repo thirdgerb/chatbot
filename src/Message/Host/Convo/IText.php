@@ -58,7 +58,7 @@ class IText extends AbsMessage implements VerbalMsg
     public function getText(): string
     {
         return $this->_text
-            ?? $this->_text = StringUtils::sbc2dbc(StringUtils::trim($this->text));
+            ?? $this->_text = StringUtils::trim($this->text);
     }
 
 
