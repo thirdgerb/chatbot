@@ -11,32 +11,47 @@
 
 namespace Commune\Contracts\Messenger;
 
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 
 /**
+ * 消息广播, 最廉价的异构解决方案.
+ * 当 N 个 Shell 连接到同一个 Ghost 的时候,
+ * 一个 Shell 的输入消息只有在特定条件下, 才需要发送到其它 Shell.
+ *
+ * 如果是 Ghost 主动推送, 则难免会淹没在极其复杂的推送规则中, 无法作为项目的通用解决方案.
+ *
+ * 因此, 相比之下广播是更为适用的方案.
+ * 只广播关于 BatchId 相关的信息, 然后由 Shell 自己组装 ShellOutputRequest.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Broadcaster
 {
 
     /**
-     * @param string $shellId
-     * @param ShellOutputRequest $request
+     * 广播一个响应.
+     *
+     * @param GhostRequest $request
+     * @param GhostResponse $response
+     * @param array $routes         路由表, ShellId => ShellSessionId
      */
     public function publish(
-        string $shellId,
-        ShellOutputRequest $request
+        GhostRequest $request,
+        GhostResponse $response,
+        array $routes
     ) : void;
 
     /**
      * @param callable $callback        传入参数, ShellOutputRequest
      * @param string $shellId
-     * @param string|null $sessionId
+     * @param string|null $shellSessionId
      */
     public function subscribe(
         callable $callback,
         string $shellId,
-        string $sessionId = null
+        string $shellSessionId = null
     ) : void;
 
 }

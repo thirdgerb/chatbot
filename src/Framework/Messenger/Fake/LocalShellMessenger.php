@@ -20,18 +20,13 @@ use Commune\Contracts\Messenger\ShellMessenger;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ArrShellMessenger implements ShellMessenger
+class LocalShellMessenger implements ShellMessenger
 {
 
     /**
      * @var Ghost
      */
     protected $ghost;
-
-    /**
-     * @var GhostRequest[]
-     */
-    protected $requests = [];
 
     /**
      * ArrMessenger constructor.
@@ -51,17 +46,4 @@ class ArrShellMessenger implements ShellMessenger
         $response = $this->ghost->handleRequest($request, GhostRequestHandler::class);
         return $response;
     }
-
-    public function asyncSendGhostRequest(GhostRequest $request, GhostRequest ...$requests): void
-    {
-        array_unshift($requests, $request);
-        array_push($this->requests, ...$requests);
-    }
-
-    public function popAsyncGhostRequest(): ? GhostRequest
-    {
-        return array_pop($this->requests);
-    }
-
-
 }

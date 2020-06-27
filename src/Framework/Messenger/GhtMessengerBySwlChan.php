@@ -22,6 +22,8 @@ use Commune\Contracts\Messenger\GhostMessenger;
 
 
 /**
+ * Ghost 发送异步消息的 Swoole Channel 实现.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class GhtMessengerBySwlChan implements GhostMessenger

@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\MessengerFaker;
+namespace Commune\Framework\MessageDB;
 
 use Commune\Contracts\Messenger\Condition;
 use Commune\Protocals\IntercomMsg;
@@ -19,10 +19,10 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ArrFakeCondition implements Condition
+class ArrCondition implements Condition
 {
     /**
-     * @var ArrFakeMessageDB
+     * @var ArrMessageDB
      */
     protected $db;
 
@@ -51,9 +51,9 @@ class ArrFakeCondition implements Condition
 
     /**
      * ArrFakeCondition constructor.
-     * @param ArrFakeMessageDB $db
+     * @param ArrMessageDB $db
      */
-    public function __construct(ArrFakeMessageDB $db)
+    public function __construct(ArrMessageDB $db)
     {
         $this->db = $db;
     }
@@ -97,7 +97,7 @@ class ArrFakeCondition implements Condition
 
     public function get(): array
     {
-        $messages = $this->db->fetch(function(ArrFakeMessageDB $db) {
+        $messages = $this->db->fetch(function(ArrMessageDB $db) {
 
             $selections = [];
             foreach ($db->messages as $message) {

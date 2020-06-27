@@ -14,6 +14,10 @@ namespace Commune\Contracts\Messenger;
 use Commune\Protocals\IntercomMsg;
 
 /**
+ * MessageDB 的复杂查询逻辑
+ * Condition 的定义仍然是有限的. 如果需要无限的查询能力, 就不适合用 MessageDB 模块了.
+ * 因为 MessageDB 只是服务于异构项目的.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Condition

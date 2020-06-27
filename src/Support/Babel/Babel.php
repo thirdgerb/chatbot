@@ -17,6 +17,10 @@ namespace Commune\Support\Babel;
  */
 class Babel
 {
+    const FUNC_SERIALIZE = 'serialize';
+
+    const FUNC_UN_SERIALIZE = 'unserialize';
+
     /**
      * @var BabelResolver
      */

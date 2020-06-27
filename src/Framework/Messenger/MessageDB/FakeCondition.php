@@ -9,20 +9,25 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Support\Swoole;
+namespace Commune\Framework\Messenger\MessageDB;
 
-use Swoole\Coroutine;
+use Commune\Contracts\Messenger\MessageDB;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SwooleUtils
+class FakeCondition extends AbsCondition
 {
-
-    public static function isInCoroutine() : bool
+    public function __invoke(MessageDB $db): array
     {
-        return class_exists(Coroutine::class)
-            && Coroutine::getCid() > 0;
+        return [];
     }
+
+    public function count(): int
+    {
+        return 0;
+    }
+
 
 }

@@ -15,6 +15,9 @@ use Commune\Protocals\IntercomMsg;
 
 
 /**
+ * 消息的存储与读取.
+ * 这样可以做到和客户端 推/拉 结合地获取消息.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface MessageDB
@@ -34,6 +37,12 @@ interface MessageDB
         IntercomMsg $input,
         IntercomMsg ...$outputs
     ) : void;
+
+    /**
+     * @param string $batchId
+     * @return IntercomMsg[]
+     */
+    public function fetchBatch(string $batchId) : array;
 
     /**
      * @param callable $fetcher

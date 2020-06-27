@@ -46,9 +46,13 @@ return new IHostConfig([
         Framework\Providers\SoundLikeServiceProvider::class,
 
         // 假的消息发送器.
-        Framework\Providers\MessengerFakeByArrProvider::class,
+        // Framework\Providers\MessengerFakeByArrProvider::class,
+
 
         /* req services */
+
+        // 完全基于缓存, 无法获取长期存储的消息数据库.
+        Framework\Providers\MessageDBCacheOnlyProvider::class,
 
         // 用数组实现的缓存.
         // Framework\Providers\CacheByArrProvider::class,

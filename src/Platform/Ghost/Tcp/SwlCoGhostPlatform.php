@@ -75,7 +75,7 @@ class SwlCoGhostPlatform extends AbsPlatform
 
     public function sleep(float $seconds): void
     {
-        if (SwooleUtils::isAtCoroutine()) {
+        if (SwooleUtils::isInCoroutine()) {
             Coroutine::sleep($seconds);
         }
     }

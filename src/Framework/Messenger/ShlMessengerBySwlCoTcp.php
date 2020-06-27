@@ -26,6 +26,8 @@ use Commune\Contracts\Messenger\ShellMessenger;
 
 
 /**
+ * Shell 发送消息给 Ghost 的 Swoole 协程 TCP 客户端实现.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class ShlMessengerBySwlCoTcp implements ShellMessenger

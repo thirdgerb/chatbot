@@ -15,12 +15,14 @@ use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 
 /**
+ * Shell 发送消息给 Ghost 的模块.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface ShellMessenger
 {
     /**
-     * 发送一个同步请求到
+     * 发送一个同步请求到 Ghost
      *
      * @param GhostRequest $request
      * @return GhostResponse

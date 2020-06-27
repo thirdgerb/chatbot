@@ -31,6 +31,39 @@ use Commune\Support\Utils\StringUtils;
 class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
 {
 
+    /**
+     * 实例化一个异步请求.
+     *
+     * @param string $sessionId
+     * @param string $traceId
+     * @param string $batchId
+     * @return IShellOutputRequest
+     */
+    public static function asyncInstance(
+        string $sessionId,
+        string $traceId,
+        string $batchId
+    ) : self
+    {
+        return static::instance(
+            true,
+            $sessionId,
+            $traceId,
+            $batchId,
+            []
+        );
+    }
+
+    /**
+     * 实例化一个 Shell 输出请求.
+     *
+     * @param bool $async
+     * @param string $sessionId
+     * @param string $traceId
+     * @param string $batchId
+     * @param array $outputs
+     * @return IShellOutputRequest
+     */
     public static function instance(
         bool $async,
         string $sessionId,

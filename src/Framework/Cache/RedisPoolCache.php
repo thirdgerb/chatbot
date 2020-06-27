@@ -37,22 +37,34 @@ class RedisPoolCache implements Cache
      */
     protected $psr16;
 
+    protected $prefix;
+
     /**
-     * SwlRedisCache constructor.
+     * RedisPoolCache constructor.
      * @param RedisPool $pool
+     * @param string $prefix
      */
-    public function __construct(RedisPool $pool)
+    public function __construct(RedisPool $pool, string $prefix = '')
     {
         $this->pool = $pool;
+        $this->prefix = $prefix;
         SpyAgency::incr(static::class);
+    }
+
+    public function parseKey(string $key) : string
+    {
+        return $this->prefix . $key;
     }
 
 
     public function set(string $key, string $value, int $ttl = null): bool
     {
+        $key = $this->parseKey($key);
+
         return $this->call(
             __METHOD__,
             function(Redis $client) use ($key, $value, $ttl){
+
                 if (isset($ttl) && $ttl > 0) {
                     return $client->setex($key, $ttl, $value);
                 }
@@ -64,9 +76,12 @@ class RedisPoolCache implements Cache
 
     public function has(string $key): bool
     {
+        $this->parseKey($key);
+
         return $this->call(
             __METHOD__,
             function(Redis $client) use ($key) {
+
                 return $client->exists($key);
             }
         );
@@ -74,6 +89,8 @@ class RedisPoolCache implements Cache
 
     public function get(string $key): ? string
     {
+        $this->parseKey($key);
+
         return $this->call(
             __METHOD__,
             function(Redis $client) use ($key) {
@@ -103,9 +120,12 @@ class RedisPoolCache implements Cache
             $this->checkKey(__METHOD__, $key);
         }
 
+        $keys = array_map([$this,'parseKey'], $keys);
+
         return $this->call(
             __METHOD__,
             function(Redis $client) use ($keys, $default) {
+
 
                 $values = $client->mget($keys);
 
@@ -125,9 +145,9 @@ class RedisPoolCache implements Cache
 
     public function setMultiple(array $values, int $ttl = null): bool
     {
-        $keys = array_keys($values);
-        foreach ($keys as $key) {
+        foreach ($values as $key => $value) {
             $this->checkKey(__METHOD__, $key);
+            $values[$this->parseKey($key)] = $value;
         }
 
         return $this->call(
@@ -150,6 +170,8 @@ class RedisPoolCache implements Cache
 
     public function expire(string $key, int $ttl): bool
     {
+        $key = $this->parseKey($key);
+
         return $this->call(
             __METHOD__,
             function(Redis $client) use ($key, $ttl) {
@@ -161,6 +183,8 @@ class RedisPoolCache implements Cache
 
     public function forget(string $key): bool
     {
+        $key = $this->parseKey($key);
+
         return $this->call(
             __METHOD__,
             function(Redis $client) use ($key) {
@@ -176,6 +200,8 @@ class RedisPoolCache implements Cache
             $this->checkKey(__METHOD__, $key);
         }
 
+        $keys = array_map([$this, 'parseKey'], $keys);
+
         return $this->call(
             __METHOD__,
             function(Redis $client) use ($keys) {
@@ -187,6 +213,8 @@ class RedisPoolCache implements Cache
 
     public function lock(string $key, int $ttl = null): bool
     {
+        $key = $this->parseKey($key);
+
         return $this->call(
             __METHOD__,
             function(Redis $client) use ($key, $ttl) {
@@ -207,6 +235,8 @@ class RedisPoolCache implements Cache
 
     public function hSet(string $key, string $memberKey, string $value, int $ttl = null): bool
     {
+        $key = $this->parseKey($key);
+
         return $this->call(
             __METHOD__,
             function(Redis $client) use ($key, $memberKey, $value, $ttl) {
@@ -230,6 +260,8 @@ class RedisPoolCache implements Cache
 
     public function hMSet(string $key, array $values, int $ttl = null): bool
     {
+        $key = $this->parseKey($key);
+
         foreach ($values as $valKey => $val) {
             $this->checkKey(__METHOD__, $valKey);
         }
@@ -254,10 +286,11 @@ class RedisPoolCache implements Cache
 
     public function hMGet(string $key, array $memberKeys): array
     {
-        foreach ($memberKeys as $key) {
-            $this->checkKey(__METHOD__, $key);
-        }
+        $key = $this->parseKey($key);
 
+        foreach ($memberKeys as $memberKey) {
+            $this->checkKey(__METHOD__, $memberKey);
+        }
 
         return $this->call(
             __METHOD__,
@@ -269,6 +302,8 @@ class RedisPoolCache implements Cache
 
     public function hGet(string $key, string $memberKey): ? string
     {
+        $key = $this->parseKey($key);
+
         return $this->call(
             __METHOD__,
             function(Redis $client) use ($key, $memberKey) {
@@ -280,6 +315,8 @@ class RedisPoolCache implements Cache
 
     public function hGetAll(string $key): array
     {
+        $key = $this->parseKey($key);
+
         return $this->call(
             __METHOD__,
             function(Redis $client) use ($key) {

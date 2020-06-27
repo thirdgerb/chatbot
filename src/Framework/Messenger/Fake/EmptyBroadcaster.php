@@ -11,6 +11,8 @@
 
 namespace Commune\Framework\MessengerFaker;
 
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Contracts\Messenger\Broadcaster;
 
@@ -18,24 +20,20 @@ use Commune\Contracts\Messenger\Broadcaster;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class FakeBroadcaster implements Broadcaster
+class EmptyBroadcaster implements Broadcaster
 {
-    /**
-     * @var callable[]
-     */
-    protected $listeners = [];
-
-    public function subscribe(
-        callable $callback,
-        string $shellId,
-        string $sessionId = null
+    public function publish(
+        GhostRequest $request,
+        GhostResponse $response,
+        array $routes
     ): void
     {
     }
 
-    public function publish(
+    public function subscribe(
+        callable $callback,
         string $shellId,
-        ShellOutputRequest $request
+        string $shellSessionId = null
     ): void
     {
     }

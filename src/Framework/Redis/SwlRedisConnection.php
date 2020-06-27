@@ -49,7 +49,7 @@ class SwlRedisConnection implements RedisConnection
      */
     public function get()
     {
-        if (!SwooleUtils::isAtCoroutine()) {
+        if (!SwooleUtils::isInCoroutine()) {
             throw new CommuneLogicException('swoole connection must be called in the coroutine');
         }
 

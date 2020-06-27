@@ -13,14 +13,26 @@ namespace Commune\Framework\Providers;
 
 use Commune\Contracts\Cache;
 use Commune\Container\ContainerContract;
+use Commune\Contracts\Redis\RedisPool;
 use Commune\Contracts\ServiceProvider;
 use Commune\Framework\Cache\RedisPoolCache;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $cachePrefix   缓存的默认前缀.
  */
 class CacheByRedisPoolProvider extends ServiceProvider
 {
+
+    public static function stub(): array
+    {
+        return [
+            'cachePrefix' => 'cmu:',
+        ];
+    }
+
+
     public function getDefaultScope(): string
     {
         // 如果使用连接池, 就可以作为进程级单例.
@@ -32,11 +44,6 @@ class CacheByRedisPoolProvider extends ServiceProvider
         return Cache::class;
     }
 
-    public static function stub(): array
-    {
-        return [
-        ];
-    }
 
     public function boot(ContainerContract $app): void
     {
@@ -46,7 +53,11 @@ class CacheByRedisPoolProvider extends ServiceProvider
     {
         $app->singleton(
             Cache::class,
-            RedisPoolCache::class
+            function(ContainerContract $app) {
+
+                $pool = $app->make(RedisPool::class);
+                return new RedisPoolCache($pool, $this->cachePrefix);
+            }
         );
     }
 

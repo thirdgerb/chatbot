@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\MessengerFaker;
+namespace Commune\Framework\MessageDB;
 
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\Utils\ArrayUtils;
@@ -20,7 +20,7 @@ use Commune\Contracts\Messenger\MessageDB;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ArrFakeMessageDB implements MessageDB
+class ArrMessageDB implements MessageDB
 {
     public static $maxMessages = 100;
 
@@ -45,6 +45,11 @@ class ArrFakeMessageDB implements MessageDB
         ArrayUtils::maxLength($this->messages, self::$maxMessages);
     }
 
+    public function fetchBatch(string $batchId): array
+    {
+        return $this->where()->batchIs($batchId)->get();
+    }
+
 
     public function fetch(callable $fetcher): array
     {
@@ -53,7 +58,7 @@ class ArrFakeMessageDB implements MessageDB
 
     public function where(): Condition
     {
-        return new ArrFakeCondition($this);
+        return new ArrCondition($this);
     }
 
     public function find(string $messageId): ? IntercomMsg
