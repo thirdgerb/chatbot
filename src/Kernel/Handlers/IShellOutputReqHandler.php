@@ -29,7 +29,8 @@ class IShellOutputReqHandler implements ShellOutputReqHandler
 {
 
     protected $middleware = [
-        ShellPipes\ShellGuardPipe::class,
+        ShellPipes\ShellTryCatchPipe::class,
+        ShellPipes\OutputAsyncFillMessagesPipe::class,
         ShellPipes\OutputRenderPipe::class,
     ];
 
@@ -55,10 +56,6 @@ class IShellOutputReqHandler implements ShellOutputReqHandler
                 AppResponse::BAD_REQUEST,
                 $invalid
             );
-        }
-
-        if ($request->isAsync()) {
-            $request = $this->fillOutputsInRequest($request);
         }
 
         $middleware = $this->middleware;

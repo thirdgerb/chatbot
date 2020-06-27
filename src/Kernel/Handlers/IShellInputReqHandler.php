@@ -38,7 +38,7 @@ class IShellInputReqHandler implements ShellInputReqHandler
 {
     protected $middleware = [
         // guard
-        ShellPipes\ShellGuardPipe::class,
+        ShellPipes\ShellTryCatchPipe::class,
         // api 管道
         ShellPipes\InputApiPipe::class,
         // command
@@ -102,7 +102,7 @@ class IShellInputReqHandler implements ShellInputReqHandler
         }
 
         // 处理响应逻辑.
-        $outputRequest = $this->wrapOutputRequest($ghostRes);
+        $outputRequest = $this->wrapOutputRequest($request, $ghostRes);
 
         /**
          * @var ShellOutputReqHandler $handler
@@ -170,7 +170,7 @@ class IShellInputReqHandler implements ShellInputReqHandler
             $response->getTraceId()
         );
 
-        $messenger->asyncSendGhostRequest($request);
+        $messenger->sendGhostRequest($request);
 
         return $this->emptyResponse($response);
     }
@@ -269,17 +269,25 @@ class IShellInputReqHandler implements ShellInputReqHandler
     }
 
     /**
+     * @param ShellInputRequest $request
      * @param GhostResponse $response
      * @return ShellOutputRequest
      */
-    protected function wrapOutputRequest(GhostResponse $response) : ShellOutputRequest
+    protected function wrapOutputRequest(
+        ShellInputRequest $request,
+        GhostResponse $response
+    ) : ShellOutputRequest
     {
+        $input = $request->getInput();
+
         return IShellOutputRequest::instance(
             false,
             $response->getSessionId(),
             $response->getTraceId(),
             $response->getBatchId(),
-            $response->getOutputs()
+            $response->getOutputs(),
+            $input->getCreatorId(),
+            $input->getCreatorName()
         );
     }
 

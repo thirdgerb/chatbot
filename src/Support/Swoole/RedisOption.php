@@ -22,6 +22,9 @@ use Commune\Support\Option\AbsOption;
  * @property-read string $auth
  * @property-read int $dbIndex
  * @property-read int $timeout
+ * @property-read float $readTimeout
+ * @property-read int $retryInterval
+ * @property-read string $reserved
  */
 class RedisOption extends AbsOption
 {
@@ -33,6 +36,9 @@ class RedisOption extends AbsOption
             'auth' => '',
             'dbIndex' => 0,
             'timeout' => 1,
+            'retryInterval' => 0,
+            'readTimeout' => 0.0,
+            'reserved' => '',
         ];
     }
 

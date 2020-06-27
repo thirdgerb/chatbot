@@ -10,17 +10,17 @@
  */
 
 namespace Commune\Kernel\ShellPipes;
-
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Contracts\Messenger\MessageDB;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ShellGuardPipe extends AShellPipe
+class OutputAsyncFillMessagesPipe extends AShellPipe
 {
     protected function handleInput(
         ShellInputRequest $request,
@@ -35,6 +35,23 @@ class ShellGuardPipe extends AShellPipe
         \Closure $next
     ): ShellOutputResponse
     {
+        if (!$request->isAsync()) {
+            return $next($request);
+        }
+
+        $outputs = $request->getOutputs();
+        if (!empty($outputs)) {
+            return $next($request);
+        }
+
+        /**
+         * @var MessageDB $messageDB
+         */
+        $messageDB = $this->session->container->make(MessageDB::class);
+
+        $outputs = $messageDB->fetchBatch($request->getBatchId());
+        $request->setOutputs($outputs);
+
         return $next($request);
     }
 

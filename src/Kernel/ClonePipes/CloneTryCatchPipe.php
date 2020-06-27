@@ -26,7 +26,7 @@ use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class CloneGuardPipe extends AClonePipe
+class CloneTryCatchPipe extends AClonePipe
 {
     /**
      * @var string[]

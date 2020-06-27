@@ -36,7 +36,7 @@ class IGhostRequestHandler implements GhostRequestHandler
      */
     protected $middleware = [
         // 请求异常管理
-        ClonePipes\CloneGuardPipe::class,
+        ClonePipes\CloneTryCatchPipe::class,
 
         /*  可能直接中断的情况 */
 

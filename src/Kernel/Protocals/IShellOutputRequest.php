@@ -27,6 +27,9 @@ use Commune\Support\Utils\StringUtils;
  * @property-read bool $async
  *
  * @property-read IntercomMsg[] $outputs
+ *
+ * @property-read string $creatorId
+ * @property-read string $creatorName
  */
 class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
 {
@@ -37,12 +40,16 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
      * @param string $sessionId
      * @param string $traceId
      * @param string $batchId
+     * @param string $creatorId
+     * @param string $creatorName
      * @return IShellOutputRequest
      */
     public static function asyncInstance(
         string $sessionId,
         string $traceId,
-        string $batchId
+        string $batchId,
+        string $creatorId,
+        string $creatorName
     ) : self
     {
         return static::instance(
@@ -50,7 +57,9 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
             $sessionId,
             $traceId,
             $batchId,
-            []
+            [],
+            $creatorId,
+            $creatorName
         );
     }
 
@@ -62,6 +71,8 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
      * @param string $traceId
      * @param string $batchId
      * @param array $outputs
+     * @param string $creatorId
+     * @param string $creatorName
      * @return IShellOutputRequest
      */
     public static function instance(
@@ -69,7 +80,9 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
         string $sessionId,
         string $traceId,
         string $batchId,
-        array $outputs = []
+        array $outputs = [],
+        string $creatorId = '',
+        string $creatorName = ''
     ) : self
     {
         return new static([
@@ -78,6 +91,8 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
             'batchId' => $batchId,
             'async' => $async,
             'outputs' => $outputs,
+            'creatorId' => $creatorId,
+            'creatorName' => $creatorName
         ]);
     }
 
@@ -89,6 +104,8 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
             'batchId' => '',
             'async' => false,
             'outputs' => [],
+            'creatorId' => '',
+            'creatorName' => ''
         ];
     }
 
@@ -164,6 +181,16 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
             $this->batchId,
             $this->traceId
         );
+    }
+
+    public function getCreatorId(): string
+    {
+        return $this->creatorId;
+    }
+
+    public function getCreatorName(): string
+    {
+        return $this->creatorName;
     }
 
 

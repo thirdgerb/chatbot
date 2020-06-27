@@ -42,6 +42,10 @@ interface ShellOutputRequest extends AppRequest
      */
     public function setOutputs(array $messages) : void;
 
+    public function getCreatorId() : string;
+
+    public function getCreatorName() : string;
+
     /**
      * @param int $errcode
      * @param string $errmsg

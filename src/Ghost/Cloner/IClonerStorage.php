@@ -37,7 +37,7 @@ class IClonerStorage extends ASessionStorage implements ClonerStorage
 
     public function getSessionKey(string $appId, string $sessionId): string
     {
-        return "ghost:$appId:id:$sessionId:storage";
+        return "clone:$appId:id:$sessionId:storage";
     }
 
     public function isStateless(): bool

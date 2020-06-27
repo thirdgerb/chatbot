@@ -36,10 +36,11 @@ class SwlRedisPool implements RedisPool
     /**
      * SwlRedisPool constructor.
      * @param RedisConfig $config
+     * @param int $size
      */
-    public function __construct(RedisConfig $config)
+    public function __construct(RedisConfig $config, int $size)
     {
-        $this->pool = new SwooleRedisPool($config);
+        $this->pool = new SwooleRedisPool($config, $size);
     }
 
     public function get(): RedisConnection

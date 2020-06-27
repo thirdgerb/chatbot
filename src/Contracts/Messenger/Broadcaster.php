@@ -44,7 +44,10 @@ interface Broadcaster
     ) : void;
 
     /**
-     * @param callable $callback        传入参数, ShellOutputRequest
+     * @param callable $callback
+     *
+     * 传入参数 (string $chan, ShellOutputRequest $request)
+     *
      * @param string $shellId
      * @param string|null $shellSessionId
      */

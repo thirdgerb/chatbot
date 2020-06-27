@@ -48,6 +48,9 @@ return new IHostConfig([
         // 假的消息发送器.
         // Framework\Providers\MessengerFakeByArrProvider::class,
 
+        // 基于 redis 连接池实现的消息广播
+        Framework\Providers\BroadcasterBySwlRedisProvider::class,
+
 
         /* req services */
 

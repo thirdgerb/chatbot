@@ -13,7 +13,6 @@ namespace Commune\Framework\MessengerFaker;
 
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Contracts\Messenger\Broadcaster;
 
 

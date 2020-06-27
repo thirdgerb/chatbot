@@ -32,6 +32,7 @@ class StdioSinglePlatformConfig extends IPlatformConfig
             'providers' => [
                 // 用数组来做缓存.
                 Providers\CacheByArrProvider::class,
+                Providers\MessengerFakeByArrProvider::class,
             ],
             'options' => [
             ],

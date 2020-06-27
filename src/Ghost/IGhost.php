@@ -27,7 +27,6 @@ use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
-use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
 use Commune\Kernel\Protocals\IGhostResponse;
@@ -89,7 +88,7 @@ class IGhost extends AbsAppKernel implements Ghost
 
     public function getId(): string
     {
-        return 'ghost-' . $this->config->id;
+        return $this->config->id;
     }
 
     protected function basicBindings(): void

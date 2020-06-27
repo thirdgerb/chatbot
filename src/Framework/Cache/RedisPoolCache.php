@@ -37,6 +37,9 @@ class RedisPoolCache implements Cache
      */
     protected $psr16;
 
+    /**
+     * @var string
+     */
     protected $prefix;
 
     /**
@@ -76,7 +79,7 @@ class RedisPoolCache implements Cache
 
     public function has(string $key): bool
     {
-        $this->parseKey($key);
+        $key = $this->parseKey($key);
 
         return $this->call(
             __METHOD__,
@@ -89,7 +92,7 @@ class RedisPoolCache implements Cache
 
     public function get(string $key): ? string
     {
-        $this->parseKey($key);
+        $key = $this->parseKey($key);
 
         return $this->call(
             __METHOD__,

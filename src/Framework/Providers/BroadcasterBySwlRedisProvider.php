@@ -12,21 +12,23 @@
 namespace Commune\Framework\Providers;
 
 use Commune\Container\ContainerContract;
-use Commune\Contracts\Redis\RedisPool;
+use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Contracts\ServiceProvider;
-use Commune\Framework\Redis\SwlRedisPool;
+use Commune\Framework\Messenger\Broadcaster\SwlRedisBroadcaster;
 use Commune\Support\Swoole\RedisOption;
-use Swoole\ConnectionPool;
-use Swoole\Database\RedisConfig;
+use Psr\Log\LoggerInterface;
+use Swoole\Database\RedisPool as SwooleRedisPool;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read int $size
+ * @property-read string[] $listeningShells
+ * @property-read int $publishPoolSize
+ * @property-read int $subscribePoolSize
  * @property-read RedisOption $option
  */
-class RedisPoolBySwooleProvider extends ServiceProvider
+class BroadcasterBySwlRedisProvider extends ServiceProvider
 {
     public function getDefaultScope(): string
     {
@@ -36,7 +38,9 @@ class RedisPoolBySwooleProvider extends ServiceProvider
     public static function stub(): array
     {
         return [
-            'size' => ConnectionPool::DEFAULT_SIZE,
+            'listeningShells' => [],
+            'publishPoolSize' => SwooleRedisPool::DEFAULT_SIZE,
+            'subscribePoolSize' => 2,
             'option' => [
                 'host' => '127.0.0.1',
                 'port' => 6379,
@@ -47,6 +51,7 @@ class RedisPoolBySwooleProvider extends ServiceProvider
                 'readTimeout' => 0.0,
                 'reserved' => '',
             ],
+
         ];
     }
 
@@ -57,23 +62,17 @@ class RedisPoolBySwooleProvider extends ServiceProvider
     public function register(ContainerContract $app): void
     {
         $app->singleton(
-            RedisPool::class,
+            Broadcaster::class,
             function(ContainerContract $app) {
 
-                $option = $this->option;
-                $config = new RedisConfig();
-                $config = $config
-                    ->withHost($option->host)
-                    ->withPort($option->port)
-                    ->withAuth($option->auth)
-                    ->withDbIndex($option->dbIndex)
-                    ->withTimeout($option->timeout)
-                    ->withReadTimeout($option->readTimeout)
-                    ->withRetryInterval($option->retryInterval)
-                    ->withReserved($option->reserved);
-
-
-                return new SwlRedisPool($config, $this->size);
+                $logger = $app->make(LoggerInterface::class);
+                return new SwlRedisBroadcaster(
+                    $this->option,
+                    $logger,
+                    $this->listeningShells,
+                    $this->publishPoolSize,
+                    $this->subscribePoolSize
+                );
             }
         );
     }
@@ -81,7 +80,7 @@ class RedisPoolBySwooleProvider extends ServiceProvider
     public static function relations(): array
     {
         return [
-            'option' => RedisOption::class  
+            'option' => RedisOption::class,
         ];
     }
 
