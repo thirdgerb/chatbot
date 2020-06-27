@@ -23,7 +23,7 @@ return new Platform\Ghost\TcpCoGhostPlatformConfig([
                 'host' => '127.0.0.1',
                 'port' => '9501',
                 'ssl' => false,
-                'serverOption' => [
+                'serverSettings' => [
                 ],
             ],
             /**

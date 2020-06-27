@@ -11,22 +11,24 @@
 
 namespace Commune\Platform\Ghost\Tcp;
 
-use Commune\Support\Swoole\SwooleUtils;
+use Commune\Kernel\Protocals\LogContext;
+use Swoole;
 use Swoole\Coroutine;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Host;
 use Psr\Log\LoggerInterface;
 use Commune\Platform\AbsPlatform;
 use Commune\Blueprint\Platform;
+use Commune\Support\Swoole\SwooleUtils;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Contracts\Messenger\GhostMessenger;
-use Commune\Kernel\Protocals\IGhostRequest;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
 use Commune\Platform\Libs\SwlCo\ProcPoolFactory;
 use Commune\Platform\Libs\SwlCo\TcpAdapterOption;
 use Commune\Platform\Libs\SwlCo\TcpPlatformServeTrait;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+
 
 
 /**
@@ -89,6 +91,7 @@ class SwlCoGhostPlatform extends AbsPlatform
 
     public function serve(): void
     {
+        Swoole\Runtime::enableCoroutine();
         $pool = $this->poolFactory->getPool();
 
         $pool->on('workerStart', function ($pool, $id) {
@@ -98,6 +101,7 @@ class SwlCoGhostPlatform extends AbsPlatform
             //接收到新的连接请求 并自动创建一个协程
             $server->handle([$this, 'receive']);
 
+            // 使用一个协程来处理异步的消息.
             Coroutine::create([$this, 'receiveAsync']);
 
             //开始监听端口
@@ -136,7 +140,7 @@ class SwlCoGhostPlatform extends AbsPlatform
                     // 记录日志.
                     $logger->info(
                         'handled async ghost request',
-                        IGhostRequest::toLogContext($request)
+                        LogContext::requestToContext($request)
                     );
 
                     unset($request, $response);
@@ -151,11 +155,12 @@ class SwlCoGhostPlatform extends AbsPlatform
         }
     }
 
-    protected function handleRequest(Platform\Adapter $adapter, AppRequest $request): void
+    protected function handleRequest(Platform\Adapter $adapter, AppRequest $request, string $interface = null): void
     {
+        $interface = $interface ?? GhostRequestHandler::class;
         $response = $this
             ->ghost
-            ->handleRequest($request, GhostRequestHandler::class);
+            ->handleRequest($request, $interface);
 
         $adapter->sendResponse($response);
 

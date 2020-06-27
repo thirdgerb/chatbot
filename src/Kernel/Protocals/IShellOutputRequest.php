@@ -193,6 +193,11 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
         return $this->creatorName;
     }
 
+    public function hasOutputs(): bool
+    {
+        return count($this->outputs) > 0;
+    }
+
 
     public function getProtocalId(): string
     {

@@ -11,9 +11,7 @@
 
 namespace Commune\Framework\Command;
 
-use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Blueprint\Kernel\Protocals\HasInput;
-use Commune\Blueprint\Kernel\Protocals\InputRequest;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Psr\Log\LoggerInterface;
@@ -65,7 +63,7 @@ trait TRequestCmdPipe
     public function tryHandleCommand(AppRequest $request, \Closure $next) : AppResponse
     {
 
-        if (!$request instanceof InputRequest) {
+        if (!$request instanceof HasInput) {
             return $next($request);
         }
 

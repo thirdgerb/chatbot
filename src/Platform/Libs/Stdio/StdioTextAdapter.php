@@ -17,7 +17,7 @@ use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 use Commune\Blueprint\Platform\Adapter;
 use Commune\Framework\Log\IConsoleLogger;
-use Commune\Kernel\Protocals\IShellInputRequest;
+use Commune\Kernel\Protocals\IShellInputRequestRequest;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\HostMsg\DefaultIntents;
@@ -76,12 +76,12 @@ class StdioTextAdapter implements Adapter
 
         $inputMsg = IInputMsg::instance(
             $message,
-            md5($this->packer->creatorId),
+            md5($this->appId . ':' . $this->packer->creatorId),
             $this->packer->creatorId,
             $this->packer->creatorName
         );
 
-        $request = IShellInputRequest::instance(
+        $request = IShellInputRequestRequest::instance(
             false,
             $inputMsg
         );

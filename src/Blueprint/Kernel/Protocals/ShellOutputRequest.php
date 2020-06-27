@@ -16,7 +16,7 @@ use Commune\Protocals\IntercomMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellOutputRequest extends AppRequest
+interface ShellOutputRequest extends AppRequest, HasOutputs
 {
     /**
      * 是否是异步请求.

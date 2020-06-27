@@ -13,11 +13,6 @@ return new Platform\Shell\TcpSyncShellPlatformConfig([
     'bootGhost' => false,
 
     'providers' => [
-        Providers\ShlMessengerBySwlCoTcpProvider::class => [
-            'ghostHost' => '127.0.0.1',
-            'ghostPort' => '9501',
-        ],
-
     ],
     'options' => [
         Tcp\SwlCoShellOption::class => [
@@ -26,7 +21,7 @@ return new Platform\Shell\TcpSyncShellPlatformConfig([
                 'host' => '127.0.0.1',
                 'port' => '9502',
                 'ssl' => false,
-                'serverOption' => [
+                'serverSettings' => [
                 ],
             ],
             /**

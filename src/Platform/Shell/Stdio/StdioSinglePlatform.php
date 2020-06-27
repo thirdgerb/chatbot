@@ -62,8 +62,10 @@ class StdioSinglePlatform extends AbsPlatform
         $this->stdio = new Stdio($this->loop);
     }
 
-    protected function handleRequest(Platform\Adapter $adapter, AppRequest $request): void
+    protected function handleRequest(Platform\Adapter $adapter, AppRequest $request, string $interface = null): void
     {
+        $interface = $interface ?? ShellInputReqHandler::class;
+
         $response = $this->shell->handleRequest(
             $request,
             ShellInputReqHandler::class

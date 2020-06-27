@@ -16,7 +16,7 @@ use Commune\Protocals\IntercomMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellOutputResponse extends AppResponse
+interface ShellOutputResponse extends AppResponse, HasOutputs
 {
 
     /**

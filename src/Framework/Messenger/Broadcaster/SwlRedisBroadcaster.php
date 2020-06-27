@@ -11,6 +11,7 @@
 
 namespace Commune\Framework\Messenger\Broadcaster;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Contracts\Redis\RedisPool;
 use Commune\Framework\Redis\SwlRedisPool;
 use Commune\Support\Swoole\RedisOption;
@@ -124,8 +125,15 @@ class SwlRedisBroadcaster extends AbsBroadcaster
             $client = $connection->get();
 
             $chan = static::makeChannel($shellId, $shellSessionId);
+
+            var_dump('pub', $chan, $publish);
+
             $client->publish($chan, $publish);
             $connection->release();
+
+            if (CommuneEnv::isDebug()) {
+                $this->logger->debug(__METHOD__ . " publish $chan $publish");
+            }
 
         } catch (\Throwable $e) {
             isset($client) and $client->close();
@@ -145,6 +153,7 @@ class SwlRedisBroadcaster extends AbsBroadcaster
     ): void
     {
         $chan = static::makeChannel($shellId, $shellSessionId ?? '*');
+        var_dump($chan);
 
         while (true) {
             try {

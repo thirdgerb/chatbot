@@ -33,7 +33,7 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string $entry
  * @property-read Comprehension $comprehension
  */
-class IShellInputRequest extends AbsMessage implements ShellInputRequest
+class IShellInputRequestRequest extends AbsMessage implements ShellInputRequest
 {
     public static function instance(
         bool $async,

@@ -98,7 +98,7 @@ class ProcPoolFactory
         $pool = new Process\Pool($option->workerNum);
 
         // 设置 Server 的配置.
-        $serverOption = $option->serverOption;
+        $serverOption = $option->serverSettings;
 
         // 必须允许协程.
         $serverOption['enable_coroutine'] = true;

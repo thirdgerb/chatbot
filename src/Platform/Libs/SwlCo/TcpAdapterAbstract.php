@@ -64,9 +64,9 @@ abstract class TcpAdapterAbstract implements Adapter
 
     /**
      * @param string $input
-     * @return mixed|string|AppResponse
+     * @return null|AppRequest
      */
-    abstract protected function unserialize(string $input);
+    abstract protected function unserialize(string $input) : ? AppRequest;
 
     abstract protected function serialize($response) : string;
 
@@ -74,8 +74,7 @@ abstract class TcpAdapterAbstract implements Adapter
     {
         $un = $this->unserialize($input);
 
-        if (is_string($un)) {
-            $this->error = $un;
+        if (isset($this->error)) {
             return;
         }
 

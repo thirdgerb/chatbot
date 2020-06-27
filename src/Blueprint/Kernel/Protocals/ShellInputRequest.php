@@ -17,7 +17,7 @@ use Commune\Protocals\HostMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ShellInputRequest extends AppRequest, InputRequest
+interface ShellInputRequest extends AppRequest, HasInput
 {
     /**
      * @return bool

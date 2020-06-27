@@ -11,10 +11,11 @@
 
 namespace Commune\Platform\Shell\Tcp;
 
+use Swoole;
+use Swoole\Coroutine;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Host;
 use Psr\Log\LoggerInterface;
-use Swoole\Coroutine;
 use Commune\Blueprint\Shell;
 use Commune\Blueprint\Platform;
 use Commune\Platform\AbsPlatform;
@@ -86,6 +87,8 @@ class SwlCoShellPlatform extends AbsPlatform
 
     public function serve(): void
     {
+        Swoole\Runtime::enableCoroutine();
+
         $pool = $this->poolFactory->getPool();
 
         $pool->on('workerStart', function ($pool, $id) {
@@ -108,14 +111,15 @@ class SwlCoShellPlatform extends AbsPlatform
     }
 
 
-    protected function handleRequest(Platform\Adapter $adapter, AppRequest $request): void
+    protected function handleRequest(Platform\Adapter $adapter, AppRequest $request, string $interface = null): void
     {
+        $interface = $interface ?? ShellInputReqHandler::class;
         /**
          * @var ShellOutputResponse
          */
         $response = $this->shell->handleRequest(
             $request,
-            ShellInputReqHandler::class
+            $interface
         );
 
         // 发送响应.

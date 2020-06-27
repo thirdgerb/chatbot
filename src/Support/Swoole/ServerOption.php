@@ -13,22 +13,26 @@ namespace Commune\Support\Swoole;
 
 use Commune\Support\Option\AbsOption;
 
-
 /**
  * 协程进程池的配置.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * ## 进程配置
- *
- * @property-read int $workerNum          Worker 进程数
+
  *
  * ## Server 配置
  *
  * @property-read string $host
  * @property-read string $port
+ *
+ * ## Swoole 的服务端配置.
+ * @property-read array $serverSettings
+ * 具体配置项请查看: @see https://wiki.swoole.com/#/server/setting
+ *
+ * ## 从 ServerSettings 衍生出来的配置
+ *
+ * @property-read int $workerNum          Worker 进程数
  * @property-read bool $ssl
- * @property-read array $serverOption
  */
 class ServerOption extends AbsOption
 {
@@ -36,14 +40,31 @@ class ServerOption extends AbsOption
     public static function stub(): array
     {
         return [
-            'workerNum' => 2,
-
             'host' => '127.0.0.1',
             'port' => '9501',
-            'ssl' => false,
 
-            'serverOption' => [],
+            'serverSettings' => [
+                //'reactor_num' => 2,
+                //'worker_num' => 2,
+                //'max_request' => 100000,
+                //'max_conn' => 10000,
+                //'ssl_cert_file' => '',
+                //'ssl_key_file' => '',
+            ],
         ];
+    }
+
+    public function __get_workerNum() : int
+    {
+        $settings = $this->serverSettings;
+        return $settings['worker_num'] ?? 2;
+    }
+
+    public function __get_ssl() : bool
+    {
+        $settings = $this->serverSettings;
+        // 证书不为空.
+        return !empty($settings['ssl_cert_file']);
     }
 
     public static function relations(): array

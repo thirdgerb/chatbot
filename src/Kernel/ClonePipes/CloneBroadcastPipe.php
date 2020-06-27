@@ -101,43 +101,17 @@ class CloneBroadcastPipe extends AClonePipe
         }
 
         $routes = $this->cloner->storage->shellSessionRoutes;
-        $selfShellId = $request->getFromApp();
-
-        // 如果是同步消息, 则不广播.
-        unset($routes[$selfShellId]);
-        // 异步消息的话, 自己要获取.
-        if ($request->isAsync()) {
-            $routes[$selfShellId] = $request->getFromSession();
-        }
-
-        if (empty($broadcasting)) {
-            return;
-        }
 
         /**
          * @var Broadcaster $broadcaster
          */
         $broadcaster = $this->cloner->container->get(Broadcaster::class);
 
-        $traceId = $request->getTraceId();
-        $batchId = $request->getBatchId();
-
-        // 广播所有消息. 最好是协程.
-        foreach ($routes as $shellId => $sessionId) {
-            $broadcaster->publish(
-                $shellId,
-
-                // 使用一个空的响应, 携带 ID 来作为事件发送.
-                IShellOutputRequest::instance(
-                    true,
-                    $sessionId,
-                    $traceId,
-                    $batchId,
-                    []
-                )
-            );
-        }
-
+        $broadcaster->publish(
+            $request,
+            $response,
+            $routes
+        );
     }
 
 

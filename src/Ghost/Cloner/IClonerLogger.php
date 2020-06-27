@@ -17,7 +17,7 @@ use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Framework\Log\ContextLogger;
 use Commune\Framework\Spy\SpyAgency;
-use Commune\Kernel\Protocals\IGhostRequest;
+use Commune\Kernel\Protocals\LogContext;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -74,7 +74,7 @@ class IClonerLogger extends ContextLogger implements ClonerLogger
 
         if ($this->container->bound(GhostRequest::class)) {
             $request = $this->container->get(GhostRequest::class);
-            $context = IGhostRequest::toLogContext($request);
+            $context = LogContext::requestToContext($request);
         }
 
         return $context;

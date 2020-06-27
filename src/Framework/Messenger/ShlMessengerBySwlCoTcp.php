@@ -11,7 +11,7 @@
 
 namespace Commune\Framework\Messenger;
 
-use Commune\Kernel\Protocals\IGhostRequest;
+use Commune\Kernel\Protocals\LogContext;
 use Commune\Support\Babel\Babel;
 use Commune\Support\Swoole\ClientOption;
 use Commune\Support\Utils\TypeUtils;
@@ -103,7 +103,7 @@ class ShlMessengerBySwlCoTcp implements ShellMessenger
         } catch (\Exception $e) {
             $this->logger->error(
                 $e,
-                IGhostRequest::toLogContext($request)
+                LogContext::requestToContext($request)
             );
 
             return $this->fail($request, $e->getMessage());
@@ -137,7 +137,7 @@ class ShlMessengerBySwlCoTcp implements ShellMessenger
             __METHOD__
             . ' send request fail: '
             . $error,
-            IGhostRequest::toLogContext($request)
+            LogContext::requestToContext($request)
         );
 
         return IGhostResponse::instance(

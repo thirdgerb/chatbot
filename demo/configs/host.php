@@ -49,8 +49,15 @@ return new IHostConfig([
         // Framework\Providers\MessengerFakeByArrProvider::class,
 
         // 基于 redis 连接池实现的消息广播
-        Framework\Providers\BroadcasterBySwlRedisProvider::class,
+        Framework\Providers\BroadcasterBySwlRedisProvider::class => [
+            'listeningShells' => ['listener_shell'],
+        ],
 
+        // shell 向 Ghost 通信的工具.
+        Framework\Providers\ShlMessengerBySwlCoTcpProvider::class => [
+            'ghostHost' => '127.0.0.1',
+            'ghostPort' => '9501',
+        ],
 
         /* req services */
 
@@ -59,6 +66,8 @@ return new IHostConfig([
 
         // 用数组实现的缓存.
         // Framework\Providers\CacheByArrProvider::class,
+
+
     ],
 
     // ghost 的配置
@@ -84,14 +93,11 @@ return new IHostConfig([
         'sync_shell' => include __DIR__ . '/platforms/sync_shell.php',
 
         // 双工 Shell 端, 监听 9503 端口.
+        'duplex_shell' =>  include __DIR__ . '/platforms/duplex_shell.php',
 
-        // http 端, 监听 9504 端口.
+        // 模拟接受广播的 shell 端, 监听 9504 端口
+        'listener_shell' =>  include __DIR__ . '/platforms/listener_shell.php',
 
-        // websocket 端, 监听 9505 端口.
-
-        // Broadcaster 模拟广播端.
-
-        // MessageDB 模拟消息存储库.
     ],
 
 ]);

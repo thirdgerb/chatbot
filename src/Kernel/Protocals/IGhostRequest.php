@@ -226,17 +226,4 @@ class IGhostRequest extends AbsMessage implements GhostRequest
         return $this->input;
     }
 
-    /*-------- helpers --------*/
-
-    public static function toLogContext(GhostRequest $request) : array
-    {
-        return [
-            'traceId' => $request->getTraceId(),
-            'batchId' => $request->getBatchId(),
-            'sessionId' => $request->getSessionId(),
-            'fromApp' => $request->getFromApp(),
-            'fromSession' => $request->getFromSession(),
-        ];
-    }
-
 }

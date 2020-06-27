@@ -97,6 +97,11 @@ class IShellOutputResponse extends AbsMessage implements ShellOutputResponse
     }
 
     /*------ request ------*/
+    public function hasOutputs(): bool
+    {
+        return count($this->outputs) > 0;
+    }
+
 
     public function getOutputs(): array
     {

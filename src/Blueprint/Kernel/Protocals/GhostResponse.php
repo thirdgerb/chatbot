@@ -16,7 +16,7 @@ use Commune\Protocals\Intercom\OutputMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhostResponse extends AppResponse
+interface GhostResponse extends AppResponse, HasOutputs
 {
 
     /**

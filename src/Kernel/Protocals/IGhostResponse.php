@@ -143,6 +143,12 @@ class IGhostResponse extends AbsMessage implements GhostResponse
         $this->__set_outputs('outputs', $buffer);
     }
 
+    public function hasOutputs(): bool
+    {
+        return count($this->outputs) > 0;
+    }
+
+
     /*-------- protocal --------*/
 
     public function getProtocalId(): string

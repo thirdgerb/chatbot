@@ -17,7 +17,7 @@ use Commune\Protocals\Intercom\InputMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface InputRequest
+interface HasInput
 {
 
     /**

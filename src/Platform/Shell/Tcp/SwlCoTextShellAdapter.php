@@ -11,13 +11,15 @@
 
 namespace Commune\Platform\Shell\Tcp;
 
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 use Commune\Framework\Log\IConsoleLogger;
-use Commune\Kernel\Protocals\IShellInputRequest;
+use Commune\Kernel\Protocals\IShellInputRequestRequest;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
+use Commune\Platform\Libs\Parser\AppResponseParser;
 use Commune\Platform\Libs\SwlCo\TcpAdapterAbstract;
 use Commune\Protocals\HostMsg\DefaultIntents;
 use Commune\Protocals\HostMsg\IntentMsg;
@@ -43,7 +45,7 @@ class SwlCoTextShellAdapter extends TcpAdapterAbstract
         return ShellOutputResponse::class;
     }
 
-    protected function unserialize(string $input)
+    protected function unserialize(string $input) : ? AppRequest
     {
         $input = trim($input);
         $message = IText::instance($input);
@@ -52,10 +54,11 @@ class SwlCoTextShellAdapter extends TcpAdapterAbstract
         $info = $socket->getpeername();
 
         if (!is_array($info) || empty($info)) {
-            return 'invalid socket connection peer name';
+            $this->error =  'invalid socket connection peer name';
+            return null;
         }
 
-        $sessionId = md5(json_encode($info));
+        $sessionId = md5($this->appId . ':' . json_encode($info));
 
         $inputMsg = IInputMsg::instance(
             $message,
@@ -63,7 +66,7 @@ class SwlCoTextShellAdapter extends TcpAdapterAbstract
             $creatorId = $sessionId
         );
 
-        $request = IShellInputRequest::instance(
+        $request = IShellInputRequestRequest::instance(
             false,
             $inputMsg
         );
@@ -77,38 +80,7 @@ class SwlCoTextShellAdapter extends TcpAdapterAbstract
      */
     protected function serialize($response): string
     {
-        $outputStr = '';
-        $code = $response->getErrcode();
-        if ($code !== AppResponse::SUCCESS) {
-            $errmsg = $response->getErrmsg();
-            $outputStr .= IConsoleLogger::wrapMessage(
-                LogLevel::CRITICAL,
-                "request failed, code $code, msg $errmsg \n\n"
-            );
-        }
-
-        $outputs = $response->getOutputs();
-
-        foreach ($outputs as $output) {
-            $message = $output->getMessage();
-            $text = $message->getText();
-            $level = $message->getLevel();
-
-            $outputStr .= IConsoleLogger::wrapMessage(
-                $level,
-                $text
-            );
-
-            $outputStr .= "\n\n";
-
-            if ($message instanceof IntentMsg
-                && $message->getProtocalId() === DefaultIntents::SYSTEM_SESSION_QUIT
-            ) {
-                $this->shouldClose = true;
-            }
-        }
-
-        return $outputStr;
+        return AppResponseParser::outputsToString($response);
     }
 
     protected function checkWouldClose(AppResponse $response): void

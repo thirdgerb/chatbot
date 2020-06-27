@@ -12,6 +12,7 @@
 namespace Commune\Platform\Ghost\Tcp;
 
 use Commune\Blueprint\Exceptions\CommuneLogicException;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
@@ -25,9 +26,17 @@ use Commune\Support\Utils\TypeUtils;
  */
 class SwlCoBabelGhostAdapter extends TcpAdapterAbstract
 {
-    protected function unserialize(string $input)
+    protected function unserialize(string $input) : ? AppRequest
     {
-        return Babel::unserialize($input);
+        $un = Babel::unserialize($input);
+        if ($un instanceof AppRequest) {
+            return $un;
+        }
+
+        $type = TypeUtils::getType($un);
+
+        $this->error = "babel unserialize expect AppRequest, $type given";
+        return null;
     }
 
     protected function getRequestInterface(): string

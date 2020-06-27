@@ -59,10 +59,16 @@ abstract class AbsPlatform implements Platform
 
     /**
      * 响应请求.
+     *
      * @param Platform\Adapter $adapter
      * @param AppRequest $request
+     * @param string|null $interface
      */
-    abstract protected function handleRequest(Platform\Adapter $adapter, AppRequest $request) : void;
+    abstract protected function handleRequest(
+        Platform\Adapter $adapter,
+        AppRequest $request,
+        string $interface = null
+    ) : void;
 
     /**
      * @return ProcContainer
@@ -82,7 +88,11 @@ abstract class AbsPlatform implements Platform
     }
 
 
-    public function onPacker(Platform\Packer $packer, string $adapterName) : bool
+    public function onPacker(
+        Platform\Packer $packer,
+        string $adapterName,
+        string $interface = null
+    ) : bool
     {
         try {
             // 检查数据包是否合法.
@@ -103,7 +113,7 @@ abstract class AbsPlatform implements Platform
 
             $request = $adapter->getRequest();
 
-            $this->handleRequest($adapter, $request);
+            $this->handleRequest($adapter, $request, $interface);
             $adapter->destroy();
 
             return $this->donePacker($packer);

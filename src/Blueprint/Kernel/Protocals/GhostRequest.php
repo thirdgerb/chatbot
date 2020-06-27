@@ -16,7 +16,7 @@ use Commune\Protocals\HostMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface GhostRequest extends AppRequest, InputRequest
+interface GhostRequest extends AppRequest, HasInput
 {
 
     /**

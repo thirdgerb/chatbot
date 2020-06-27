@@ -11,14 +11,14 @@
 
 namespace Commune\Framework\Messenger;
 
-use Commune\Blueprint\Exceptions\CommuneLogicException;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Kernel\Protocals\IGhostRequest;
-use Commune\Support\Utils\TypeUtils;
-use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Commune\Contracts\Messenger\GhostMessenger;
+use Commune\Blueprint\Exceptions\CommuneLogicException;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Kernel\Protocals\LogContext;
+use Commune\Support\Utils\TypeUtils;
+use Psr\Log\LoggerInterface;
 
 
 /**
@@ -100,7 +100,7 @@ class GhtMessengerBySwlChan implements GhostMessenger
                 $this->logger->error(
                     __METHOD__
                     . ' send async request fail',
-                    IGhostRequest::toLogContext($request)
+                    LogContext::requestToContext($request)
                 );
             }
         }
@@ -126,7 +126,7 @@ class GhtMessengerBySwlChan implements GhostMessenger
             $this->logger->error(
                 __METHOD__
                 . ' only accept async request',
-                IGhostRequest::toLogContext($data)
+                LogContext::requestToContext($data)
             );
 
             return null;

@@ -14,46 +14,34 @@ namespace Commune\Platform\Shell;
 use Commune\Platform\IPlatformConfig;
 use Commune\Platform\Shell\Tcp;
 use Commune\Support\Utils\TypeUtils;
-use Commune\Framework\Providers\ShlMessengerBySwlCoTcpProvider;
 
 
 /**
+ * 接受所有消息广播的 shell
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class TcpSyncShellPlatformConfig extends IPlatformConfig
+class TcpBroadcastShellPlatformConfig extends IPlatformConfig
 {
 
     public static function stub(): array
     {
         return [
             'id' => '',
-            'concrete' => Tcp\SwlCoShellPlatform::class,
+            'concrete' => Tcp\SwlAsyncShellPlatform::class,
             'bootShell' => null,
-            'bootGhost' => true,
+            'bootGhost' => false,
             'providers' => [
-                ShlMessengerBySwlCoTcpProvider::class => [
-                    'host' => '127.0.0.1',
-                    'port' => '9501',
-                ],
+
             ],
             'options' => [
-                Tcp\SwlCoShellOption::class => [
-                    'poolOption' => [
-                        'workerNum' => 2,
+                Tcp\SwlAsyncShellOption::class => [
+                    'adapterName' => Tcp\SwlAsyncBroadcastAdapter::class,
+                    'tableSize' => 10000,
+                    'serverOption' => [
                         'host' => '127.0.0.1',
-                        'port' => '9502',
-                        'ssl' => false,
-                        'serverSettings' => [
-                        ],
+                        'port' => '9504',
                     ],
-                    /**
-                     * @see TcpAdapterOption
-                     */
-                    'adapterOption' => [
-                        'tcpAdapter' => Tcp\SwlCoTextShellAdapter::class,
-                        'receiveTimeout' => 0
-                    ],
-
                 ],
             ],
         ];
