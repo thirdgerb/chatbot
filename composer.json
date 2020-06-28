@@ -7,7 +7,7 @@
         "chatbot",
         "commune"
     ],
-    "description": "chatbot framework, program complex multi-turn conversation chatbot",
+    "description": "chatbot framework, to create complex multi-turn conversation chatbot on isomerism platforms",
     "license": "MIT",
     "authors": [
         {
