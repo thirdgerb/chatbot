@@ -142,6 +142,8 @@ class IHost extends AbsApp implements Host
             $this->fail();
         }
 
+        $id = $platformConfig->id;
+        $this->getConsoleLogger()->info("serve platform [$id]");
         // 启动服务
         $platform->serve();
     }
@@ -251,15 +253,27 @@ class IHost extends AbsApp implements Host
     protected function doActivate(): void
     {
         parent::doActivate();
+        $id = $this->getId();
+        $lines = ["activated Host [$id]"];
 
         $container = $this->getProcContainer();
 
         if (isset($this->ghostConfig)) {
-            $container->get(Ghost::class)->activate();
+            $ghost = $container->get(Ghost::class);
+            $ghost->activate();
+            $id = $ghost->getId();
+            $lines[] = "activated ghost [$id]";
         }
 
         if (isset($this->shellConfig)) {
-            $container->get(Shell::class)->activate();
+            $shell = $container->get(Shell::class);
+            $shell->activate();
+            $id = $shell->getId();
+            $lines[] = "activated shell [$id]";
+        }
+
+        foreach ($lines as $line) {
+            $this->getConsoleLogger()->info($line);
         }
     }
 

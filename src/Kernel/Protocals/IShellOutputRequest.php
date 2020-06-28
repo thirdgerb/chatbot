@@ -48,8 +48,8 @@ class IShellOutputRequest extends AbsMessage implements ShellOutputRequest
         string $sessionId,
         string $traceId,
         string $batchId,
-        string $creatorId,
-        string $creatorName
+        string $creatorId = '',
+        string $creatorName = ''
     ) : self
     {
         return static::instance(

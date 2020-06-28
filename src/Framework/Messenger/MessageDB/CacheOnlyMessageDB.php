@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Framework\Messenger\MessageDB;
+
 use Commune\Contracts\Messenger\Condition;
 use Commune\Protocals\IntercomMsg;
 
@@ -19,6 +20,7 @@ use Commune\Protocals\IntercomMsg;
  */
 class CacheOnlyMessageDB extends AbsMessageDB
 {
+
     public function saveBatchMessages(
         string $traceId,
         string $fromApp,

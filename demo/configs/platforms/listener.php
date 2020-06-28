@@ -5,16 +5,16 @@ use Commune\Platform\Shell;
 use Commune\Platform\Shell\Tcp;
 
 return new Shell\TcpBroadcastShellPlatformConfig([
-     'id' => 'listener_shell',
-     'concrete' => Tcp\SwlAsyncShellPlatform::class,
-     'bootShell' => 'demo_shell',
+     'id' => 'listener',
+     'concrete' => Tcp\SwlBroadcastShellPlatform::class,
+     'bootShell' => 'listener_shell',
      'bootGhost' => false,
      'providers' => [
 
      ],
      'options' => [
-         Tcp\SwlAsyncShellOption::class => [
-             'adapterName' => Tcp\SwlAsyncBroadcastAdapter::class,
+         Tcp\SwlDuplexShellOption::class => [
+             'adapterName' => Tcp\SwlBroadcastAdapter::class,
              'tableSize' => 10000,
              'serverOption' => [
                  'host' => '127.0.0.1',

@@ -26,7 +26,7 @@ use Commune\Support\Swoole\ServerOption;
  * @property-read ServerOption $serverOption
  *
  */
-class SwlAsyncShellOption extends AbsOption
+class SwlDuplexShellOption extends AbsOption
 {
     public static function stub(): array
     {

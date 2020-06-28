@@ -76,27 +76,45 @@ return new IHostConfig([
 
     // shell 的配置
     'shells' => [
-        // demo shell
-        'demo_shell' => include __DIR__ . '/shells/demo_shell.php',
+
+        'stdio_shell' => new \Commune\Host\Prototype\ShellProtoConfig([
+            'id' => 'stdio_shell',
+            'name' => 'stdio_shell',
+        ]),
+
+        'sync_shell' => new \Commune\Host\Prototype\ShellProtoConfig([
+            'id' => 'sync_shell',
+            'name' => 'sync_shell',
+        ]),
+
+        'duplex_shell' => new \Commune\Host\Prototype\ShellProtoConfig([
+            'id' => 'duplex_shell',
+            'name' => 'duplex_shell',
+        ]),
+
+        'listener_shell' => new \Commune\Host\Prototype\ShellProtoConfig([
+            'id' => 'listener_shell',
+            'name' => 'listener_shell',
+        ]),
     ],
 
     // 平台的配置.
     'platforms' => [
 
         // 基于 Stdio 实现的单点对话机器人.
-        'stdio_shell' => include __DIR__ . '/platforms/stdio_shell.php',
+        'stdio' => include __DIR__ . '/platforms/stdio.php',
 
         // ghost 端, 监听 9501 端口
         'ghost' => include __DIR__ . '/platforms/ghost.php',
 
         // 同步 shell 端, 监听 9502 端口.
-        'sync_shell' => include __DIR__ . '/platforms/sync_shell.php',
+        'sync' => include __DIR__ . '/platforms/sync.php',
 
         // 双工 Shell 端, 监听 9503 端口.
-        'duplex_shell' =>  include __DIR__ . '/platforms/duplex_shell.php',
+        'duplex' =>  include __DIR__ . '/platforms/duplex.php',
 
         // 模拟接受广播的 shell 端, 监听 9504 端口
-        'listener_shell' =>  include __DIR__ . '/platforms/listener_shell.php',
+        'listener' =>  include __DIR__ . '/platforms/listener.php',
 
     ],
 

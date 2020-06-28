@@ -71,7 +71,6 @@ abstract class AbsBroadcaster implements Broadcaster
         // 如果是同步消息, 则不广播.
         unset($routes[$selfShellId]);
 
-        var_dump($routes);
         // 异步消息的话, 自己也要广播.
         if ($request->isAsync()) {
             $routes[$selfShellId] = $request->getFromSession();

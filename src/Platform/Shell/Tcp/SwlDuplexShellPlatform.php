@@ -33,7 +33,7 @@ use Commune\Platform\AbsPlatform;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SwlAsyncShellPlatform extends AbsPlatform implements SwlAsyncPlatform
+class SwlDuplexShellPlatform extends AbsPlatform implements SwlAsyncPlatform
 {
 
     /**
@@ -47,7 +47,7 @@ class SwlAsyncShellPlatform extends AbsPlatform implements SwlAsyncPlatform
     protected $server;
 
     /**
-     * @var SwlAsyncShellOption
+     * @var SwlDuplexShellOption
      */
     protected $option;
 
@@ -55,7 +55,7 @@ class SwlAsyncShellPlatform extends AbsPlatform implements SwlAsyncPlatform
         Host $host,
         PlatformConfig $config,
         Shell $shell,
-        SwlAsyncShellOption $option,
+        SwlDuplexShellOption $option,
         LoggerInterface $logger
     )
     {
@@ -87,30 +87,32 @@ class SwlAsyncShellPlatform extends AbsPlatform implements SwlAsyncPlatform
 
     protected function initProcess(Server $server) : Process
     {
-        return new Process(function($process) use ($server) {
+        return new Process(function($process){
 
-            /**
-             * @var Broadcaster $broadcaster
-             */
-            $broadcaster = $this
-                ->host
-                ->getProcContainer()
-                ->make(Broadcaster::class);
+            Swoole\Coroutine\run(function() {
+                /**
+                 * @var Broadcaster $broadcaster
+                 */
+                $broadcaster = $this
+                    ->host
+                    ->getProcContainer()
+                    ->make(Broadcaster::class);
 
-            $broadcaster->subscribe(
-                [$this, 'receiveAsyncRequest'],
-                $this->shell->getId(),
-                null
-            );
+                $broadcaster->subscribe(
+                    [$this, 'receiveAsyncRequest'],
+                    $this->shell->getId(),
+                    null
+                );
 
+            });
         });
     }
 
     public function receiveAsyncRequest(string $chan, ShellOutputRequest $request) : void
     {
-        var_dump($chan);
         $sessionId = $request->getSessionId();
-        var_dump('sync' . $chan. ' ' . $sessionId);
+
+        $this->isSessionExists($sessionId);
         $fd = $this->getSessionFd($sessionId);
         // fd 已经不存在了.
         if (empty($fd)) {
@@ -236,8 +238,6 @@ class SwlAsyncShellPlatform extends AbsPlatform implements SwlAsyncPlatform
                 if (isset($sessionId)) {
                     $this->unsetSessionRoute($sessionId);
                 }
-
-                var_dump("table count: " . $this->getServerTable()->count());
             }
         );
 

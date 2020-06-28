@@ -16,7 +16,7 @@ use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
-use Commune\Platform\Libs\SwlAsync\TcpAdapterAbstract;
+use Commune\Support\Utils\TypeUtils;
 
 
 /**
@@ -25,7 +25,7 @@ use Commune\Platform\Libs\SwlAsync\TcpAdapterAbstract;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SwlAsyncBroadcastAdapter extends TcpAdapterAbstract
+class SwlBroadcastAdapter extends SwlDuplexTextShellAdapter
 {
 
     protected function isValidRequest(AppRequest $request): bool
@@ -39,8 +39,27 @@ class SwlAsyncBroadcastAdapter extends TcpAdapterAbstract
         return $response instanceof ShellOutputResponse;
     }
 
+
+    public function sendResponse(AppResponse $response): void
+    {
+        if (!$this->isValidResponse($response)) {
+            $type = TypeUtils::getType($response);
+            $this->packer->fail("invalid response, $type given");
+            return;
+        }
+
+        $sessionId = $response->getSessionId();
+        $output = $this->serializeResponse($response);
+        $this->send($sessionId, $output);
+    }
+
+
     protected function send(string $sessionId, string $data): void
     {
+        if (empty($data)) {
+            return;
+        }
+
         // 广播消息.
         $server = $this->packer->server;
         $platform = $this->packer->platform;

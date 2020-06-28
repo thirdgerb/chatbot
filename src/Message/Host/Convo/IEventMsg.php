@@ -76,7 +76,7 @@ class IEventMsg extends AbsMessage implements EventMsg
 
     public function isEmpty(): bool
     {
-        return false;
+        return empty($this->payload);
     }
 
 

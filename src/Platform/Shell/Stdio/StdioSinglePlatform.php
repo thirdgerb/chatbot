@@ -11,7 +11,6 @@
 
 namespace Commune\Platform\Shell\Stdio;
 
-use Swoole\Coroutine;
 use React\EventLoop\Factory;
 use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Host;

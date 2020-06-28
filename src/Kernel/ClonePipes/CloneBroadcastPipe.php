@@ -69,7 +69,6 @@ class CloneBroadcastPipe extends AClonePipe
         $input = $this->cloner->input;
         $this->setConvoId($input, ...$outputs);
 
-
         // 保存消息.
         $this->recordBatch(
             $request->getTraceId(),

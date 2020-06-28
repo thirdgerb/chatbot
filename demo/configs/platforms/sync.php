@@ -3,13 +3,12 @@
 use Commune\Platform;
 use Commune\Platform\Shell\Tcp;
 use Commune\Platform\Libs;
-use Commune\Framework\Providers;
 
 return new Platform\Shell\TcpSyncShellPlatformConfig([
 
-    'id' => 'sync_shell',
+    'id' => 'sync',
 
-    'bootShell' => 'demo_shell',
+    'bootShell' => 'sync_shell',
     'bootGhost' => false,
 
     'providers' => [

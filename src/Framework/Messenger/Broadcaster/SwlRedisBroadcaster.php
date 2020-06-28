@@ -16,6 +16,7 @@ use Commune\Contracts\Redis\RedisPool;
 use Commune\Framework\Redis\SwlRedisPool;
 use Commune\Support\Swoole\RedisOption;
 use Psr\Log\LoggerInterface;
+use Swoole\Coroutine;
 use Swoole\Database\RedisConfig;
 
 
@@ -33,12 +34,7 @@ class SwlRedisBroadcaster extends AbsBroadcaster
     /**
      * @var RedisPool
      */
-    protected $writePool;
-
-    /**
-     * @var RedisPool
-     */
-    protected $readPool;
+    protected $pool;
 
     /**
      * @var int
@@ -72,10 +68,10 @@ class SwlRedisBroadcaster extends AbsBroadcaster
         parent::__construct($logger, $listeningShells);
     }
 
-    protected function getPublishPool() : RedisPool
+    protected function getRedisPool() : RedisPool
     {
-        if (isset($this->writePool)) {
-            return $this->writePool;
+        if (isset($this->pool)) {
+            return $this->pool;
         }
         $option = $this->option;
         $config = new RedisConfig();
@@ -89,29 +85,9 @@ class SwlRedisBroadcaster extends AbsBroadcaster
             ->withRetryInterval($option->retryInterval)
             ->withReserved($option->reserved);;
 
-        return $this->writePool = new SwlRedisPool($config, $this->pubSize);
+        return $this->pool = new SwlRedisPool($config, $this->pubSize);
     }
 
-    protected function getSubscribePool() : RedisPool
-    {
-        if (isset($this->readPool)) {
-            return $this->readPool;
-        }
-
-        $option = $this->option;
-        $config = new RedisConfig();
-        $config = $config
-            ->withHost($option->host)
-            ->withPort($option->port)
-            ->withAuth($option->auth)
-            ->withDbIndex($option->dbIndex)
-            ->withTimeout($option->timeout)
-            ->withReadTimeout(-1)
-            ->withRetryInterval($option->retryInterval)
-            ->withReserved($option->reserved);;
-
-        return $this->readPool = new SwlRedisPool($config, $this->subSize);
-    }
 
     public function doPublish(
         string $shellId,
@@ -121,18 +97,20 @@ class SwlRedisBroadcaster extends AbsBroadcaster
     {
         try {
 
-            $connection = $this->getPublishPool()->get();
+            $connection = $this->getRedisPool()->get();
             $client = $connection->get();
 
-            $chan = static::makeChannel($shellId, $shellSessionId);
+            $shellChan = static::makeChannel($shellId, '');
+            // session chan
+            $sessionChan = static::makeChannel($shellId, $shellSessionId);
 
-            var_dump('pub', $chan, $publish);
+            $client->publish($shellChan, $publish);
+            $client->publish($sessionChan, $publish);
 
-            $client->publish($chan, $publish);
             $connection->release();
 
             if (CommuneEnv::isDebug()) {
-                $this->logger->debug(__METHOD__ . " publish $chan $publish");
+                $this->logger->debug(__METHOD__ . " publish $shellChan/$sessionChan: $publish");
             }
 
         } catch (\Throwable $e) {
@@ -143,7 +121,8 @@ class SwlRedisBroadcaster extends AbsBroadcaster
 
     public static function makeChannel(string $shellId, string $sessionId) : string
     {
-        return "commune/$shellId/$sessionId";
+        $sessionId = empty($sessionId) ? '' : "/$sessionId";
+        return "commune/$shellId$sessionId";
     }
 
     public function doSubscribe(
@@ -152,23 +131,36 @@ class SwlRedisBroadcaster extends AbsBroadcaster
         string $shellSessionId = null
     ): void
     {
-        $chan = static::makeChannel($shellId, $shellSessionId ?? '*');
-        var_dump($chan);
+        $chan = static::makeChannel($shellId, $shellSessionId ?? '');
 
+        $expErr = 0;
         while (true) {
             try {
 
-                $connection = $this->getSubscribePool()->get();
+                $connection = $this->getRedisPool()->get();
+
                 $client  = $connection->get();
+
+                $client->setOption(\Redis::OPT_READ_TIMEOUT, -1);
 
                 $client->subscribe([$chan], function ($redis, $chan, $message) use ($callback){
                     $callback($chan, $message);
                 });
 
+                // 成功监听, 计数器清零.
+                $expErr = 0;
+
             } catch (\Throwable $e) {
+                // 连接错误的话计数器增加.
+                $expErr ++;
 
+                if ($expErr > 3) {
+                    throw $e;
+                }
+
+                $this->logger->error($e);
                 isset($client) and $client->close();
-
+                Coroutine::sleep(1);
             }
         }
     }

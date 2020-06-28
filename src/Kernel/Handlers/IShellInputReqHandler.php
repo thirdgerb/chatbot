@@ -201,6 +201,7 @@ class IShellInputReqHandler implements ShellInputReqHandler
          */
         $messenger = $container->get(ShellMessenger::class);
         $response = $messenger->sendGhostRequest($request);
+
         return $response;
     }
 

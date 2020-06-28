@@ -14,14 +14,8 @@ namespace Commune\Platform\Libs\SwlAsync;
 use Commune\Blueprint\Exceptions\CommuneLogicException;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 use Commune\Blueprint\Platform\Adapter;
-use Commune\Kernel\Protocals\IShellInputRequestRequest;
 use Commune\Kernel\Protocals\LogContext;
-use Commune\Message\Host\Convo\IText;
-use Commune\Message\Intercom\IInputMsg;
-use Commune\Platform\Libs\Parser\AppResponseParser;
 use Commune\Support\Utils\TypeUtils;
 
 
@@ -76,40 +70,11 @@ abstract class TcpAdapterAbstract implements Adapter
 
     abstract protected function isValidResponse(AppResponse $response) : bool;
 
-    protected function serializeResponse(AppResponse $response): string
-    {
-        return AppResponseParser::outputsToString($response);
-    }
+    abstract protected function unserializeRequest() : ? AppRequest;
+
+    abstract protected function serializeResponse(AppResponse $response): string;
 
 
-    protected function unserializeRequest() : ? AppRequest
-    {
-        $clientInfo = $this->packer->server->getClientInfo($this->packer->fd);
-
-        $ip = $clientInfo['remote_ip'] ?? '';
-        if (empty($ip)) {
-            $this->invalid = "invalid ip info $ip";
-            return null;
-        }
-
-        $creatorName = $ip;
-        $creatorId = md5($this->appId . ':'. $creatorName);
-        $sessionId = $creatorId;
-
-        $message = IText::instance(trim($this->packer->data));
-
-        $input = IInputMsg::instance(
-            $message,
-            $sessionId,
-            $creatorId,
-            $creatorName
-        );
-
-        return IShellInputRequestRequest::instance(
-            false,
-            $input
-        );
-    }
 
 
     protected function initRequest() : ? AppRequest
@@ -122,7 +87,7 @@ abstract class TcpAdapterAbstract implements Adapter
 
         if (!$this->isValidRequest($request)) {
             $type = TypeUtils::getType($request);
-            $this->invalid = "invalid request, expect $interface, $type given";
+            $this->invalid = "invalid request, $type given";
             return null;
         }
 
@@ -184,7 +149,6 @@ abstract class TcpAdapterAbstract implements Adapter
         }
 
         $output = $this->serializeResponse($response);
-
         $this->send($sessionId, $output);
     }
 

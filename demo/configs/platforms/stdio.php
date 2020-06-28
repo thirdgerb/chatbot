@@ -5,9 +5,9 @@ use Commune\Platform\Libs;
 
 return new Platform\Shell\StdioSinglePlatformConfig([
 
-    'id' => 'stdio_shell',
+    'id' => 'stdio',
 
-    'bootShell' => 'demo_shell',
+    'bootShell' => 'stdio_shell',
     'bootGhost' => true,
 
     'options' => [

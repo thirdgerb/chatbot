@@ -11,12 +11,13 @@
 
 namespace Commune\Blueprint\Kernel\Protocals;
 
+use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\Protocal\Protocal;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface AppProtocal extends Protocal
+interface AppProtocal extends Protocal, ArrayAndJsonAble
 {
 
     /**

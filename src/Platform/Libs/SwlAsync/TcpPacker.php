@@ -49,15 +49,15 @@ class TcpPacker implements Packer
      * @param SwlAsyncPlatform $platform
      * @param Server $server
      * @param int $fd
-     * @param string $data
      * @param $from
+     * @param string $data
      */
     public function __construct(
         SwlAsyncPlatform $platform,
         Server $server,
         int $fd,
-        string $data,
-        $from
+        int $from,
+        string $data
     )
     {
         $this->platform = $platform;

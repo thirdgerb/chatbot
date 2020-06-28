@@ -91,19 +91,30 @@ abstract class AbsPlatform implements Platform
     public function onPacker(
         Platform\Packer $packer,
         string $adapterName,
-        string $interface = null
+        string $handlerInterface = null
     ) : bool
     {
-        try {
-            // 检查数据包是否合法.
-            $requestError = $packer->isInvalid();
-            if (isset($requestError)) {
-                return $this->donePacker($packer, $requestError);
-            }
+        // 检查数据包是否合法.
+        $requestError = $packer->isInvalid();
+        if (isset($requestError)) {
+            return $this->donePacker($packer, $requestError);
+        }
 
-            // 检查协议是否合法.
-            $appId = $this->getAppId();
-            $adapter = $packer->adapt($adapterName, $appId);
+        // 检查协议是否合法.
+        $appId = $this->getAppId();
+        $adapter = $packer->adapt($adapterName, $appId);
+
+        return $this->onAdapter($packer, $adapter, $handlerInterface);
+    }
+
+    public function onAdapter(
+        Platform\Packer $packer,
+        Platform\Adapter $adapter,
+        string $handlerInterface = null
+    ) : bool
+    {
+
+        try {
 
             $requestError = $adapter->isInvalid();
             if (isset($requestError)) {
@@ -113,7 +124,7 @@ abstract class AbsPlatform implements Platform
 
             $request = $adapter->getRequest();
 
-            $this->handleRequest($adapter, $request, $interface);
+            $this->handleRequest($adapter, $request, $handlerInterface);
             $adapter->destroy();
 
             return $this->donePacker($packer);
@@ -125,6 +136,7 @@ abstract class AbsPlatform implements Platform
 
             return $this->donePacker($packer, $e->getMessage());
         }
+
     }
 
     protected function donePacker(Platform\Packer $packer, string $error = null) : bool

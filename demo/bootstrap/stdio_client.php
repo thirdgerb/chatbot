@@ -6,11 +6,9 @@ use React\EventLoop\Factory;
 
 function main(string $host, string $port) {
 
-    Coroutine::set([
-        'enable_coroutine' => true,
-    ]);
+    \Swoole\Runtime::enableCoroutine();
 
-    Coroutine\run(function() use ($host, $port){
+    $code = Coroutine\run(function() use ($host, $port){
 
         $loop = Factory::create();
         $stdio = new Stdio($loop);
@@ -18,34 +16,47 @@ function main(string $host, string $port) {
         $stdio->setPrompt('> ');
 
         // client connect
-        $client = new Swoole\Coroutine\Client(SWOOLE_SOCK_TCP);
+        $client = new Coroutine\Client(SWOOLE_SOCK_TCP);
         if (!$client->connect($host, $port, 0.5))
         {
-            $stdio->end("connect failed. Error: {$client->errCode}\n");
-            exit;
+            echo "connect failed. Error: {$client->errCode}\n";
+            return 1;
         }
 
+        // 主动连接.
         $client->send(' ');
-        $output = $client->recv(0.5);
+        $output = $client->recv();
 
-        $stdio->write(!empty($output) ? $output : "failed \n");
 
-        // 处理同步请求.
-        $stdio->on('data', function($line) use ($client, $stdio) {
+        if (empty($output)) {
+            $stdio->end("failed");
+        } else {
+            echo $output . "\n";
+        }
 
-            $client->send($line . ' ');
-            $data = $client->recv(0.5);
-
-            if ($data === false) {
-                $stdio->write("error, false received");
-                $client->close();
-                $stdio->end('quit');
+        Coroutine::create(function () use ($client, $stdio){
+            while(true) {
+                $data = $client->recv();
+                if (!empty($data)) {
+                    echo $data . "\n" . $stdio->getPrompt();
+                }
             }
-
-            $stdio->write($data);
         });
 
 
+        // 处理同步请求.
+        $stdio->on('data', function($line) use ($client, $stdio) {
+            $success = $client->send($line . ' ');
+            if (!$success) {
+                $stdio->end("failed sent");
+            }
+        });
+
         $loop->run();
+
     });
+
+    exit($code);
+
+
 }

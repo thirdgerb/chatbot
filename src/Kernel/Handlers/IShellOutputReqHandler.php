@@ -83,27 +83,6 @@ class IShellOutputReqHandler implements ShellOutputReqHandler
     }
 
 
-    /**
-     * 从数据存储中读取批次的所有消息, 会包含 input message.
-     *
-     * @param ShellOutputRequest $request
-     * @return ShellOutputRequest
-     */
-    protected function fillOutputsInRequest(ShellOutputRequest $request) : ShellOutputRequest
-    {
-        /**
-         * @var MessageDB $db
-         */
-        $db = $this->session->container->get(MessageDB::class);
-
-        $outputs = $db->fetchBatch($request->getBatchId());
-
-        $request->setOutputs($outputs);
-
-        // 过滤到输入信息.
-        return $request;
-    }
-
     public function __destruct()
     {
         SpyAgency::decr(static::class);

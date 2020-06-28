@@ -107,8 +107,8 @@ class SymfonyTranslatorAdapter implements Translator
         $parameters = Arr::dot($parameters);
         $parameters = array_filter($parameters, [TypeUtils::class, 'maybeString']);
 
-        return $this->transByTemp($id, $locale, $domain, $parameters)
-            ?? $this->transByIntlTemp($id, $locale, $domain, $parameters);
+        return $this->transByIntlTemp($id, $locale, $domain, $parameters)
+            ?? $this->transByTemp($id, $locale, $domain, $parameters);
     }
 
     protected function getPrefix(string $locale, string $domain) : string
@@ -116,20 +116,25 @@ class SymfonyTranslatorAdapter implements Translator
         return "$locale:$domain:";
     }
 
-    protected function transByIntlTemp(string $id, string $locale, string $domain, array $parameters) : string
+    protected function transByIntlTemp(string $id, string $locale, string $domain, array $parameters) : ? string
     {
-        $temp = $this->intlTemps[$locale][$domain][$id] ?? $id;
+        // 模板不存在, 则退出.
+        $temp = $this->intlTemps[$locale][$domain][$id] ?? null;
+
+
+        if (is_null($temp)) {
+            return null;
+        }
+
         return extension_loaded('intl')
             ? $this->formatter->formatIntl($temp, $locale, $parameters)
             : self::mustacheTrans($this->formatter, $temp, $locale, $parameters);
     }
 
-    protected function transByTemp(string $id, string $locale, string $domain, array $parameters) : ? string
+    protected function transByTemp(string $id, string $locale, string $domain, array $parameters) : string
     {
-        $temp = $this->temps[$locale][$domain][$id] ?? null;
-        return isset($temp)
-            ? self::mustacheTrans($this->formatter, $temp, $locale, $parameters)
-            : null;
+        $temp = $this->temps[$locale][$domain][$id] ?? $id;
+        return self::mustacheTrans($this->formatter, $temp, $locale, $parameters);
     }
 
     public static function mustacheTrans(

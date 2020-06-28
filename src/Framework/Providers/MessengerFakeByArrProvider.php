@@ -17,8 +17,8 @@ use Commune\Contracts\Messenger\MessageDB;
 use Commune\Contracts\Messenger\ShellMessenger;
 use Commune\Contracts\ServiceProvider;
 use Commune\Framework\MessageDB\ArrMessageDB;
-use Commune\Framework\MessengerFaker\EmptyBroadcaster;
-use Commune\Framework\MessengerFaker\LocalShellMessenger;
+use Commune\Framework\Messenger\Fake\EmptyBroadcaster;
+use Commune\Framework\Messenger\Fake\LocalShellMessenger;
 
 
 /**

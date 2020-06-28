@@ -15,15 +15,11 @@ use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
-use Commune\Framework\Log\IConsoleLogger;
 use Commune\Kernel\Protocals\IShellInputRequestRequest;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Platform\Libs\Parser\AppResponseParser;
 use Commune\Platform\Libs\SwlCo\TcpAdapterAbstract;
-use Commune\Protocals\HostMsg\DefaultIntents;
-use Commune\Protocals\HostMsg\IntentMsg;
-use Psr\Log\LogLevel;
 
 /**
  * 作为示范用的 Adapter

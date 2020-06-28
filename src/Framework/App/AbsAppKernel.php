@@ -255,6 +255,8 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
     ) : void
     {
         $context['trace'] = $traceId;
+        $context['appId'] = $this->getId();
+
         $logger->info($message, $context);
     }
 

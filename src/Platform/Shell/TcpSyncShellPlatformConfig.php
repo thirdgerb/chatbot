@@ -18,6 +18,11 @@ use Commune\Framework\Providers\ShlMessengerBySwlCoTcpProvider;
 
 
 /**
+ * 基于 Swoole Tcp 实现的 同步请求 ShellPlatform.
+ *
+ * 只能够发送和接收同步请求的结果. 无法接受广播和异步的消息.
+ *
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class TcpSyncShellPlatformConfig extends IPlatformConfig

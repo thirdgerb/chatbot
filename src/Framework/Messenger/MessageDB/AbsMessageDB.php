@@ -106,7 +106,6 @@ abstract class AbsMessageDB implements MessageDB
 
         } catch (\Throwable $e) {
             $this->logger->error($e);
-
         }
     }
 
@@ -144,6 +143,7 @@ abstract class AbsMessageDB implements MessageDB
         if (empty($serialized)) {
             return null;
         }
+
 
         $decode = json_decode($serialized, true);
         if (!is_array($decode)) {

@@ -90,7 +90,7 @@ class BroadcastProtocal
             return null;
         }
 
-        if (!self::isAction($unserialize, self::ACT_SEND)) {
+        if (!self::isAction($unserialize, self::ACT_PUB)) {
             return null;
         }
 
@@ -111,7 +111,9 @@ class BroadcastProtocal
         return IShellOutputRequest::asyncInstance(
             $sessionId,
             $traceId,
-            $batchId
+            $batchId,
+            $creatorId,
+            $creatorName
         );
     }
 

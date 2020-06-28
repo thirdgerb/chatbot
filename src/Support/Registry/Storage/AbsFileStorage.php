@@ -499,7 +499,7 @@ abstract class AbsFileStorage implements Storage
         $storageOption = $this->parseOption($storageOption);
         $this->loadFile($categoryOption, $storageOption);
         $cateId = $categoryOption->getId();
-        return count($this->optionCaches[$cateId]);
+        return count($this->optionCaches[$cateId] ?? []);
     }
 
     public function searchIds(

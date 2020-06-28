@@ -28,15 +28,15 @@ class TcpBroadcastShellPlatformConfig extends IPlatformConfig
     {
         return [
             'id' => '',
-            'concrete' => Tcp\SwlAsyncShellPlatform::class,
+            'concrete' => Tcp\SwlBroadcastShellPlatform::class,
             'bootShell' => null,
             'bootGhost' => false,
             'providers' => [
 
             ],
             'options' => [
-                Tcp\SwlAsyncShellOption::class => [
-                    'adapterName' => Tcp\SwlAsyncBroadcastAdapter::class,
+                Tcp\SwlDuplexShellOption::class => [
+                    'adapterName' => Tcp\SwlBroadcastAdapter::class,
                     'tableSize' => 10000,
                     'serverOption' => [
                         'host' => '127.0.0.1',

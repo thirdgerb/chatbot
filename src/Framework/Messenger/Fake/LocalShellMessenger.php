@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\MessengerFaker;
+namespace Commune\Framework\Messenger\Fake;
 
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
