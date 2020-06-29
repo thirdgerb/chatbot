@@ -159,8 +159,12 @@ class SwlRedisBroadcaster extends AbsBroadcaster
                 }
 
                 $this->logger->error($e);
-                isset($client) and $client->close();
                 Coroutine::sleep(1);
+
+            } finally {
+
+                // 不用把连接返回连接池了.
+                isset($client) and $client->close();
             }
         }
     }
