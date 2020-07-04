@@ -16,6 +16,7 @@ use Commune\Blueprint\Ghost\MindMeta;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
 use Commune\Support\Registry\Meta\CategoryOption;
+use Commune\Support\Registry\Meta\StorageMeta;
 use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Support\Registry\Storage\PHP\PHPStorageOption;
@@ -28,8 +29,8 @@ use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
  *
  * @property-read string $resourcePath
  * @property-read int $cacheExpire
- * @property-read StorageOption|null $storage
- * @property-read StorageOption|null $initStorage
+ * @property-read StorageMeta|null $storage
+ * @property-read StorageMeta|null $initStorage
  *
  */
 class MindsetStorageConfigProvider extends ServiceProvider
@@ -51,8 +52,8 @@ class MindsetStorageConfigProvider extends ServiceProvider
     public static function relations(): array
     {
         return [
-            'storage' => StorageOption::class,
-            'initStorage' => StorageOption::class
+            'storage' => StorageMeta::class,
+            'initStorage' => StorageMeta::class
         ];
     }
 
@@ -94,10 +95,13 @@ class MindsetStorageConfigProvider extends ServiceProvider
             /**
              * @var StorageOption $storage
              */
-            $storage = new $storageName([
-                'name' => $type,
-                'path' => $this->resourcePath . '/' . $type,
-                'isDir' => true,
+            $storage = new StorageMeta([
+                'wrapper' => $storageName,
+                'config' => [
+                    'name' => $type,
+                    'path' => $this->resourcePath . '/' . $type,
+                    'isDir' => true,
+                ]
             ]);
             $initStorage = null;
 
@@ -113,8 +117,8 @@ class MindsetStorageConfigProvider extends ServiceProvider
                 'title' => $title,
                 'desc' => $desc,
                 'cacheExpire' => $this->cacheExpire,
-                'storage' => $storage->toMeta(),
-                'initialStorage' => isset($initStorage) ? $initStorage->toMeta() : null,
+                'storage' => $storage,
+                'initialStorage' => isset($initStorage) ? $initStorage : null,
             ]);
         }
     }
