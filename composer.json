@@ -34,14 +34,14 @@
         "psr/log": "~1.0",
         "ramsey/uuid": "~3.8",
         "clue/stdio-react": "~2.2",
-        "nesbot/carbon": "^1.2 || ^2.1",
+        "nesbot/carbon": "^2.0",
         "illuminate/support": "~6.8",
         "illuminate/console": "~6.8",
         "symfony/console": "~4.3",
         "symfony/translation": "~5.1",
         "symfony/finder": "~5.1",
         "symfony/yaml": "~5.1",
-        "monolog/monolog": "^1.24",
+        "monolog/monolog": "^2.0",
         "guzzlehttp/guzzle": "^6.2",
         "overtrue/pinyin": "~4.0",
         "swoole/ide-helper": "^4.4"
@@ -50,10 +50,5 @@
         "phpunit/phpunit": "^7.5",
         "symfony/var-dumper": "~5.1",
         "mockery/mockery": "^1.2"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.2.x-dev"
-        }
     }
 }
