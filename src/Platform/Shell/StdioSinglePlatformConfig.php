@@ -13,7 +13,7 @@ namespace Commune\Platform\Shell;
 
 use Commune\Framework\Providers;
 use Commune\Platform\IPlatformConfig;
-use Commune\Platform\Shell\Stdio\StdioSinglePlatform;
+use Commune\Platform\Shell\Stdio\StdioPlatform;
 use Commune\Support\Utils\TypeUtils;
 
 /**
@@ -26,7 +26,7 @@ class StdioSinglePlatformConfig extends IPlatformConfig
     {
         return [
             'id' => '',
-            'concrete' => StdioSinglePlatform::class,
+            'concrete' => StdioPlatform::class,
             'bootShell' => null,
             'bootGhost' => true,
             'providers' => [

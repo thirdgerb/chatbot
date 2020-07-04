@@ -74,6 +74,12 @@ class PredefinedComponent extends GhostComponent
                 "Commune\\Components\\Predefined\\Manager" => __DIR__ . '/Manager',
             ]
         );
+
+        // 加载语言配置
+        $this->loadTranslation(
+            $app,
+            __DIR__ . '/resources/trans'
+        );
     }
 
 

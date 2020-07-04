@@ -15,7 +15,7 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
 use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Framework\Command\CommandMsg;
-use Illuminate\Console\Parser;
+use Commune\Framework\Command\Parser;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 

@@ -30,7 +30,7 @@ use Commune\Platform\Libs\Stdio\StdioTextAdapter;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StdioSinglePlatform extends AbsPlatform
+class StdioPlatform extends AbsPlatform
 {
     /**
      * @var Shell

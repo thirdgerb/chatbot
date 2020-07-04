@@ -67,6 +67,7 @@ class IConfirm extends IQuestionMsg implements Confirm
             ],
             'routes' => [],
             'default' => null,
+            'translated' => false,
         ];
     }
 

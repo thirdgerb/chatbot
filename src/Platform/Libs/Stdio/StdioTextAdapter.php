@@ -116,8 +116,6 @@ class StdioTextAdapter implements Adapter
         $outputStr = '';
 
         foreach ($outputs as $output) {
-
-
             $message = $output->getMessage();
 
             $text = $message->getText();

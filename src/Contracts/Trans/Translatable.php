@@ -17,7 +17,7 @@ namespace Commune\Contracts\Trans;
  */
 interface Translatable
 {
-    public function getTransTemp() : string;
+    public function getTransTempId() : string;
 
     public function getSlots() : array;
 }

@@ -111,7 +111,7 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         return $data;
     }
 
-    public function getTransTemp(): string
+    public function getTransTempId(): string
     {
         return $this->getIntentName();
     }
