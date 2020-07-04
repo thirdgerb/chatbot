@@ -23,10 +23,27 @@ use Commune\Blueprint\Exceptions\CommuneLogicException;
  */
 class CommuneEnv
 {
+    const BASE_PATH = 'COMMUNE_BASE_PATH';
     const DEBUG = 'COMMUNE_DEBUG';
     const RESET_REGISTRY = 'COMMUNE_RESET_REGISTRY';
     const RESOURCE_PATH = 'COMMUNE_RESOURCE_PATH';
     const LOG_PATH = 'COMMUNE_LOG_PATH';
+
+    /*------- path ------*/
+
+    public static function getBasePath() : string
+    {
+        return self::get(
+            self::BASE_PATH,
+            realpath(__DIR__ . '/../../demo')
+        );
+    }
+
+    public static function defineBathPath(string $path) : void
+    {
+        self::set(self::BASE_PATH, $path);
+    }
+
 
     /*------- debug ------*/
 
@@ -45,7 +62,10 @@ class CommuneEnv
 
     public static function getLogPath() : string
     {
-        return self::get(self::LOG_PATH, __DIR__ . '/../../demo/log');
+        return self::get(
+            self::LOG_PATH,
+            self::getBasePath() . '/runtime/log'
+        );
     }
 
     public static function defineLogPath(string $path) : void
@@ -60,7 +80,10 @@ class CommuneEnv
 
     public static function getResourcePath() : string
     {
-        return self::get(self::RESOURCE_PATH, __DIR__ . '/../../demo/resources');
+        return self::get(
+            self::RESOURCE_PATH,
+            self::getBasePath() . '/resources'
+        );
     }
 
     public static function defineResourcePath(string $path) : void

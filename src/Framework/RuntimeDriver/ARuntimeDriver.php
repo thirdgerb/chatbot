@@ -24,7 +24,7 @@ use Commune\Contracts\Ghost\RuntimeDriver;
 abstract class ARuntimeDriver implements RuntimeDriver
 {
 
-    abstract protected function getProcessKey(string $clonerId, string $belongsTo) : string;
+    abstract protected function getProcessKey(string $clonerId, string $convoId) : string;
 
     abstract protected function doCacheProcess(string $key, Process $process, int $expire) : bool;
 
