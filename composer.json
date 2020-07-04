@@ -37,7 +37,7 @@
         "nesbot/carbon": "^2.0",
         "illuminate/support": "~6.8",
         "illuminate/console": "~6.8",
-        "symfony/console": "~4.3",
+        "symfony/console": "~5.1",
         "symfony/translation": "~5.1",
         "symfony/finder": "~5.1",
         "symfony/yaml": "~5.1",
