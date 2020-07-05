@@ -19,6 +19,7 @@ use Commune\Contracts\Trans\Translator;
 use Commune\Framework\Trans\SymfonyTranslatorAdapter;
 use Commune\Framework\Trans\TransOption;
 use Commune\Support\Registry\Meta\CategoryOption;
+use Commune\Support\Registry\Meta\StorageMeta;
 use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Support\Registry\Storage\Json\JsonStorageOption;
@@ -29,8 +30,8 @@ use Commune\Support\Utils\StringUtils;
  *
  * @property-read string $defaultLocale
  * @property-read string $defaultDomain
- * @property-read StorageOption|null $storage
- * @property-read StorageOption|null $initStorage
+ * @property-read StorageMeta|null $storage
+ * @property-read StorageMeta|null $initStorage
  */
 class TranslatorBySymfonyProvider extends ServiceProvider
 {
@@ -47,8 +48,8 @@ class TranslatorBySymfonyProvider extends ServiceProvider
     public static function relations(): array
     {
         return [
-            'storage' => StorageOption::class,
-            'initStorage' => StorageOption::class,
+            'storage' => StorageMeta::class,
+            'initStorage' => StorageMeta::class,
         ];
     }
 
@@ -91,22 +92,27 @@ class TranslatorBySymfonyProvider extends ServiceProvider
         $storage = $this->storage;
         $initStorage = $this->initStorage;
 
-        $storage = $storage
-            ?? new JsonStorageOption([
+        $defaultStorageMeta = (new JsonStorageOption([
                 'path' => StringUtils::gluePath(
                     CommuneEnv::getResourcePath(),
                     'trans/lang.json'
                 ),
                 'isDir' => false,
-            ]);
+            ]))->toMeta();
+
+        if (isset($storage)) {
+            $initStorage = $initStorage ?? $defaultStorageMeta;
+        } else {
+            $storage = $defaultStorageMeta;
+        }
 
         $registry->registerCategory(new CategoryOption([
             'name' => TransOption::class,
             'optionClass' => TransOption::class,
             'title' => '翻译模块',
             'desc' => '翻译模块的默认语料',
-            'storage' => $storage->toMeta(),
-            'initialStorage' => isset($initStorage) ? $initStorage->toMeta() : null,
+            'storage' => $storage,
+            'initialStorage' => $initStorage,
         ]));
 
         $logger = $app->get(ConsoleLogger::class);

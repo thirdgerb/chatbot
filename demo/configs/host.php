@@ -17,7 +17,7 @@ return new IHostConfig([
         /* config services */
 
         // 配置中心
-        Framework\Providers\OptRegistryByFileProvider::class,
+        Framework\Providers\OptionRegistryServiceProvider::class,
 
         // Redis 连接池.
         Framework\Providers\RedisPoolBySwooleProvider::class,
