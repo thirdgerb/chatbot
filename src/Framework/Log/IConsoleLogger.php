@@ -67,7 +67,7 @@ class IConsoleLogger implements ConsoleLogger
         }
 
         $start = $this->showLevel
-            ? '[' . static::wrapMessage($level, strtoupper($level)) . '] '
+            ? '[' . static::wrapMessage(LogLevel::INFO, strtoupper($level)) . '] '
             : '';
         // 打印日志message
         $this->write( $start . $this->wrapMessage($level, $message) . PHP_EOL);

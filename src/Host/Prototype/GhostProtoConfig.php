@@ -45,7 +45,7 @@ class GhostProtoConfig extends IGhostConfig
                 /* req service */
 
                 // runtime driver
-                Framework\Providers\RuntimeDriverByCacheProvider::class,
+                Framework\Providers\RuntimeDriverDemoProvider::class,
 
                 // clone service
                 GhostProviders\ClonerServiceProvider::class,

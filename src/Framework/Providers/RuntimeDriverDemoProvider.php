@@ -14,13 +14,13 @@ namespace Commune\Framework\Providers;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Ghost\RuntimeDriver;
 use Commune\Contracts\ServiceProvider;
-use Commune\Framework\RuntimeDriver\CacheRuntimeDriver;
+use Commune\Framework\RuntimeDriver\DemoRuntimeDriver;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RuntimeDriverByCacheProvider extends ServiceProvider
+class RuntimeDriverDemoProvider extends ServiceProvider
 {
     public static function stub(): array
     {
@@ -41,7 +41,7 @@ class RuntimeDriverByCacheProvider extends ServiceProvider
     {
         $app->singleton(
             RuntimeDriver::class,
-            CacheRuntimeDriver::class
+            DemoRuntimeDriver::class
         );
     }
 

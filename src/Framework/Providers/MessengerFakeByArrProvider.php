@@ -16,7 +16,7 @@ use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Contracts\Messenger\MessageDB;
 use Commune\Contracts\Messenger\ShellMessenger;
 use Commune\Contracts\ServiceProvider;
-use Commune\Framework\MessageDB\ArrMessageDB;
+use Commune\Framework\Messenger\Fake\ArrMessageDB;
 use Commune\Framework\Messenger\Fake\EmptyBroadcaster;
 use Commune\Framework\Messenger\Fake\LocalShellMessenger;
 

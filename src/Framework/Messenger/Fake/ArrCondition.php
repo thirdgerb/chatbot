@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Framework\MessageDB;
+namespace Commune\Framework\Messenger\Fake;
 
 use Commune\Contracts\Messenger\Condition;
 use Commune\Protocals\IntercomMsg;
