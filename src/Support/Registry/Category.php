@@ -11,7 +11,6 @@
 
 namespace Commune\Support\Registry;
 
-use Commune\Support\Registry\Exceptions\OptionNotFoundException;
 use Commune\Support\Option\Option;
 use Commune\Support\Registry\Meta\CategoryOption;
 
@@ -22,19 +21,17 @@ interface Category
 {
 
     /**
-     * 初始化 Storage.
-     *
-     * @param bool $initialize  会将 initial Storage 的数据尝试加载到 Storage
-     */
-    public function boot(bool $initialize = false) : void;
-
-    /*---- 单个 Option 管理 ----*/
-
-    /**
      * 当前分类的配置.
      * @return CategoryOption
      */
     public function getConfig() : CategoryOption;
+
+    /**
+     * 初始化 Storage.
+     *
+     * @param bool $initialize  会将 initial Storage 的数据尝试加载到 Storage
+     */
+    public function boot(bool $initialize = true) : void;
 
     /**
      * 检查 Option 是否存在.
@@ -131,7 +128,11 @@ interface Category
      */
     public function eachId() : \Generator;
 
-    /*---- storage ----*/
+    /**
+     * @return \Generator|Option[]
+     */
+    public function eachOption() : \Generator;
+
 
     /**
      * @return Storage

@@ -19,7 +19,7 @@ use Commune\Support\Utils\TypeUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StdioSinglePlatformConfig extends IPlatformConfig
+class StdioConsolePlatformConfig extends IPlatformConfig
 {
 
     public static function stub(): array

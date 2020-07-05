@@ -3,7 +3,7 @@
 use Commune\Platform;
 use Commune\Platform\Libs;
 
-return new Platform\Shell\StdioSinglePlatformConfig([
+return new Platform\Shell\StdioConsolePlatformConfig([
 
     'id' => 'stdio',
 

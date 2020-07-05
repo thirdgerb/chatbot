@@ -12,13 +12,11 @@
 namespace Commune\Support\Registry\Impl;
 
 use Commune\Support\Registry\Category;
-use Commune\Support\Registry\Exceptions\OptionNotFoundException;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Option\Option;
-use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\Storage;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
+use Commune\Support\Registry\Exceptions\OptionNotFoundException;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -45,12 +43,7 @@ class ICategory implements Category
     protected $storage;
 
     /**
-     * @var StorageOption
-     */
-    protected $storageOption;
-
-    /**
-     * @var Storage
+     * @var Storage|null
      */
     protected $initialStorage;
 
@@ -66,28 +59,119 @@ class ICategory implements Category
     {
         $this->container = $container;
         $this->categoryOption = $categoryOption;
-        $this->storageOption = $categoryOption->storage->toWrapper();
     }
+
 
     public function getConfig() : CategoryOption
     {
         return $this->categoryOption;
     }
 
+
+    public function boot(bool $initialize = true): void
+    {
+        if ($this->booted) {
+            return;
+        }
+
+        // 如果 Driver 需要初始化的话.
+        $storage = $this->getStorage();
+        $storage->getDriver()->boot(
+            $this->categoryOption,
+            $storage->getOption()
+        );
+
+        $initStorage = $this->getInitialStorage();
+        if (isset($initStorage)) {
+            $initStorage->getDriver()->boot(
+                $this->categoryOption,
+                $initStorage->getOption()
+            );
+        }
+
+        $this->booted = true;
+
+        // 看看是否需要初始化. 如果初始化, 会把 initialize storage 的数据转到 storage
+        if (!$initialize) {
+            $this->initialize();
+        }
+    }
+
+    protected function initialize() : void
+    {
+        $initStorage = $this->getInitialStorage();
+
+        if (!isset($initStorage)) {
+            return;
+        }
+
+        $storage = $this->getStorage();
+        $gen = $initStorage->getDriver()->eachOption(
+            $this->categoryOption,
+            $initStorage->getOption()
+        );
+
+
+        $driver = $storage->getDriver();
+        $storageOption = $storage->getOption();
+        foreach ($gen as $option) {
+            $driver->save(
+                $this->categoryOption,
+                $storageOption,
+                $option,
+                true
+            );
+        }
+    }
+
+
+    public function getStorage(): Storage
+    {
+        if (isset($this->storage)) {
+            return $this->storage;
+        }
+        $storageOption = $this->categoryOption->storage->toWrapper();
+        return $this->storage = new IStorage(
+            $this->container,
+            $storageOption
+        );
+    }
+
+    public function getInitialStorage(): ? Storage
+    {
+        if (isset($this->initialStorage)) {
+            return $this->initialStorage;
+        }
+
+        $meta = $this->categoryOption->initialStorage;
+        if (!isset($meta)) {
+            return null;
+        }
+
+        $storageOption = $meta->toWrapper();
+        return $this->initialStorage = new IStorage(
+            $this->container,
+            $storageOption
+        );
+    }
+
     public function has(string $optionId): bool
     {
-        return $this->getStorage()->has(
+        $storage = $this->getStorage();
+        return $storage->getDriver()->has(
             $this->categoryOption,
-            $this->storageOption,
+            $storage->getOption(),
             $optionId
         );
     }
 
+
     public function find(string $optionId): Option
     {
-        $option = $this->getStorage()->find(
+        $storage = $this->getStorage();
+        $option = $storage->getDriver()->find(
             $this->categoryOption,
-            $this->storageOption,
+            $storage->getOption(),
             $optionId
         );
 
@@ -104,9 +188,10 @@ class ICategory implements Category
 
     public function save(Option $option, bool $notExists = false): bool
     {
-        return $this->getStorage()->save(
+        $storage = $this->getStorage();
+        return $storage->getDriver()->save(
             $this->categoryOption,
-            $this->storageOption,
+            $storage->getOption(),
             $option,
             $notExists
         );
@@ -115,9 +200,10 @@ class ICategory implements Category
 
     public function delete(string $id, string ...$ids): int
     {
-        return $this->getStorage()->delete(
+        $storage = $this->getStorage();
+        return $storage->getDriver()->delete(
             $this->categoryOption,
-            $this->storageOption,
+            $storage->getOption(),
             $id,
             ...$ids
         );
@@ -125,9 +211,10 @@ class ICategory implements Category
 
     public function findByIds(array $ids): array
     {
-        $options = $this->getStorage()->findByIds(
+        $storage = $this->getStorage();
+        $options = $storage->getDriver()->findByIds(
             $this->categoryOption,
-            $this->storageOption,
+            $storage->getOption(),
             $ids
         );
 
@@ -140,22 +227,22 @@ class ICategory implements Category
 
     public function count(): int
     {
-        return $this
-            ->getStorage()
+        $storage = $this->getStorage();
+        return $storage->getDriver()
             ->count(
                 $this->categoryOption,
-                $this->storageOption
+                $storage->getOption()
             );
     }
 
 
     public function paginate(int $offset = 0, int $limit = 20): array
     {
-        $ids = $this
-            ->getStorage()
+        $storage = $this->getStorage();
+        $ids = $storage->getDriver()
             ->paginateIds(
                 $this->categoryOption,
-                $this->storageOption,
+                $storage->getOption(),
                 $offset,
                 $limit
             );
@@ -168,11 +255,11 @@ class ICategory implements Category
 
     public function searchIds(string $wildcardId): array
     {
-        return $this
-            ->getStorage()
+        $storage = $this->getStorage();
+        return $storage->getDriver()
             ->searchIds(
                 $this->categoryOption,
-                $this->storageOption,
+                $storage->getOption(),
                 $wildcardId
             );
     }
@@ -183,50 +270,14 @@ class ICategory implements Category
         return count($ids);
     }
 
-    public function each(): \Generator
-    {
-        $each = $this->getStorage()->eachId(
-            $this->categoryOption,
-            $this->storageOption
-        );
 
-        foreach ($each as $id) {
-            yield $this->find($id);
-        }
-    }
-
-    public function getStorage(): Storage
-    {
-        if (isset($this->storage)) {
-            return $this->storage;
-        }
-
-        $storageOption = $this->categoryOption->storage->toWrapper();
-        $driver = $storageOption->getDriver();
-
-        return $this->storage = $this->container->get($driver);
-    }
-
-    public function getInitialStorage(): ? Storage
-    {
-        if (isset($this->initialStorage)) {
-            return $this->initialStorage;
-        }
-
-        $option = $this->categoryOption->initialStorage;
-        if (!isset($option)) {
-            return null;
-        }
-
-        $driver = $option->toWrapper()->getDriver();
-        return $this->initialStorage = $this->container->get($driver);
-    }
 
     public function paginateId(int $offset = 0, int $limit = 20): array
     {
-        return $this->getStorage()->paginateIds(
+        $storage = $this->getStorage();
+        return $storage->getDriver()->paginateIds(
             $this->categoryOption,
-            $this->storageOption,
+            $storage->getOption(),
             $offset,
             $limit
         );
@@ -234,9 +285,10 @@ class ICategory implements Category
 
     public function eachId(): \Generator
     {
-        $each =  $this->getStorage()->eachId(
+        $storage = $this->getStorage();
+        $each =  $storage->getDriver()->eachId(
             $this->categoryOption,
-            $this->storageOption
+            $storage->getOption()
         );
 
         foreach($each as $id) {
@@ -244,65 +296,27 @@ class ICategory implements Category
         }
     }
 
-    public function boot(bool $initialize = false): void
-    {
-        if ($this->booted) {
-            return;
-        }
-
-        $storage = $this->getStorage();
-        $storage->boot($this->categoryOption, $this->storageOption);
-        $this->booted = true;
-
-        if (!$initialize) {
-            $this->initialize();
-        }
-    }
-
-    protected function initialize() : void
+    public function eachOption(): \Generator
     {
         $storage = $this->getStorage();
-        $storage->boot($this->categoryOption, $this->storageOption);
-
-        $initStorage = $this->getInitialStorage();
-        if (!isset($initStorage)) {
-            $this->booted = true;
-            return;
-        }
-
-        $initStorageOption = $this->categoryOption->initialStorage->toWrapper();
-        $initStorage->boot(
-            $this->categoryOption,
-            $initStorageOption
-        );
-
-        $gen = $initStorage->eachId($this->categoryOption, $this->storageOption);
-
-
-        foreach ($gen as $id) {
-            $option = $initStorage->find($this->categoryOption, $this->storageOption, $id);
-            $storage->save(
+        $gen = $storage
+            ->getDriver()
+            ->eachOption(
                 $this->categoryOption,
-                $this->storageOption,
-                $option,
-                true
+                $storage->getOption()
             );
+        foreach ($gen as $option) {
+            yield $option;
         }
     }
 
     public function flush(): bool
     {
-        return $this->getStorage()->flush(
+        $storage = $this->getStorage();
+        return $storage->getDriver()->flush(
             $this->categoryOption,
-            $this->storageOption
+            $storage->getOption()
         );
     }
 
-
-    public function __destruct()
-    {
-        $this->initialStorage = null;
-        $this->storage = null;
-        $this->categoryOption = null;
-    }
 }

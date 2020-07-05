@@ -14,8 +14,9 @@ namespace Commune\Support\Registry\Storage;
 use Commune\Support\Option\Option;
 use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\Meta\CategoryOption;
-use Commune\Support\Registry\Storage;
+use Commune\Support\Registry\StorageDriver;
 use Commune\Support\Utils\StringUtils;
+use Commune\Support\Utils\TypeUtils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 
@@ -23,7 +24,7 @@ use Symfony\Component\Finder\Finder;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbsFileStorage implements Storage
+abstract class AbsFileStorage implements StorageDriver
 {
 
     /*---- 配置, 文件后缀 -----*/
@@ -262,11 +263,13 @@ abstract class AbsFileStorage implements Storage
         if ($option instanceof FileStorageOption && $this->isValidOption($option)) {
             return $option;
         }
-
+        
+        $type = TypeUtils::getType($option);
         throw new \InvalidArgumentException(
             static::class
             . ' only accept storage option that is subclass of '
             . FileStorageOption::class
+            . ", $type given"
         );
     }
 

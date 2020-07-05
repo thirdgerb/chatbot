@@ -8,7 +8,7 @@ require __DIR__ . '/../../vendor/autoload.php';
 
 // 设置
 CommuneEnv::defineDebug(true);
-CommuneEnv::defineResetMind(false);
+CommuneEnv::defineResetMind(true);
 
 
 // 启动异构的服务.

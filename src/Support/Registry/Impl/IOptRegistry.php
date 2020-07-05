@@ -48,7 +48,7 @@ class IOptRegistry implements OptRegistry
         $this->container = $container;
     }
 
-    public function registerCategory(CategoryOption $meta, bool $initialize = false): void
+    public function registerCategory(CategoryOption $meta, bool $initialize = true): void
     {
         $metaId = $meta->getId();
         $this->categoryOptions[$metaId] = $meta;
