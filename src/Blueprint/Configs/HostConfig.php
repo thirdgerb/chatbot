@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Blueprint\Configs;
+
 use Commune\Support\Option\Option;
 
 /**
@@ -17,11 +18,13 @@ use Commune\Support\Option\Option;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $id
- * @property-read string $name
+ * 
+ * 
+ * @property-read string $id                    机器人总的 ID
+ * @property-read string $name                  机器人对外暴露的名称. 
  *
- * @property-read array $providers              所有 组件共享的服务配置.
- * @property-read array $options
+ * @property-read array $providers              全局共享的服务配置.
+ * @property-read array $options                Host 要绑定的配置单例. 
  *
  * # 关联配置
  * @property-read GhostConfig $ghost            Ghost 的配置

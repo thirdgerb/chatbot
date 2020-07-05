@@ -19,6 +19,9 @@ use Commune\Support\Utils\TypeUtils;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $id                    平台 id
+ * @property-read string $name                  平台的名称. 
+ * @property-read string $desc                  平台的简介. 
+ * 
  * @property-read string $concrete              Platform 的实现.
  *
  * @property-read string|null $bootShell        平台初始化时要启动的 Shell
@@ -35,6 +38,8 @@ class IPlatformConfig extends AbsOption implements PlatformConfig
     {
         return [
             'id' => '',
+            'name' => '',
+            'desc' => '',
             'concrete' => '',
             'bootShell' => null,
             'bootGhost' => false,
@@ -54,4 +59,13 @@ class IPlatformConfig extends AbsOption implements PlatformConfig
             ?? parent::validate($data);
     }
 
+    public function getTitle(): string
+    {
+        return $this->name;
+    }
+    
+    public function getDescription(): string
+    {
+        return $this->desc;
+    }
 }

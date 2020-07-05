@@ -99,10 +99,10 @@ class IHost extends AbsApp implements Host
         return $this->config;
     }
 
-    public function run(string $platformId, callable $bootFailure = null): void
+    public function run(string $platformId, callable $onBootFailure = null): void
     {
-        if (isset($bootFailure)) {
-            $this->onFail($bootFailure);
+        if (isset($onBootFailure)) {
+            $this->onFail($onBootFailure);
         }
 
         // 获取配置.

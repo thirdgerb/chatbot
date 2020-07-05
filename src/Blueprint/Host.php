@@ -34,9 +34,9 @@ interface Host extends App
      * 根据 Platform 的配置, 同时启动配置中的 Shell 和 Ghost, 如果有定义的话.
      *
      * @param string $platformId
-     * @param callable|null $bootFailure
+     * @param callable|null $onBootFailure        如果启动异常, 如何处理.
      * @throws AppNotDefinedException
      */
-    public function run(string $platformId, callable $bootFailure = null) : void;
+    public function run(string $platformId, callable $onBootFailure = null) : void;
 
 }
