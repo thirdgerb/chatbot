@@ -28,6 +28,8 @@ class TcpBroadcastShellPlatformConfig extends IPlatformConfig
     {
         return [
             'id' => '',
+            'name' => '',
+            'desc' => '',
             'concrete' => Tcp\SwlBroadcastShellPlatform::class,
             'bootShell' => null,
             'bootGhost' => false,

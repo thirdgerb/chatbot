@@ -32,6 +32,8 @@ class TcpDuplexShellPlatformConfig extends IPlatformConfig
     {
         return [
             'id' => '',
+            'name' => '',
+            'desc' => '',
             'concrete' => SwlDuplexShellPlatform::class,
             'bootShell' => null,
             'bootGhost' => false,

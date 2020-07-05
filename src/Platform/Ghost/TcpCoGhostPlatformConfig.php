@@ -29,6 +29,8 @@ class TcpCoGhostPlatformConfig extends IPlatformConfig
     {
         return [
             'id' => 'demo',
+            'name' => '',
+            'desc' => '',
             'concrete' => SwlCoGhostPlatform::class,
             'bootShell' => null,
             'bootGhost' => true,

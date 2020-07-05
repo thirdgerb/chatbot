@@ -32,6 +32,8 @@ class TcpSyncShellPlatformConfig extends IPlatformConfig
     {
         return [
             'id' => '',
+            'name' => '',
+            'desc' => '',
             'concrete' => Tcp\SwlCoShellPlatform::class,
             'bootShell' => null,
             'bootGhost' => true,

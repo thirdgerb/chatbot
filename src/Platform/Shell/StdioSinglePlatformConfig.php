@@ -26,6 +26,8 @@ class StdioSinglePlatformConfig extends IPlatformConfig
     {
         return [
             'id' => '',
+            'name' => '',
+            'desc' => '',
             'concrete' => StdioPlatform::class,
             'bootShell' => null,
             'bootGhost' => true,
