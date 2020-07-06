@@ -15,6 +15,8 @@ use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Platform;
 use Commune\Blueprint\Platform\Adapter;
 use Commune\Blueprint\Platform\Packer;
+use Commune\Framework\Log\IConsoleLogger;
+use Psr\Log\LogLevel;
 
 
 /**
@@ -22,6 +24,11 @@ use Commune\Blueprint\Platform\Packer;
  */
 class StdioPacker implements Packer
 {
+    /**
+     * @var bool
+     */
+    public $quit = false;
+
     /**
      * @var Stdio
      */
@@ -83,7 +90,9 @@ class StdioPacker implements Packer
 
     public function fail(string $error): void
     {
-        $this->stdio->end($error);
+        $error = IConsoleLogger::wrapMessage(LogLevel::ERROR, $error);
+        $this->stdio->write($error);
+        $this->quit = true;
     }
 
     public function destroy(): void

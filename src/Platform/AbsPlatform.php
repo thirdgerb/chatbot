@@ -139,6 +139,11 @@ abstract class AbsPlatform implements Platform
 
     }
 
+    /**
+     * @param Platform\Packer $packer
+     * @param string|null $error
+     * @return bool                     表示 packer 是否要继续.
+     */
     protected function donePacker(Platform\Packer $packer, string $error = null) : bool
     {
         $failed = isset($failed);

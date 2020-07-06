@@ -45,6 +45,7 @@ class StdioTextAdapter implements Adapter
      */
     protected $request;
 
+
     /**
      * StdioTextAdapter constructor.
      * @param StdioPacker $packer
@@ -105,7 +106,7 @@ class StdioTextAdapter implements Adapter
         if (!$response->isForward()) {
             $code = $response->getErrcode();
             $error = $response->getErrmsg();
-            $this->packer->stdio->end("errcode: $code, errmsg: $error");
+            $this->packer->fail("errcode: $code, errmsg: $error");
             return;
         }
 
@@ -136,15 +137,10 @@ class StdioTextAdapter implements Adapter
     {
         $intents = $response->getIntents();
 
-        $quit = false;
         foreach ($intents as $message) {
             if ($message->getProtocalId() === DefaultIntents::SYSTEM_SESSION_QUIT) {
-                $quit = true;
+                $this->packer->quit = true;
             }
-        }
-
-        if ($quit) {
-            $this->packer->stdio->end('end');
         }
     }
 

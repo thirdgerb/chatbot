@@ -79,7 +79,6 @@ class StdioConsolePlatform extends AbsPlatform
 
     public function serve(): void
     {
-
         $this->stdio->setPrompt('> ');
 
         $this->host->instance(
@@ -95,11 +94,14 @@ class StdioConsolePlatform extends AbsPlatform
         $this->stdio->on('data', function($line) {
 
             $packer = $this->makePacker($line);
-            $this->onPacker($packer, StdioTextAdapter::class);
+            $success = $this->onPacker($packer, StdioTextAdapter::class);
+
+            if (!$success) {
+                $this->loop->stop();
+            }
         });
 
         $this->loop->run();
-
     }
 
     protected function makePacker(string $line) : StdioPacker
@@ -122,7 +124,7 @@ class StdioConsolePlatform extends AbsPlatform
 
     public function shutdown(): void
     {
-        $this->stdio->end(__METHOD__);
+        $this->loop->stop();
     }
 
     protected function makeGhostMessenger() : GhostMessenger
@@ -141,4 +143,17 @@ class StdioConsolePlatform extends AbsPlatform
         };
     }
 
+    /**
+     * @param StdioPacker $packer
+     * @param string|null $error
+     * @return bool
+     */
+    protected function donePacker(Platform\Packer $packer, string $error = null): bool
+    {
+        $quit = $packer->quit;
+        if ($quit) {
+            return false;
+        }
+        return parent::donePacker($packer, $error);
+    }
 }
