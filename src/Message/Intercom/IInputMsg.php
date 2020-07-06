@@ -38,9 +38,10 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         string $creatorId = '',
         string $creatorName = '',
         string $convoId = '',
-        int $deliverAt = 0
+        int $deliverAt = null
     ) : self
     {
+        $deliverAt = $deliverAt ?? time();
         $data = [
             'message' => $message,
             'sessionId' => $sessionId,
@@ -75,10 +76,11 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         HostMsg $message,
         string $creatorId = '',
         string $creatorName = '',
-        int $deliverAt = 0,
+        int $deliverAt = null,
         string $sessionId = null
     ): OutputMsg
     {
+        $deliverAt = $deliverAt ?? time();
         return IOutputMsg::instance(
             $message,
             $this->getSessionId(),

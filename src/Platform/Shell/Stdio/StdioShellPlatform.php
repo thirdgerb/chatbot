@@ -15,7 +15,6 @@ use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
 use Commune\Blueprint\Platform;
 use Commune\Blueprint\Shell;
-use Commune\Contracts\Cache;
 use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Platform\AbsPlatform;
 use Commune\Platform\Libs\Stdio\StdioClientOption;
@@ -28,8 +27,8 @@ use Commune\Blueprint\Host;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
+use Swoole\Runtime;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -77,57 +76,59 @@ class StdioShellPlatform extends AbsPlatform
 
     public function serve(): void
     {
-        Coroutine\run(function(){
+        Runtime::enableCoroutine(true);
 
-            $this->loop = Factory::create();
-            $this->stdio = new Stdio($this->loop);
+        Coroutine\run([$this, 'run']);
+    }
 
-            $this->stdio->setPrompt('> ');
-            $packer = $this->makePacker('');
+    public function run() : void
+    {
 
-            // 发送启动信息.
-            $this->onPacker(
+        $this->loop = Factory::create();
+        $this->stdio = new Stdio($this->loop);
+
+        $this->stdio->setPrompt('> ');
+        $packer = $this->makePacker('');
+
+        // 发送启动信息.
+        $this->onPacker(
+            $packer,
+            $this->option->adapter,
+            ShellInputReqHandler::class
+        );
+
+        Coroutine::create(
+            function (string $sessionId){
+                /**
+                 * @var Broadcaster $broadcaster
+                 */
+                $broadcaster = $this->host->getProcContainer()->get(Broadcaster::class);
+
+                $broadcaster->subscribe(
+                    [$this, 'subscribe'],
+                    $this->getAppId(),
+                    $sessionId
+                );
+            },
+            $packer->sessionId
+        );
+
+        // 处理同步请求.
+        $this->stdio->on('data', function($line) {
+            $packer = $this->makePacker($line);
+
+            $continue = $this->onPacker(
                 $packer,
                 $this->option->adapter,
                 ShellInputReqHandler::class
             );
 
-            /**
-             * @var Broadcaster $broadcaster
-             */
-            $broadcaster = $this->host->getProcContainer()->get(Broadcaster::class);
-            Coroutine::create(
-                function (
-                    Broadcaster $broadcaster,
-                    string $sessionId
-                ){
-                    $broadcaster->subscribe(
-                        [$this, 'subscribe'],
-                        $this->getAppId(),
-                        $sessionId
-                    );
-                },
-                $broadcaster,
-                $packer->sessionId
-            );
-
-            // 处理同步请求.
-            $this->stdio->on('data', function($line) {
-                $packer = $this->makePacker($line);
-
-                $continue = $this->onPacker(
-                    $packer,
-                    $this->option->adapter,
-                    ShellInputRequest::class
-                );
-
-                if (!$continue) {
-                    $this->loop->stop();
-                }
-            });
-
-            $this->loop->run();
+            if (!$continue) {
+                $this->shutdown();
+            }
         });
+
+        $this->loop->run();
     }
 
     public function sleep(float $seconds): void
@@ -137,7 +138,8 @@ class StdioShellPlatform extends AbsPlatform
 
     public function shutdown(): void
     {
-        exit(0);
+        $this->stdio->write("end stdio loop. please exit process manually");
+        $this->stdio->end();
     }
 
     public function subscribe(string $chan, ShellOutputRequest $request) : void
@@ -178,4 +180,16 @@ class StdioShellPlatform extends AbsPlatform
         );
     }
 
+    /**
+     * @param StdioPacker $packer
+     * @param string|null $error
+     * @return bool
+     */
+    protected function donePacker(Platform\Packer $packer, string $error = null): bool
+    {
+        if ($packer->quit) {
+            return false;
+        }
+        return parent::donePacker($packer, $error);
+    }
 }

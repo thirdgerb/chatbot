@@ -74,10 +74,10 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
             'message' => new IText(),
 
             // 发布时间
-            'deliverAt' => 0,
+            'deliverAt' => $now = time(),
 
             // 创建时间
-            'createdAt' => time(),
+            'createdAt' => $now,
         ];
     }
 
@@ -108,9 +108,11 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
         string $convoId = '',
         string $creatorId = '',
         string $creatorName = '',
-        int $deliverAt = 0
+        int $deliverAt = null
     ): IntercomMsg
     {
+        $deliverAt = $deliverAt ?? time();
+        
         $vars = get_defined_vars();
 
         $data = $this->_data;

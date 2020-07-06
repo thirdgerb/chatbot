@@ -226,7 +226,7 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
             if (isset($logger)) {
                 $requestEnd = microtime(true);
                 $gap = round(($requestEnd - $requestStart) * 1000000, 0);
-                $usage = memory_get_usage();
+                $usage = memory_get_peak_usage();
                 $this->requestLog($logger, static::class . " finish request in $gap us, memory usage $usage", $traceId);
             }
             unset ($logger);

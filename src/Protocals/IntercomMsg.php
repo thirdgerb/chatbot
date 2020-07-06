@@ -125,7 +125,7 @@ interface IntercomMsg extends Message, Protocal
      * @param string $convoId
      * @param string $creatorId
      * @param string $creatorName
-     * @param int $deliverAt
+     * @param int|null $deliverAt
      *
      * @return static
      */
@@ -135,7 +135,7 @@ interface IntercomMsg extends Message, Protocal
         string $convoId = '',
         string $creatorId = '',
         string $creatorName = '',
-        int $deliverAt = 0
+        int $deliverAt = null
     ) : IntercomMsg;
 
 

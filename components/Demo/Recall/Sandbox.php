@@ -11,6 +11,7 @@
 
 namespace Commune\Components\Demo\Recall;
 
+use Commune\Blueprint\Ghost\Cloner\ClonerScope;
 use Commune\Ghost\Memory\AbsRecall;
 
 
@@ -24,7 +25,9 @@ class Sandbox extends AbsRecall
 {
     public static function __scopes(): array
     {
-        return [];
+        return [
+            ClonerScope::GUEST_ID,
+        ];
     }
 
     public static function __attrs(): array

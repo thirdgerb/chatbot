@@ -38,9 +38,10 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
         string $creatorId = '',
         string $creatorName = '',
         string $convoId = '',
-        int $deliverAt = 0
+        int $deliverAt = null
     ) : self
     {
+        $deliverAt = $deliverAt ?? time();
         return new static([
             'message' => $message,
             'batchId' => $batchId,

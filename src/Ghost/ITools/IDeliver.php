@@ -51,9 +51,9 @@ class IDeliver implements Deliver
     /*----- output config -----*/
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $deliverAt = 0;
+    protected $deliverAt = null;
 
     /**
      * @var array

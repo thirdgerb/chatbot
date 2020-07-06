@@ -113,7 +113,6 @@ abstract class AbsPlatform implements Platform
         string $handlerInterface = null
     ) : bool
     {
-
         try {
 
             $requestError = $adapter->isInvalid();
