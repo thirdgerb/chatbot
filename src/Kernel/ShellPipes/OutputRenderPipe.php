@@ -51,12 +51,17 @@ class OutputRenderPipe extends AShellPipe
 
         // 输出消息.
         $renderedOutputs = [];
+        // 意图消息拉出来.
+        $intents = [];
 
         $sessionId = $request->getSessionId();
 
         foreach ($outputs as $output) {
 
             $message = $output->getMessage();
+            if ($message instanceof HostMsg\IntentMsg) {
+                $intents[] = $message;
+            }
 
             // 用协议中定义过的渲染器渲染一遍.
             $rendered = $this->eachRenderer($shell, $container, $message);
@@ -86,7 +91,13 @@ class OutputRenderPipe extends AShellPipe
         $request->setOutputs($renderedOutputs);
 
         // 进入下一节.
-        return $next($request);
+        /**
+         * @var ShellOutputResponse $response
+         */
+        $response = $next($request);
+        $response->setIntents(...$intents);
+
+        return $response;
     }
 
     /**

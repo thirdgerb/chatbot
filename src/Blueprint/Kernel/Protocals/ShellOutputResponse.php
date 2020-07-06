@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Kernel\Protocals;
 
+use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Protocals\IntercomMsg;
 
 /**
@@ -24,4 +25,13 @@ interface ShellOutputResponse extends AppResponse, HasOutputs
      */
     public function getOutputs() : array;
 
+    /**
+     * @return IntentMsg[]
+     */
+    public function getIntents() : array;
+
+    /**
+     * @param IntentMsg[] $intents
+     */
+    public function setIntents(IntentMsg ...$intents) : void;
 }

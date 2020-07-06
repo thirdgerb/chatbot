@@ -11,6 +11,7 @@
 
 namespace Commune\Kernel\Protocals;
 
+use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\Message\AbsMessage;
@@ -31,6 +32,7 @@ use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
  */
 class IShellOutputResponse extends AbsMessage implements ShellOutputResponse
 {
+    protected $_intents = [];
 
     public static function instance(
         int $errcode,
@@ -144,6 +146,16 @@ class IShellOutputResponse extends AbsMessage implements ShellOutputResponse
     public function isForward(): bool
     {
         return $this->errcode < AppResponse::FAILURE_CODE_START;
+    }
+
+    public function getIntents(): array
+    {
+        return $this->_intents;
+    }
+
+    public function setIntents(IntentMsg ...$intents): void
+    {
+        $this->_intents = $intents;
     }
 
 

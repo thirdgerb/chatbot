@@ -21,7 +21,6 @@ use Commune\Kernel\Protocals\IShellInputRequestRequest;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\HostMsg\DefaultIntents;
-use Commune\Protocals\HostMsg\IntentMsg;
 use Commune\Support\Utils\TypeUtils;
 
 
@@ -110,9 +109,14 @@ class StdioTextAdapter implements Adapter
             return;
         }
 
-        $outputs = $response->getOutputs();
+        $this->renderOutputs($response);
+        $this->handleIntents($response);
 
-        $quit = false;
+    }
+
+    protected function renderOutputs(ShellOutputResponse $response) : void
+    {
+        $outputs = $response->getOutputs();
         $outputStr = '';
 
         foreach ($outputs as $output) {
@@ -123,19 +127,24 @@ class StdioTextAdapter implements Adapter
 
             $outputStr .= IConsoleLogger::wrapMessage($level, $text);
             $outputStr .= "\n\n";
+        }
 
-            if (
-                $message instanceof IntentMsg
-                && $message->getProtocalId() === DefaultIntents::SYSTEM_SESSION_QUIT
-            ) {
+        $this->packer->stdio->write($outputStr);
+    }
+
+    protected function handleIntents(ShellOutputResponse $response) : void
+    {
+        $intents = $response->getIntents();
+
+        $quit = false;
+        foreach ($intents as $message) {
+            if ($message->getProtocalId() === DefaultIntents::SYSTEM_SESSION_QUIT) {
                 $quit = true;
             }
         }
 
-        $this->packer->stdio->write($outputStr);
-
         if ($quit) {
-            $this->packer->stdio->end("quit");
+            $this->packer->stdio->end('end');
         }
     }
 

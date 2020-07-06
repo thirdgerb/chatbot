@@ -298,7 +298,7 @@ abstract class AbsApp implements App
     protected function fail(): void
     {
         $this->console->info('exit');
-        if (isset($this->fail)) {
+        if (isset($this->fail) && is_callable($this->fail)) {
             $caller = $this->fail;
             $caller();
         } else {
