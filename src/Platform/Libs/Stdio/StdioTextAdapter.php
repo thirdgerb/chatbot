@@ -76,7 +76,7 @@ class StdioTextAdapter implements Adapter
 
         $inputMsg = IInputMsg::instance(
             $message,
-            md5($this->appId . ':' . $this->packer->creatorId),
+            $this->packer->sessionId,
             $this->packer->creatorId,
             $this->packer->creatorName
         );

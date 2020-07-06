@@ -52,28 +52,35 @@ class StdioPacker implements Packer
     /**
      * @var string
      */
+    public $sessionId;
+
+    /**
+     * @var string
+     */
     public $line;
 
     /**
      * StdioPacker constructor.
      * @param Stdio $stdio
      * @param Platform $platform
-     * @param string $creatorId
      * @param string $creatorName
      * @param string $line
+     * @param string $salt
      */
     public function __construct(
         Stdio $stdio,
         Platform $platform,
-        string $creatorId,
         string $creatorName,
-        string $line
+        string $line,
+        string $salt = 'salt'
     )
     {
         $this->stdio = $stdio;
         $this->platform = $platform;
-        $this->creatorId = $creatorId;
+        $this->creatorId = $creatorId = md5("salt:$salt:name:$creatorName");
         $this->creatorName = $creatorName;
+        $appId = $platform->getId();
+        $this->sessionId = sha1("app:$appId:creatorId:$creatorId");
         $this->line = $line;
     }
 

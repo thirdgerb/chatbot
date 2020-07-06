@@ -11,11 +11,23 @@
 
 namespace Commune\Platform\Shell\Stdio;
 
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Platform;
 use Commune\Blueprint\Shell;
+use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Platform\AbsPlatform;
-
+use Commune\Platform\Libs\Stdio\StdioClientOption;
+use Commune\Platform\Libs\Stdio\StdioPacker;
+use Psr\Log\LoggerInterface;
+use React\EventLoop\Factory;
+use React\EventLoop\LoopInterface;
+use Swoole\Coroutine;
+use Commune\Blueprint\Host;
+use Commune\Blueprint\Configs\PlatformConfig;
+use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
+use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -28,6 +40,34 @@ class StdioShellPlatform extends AbsPlatform
      */
     protected $shell;
 
+    /**
+     * @var StdioClientOption
+     */
+    protected $option;
+
+    /**
+     * @var Stdio
+     */
+    protected $stdio;
+
+    /**
+     * @var LoopInterface
+     */
+    protected $loop;
+
+    public function __construct(
+        Host $host,
+        PlatformConfig $config,
+        Shell $shell,
+        StdioClientOption $option,
+        LoggerInterface $logger
+    )
+    {
+        $this->shell = $shell;
+        $this->option = $option;
+        parent::__construct($host, $config, $logger);
+    }
+
     public function getAppId(): string
     {
         return $this->shell->getId();
@@ -35,17 +75,75 @@ class StdioShellPlatform extends AbsPlatform
 
     public function serve(): void
     {
-        // TODO: Implement serve() method.
+        Coroutine\run(function(){
+
+            $this->loop = Factory::create();
+            $this->stdio = new Stdio($this->loop);
+
+            $this->stdio->setPrompt('> ');
+            $packer = $this->makePacker('');
+
+            /**
+             * @var Broadcaster $broadcaster
+             */
+            $broadcaster = $this->host->getProcContainer()->get(Broadcaster::class);
+            Coroutine::create(
+                function (
+                    Broadcaster $broadcaster,
+                    StdioPacker $packer
+                ){
+                    $broadcaster->subscribe(
+                        [$this, 'subscribe'],
+                        $this->getAppId(),
+                        $packer->sessionId
+                    );
+                },
+                $broadcaster,
+                $packer
+            );
+
+            // 处理同步请求.
+            $this->stdio->on('data', function($line) {
+                $packer = $this->makePacker($line);
+
+                $continue = $this->onPacker(
+                    $packer,
+                    $this->option->adapter,
+                    ShellInputRequest::class
+                );
+
+                if (!$continue) {
+                    $this->loop->stop();
+                }
+            });
+
+            $this->loop->run();
+        });
     }
 
     public function sleep(float $seconds): void
     {
-        // TODO: Implement sleep() method.
+        Coroutine::sleep($seconds);
     }
 
     public function shutdown(): void
     {
-        // TODO: Implement shutdown() method.
+        exit(0);
+    }
+
+    public function subscribe(string $chan, ShellOutputRequest $request) : void
+    {
+        $packer = $this->makePacker('');
+        $adapter = $packer->adapt($this->option->adapter, $this->getAppId());
+
+        $response = $this->shell->handleRequest(
+            $request,
+            ShellOutputReqHandler::class
+        );
+        $adapter->sendResponse($response);
+
+        $adapter->destroy();
+        $packer->destroy();
     }
 
     protected function handleRequest(
@@ -54,8 +152,21 @@ class StdioShellPlatform extends AbsPlatform
         string $interface = null
     ): void
     {
-        // TODO: Implement handleRequest() method.
+        $response = $this->shell->handleRequest(
+            $request,
+            $interface
+        );
+        $adapter->sendResponse($response);
     }
 
+    public function makePacker(string $line) : StdioPacker
+    {
+        return new StdioPacker(
+            $this->stdio,
+            $this,
+            $this->option->creatorName,
+            $line
+        );
+    }
 
 }

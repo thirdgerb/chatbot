@@ -110,7 +110,6 @@ class StdioConsolePlatform extends AbsPlatform
         return new StdioPacker(
             $this->stdio,
             $this,
-            md5($id),
             $id,
             $line
         );
