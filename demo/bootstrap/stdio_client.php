@@ -54,6 +54,7 @@ function main(string $host, string $port) {
 
         $loop->run();
 
+        return 0;
     });
 
     exit($code);
