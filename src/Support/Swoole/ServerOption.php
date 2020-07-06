@@ -26,6 +26,7 @@ use Commune\Support\Option\AbsOption;
  * @property-read string $port
  *
  * ## Swoole 的服务端配置.
+ * 
  * @property-read array $serverSettings
  * 具体配置项请查看: @see https://wiki.swoole.com/#/server/setting
  *

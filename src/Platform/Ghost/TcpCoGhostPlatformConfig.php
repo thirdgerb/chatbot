@@ -15,11 +15,14 @@ use Commune\Framework\Providers\GhtMessengerBySwlChanProvider;
 use Commune\Platform\Ghost\Tcp\SwlCoGhostOption;
 use Commune\Platform\IPlatformConfig;
 use Commune\Platform\Ghost\Tcp\SwlCoGhostPlatform;
-use Commune\Platform\Libs\SwlCo\TcpAdapterOption;
+use Commune\Platform\Libs\SwlCo\TcpPlatformOption;
 use Commune\Platform\Ghost\Tcp\SwlCoBabelGhostAdapter;
+use Commune\Support\Swoole\ServerOption;
 
 
 /**
+ * Swoole Tcp 协程实现的 Ghost 服务端的基础配置.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class TcpCoGhostPlatformConfig extends IPlatformConfig
@@ -28,13 +31,16 @@ class TcpCoGhostPlatformConfig extends IPlatformConfig
     public static function stub(): array
     {
         return [
-            'id' => 'demo',
+            'id' => '',
             'name' => '',
             'desc' => '',
             'concrete' => SwlCoGhostPlatform::class,
+            // Ghost 服务端不启动 shell
             'bootShell' => null,
+            // 启动 Ghost
             'bootGhost' => true,
             'providers' => [
+                // 基于 Channel 实现的 Ghost 端异步投递消息.
                 GhtMessengerBySwlChanProvider::class => [
                     'chanCapacity' => 1000,
                     'chanTimeout' => 0.1,
@@ -42,16 +48,18 @@ class TcpCoGhostPlatformConfig extends IPlatformConfig
             ],
             'options' => [
                 SwlCoGhostOption::class => [
-                    'poolOption' => [
-                        'workerNum' => 2,
+                    /**
+                     * @see ServerOption
+                     */
+                    'serverOption' => [
                         'host' => '127.0.0.1',
                         'port' => '9501',
-                        'ssl' => false,
                         'serverSettings' => [
+                            'workerNum' => 2,
                         ],
                     ],
                     /**
-                     * @see TcpAdapterOption
+                     * @see TcpPlatformOption
                      */
                     'adapterOption' => [
                         'tcpAdapter' => SwlCoBabelGhostAdapter::class,

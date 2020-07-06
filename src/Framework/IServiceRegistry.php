@@ -214,11 +214,15 @@ class IServiceRegistry implements ServiceRegistry
 
         try {
             foreach ($this->configProviders as $id => $provider) {
-                $provider->boot($this->procC);
                 // 初始化服务
                 $this->consoleLogger->debug(
                     $this->logInfo->bootingBootProvider($id, get_class($provider))
                 );
+
+                $provider->boot($this->procC);
+
+                // 初始化服务
+                $this->consoleLogger->debug('done!');
             }
 
         } catch (\Throwable $e) {
@@ -240,13 +244,18 @@ class IServiceRegistry implements ServiceRegistry
         try {
 
             foreach ($this->procProviders as $id => $provider) {
-                $provider->boot($this->procC);
                 // 初始化服务
                 $this->consoleLogger->debug(
                     $this->logInfo->bootingBootProvider($id, get_class($provider))
                 );
+
+                $provider->boot($this->procC);
+
+                $this->consoleLogger->debug('done!');
             }
+
         } catch (\Throwable $e) {
+            $id = $id ?? '';
 
             throw new CommuneBootingException(
                 "boot proc service provider $id fail",

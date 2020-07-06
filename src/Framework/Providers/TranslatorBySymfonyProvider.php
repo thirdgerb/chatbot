@@ -20,7 +20,6 @@ use Commune\Framework\Trans\SymfonyTranslatorAdapter;
 use Commune\Framework\Trans\TransOption;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Meta\StorageMeta;
-use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Support\Registry\Storage\Json\JsonStorageOption;
 use Commune\Support\Utils\StringUtils;
@@ -73,12 +72,16 @@ class TranslatorBySymfonyProvider extends ServiceProvider
             $registry = $app->get(OptRegistry::class);
             $logger = $app->get(ConsoleLogger::class);
 
-            return new SymfonyTranslatorAdapter(
-                $registry->getCategory(TransOption::class),
+            $category = $registry->getCategory(TransOption::class);
+            
+            $translator = new SymfonyTranslatorAdapter(
+                $category,
                 $logger,
                 $this->defaultLocale,
                 $this->defaultDomain
             );
+            
+            return $translator;
         });
     }
 

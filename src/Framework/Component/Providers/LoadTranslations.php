@@ -16,6 +16,8 @@ use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\ServiceProvider;
 use Commune\Contracts\Trans\Translator;
+use Commune\Framework\Trans\TransOption;
+use Commune\Support\Registry\OptRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 
@@ -76,7 +78,6 @@ class LoadTranslations extends ServiceProvider
         $generator = $dirFinder->directories()
             ->in($path)
             ->depth(0);
-
         foreach($generator as $dir) {
             /**
              *

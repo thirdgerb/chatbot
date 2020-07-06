@@ -13,7 +13,7 @@ namespace Commune\Platform\Ghost\Tcp;
 
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Swoole\ServerOption;
-use Commune\Platform\Libs\SwlCo\TcpAdapterOption;
+use Commune\Platform\Libs\SwlCo\TcpPlatformOption;
 
 
 /**
@@ -23,8 +23,8 @@ use Commune\Platform\Libs\SwlCo\TcpAdapterOption;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read TcpAdapterOption $adapterOption
- * @property-read ServerOption $poolOption
+ * @property-read TcpPlatformOption $adapterOption  平台相关的配置
+ * @property-read ServerOption $serverOption        服务端的配置.
  */
 class SwlCoGhostOption extends AbsOption
 {
@@ -32,15 +32,15 @@ class SwlCoGhostOption extends AbsOption
     {
         return [
             'adapterOption' => [],
-            'poolOption' => []
+            'serverOption' => []
         ];
     }
 
     public static function relations(): array
     {
         return [
-            'adapterOption' => TcpAdapterOption::class,
-            'poolOption' => ServerOption::class,
+            'adapterOption' => TcpPlatformOption::class,
+            'serverOption' => ServerOption::class,
         ];
     }
 

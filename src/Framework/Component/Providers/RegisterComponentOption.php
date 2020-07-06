@@ -83,7 +83,8 @@ class RegisterComponentOption extends ServiceProvider
         // 注册到正式的option 分类中.
         $ids = 0;
         foreach ($componentCategory->eachOption() as $option) {
-            if ($category->save($option, true)) {
+            $success = $category->save($option, true);
+            if ($success) {
                 $ids ++;
             }
         }

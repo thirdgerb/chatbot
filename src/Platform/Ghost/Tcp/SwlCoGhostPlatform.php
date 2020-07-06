@@ -25,7 +25,7 @@ use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
 use Commune\Platform\Libs\SwlCo\ProcPoolFactory;
-use Commune\Platform\Libs\SwlCo\TcpAdapterOption;
+use Commune\Platform\Libs\SwlCo\TcpPlatformOption;
 use Commune\Platform\Libs\SwlCo\TcpPlatformServeTrait;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 
@@ -64,7 +64,7 @@ class SwlCoGhostPlatform extends AbsPlatform
         $this->ghost = $ghost;
         $this->option = $option;
 
-        $this->poolFactory = new ProcPoolFactory($option->poolOption);
+        $this->poolFactory = new ProcPoolFactory($option->serverOption);
 
         parent::__construct($host, $config, $logger);
     }
@@ -167,7 +167,7 @@ class SwlCoGhostPlatform extends AbsPlatform
         unset($request, $response, $adapter);
     }
 
-    public function getAdapterOption(): TcpAdapterOption
+    public function getAdapterOption(): TcpPlatformOption
     {
         return $this->option->adapterOption;
     }

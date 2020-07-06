@@ -182,11 +182,8 @@ class SymfonyTranslatorAdapter implements Translator
                 'intl' => $intl
             ]);
 
-            if ($this->category->save($transOption, !$force)) {
-                $this->cacheOption($transOption);
-            } elseif ($force) {
-                $this->logger->error('save trans option fail : ' . $transOption->toJson());
-            }
+            $this->cacheOption($transOption);
+            $this->category->save($transOption, !$force);
         }
     }
 

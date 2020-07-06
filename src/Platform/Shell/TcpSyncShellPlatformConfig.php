@@ -54,7 +54,7 @@ class TcpSyncShellPlatformConfig extends IPlatformConfig
                         ],
                     ],
                     /**
-                     * @see TcpAdapterOption
+                     * @see TcpPlatformOption
                      */
                     'adapterOption' => [
                         'tcpAdapter' => Tcp\SwlCoTextShellAdapter::class,

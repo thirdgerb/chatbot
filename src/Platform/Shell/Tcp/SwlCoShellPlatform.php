@@ -22,7 +22,7 @@ use Commune\Platform\AbsPlatform;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
-use Commune\Platform\Libs\SwlCo\TcpAdapterOption;
+use Commune\Platform\Libs\SwlCo\TcpPlatformOption;
 use Commune\Platform\Libs\SwlCo\TcpPlatformServeTrait;
 use Commune\Platform\Libs\SwlCo\ProcPoolFactory;
 
@@ -105,7 +105,7 @@ class SwlCoShellPlatform extends AbsPlatform
         $pool->start();
     }
 
-    public function getAdapterOption(): TcpAdapterOption
+    public function getAdapterOption(): TcpPlatformOption
     {
         return $this->option->adapterOption;
     }

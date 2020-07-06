@@ -15,12 +15,14 @@ use Commune\Support\Option\AbsOption;
 use Commune\Support\Utils\TypeUtils;
 
 /**
+ * Swoole Coroutine TCP 服务端的基础配置.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $tcpAdapter
- * @property-read float $receiveTimeout
+ * @property-read string $tcpAdapter        Swoole Tcp 接口的适配器.
+ * @property-read float $receiveTimeout     每一个 Tcp Connection 传送消息的过期时间. 默认是 0
  */
-class TcpAdapterOption extends AbsOption
+class TcpPlatformOption extends AbsOption
 {
     public static function stub(): array
     {

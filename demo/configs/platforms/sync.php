@@ -24,7 +24,7 @@ return new Platform\Shell\TcpSyncShellPlatformConfig([
                 ],
             ],
             /**
-             * @see TcpAdapterOption
+             * @see TcpPlatformOption
              */
             'adapterOption' => [
                 'tcpAdapter' => Tcp\SwlCoTextShellAdapter::class,

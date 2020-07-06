@@ -27,7 +27,7 @@ return new Platform\Ghost\TcpCoGhostPlatformConfig([
                 ],
             ],
             /**
-             * @see TcpAdapterOption
+             * @see TcpPlatformOption
              */
             'adapterOption' => [
                 'tcpAdapter' => Platform\Ghost\Tcp\SwlCoBabelGhostAdapter::class,

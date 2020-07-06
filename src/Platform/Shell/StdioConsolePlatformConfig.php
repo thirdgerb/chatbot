@@ -17,6 +17,9 @@ use Commune\Platform\Shell\Stdio\StdioPlatform;
 use Commune\Support\Utils\TypeUtils;
 
 /**
+ * 基于 Stdio 实现的单体 Platform.
+ * 在 Platform 上同时启动 Shell 与 Ghost.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class StdioConsolePlatformConfig extends IPlatformConfig

@@ -12,7 +12,7 @@
 namespace Commune\Platform\Shell\Tcp;
 
 use Commune\Support\Swoole\ServerOption;
-use Commune\Platform\Libs\SwlCo\TcpAdapterOption;
+use Commune\Platform\Libs\SwlCo\TcpPlatformOption;
 use Commune\Support\Option\AbsOption;
 
 
@@ -21,7 +21,7 @@ use Commune\Support\Option\AbsOption;
  *
  *
  * @property-read ServerOption $poolOption
- * @property-read TcpAdapterOption $adapterOption
+ * @property-read TcpPlatformOption $adapterOption
  */
 class SwlCoShellOption extends AbsOption
 {
@@ -37,7 +37,7 @@ class SwlCoShellOption extends AbsOption
     {
         return [
             'poolOption' => ServerOption::class,
-            'adapterOption' => TcpAdapterOption::class,
+            'adapterOption' => TcpPlatformOption::class,
         ];
     }
 

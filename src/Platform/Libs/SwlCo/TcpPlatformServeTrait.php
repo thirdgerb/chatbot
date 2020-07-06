@@ -15,6 +15,9 @@ use Commune\Platform\AbsPlatform;
 use Swoole\Coroutine\Server\Connection;
 
 /**
+ * 使用 Swoole Coroutine TCP Server 的平台端.
+ * 获取一个 Connection, 接受客户端信息, 并同步发送响应.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @mixin AbsPlatform
@@ -22,8 +25,15 @@ use Swoole\Coroutine\Server\Connection;
 trait TcpPlatformServeTrait
 {
 
-    abstract public function getAdapterOption() : TcpAdapterOption;
+    /**
+     * @return TcpPlatformOption
+     */
+    abstract public function getAdapterOption() : TcpPlatformOption;
 
+    /**
+     * 接受到一个协程的 TCP 连接.
+     * @param Connection $conn
+     */
     public function receive(Connection $conn) : void
     {
         $adapterOption = $this->getAdapterOption();
