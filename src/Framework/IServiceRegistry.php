@@ -220,9 +220,6 @@ class IServiceRegistry implements ServiceRegistry
                 );
 
                 $provider->boot($this->procC);
-
-                // 初始化服务
-                $this->consoleLogger->debug('done!');
             }
 
         } catch (\Throwable $e) {

@@ -12,8 +12,10 @@
 namespace Commune\Platform\Shell\Stdio;
 
 use Clue\React\Stdio\Stdio;
+use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
 use Commune\Blueprint\Platform;
 use Commune\Blueprint\Shell;
+use Commune\Contracts\Cache;
 use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Platform\AbsPlatform;
 use Commune\Platform\Libs\Stdio\StdioClientOption;
@@ -83,6 +85,13 @@ class StdioShellPlatform extends AbsPlatform
             $this->stdio->setPrompt('> ');
             $packer = $this->makePacker('');
 
+            // 发送启动信息.
+            $this->onPacker(
+                $packer,
+                $this->option->adapter,
+                ShellInputReqHandler::class
+            );
+
             /**
              * @var Broadcaster $broadcaster
              */
@@ -90,16 +99,16 @@ class StdioShellPlatform extends AbsPlatform
             Coroutine::create(
                 function (
                     Broadcaster $broadcaster,
-                    StdioPacker $packer
+                    string $sessionId
                 ){
                     $broadcaster->subscribe(
                         [$this, 'subscribe'],
                         $this->getAppId(),
-                        $packer->sessionId
+                        $sessionId
                     );
                 },
                 $broadcaster,
-                $packer
+                $packer->sessionId
             );
 
             // 处理同步请求.
