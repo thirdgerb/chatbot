@@ -99,12 +99,12 @@ abstract class AbsOption extends AStruct implements Option
 
     public function getTitle(): string
     {
-        return $this->_data[static::TITLE_FIELD] ?? '';
+        return $this->_data[static::TITLE_FIELD] ?? $this->getId();
     }
 
     public function getDescription(): string
     {
-        return $this->_data[static::DESC_FIELD] ?? '';
+        return $this->_data[static::DESC_FIELD] ?? $this->getId();
     }
 
     public function __clone()

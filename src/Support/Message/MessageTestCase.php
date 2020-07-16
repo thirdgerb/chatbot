@@ -41,10 +41,20 @@ class MessageTestCase extends TestCase
             $this->ReflectionOfPropertiesTest($name ,$message);
             $this->babelTest($name, $message);
             $this->relationsTest($name, $message);
+            $this->propertiesTest($name, $message);
         }
-
-
     }
+    
+    
+    public function propertiesTest(string $name, Message $message) 
+    {
+        $properties = $message->toProperties();
+        
+        foreach ($properties as $name => $property) {
+            $this->assertEquals($property, $message->{$name});
+        }
+    }
+    
 
     public function relationsTest(string $name, Message $message)
     {

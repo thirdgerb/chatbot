@@ -67,6 +67,14 @@ interface Struct extends ArrayAndJsonAble, \IteratorAggregate
      */
     public static function relations() : array;
 
+    /*------- to array -------*/
+
+    /**
+     * 按注解的字段给出值. 
+     * @return array
+     */
+    public function toProperties() : array;
+
     /*------- reflection -------*/
 
     /**

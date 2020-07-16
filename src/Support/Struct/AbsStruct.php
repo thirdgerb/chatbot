@@ -243,8 +243,21 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
      */
     public function toArray(): array
     {
-        $data = $this->_data;
-        return ArrayUtils::recursiveToArray($data);
+        return ArrayUtils::recursiveToArray($this->_data);
+    }
+    
+    public function toProperties(): array
+    {
+        $reflection = static::getStructReflection();
+        $props = $reflection->getDefinedPropertyMap();
+        $data = [];
+        
+        foreach ($props as $prop) {
+            $name = $prop->getName();
+            $data[$name] = $this->__get($name);
+        }
+        
+        return $data;
     }
 
     /*------- doc --------*/
