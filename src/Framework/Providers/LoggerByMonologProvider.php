@@ -36,6 +36,8 @@ use Monolog\Logger as Monolog;
  * @property-read bool $bubble 是否冒泡到别的handler
  * @property-read bool|null $permission 文件的权限设置
  * @property-read bool $locking 是否文件锁
+ * 
+ * @property-read bool $forceRegister 是否强制注册.
  */
 class LoggerByMonologProvider extends ServiceProvider
 {
@@ -44,18 +46,25 @@ class LoggerByMonologProvider extends ServiceProvider
         return [
             'name' => 'commune',
             'logDir' => CommuneEnv::getLogPath(),
-            'file' => 'commune.log',
             'days' => 7,
             'level' => LogLevel::DEBUG,
             'bubble' => true,
             'permission' => null,
             'locking' => false,
+            'forceRegister' => false,
         ];
     }
 
     public function getId(): string
     {
         return LoggerInterface::class;
+    }
+    
+    public function __get_file() : string
+    {
+        return empty($this->_data['file'])
+            ? $this->name . '.log'
+            : $this->_data['file'];
     }
 
     public function getDefaultScope(): string
@@ -70,6 +79,10 @@ class LoggerByMonologProvider extends ServiceProvider
 
     public function register(ContainerContract $app): void
     {
+        if ($app->bound(LoggerInterface::class) && !$this->forceRegister) {
+            return;
+        }
+        
         $app->singleton(
             LoggerInterface::class,
             function($app) {
