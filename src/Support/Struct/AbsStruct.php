@@ -72,7 +72,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
         $error = static::validate($this->_data);
 
         if (!empty($error)) {
-            throw new InvalidStructException(static::class . ' invalid struct data , ' . $error);
+            throw new InvalidStructException(static::class . ' invalid struct data, ' . $error);
         }
     }
 

@@ -45,7 +45,8 @@ class IStructProperty extends AStructProperty
         }
 
         $errorMsg = implode(",", $errors);
-        return 'type should fit rules ' . implode('|', $this->rules) . ", $errorMsg";
+        $name = $this->name;
+        return "[$name] not fit rules " . implode('|', $this->rules) . ", $errorMsg";
     }
 
 
