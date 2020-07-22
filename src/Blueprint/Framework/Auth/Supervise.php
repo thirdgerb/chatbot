@@ -18,4 +18,7 @@ namespace Commune\Blueprint\Framework\Auth;
  */
 interface Supervise extends Policy
 {
+    const GUEST = 0;
+    const USER = 1;
+    const SUPERVISOR = 255;
 }
