@@ -65,6 +65,11 @@ class IHost extends AbsApp implements Host
      */
     protected $platformConfig;
 
+    /**
+     * @var bool 
+     */
+    protected $inited = false;
+
     public function __construct(
         HostConfig $config,
         ProcContainer $procC = null,
@@ -99,36 +104,58 @@ class IHost extends AbsApp implements Host
         return $this->config;
     }
 
-    public function run(string $platformId, callable $onBootFailure = null): void
+    public function init(string $platformId, callable $onBootFailure = null): ? PlatformConfig
     {
         if (isset($onBootFailure)) {
             $this->onFail($onBootFailure);
         }
 
-        // 获取配置.
-        $platformConfig = $this->config->getPlatformConfig($platformId);
-
-        if (empty($platformConfig)) {
-
-            $ids = array_map(function(PlatformConfig $config) {
-                return $config->id;
-            }, $this->config->platforms);
-
-            throw new AppNotDefinedException(
-                'platform',
-                $platformId,
-                'available: ' . implode(',', $ids)
-            );
+        if ($this->inited) {
+            return $this->platformConfig;
         }
 
-        $this->initPlatform($platformConfig);
-        $this->initGhost($platformConfig);
-        $this->initShell($platformConfig);
-
-        $this->bootstrap();
-        $this->activate();
-
         try {
+
+            // 获取配置.
+            $platformConfig = $this->config->getPlatformConfig($platformId);
+
+            if (empty($platformConfig)) {
+
+                return null;
+            }
+
+            $this->initPlatform($platformConfig);
+            $this->initGhost($platformConfig);
+            $this->initShell($platformConfig);
+
+            $this->bootstrap();
+            $this->activate();
+            $this->inited = true;
+            
+            return $platformConfig;
+            
+        } catch (\Throwable $e) {
+            $this->getConsoleLogger()->critical(strval($e));
+            $this->fail();
+        }
+    }
+
+    public function run(string $platformId, callable $onBootFailure = null): void
+    {
+        try {
+            
+            $platformConfig = $this->init($platformId, $onBootFailure);
+            if (empty($platformConfig)) {
+                $ids = array_map(function(PlatformConfig $config) {
+                    return $config->id;
+                }, $this->config->platforms);
+
+                throw new AppNotDefinedException(
+                    'platform',
+                    $platformId,
+                    'available: ' . implode(',', $ids)
+                );
+            }
 
             /**
              * @var Platform $platform

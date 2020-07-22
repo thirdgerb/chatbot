@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint;
 
+use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Exceptions\Boot\AppNotDefinedException;
 use Commune\Blueprint\Configs\HostConfig;
 use Commune\Blueprint\Framework\App;
@@ -29,6 +30,15 @@ interface Host extends App
      */
     public function getConfig() : HostConfig;
 
+    /**
+     * 根据 Platform 的配置, 初始化所有的服务. 
+     * 
+     * @param string $platformId
+     * @param callable|null $onBootFailure
+     * @return PlatformConfig|null
+     */
+    public function init(string $platformId, callable $onBootFailure = null): ? PlatformConfig;
+    
     /**
      * 使用 Platform 名称正式启动一个 Platform.
      * 根据 Platform 的配置, 同时启动配置中的 Shell 和 Ghost, 如果有定义的话.

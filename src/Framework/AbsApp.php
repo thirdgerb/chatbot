@@ -302,7 +302,7 @@ abstract class AbsApp implements App
             $caller = $this->fail;
             $caller();
         } else {
-            exit(1);
+            exit(SIGTERM);
         }
     }
 
