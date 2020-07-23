@@ -27,6 +27,10 @@ interface CommuneErrorCode
     const UNAUTHORIZED = 401;
     const FORBIDDEN = 403;
     const HANDLER_NOT_FOUND = 404;
+    const REQUEST_TOO_LARGE = 413;
+    const UNPROCESSABLE_ENTITY = 422;
+    const LOCKED = 423;
+    
 
     // runtime failure
     const HOST_RUNTIME_ERROR = 500;
@@ -44,6 +48,9 @@ interface CommuneErrorCode
         401 => 'UNAUTHORIZED',
         403 => 'FORBIDDEN',
         404 => 'HANDLER_NOT_FOUND',
+        413 => 'REQUEST_TOO_LARGE',
+        422 => 'UNPROCESSABLE_ENTITY',
+        423 => 'LOCKED',
         500 => 'RUNTIME_ERROR',
         501 => 'REQUEST_FAIL',
         502 => 'SESSION_FAIL',
