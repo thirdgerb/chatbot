@@ -15,7 +15,7 @@ use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
-use Commune\Kernel\Protocals\IShellInputRequestRequest;
+use Commune\Kernel\Protocals\IShellInputRequest;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Platform\Libs\Parser\AppResponseParser;
@@ -62,7 +62,7 @@ class SwlCoTextShellAdapter extends TcpAdapterAbstract
             $creatorId = $sessionId
         );
 
-        $request = IShellInputRequestRequest::instance(
+        $request = IShellInputRequest::instance(
             false,
             $inputMsg
         );

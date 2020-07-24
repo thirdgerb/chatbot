@@ -60,7 +60,7 @@ class MessagesTest extends MessageTestCase
         // kernel protocals
         Protocals\IGhostRequest::class,
         Protocals\IGhostResponse::class,
-        Protocals\IShellInputRequestRequest::class,
+        Protocals\IShellInputRequest::class,
         Protocals\IShellInputResponse::class,
         Protocals\IShellOutputRequest::class,
         Protocals\IShellOutputResponse::class,

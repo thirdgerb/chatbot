@@ -21,7 +21,7 @@ use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Platform\Libs\Parser\AppResponseParser;
 use Commune\Support\Utils\StringUtils;
-use Commune\Kernel\Protocals\IShellInputRequestRequest;
+use Commune\Kernel\Protocals\IShellInputRequest;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -71,7 +71,7 @@ class SwlDuplexTextShellAdapter extends TcpAdapterAbstract
             $creatorName
         );
 
-        return IShellInputRequestRequest::instance(
+        return IShellInputRequest::instance(
             false,
             $input
         );
