@@ -84,10 +84,10 @@ interface Deliver
      * 会作为一个异步消息发送.
      *
      * @param string $sessionId
-     * @param bool $isOutput      默认是一个异步的输入消息, 否则是回复消息. 会从目标 Session 投递
+     * @param bool $isDelivery      默认是一个异步的输入消息, 否则是回复消息. 会从目标 Session 投递
      * @return Deliver
      */
-    public function withSessionId(string $sessionId, bool $isOutput = false) : Deliver;
+    public function withSessionId(string $sessionId, bool $isDelivery = false) : Deliver;
 
     /**
      * 指定发送消息的用户信息. 默认是机器人自身.

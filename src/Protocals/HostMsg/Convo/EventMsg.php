@@ -21,7 +21,9 @@ use Commune\Protocals\HostMsg\ConvoMsg;
  */
 interface EventMsg extends ConvoMsg
 {
-    const SYSTEM_EVENT_CONNECTION = 'system.connection';
+    // 常见客户端事件. 
+    const EVENT_CLIENT_CONNECTION = 'client.connection';
+    const EVENT_CLIENT_ACKNOWLEDGE = 'client.ack';
 
     public function getEventName() : string;
 

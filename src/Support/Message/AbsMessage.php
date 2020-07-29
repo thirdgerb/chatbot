@@ -11,7 +11,6 @@
 
 namespace Commune\Support\Message;
 
-use Commune\Message\Abstracted\IComprehension;
 use Commune\Support\Babel\Babel;
 use Commune\Support\Babel\BabelSerializable;
 use Commune\Support\DI\Injectable;

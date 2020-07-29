@@ -25,11 +25,15 @@ interface Packer
 {
 
     /**
+     * 数据包是否有问题.
+     * 如果有问题, 则直接告知客户端请求失败.
      * @return null|string
      */
     public function isInvalid() : ? string;
 
     /**
+     * 通过数据包生成一个适配器.
+     *
      * @param string $adapterName
      * @param string $appId
      * @return Adapter
@@ -37,7 +41,12 @@ interface Packer
     public function adapt(string $adapterName, string $appId) : Adapter;
 
     /**
-     * 将错误信息发送给客户端. 不需要记录日志.
+     * 用于表示请求本身失败, 而无关逻辑结果.
+     * 通常是 400 bad request.
+     *
+     * 将请求失败的消息告知客户端.
+     * 不需要记录日志.
+     *
      * @param string $error
      */
     public function fail(string $error) : void;

@@ -27,8 +27,8 @@ use Commune\Support\Uuid\IdGeneratorHelper;
  * @property string $sessionId          sessionId: 会话Id, 为空则是 guestId
  * @property string $convoId            convoId: 多轮会话的 ID. 允许为空. 除非客户端有指定的 conversation.
  *
- * @property string $creatorId          creatorId: 用户的ID. 不可以为空.
- * @property string $creatorName        creatorName: 用户的姓名. 可以为空.
+ * @property string $creatorId          creatorId: 用户的ID.
+ * @property string $creatorName        creatorName: 用户的姓名.
  * @property HostMsg $message           message: 输入消息. 不可以为空.
  * @property int $createdAt             createdAt: 创建时间.
  * @property int $deliverAt             deliverAt: 发送时间. 默认为0.
@@ -64,7 +64,7 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
             // 会话 id
             'convoId' => '',
 
-            // 创建者
+            // 创建者. 为空表示为是机器人.
             'creatorId' => '',
 
             // 创建者名称.
@@ -128,7 +128,7 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
 
     public function getProtocalId(): string
     {
-        return $this->getMessage()->getProtocalId();
+        return get_class($this->getMessage());
     }
 
     public function getSessionId(): string

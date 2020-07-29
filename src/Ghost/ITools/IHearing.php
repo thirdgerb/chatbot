@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
+use Commune\Protocals\HostMsg\Convo\EventMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -145,6 +146,11 @@ class IHearing extends IMatcher implements Hearing
     public function end($action = null) : Operator
     {
         $this->then();
+
+        // Event 消息如果不主动处理, 则完全忽略.
+        if ($this->input->getMessage() instanceof EventMsg) {
+            return $this->dialog->dumb();
+        }
 
         if (isset($action)) {
             $this->fallback[] = $action;

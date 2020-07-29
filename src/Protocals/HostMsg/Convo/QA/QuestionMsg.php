@@ -15,11 +15,12 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Trans\SelfTranslatable;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocals\HostMsg\Tags\Conversational;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface QuestionMsg extends VerbalMsg, SelfTranslatable
+interface QuestionMsg extends VerbalMsg, Conversational, SelfTranslatable
 {
     /**
      * @return string

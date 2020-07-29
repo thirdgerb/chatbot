@@ -153,12 +153,15 @@ interface Dialog
 
 
     /**
+     * 重置会话到上一轮.
      * @param bool $silent
      * @return Operator
      */
     public function rewind(bool $silent = false) : Operator;
 
     /**
+     * 装作没有收到对话消息.
+     * 不做任何响应, 也不保存状态.
      * @return Operator
      */
     public function dumb() : Operator;

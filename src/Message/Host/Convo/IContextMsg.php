@@ -69,6 +69,12 @@ class IContextMsg extends AbsMessage implements ContextMsg
         return $this->contextName;
     }
 
+    public function getStageName(): string
+    {
+        return $this->stageName;
+    }
+
+
     public function getQuery(): array
     {
         return $this->query;

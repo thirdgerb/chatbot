@@ -14,7 +14,9 @@ namespace Commune\Protocals\HostMsg\Convo;
 use Commune\Protocals\HostMsg;
 
 /**
- * 异步任务投递的结果. 会触发目标语境的 receive 方法.
+ * 异步任务投递的结果.
+ * 会触发目标语境的 receive 方法.
+ * 还没想得完全清楚.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */

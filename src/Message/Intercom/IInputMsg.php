@@ -38,7 +38,8 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         string $creatorId = '',
         string $creatorName = '',
         string $convoId = '',
-        int $deliverAt = null
+        int $deliverAt = null,
+        string $messageId = null
     ) : self
     {
         $deliverAt = $deliverAt ?? time();
@@ -48,6 +49,7 @@ class IInputMsg extends AIntercomMsg implements InputMsg
             'creatorId' => $creatorId,
             'creatorName' => $creatorName,
             'convoId' => $convoId,
+            'messageId' => $messageId,
             'deliverAt' => $deliverAt
         ];
 

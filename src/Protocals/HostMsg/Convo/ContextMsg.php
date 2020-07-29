@@ -29,6 +29,8 @@ interface ContextMsg extends ConvoMsg
 
     public function getContextName() : string;
 
+    public function getStageName() : string;
+
     public function getQuery() : array;
 
     public function getMemorableData() : array;

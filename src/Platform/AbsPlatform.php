@@ -128,6 +128,7 @@ abstract class AbsPlatform implements Platform
 
             return $this->donePacker($packer);
 
+        // 理论上这里不应该捕获任何异常.
         } catch (\Throwable $e) {
 
             $this->catchExp($e);
@@ -145,11 +146,11 @@ abstract class AbsPlatform implements Platform
      */
     protected function donePacker(Platform\Packer $packer, string $error = null) : bool
     {
-        $failed = isset($failed);
+        $failed = isset($error);
         if ($failed) {
             $packer->fail($error);
             // 记录日志.
-            $this->invalidRequest($error);
+            $this->logInvalidRequest($error);
         }
 
         $packer->destroy();
@@ -167,7 +168,7 @@ abstract class AbsPlatform implements Platform
         return $this->config->id;
     }
 
-    protected function invalidRequest(string $error) : void
+    protected function logInvalidRequest(string $error) : void
     {
         $id = $this->getId();
         $this->logger->notice("invalid request for platform $id, $error");

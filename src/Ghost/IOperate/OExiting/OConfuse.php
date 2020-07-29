@@ -99,7 +99,7 @@ class OConfuse extends AbsOperator
         $message = $this->cloner->input->getMessage();
 
         if ($message instanceof EventMsg) {
-            return $this->dialog->rewind($this->silent);
+            return $this->dialog->dumb();
         }
 
         return null;
