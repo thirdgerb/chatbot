@@ -11,7 +11,10 @@
 
 namespace Commune\Ghost;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Configs\GhostConfig;
+use Commune\Blueprint\Exceptions\CommuneRuntimeException;
+use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\Auth\Authority;
 use Commune\Blueprint\Ghost;
@@ -20,6 +23,7 @@ use Commune\Contracts\Cache;
 use Commune\Contracts\Trans\SelfTranslatable;
 use Commune\Contracts\Trans\Translator;
 use Commune\Framework\ASession;
+use Commune\Ghost\IOperate\OStart;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\OutputMsg;
 use Psr\Log\LoggerInterface;
@@ -294,6 +298,39 @@ class ICloner extends ASession implements Cloner
         $this->expire = $seconds;
     }
 
+    /*------- dialog manager -------*/
+
+    public function runDialogManager(Ghost\Operate\Operator $start = null): void
+    {
+        $operator = $start ?? new OStart($this);
+        $tracer = $this->runtime->trace;
+
+        try {
+
+            while (isset($operator)) {
+
+                $tracer->record($operator);
+                $operator = $operator->tick();
+                if ($operator->isTicked()) {
+                    break;
+                }
+            }
+
+        } catch (CommuneRuntimeException $e) {
+            throw $e;
+
+        } catch (\Throwable $e) {
+            throw new BrokenRequestException($e->getMessage(), $e);
+
+        } finally {
+            // 调试模式下检查运行轨迹.
+            if (CommuneEnv::isDebug()) {
+                $tracer->log($this->logger);
+            }
+        }
+    }
+
+
     /*------- output -------*/
 
 
@@ -377,6 +414,8 @@ class ICloner extends ASession implements Cloner
         }
 
         // storage 更新.
+        // 所以 Storage 是跟随 Session, 而不是跟随 Conversation
+        // 因此 Storage 可以跨越多个 Conversation 存在.
         if ($this->isSingletonInstanced('storage')) {
             $this->__get('storage')->save();
         }

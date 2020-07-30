@@ -11,9 +11,6 @@
 
 namespace Commune\Kernel\ClonePipes;
 
-use Commune\Blueprint\CommuneEnv;
-use Commune\Blueprint\Exceptions\CommuneRuntimeException;
-use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Ghost\IOperate\OStart;
@@ -26,34 +23,10 @@ class CloneDialogManagerPipe extends AClonePipe
     protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
         $operator = new OStart($this->cloner);
-        $tracer = $this->cloner->runtime->trace;
 
-        try {
-
-            while (isset($operator)) {
-
-                $tracer->record($operator);
-                $operator = $operator->tick();
-                if ($operator->isTicked()) {
-                    break;
-                }
-            }
-
-            unset($next);
-
-        } catch (CommuneRuntimeException $e) {
-            throw $e;
-
-        } catch (\Throwable $e) {
-            throw new BrokenRequestException($e->getMessage(), $e);
-
-        } finally {
-            // 调试模式下检查运行轨迹.
-            if (CommuneEnv::isDebug()) {
-                $tracer->log($this->cloner->logger);
-            }
-        }
-
+        // 可以考虑用中间件来定义自己 Start operator, 根据情况决定.
+        $this->cloner->runDialogManager($operator);
+        unset($next);
         return $request->response();
     }
 

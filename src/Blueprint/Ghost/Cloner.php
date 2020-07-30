@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Ghost;
 use Commune\Contracts\Cache;
 use Commune\Blueprint\Configs\GhostConfig;
@@ -108,6 +109,14 @@ interface Cloner extends Session
      * 多轮对话不记录状态 (主要是 Runtime), 但不影响 Session
      */
     public function noConversationState(): void;
+
+    /*----- 触发理解 -----*/
+
+    /**
+     * @param Operate\Operator|null $start
+     * @throws CommuneRuntimeException
+     */
+    public function runDialogManager(Ghost\Operate\Operator $start = null) : void;
 
     /*----- 手动输出 -----*/
 

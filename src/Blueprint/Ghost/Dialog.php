@@ -138,7 +138,15 @@ interface Dialog
     /*----- await -----*/
 
     /**
-     * 等待用户回复
+     * 等待用户回复.
+     * 预定义的 Routes 会在用户命中意图时, 产生重定向.
+     *
+     * 重定向的基本法则:
+     * 1. 同 context 的 stage : redirect, 跳转走.
+     * 2. 不同的 context :
+     *   1. 当前 context 的优先级为 0 : redirectTo
+     *   2. 否则会将当前 context 设为 blocking 状态.
+     *
      *
      * @param string[] $stageRoutes
      * @param string[]|Ucl[] $contextRoutes
@@ -148,6 +156,7 @@ interface Dialog
     public function await(
         array $stageRoutes = [],
         array $contextRoutes = [],
+        // array $redirects =[], //一定会跳转走的场景.
         int $expire = null
     ) : Operate\Await;
 
@@ -189,7 +198,7 @@ interface Dialog
      * 如果没有管道存在, 则会触发 fulfill 流程.
      *
      * @param string $stageName
-     * @param string ...$stageNames
+     * @param string[] ...$stageNames
      * @return Operator
      */
     public function goStage(string $stageName, string ...$stageNames) : Operator;
