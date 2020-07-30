@@ -12,6 +12,7 @@
 namespace Commune\Support\Registry;
 
 use Commune\Support\Option\Option;
+use Commune\Support\Registry\Exceptions\OptionNotFoundException;
 use Commune\Support\Registry\Meta\CategoryOption;
 
 /**
@@ -80,9 +81,16 @@ interface Category
 
     /**
      * 删除所有的数据.
+     *
+     * @param bool $flushInitStorage  是否连 initStorage 也不放过.
+     * @return bool
      */
-    public function flush() : bool;
+    public function flush(bool $flushInitStorage = false) : bool;
 
+    /**
+     * 同步 storage 所有数据到 initStorage
+     */
+    public function syncStorage() : void;
 
     /*---- 多个 Option 管理 ----*/
 

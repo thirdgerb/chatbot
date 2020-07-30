@@ -340,13 +340,59 @@ class ICategory implements Category
         }
     }
 
-    public function flush(): bool
+    /**
+     * @param bool $flushInitStorage
+     * @return bool
+     */
+    public function flush(bool $flushInitStorage = false): bool
     {
+        // 当只定义了一个 storage 的情况.
+        if (empty($this->categoryOption->storage) && !$flushInitStorage) {
+            return true;
+        }
+
         $storage = $this->getStorage();
-        return $storage->getDriver()->flush(
+        $success = $storage->getDriver()->flush(
             $this->categoryOption,
             $storage->getOption()
         );
+
+        if (!$success) {
+            return $success;
+        }
+
+        $initStorage = $this->getInitialStorage();
+        if ($initStorage) {
+            return $initStorage->getDriver()->flush(
+                $this->categoryOption,
+                $initStorage->getOption()
+            );
+        }
+
+        return $success;
     }
+
+    /**
+     * 同步当前 Storage 的所有数据到 init storage
+     */
+    public function syncStorage(): void
+    {
+        $init = $this->getInitialStorage();
+        if (empty($init)) {
+            return;
+        }
+
+        foreach ($this->eachOption() as $option) {
+            // 强制更新.
+            $init->getDriver()->save(
+                $this->categoryOption,
+                $init->getOption(),
+                $option,
+               false
+            );
+        }
+
+    }
+
 
 }
