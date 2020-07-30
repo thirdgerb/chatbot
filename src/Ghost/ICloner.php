@@ -44,6 +44,7 @@ class ICloner extends ASession implements Cloner
         'scene' => Cloner\ClonerScene::class,
         'scope' => Cloner\ClonerScope::class,
         'matcher' => Ghost\Tools\Matcher::class,
+        'avatar' => Cloner\ClonerAvatar::class,
 
         'cache' => Cache::class,
         'auth' => Authority::class,

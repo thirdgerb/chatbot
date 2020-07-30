@@ -49,9 +49,10 @@ use Commune\Support\Registry\OptRegistry;
  * # 请求相关
  * @property-read InputMsg $input                   输入
  * @property-read Comprehension $comprehension      理解模块
- * @property-read Cloner\ClonerScene $scene         场景信息
+ * @property-read Cloner\ClonerScene $scene         场景信息. 代表请求中与消息无关的信息.
  * @property-read Cloner\ClonerScope $scope         当前分身的维度.
  * @property-read Ghost\Tools\Matcher $matcher      默认的匹配逻辑工具
+ * @property-read Cloner\ClonerAvatar $avatar       当前分身的形象数据.
  *
  * # 功能组件
  * @property-read Cache $cache                      公共缓存
@@ -69,6 +70,8 @@ use Commune\Support\Registry\OptRegistry;
  */
 interface Cloner extends Session
 {
+
+
 
     /*----- status -----*/
 

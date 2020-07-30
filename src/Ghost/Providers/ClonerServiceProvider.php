@@ -25,13 +25,13 @@ use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Container\ContainerContract as Container;
 use Commune\Contracts\ServiceProvider;
 use Commune\Ghost\Auth\IAuthority;
+use Commune\Ghost\Cloner\IClonerAvatar;
 use Commune\Ghost\Cloner\IClonerLogger;
 use Commune\Ghost\Cloner\IClonerScene;
 use Commune\Ghost\Cloner\IClonerScope;
 use Commune\Ghost\Cloner\IClonerStorage;
 use Commune\Ghost\Runtime\IRuntime;
 use Commune\Ghost\ITools\IMatcher;
-use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Psr\Log\LoggerInterface;
 
@@ -65,6 +65,7 @@ class ClonerServiceProvider extends ServiceProvider
         $this->registerAuth($app);
         $this->registerRuntime($app);
         $this->registerStorage($app);
+        $this->registerAvatar($app);
     }
 
 
@@ -184,4 +185,8 @@ class ClonerServiceProvider extends ServiceProvider
         $app->singleton(ClonerStorage::class, IClonerStorage::class);
     }
 
+    protected function registerAvatar(Container $app) : void
+    {
+        $app->singleton(Cloner\ClonerAvatar::class, IClonerAvatar::class);
+    }
 }

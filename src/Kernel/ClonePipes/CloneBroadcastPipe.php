@@ -17,7 +17,6 @@ use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Contracts\Messenger\MessageDB;
 use Commune\Kernel\Protocals\IGhostRequest;
-use Commune\Kernel\Protocals\IShellOutputRequest;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
@@ -32,16 +31,11 @@ class CloneBroadcastPipe extends AClonePipe
 {
     protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
-        // 如果消息是从别的 Session 传来的投递消息, 直接返回给 Shell.
+        // 如果消息是从别的 Session 传来的投递消息, 直接广播给 Shell.
         // 用这种方式, 可以让不同的 SessionId 通过 AsyncInput 来传递消息给其它的 SessionId
-        $app = $this->cloner->getApp();
         $isDelivery = $request->isDelivery();
         if ($isDelivery) {
-            $response = $request->output(
-                $app->getId(),
-                $app->getName(),
-                $request->getInput()->getMessage()
-            );
+            $response = $request->response();
 
         } else {
             /**
@@ -56,9 +50,6 @@ class CloneBroadcastPipe extends AClonePipe
             return $response;
         }
 
-        // 处理异步消息.
-        $this->sendAsyncMessages($request);
-
         // 获取所有的输出.
         $outputs = $this->cloner->getOutputs();
 
@@ -66,7 +57,7 @@ class CloneBroadcastPipe extends AClonePipe
         $outputs = $response->getOutputs();
 
         // 设置 convoId
-        $input = $this->cloner->input;
+        $input = $request->getInput();
         $this->setConvoId($input, ...$outputs);
 
         // 保存消息.
@@ -77,6 +68,10 @@ class CloneBroadcastPipe extends AClonePipe
             $input,
             ...$outputs
         );
+
+
+        // 处理异步消息.
+        $this->sendAsyncMessages($request);
 
         // 广播消息
         $this->broadcast($request, $response);
@@ -130,14 +125,17 @@ class CloneBroadcastPipe extends AClonePipe
 
     protected function sendAsyncMessages(GhostRequest $request) : void
     {
+        // Async Input 是机器人发给机器人的请求消息
         $inputs = $this->cloner->getAsyncInputs();
+        // deliveries 是机器人要另一个机器人回复给 session 所有用户的消息.
         $deliveries = $this->cloner->getAsyncDeliveries();
 
-        if (empty($inputs) && $deliveries) {
+        if (empty($inputs) && empty($deliveries)) {
             return;
         }
 
         /**
+         * 获得 Messenger
          * @var GhostMessenger $messenger
          */
         $messenger = $this->cloner->container->get(GhostMessenger::class);
@@ -152,13 +150,14 @@ class CloneBroadcastPipe extends AClonePipe
                     $appId,
                     true,
                     $input,
-                    '',
+                    '', // 不可指定 entry, 由该对话自行决定.
                     [],
                     null,
                     false,
                     $traceId
                 );
             }, $inputs);
+            // 发送异步的请求.
             $messenger->asyncSendRequest(...$inputRequests);
         }
 
@@ -169,7 +168,7 @@ class CloneBroadcastPipe extends AClonePipe
                     $appId,
                     true,
                     $input,
-                    '',
+                    '', //不需要 entry, 反正是直接投递.
                     [],
                     null,
                     true,
@@ -177,7 +176,7 @@ class CloneBroadcastPipe extends AClonePipe
                 );
 
             }, $deliveries);
-            $messenger->asyncSendGhostRequest(...$deliveryRequests);
+            $messenger->asyncSendRequest(...$deliveryRequests);
         }
     }
 

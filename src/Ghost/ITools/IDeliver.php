@@ -239,8 +239,8 @@ class IDeliver implements Deliver
 
         // Id 为空是对话机器人消息的标志.
         // 由客户端去判断用什么身份来代表机器人.
-        $creatorId = $this->creatorId ?? '';
-        $creatorName = $this->creatorName ?? '';
+        $creatorId = $this->creatorId ?? $this->cloner->avatar->getId();
+        $creatorName = $this->creatorName ?? $this->cloner->avatar->getName();
         $deliverAt = $this->deliverAt;
 
         // 遍历赋值.
