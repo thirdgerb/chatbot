@@ -18,6 +18,7 @@ use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Support\Registry\Storage\FileStorageOption;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * 将组件里的 resource 文件夹下的配置先读取到注册表.
@@ -41,8 +42,9 @@ class LoadComponentOption extends ServiceProvider
     {
         return [
             'componentName' => '',
-            'resourcePath' =>  '',
             'optionClass' => '',
+            'resourcePath' =>  '',
+            // if isDir === false, then resource path should be valid file path
             'isDir' => true,
             'loader' => FileStorageOption::OPTION_PHP,
         ];
@@ -51,6 +53,13 @@ class LoadComponentOption extends ServiceProvider
     public function getDefaultScope(): string
     {
         return self::SCOPE_CONFIG;
+    }
+
+    public static function validate(array $data): ? string /* errorMsg */
+    {
+
+        return TypeUtils::requireFields($data, ['componentName', 'optionClass'])
+            ?? parent::validate($data);
     }
 
     public function __get_id() : string
@@ -100,9 +109,9 @@ class LoadComponentOption extends ServiceProvider
                 . ' by component '
                 . $this->componentName,
 
-            'storage' => $this->getStorageOption()->toMeta(),
+            'storage' => null,
 
-            'initialStorage' => null,
+            'initialStorage' => $this->getStorageOption()->toMeta(),
         ]));
     }
 

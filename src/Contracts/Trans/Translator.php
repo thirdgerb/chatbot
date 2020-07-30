@@ -37,14 +37,14 @@ interface Translator
      * @param string|null $locale
      * @param string|null $domain
      * @param bool $intl            默认使用 {} mustache
-     * @param bool $force
+     * @param bool|null $force
      */
     public function saveMessages(
         array $messages,
         string $locale = null,
         string $domain = null,
         bool $intl = true,
-        bool $force = false
+        bool $force = null
     ) : void;
 
 

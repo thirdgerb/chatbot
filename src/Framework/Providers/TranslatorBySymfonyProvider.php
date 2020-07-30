@@ -21,7 +21,7 @@ use Commune\Framework\Trans\TransOption;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Meta\StorageMeta;
 use Commune\Support\Registry\OptRegistry;
-use Commune\Support\Registry\Storage\Json\JsonStorageOption;
+use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
 use Commune\Support\Utils\StringUtils;
 
 /**
@@ -38,9 +38,12 @@ class TranslatorBySymfonyProvider extends ServiceProvider
     {
         return [
             'defaultLocale' => Translator::DEFAULT_LOCALE,
+            // domain 可以设置为 shell 的名称.
             'defaultDomain' => Translator::DEFAULT_DOMAIN,
+
             'storage' => null,
-            'initStorage' => null
+
+            'initStorage' => null,
         ];
     }
 
@@ -95,13 +98,7 @@ class TranslatorBySymfonyProvider extends ServiceProvider
         $storage = $this->storage;
         $initStorage = $this->initStorage;
 
-        $defaultStorageMeta = (new JsonStorageOption([
-                'path' => StringUtils::gluePath(
-                    CommuneEnv::getResourcePath(),
-                    'trans/lang.json'
-                ),
-                'isDir' => false,
-            ]))->toMeta();
+        $defaultStorageMeta = $this->getDefaultStorageMeta();
 
         if (isset($storage)) {
             $initStorage = $initStorage ?? $defaultStorageMeta;
@@ -124,7 +121,17 @@ class TranslatorBySymfonyProvider extends ServiceProvider
             $logger->warning("reset trans data!!");
             $registry->getCategory(TransOption::class)->flush();
         }
+    }
 
+    protected function getDefaultStorageMeta() : StorageMeta
+    {
+        return (new YmlStorageOption([
+            'path' => StringUtils::gluePath(
+                CommuneEnv::getResourcePath(),
+                'trans/lang.yml'
+            ),
+            'isDir' => false,
+        ]))->toMeta();
     }
 
 }

@@ -11,6 +11,7 @@
 
 namespace Commune\Framework\Trans;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Contracts\Trans\Translator;
 use Commune\Support\Registry\Category;
 use Commune\Support\Utils\TypeUtils;
@@ -163,13 +164,16 @@ class SymfonyTranslatorAdapter implements Translator
         string $locale = null,
         string $domain = null,
         bool $intl = true,
-        bool $force = false
+        bool $force = null
     ): void
     {
         $locale = $locale ?? $this->defaultLocale;
         $domain = $domain ?? $this->defaultDomain;
         $prefix = $this->getPrefix($locale, $domain);
         $messages = Arr::dot($messages);
+
+        // 是否重置.
+        $force = $force ?? CommuneEnv::isResetRegistry();
 
         foreach ($messages as $id => $template) {
 
