@@ -16,6 +16,7 @@ use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Waiter;
 use Commune\Kernel\GhostCmd\AGhostCmd;
+use Commune\Message\Host\Convo\Verbal\JsonMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 
@@ -49,7 +50,7 @@ class ProcessCmd extends AGhostCmd
         } elseif($s) {
             $this->showSerialize($process);
         } else {
-            $this->info($process->toPrettyJson());
+            $this->output(JsonMsg::instance($process->toPrettyJson()));
             $json = $process->toJson();
             $this->info(
                 "process to json mb_string length : {len}",
@@ -64,7 +65,7 @@ class ProcessCmd extends AGhostCmd
         if (empty($waiter)) {
             $this->info("process has no waiter");
         } else {
-            $this->info($waiter->toPrettyJson());
+            $this->output(JsonMsg::instance($waiter->toPrettyJson()));
         }
     }
 
