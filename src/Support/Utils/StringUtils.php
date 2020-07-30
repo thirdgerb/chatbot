@@ -275,8 +275,7 @@ class StringUtils
      */
     public static function hasAnnotation(string $doc, string $annotation) : bool
     {
-        $matched = preg_match('/@'. $annotation.'\s/', $doc);
-        return is_int($matched) && $matched > 0;
+        return (bool) preg_match('/@'. $annotation.'\s/', $doc);
     }
 
     /**
@@ -511,5 +510,11 @@ class StringUtils
     {
         $len = strlen($text);
         return $len > 2 && $text[0] === '/' && $text[$len - 1] === '/';
+    }
+
+    public static function isValidDotDirName(string $text) : bool
+    {
+        return (preg_match('/^[a-zA-Z0-9_\-\.]+$/', $text) > 0)
+            && (false === strstr($text, '..'));
     }
 }

@@ -357,7 +357,7 @@ class ICategory implements Category
             $storage->getOption()
         );
 
-        if (!$success) {
+        if (!$success || !$flushInitStorage) {
             return $success;
         }
 

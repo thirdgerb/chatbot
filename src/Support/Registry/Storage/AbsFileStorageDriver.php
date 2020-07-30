@@ -299,7 +299,8 @@ abstract class AbsFileStorageDriver implements StorageDriver
     protected function makeFilePath(FileStorageOption $meta, string $id = null) : string
     {
         $id = $id ?? '';
-        if ($meta->depth === 0) {
+
+        if ($meta->depth === 0 && StringUtils::isValidDotDirName($id)) {
             $sections = explode('.', $id);
             $id = implode(DIRECTORY_SEPARATOR, $sections);
         } else {

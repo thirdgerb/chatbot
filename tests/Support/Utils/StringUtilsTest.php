@@ -345,4 +345,13 @@ EOF;
         $this->assertEquals('test %123%, %k%', $t);
 
     }
+
+    public function testValidDotPath()
+    {
+        $this->assertTrue(StringUtils::isValidDotDirName('a.b.c'));
+
+        $this->assertFalse(StringUtils::isValidDotDirName('+3 day'));
+        $this->assertFalse(StringUtils::isValidDotDirName('前'));
+        $this->assertFalse(StringUtils::isValidDotDirName('a..b'));
+    }
 }
