@@ -21,7 +21,6 @@ use Commune\Framework\Spy\SpyAgency;
 use Commune\Support\Registry\Category;
 use Commune\Support\Registry\Exceptions\OptionNotFoundException;
 use Commune\Support\Registry\OptRegistry;
-use Commune\Support\Utils\StringUtils;
 
 
 /**

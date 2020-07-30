@@ -157,6 +157,7 @@ class IMindset implements Mindset
     public function __destruct()
     {
         $this->registries = [];
-        $this->optRegistry = null;
+        // 有一些 unset 是排查问题时碰到的.
+        unset($this->optRegistry);
     }
 }

@@ -53,6 +53,7 @@ class MindsetServiceProvider extends ServiceProvider
             $mindset->reset();
         }
 
+        // 加载项目 默认的 self register
         foreach ($config->mindPsr4Registers as $namespace => $path) {
             Psr4SelfRegisterLoader::loadSelfRegister(
                 $mindset,
@@ -65,14 +66,6 @@ class MindsetServiceProvider extends ServiceProvider
 
     public function register(ContainerContract $app): void
     {
-        $app->singleton(Mindset::class, function(ContainerContract $app){
-            $optRegistry = $app->get(OptRegistry::class);
-            /**
-             * @var GhostConfig $config
-             */
-            $config = $app->get(GhostConfig::class);
-            return new IMindset($optRegistry, $config->mindsetCacheExpire);
-        });
     }
 
 

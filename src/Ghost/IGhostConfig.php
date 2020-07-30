@@ -65,7 +65,6 @@ use Commune\Support\Utils\TypeUtils;
  * @property-read string[] $comprehensionPipes              对输入信息进行抽象理解的管道.
  * @property-read int $maxRedirectTimes                     单词对话语境重定向的最大次数
  * @property-read int $maxRequestFailTimes                  对话最大的请求异常次数, 超过了就会重启会话
- * @property-read int $mindsetCacheExpire                   Mindset 的配置过期时间.
  * @property-read string[] $mindPsr4Registers               Mind 模块自定义加载路径.
  *
  *  [namespace  => path]
@@ -99,7 +98,6 @@ class IGhostConfig extends AbsOption implements GhostConfig
             'sessionLockerExpire' => 3,
             'maxRedirectTimes' => 255,
             'maxRequestFailTimes' => 3,
-            'mindsetCacheExpire' => 600,
             'maxBacktrace' => 3,
             'defaultContextName' => '',
             'sceneContextNames' => [],
