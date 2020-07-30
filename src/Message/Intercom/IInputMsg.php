@@ -49,7 +49,7 @@ class IInputMsg extends AIntercomMsg implements InputMsg
             'creatorId' => $creatorId,
             'creatorName' => $creatorName,
             'convoId' => $convoId,
-            'messageId' => $messageId,
+            'messageId' => $messageId ?? '',
             'deliverAt' => $deliverAt
         ];
 
