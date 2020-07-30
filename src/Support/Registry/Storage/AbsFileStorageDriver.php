@@ -24,7 +24,7 @@ use Symfony\Component\Finder\Finder;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbsFileStorage implements StorageDriver
+abstract class AbsFileStorageDriver implements StorageDriver
 {
 
     /*---- 配置, 文件后缀 -----*/
@@ -289,17 +289,22 @@ abstract class AbsFileStorage implements StorageDriver
         $cateId = $category->getId();
         foreach ($deletes as $id) {
             $fileName = $this->optionPath[$cateId][$id]
-                ?? $this->getFileName($storage, $id);
+                ?? $this->makeFilePath($storage, $id);
 
             unset($this->optionPath[$cateId][$id]);
             @unlink($fileName);
         }
     }
 
-    protected function getFileName(FileStorageOption $meta, string $id = null) : string
+    protected function makeFilePath(FileStorageOption $meta, string $id = null) : string
     {
         $id = $id ?? '';
-        $id = $this->serializeId($id);
+        if ($meta->depth === 0) {
+            $sections = explode('.', $id);
+            $id = implode(DIRECTORY_SEPARATOR, $sections);
+        } else {
+            $id = $this->serializeId($id);
+        }
         return rtrim($meta->path, DIRECTORY_SEPARATOR)
             . DIRECTORY_SEPARATOR
             . $id . '.' . $this->ext;
@@ -347,10 +352,14 @@ abstract class AbsFileStorage implements StorageDriver
         $optionId = $option->getId();
 
         $path = $this->optionPath[$cateId][$optionId] ?? null;
-        $path = $path ?? $this->getFileName($meta, $optionId);
+        $path = $path ?? $this->makeFilePath($meta, $optionId);
 
         $content = $this->parseArrayToString($option->toArray(), $meta);
 
+        $dir = dirname($path);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
         file_put_contents($path, $content);
         $this->optionPath[$cateId][$optionId] = $path;
     }

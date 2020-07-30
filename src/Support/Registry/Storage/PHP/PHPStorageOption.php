@@ -20,7 +20,7 @@ class PHPStorageOption extends FileStorageOption
 {
     public function getDriver(): string
     {
-        return PHPFileStorage::class;
+        return PHPFileStorageDriver::class;
     }
 
 }

@@ -12,7 +12,7 @@
 namespace Commune\Support\Registry\Storage\PHP;
 
 use Commune\Support\Registry\Meta\StorageOption;
-use Commune\Support\Registry\Storage\AbsFileStorage;
+use Commune\Support\Registry\Storage\AbsFileStorageDriver;
 use Commune\Support\Registry\Storage\FileStorageOption;
 
 
@@ -21,7 +21,7 @@ use Commune\Support\Registry\Storage\FileStorageOption;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class PHPFileStorage extends AbsFileStorage
+class PHPFileStorageDriver extends AbsFileStorageDriver
 {
     protected $ext = 'php';
 

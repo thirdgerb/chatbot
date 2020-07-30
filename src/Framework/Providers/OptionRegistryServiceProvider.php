@@ -17,9 +17,9 @@ use Commune\Contracts\ServiceProvider;
 use Commune\Support\Registry\Impl\IOptRegistry;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\OptRegistry;
-use Commune\Support\Registry\Storage\Json\JsonFileStorage;
-use Commune\Support\Registry\Storage\PHP\PHPFileStorage;
-use Commune\Support\Registry\Storage\Yaml\YmlFileStorage;
+use Commune\Support\Registry\Storage\Json\JsonFileStorageDriver;
+use Commune\Support\Registry\Storage\PHP\PHPFileStorageDriver;
+use Commune\Support\Registry\Storage\Yaml\YmlFileStorageDriver;
 
 /**
  * 配置注册表模块. 能够从指定的存储介质中获得配置.
@@ -66,23 +66,23 @@ class OptionRegistryServiceProvider extends ServiceProvider
         });
 
         $app->singleton(
-            JsonFileStorage::class,
+            JsonFileStorageDriver::class,
             function(ContainerContract $app) {
-                return new JsonFileStorage($app->get(ConsoleLogger::class));
+                return new JsonFileStorageDriver($app->get(ConsoleLogger::class));
             }
         );
 
         $app->singleton(
-            PHPFileStorage::class,
+            PHPFileStorageDriver::class,
             function(ContainerContract $app) {
-                return new PHPFileStorage($app->get(ConsoleLogger::class));
+                return new PHPFileStorageDriver($app->get(ConsoleLogger::class));
             }
         );
 
         $app->singleton(
-            YmlFileStorage::class,
+            YmlFileStorageDriver::class,
             function(ContainerContract $app) {
-                return new YmlFileStorage($app->get(ConsoleLogger::class));
+                return new YmlFileStorageDriver($app->get(ConsoleLogger::class));
             }
         );
     }

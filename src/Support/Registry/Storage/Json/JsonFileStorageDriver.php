@@ -12,14 +12,14 @@
 namespace Commune\Support\Registry\Storage\Json;
 
 use Commune\Support\Registry\Meta\StorageOption;
-use Commune\Support\Registry\Storage\AbsFileStorage;
+use Commune\Support\Registry\Storage\AbsFileStorageDriver;
 use Commune\Support\Registry\Storage\FileStorageOption;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class JsonFileStorage extends AbsFileStorage
+class JsonFileStorageDriver extends AbsFileStorageDriver
 {
     protected $ext = 'json';
 

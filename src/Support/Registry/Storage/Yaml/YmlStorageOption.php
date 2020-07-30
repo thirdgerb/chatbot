@@ -41,7 +41,7 @@ class YmlStorageOption extends FileStorageOption
 
     public function getDriver(): string
     {
-        return YmlFileStorage::class;
+        return YmlFileStorageDriver::class;
     }
 
 

@@ -16,11 +16,11 @@ use Commune\Support\Registry\Exceptions\OptionNotFoundException;
 use Commune\Support\Registry\Impl\IOptRegistry;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\OptRegistry;
-use Commune\Support\Registry\Storage\Json\JsonFileStorage;
+use Commune\Support\Registry\Storage\Json\JsonFileStorageDriver;
 use Commune\Support\Registry\Storage\Json\JsonStorageOption;
-use Commune\Support\Registry\Storage\PHP\PHPFileStorage;
+use Commune\Support\Registry\Storage\PHP\PHPFileStorageDriver;
 use Commune\Support\Registry\Storage\PHP\PHPStorageOption;
-use Commune\Support\Registry\Storage\Yaml\YmlFileStorage;
+use Commune\Support\Registry\Storage\Yaml\YmlFileStorageDriver;
 use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
 
 
@@ -34,9 +34,9 @@ class OptRepoTest extends TestCase
 
         $container->singleton(OptRegistry::class, IOptRegistry::class);
 
-        $container->singleton(JsonFileStorage::class);
-        $container->singleton(PHPFileStorage::class);
-        $container->singleton(YmlFileStorage::class);
+        $container->singleton(JsonFileStorageDriver::class);
+        $container->singleton(PHPFileStorageDriver::class);
+        $container->singleton(YmlFileStorageDriver::class);
 
         /**
          * @var OptRegistry $repo

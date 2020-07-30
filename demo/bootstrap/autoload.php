@@ -7,8 +7,8 @@ use Commune\Host\IHost;
 require __DIR__ . '/../../vendor/autoload.php';
 
 // 设置
-CommuneEnv::defineDebug(true);
-CommuneEnv::defineResetMind(true);
+CommuneEnv::defineDebug(in_array('-d', $argv));
+CommuneEnv::defineResetMind(in_array('-r', $argv));
 
 
 // 启动异构的服务.
