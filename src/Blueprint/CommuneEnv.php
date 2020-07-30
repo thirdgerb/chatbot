@@ -12,6 +12,7 @@
 namespace Commune\Blueprint;
 
 use Commune\Blueprint\Exceptions\CommuneLogicException;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -23,9 +24,10 @@ use Commune\Blueprint\Exceptions\CommuneLogicException;
  */
 class CommuneEnv
 {
-    const BASE_PATH = 'COMMUNE_BASE_PATH';
     const DEBUG = 'COMMUNE_DEBUG';
     const RESET_REGISTRY = 'COMMUNE_RESET_REGISTRY';
+    const BASE_PATH = 'COMMUNE_BASE_PATH';
+    const RUNTIME_PATH = 'COMMUNE_RUNTIME_PATH';
     const RESOURCE_PATH = 'COMMUNE_RESOURCE_PATH';
     const LOG_PATH = 'COMMUNE_LOG_PATH';
 
@@ -44,18 +46,22 @@ class CommuneEnv
         self::set(self::BASE_PATH, $path);
     }
 
-
-    /*------- debug ------*/
-
-    public static function isDebug() : bool
+    public static function getRuntimePath() : string
     {
-        return self::get(self::DEBUG, false);
+        return self::get(
+            self::RUNTIME_PATH,
+            StringUtils::gluePath(
+                self::getBasePath(),
+                'runtime'
+            )
+        );
     }
 
-    public static function defineDebug(bool $debug) : void
+    public static function defineRuntimePath(string $path) : void
     {
-        self::set(self::DEBUG, $debug);
+        self::set(self::RUNTIME_PATH, $path);
     }
+
 
     /*------- log path ------*/
 
@@ -64,7 +70,10 @@ class CommuneEnv
     {
         return self::get(
             self::LOG_PATH,
-            self::getBasePath() . '/runtime/log'
+            StringUtils::gluePath(
+                self::getRuntimePath(),
+                'log'
+            )
         );
     }
 
@@ -75,6 +84,7 @@ class CommuneEnv
         }
         self::set(self::LOG_PATH, $path);
     }
+
 
     /*------- path ------*/
 
@@ -92,6 +102,19 @@ class CommuneEnv
             throw new CommuneLogicException("path $path is invalid dir");
         }
         self::set(self::RESOURCE_PATH, $path);
+    }
+
+
+    /*------- debug ------*/
+
+    public static function isDebug() : bool
+    {
+        return self::get(self::DEBUG, false);
+    }
+
+    public static function defineDebug(bool $debug) : void
+    {
+        self::set(self::DEBUG, $debug);
     }
 
     /*------- mind ------*/

@@ -37,6 +37,7 @@ use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
  * @property-read int $storageCacheExpire       默认介质的缓存过期时间.
  * @property-read string $resourcePath          默认的资源库路径.
  *
+ * @property-read bool $useFileInitStorage      是否使用文件 storage 作为默认.
  */
 class MindsetStorageConfigProvider extends ServiceProvider
 {
@@ -45,8 +46,9 @@ class MindsetStorageConfigProvider extends ServiceProvider
         return [
             'mindsetCacheExpire' => 599,
             'resourcePath' => CommuneEnv::getResourcePath(),
-            '$storageCacheExpire' => 600,
+            'storageCacheExpire' => 600,
             'storage' => null,
+            'useFileInitStorage' => true,
         ];
     }
 
@@ -100,14 +102,16 @@ class MindsetStorageConfigProvider extends ServiceProvider
             /**
              * @var StorageOption $storage
              */
-            $initStorage = new StorageMeta([
-                'wrapper' => $storageName,
-                'config' => [
-                    'name' => $type,
-                    'path' => $this->resourcePath . '/' . $type,
-                    'isDir' => true,
-                ]
-            ]);
+            $initStorage = $this->useFileInitStorage
+                ? new StorageMeta([
+                    'wrapper' => $storageName,
+                    'config' => [
+                        'name' => $type,
+                        'path' => $this->resourcePath . '/' . $type,
+                        'isDir' => true,
+                    ]
+                ])
+                : null;
 
             $definedStorage = $this->storage;
 
