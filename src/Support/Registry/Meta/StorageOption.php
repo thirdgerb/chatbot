@@ -21,6 +21,9 @@ use Commune\Support\Option\Wrapper;
 abstract class StorageOption extends AbsOption implements Wrapper
 {
 
+    /**
+     * @return StorageMeta
+     */
     public function toMeta(): Meta
     {
         $data = $this->toArray();

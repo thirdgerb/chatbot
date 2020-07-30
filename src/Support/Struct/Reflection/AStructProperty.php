@@ -340,6 +340,7 @@ abstract class AStructProperty implements StructProperty
         $name = $this->getName();
         $relation = $this->getRelationClass();
 
+        // relation 是否允许为 null.
         if (is_null($value)) {
             return $this->nullable ? null : $name . ' should not be null';
         }

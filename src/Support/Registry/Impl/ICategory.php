@@ -97,6 +97,9 @@ class ICategory implements Category
         }
     }
 
+    /**
+     * 初始化. 如果定义了 init storage, 将数据同步到 storage.
+     */
     protected function initialize() : void
     {
         $initStorage = $this->getInitialStorage();
@@ -130,7 +133,11 @@ class ICategory implements Category
         if (isset($this->storage)) {
             return $this->storage;
         }
-        $storageOption = $this->categoryOption->storage->toWrapper();
+
+        $meta = $this->categoryOption->storage
+            ?? $this->categoryOption->initialStorage;
+
+        $storageOption = $meta->toWrapper();
         return $this->storage = new IStorage(
             $this->container,
             $storageOption
@@ -141,6 +148,12 @@ class ICategory implements Category
     {
         if (isset($this->initialStorage)) {
             return $this->initialStorage;
+        }
+
+        // 如果 storage meta 不存在, 则用 initial storage meta 顶替.
+        $storageMeta = $this->categoryOption->storage;
+        if (empty($storageMeta)) {
+            return null;
         }
 
         $meta = $this->categoryOption->initialStorage;
@@ -189,9 +202,26 @@ class ICategory implements Category
     public function save(Option $option, bool $notExists = false): bool
     {
         $storage = $this->getStorage();
-        return $storage->getDriver()->save(
+        $success = $storage->getDriver()->save(
             $this->categoryOption,
             $storage->getOption(),
+            $option,
+            $notExists
+        );
+
+        if (!$success) {
+            return $success;
+        }
+
+        // 按需同步到 init.
+        $init = $this->getInitialStorage();
+        if (empty($init)) {
+            return $success;
+        }
+
+        return $init->getDriver()->save(
+            $this->categoryOption,
+            $init->getOption(),
             $option,
             $notExists
         );

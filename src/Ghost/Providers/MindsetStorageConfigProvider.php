@@ -13,8 +13,10 @@ namespace Commune\Ghost\Providers;
 
 use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Ghost\MindMeta;
+use Commune\Blueprint\Ghost\Mindset;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
+use Commune\Ghost\IMindset;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Meta\StorageMeta;
 use Commune\Support\Registry\Meta\StorageOption;
@@ -27,10 +29,13 @@ use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $resourcePath
- * @property-read int $cacheExpire
- * @property-read StorageMeta|null $storage
- * @property-read StorageMeta|null $initStorage
+ * @property-read int $mindsetCacheExpire       Mindset 里用内存缓存 definition 的过期时间.
+ *
+ *
+ * @property-read StorageMeta|null $storage     自定义的存储介质.
+ *
+ * @property-read int $storageCacheExpire       默认介质的缓存过期时间.
+ * @property-read string $resourcePath          默认的资源库路径.
  *
  */
 class MindsetStorageConfigProvider extends ServiceProvider
@@ -38,8 +43,9 @@ class MindsetStorageConfigProvider extends ServiceProvider
     public static function stub(): array
     {
         return [
+            'mindsetCacheExpire' => 599,
             'resourcePath' => CommuneEnv::getResourcePath(),
-            'cacheExpire' => 600,
+            '$storageCacheExpire' => 600,
             'storage' => null,
         ];
     }
@@ -53,7 +59,6 @@ class MindsetStorageConfigProvider extends ServiceProvider
     {
         return [
             'storage' => StorageMeta::class,
-            'initStorage' => StorageMeta::class
         ];
     }
 
@@ -95,7 +100,7 @@ class MindsetStorageConfigProvider extends ServiceProvider
             /**
              * @var StorageOption $storage
              */
-            $storage = new StorageMeta([
+            $initStorage = new StorageMeta([
                 'wrapper' => $storageName,
                 'config' => [
                     'name' => $type,
@@ -103,28 +108,28 @@ class MindsetStorageConfigProvider extends ServiceProvider
                     'isDir' => true,
                 ]
             ]);
-            $initStorage = null;
 
-            $selfStorage = $this->storage;
-            if (isset($selfStorage)) {
-                $initStorage = $storage;
-                $storage = $selfStorage;
-            }
+            $definedStorage = $this->storage;
+
 
             yield new CategoryOption([
                 'name' => $metaName,
                 'optionClass' => $metaName,
                 'title' => $title,
                 'desc' => $desc,
-                'cacheExpire' => $this->cacheExpire,
-                'storage' => $storage,
-                'initialStorage' => isset($initStorage) ? $initStorage : null,
+                'cacheExpire' => $this->storageCacheExpire,
+                'storage' => $definedStorage,
+                'initialStorage' => $initStorage,
             ]);
         }
     }
 
     public function register(ContainerContract $app): void
     {
+        $app->singleton(Mindset::class, function(ContainerContract $app){
+            $optRegistry = $app->get(OptRegistry::class);
+            return new IMindset($optRegistry, $this->mindsetCacheExpire);
+        });
     }
 
 
