@@ -39,6 +39,16 @@ class IClonerAvatar implements ClonerAvatar
      */
     protected $id;
 
+    /**
+     * IClonerAvatar constructor.
+     * @param Cloner $cloner
+     */
+    public function __construct(Cloner $cloner)
+    {
+        $this->cloner = $cloner;
+    }
+
+
     public function getId(): string
     {
         if (isset($this->id)) {

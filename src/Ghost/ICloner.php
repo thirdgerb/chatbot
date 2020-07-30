@@ -119,6 +119,13 @@ class ICloner extends ASession implements Cloner
      */
     protected $translator;
 
+
+    /**
+     * 判断当前 Cloner 的进程是否是子进程.
+     * @var bool
+     */
+    protected $isSubProcess = false;
+
     public function __construct(
         Ghost $ghost,
         ReqContainer $container,
@@ -161,6 +168,7 @@ class ICloner extends ASession implements Cloner
             return $this->conversationId;
         }
 
+        // 如果是无状态的, 随便生成一个 conversationId.
         if ($this->isStateless()) {
             $convoId = $this->inputConvoId;
             $convoId = empty($convoId)
@@ -170,18 +178,26 @@ class ICloner extends ASession implements Cloner
             return $this->conversationId = $convoId;
         }
 
+        // 当输入消息指定 conversationId
+        // 如果 session 还没有任何 conversation, 则创建一个.
+        // 相反, 如果 session 已经有了 conversation, 这相当于为当前 Session 创建了一个子进程.
         $inputCid = $this->inputConvoId;
         $cachedCid = $this->getConvoIdFromCache();
 
         // 如果没有缓存, 重新生成一个
         if (empty($cachedCid)) {
             $convoId = empty($inputCid) ? $this->makeConvoId() : $inputCid;
+            // 将新建的 conversation id 保存当主进程里.
+            $this->cacheConvoId($convoId);
 
-        // 有缓存的情况下, 可以被inputSid 覆盖.
+        // 输入没有带 conversation id, 认为访问的是主进程.
         } elseif(empty($inputCid)) {
             $convoId = $cachedCid;
+
+        // 输入携带了 conversation id, 则认为访问的是子进程.
         } else {
             $convoId = $inputCid;
+            $this->isSubProcess = true;
         }
 
         return $this->conversationId = $convoId;
@@ -249,11 +265,19 @@ class ICloner extends ASession implements Cloner
 
     /*------- cache -------*/
 
+    /**
+     * 生成 Cloner 的锁 key
+     * @return string
+     */
     protected function getGhostClonerLockerKey() : string
     {
         $ghostId = $this->getAppId();
         $clonerId = $this->getSessionId();
-        return "ghost:$ghostId:clone:$clonerId:locker";
+        $convoId = $this->getConversationId();
+
+        // 之所以使用这么长的 key 名, 是为了可以在目标中追踪.
+        // 当然会导致读写的开销.
+        return "ghost:$ghostId:clone:$clonerId:convo:$convoId:locker";
     }
 
     public function lock(int $second): bool
@@ -402,15 +426,22 @@ class ICloner extends ASession implements Cloner
 
     /*------- flush -------*/
 
+    /**
+     * 这个方法是 CommuneChatbot 项目精华中的精华之一
+     * 通过反复的实践和试错才成型, 当然仍然需要不断完善.
+     *
+     * 这个方法实现了对话机器人的 多进程, 从而实现了基于多进程的异步任务.
+     *
+     * 只需要投递一个携带了 conversationId 的异步 input, 就可以开启一个子进程.
+     * 而这个子进程又能够共享当前的 session, 对用户进行广播.
+     *
+     * 真是太牛了 (希望不要打脸)
+     */
     protected function saveSession(): void
     {
         // 无状态的请求不做任何缓存.
         if ($this->isStateless()) {
             return;
-        }
-
-        if ($this->isConversationEnd()) {
-            $this->ioDeleteConvoIdCache();
         }
 
         // storage 更新.
@@ -425,12 +456,22 @@ class ICloner extends ASession implements Cloner
             return;
         }
 
+        // 如果当前不是主进程, 会话又结束时, 删除主进程的 conversationId 缓存.
+        if ($this->isConversationEnd()) {
+            if (!$this->isSubProcess) {
+                $this->ioDeleteConvoIdCache();
+            }
+            // 后面的流程都不执行了.
+            return;
+        }
+
+        // 保存当前 conversation 的 runtime.
         if ($this->isSingletonInstanced('runtime')) {
             $this->__get('runtime')->save();
         }
 
-        // 更新 conversationId 缓存.
-        if (isset($this->conversationId)) {
+        //  给当前 conversation 续命.
+        if (!$this->isSubProcess && isset($this->conversationId)) {
             $this->cacheConvoId($this->conversationId);
         }
     }

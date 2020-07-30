@@ -19,8 +19,8 @@ use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Framework\Auth\Authority;
+use Commune\Kernel\ClonePipes\CloneLockerPipe;
 use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
@@ -164,7 +164,15 @@ interface Cloner extends Session
     /*----- clone locker -----*/
 
     /**
-     * 锁定一个 session 用于禁止通讯.
+     * 锁定一个 session + conversation 用于禁止并发通讯.
+     * 机器人是有状态的, 因此需要有一个锁防止并发逻辑导致 "裂脑" 现象.
+     * 然而机器人本身也有各种机制执行并发任务. 包括:
+     *
+     * 1. stateless request : 无状态请求. 则不会保存状态, 从而也不需要锁.
+     * 2. 多进程. 每个 ConversationId 对应一个子进程, 共享 session. 从而可以分裂逻辑.
+     * 3. async request : 异步请求会进入一个队列, 等到解锁后才执行.
+     *
+     * 具体实现 @see CloneLockerPipe
      *
      * @param int $second
      * @return bool
@@ -177,7 +185,7 @@ interface Cloner extends Session
     public function isLocked() : bool;
 
     /**
-     * 解锁一个机器人的分身. 允许通讯.
+     * 解锁一个机器人的分身 + conversation. 允许通讯.
      * @return bool
      */
     public function unlock() : bool;
