@@ -17,8 +17,6 @@ use Commune\Blueprint\Ghost\Mindset;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\ServiceProvider;
-use Commune\Ghost\IMindset;
-use Commune\Support\Registry\OptRegistry;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

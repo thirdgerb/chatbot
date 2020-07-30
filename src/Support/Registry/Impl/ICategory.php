@@ -92,7 +92,7 @@ class ICategory implements Category
         $this->booted = true;
 
         // 看看是否需要初始化. 如果初始化, 会把 initialize storage 的数据转到 storage
-        if (!$initialize) {
+        if ($initialize) {
             $this->initialize();
         }
     }
@@ -100,7 +100,7 @@ class ICategory implements Category
     /**
      * 初始化. 如果定义了 init storage, 将数据同步到 storage.
      */
-    protected function initialize() : void
+    public function initialize() : void
     {
         $initStorage = $this->getInitialStorage();
 

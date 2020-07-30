@@ -21,7 +21,7 @@ use Commune\Framework\Trans\TransOption;
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Meta\StorageMeta;
 use Commune\Support\Registry\OptRegistry;
-use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
+use Commune\Support\Registry\Storage\Json\JsonStorageOption;
 use Commune\Support\Utils\StringUtils;
 
 /**
@@ -98,6 +98,9 @@ class TranslatorBySymfonyProvider extends ServiceProvider
         $storage = $this->storage;
         $initStorage = $this->initStorage ?? $this->getDefaultStorageMeta();
 
+        $logger = $app->get(ConsoleLogger::class);
+
+
         $registry->registerCategory(new CategoryOption([
             'name' => TransOption::class,
             'optionClass' => TransOption::class,
@@ -107,20 +110,21 @@ class TranslatorBySymfonyProvider extends ServiceProvider
             'initialStorage' => $initStorage,
         ]));
 
-        $logger = $app->get(ConsoleLogger::class);
-
         if (CommuneEnv::isResetRegistry()) {
             $logger->warning("reset trans data!!");
-            $registry->getCategory(TransOption::class)->flush();
+            $category = $registry->getCategory(TransOption::class);
+            $category->flush(false);
+            $category->initialize();
         }
+
     }
 
     protected function getDefaultStorageMeta() : StorageMeta
     {
-        return (new YmlStorageOption([
+        return (new JsonStorageOption([
             'path' => StringUtils::gluePath(
                 CommuneEnv::getResourcePath(),
-                'trans/lang.yml'
+                'trans/lang.json'
             ),
             'isDir' => false,
         ]))->toMeta();

@@ -232,7 +232,9 @@ abstract class AbsDefRegistry implements DefRegistry
 
     public function reset(): void
     {
-        $this->getMetaRegistry()->flush();
+        $category = $this->getMetaRegistry();
+        $category->flush(false);
+        $category->initialize();
     }
 
 

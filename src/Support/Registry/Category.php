@@ -80,6 +80,11 @@ interface Category
     public function findByIds(array $ids) : array;
 
     /**
+     * 同步 initialStorage 的数据到 Storage
+     */
+    public function initialize() : void;
+
+    /**
      * 删除所有的数据.
      *
      * @param bool $flushInitStorage  是否连 initStorage 也不放过.
