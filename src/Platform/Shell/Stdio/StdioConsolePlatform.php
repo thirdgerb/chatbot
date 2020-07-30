@@ -67,7 +67,7 @@ class StdioConsolePlatform extends AbsPlatform
 
         $response = $this->shell->handleRequest(
             $request,
-            ShellInputReqHandler::class
+            $interface
         );
         $adapter->sendResponse($response);
     }

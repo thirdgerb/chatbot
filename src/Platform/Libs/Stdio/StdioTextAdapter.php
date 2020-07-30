@@ -18,8 +18,10 @@ use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 use Commune\Blueprint\Platform\Adapter;
 use Commune\Framework\Log\IConsoleLogger;
 use Commune\Kernel\Protocals\IShellInputRequest;
+use Commune\Message\Host\Convo\IEventMsg;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
+use Commune\Protocals\HostMsg\Convo\EventMsg;
 use Commune\Protocals\HostMsg\DefaultIntents;
 use Commune\Support\Utils\TypeUtils;
 
@@ -72,7 +74,11 @@ class StdioTextAdapter implements Adapter
         }
 
         $line = trim($this->packer->line);
-        $message = IText::instance($line);
+        if (empty($line)) {
+            $message = IEventMsg::instance(EventMsg::EVENT_CLIENT_ACKNOWLEDGE);
+        } else {
+            $message = IText::instance($line);
+        }
 
         $inputMsg = IInputMsg::instance(
             $message,
