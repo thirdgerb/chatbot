@@ -135,6 +135,7 @@ class IGhost extends AbsAppKernel implements Ghost
 
         if ($request instanceof GhostRequest) {
             $input = $request->getInput();
+            $convoId = $input->getConvoId();
             $container->share(GhostRequest::class, $request);
             $container->share(InputMsg::class, $input);
             $container->share(Comprehension::class, $request->getComprehension());
@@ -142,7 +143,7 @@ class IGhost extends AbsAppKernel implements Ghost
         }
 
         $sessionId = $request->getSessionId();
-        $cloner = $this->newCloner($container, $sessionId);
+        $cloner = $this->newCloner($container, $sessionId, $convoId);
         $container->share(Cloner::class, $cloner);
 
         return $cloner;

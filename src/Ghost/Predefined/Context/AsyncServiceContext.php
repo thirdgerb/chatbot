@@ -61,7 +61,7 @@ class AsyncServiceContext extends ACodeContext
         return $stage
             ->onActivate([$this, 'callService'])
             ->onEventExcept(
-                $stage->dialog->fulfill(),
+                $stage->dialog->quit(),
                 Dialog::ACTIVATE
             );
 
@@ -71,7 +71,6 @@ class AsyncServiceContext extends ACodeContext
     {
         $service = $dialog->container()->make($this->service);
         $service($this->payload, $dialog->send(true));
-
-        return $dialog->fulfill();
+        return $dialog->quit();
     }
 }

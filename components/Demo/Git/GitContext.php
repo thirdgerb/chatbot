@@ -12,13 +12,11 @@
 namespace Commune\Components\Demo\Git;
 
 use Commune\Blueprint\Framework\Auth\Supervise;
-use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Context\CodeContextOption;
 use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
-use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Context\ACodeContext;
 
 
