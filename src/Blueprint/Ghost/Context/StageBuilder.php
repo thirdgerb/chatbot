@@ -53,11 +53,22 @@ interface StageBuilder
     public function onResume($caller) : StageBuilder;
 
     /**
+     * 当命中了 Dialog 事件时触发.
+     *
      * @param string $event
      * @param callable|string $caller
      * @return StageBuilder
      */
     public function onEvent(string $event, $caller) : StageBuilder;
 
+    /**
+     * 当不是以下 Dialog 事件时触发.
+     * 不包括 Redirect 事件.
+     *
+     * @param $caller
+     * @param string ...$events
+     * @return StageBuilder
+     */
+    public function onEventExcept($caller, string ...$events) : StageBuilder;
 
 }

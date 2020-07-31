@@ -22,7 +22,10 @@ class ODumb extends AbsOperator
 {
     protected function toNext(): Operator
     {
-        $this->dialog->cloner->noState();
+        // 对话进程首次接受的消息很可能是 event, 这时就不要dumb 了.
+        if (!$this->dialog->process->isFresh()) {
+            $this->dialog->cloner->noState();
+        }
         return $this;
     }
 

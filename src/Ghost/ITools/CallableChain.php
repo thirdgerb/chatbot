@@ -11,7 +11,7 @@
 
 namespace Commune\Ghost\ITools;
 
-use Commune\Blueprint\Ghost\Tools\Invoker;
+use Commune\Blueprint\Ghost\Tools\DialogContainer;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -20,7 +20,7 @@ class CallableChain
 {
 
     /**
-     * @var Invoker
+     * @var DialogContainer
      */
     protected $invoker;
 
@@ -31,10 +31,10 @@ class CallableChain
 
     /**
      * CallableChain constructor.
-     * @param Invoker $invoker
+     * @param DialogContainer $invoker
      * @param callable[] $callers
      */
-    public function __construct(Invoker $invoker, array $callers)
+    public function __construct(DialogContainer $invoker, array $callers)
     {
         $this->invoker = $invoker;
         $this->callers = $callers;

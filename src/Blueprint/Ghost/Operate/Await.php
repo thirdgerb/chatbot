@@ -24,7 +24,7 @@ interface Await extends Finale
 
     /**
      * @param string $query
-     * @param array $suggestions
+     * @param string[]|Ucl[] $suggestions
      * @param int|string $defaultChoice
      * @param Ucl[] $routes
      * @return Operator

@@ -12,7 +12,7 @@
 namespace Commune\Kernel\ShellPipes;
 
 use Commune\Contracts\Api\ApiController;
-use Commune\Protocals\HostMsg\Convo\ApiMsg;
+use Commune\Protocals\HostMsg\ApiMsg;
 use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;

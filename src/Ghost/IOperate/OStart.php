@@ -18,6 +18,8 @@ use Commune\Blueprint\Ghost\Pipe\ComprehendPipe;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\IReceive;
+use Commune\Ghost\IOperate\OExiting\OCancel;
+use Commune\Ghost\IOperate\OExiting\OFulfill;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\HostMsg\ConvoMsg;
 use Commune\Protocals\Intercom\InputMsg;
@@ -68,23 +70,33 @@ class OStart extends AbsOperator
         $process->activate($this->start);
         $input = $this->cloner->input;
 
-
-        // 检查是否是异步 yielding 消息
-        $operator = $this->checkAsyncInput($input)
+        // 链式的启动流程.
+        // 以下流程其实可以拆分成若干个独立的 Operator.
+        // 但为什么没有这么做呢?
+        // 主要原因是, 作者希望最核心的控制流程能够一目了然
+        // 其次是减少 Trace 的轨迹长度, 将后续分支少的环节合并到相同的 operator.
+        $operator =
             // 检查是否是强制同步状态的 contextMsg
-            ?? $this->isContextMsgCall($input)
-            // 检查是否有阻塞中的任务.
-            ?? $this->checkBlocking()
+            $this->isContextMsgCall($input)
+
+            // ?? $this->checkBlocking()
+
             // 检查是否是 session 第一次输入, 是的话要初始化 session
             ?? $this->isSessionStart()
-            // 如果不是影响对话状态的 convo msg, 则全部由 await ucl 来处理. 不走任何理解和路由.
+
+            // 如果不是影响对话状态的 convo msg,
+            // 则全部由 await ucl 来处理. 不走任何理解和路由.
             ?? $this->isNotConvoMsgCall($input)
+
+            // 以下是语义相关的环节.
             // 通过管道试图理解消息, 将理解结果保留在 comprehension 中.
             ?? $this->runComprehendPipes($input)
             // 问题匹配
             ?? $this->checkQuestion()
             // 检查是否命中了路由.
             ?? $this->checkAwaitRoutes()
+
+            // 进行 listen 的逻辑.
             ?? $this->heed();
 
         return $operator;
@@ -92,13 +104,11 @@ class OStart extends AbsOperator
 
     /*------ pipeline ------*/
 
-    protected function checkAsyncInput(InputMsg $input) : ? Operator
-    {
-        // todo 带了场景再实现
-        return null;
-    }
-
-
+    /**
+     * 如果输入消息是一个 ContextMsg 对象.
+     * @param InputMsg $input
+     * @return Operator|null
+     */
     protected function isContextMsgCall(InputMsg $input) : ? Operator
     {
         $message = $input->getMessage();
@@ -107,24 +117,77 @@ class OStart extends AbsOperator
         if (!$message instanceof ContextMsg) {
             return null;
         }
+        $current = $this->dialog->ucl;
+        $currentDef = $current->findContextDef($this->cloner);
 
-        $context = $message->toContext($this->cloner);
-        // 直接重定向到目标位置.
-        return $this->dialog->redirectTo($context->getUcl());
-    }
+        $target = $message->toContext($this->cloner);
+        $targetUcl = $target->getUcl();
 
-    protected function checkBlocking() : ? Operator
-    {
-        // 必须是无副作用的.
-        $blocking = $this->process->firstBlocking();
-        if (empty($blocking)) {
-            return null;
+        $mode = $message->getMode();
+
+        switch($mode) {
+
+            // 发起该 context 的cancel 流程.
+            case ContextMsg::MODE_CANCEL:
+                $this->process->addBlocking(
+                    $current,
+                    $currentDef->getPriority()
+                );
+                $dialog = new IReceive(
+                    $this->cloner,
+                    $targetUcl,
+                    $this->dialog
+                );
+                return new OCancel($dialog);
+
+            // 发起该 context 的fulfill 流程.
+            case ContextMsg::MODE_FULFILL:
+                $this->process->addBlocking(
+                    $current,
+                    $currentDef->getPriority()
+                );
+                $dialog = new IReceive(
+                    $this->cloner,
+                    $targetUcl,
+                    $this->dialog
+                );
+                return new OFulfill($dialog, 0, []);
+
+            case ContextMsg::MODE_BLOCKING:
+                return $this->challengeCurrent($targetUcl);
+
+            case ContextMsg::MODE_REDIRECT:
+            default :
+                return $this->dialog->redirectTo($targetUcl, true);
+
         }
-
-        return $this->challengeCurrent($blocking);
     }
+//
+//    /**
+//     * 新消息来检查, 是否有新的任务优先级高于上一轮对话的任务.
+//     * @return Operator|null
+//     */
+//    protected function checkBlocking() : ? Operator
+//    {
+//        // 必须是无副作用的.
+//        $blocking = $this->process->firstBlocking();
+//        if (empty($blocking)) {
+//            return null;
+//        }
+//
+//        return $this->challengeCurrent($blocking);
+//    }
 
-
+    /**
+     * 检查会话是不是新启动.
+     * 如果是新启动的话, 则触发一次 activate 来产生欢迎语.
+     * 然后把当前输入当成一个回复来响应.
+     *
+     * 这样某些场景直接可以用 bot 能接受的命令来启动 bot.
+     * 不过更安全的做法是, 连接 bot 时先发一条 EventMsg (client.connect)
+     *
+     * @return Operator|null
+     */
     protected function isSessionStart() : ? Operator
     {
         $process = $this->process;
@@ -149,6 +212,19 @@ class OStart extends AbsOperator
         return null;
     }
 
+    /**
+     * 系统的输入消息默认是 ConvoMsg
+     * 也就是可以在 client 和 host 之间传播和渲染的消息 (conversation message)
+     *
+     * 除了 ConvoMsg 之外, 还有三种是带有明确语义的:
+     *
+     * - IntentMsg: 直接是意图.
+     * - DirectiveMsg: 指令.
+     * - ApiMsg: 调用 api. 理论上不会传到这里来.
+     *
+     * @param InputMsg $input
+     * @return Operator|null
+     */
     protected function isNotConvoMsgCall(InputMsg $input) : ? Operator
     {
         $message = $input->getMessage();
@@ -164,17 +240,17 @@ class OStart extends AbsOperator
 
     protected function runComprehendPipes(InputMsg $input) : ? Operator
     {
-
-        $awaitUcl = $this->start;
-        $contextDef = $awaitUcl->findContextDef($this->cloner);
-
-        $pipes = $contextDef->comprehendPipes($this->dialog);
-
-        if (is_null($pipes)) {
-            return $this->runGhostComprehendPipes($input);
-        }
-
-        $this->runComprehendPipeline($input, $pipes);
+//
+//        $awaitUcl = $this->start;
+//        $contextDef = $awaitUcl->findContextDef($this->cloner);
+//
+//        $pipes = $contextDef->comprehendPipes($this->dialog);
+//
+//        if (is_null($pipes)) {
+//            return $this->runGhostComprehendPipes($input);
+//        }
+//
+//        $this->runComprehendPipeline($input, $pipes);
         return null;
     }
 

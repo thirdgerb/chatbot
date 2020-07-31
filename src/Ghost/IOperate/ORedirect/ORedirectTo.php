@@ -32,9 +32,15 @@ class ORedirectTo extends AbsRedirect
      */
     protected $target;
 
-    public function __construct(Dialog $dialog, Ucl $target)
+    /**
+     * @var bool
+     */
+    protected $intentional;
+
+    public function __construct(Dialog $dialog, Ucl $target, bool $intentional)
     {
         $this->target = $target;
+        $this->intentional = $intentional;
         parent::__construct($dialog);
     }
 
@@ -49,13 +55,23 @@ class ORedirectTo extends AbsRedirect
                 : $this->dialog->goStage($target->stageName);
         }
 
+        // 如果不是故意触发的redirect, 则会尝试将当前会话保留到 blocking 栈.
+        if (!$this->intentional) {
+            $priority = $current
+                ->findContextDef($this->dialog->cloner)
+                ->getPriority();
+            // 不允许自然终结的, 都是 priority > 0 的对话.
+            // 将当前对话压入 blocking 栈.
+            if ($priority > 0) {
+                $this->dialog->process->addBlocking($current, $priority);
+            }
+        }
+
+        // 重定向到目标语境.
         $task = $this->dialog->process->getTask($target);
         $status = $task->getStatus();
-
         switch ($status) {
-
             case Context::CALLBACK:
-
                 $resume = new ICallback($this->dialog, $target);
                 return $this->resume($resume, $target);
 
@@ -69,7 +85,7 @@ class ORedirectTo extends AbsRedirect
                     ->getDepended($target->getContextId());
 
                 if (isset($depending)) {
-                    return new ORedirectTo($this->dialog, $depending);
+                    return new ORedirectTo($this->dialog, $depending, true);
                 }
 
                 return $this->redirect($this->target, function(Ucl $target) {

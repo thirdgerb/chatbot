@@ -15,7 +15,7 @@ use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Contracts\Api\ApiController;
-use Commune\Protocals\HostMsg\Convo\ApiMsg;
+use Commune\Protocals\HostMsg\ApiMsg;
 use Commune\Support\Utils\TypeUtils;
 
 

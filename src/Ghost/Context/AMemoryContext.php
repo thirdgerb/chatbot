@@ -18,7 +18,9 @@ use Commune\Ghost\Support\ContextUtils;
 
 /**
  * 作为记忆体存在的 context.
- * 可以用多轮对话完成某个记忆单元.
+ * 
+ * 一方面像正常的 context, 可以用多轮对话完成流程.
+ * 而获得的记忆内容, 又可以当成 memory 来调用. 
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *

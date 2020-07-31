@@ -9,10 +9,10 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Protocals\HostMsg\Convo;
+namespace Commune\Protocals\HostMsg;
 
-use Commune\Protocals\HostMsg\ConvoMsg;
 use Commune\Blueprint\Exceptions\CommuneErrorCode;
+use Commune\Protocals\HostMsg;
 
 
 /**
@@ -20,9 +20,8 @@ use Commune\Blueprint\Exceptions\CommuneErrorCode;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ApiMsg extends ConvoMsg, CommuneErrorCode
+interface ApiMsg extends HostMsg, CommuneErrorCode
 {
-
 
     public function getApiName() : string;
 

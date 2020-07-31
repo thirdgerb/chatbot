@@ -12,15 +12,17 @@
 namespace Commune\Ghost\IOperate\OFinale;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\MindReg\StageReg;
 use Commune\Blueprint\Ghost\Operate\Await;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Support\ContextUtils;
-use Commune\Message\Host\QA\IChoose;
-use Commune\Message\Host\QA\IConfirm;
-use Commune\Message\Host\QA\IQuestionMsg;
+use Commune\Message\Host\Convo\QA\IChoose;
+use Commune\Message\Host\Convo\QA\IConfirm;
+use Commune\Message\Host\Convo\QA\IQuestionMsg;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
+use Commune\Support\Registry\OptRegistry;
 use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 

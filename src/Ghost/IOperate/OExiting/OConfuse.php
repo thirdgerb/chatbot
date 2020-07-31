@@ -85,7 +85,7 @@ class OConfuse extends AbsOperator
     {
         $action = $this->cloner->config->confuseHandler;
         if (isset($action)) {
-            return $this->dialog->invoker()->call($action);
+            return $this->dialog->container()->call($action);
         }
         return null;
     }

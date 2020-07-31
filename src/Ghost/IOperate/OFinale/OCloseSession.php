@@ -22,7 +22,9 @@ class OCloseSession extends AbsFinale
 
     protected function toNext(): Operator
     {
-        $this->dialog->send()->message(SessionQuitInt::instance($this->dialog->ucl));
+        if (!$this->cloner->isSubProcess()) {
+            $this->dialog->send()->message(SessionQuitInt::instance($this->dialog->ucl));
+        }
         $this->dialog->cloner->endConversation();
         return $this;
     }

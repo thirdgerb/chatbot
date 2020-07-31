@@ -11,8 +11,11 @@
 
 namespace Commune\Ghost\Cloner;
 
+use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Container\ContainerContract;
 use Commune\Framework\Spy\SpyAgency;
 
 /**
@@ -33,6 +36,37 @@ class IClonerScene implements ClonerScene
         $this->_entry = $root;
         $this->_env = $env;
         SpyAgency::incr(static::class);
+    }
+
+    public static function factory(ContainerContract $app) : self
+    {
+
+        $env = [];
+        $root = '';
+        if ($app->bound(GhostRequest::class)) {
+            /**
+             * @var GhostRequest $request
+             */
+            $request = $app->make(GhostRequest::class);
+            $env = $request->getEnv();
+            $root = $request->getEntry();
+        }
+
+        /**
+         * @var GhostConfig $config
+         */
+        $config = $app->make(GhostConfig::class);
+        $scenes = $config->sceneContextNames;
+
+        $entry = Ucl::decode($root);
+        $isValid = $entry->isValidPattern()
+            && in_array($entry->contextName, $scenes);
+
+        $entry = $isValid
+            ? $entry
+            : Ucl::decode($config->defaultContextName);
+
+        return new static($entry, $env);
     }
 
     public function __get($name)

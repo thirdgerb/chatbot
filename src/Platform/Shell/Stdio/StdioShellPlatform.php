@@ -64,9 +64,10 @@ class StdioShellPlatform extends AbsPlatform
         LoggerInterface $logger
     )
     {
+        parent::__construct($host, $config, $logger);
+
         $this->shell = $shell;
         $this->option = $option;
-        parent::__construct($host, $config, $logger);
     }
 
     public function getAppId(): string

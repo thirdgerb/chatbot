@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Host\QA;
+namespace Commune\Message\Host\Convo\QA;
 
 use Commune\Protocals\HostMsg\Convo\QA\Confirmation;
 

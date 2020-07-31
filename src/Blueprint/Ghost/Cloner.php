@@ -25,6 +25,7 @@ use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
 use Commune\Support\Registry\OptRegistry;
+use Commune\Blueprint\Ghost\Cloner\ClonerDispatcher;
 
 
 /**
@@ -52,8 +53,11 @@ use Commune\Support\Registry\OptRegistry;
  * @property-read Comprehension $comprehension      理解模块
  * @property-read Cloner\ClonerScene $scene         场景信息. 代表请求中与消息无关的信息.
  * @property-read Cloner\ClonerScope $scope         当前分身的维度.
+ *
+ * # 请求级组件
  * @property-read Ghost\Tools\Matcher $matcher      默认的匹配逻辑工具
  * @property-read Cloner\ClonerAvatar $avatar       当前分身的形象数据.
+ * @property-read ClonerDispatcher $dispatcher      异步任务的工具类.
  *
  * # 功能组件
  * @property-read Cache $cache                      公共缓存
@@ -109,6 +113,12 @@ interface Cloner extends Session
      * 多轮对话不记录状态 (主要是 Runtime), 但不影响 Session
      */
     public function noConversationState(): void;
+
+    /**
+     * 是否是子进程.
+     * @return bool
+     */
+    public function isSubProcess() : bool;
 
     /*----- 触发理解 -----*/
 

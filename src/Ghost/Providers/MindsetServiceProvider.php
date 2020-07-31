@@ -51,6 +51,14 @@ class MindsetServiceProvider extends ServiceProvider
             $mindset->reset();
         }
 
+        // 加载预定义的系统级别功能.
+        Psr4SelfRegisterLoader::loadSelfRegister(
+            $app->make(Mindset::class),
+            "Commune\\Ghost\\Predefined\\",
+            __DIR__ . '/../Predefined/',
+            $app->make(ConsoleLogger::class)
+        );
+
         // 加载项目 默认的 self register
         foreach ($config->mindPsr4Registers as $namespace => $path) {
             Psr4SelfRegisterLoader::loadSelfRegister(

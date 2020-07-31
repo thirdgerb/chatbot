@@ -47,6 +47,11 @@ interface Broadcaster
      * @param callable $callback
      *
      * 传入参数 (string $chan, ShellOutputRequest $request)
+     * 
+     * $chan = 监听的渠道. 可以是 shell/shellId (shell/shellId), 
+     * 也可能是 shell/null (shell)
+     * 
+     * $request = 从服务端广播过来的 request 
      *
      * @param string $shellId
      * @param string|null $shellSessionId

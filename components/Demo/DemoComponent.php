@@ -42,6 +42,7 @@ class DemoComponent extends GhostComponent
                 'Commune\Components\Demo\Contexts' => __DIR__ . '/Contexts',
                 'Commune\Components\Demo\Recall' => __DIR__ . '/Recall',
                 'Commune\Components\Demo\Maze' => __DIR__ . '/Maze',
+                'Commune\Components\Demo\Git' => __DIR__ . '/Git',
             ]
         );
 

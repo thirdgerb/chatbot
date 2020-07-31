@@ -110,7 +110,8 @@ abstract class AbsPlatform implements Platform
     public function onAdapter(
         Platform\Packer $packer,
         Platform\Adapter $adapter,
-        string $handlerInterface = null
+        string $handlerInterface = null,
+        AppRequest $request = null
     ) : bool
     {
         try {
@@ -121,11 +122,10 @@ abstract class AbsPlatform implements Platform
                 return $this->donePacker($packer, $requestError);
             }
 
-            $request = $adapter->getRequest();
+            $request = $request ?? $adapter->getRequest();
 
             $this->handleRequest($adapter, $request, $handlerInterface);
             $adapter->destroy();
-
             return $this->donePacker($packer);
 
         // 理论上这里不应该捕获任何异常.

@@ -49,6 +49,7 @@ class ICloner extends ASession implements Cloner
         'scope' => Cloner\ClonerScope::class,
         'matcher' => Ghost\Tools\Matcher::class,
         'avatar' => Cloner\ClonerAvatar::class,
+        'dispatcher' => Cloner\ClonerDispatcher::class,
 
         'cache' => Cache::class,
         'auth' => Authority::class,
@@ -210,18 +211,29 @@ class ICloner extends ASession implements Cloner
         return sha1("cloner:$clonerId:req:$traceId");
     }
 
+    /**
+     * 从缓存中获取当前 session 的 主conversation id
+     * @return null|string
+     */
     protected function getConvoIdFromCache() : ? string
     {
         $key = $this->getConvoCacheKey();
         return $this->__get('cache')->get($key);
     }
 
+    /**
+     * 缓存当前 Session 的主 conversation.
+     * @param string $convoId
+     */
     protected function cacheConvoId(string $convoId) : void
     {
         $key = $this->getConvoCacheKey();
         $this->__get('cache')->set($key, $convoId, $this->getSessionExpire());
     }
 
+    /**
+     * 删除 session 的 conversationId cache.
+     */
     protected function ioDeleteConvoIdCache() : void
     {
         $key = $this->getConvoCacheKey();
@@ -415,7 +427,7 @@ class ICloner extends ASession implements Cloner
 
     public function isConversationEnd(): bool
     {
-        return $this->quit;
+        return $this->noConversationState;
     }
 
     public function noConversationState(): void
@@ -423,6 +435,10 @@ class ICloner extends ASession implements Cloner
         $this->noConversationState = true;
     }
 
+    public function isSubProcess() : bool
+    {
+        return $this->isSubProcess;
+    }
 
     /*------- flush -------*/
 
@@ -462,6 +478,7 @@ class ICloner extends ASession implements Cloner
                 $this->ioDeleteConvoIdCache();
             }
             // 后面的流程都不执行了.
+            // todo 以后可能加一个 clear cache 主动删除缓存. 现在看徒增复杂度.
             return;
         }
 

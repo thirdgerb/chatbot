@@ -46,7 +46,7 @@ use Commune\Blueprint\Exceptions\Runtime\BrokenRequestException;
 abstract class AbsBaseDialog implements
     Injectable,
     Dialog,
-    Ghost\Tools\Invoker
+    Ghost\Tools\DialogContainer
 {
     use TInjectable;
 
@@ -114,7 +114,7 @@ abstract class AbsBaseDialog implements
     public function chainCallable(callable $callable, callable ...$callableList): callable
     {
         array_unshift($callableList, $callable);
-        return new ITools\CallableChain($this->invoker(), $callableList);
+        return new ITools\CallableChain($this->container(), $callableList);
     }
 
 
@@ -127,10 +127,22 @@ abstract class AbsBaseDialog implements
 
     /*-------- caller --------*/
 
-    public function invoker(): Tools\Invoker
+    public function container(): Tools\DialogContainer
     {
         return $this;
     }
+
+    public function make(string $abstract, array $parameters = [])
+    {
+        $parameters = $this->getDialogicInjections($parameters);
+
+        try {
+            return $this->_cloner->container->make($abstract, $parameters);
+        } catch (\Exception $e) {
+            throw new BrokenRequestException('', $e);
+        }
+    }
+
 
     public function call($caller, array $parameters = [])
     {
@@ -142,14 +154,9 @@ abstract class AbsBaseDialog implements
             $caller = [$caller, '__invoke'];
         }
 
-        $parameters = $this->getContextualInjections($parameters);
+        $parameters = $this->getDialogicInjections($parameters);
 
         try {
-            $tests = [];
-            foreach ($parameters as $key => $val){
-                $tests[$key] = isset($val);
-            }
-
             return $this->_cloner->container->call($caller, $parameters);
         } catch (\Exception $e) {
             throw new BrokenRequestException('', $e);
@@ -176,7 +183,7 @@ abstract class AbsBaseDialog implements
         throw new InvalidArgumentException('caller should return operator or null, ' . TypeUtils::getType($result) . ' given');
     }
 
-    protected function getContextualInjections(array $parameters) : array
+    protected function getDialogicInjections(array $parameters) : array
     {
         $injections = [
             'context' => $this->context,

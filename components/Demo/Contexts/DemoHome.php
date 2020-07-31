@@ -16,6 +16,7 @@ use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Components\Demo\Git\GitContext;
 use Commune\Components\Demo\Maze\PlayMaze;
 use Commune\Ghost\Context\ACodeContext;
 use Commune\Support\Registry\OptRegistry;
@@ -90,6 +91,7 @@ class DemoHome extends ACodeContext
                         [
                             FeatureTest::genUcl(),
                             PlayMaze::genUcl(),
+                            GitContext::genUcl(),
                         ]
                     );
 

@@ -41,6 +41,15 @@ interface Process extends ArrayAndJsonAble
 
     public function nextSnapshot(string $id, int $maxBacktrace) : Process;
 
+    /**
+     * 从进程中获取 Ucl 指向的运行栈 (task).
+     * Task 包含 Context 运行的上下文.
+     *
+     * 如果没有的话, 会基于 Ucl 生成一个.
+     *
+     * @param Ucl $ucl
+     * @return Task
+     */
     public function getTask(Ucl $ucl) : Task;
 
     public function getTaskById(string $contextId) : ? Task;
@@ -97,6 +106,10 @@ interface Process extends ArrayAndJsonAble
 
     public function addBlocking(Ucl $ucl, int $priority) : void;
 
+    /**
+     * blocking 栈中第一个元素.
+     * @return Ucl|null
+     */
     public function firstBlocking() : ? Ucl;
 
     public function eachBlocking() : \Generator;

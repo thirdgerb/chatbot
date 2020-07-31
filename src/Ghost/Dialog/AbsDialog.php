@@ -79,9 +79,9 @@ abstract class AbsDialog extends AbsBaseDialog
         return new ORedirect\OReactivate($this);
     }
 
-    public function redirectTo(Ucl $ucl): Operator
+    public function redirectTo(Ucl $ucl, bool $intentional = true): Operator
     {
-        return new ORedirect\ORedirectTo($this, $ucl);
+        return new ORedirect\ORedirectTo($this, $ucl, $intentional);
     }
 
     public function reset(Ucl $root = null): Operator

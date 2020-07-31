@@ -49,13 +49,15 @@ class MessagesTest extends MessageTestCase
         Message\Intercom\IOutputMsg::class,
 
         // qa
-        Message\Host\QA\IQuestionMsg::class,
-        Message\Host\QA\IAnswerMsg::class,
-        Message\Host\QA\IChoose::class,
-        Message\Host\QA\IChoice::class,
-        Message\Host\QA\IConfirm::class,
-        Message\Host\QA\IConfirmation::class,
+        Message\Host\Convo\QA\IQuestionMsg::class,
+        Message\Host\Convo\QA\IAnswerMsg::class,
+        Message\Host\Convo\QA\IChoose::class,
+        Message\Host\Convo\QA\IChoice::class,
+        Message\Host\Convo\QA\IConfirm::class,
+        Message\Host\Convo\QA\IConfirmation::class,
 
+        // api
+        Message\Host\IApiMsg::class,
 
         // kernel protocals
         Protocals\IGhostRequest::class,

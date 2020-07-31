@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Providers;
 
+use Commune\Blueprint\Exceptions\CommuneLogicException;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\MindSelfRegister;
 use Commune\Container\ContainerContract;
@@ -70,6 +71,11 @@ class Psr4SelfRegisterLoader extends ServiceProvider
         LoggerInterface $logger
     ) : void
     {
+        $directory = realpath($directory);
+        if ($directory === false) {
+            throw new CommuneLogicException("directory $directory not exists");
+        }
+
         $finder = new Finder();
         $finder->files()
             ->in($directory)

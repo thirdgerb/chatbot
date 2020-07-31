@@ -11,9 +11,13 @@
 
 namespace Commune\Ghost\Cloner;
 
-use Commune\Blueprint\Ghost\Cloner\ClonerScope;
+use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
+use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Cloner\ClonerScope;
+use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Framework\Spy\SpyAgency;
+use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
 
 /**
@@ -36,6 +40,40 @@ class IClonerScope implements ClonerScope
         $this->time = time();
         unset($cloner);
         SpyAgency::incr(static::class);
+    }
+    
+    public static function factory(ReqContainer $app) : self
+    {
+
+        $data = [];
+        if ($app->bound(GhostRequest::class)) {
+            /**
+             * @var GhostRequest $request
+             */
+            $request = $app->make(GhostRequest::class);
+            $data[ClonerScope::SHELL_ID] = $request->getFromApp();
+        }
+
+        if ($app->bound(InputMsg::class)) {
+            /**
+             * @var InputMsg $input
+             */
+            $input = $app->make(InputMsg::class);
+            $data[ClonerScope::GUEST_ID] = $input->getCreatorId();
+        }
+
+        if ($app->bound(Cloner::class)) {
+            /**
+             * @var Cloner $cloner
+             */
+            $cloner = $app->make(Cloner::class);
+            $data[ClonerScope::CONVO_ID] = $cloner->getConversationId();
+            $data[ClonerScope::SESSION_ID] = $cloner->getSessionId();
+        }
+
+
+        return new static($data);
+        
     }
 
     public function toArray(): array

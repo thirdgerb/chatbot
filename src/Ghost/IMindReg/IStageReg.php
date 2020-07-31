@@ -39,20 +39,20 @@ class IStageReg extends AbsDefRegistry implements StageReg
 
     protected function hasRegisteredMeta(string $defName): bool
     {
+        // 已经注册过了.
         if (parent::hasRegisteredMeta($defName)) {
             return true;
         }
 
-        list($maybeContextName, $stage) = ContextUtils::divideContextNameFromStageName($defName);
-
+        // 如果当前 def 名就是 context 的 name
         $contextReg = $this->mindset->contextReg();
-
         if ($contextReg->hasDef($defName)) {
             $contextDef = $contextReg->getDef($defName);
             $this->registerDef($contextDef->asStageDef());
             return true;
-
         }
+
+        list($maybeContextName, $stage) = ContextUtils::divideContextNameFromStageName($defName);
 
         if (empty($maybeContextName)) {
             return false;

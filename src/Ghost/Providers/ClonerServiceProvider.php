@@ -11,28 +11,17 @@
 
 namespace Commune\Ghost\Providers;
 
-use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Framework\Auth\Authority;
+use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Cloner\ClonerScope;
-use Commune\Blueprint\Ghost\Cloner\ClonerLogger;
-use Commune\Blueprint\Ghost\Cloner\ClonerScene;
-use Commune\Blueprint\Ghost\Cloner\ClonerStorage;
+use Commune\Ghost\Cloner as ICloner;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Tools\Matcher;
-use Commune\Blueprint\Ghost\Ucl;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Container\ContainerContract as Container;
 use Commune\Contracts\ServiceProvider;
 use Commune\Ghost\Auth\IAuthority;
-use Commune\Ghost\Cloner\IClonerAvatar;
-use Commune\Ghost\Cloner\IClonerLogger;
-use Commune\Ghost\Cloner\IClonerScene;
-use Commune\Ghost\Cloner\IClonerScope;
-use Commune\Ghost\Cloner\IClonerStorage;
 use Commune\Ghost\Runtime\IRuntime;
 use Commune\Ghost\ITools\IMatcher;
-use Commune\Protocals\Intercom\InputMsg;
 use Psr\Log\LoggerInterface;
 
 
@@ -66,6 +55,7 @@ class ClonerServiceProvider extends ServiceProvider
         $this->registerRuntime($app);
         $this->registerStorage($app);
         $this->registerAvatar($app);
+        $this->registerDispatcher($app);
     }
 
 
@@ -85,71 +75,22 @@ class ClonerServiceProvider extends ServiceProvider
      */
     protected function registerCloneScene(Container $app) : void
     {
-        $app->singleton(ClonerScene::class, function(Container $app) {
-
-            $env = [];
-            $root = '';
-            if ($app->bound(GhostRequest::class)) {
-                /**
-                 * @var GhostRequest $request
-                 */
-                $request = $app->make(GhostRequest::class);
-                $env = $request->getEnv();
-                $root = $request->getEntry();
+        $app->singleton(
+            Cloner\ClonerScene::class,
+            function(Container $app) {
+                return ICloner\IClonerScene::factory($app);
             }
-
-            /**
-             * @var GhostConfig $config
-             */
-            $config = $app->make(GhostConfig::class);
-            $scenes = $config->sceneContextNames;
-
-            $entry = Ucl::decode($root);
-            $isValid = $entry->isValidPattern()
-                && in_array($entry->contextName, $scenes);
-
-            $entry = $isValid
-                ? $entry
-                : Ucl::decode($config->defaultContextName);
-
-            $sceneObj = new IClonerScene($entry, $env);
-            return $sceneObj;
-        });
+        );
     }
 
     protected function registerCloneScope(Container $app) : void
     {
-        $app->singleton(ClonerScope::class, function(Container $app) {
-
-            $data = [];
-            if ($app->bound(GhostRequest::class)) {
-                /**
-                 * @var GhostRequest $request
-                 */
-                $request = $app->make(GhostRequest::class);
-                $data[ClonerScope::SHELL_ID] = $request->getFromApp();
+        $app->singleton(
+            Cloner\ClonerScope::class,
+            function(ReqContainer $app) {
+                return ICloner\IClonerScope::factory($app);
             }
-
-            if ($app->bound(InputMsg::class)) {
-                /**
-                 * @var InputMsg $input
-                 */
-                $input = $app->make(InputMsg::class);
-                $data[ClonerScope::GUEST_ID] = $input->getCreatorId();
-            }
-
-            if ($app->bound(Cloner::class)) {
-                /**
-                 * @var Cloner $cloner
-                 */
-                $cloner = $app->make(Cloner::class);
-                $data[ClonerScope::CONVO_ID] = $cloner->getConversationId();
-                $data[ClonerScope::SESSION_ID] = $cloner->getSessionId();
-            }
-
-
-            return new IClonerScope($data);
-        });
+        );
     }
 
     /**
@@ -158,16 +99,19 @@ class ClonerServiceProvider extends ServiceProvider
      */
     protected function registerCloneLogger(Container $app) : void
     {
-        $app->singleton(ClonerLogger::class, function(Container $app) {
-            /**
-             * @var LoggerInterface $logger
-             */
-            $logger = $app->make(LoggerInterface::class);
-            return new IClonerLogger(
-                $logger,
-                $app
-            );
-        });
+        $app->singleton(
+            Cloner\ClonerLogger::class,
+            function(Container $app) {
+                /**
+                 * @var LoggerInterface $logger
+                 */
+                $logger = $app->make(LoggerInterface::class);
+                return new ICloner\IClonerLogger(
+                    $logger,
+                    $app
+                );
+            }
+        );
     }
 
     protected function registerAuth(Container $app) : void
@@ -182,11 +126,25 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerStorage(Container $app) : void
     {
-        $app->singleton(ClonerStorage::class, IClonerStorage::class);
+        $app->singleton(
+        Cloner\ClonerStorage::class,
+        ICloner\IClonerStorage::class
+        );
     }
 
     protected function registerAvatar(Container $app) : void
     {
-        $app->singleton(Cloner\ClonerAvatar::class, IClonerAvatar::class);
+        $app->singleton(
+            Cloner\ClonerAvatar::class,
+            ICloner\IClonerAvatar::class
+        );
+    }
+
+    protected function registerDispatcher(Container $app) : void
+    {
+        $app->singleton(
+            Cloner\ClonerDispatcher::class,
+            ICloner\IClonerDispatcher::class
+        );
     }
 }

@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Operate;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Runtime\Task;
-use Commune\Blueprint\Ghost\Tools\Invoker;
+use Commune\Blueprint\Ghost\Tools\DialogContainer;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Tools\Hearing;
@@ -96,10 +96,10 @@ interface Dialog
     /*----- call -----*/
 
     /**
-     * 上下文相关的 IoC 容器.
-     * @return Invoker
+     * Dialog 上下文相关的 IoC 容器.
+     * @return DialogContainer
      */
-    public function invoker() : Invoker;
+    public function container() : DialogContainer;
 
 
     /*----- conversation -----*/
@@ -117,19 +117,21 @@ interface Dialog
      */
     public function send(bool $immediately = true) : Deliver;
 
-    /**
-     * 将多个 __invoke 的 callable 对象组成一个 callable 链条.
-     *
-     * @param callable $callable
-     * @param callable ...$callableList
-     * @return callable
-     */
-    public function chainCallable(callable $callable, callable ...$callableList) : callable ;
+//  没有在任何地方用到过, 忘记了为何定义这个方法.
+
+//    /**
+//     * 将多个 __invoke 的 callable 对象组成一个 callable 链条.
+//     *
+//     * @param callable $callable
+//     * @param callable ...$callableList
+//     * @return callable
+//     */
+//    public function chainCallable(callable $callable, callable ...$callableList) : callable ;
 
     /*----- memory -----*/
 
     /**
-     * 获取一个记忆体.
+     * 获取一个记忆体 (Recollection) .
      * @param string $name
      * @return Recollection
      */

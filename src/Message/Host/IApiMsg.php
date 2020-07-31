@@ -9,10 +9,10 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Host\Convo;
+namespace Commune\Message\Host;
 
 use Commune\Protocals\HostMsg;
-use Commune\Protocals\HostMsg\Convo\ApiMsg;
+use Commune\Protocals\HostMsg\ApiMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\Message\AbsMessage;
 

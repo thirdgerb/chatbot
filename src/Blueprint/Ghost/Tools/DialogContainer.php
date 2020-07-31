@@ -17,8 +17,16 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface Invoker
+interface DialogContainer
 {
+
+    /**
+     * @param string $abstract
+     * @param array $parameters
+     * @return mixed
+     */
+    public function make(string $abstract, array $parameters = []);
+
     /**
      * @param callable|string $caller
      * @param array $parameters

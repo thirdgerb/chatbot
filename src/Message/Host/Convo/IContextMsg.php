@@ -27,6 +27,7 @@ use Commune\Protocals\HostMsg\Convo\ContextMsg;
  * @property string $stageName
  * @property-read array $query
  * @property array $data                语境的数据.
+ * @property int $mode
  */
 class IContextMsg extends AbsMessage implements ContextMsg
 {
@@ -38,6 +39,7 @@ class IContextMsg extends AbsMessage implements ContextMsg
             'stageName' => '',
             'query' => [],
             'data' => [],
+            'mode' => ContextMsg::MODE_REDIRECT,
         ];
     }
 
@@ -99,6 +101,17 @@ class IContextMsg extends AbsMessage implements ContextMsg
     public function isEmpty(): bool
     {
         return false;
+    }
+
+    public function getMode(): int
+    {
+        return $this->mode;
+    }
+
+    public function withMode(int $mode): ContextMsg
+    {
+        $this->mode = $mode;
+        return $this;
     }
 
 

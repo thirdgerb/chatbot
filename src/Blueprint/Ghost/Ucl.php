@@ -289,8 +289,6 @@ class Ucl implements UclInterface
         return $query;
     }
 
-
-
     public function encode() : string
     {
         if (isset($this->encoded)) {

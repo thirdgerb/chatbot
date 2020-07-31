@@ -32,6 +32,9 @@ use Commune\Components\Demo\Maze\Memories\UserPlayHistory;
  */
 class Maze extends ACodeContext
 {
+    /**
+     * 测试自定义 context 的 namespace
+     */
     const CONTEXT_PREFIX = 'commune.demo.maze.';
 
     /*------------ 临时属性 -----------*/

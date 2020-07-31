@@ -12,29 +12,25 @@
 namespace Commune\Framework\Messenger\Fake;
 
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
-use Commune\Contracts\Messenger\Broadcaster;
+use Commune\Contracts\Messenger\GhostMessenger;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class EmptyBroadcaster implements Broadcaster
+class LocalGhostMessenger implements GhostMessenger
 {
-    public function publish(
-        GhostRequest $request,
-        GhostResponse $response,
-        array $routes
-    ): void
+
+    protected $chan = [];
+
+    public function asyncSendRequest(GhostRequest $request, GhostRequest ...$requests): void
     {
+        array_push($this->chan, $request, ...$requests);
     }
 
-    public function subscribe(
-        callable $callback,
-        string $shellId,
-        string $shellSessionId = null
-    ): void
+    public function receiveAsyncRequest(): ? GhostRequest
     {
+        return array_shift($this->chan);
     }
 
 

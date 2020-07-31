@@ -183,6 +183,8 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
             if (!isset($handler)) {
                 throw new CommuneLogicException(
                     "request handler not found for " . TypeUtils::getType($request)
+                    . ", interface $interface, on "
+                    . static::class
                 );
             }
 

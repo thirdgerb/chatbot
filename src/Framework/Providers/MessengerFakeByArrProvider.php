@@ -13,11 +13,13 @@ namespace Commune\Framework\Providers;
 
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Messenger\Broadcaster;
+use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Contracts\Messenger\MessageDB;
 use Commune\Contracts\Messenger\ShellMessenger;
 use Commune\Contracts\ServiceProvider;
 use Commune\Framework\Messenger\Fake\ArrMessageDB;
-use Commune\Framework\Messenger\Fake\EmptyBroadcaster;
+use Commune\Framework\Messenger\Fake\LocalBroadcaster;
+use Commune\Framework\Messenger\Fake\LocalGhostMessenger;
 use Commune\Framework\Messenger\Fake\LocalShellMessenger;
 
 
@@ -56,7 +58,12 @@ class MessengerFakeByArrProvider extends ServiceProvider
 
         $app->singleton(
             Broadcaster::class,
-            EmptyBroadcaster::class
+            LocalBroadcaster::class
+        );
+
+        $app->singleton(
+            GhostMessenger::class,
+            LocalGhostMessenger::class
         );
     }
 

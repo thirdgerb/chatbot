@@ -116,6 +116,7 @@ return new IHostConfig([
         // 模拟接受广播的 shell 端, 监听 9504 端口
         'listener' =>  include __DIR__ . '/platforms/listener.php',
 
+        // 命令行
         'console' => include __DIR__ . '/platforms/console.php',
     ],
 

@@ -15,7 +15,9 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 
 /**
- * 静态的回忆工具, 用静态方法来定义和获取记忆体.
+ * 静态的回忆工具, 用静态方法来 定义|获取  记忆体.
+ *
+ * 是一种比较简便的做法.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */

@@ -57,7 +57,7 @@ class IStageBuilder implements StageBuilder
             unset($caller);
             return  $this;
         }
-        $this->operator = $this->dialog->invoker()->call($caller);
+        $this->operator = $this->dialog->container()->call($caller);
         unset($caller);
         return $this;
     }
@@ -71,7 +71,7 @@ class IStageBuilder implements StageBuilder
         }
 
         if ($this->redirect) {
-            $this->operator = $this->dialog->invoker()->action($caller);
+            $this->operator = $this->dialog->container()->action($caller);
         }
 
         return  $this;
@@ -85,7 +85,7 @@ class IStageBuilder implements StageBuilder
         }
 
         if ($this->dialog->isEvent(Dialog::ACTIVATE)) {
-            $ioc = $this->dialog->invoker();
+            $ioc = $this->dialog->container();
             $this->operator = $ioc->action($caller);
         }
 
@@ -99,7 +99,7 @@ class IStageBuilder implements StageBuilder
         }
 
         if ($this->dialog->isEvent(Dialog::RECEIVE)) {
-            $this->operator = $this->dialog->invoker()->action($caller);
+            $this->operator = $this->dialog->container()->action($caller);
         }
 
         return  $this;
@@ -112,7 +112,7 @@ class IStageBuilder implements StageBuilder
         }
 
         if ($this->dialog->isEvent(Dialog::RESUME)) {
-            $this->operator = $this->dialog->invoker()->action($caller);
+            $this->operator = $this->dialog->container()->action($caller);
         }
 
         return $this;
@@ -127,10 +127,27 @@ class IStageBuilder implements StageBuilder
         }
 
         if ($this->dialog->isEvent($event)) {
-            $this->operator = $this->dialog->invoker()->action($caller);
+            $this->operator = $this->dialog->container()->action($caller);
         }
 
         return  $this;
+    }
+
+    public function onEventExcept($caller, string ...$events) : StageBuilder
+    {
+        if (isset($this->operator) || $this->redirect) {
+            if ($caller instanceof \Closure) $caller->bindTo(null);
+            return $this;
+        }
+
+        foreach ($events as $event) {
+            if ($this->dialog->isEvent($event)) {
+                return $this;
+            }
+        }
+
+        $this->operator = $this->dialog->container()->action($caller);
+        return $this;
     }
 
     public function popOperator() : ? Operator

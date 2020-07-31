@@ -11,6 +11,13 @@
 
 namespace Commune\Platform\Shell\Stdio;
 
+use Commune\Blueprint\Ghost;
+use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
+use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
+use Commune\Contracts\Messenger\Broadcaster;
+use Commune\Kernel\Protocals\IShellOutputRequest;
+use Commune\Support\Babel\Babel;
 use React\EventLoop\Factory;
 use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Host;
@@ -26,6 +33,7 @@ use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Platform\Libs\Stdio\StdioTextAdapter;
+use Swoole\Coroutine;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -54,9 +62,9 @@ class StdioConsolePlatform extends AbsPlatform
         LoggerInterface $logger
     )
     {
-        $this->shell = $shell;
         parent::__construct($host, $config, $logger);
 
+        $this->shell = $shell;
         $this->loop = Factory::create();
         $this->stdio = new Stdio($this->loop);
     }
@@ -79,30 +87,82 @@ class StdioConsolePlatform extends AbsPlatform
 
     public function serve(): void
     {
-        $this->stdio->setPrompt('> ');
+            $this->stdio->setPrompt('> ');
 
-        $this->host->instance(
-            GhostMessenger::class,
-            $this->makeGhostMessenger()
+            $initPacker = $this->makePacker('');
+            $this->onPacker($initPacker, StdioTextAdapter::class);
+            unset($initPacker);
+
+            $this->stdio->on('data', function($line) {
+
+                $packer = $this->makePacker($line);
+                $success = $this->onPacker($packer, StdioTextAdapter::class);
+
+                $this->runAsyncInput();
+                $this->runSubscribe();
+
+                if (!$success) {
+                    $this->loop->stop();
+                }
+
+            });
+
+            $this->loop->run();
+    }
+
+    protected function runSubscribe() : void
+    {
+        /**
+         * @var Broadcaster $broadcaster
+         */
+        $broadcaster = $this->host
+            ->getProcContainer()
+            ->make(Broadcaster::class);
+
+        $broadcaster->subscribe(
+            function($chan, $request) {
+
+
+                $packer = $this->makePacker('');
+                $adapter = $packer->adapt(
+                    StdioTextAdapter::class,
+                    $this->shell->getId()
+                );
+
+                $this->onAdapter(
+                    $packer,
+                    $adapter,
+                    ShellOutputReqHandler::class,
+                    $request
+                );
+            },
+            $this->shell->getId()
         );
 
-        $initPacker = $this->makePacker('');
-        $this->onPacker($initPacker, StdioTextAdapter::class);
-        unset($initPacker);
-
-
-        $this->stdio->on('data', function($line) {
-
-            $packer = $this->makePacker($line);
-            $success = $this->onPacker($packer, StdioTextAdapter::class);
-
-            if (!$success) {
-                $this->loop->stop();
-            }
-        });
-
-        $this->loop->run();
     }
+
+    protected function runAsyncInput() : void
+    {
+        /**
+         * @var GhostMessenger $ghostMessenger
+         */
+        $ghostMessenger = $this->host
+            ->getProcContainer()
+            ->make(GhostMessenger::class);
+
+        /**
+         * @var Ghost $ghost
+         */
+        $ghost = $this->host->getProcContainer()->make(Ghost::class);
+        while ($request = $ghostMessenger->receiveAsyncRequest()) {
+            $ghost->handleRequest(
+                $request,
+                GhostRequestHandler::class
+            );
+        }
+    }
+
+
 
     protected function makePacker(string $line) : StdioPacker
     {
@@ -124,22 +184,6 @@ class StdioConsolePlatform extends AbsPlatform
     public function shutdown(): void
     {
         $this->loop->stop();
-    }
-
-    protected function makeGhostMessenger() : GhostMessenger
-    {
-        return new class() implements GhostMessenger {
-
-            public function asyncSendRequest(GhostRequest $request, GhostRequest ...$requests): void
-            {
-                return;
-            }
-
-            public function receiveAsyncRequest(): ? GhostRequest
-            {
-                return null;
-            }
-        };
     }
 
     /**

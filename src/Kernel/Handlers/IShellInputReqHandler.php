@@ -185,23 +185,11 @@ class IShellInputReqHandler implements ShellInputReqHandler
 
         // 如果已经实例化了 Ghost, 就做同步响应.
         $container = $this->session->container;
-        if ($container->bound(Ghost::class)) {
-            /**
-             * @var Ghost $ghost
-             * @var GhostResponse $response
-             */
-            $ghost = $container->make(Ghost::class);
-            $response = $ghost->handleRequest($request, GhostRequestHandler::class);
-
-            return $response;
-        }
-
         /**
          * @var ShellMessenger $messenger
          */
         $messenger = $container->get(ShellMessenger::class);
         $response = $messenger->sendGhostRequest($request);
-
         return $response;
     }
 

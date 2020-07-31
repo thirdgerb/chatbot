@@ -114,9 +114,11 @@ abstract class ASessionStorage implements SessionStorage
 
     public function __destruct()
     {
-        $this->session = null;
-        $this->cache = null;
-        unset($this->_data);
+        unset(
+            $this->_data,
+            $this->session,
+            $this->cache
+        );
 
         SpyAgency::decr(static::class);
     }

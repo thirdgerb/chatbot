@@ -9,13 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Message\Host\QA;
+namespace Commune\Blueprint\Ghost\Callables;
 
-use Commune\Protocals\HostMsg\Convo\QA\Choice;
+use Commune\Blueprint\Ghost\Tools\Deliver;
+
 
 /**
+ * 对话式的服务, 执行完后用对话来返回结果.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IChoice extends IAnswerMsg implements Choice
+interface DialogicService
 {
+
+    public function __invoke(array $payload, Deliver $deliver) : void;
 }

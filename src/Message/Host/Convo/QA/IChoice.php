@@ -9,17 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Contracts\Api;
+namespace Commune\Message\Host\Convo\QA;
 
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Protocals\HostMsg\ApiMsg;
-
+use Commune\Protocals\HostMsg\Convo\QA\Choice;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ApiController
+class IChoice extends IAnswerMsg implements Choice
 {
-    public function __invoke(AppRequest $request, ApiMsg $message) : AppResponse;
 }
