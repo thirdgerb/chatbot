@@ -31,7 +31,9 @@ interface InputMsg extends IntercomMsg
         HostMsg $message,
         string $creatorId = '',
         string $creatorName = '',
-        int $deliverAt = null
+        int $deliverAt = null,
+        string $sessionId = null,
+        string $scene = null
     ) : OutputMsg;
 
 }

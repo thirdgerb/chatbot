@@ -61,6 +61,12 @@ interface IntercomMsg extends Message, Protocal
     public function getConvoId() : string;
 
     /**
+     * 场景
+     * @return string
+     */
+    public function getScene() : string;
+
+    /**
      * 消息的批次 ID
      * @return string
      */
@@ -122,20 +128,22 @@ interface IntercomMsg extends Message, Protocal
      *
      * @param HostMsg $message
      * @param string $sessionId
-     * @param string $convoId
-     * @param string $creatorId
-     * @param string $creatorName
+     * @param string|null $convoId
+     * @param string|null $creatorId
+     * @param string|null $creatorName
      * @param int|null $deliverAt
+     * @param string|null $scene
      *
      * @return static
      */
     public function divide(
         HostMsg $message,
         string $sessionId,
-        string $convoId = '',
-        string $creatorId = '',
-        string $creatorName = '',
-        int $deliverAt = null
+        string $convoId = null,
+        string $creatorId = null,
+        string $creatorName = null,
+        int $deliverAt = null,
+        string $scene = null
     ) : IntercomMsg;
 
 

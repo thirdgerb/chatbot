@@ -30,6 +30,7 @@ use Commune\Support\Uuid\IdGeneratorHelper;
  * @property string $creatorId          creatorId: 用户的ID.
  * @property string $creatorName        creatorName: 用户的姓名.
  * @property HostMsg $message           message: 输入消息. 不可以为空.
+ * @property string $scene              场景.
  * @property int $createdAt             createdAt: 创建时间.
  * @property int $deliverAt             deliverAt: 发送时间. 默认为0.
  *
@@ -70,6 +71,9 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
             // 创建者名称.
             'creatorName' => '',
 
+            // 调用场景. 是和客户端形成一致的关键.
+            'scene' => '',
+
             // 消息体
             'message' => new IText(),
 
@@ -105,19 +109,19 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
     public function divide(
         HostMsg $message,
         string $sessionId,
-        string $convoId = '',
-        string $creatorId = '',
-        string $creatorName = '',
-        int $deliverAt = null
+        string $convoId = null,
+        string $creatorId = null,
+        string $creatorName = null,
+        int $deliverAt = null,
+        string $scene = null
     ): IntercomMsg
     {
         $deliverAt = $deliverAt ?? time();
-        
         $vars = get_defined_vars();
 
         $data = $this->_data;
         foreach ($vars as $name => $val) {
-            $data[$name] = $val;
+            $data[$name] = $val ?? $data[$name] ?? null;
         }
 
         return new static($data);
@@ -171,6 +175,10 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
         return $this->deliverAt;
     }
 
+    public function getScene(): string
+    {
+        return $this->scene;
+    }
 
     public function setMessage(HostMsg $message): void
     {

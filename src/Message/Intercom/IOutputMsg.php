@@ -38,7 +38,8 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
         string $creatorId = '',
         string $creatorName = '',
         string $convoId = '',
-        int $deliverAt = null
+        int $deliverAt = null,
+        string $scene = ''
     ) : self
     {
         $deliverAt = $deliverAt ?? time();
@@ -49,7 +50,8 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
             'creatorId' => $creatorId,
             'creatorName' => $creatorName,
             'convoId' => $convoId,
-            'deliverAt' => $deliverAt
+            'deliverAt' => $deliverAt,
+            'scene' => $scene,
         ]);
     }
 

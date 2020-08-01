@@ -39,7 +39,8 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         string $creatorName = '',
         string $convoId = '',
         int $deliverAt = null,
-        string $messageId = null
+        string $messageId = null,
+        string $scene = ''
     ) : self
     {
         $deliverAt = $deliverAt ?? time();
@@ -50,7 +51,8 @@ class IInputMsg extends AIntercomMsg implements InputMsg
             'creatorName' => $creatorName,
             'convoId' => $convoId,
             'messageId' => $messageId ?? '',
-            'deliverAt' => $deliverAt
+            'deliverAt' => $deliverAt,
+            'scene' => $scene,
         ];
 
         return new static($data);
@@ -79,18 +81,20 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         string $creatorId = '',
         string $creatorName = '',
         int $deliverAt = null,
-        string $sessionId = null
+        string $sessionId = null,
+        string $scene = null
     ): OutputMsg
     {
         $deliverAt = $deliverAt ?? time();
         return IOutputMsg::instance(
             $message,
-            $this->getSessionId(),
+            $sessionId ?? $this->getSessionId(),
             $this->getMessageId(),
             $creatorId,
             $creatorName,
             $this->getConvoId(),
-            $deliverAt
+            $deliverAt,
+            $scene ?? $this->scene
         );
     }
 
