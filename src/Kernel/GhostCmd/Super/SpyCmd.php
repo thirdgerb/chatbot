@@ -16,6 +16,7 @@ use Commune\Kernel\GhostCmd\AGhostCmd;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
+use Commune\Support\Utils\MarkdownUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -42,7 +43,7 @@ class SpyCmd extends AGhostCmd
             );
         }
 
-        $this->info($str);
+        $this->info(MarkdownUtils::quote($str));
     }
 
     protected function showRunningTrace(string $type, int $count) : string
