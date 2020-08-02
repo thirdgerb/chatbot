@@ -95,7 +95,7 @@ abstract class TcpAdapterAbstract implements Adapter
         }
     }
 
-    public function isInvalid(): ? string
+    public function isInvalidRequest(): ? string
     {
         return $this->error;
     }

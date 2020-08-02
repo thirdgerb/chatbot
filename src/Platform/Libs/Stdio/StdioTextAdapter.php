@@ -59,7 +59,7 @@ class StdioTextAdapter implements Adapter
         $this->appId = $appId;
     }
 
-    public function isInvalid(): ? string
+    public function isInvalidRequest(): ? string
     {
         return null;
     }

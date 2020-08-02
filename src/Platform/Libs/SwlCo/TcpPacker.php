@@ -65,7 +65,7 @@ class TcpPacker implements Packer
         $this->conn->send($message);
     }
 
-    public function isInvalid(): ? string
+    public function isInvalidInput(): ? string
     {
         return empty($this->input) ? "input should not be empty" : null;
     }

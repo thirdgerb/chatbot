@@ -14,7 +14,8 @@ namespace Commune\Blueprint\Platform;
 
 /**
  * 将平台的输入输出打包, 传给 adapter
- * 用这种方式实现 adapter 在平台上的复用.
+ * 用这种方式实现 adapter 在平台上的替换.
+ * 一个平台只有一种确定的 packer, 但可以使用不同的 adapter.
  *
  * Platform 自身可以定义 Packer
  * 而 PlatformConfig 可以替换 Adapter
@@ -29,7 +30,7 @@ interface Packer
      * 如果有问题, 则直接告知客户端请求失败.
      * @return null|string
      */
-    public function isInvalid() : ? string;
+    public function isInvalidInput() : ? string;
 
     /**
      * 通过数据包生成一个适配器.
@@ -43,9 +44,7 @@ interface Packer
     /**
      * 用于表示请求本身失败, 而无关逻辑结果.
      * 通常是 400 bad request.
-     *
      * 将请求失败的消息告知客户端.
-     * 不需要记录日志.
      *
      * @param string $error
      */

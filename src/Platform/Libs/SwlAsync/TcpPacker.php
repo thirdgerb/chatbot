@@ -68,7 +68,7 @@ class TcpPacker implements Packer
     }
 
 
-    public function isInvalid(): ? string
+    public function isInvalidInput(): ? string
     {
         return null;
     }

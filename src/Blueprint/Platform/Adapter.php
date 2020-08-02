@@ -15,6 +15,9 @@ use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 
 /**
+ * 获取 Packer, 将 packer 的数据转化为 Commune 所需要的 AppRequest
+ * 并将 AppResponse 解析成 packer
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface Adapter
@@ -24,7 +27,7 @@ interface Adapter
      * 异常检查.
      * @return null|string
      */
-    public function isInvalid() : ? string;
+    public function isInvalidRequest() : ? string;
 
     /**
      * @return AppRequest

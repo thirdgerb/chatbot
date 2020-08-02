@@ -95,7 +95,7 @@ abstract class AbsPlatform implements Platform
     ) : bool
     {
         // 检查数据包是否合法.
-        $requestError = $packer->isInvalid();
+        $requestError = $packer->isInvalidInput();
         if (isset($requestError)) {
             return $this->donePacker($packer, $requestError);
         }
@@ -116,13 +116,14 @@ abstract class AbsPlatform implements Platform
     {
         try {
 
-            $requestError = $adapter->isInvalid();
-            if (isset($requestError)) {
-                $adapter->destroy();
-                return $this->donePacker($packer, $requestError);
+            if (!isset($request)) {
+                $requestError = $adapter->isInvalidRequest();
+                if (isset($requestError)) {
+                    $adapter->destroy();
+                    return $this->donePacker($packer, $requestError);
+                }
+                $request = $adapter->getRequest();
             }
-
-            $request = $request ?? $adapter->getRequest();
 
             $this->handleRequest($adapter, $request, $handlerInterface);
             $adapter->destroy();
@@ -148,6 +149,7 @@ abstract class AbsPlatform implements Platform
     {
         $failed = isset($error);
         if ($failed) {
+            // 发送请求失败的消息给客户端.
             $packer->fail($error);
             // 记录日志.
             $this->logInvalidRequest($error);
