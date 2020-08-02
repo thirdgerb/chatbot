@@ -59,10 +59,12 @@ trait TcpPlatformServeTrait
                 $data
             );
 
-            $success = $this->onPacker($packer, $adapterName);
-            if (!$success) {
-                break;
-            }
+            $this->onPacker($packer, $adapterName);
+            $packer->destroy();
+
+            //if (!$success) {
+            //    break;
+            //}
         }
     }
 

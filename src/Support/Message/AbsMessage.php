@@ -141,4 +141,9 @@ abstract class AbsMessage extends AStruct implements Message, Injectable
     {
         return static::getInterfacesOf(Message::class);
     }
+    
+    public function destroy() : void
+    {
+        unset($this->_data);
+    }
 }

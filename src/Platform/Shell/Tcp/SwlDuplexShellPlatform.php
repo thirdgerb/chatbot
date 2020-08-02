@@ -31,6 +31,9 @@ use Commune\Platform\AbsPlatform;
 
 
 /**
+ * 基于 Swoole Tcp Server 实现的双工 Shell 平台.
+ * 用 Swoole Table 来保存路由关系, 收到广播后推送给客户端.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class SwlDuplexShellPlatform extends AbsPlatform implements SwlAsyncPlatform
@@ -134,6 +137,8 @@ class SwlDuplexShellPlatform extends AbsPlatform implements SwlAsyncPlatform
             ShellOutputReqHandler::class
         );
 
+        $packer->destroy();
+
     }
 
     public function getServer(): Server
@@ -224,6 +229,8 @@ class SwlDuplexShellPlatform extends AbsPlatform implements SwlAsyncPlatform
                     $this->option->adapterName,
                     ShellInputReqHandler::class
                 );
+
+                $packer->destroy();
             }
         );
 

@@ -14,6 +14,7 @@ namespace Commune\Platform;
 use Commune\Blueprint\Framework\ProcContainer;
 use Commune\Blueprint\Host;
 use Commune\Blueprint\Platform;
+use Commune\Contracts\Log\ExceptionReporter;
 use Psr\Log\LoggerInterface;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
@@ -154,8 +155,6 @@ abstract class AbsPlatform implements Platform
             // 记录日志.
             $this->logInvalidRequest($error);
         }
-
-        $packer->destroy();
         return ! $failed;
     }
 
@@ -178,7 +177,7 @@ abstract class AbsPlatform implements Platform
 
     public function catchExp(\Throwable $e): void
     {
-        $this->host->getConsoleLogger()->critical(strval($e));
+        $this->host->getProcContainer()->get(ExceptionReporter::class)->report($e);
     }
 
 

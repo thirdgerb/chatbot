@@ -124,6 +124,8 @@ class StdioShellPlatform extends AbsPlatform
                 ShellInputReqHandler::class
             );
 
+            $packer->destroy();
+
             if (!$continue) {
                 $this->shutdown();
             }
