@@ -25,13 +25,18 @@ class CloneRoutePipe extends AClonePipe
         if ($this->cloner->isStateless()) {
             return $next($request);
         }
+        $shellName = $request->getFromApp();
+
+        // 如果是自己发来的...
+        if ($this->cloner->getAppId() === $shellName) {
+            return $next($request);
+        }
 
         // 设置路由关系.
         $storage = $this->cloner->storage;
         $routes = $storage->shellSessionRoutes ?? [];
 
 
-        $shellName = $request->getFromApp();
         $routes[$shellName] = $request->getFromSession();
 
         $storage->shellSessionRoutes = $routes;

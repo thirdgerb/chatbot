@@ -46,6 +46,9 @@ class IGhostRequestHandler implements GhostRequestHandler
         // locker
         ClonePipes\CloneLockerPipe::class,
 
+        // 路由.
+        ClonePipes\CloneRoutePipe::class,
+
         // 消息广播
         ClonePipes\CloneBroadcastPipe::class,
 
@@ -56,6 +59,7 @@ class IGhostRequestHandler implements GhostRequestHandler
         // super
         ClonePipes\CloneSuperCmdPipe::class,
 
+        // 对话管理
         ClonePipes\CloneDialogManagerPipe::class,
     ];
 

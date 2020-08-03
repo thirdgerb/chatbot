@@ -17,7 +17,6 @@ use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
 use Commune\Blueprint\Shell\ShellSession;
-use Commune\Contracts\Messenger\MessageDB;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Kernel\ShellPipes;
 

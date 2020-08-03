@@ -106,6 +106,20 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
 
     /*------- clone -------*/
 
+    /**
+     * 将当前消息分裂出不同的版本.
+     * 通常只需要指定不一样的值就可以了, 其它的值都是相同的.
+     * 至少 Message 是不同的.
+     *
+     * @param HostMsg $message
+     * @param string $sessionId
+     * @param string|null $convoId
+     * @param string|null $creatorId
+     * @param string|null $creatorName
+     * @param int|null $deliverAt
+     * @param string|null $scene
+     * @return IntercomMsg
+     */
     public function divide(
         HostMsg $message,
         string $sessionId,
@@ -117,6 +131,7 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
     ): IntercomMsg
     {
         $deliverAt = $deliverAt ?? time();
+        $messageId = $this->createUuId();
         $vars = get_defined_vars();
 
         $data = $this->_data;

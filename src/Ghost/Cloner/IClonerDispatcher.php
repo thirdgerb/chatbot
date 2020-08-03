@@ -18,7 +18,6 @@ use Commune\Blueprint\Ghost\Cloner\ClonerDispatcher;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Predefined\Context\AsyncServiceContext;
-use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
@@ -90,13 +89,14 @@ class IClonerDispatcher implements ClonerDispatcher, HasIdGenerator
     {
         $message = $context->toContextMsg()->withMode($mode);
         $avatar = $this->cloner->avatar;
-        $input = IInputMsg::instance(
+        $input = $this->cloner->input->divide(
             $message,
             $sessionId,
+            $convoId,
             $avatar->getId(),
-            $avatar->getName(),
-            $convoId
+            $avatar->getName()
         );
+
         $this->cloner->asyncInput($input);
     }
 

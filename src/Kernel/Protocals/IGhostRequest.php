@@ -49,7 +49,8 @@ class IGhostRequest extends AbsMessage implements GhostRequest
         array $env = [],
         Comprehension $comprehension = null,
         bool $delivery = false,
-        string $traceId = ''
+        string $traceId = '',
+        string $fromSession = ''
     ) : self
     {
 
@@ -60,7 +61,8 @@ class IGhostRequest extends AbsMessage implements GhostRequest
             'async' => $async,
             'delivery' => $delivery,
             'entry' => $entry,
-            'env' => $env
+            'env' => $env,
+            'fromSession' => $fromSession,
         ];
 
         if (isset($comprehension)) $data['comprehension'] = $comprehension;
@@ -73,6 +75,7 @@ class IGhostRequest extends AbsMessage implements GhostRequest
         return [
             'traceId' => '',
             'fromApp' => '',
+            // from session 通常是由 input 决定的.
             'fromSession' => '',
             'async' => false,
             'delivery' => false,

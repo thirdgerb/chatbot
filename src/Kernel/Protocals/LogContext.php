@@ -32,6 +32,7 @@ class LogContext
         if ($request instanceof GhostRequest) {
             $context['fromApp'] = $request->getFromApp();
             $context['fromSession'] = $request->getFromSession();
+            $context['convoId'] = $request->getInput()->getConvoId();
         }
 
         return $context;

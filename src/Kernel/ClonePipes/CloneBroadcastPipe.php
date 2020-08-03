@@ -140,44 +140,62 @@ class CloneBroadcastPipe extends AClonePipe
          */
         $messenger = $this->cloner->container->get(GhostMessenger::class);
 
-        $appId = $this->cloner->getAppId();
         $traceId = $request->getTraceId();
+        $fromApp = $request->getFromApp();
+        $fromSession = $request->getFromSession();
 
         // 发送异步的输入消息
-        if (!empty($inputs)) {
-            $inputRequests = array_map(function(InputMsg $input) use ($appId, $traceId){
-                return IGhostRequest::instance(
-                    $appId,
-                    true,
-                    $input,
-                    '', // 不可指定 entry, 由该对话自行决定.
-                    [],
-                    null,
-                    false,
-                    $traceId
-                );
-            }, $inputs);
-            // 发送异步的请求.
-            $messenger->asyncSendRequest(...$inputRequests);
-        }
+        $this->sendAsyncGhostMessages(
+            $messenger,
+            $traceId,
+            $fromApp,
+            $fromSession,
+            false,
+            $inputs
+        );
 
         // 发送异步的投递消息.
-        if (!empty($deliveries)) {
-            $deliveryRequests = array_map(function(InputMsg $input) use ($appId, $traceId) {
+        $this->sendAsyncGhostMessages(
+            $messenger,
+            $traceId,
+            $fromApp,
+            $fromSession,
+            true,
+            $deliveries
+        );
+    }
+
+    protected function sendAsyncGhostMessages(
+        GhostMessenger $messenger,
+        string $traceId,
+        string $fromApp,
+        string $fromSession,
+        bool $isDelivery,
+        array $messages
+    ) : void
+    {
+        // 发送异步的投递消息.
+        if (empty($messages)) {
+            return;
+        }
+        $deliveryRequests = array_map(
+            function(InputMsg $input) use ($traceId, $fromApp, $fromSession, $isDelivery) {
                 return IGhostRequest::instance(
-                    $appId,
+                    $fromApp,
                     true,
                     $input,
                     '', //不需要 entry, 反正是直接投递.
                     [],
                     null,
-                    true,
-                    $traceId
+                    $isDelivery,
+                    $traceId,
+                    $fromSession
                 );
 
-            }, $deliveries);
-            $messenger->asyncSendRequest(...$deliveryRequests);
-        }
+            },
+            $messages
+        );
+        $messenger->asyncSendRequest(...$deliveryRequests);
     }
 
     /**

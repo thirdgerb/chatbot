@@ -255,7 +255,7 @@ class IDeliver implements Deliver
                 // 异步时发送的都是 inputMsg
                 // 因此用 divide 来克隆消息体.
                 if ($async) {
-                    return $this->input->divide(
+                    $asyncInput = $this->input->divide(
                         $message,
                         $sessionId,
                         '',
@@ -263,6 +263,7 @@ class IDeliver implements Deliver
                         $creatorName,
                         $deliverAt
                     );
+                    return $asyncInput;
                 }
 
                 // 否则发送同步消息.

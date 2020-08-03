@@ -50,9 +50,10 @@ class OutputAsyncFillMessagesPipe extends AShellPipe
          */
         $messageDB = $this->session->container->make(MessageDB::class);
 
-        $outputs = $messageDB->fetchBatch($request->getBatchId());
-        $request->setOutputs($outputs);
+        $batchId = $request->getBatchId();
+        $outputs = $messageDB->fetchBatch($batchId);
 
+        $request->setOutputs($outputs);
         return $next($request);
     }
 

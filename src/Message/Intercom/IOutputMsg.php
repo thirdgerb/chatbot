@@ -73,11 +73,7 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
         return array_map(function(HostMsg $message) {
             return $this->divide(
                 $message,
-                $this->sessionId,
-                $this->convoId,
-                $this->creatorId,
-                $this->creatorName,
-                $this->deliverAt
+                $this->sessionId
             );
         }, $messages);
     }
