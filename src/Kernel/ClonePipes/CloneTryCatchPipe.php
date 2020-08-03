@@ -39,7 +39,8 @@ class CloneTryCatchPipe extends AClonePipe
 
         if (CommuneEnv::isDebug()) {
             $text = $message->getText();
-            $this->cloner->logger->debug("receive message : \"$text\"");
+            $type = get_class($message);
+            $this->cloner->logger->debug("receive message $type: \"$text\"");
         }
 
         try {

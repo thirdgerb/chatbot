@@ -28,6 +28,7 @@ class MarkdownUtils
     public static function code(string $text, string $codeType = null) : string
     {
         $codeType = $codeType ?? '';
-        return "```$codeType\n$text\n```";
+        $text = static::quote($text);
+        return "\n```$codeType\n\n$text\n```";
     }
 }

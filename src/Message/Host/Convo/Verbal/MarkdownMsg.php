@@ -29,9 +29,9 @@ class MarkdownMsg extends IText
         return static::instance(MarkdownUtils::quote($text));
     }
 
-    public static function code(string $text) : IText
+    public static function code(string $text, string $type = 'shell') : IText
     {
-        return static::instance(MarkdownUtils::code($text));
+        return static::instance(MarkdownUtils::code($text, $type));
     }
 
 }

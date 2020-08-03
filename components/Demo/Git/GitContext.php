@@ -113,7 +113,7 @@ class GitContext extends ACodeContext
                 );
             return $dialog
                 ->send()
-                ->info("发送异步任务, 睡眠5秒后返回结果.")
+                ->info("发送异步任务, 睡眠 2 秒后返回结果.")
                 ->over()
                 ->rewind();
         };

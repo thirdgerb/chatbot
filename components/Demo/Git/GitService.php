@@ -43,26 +43,26 @@ class GitService implements DialogicService
         $deliver->message(MarkdownMsg::instance("接受到异步命令 ```$command```"));
         $path = CommuneEnv::getBasePath();
         if ($command === 'status') {
-            $this->run($deliver, "cd $path && git status");
+            $this->run($deliver, $path, "git status");
             return;
         }
 
         if ($command === 'state') {
-            $this->run($deliver, "cd $path && git log --pretty=tformat: --numstat  -- $@ | awk '{ add += $1 ; subs += $2 ; loc += $1 + $2 } END { printf \"added lines: %s; removed lines : %s; total lines: %s\", add,subs,loc }' -");
+            $this->run($deliver, $path, "git log --pretty=tformat: --numstat  -- $@ | awk '{ add += $1 ; subs += $2 ; loc += $1 + $2 } END { printf \"added lines: %s; removed lines : %s; total lines: %s\", add,subs,loc }' -");
             return;
         }
 
         $deliver->notice("当前命令 $command 不支持!");
     }
 
-    protected function run(Deliver $deliver, string $command) : void
+    protected function run(Deliver $deliver, string $path, string $command) : void
     {
         // 故意制造延时的效果.
         if (SwooleUtils::isInCoroutine()) {
-            Coroutine::sleep(5);
+            Coroutine::sleep(2);
         }
 
-        exec($command, $output, $code);
+        exec("cd $path && $command", $output, $code);
 
         $output = implode("\n", $output);
         if ($code === 0) {
