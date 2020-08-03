@@ -20,6 +20,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Components\Demo\Recall\Sandbox;
 use Commune\Contracts\Trans\Translator;
 use Commune\Ghost\Context\ACodeContext;
+use Commune\Message\Host\Convo\Verbal\MarkdownMsg;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 
@@ -142,11 +143,51 @@ class FeatureTest extends ACodeContext
                         $this->getStage('test_confirmation'),
                         $this->getStage('test_entity'),
                         $this->getStage('test_trans'),
+                        $this->getStage('test_mermaid'),
 //                        $this->getStage('test_exiting'),
 //                        'askContinue 机制' => 'test_ask_continue',
                     ]
                 );
         });
+    }
+
+
+    /**
+     * 测试 markdown 画图.
+     * @param Stage $stage
+     * @return Stage
+     *
+     *
+     * @title testMermaid
+     * @desc 测试 markdown 画图
+     */
+    public function __on_test_mermaid(Stage $stage) : Stage
+    {
+        return $stage
+            ->always(function(Dialog $dialog) {
+
+                $mermaid = <<<EOF
+stateDiagram
+[*] --> start
+start --> depending
+start --> wait
+start --> sleeping
+depending --> intended
+sleeping --> fallback
+wait --> callback
+intended --> exiting
+fallback --> exiting
+callback --> exiting
+exiting --> [*]
+EOF;
+
+                return $dialog
+                    ->send()
+                    ->info('测试 markdown mermaid')
+                    ->message(MarkdownMsg::code($mermaid, 'mermaid'))
+                    ->over()
+                    ->rewind();
+            });
     }
 
 
