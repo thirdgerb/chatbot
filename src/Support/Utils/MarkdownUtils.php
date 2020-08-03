@@ -25,4 +25,9 @@ class MarkdownUtils
         return "    $output";
     }
 
+    public static function code(string $text, string $codeType = null) : string
+    {
+        $codeType = $codeType ?? '';
+        return "```$codeType\n$text\n```";
+    }
 }

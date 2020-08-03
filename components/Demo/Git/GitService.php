@@ -14,6 +14,9 @@ namespace Commune\Components\Demo\Git;
 use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Ghost\Callables\DialogicService;
 use Commune\Blueprint\Ghost\Tools\Deliver;
+use Commune\Message\Host\Convo\Verbal\MarkdownMsg;
+use Commune\Support\Swoole\SwooleUtils;
+use Swoole\Coroutine;
 
 
 /**
@@ -37,7 +40,7 @@ class GitService implements DialogicService
             return;
         }
 
-        $deliver->info("尝试执行命令 $command");
+        $deliver->message(MarkdownMsg::instance("接受到异步命令 ```$command```"));
         $path = CommuneEnv::getBasePath();
         if ($command === 'status') {
             $this->run($deliver, "cd $path && git status");
@@ -54,11 +57,19 @@ class GitService implements DialogicService
 
     protected function run(Deliver $deliver, string $command) : void
     {
+        // 故意制造延时的效果.
+        if (SwooleUtils::isInCoroutine()) {
+            Coroutine::sleep(5);
+        }
+
         exec($command, $output, $code);
 
         $output = implode("\n", $output);
         if ($code === 0) {
-            $deliver->info($output)->over();
+            $deliver
+                ->message(MarkdownMsg::instance("运行命令 ```$command```, 结果是:"))
+                ->message(MarkdownMsg::code($output))
+                ->over();
             return;
         } else {
             $deliver

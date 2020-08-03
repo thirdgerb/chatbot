@@ -98,11 +98,15 @@ class OConfuse extends AbsOperator
     {
         $message = $this->cloner->input->getMessage();
 
-        if ($message instanceof EventMsg) {
-            return $this->dialog->dumb();
+        if (!$message instanceof EventMsg) {
+            return null;
         }
 
-        return null;
+        if ($message->getEventName() === EventMsg::EVENT_CLIENT_CONNECTION) {
+            return $this->dialog->rewind();
+        } else {
+            return $this->dialog->dumb();
+        }
     }
 
     protected function reallyConfuse() : Operator
