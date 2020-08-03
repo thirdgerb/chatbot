@@ -75,7 +75,7 @@ class OConfuse extends AbsOperator
             foreach ($replies as $reply) {
                 $deliver->message($reply);
             }
-            return $deliver->over()->await();
+            return $deliver->over()->rewind();
         }
 
         return null;

@@ -23,6 +23,7 @@ use Commune\Ghost\IOperate\OExiting\OFulfill;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\HostMsg\ConvoMsg;
 use Commune\Protocals\Intercom\InputMsg;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -75,29 +76,25 @@ class OStart extends AbsOperator
         // 但为什么没有这么做呢?
         // 主要原因是, 作者希望最核心的控制流程能够一目了然
         // 其次是减少 Trace 的轨迹长度, 将后续分支少的环节合并到相同的 operator.
-        $operator =
-            // 检查是否是强制同步状态的 contextMsg
-            $this->isContextMsgCall($input)
 
+
+        // 检查是否是强制同步状态的 contextMsg
+        $operator = $this->isContextMsgCall($input);
             // ?? $this->checkBlocking()
-
-            // 检查是否是 session 第一次输入, 是的话要初始化 session
-            ?? $this->isSessionStart()
-
-            // 如果不是影响对话状态的 convo msg,
-            // 则全部由 await ucl 来处理. 不走任何理解和路由.
-            ?? $this->isNotConvoMsgCall($input)
-
-            // 以下是语义相关的环节.
-            // 通过管道试图理解消息, 将理解结果保留在 comprehension 中.
-            ?? $this->runComprehendPipes($input)
-            // 问题匹配
-            ?? $this->checkQuestion()
-            // 检查是否命中了路由.
-            ?? $this->checkAwaitRoutes()
-
-            // 进行 listen 的逻辑.
-            ?? $this->heed();
+        // 检查是否是 session 第一次输入, 是的话要初始化 session
+        $operator = $operator ?? $this->isSessionStart();
+        // 如果不是影响对话状态的 convo msg,
+        // 则全部由 await ucl 来处理. 不走任何理解和路由.
+        $operator = $operator ?? $this->isNotConvoMsgCall($input);
+        // 以下是语义相关的环节.
+        // 通过管道试图理解消息, 将理解结果保留在 comprehension 中.
+        $operator = $operator ?? $this->runComprehendPipes($input);
+        // 问题匹配
+        $operator = $operator ?? $this->checkQuestion();
+        // 检查是否命中了路由.
+        $operator = $operator  ?? $this->checkAwaitRoutes();
+        // 进行 listen 的逻辑.
+        $operator = $operator ?? $this->heed();
 
         return $operator;
     }
