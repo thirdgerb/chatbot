@@ -83,4 +83,5 @@ class IWaiter implements Waiter
             ? $this->{$name}
             : null;
     }
+
 }

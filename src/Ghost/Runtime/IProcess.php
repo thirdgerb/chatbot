@@ -189,7 +189,7 @@ class IProcess implements Process, HasIdGenerator, \Serializable
         $this->_waiter = $waiter;
 
         if ($last->await !== $waiter->await) {
-            array_unshift($this->_backtrace, $last);
+            array_unshift($this->_backtrace, $last->await);
             ArrayUtils::maxLength($this->_backtrace, self::$maxBacktrace);
         }
     }
@@ -387,11 +387,12 @@ class IProcess implements Process, HasIdGenerator, \Serializable
 
         $waiter = null;
         do {
-            $waiter = array_shift($this->_backtrace);
+            $await = array_shift($this->_backtrace);
             $step --;
-        } while($step > 0 && isset($waiter));
+        } while($step > 0 && isset($await));
 
-        if (isset($waiter)) {
+        if (isset($await)) {
+            $waiter = new IWaiter($await, null, []);
             $this->_waiter = $waiter;
             return true;
         }
@@ -587,7 +588,7 @@ class IProcess implements Process, HasIdGenerator, \Serializable
             : null;
 
         foreach ($this->_backtrace as $id => $val) {
-            $this->_backtrace[$id] = clone $val;
+            $this->_backtrace[$id] = $val;
         }
     }
 

@@ -96,12 +96,7 @@ class IProcessSerializer implements ProcessSerializer
         $waiter = $data['_waiter'];
         $result['_waiter'] = isset($waiter) ? $this->_serializeWaiter($waiter) : null;
 
-        $result['_backtrace'] = array_map(
-            function(Waiter $waiter){
-                return $this->_serializeWaiter($waiter);
-            },
-            $data['_backtrace'] ?? []
-        );
+        $result['_backtrace'] = $data['_backtrace'] ?? [];
 
         $callbacks = $data['_callbacks'] ?? [];
         foreach ($callbacks as $id => $val) {
@@ -185,7 +180,7 @@ class IProcessSerializer implements ProcessSerializer
 
         $waiter = $info['_waiter'] ?? null;
         $result['_waiter'] = isset($waiter) ? $this->_unserializeWaiter($info['_waiter']) : null;
-        $result['_backtrace'] = array_map([$this, '_unserializeWaiter'], $info['_backtrace'] ?? []);
+        $result['_backtrace'] = $info['_backtrace'] ?? [];
 
         $callbacks = $info['_callbacks'] ?? [];
         foreach ($callbacks as $id => $val) {
