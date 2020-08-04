@@ -69,13 +69,11 @@ abstract class AbsBroadcaster implements Broadcaster
         // 完善路由配置.
         $routes = $this->prepareRoutes($routes, $selfSessionId);
 
-        // 如果是同步消息, 则不广播.
-        unset($routes[$selfShellId]);
-
-        // 异步消息的话, 自己也要广播.
-        if ($request->isAsync()) {
-            $routes[$selfShellId] = $request->getFromSession();
+        // 如果是同步消息, 则不广播自身.
+        if (!$request->isAsync()) {
+            unset($routes[$selfShellId]);
         }
+        // 如果是异步消息, 则根据路由决定是否广播
 
         $batchId = $request->getBatchId();
         $traceId = $request->getTraceId();
