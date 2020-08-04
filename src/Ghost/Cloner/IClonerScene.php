@@ -100,6 +100,10 @@ class IClonerScene implements ClonerScene
                 return $this->_entry;
             case 'env' :
                 return $this->_env;
+            case 'userId' :
+                return $this->_cloner->input->getCreatorId();
+            case 'userName' :
+                return $this->_cloner->input->getCreatorName();
             case 'userLevel' :
                 return $this->_env[ClonerScene::ENV_USER_LEVEL] ?? 0;
             case 'userInfo' :
