@@ -14,6 +14,7 @@ namespace Commune\Kernel\ClonePipes;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Contracts\Messenger\ShellMessenger;
 use Commune\Framework\Event\FinishRequest;
 use Commune\Message\Host\SystemInt\SessionBusyInt;
@@ -99,10 +100,10 @@ class CloneLockerPipe extends AClonePipe
     protected function asyncLockFail(GhostRequest $request) : GhostResponse
     {
         /**
-         * @var ShellMessenger $messenger
+         * @var GhostMessenger $messenger
          */
         $messenger = $this->cloner->container->get(ShellMessenger::class);
-        $messenger->asyncSendGhostRequest($request->getInput(), $request->getSessionId());
+        $messenger->asyncSendRequest($request);
         return $request->response();
     }
 
