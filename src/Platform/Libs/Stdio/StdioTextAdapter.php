@@ -76,6 +76,9 @@ class StdioTextAdapter implements Adapter
         $line = trim($this->packer->line);
         if ($line === '') {
             $message = IEventMsg::instance(DefaultEvents::EVENT_CLIENT_ACKNOWLEDGE);
+
+        } elseif ($line === '#connect') {
+            $message = IEventMsg::instance(DefaultEvents::EVENT_CLIENT_CONNECTION);
         } else {
             $message = IText::instance($line);
         }

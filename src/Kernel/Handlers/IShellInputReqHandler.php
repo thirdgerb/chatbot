@@ -12,8 +12,6 @@
 namespace Commune\Kernel\Handlers;
 
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
-use Commune\Blueprint\Ghost;
-use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
 use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
 use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;

@@ -89,7 +89,7 @@ class StdioShellPlatform extends AbsPlatform
         $this->stdio = new Stdio($this->loop);
 
         $this->stdio->setPrompt('> ');
-        $packer = $this->makePacker('');
+        $packer = $this->makePacker('#connect');
 
         // 发送启动信息.
         $this->onPacker(

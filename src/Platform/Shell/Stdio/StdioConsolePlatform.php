@@ -88,7 +88,7 @@ class StdioConsolePlatform extends AbsPlatform
     {
         $this->stdio->setPrompt('> ');
 
-        $initPacker = $this->makePacker('');
+        $initPacker = $this->makePacker('#connect');
         $this->onPacker($initPacker, StdioTextAdapter::class);
         unset($initPacker);
 
