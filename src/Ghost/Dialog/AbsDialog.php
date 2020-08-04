@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Dialog;
 
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Context\Dependable;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\Operate;
@@ -79,9 +80,9 @@ abstract class AbsDialog extends AbsBaseDialog
         return new ORedirect\OReactivate($this);
     }
 
-    public function redirectTo(Ucl $ucl, bool $intentional = true): Operator
+    public function redirectTo(Ucl $ucl, bool $noBlocking = true): Operator
     {
-        return new ORedirect\ORedirectTo($this, $ucl, $intentional);
+        return new ORedirect\ORedirectTo($this, $ucl, $noBlocking);
     }
 
     public function reset(Ucl $root = null): Operator
@@ -119,6 +120,26 @@ abstract class AbsDialog extends AbsBaseDialog
     {
         $this->shouldNotBeSameContext(__METHOD__, $target);
         return new ORedirect\OSleepTo($this, $target, $wakenStages);
+    }
+
+    public function yieldTo(
+        string $sessionId,
+        Context $target,
+        Ucl $fallback = null,
+        string $convoId = null
+    ): Operator
+    {
+        $this->shouldNotBeSameContext(__METHOD__, $target->getUcl());
+        if (isset($fallback)) {
+            $this->shouldNotBeSameContext(__METHOD__, $fallback);
+        }
+        return new ORedirect\OYieldTo(
+            $this,
+            $sessionId,
+            $target,
+            $fallback,
+            $convoId
+        );
     }
 
 

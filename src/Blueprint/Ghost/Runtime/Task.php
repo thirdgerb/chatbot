@@ -62,16 +62,16 @@ interface Task extends ArrayAndJsonAble
     public function popPath() : ? Ucl;
 
     /**
-     * @param string|null $stage
+     * @param string|null $stageName
      */
-    public function onCancel(string $stage = null) : void;
+    public function onCancel(string $stageName = null) : void;
 
     public function watchCancel() : ? Ucl;
 
     /**
-     * @param string|null $stage
+     * @param string|null $stageName
      */
-    public function onQuit(string $stage = null) : void;
+    public function onQuit(string $stageName = null) : void;
 
     public function watchQuit() : ? Ucl;
 }

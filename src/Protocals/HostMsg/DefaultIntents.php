@@ -25,6 +25,8 @@ interface DefaultIntents
     const SYSTEM_SESSION_QUIT = 'system.session.quit';
     // 会话异常, 关闭会话.
     const SYSTEM_SESSION_FAIL = 'system.session.fail';
+    // 同步会话, 将当前会话和目标会话合并.
+    const SYSTEM_SESSION_SYNC = 'system.session.sync';
     // 请求错误
     const SYSTEM_REQUEST_FAILURE = 'system.request.fail';
 

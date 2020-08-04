@@ -115,9 +115,9 @@ class ITask implements Task
         return null;
     }
 
-    public function onCancel(string $stage = null): void
+    public function onCancel(string $stageName = null): void
     {
-        $this->cancel = $stage;
+        $this->cancel = $stageName;
     }
 
     public function watchCancel(): ? Ucl
@@ -127,9 +127,9 @@ class ITask implements Task
             : null;
     }
 
-    public function onQuit(string $stage = null): void
+    public function onQuit(string $stageName = null): void
     {
-        $this->quit = $stage;
+        $this->quit = $stageName;
     }
 
     public function watchQuit(): ? Ucl

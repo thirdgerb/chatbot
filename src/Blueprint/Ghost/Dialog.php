@@ -230,10 +230,10 @@ interface Dialog
      * 重定向到另一个 Context.
      *
      * @param Ucl $ucl
-     * @param  bool $intentional    故意 redirect 的话就不会有 blocking. 否则会检查是否要 blocking
+     * @param  bool $noBlocking    故意 redirect 的话就不会有 blocking. 否则会检查是否要 blocking
      * @return Operator
      */
-    public function redirectTo(Ucl $ucl,  bool $intentional = true) : Operator;
+    public function redirectTo(Ucl $ucl,  bool $noBlocking = true) : Operator;
 
     /**
      * @param Ucl|null $root
@@ -271,6 +271,23 @@ interface Dialog
      */
     public function sleepTo(Ucl $target, array $wakenStages = []) : Operator;
 
+    /**
+     * 将当前的 Context 提交给 Ghost 的另一个 Cloner 去处理.
+     * 并且期待返回结果到当前 session.
+     * 会将当前的 Context yield 到当前 session 的 process 中
+     *
+     * @param string $sessionId
+     * @param Context $target
+     * @param Ucl|null $fallback
+     * @param string|null $convoId
+     * @return Operator
+     */
+    public function yieldTo(
+        string $sessionId,
+        Context $target,
+        Ucl $fallback = null,
+        string $convoId = null
+    ) : Operator;
 
     /*------ exiting ------*/
 

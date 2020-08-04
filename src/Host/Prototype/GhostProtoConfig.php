@@ -79,6 +79,7 @@ class GhostProtoConfig extends IGhostConfig
                 GhostCmd\User\BackCmd::class,
                 GhostCmd\User\RepeatCmd::class,
                 GhostCmd\User\RestartCmd::class,
+                Components\Predefined\Join\JoinCmd::class,
             ],
 
             // 管理员命令
