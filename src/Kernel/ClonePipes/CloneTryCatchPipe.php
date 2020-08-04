@@ -87,8 +87,8 @@ class CloneTryCatchPipe extends AClonePipe
         $storage->requestFailTimes = $times;
 
         return $request->output(
-            $this->cloner->getAppId(),
-            $this->cloner->getApp()->getName(),
+            $this->cloner->avatar->getId(),
+            $this->cloner->avatar->getName(),
             RequestFailInt::instance($e->getMessage())
         );
     }
@@ -106,7 +106,11 @@ class CloneTryCatchPipe extends AClonePipe
         $this->cloner->endConversation();
         $this->resetFailureCount();
 
-        return $request->output(...$messages);
+        return $request->output(
+            $this->cloner->avatar->getId(),
+            $this->cloner->avatar->getName(),
+            ...$messages
+        );
     }
 
     protected function resetFailureCount() : void
