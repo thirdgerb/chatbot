@@ -40,8 +40,8 @@ class IConfirm extends IQuestionMsg implements Confirm
     {
         $suggestions = [];
 
-        isset($positive) and $suggestions[self::POSITIVE_INDEX] = $positive;
-        isset($negative) and $suggestions[self::NEGATIVE_INDEX] = $negative;
+        $suggestions[self::POSITIVE_INDEX] = $positive ?? self::POSITIVE_LANG;
+        $suggestions[self::NEGATIVE_INDEX] = $negative ?? self::NEGATIVE_LANG;
 
         $default = isset($default)
             ? (
@@ -56,21 +56,6 @@ class IConfirm extends IQuestionMsg implements Confirm
             $routes
         );
     }
-
-    public static function stub(): array
-    {
-        return [
-            'query' => '',
-            'suggestions' => [
-                self::NEGATIVE_INDEX => Confirm::POSITIVE_LANG,
-                self::POSITIVE_INDEX => Confirm::NEGATIVE_LANG,
-            ],
-            'routes' => [],
-            'default' => null,
-            'translated' => false,
-        ];
-    }
-
 
     public static function create(array $data = []): Struct
     {
@@ -96,6 +81,20 @@ class IConfirm extends IQuestionMsg implements Confirm
         }
 
         return null;
+    }
+
+    protected function parseInputText(string $text): string
+    {
+        switch($text) {
+            case 'y' :
+            case '1' :
+                return self::POSITIVE_INDEX;
+            case 'n' :
+            case '0' :
+                return self::NEGATIVE_LANG;
+            default:
+                return parent::parseInputText($text);
+        }
     }
 
     /**
@@ -125,8 +124,8 @@ class IConfirm extends IQuestionMsg implements Confirm
     public function setPositive(string $suggestion, Ucl $ucl = null) : Confirm
     {
         $this->addSuggestion(
-            self::POSITIVE_INDEX,
             $suggestion,
+            self::POSITIVE_INDEX,
             $ucl ? $ucl->encode() : null
         );
         return $this;
@@ -135,8 +134,8 @@ class IConfirm extends IQuestionMsg implements Confirm
     public function setNegative(string $suggestion, Ucl $ucl = null) : Confirm
     {
         $this->addSuggestion(
-            self::NEGATIVE_INDEX,
             $suggestion,
+            self::NEGATIVE_INDEX,
             $ucl ? $ucl->encode() : null
         );
         return $this;

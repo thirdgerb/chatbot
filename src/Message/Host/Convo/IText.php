@@ -69,7 +69,7 @@ class IText extends AbsMessage implements VerbalMsg
 
     public function isEmpty(): bool
     {
-        return empty($this->_data['text']);
+        return StringUtils::isEmptyStr($this->_data['text']);
     }
 
     public function __toString()

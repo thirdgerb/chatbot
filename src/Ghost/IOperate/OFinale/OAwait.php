@@ -21,6 +21,7 @@ use Commune\Ghost\Support\ContextUtils;
 use Commune\Message\Host\Convo\QA\IChoose;
 use Commune\Message\Host\Convo\QA\IConfirm;
 use Commune\Message\Host\Convo\QA\IQuestionMsg;
+use Commune\Protocals\HostMsg\Convo\QA\Confirm;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Support\Utils\TypeUtils;
@@ -156,14 +157,16 @@ class OAwait extends AbsFinale implements Await
         string $query,
         ? bool $default = true,
         $positiveRoute = null,
-        $negativeRoute = null
+        $negativeRoute = null,
+        string $positive = Confirm::POSITIVE_LANG,
+        string $negative = Confirm::NEGATIVE_LANG
     ): Operator
     {
         $confirm = new IConfirm($query, $default);
         $positiveRoute = isset($positiveRoute) ? Ucl::decode($positiveRoute) : null;
         $negativeRoute = isset($negativeRoute) ? Ucl::decode($negativeRoute) : null;
-        $confirm->setPositive('yes', $positiveRoute);
-        $confirm->setNegative('no', $negativeRoute);
+        $confirm->setPositive($positive, $positiveRoute);
+        $confirm->setNegative($negative, $negativeRoute);
 
         return $this->ask($confirm);
     }
