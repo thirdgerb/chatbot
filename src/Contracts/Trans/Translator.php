@@ -47,5 +47,6 @@ interface Translator
         bool $force = null
     ) : void;
 
+    public function getDefaultLocale() : string;
 
 }

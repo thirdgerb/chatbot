@@ -191,5 +191,10 @@ class SymfonyTranslatorAdapter implements Translator
         }
     }
 
+    public function getDefaultLocale(): string
+    {
+        return $this->defaultLocale;
+    }
+
 
 }
