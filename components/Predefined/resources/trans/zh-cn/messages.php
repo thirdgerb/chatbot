@@ -8,7 +8,7 @@ return [
             'list' => "当前可用命令:\n{cmdList}",
             'error' => "命令 {command} 格式错误: \n {error}",
             'miss' => "命令 {command} 不存在!",
-            'desc' => "{command}: {desc}\n{args}\n{opts}\""
+            'desc' => "{command}: {desc}\n{arguments}\n{options}"
         ],
 
         'session' => [
