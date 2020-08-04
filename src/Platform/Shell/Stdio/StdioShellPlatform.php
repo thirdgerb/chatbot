@@ -150,13 +150,13 @@ class StdioShellPlatform extends AbsPlatform
         $packer = $this->makePacker('');
         $adapter = $packer->adapt($this->option->adapter, $this->getAppId());
 
-        $response = $this->shell->handleRequest(
-            $request,
-            ShellOutputReqHandler::class
+        $this->onAdapter(
+            $packer,
+            $adapter,
+            ShellOutputReqHandler::class,
+            $request
         );
-        $adapter->sendResponse($response);
 
-        $adapter->destroy();
         $packer->destroy();
     }
 
