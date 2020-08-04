@@ -74,7 +74,7 @@ class StdioTextAdapter implements Adapter
         }
 
         $line = trim($this->packer->line);
-        if (empty($line)) {
+        if ($line === '') {
             $message = IEventMsg::instance(EventMsg::EVENT_CLIENT_ACKNOWLEDGE);
         } else {
             $message = IText::instance($line);
