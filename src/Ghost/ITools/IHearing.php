@@ -47,6 +47,11 @@ class IHearing extends IMatcher implements Hearing
      */
     protected $fallback = [];
 
+    /**
+     * @var null|callable
+     */
+    protected $lastFallback;
+
     public function __construct(Dialog $dialog)
     {
         $this->dialog = $dialog;
@@ -147,30 +152,42 @@ class IHearing extends IMatcher implements Hearing
     {
         $this->then();
 
-        if (isset($action)) {
-            $this->fallback[] = $action;
+        if (isset($this->nextOperator)) {
+            return $this->finale();
         }
 
-        foreach ($this->fallback as $fallback) {
-            if (isset($this->nextOperator)) {
-                break;
-            }
+        $this->lastFallback = $action;
 
-            $next = $this->call($fallback);
+        if (!empty($this->fallback)) {
+            foreach ($this->fallback as $fallback) {
+                if (isset($this->nextOperator)) {
+                    break;
+                }
 
-            if ($next instanceof Operator) {
-                $this->nextOperator = $next;
-                break;
+                $next = $this->call($fallback);
+                if ($next instanceof Operator) {
+                    $this->nextOperator = $next;
+                    return $this->finale();
+                }
             }
         }
 
-        $next = $this->nextOperator ?? $this->dialog->confuse();
-        $this->destroy();
-        return $next;
+        $message = $this->input->getMessage();
+        if ($message instanceof EventMsg) {
+            $this->nextOperator = $this->dialog->confuse();
+            return $this->finale();
+        }
+
+        if (isset($this->lastFallback)) {
+            $this->nextOperator = $this->call($this->lastFallback);
+        }
+
+        return $this->finale();
     }
 
-    protected function destroy()
+    protected function finale() : ? Operator
     {
+        $next = $this->nextOperator ?? $this->dialog->confuse();
         unset(
             $this->faker,
             $this->dialog,
@@ -178,6 +195,7 @@ class IHearing extends IMatcher implements Hearing
             $this->todo,
             $this->fallback
         );
+        return $next;
     }
 
     public function getDialog(): Dialog
