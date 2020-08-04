@@ -38,6 +38,7 @@ class IRecollection implements Recollection
     {
         $this->_id = $id;
         $this->_def = $def;
+        $this->_cloner = $cloner;;
         $this->_memory = $cloner->runtime->findMemory(
             $id,
             $longTerm = $this->isLongTerm(),
