@@ -11,6 +11,7 @@
 
 namespace Commune\Framework\Messenger\Broadcaster;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 use Commune\Contracts\Messenger\Broadcaster;
@@ -92,6 +93,17 @@ abstract class AbsBroadcaster implements Broadcaster
                 $creatorId,
                 $creatorName
             );
+
+            if (CommuneEnv::isDebug()) {
+                $this->logger->debug(
+                    __METHOD__
+                    . " publish data $publish",
+                    [
+                        'shell' => $shellId,
+                        'session' => $shellSessionId,
+                    ]
+                );
+            }
 
             $this->doPublish(
                 $shellId,
