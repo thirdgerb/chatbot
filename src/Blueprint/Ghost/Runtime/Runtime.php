@@ -86,4 +86,6 @@ interface Runtime
     /*------ save -------*/
 
     public function save() : void;
+
+    public function flush() : void;
 }

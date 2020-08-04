@@ -226,6 +226,28 @@ class IRuntime implements Runtime
         return null;
     }
 
+    public function flush(): void
+    {
+        if ($this->cloner->isStateless()) {
+            return;
+        }
+
+        if (!isset($this->driver)) {
+            return;
+        }
+
+        if (!isset($this->process)) {
+            return;
+        }
+
+        $success = $this->ioSaveLongTermMemories()
+            && $this->ioCacheProcess(0)
+            && $this->ioSaveSessionMemories(0);
+
+        if (empty($success)) {
+            throw new SaveDataException('save cloner session data failed');
+        }
+    }
 
     /*------ save ------*/
 
@@ -243,7 +265,6 @@ class IRuntime implements Runtime
             return;
         }
 
-
         // gc, 不过现在简单了, 只要删除掉 dying 就足够了.
         $this->process->gc();
 
@@ -260,7 +281,6 @@ class IRuntime implements Runtime
         if (empty($success)) {
             throw new SaveDataException('save cloner session data failed');
         }
-
     }
 
     /*------ io ------*/

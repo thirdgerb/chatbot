@@ -106,7 +106,6 @@ interface Session
 
     /*------ expire ------*/
 
-
     /**
      * Session 缓存的过期时间. 为 0 表示不限时间.
      * @return int

@@ -11,6 +11,7 @@
 
 namespace Commune\Framework;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
 use Commune\Framework\Exceptions\SerializeForbiddenException;
@@ -73,6 +74,7 @@ abstract class ASession implements Session, HasIdGenerator
         SpyAgency::incr(static::class);
     }
 
+
     /*------ id ------*/
 
     public function getSessionId(): string
@@ -84,7 +86,11 @@ abstract class ASession implements Session, HasIdGenerator
 
     abstract protected function flushInstances() : void;
 
-    abstract protected function saveSession() : void;
+    /**
+     * 返回运行的步骤, 方便 debug
+     * @return string[]
+     */
+    abstract protected function saveSession() : array;
 
     /*------ components ------*/
 
@@ -173,7 +179,21 @@ abstract class ASession implements Session, HasIdGenerator
 
     public function finish(): void
     {
-        $this->saveSession();
+        $steps = $this->saveSession();
+
+        // 记录运行日志方便排查问题.
+        $debug = CommuneEnv::isDebug();
+        if ($debug && !empty($steps)) {
+            $log = implode('|', $steps);
+            $this->getLogger()->debug(
+                static::class
+                . '::'
+                . __FUNCTION__
+                . ": $log"
+            );
+        }
+
+
         $container = $this->_container;
 
         $this->flushInstances();

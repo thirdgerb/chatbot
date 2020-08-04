@@ -59,11 +59,16 @@ abstract class CachableRuntimeDriver extends ARuntimeDriver
 
     protected function doCacheProcess(string $key, Process $process, int $expire) : bool
     {
-        return $this->cache->set(
-            $key,
-            gzcompress(serialize($process)),
-            $expire
-        );
+        if ($expire === 0) {
+            return $this->cache->set(
+                $key,
+                gzcompress(serialize($process)),
+                $expire
+            );
+        } else {
+            $this->cache->forget($key);
+            return true;
+        }
     }
 
     protected function doFetchProcess(string $key) : ? Process
@@ -102,7 +107,12 @@ abstract class CachableRuntimeDriver extends ARuntimeDriver
      */
     protected function doCacheSessionMemories(string $key, array $map, int $expire) : bool
     {
-        return $this->cache->hMSet($key, $map, $expire);
+        if ($expire === 0) {
+            return $this->cache->hMSet($key, $map, $expire);
+        } else {
+            $this->cache->forget($key);
+            return true;
+        }
     }
 
     /**

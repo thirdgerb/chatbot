@@ -110,12 +110,16 @@ class IShellSession extends ASession implements ShellSession
         unset($this->_input);
     }
 
-    protected function saveSession(): void
+    protected function saveSession(): array
     {
+        $steps = [];
         // storage 更新.
         if ($this->isSingletonInstanced('storage')) {
             $this->__get('storage')->save();
+            $steps[] = 'save storage';
         }
+
+        return $steps;
     }
 
     /*------- getter -------*/

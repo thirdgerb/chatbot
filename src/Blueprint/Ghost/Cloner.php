@@ -76,8 +76,6 @@ use Commune\Blueprint\Ghost\Cloner\ClonerDispatcher;
 interface Cloner extends Session
 {
 
-
-
     /*----- status -----*/
 
     /**
@@ -119,6 +117,11 @@ interface Cloner extends Session
      * @return bool
      */
     public function isSubProcess() : bool;
+    /**
+     * @param string $sessionId
+     * @return bool
+     */
+    public function isClonerExists(string $sessionId) : bool;
 
     /*----- 触发理解 -----*/
 
