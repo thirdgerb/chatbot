@@ -59,7 +59,7 @@ abstract class CachableRuntimeDriver extends ARuntimeDriver
 
     protected function doCacheProcess(string $key, Process $process, int $expire) : bool
     {
-        if ($expire === 0) {
+        if ($expire !== 0) {
             return $this->cache->set(
                 $key,
                 gzcompress(serialize($process)),
@@ -107,7 +107,7 @@ abstract class CachableRuntimeDriver extends ARuntimeDriver
      */
     protected function doCacheSessionMemories(string $key, array $map, int $expire) : bool
     {
-        if ($expire === 0) {
+        if ($expire !== 0) {
             return $this->cache->hMSet($key, $map, $expire);
         } else {
             $this->cache->forget($key);
