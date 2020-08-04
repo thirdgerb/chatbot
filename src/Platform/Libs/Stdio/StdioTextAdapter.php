@@ -21,7 +21,7 @@ use Commune\Kernel\Protocals\IShellInputRequest;
 use Commune\Message\Host\Convo\IEventMsg;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
-use Commune\Protocals\HostMsg\Convo\EventMsg;
+use Commune\Protocals\HostMsg\DefaultEvents;
 use Commune\Protocals\HostMsg\DefaultIntents;
 use Commune\Support\Utils\TypeUtils;
 
@@ -75,7 +75,7 @@ class StdioTextAdapter implements Adapter
 
         $line = trim($this->packer->line);
         if ($line === '') {
-            $message = IEventMsg::instance(EventMsg::EVENT_CLIENT_ACKNOWLEDGE);
+            $message = IEventMsg::instance(DefaultEvents::EVENT_CLIENT_ACKNOWLEDGE);
         } else {
             $message = IText::instance($line);
         }

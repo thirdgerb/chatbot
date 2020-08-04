@@ -153,6 +153,8 @@ class OStart extends AbsOperator
             case ContextMsg::MODE_BLOCKING:
                 return $this->challengeCurrent($targetUcl);
 
+            // 强行替换掉当前对话状态, 并且丢弃当前对话状态.
+            // 仅仅在于客户端主导时才有这种做法.
             case ContextMsg::MODE_REDIRECT:
             default :
                 return $this->dialog->redirectTo($targetUcl, true);
@@ -348,6 +350,11 @@ class OStart extends AbsOperator
 
     protected function challengeCurrent(Ucl $challenger) : ? Operator
     {
+        // 启动时, 直接跳转.
+        if ($this->process->isFresh()) {
+            return $this->dialog->redirectTo($challenger);
+        }
+
         $challengerPriority = $challenger
             ->findContextDef($this->cloner)
             ->getPriority();
@@ -360,9 +367,11 @@ class OStart extends AbsOperator
         if ($awaitPriority < $challengerPriority) {
             $this->process->addBlocking($this->start, $awaitPriority);
             return $this->dialog->redirectTo($challenger);
+        // 无法抢占成功
+        } else {
+            $this->process->addBlocking($challenger, $challengerPriority);
+            return $this->dialog->rewind(true);
         }
-
-        return null;
     }
 
     /*------ operator ------*/

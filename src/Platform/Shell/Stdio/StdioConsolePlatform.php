@@ -33,7 +33,6 @@ use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Platform\Libs\Stdio\StdioTextAdapter;
-use Swoole\Coroutine;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -87,27 +86,27 @@ class StdioConsolePlatform extends AbsPlatform
 
     public function serve(): void
     {
-            $this->stdio->setPrompt('> ');
+        $this->stdio->setPrompt('> ');
 
-            $initPacker = $this->makePacker('');
-            $this->onPacker($initPacker, StdioTextAdapter::class);
-            unset($initPacker);
+        $initPacker = $this->makePacker('');
+        $this->onPacker($initPacker, StdioTextAdapter::class);
+        unset($initPacker);
 
-            $this->stdio->on('data', function($line) {
+        $this->stdio->on('data', function($line) {
 
-                $packer = $this->makePacker($line);
-                $success = $this->onPacker($packer, StdioTextAdapter::class);
+            $packer = $this->makePacker($line);
+            $success = $this->onPacker($packer, StdioTextAdapter::class);
 
-                $this->runAsyncInput();
-                $this->runSubscribe();
+            $this->runAsyncInput();
+            $this->runSubscribe();
 
-                if (!$success) {
-                    $this->loop->stop();
-                }
+            if (!$success) {
+                $this->loop->stop();
+            }
 
-            });
+        });
 
-            $this->loop->run();
+        $this->loop->run();
     }
 
     protected function runSubscribe() : void
@@ -121,8 +120,6 @@ class StdioConsolePlatform extends AbsPlatform
 
         $broadcaster->subscribe(
             function($chan, $request) {
-
-
                 $packer = $this->makePacker('');
                 $adapter = $packer->adapt(
                     StdioTextAdapter::class,

@@ -19,6 +19,7 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\IOperate\AbsOperator;
 use Commune\Message\Host\SystemInt\DialogConfuseInt;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
+use Commune\Protocals\HostMsg\DefaultEvents;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -102,7 +103,7 @@ class OConfuse extends AbsOperator
             return null;
         }
 
-        if ($message->getEventName() === EventMsg::EVENT_CLIENT_CONNECTION) {
+        if ($message->getEventName() === DefaultEvents::EVENT_CLIENT_CONNECTION) {
             return $this->dialog->rewind();
         } else {
             return $this->dialog->dumb();

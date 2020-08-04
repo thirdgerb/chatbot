@@ -17,7 +17,8 @@ namespace Commune\Protocals\HostMsg;
  */
 interface DefaultEvents
 {
-    // 表示正常收到消息.
-    const CLIENT_ACK = 'client.ack';
+    const EVENT_CLIENT_CONNECTION = 'client.connection';
+    const EVENT_CLIENT_ACKNOWLEDGE = 'client.ack';
+
 
 }
