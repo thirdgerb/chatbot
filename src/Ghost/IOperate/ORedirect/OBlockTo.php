@@ -51,7 +51,8 @@ class OBlockTo extends AbsOperator
                 $this->priority
             );
 
-        return $this->dialog->redirectTo($this->target);
+        // 禁止套娃!!!
+        return $this->dialog->redirectTo($this->target, true);
     }
 
 }

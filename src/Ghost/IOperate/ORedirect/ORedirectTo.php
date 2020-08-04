@@ -60,9 +60,13 @@ class ORedirectTo extends AbsRedirect
             $priority = $current
                 ->findContextDef($this->dialog->cloner)
                 ->getPriority();
-            // 不允许自然终结的, 都是 priority > 0 的对话.
+            $targetPriority = $target
+                ->findContextDef($this->dialog->cloner)
+                ->getPriority();
+
+            // priority > 0 的语境都不允许被抢占行为终结.
             // 将当前对话压入 blocking 栈.
-            if ($priority > 0) {
+            if ($priority > 0 || $priority >= $targetPriority) {
                 $this->dialog->process->addBlocking($current, $priority);
             }
         }

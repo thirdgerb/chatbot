@@ -230,9 +230,10 @@ interface Dialog
      * 重定向到另一个 Context.
      *
      * @param Ucl $ucl
+     * @param  bool $intentional    故意 redirect 的话就不会有 blocking. 否则会检查是否要 blocking
      * @return Operator
      */
-    public function redirectTo(Ucl $ucl) : Operator;
+    public function redirectTo(Ucl $ucl,  bool $intentional = true) : Operator;
 
     /**
      * @param Ucl|null $root
