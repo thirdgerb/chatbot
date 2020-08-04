@@ -148,6 +148,12 @@ interface Process extends ArrayAndJsonAble
      */
     public function getDepending(string $dependedContextId) : array;
 
+    /**
+     * @param string $dependedContextId
+     * @return Ucl[]
+     */
+    public function dumpDepending(string $dependedContextId) : array;
+
     /*-------- callback ---------*/
 
     public function addCallback(Ucl ...$callbacks) : void;
