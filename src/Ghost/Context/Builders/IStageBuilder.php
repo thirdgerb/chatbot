@@ -122,7 +122,6 @@ class IStageBuilder implements StageBuilder
     public function onEvent(string $event, $caller): StageBuilder
     {
         if (isset($this->operator) || $this->redirect) {
-            if ($caller instanceof \Closure) $caller->bindTo(null);
             return $this;
         }
 
@@ -136,7 +135,6 @@ class IStageBuilder implements StageBuilder
     public function onEventExcept($caller, string ...$events) : StageBuilder
     {
         if (isset($this->operator) || $this->redirect) {
-            if ($caller instanceof \Closure) $caller->bindTo(null);
             return $this;
         }
 
@@ -174,4 +172,22 @@ class IStageBuilder implements StageBuilder
         unset($this->dialog);
         SpyAgency::decr(static::class);
     }
+
+    public function onCancel(string $stageName): StageBuilder
+    {
+        if ($this->dialog->isEvent(Dialog::ACTIVATE)) {
+            $this->dialog->context->getTask()->onCancel($stageName);
+        }
+        return $this;
+    }
+
+    public function onQuit(string $stageName): StageBuilder
+    {
+        if ($this->dialog->isEvent(Dialog::ACTIVATE)) {
+            $this->dialog->context->getTask()->onQuit($stageName);
+        }
+        return $this;
+    }
+
+
 }

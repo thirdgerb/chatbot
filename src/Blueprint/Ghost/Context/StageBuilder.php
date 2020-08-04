@@ -78,4 +78,18 @@ interface StageBuilder
      */
     public function otherwise($caller) : StageBuilder;
 
+    /**
+     * 定义 cancel stage
+     * @param string $stageName
+     * @return StageBuilder
+     */
+    public function onCancel(string $stageName) : StageBuilder;
+
+    /**
+     * 定义 quit stage.
+     * @param string $stageName
+     * @return StageBuilder
+     */
+    public function onQuit(string $stageName) : StageBuilder;
+
 }
