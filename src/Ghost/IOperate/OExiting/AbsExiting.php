@@ -30,10 +30,7 @@ abstract class AbsExiting extends AbsOperator
 
     protected function addCanceling(Ucl ...$canceling) : void
     {
-        $this->canceling = array_merge(
-            $this->canceling,
-            $canceling
-        );
+        array_push($this->canceling, ...$canceling);
     }
 
     protected function popCanceling() : ? Ucl
@@ -68,7 +65,7 @@ abstract class AbsExiting extends AbsOperator
         while ($canceling = $this->popCanceling()) {
 
             $cancelingId = $canceling->getContextId();
-            $allDepending = $process->getDepending($cancelingId);
+            $allDepending = $process->dumpDepending($cancelingId);
 
             $this->addCanceling(...$allDepending);
             $next = $this->doWithdraw($process, $canceling);

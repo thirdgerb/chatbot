@@ -37,10 +37,10 @@ class ORedirectTo extends AbsRedirect
      */
     protected $intentional;
 
-    public function __construct(Dialog $dialog, Ucl $target, bool $intentional)
+    public function __construct(Dialog $dialog, Ucl $target, bool $noBlocking)
     {
         $this->target = $target;
-        $this->intentional = $intentional;
+        $this->intentional = $noBlocking;
         parent::__construct($dialog);
     }
 

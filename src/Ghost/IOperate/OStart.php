@@ -23,7 +23,6 @@ use Commune\Ghost\IOperate\OExiting\OFulfill;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\HostMsg\ConvoMsg;
 use Commune\Protocals\Intercom\InputMsg;
-use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -114,13 +113,13 @@ class OStart extends AbsOperator
         if (!$message instanceof ContextMsg) {
             return null;
         }
-        $current = $this->dialog->ucl;
-        $currentDef = $current->findContextDef($this->cloner);
 
         $target = $message->toContext($this->cloner);
         $targetUcl = $target->getUcl();
 
         $mode = $message->getMode();
+        $current = $this->dialog->ucl;
+        $currentDef = $current->findContextDef($this->cloner);
 
         switch($mode) {
 
@@ -157,7 +156,7 @@ class OStart extends AbsOperator
             // 仅仅在于客户端主导时才有这种做法.
             case ContextMsg::MODE_REDIRECT:
             default :
-                return $this->dialog->redirectTo($targetUcl, true);
+                return $this->dialog->redirectTo($targetUcl, false);
 
         }
     }
@@ -350,11 +349,6 @@ class OStart extends AbsOperator
 
     protected function challengeCurrent(Ucl $challenger) : ? Operator
     {
-        // 启动时, 直接跳转.
-        if ($this->process->isFresh()) {
-            return $this->dialog->redirectTo($challenger);
-        }
-
         $challengerPriority = $challenger
             ->findContextDef($this->cloner)
             ->getPriority();
@@ -364,9 +358,10 @@ class OStart extends AbsOperator
             ->getPriority();
 
         // 可以占据成功.
-        if ($awaitPriority < $challengerPriority) {
+        if ($awaitPriority <= $challengerPriority) {
             $this->process->addBlocking($this->start, $awaitPriority);
             return $this->dialog->redirectTo($challenger);
+
         // 无法抢占成功
         } else {
             $this->process->addBlocking($challenger, $challengerPriority);

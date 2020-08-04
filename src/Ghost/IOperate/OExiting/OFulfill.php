@@ -42,7 +42,7 @@ class OFulfill extends AbsOperator
     {
         $process = $this->dialog->process;
         $contextId = $this->dialog->ucl->getContextId();
-        $depending = $process->getDepending($contextId);
+        $depending = $process->dumpDepending($contextId);
 
         $process->addCallback(...$depending);
         $process->addDying($this->dialog->ucl, $this->turns, $this->restoreStages);

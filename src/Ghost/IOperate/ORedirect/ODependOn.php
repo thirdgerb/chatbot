@@ -16,7 +16,6 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\IActivate\IDepend;
-use Commune\Ghost\Dialog\IResume\ICallback;
 use Commune\Ghost\IOperate\Flows\FallbackFlow;
 
 /**
@@ -59,6 +58,12 @@ class ODependOn extends AbsRedirect
             $this->dialog->process->addCallback($ucl);
             return new FallbackFlow($this->dialog);
         }
+
+        // 添加依赖栈
+        $this->dialog->process->addDepending(
+            $this->dialog->ucl,
+            $this->dependable->toFulfillUcl()->getContextId()
+        );
 
         // 否则重定向.
         return $this->redirect(

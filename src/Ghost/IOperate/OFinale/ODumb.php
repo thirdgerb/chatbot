@@ -24,7 +24,7 @@ class ODumb extends AbsOperator
     {
         // 对话进程首次接受的消息很可能是 event, 这时就不要dumb 了.
         if (!$this->dialog->process->isFresh()) {
-            $this->dialog->cloner->noState();
+            $this->dialog->cloner->noConversationState();
         }
         return $this;
     }

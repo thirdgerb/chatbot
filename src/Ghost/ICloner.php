@@ -113,7 +113,7 @@ class ICloner extends ASession implements Cloner
     /**
      * @var bool
      */
-    protected $noConversationState = false;
+    protected $noConvoState = false;
 
     /**
      * @var Translator
@@ -204,6 +204,12 @@ class ICloner extends ASession implements Cloner
         return $this->conversationId = $convoId;
     }
 
+    public function isClonerExists(string $sessionId): bool
+    {
+        $key = $this->getConvoCacheKey($sessionId);
+        return $this->__get('cache')->has($key);
+    }
+
     protected function makeConvoId() : string
     {
         $clonerId = $this->getSessionId();
@@ -240,9 +246,9 @@ class ICloner extends ASession implements Cloner
         $this->__get('cache')->forget($key);
     }
 
-    protected function getConvoCacheKey() : string
+    protected function getConvoCacheKey(string $sessionId = null) : string
     {
-        $cloneId = $this->getSessionId();
+        $cloneId = $sessionId ?? $this->getSessionId();
         return "clone:$cloneId:convo:id";
     }
 
@@ -422,17 +428,17 @@ class ICloner extends ASession implements Cloner
     public function endConversation(): void
     {
         $this->quit = true;
-        $this->noConversationState = true;
+        $this->noConvoState = true;
     }
 
     public function isConversationEnd(): bool
     {
-        return $this->noConversationState;
+        return $this->quit;
     }
 
     public function noConversationState(): void
     {
-        $this->noConversationState = true;
+        $this->noConvoState = true;
     }
 
     public function isSubProcess() : bool
@@ -451,13 +457,37 @@ class ICloner extends ASession implements Cloner
      * 只需要投递一个携带了 conversationId 的异步 input, 就可以开启一个子进程.
      * 而这个子进程又能够共享当前的 session, 对用户进行广播.
      *
+     * 关键在于, 有两种维度
+     *
+     * - sessionId (cloner)
+     * - conversationId
+     *
+     * 两种状态:
+     *
+     * - session stateless
+     * - conversation no state
+     *
+     * 每一轮对话最后根据不同情况:
+     *
+     * - isSubProcess
+     * - isConversationEnd
+     *
+     * 保存:
+     *
+     * - convoId
+     * - runtime
+     *
      * 真是太牛了 (希望不要打脸)
+     *
+     * @return string[]
      */
-    protected function saveSession(): void
+    protected function saveSession(): array
     {
+        $steps = [];
         // 无状态的请求不做任何缓存.
         if ($this->isStateless()) {
-            return;
+            $steps[] = 'stateless';
+            return $steps;
         }
 
         // storage 更新.
@@ -465,32 +495,48 @@ class ICloner extends ASession implements Cloner
         // 因此 Storage 可以跨越多个 Conversation 存在.
         if ($this->isSingletonInstanced('storage')) {
             $this->__get('storage')->save();
-        }
-
-        // 可以允许其它的状态不保存.
-        if ($this->noConversationState) {
-            return;
+            $steps[] = 'save storage';
         }
 
         // 如果当前不是主进程, 会话又结束时, 删除主进程的 conversationId 缓存.
         if ($this->isConversationEnd()) {
+
+            // 会话的主进程, 删除 convoId 的缓存
             if (!$this->isSubProcess) {
                 $this->ioDeleteConvoIdCache();
+                $steps[] = 'del convo id cache';
             }
-            // 后面的流程都不执行了.
-            // todo 以后可能加一个 clear cache 主动删除缓存. 现在看徒增复杂度.
-            return;
+
+        //  给当前 conversation id 续命.
+        } elseif (
+            !$this->isSubProcess
+            && !$this->noConvoState
+            && isset($this->conversationId)
+        ) {
+            $this->cacheConvoId($this->conversationId);
+            $steps[] = 'cache convo id';
         }
 
         // 保存当前 conversation 的 runtime.
         if ($this->isSingletonInstanced('runtime')) {
-            $this->__get('runtime')->save();
+            /**
+             * @var Ghost\Runtime\Runtime $runtime
+             */
+            $runtime = $this->__get('runtime');
+
+            // 会话结束, 删除会话缓存
+            if ($this->isConversationEnd()) {
+                $runtime->flush();
+                $steps[] = 'flush runtime';
+
+            // 允许保存会话状态.
+            } elseif (!$this->noConvoState) {
+                $runtime->save();
+                $steps[] = 'save runtime';
+            }
         }
 
-        //  给当前 conversation 续命.
-        if (!$this->isSubProcess && isset($this->conversationId)) {
-            $this->cacheConvoId($this->conversationId);
-        }
+        return $steps;
     }
 
 
