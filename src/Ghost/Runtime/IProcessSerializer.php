@@ -96,7 +96,12 @@ class IProcessSerializer implements ProcessSerializer
         $waiter = $data['_waiter'];
         $result['_waiter'] = isset($waiter) ? $this->_serializeWaiter($waiter) : null;
 
-        $result['_backtrace'] = $data['_backtrace'] ?? [];
+        $result['_backtrace'] = array_map(
+            function($backtrace) {
+                return $this->_serializeUcl(Ucl::decode($backtrace));
+            },
+            $data['_backtrace'] ?? []
+        );
 
         $callbacks = $data['_callbacks'] ?? [];
         foreach ($callbacks as $id => $val) {
@@ -108,6 +113,13 @@ class IProcessSerializer implements ProcessSerializer
         foreach ($blocking as $id => $val) {
             $id = $this->_serializeId($id);
             $result['_callbacks'][$id] = $val;
+        }
+
+
+        $yielding = $data['_yielding'] ?? [];
+        foreach ($yielding as $id => $val) {
+            $id = $this->_serializeId($id);
+            $result['_yielding'][$id] = 1;
         }
 
         $sleeping = $data['_sleeping'] ?? [];
@@ -180,7 +192,12 @@ class IProcessSerializer implements ProcessSerializer
 
         $waiter = $info['_waiter'] ?? null;
         $result['_waiter'] = isset($waiter) ? $this->_unserializeWaiter($info['_waiter']) : null;
-        $result['_backtrace'] = $info['_backtrace'] ?? [];
+        $result['_backtrace'] = array_map(
+            function($backtrace){
+                return $this->_unserializeUcl($backtrace);
+            },
+            $info['_backtrace'] ?? []
+        );
 
         $callbacks = $info['_callbacks'] ?? [];
         foreach ($callbacks as $id => $val) {
@@ -192,6 +209,12 @@ class IProcessSerializer implements ProcessSerializer
         foreach ($blocking as $id => $val) {
             $id = $this->_unserializeId($id);
             $result['_blocking'][$id] = $val;
+        }
+
+        $yielding = $info['_yielding'] ?? [];
+        foreach ($yielding as $id => $val) {
+            $id = $this->_unserializeId($id);
+            $result['_yielding'][$id] = 1;
         }
 
         $sleeping = $info['_sleeping'] ?? [];

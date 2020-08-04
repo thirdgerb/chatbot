@@ -116,6 +116,8 @@ class IProcess implements Process, HasIdGenerator, \Serializable
 
     public static $maxDying = 20;
 
+    public static $maxYielding = 20;
+
     /**
      * IProcess constructor.
      * @param string $belongsTo
@@ -255,6 +257,23 @@ class IProcess implements Process, HasIdGenerator, \Serializable
     {
         $this->setWaiting($ucl, Context::ALIVE);
     }
+
+    /*-------- yielding --------*/
+    public function addYielding(Ucl $ucl): void
+    {
+        $this->setWaiting($ucl, Context::YIELDING);
+        $id = $ucl->getContextId();
+        $this->_yielding[$id] = 1;
+        ArrayUtils::maxLength($this->_yielding, self::$maxYielding);
+    }
+
+    public function eachYielding(): \Generator
+    {
+        foreach ($this->_yielding as $id => $bool) {
+            yield $this->getContextUcl($id);
+        }
+    }
+
 
     /*-------- block --------*/
 
@@ -547,7 +566,7 @@ class IProcess implements Process, HasIdGenerator, \Serializable
             '_blocking',
             '_sleeping',
             '_depending',
-            // '_yielding',
+            '_yielding',
             '_dying',
         ];
     }

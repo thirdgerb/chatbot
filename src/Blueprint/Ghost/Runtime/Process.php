@@ -122,14 +122,14 @@ interface Process extends ArrayAndJsonAble
 
     public function eachSleeping() : \Generator;
 
-//    /*-------- yield ---------*/
-//
-//    public function addYielding(Ucl $ucl, string $id) : void;
-//
-//    public function eachYielding() : \Generator;
-//
-//    /*-------- dying ---------*/
-//
+    /*-------- yield ---------*/
+
+    public function addYielding(Ucl $ucl) : void;
+
+    public function eachYielding() : \Generator;
+
+    /*-------- dying ---------*/
+
     public function addDying(Ucl $ucl, int $turns = 0, array $restoreStages = []);
 
     /*-------- depending ---------*/

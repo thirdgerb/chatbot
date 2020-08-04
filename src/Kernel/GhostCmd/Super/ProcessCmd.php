@@ -72,11 +72,7 @@ class ProcessCmd extends AGhostCmd
     protected function showBacktrace(Process $process) : void
     {
         $backtrace = $process->backtrace;
-        $backtrace = array_map(function(Waiter $waiter) {
-            return $waiter->await;
-        }, $backtrace);
-
-        $this->info(json_encode($backtrace, ArrayAndJsonAble::PRETTY_JSON));
+        $this->output(JsonMsg::instance(json_encode($backtrace, ArrayAndJsonAble::PRETTY_JSON)));
     }
 
     protected function showSerialize(Process $process) : void
