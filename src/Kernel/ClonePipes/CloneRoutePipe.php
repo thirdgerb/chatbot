@@ -22,12 +22,15 @@ class CloneRoutePipe extends AClonePipe
 {
     protected function doHandle(GhostRequest $request, \Closure $next): GhostResponse
     {
-        if ($this->cloner->isStateless()) {
+        // 无状态请求不需要浪费精力做路由
+        // 异步请求不允许被动创建路由. 异步请求可能是任何一方发过来的 async input
+        if ($this->cloner->isStateless() || $request->isAsync()) {
             return $next($request);
         }
-        $shellName = $request->getFromApp();
 
-        // 如果是自己发来的...
+        // 如果是机器人自己发送的消息, 也不处理.
+        // 不过这通常就是 async message 啊?
+        $shellName = $request->getFromApp();
         if ($this->cloner->getAppId() === $shellName) {
             return $next($request);
         }
@@ -35,8 +38,6 @@ class CloneRoutePipe extends AClonePipe
         // 设置路由关系.
         $storage = $this->cloner->storage;
         $routes = $storage->shellSessionRoutes ?? [];
-
-
         $routes[$shellName] = $request->getFromSession();
 
         $storage->shellSessionRoutes = $routes;
