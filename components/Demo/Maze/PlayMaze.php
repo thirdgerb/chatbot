@@ -160,7 +160,6 @@ class PlayMaze extends ACodeContext
     /**
      * @param Stage $stage
      * @return Stage
-     *
      */
     public function __on_cancel(Stage $stage) : Stage
     {
@@ -169,10 +168,15 @@ class PlayMaze extends ACodeContext
                 ->send()
                 ->info($this->cancelMessage)
                 ->over()
-                ->cancel();
+                ->fulfill();
         });
     }
 
+    /**
+     * 特殊的写法, 为 stage 定义 matcher.
+     * @param Matcher $matcher
+     * @return bool
+     */
     public static function __match_cancel(Matcher $matcher) : bool
     {
         return $matcher

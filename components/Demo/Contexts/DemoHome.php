@@ -14,10 +14,11 @@ namespace Commune\Components\Demo\Contexts;
 use Commune\Blueprint\Ghost\Context\CodeContextOption;
 use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
+use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Components\Demo\Git\GitContext;
-use Commune\Components\Demo\Maze\PlayMaze;
+use Commune\Components\Demo\Maze\Maze;
 use Commune\Ghost\Context\ACodeContext;
 use Commune\Support\Registry\OptRegistry;
 
@@ -69,7 +70,7 @@ class DemoHome extends ACodeContext
                 ->send()
                 ->notice('canceling pass by cancel stage')
                 ->over()
-                ->quit();
+                ->goStage('menu');
         });
     }
 
@@ -90,19 +91,35 @@ class DemoHome extends ACodeContext
                         '请您选择',
                         [
                             FeatureTest::genUcl(),
-                            PlayMaze::genUcl(),
+                            $this->getStage('maze'),
                             GitContext::genUcl(),
                         ]
                     );
 
-            })
-            ->onResume(function(Dialog $dialog) {
-                $dialog->send()
-                    ->info('完成测试')
-                    ->over()
-                    ->quit();
             });
 
+    }
+
+    /**
+     * @param StageBuilder $stage
+     * @return StageBuilder
+     *
+     * @desc 测试迷宫小游戏
+     */
+    public function __on_maze(StageBuilder $stage) : StageBuilder
+    {
+        return $stage
+            ->onActivate($stage->dialog->dependOn(Maze::genUcl()))
+            ->onEvent(
+                Dialog::CALLBACK,
+                function(Dialog $dialog) {
+                    return $dialog
+                        ->send()
+                        ->info('完成测试')
+                        ->over()
+                        ->goStage('menu');
+                }
+            );
     }
 
 

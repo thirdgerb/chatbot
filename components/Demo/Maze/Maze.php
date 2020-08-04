@@ -168,7 +168,7 @@ class Maze extends ACodeContext
      * @param Stage $stage
      * @return Stage
      */
-    public function __onOldPlayer(Stage $stage) : Stage
+    public function __on_old_player(Stage $stage) : Stage
     {
         return $stage
             ->onActivate(function(Dialog $dialog) {
