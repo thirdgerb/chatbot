@@ -58,6 +58,11 @@ class OAwait extends AbsFinale implements Await
     protected $stageReg;
 
     /**
+     * @var array
+     */
+    protected $slots = [];
+
+    /**
      * IAwait constructor.
      * @param Dialog $dialog
      * @param string[]|Ucl[] $stageRoutes
@@ -177,7 +182,7 @@ class OAwait extends AbsFinale implements Await
         QuestionMsg $question
     ): Operator
     {
-        $this->question = $question;
+        $this->question = $question->withSlots($this->slots);
 
         $routes = $question->getRoutes();
         $this->routes = array_merge(
@@ -187,6 +192,13 @@ class OAwait extends AbsFinale implements Await
 
         return $this;
     }
+
+    public function withSlots(array $slots): Await
+    {
+        $this->slots = $slots;
+        return $this;
+    }
+
 
     protected function addSuggestions(QuestionMsg $question, array $suggestions) : QuestionMsg
     {

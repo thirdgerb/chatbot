@@ -62,8 +62,8 @@ class IConfirm extends IQuestionMsg implements Confirm
         return [
             'query' => '',
             'suggestions' => [
-                self::NEGATIVE_INDEX => 'no',
-                self::POSITIVE_INDEX => 'yes'
+                self::NEGATIVE_INDEX => Confirm::POSITIVE_LANG,
+                self::POSITIVE_INDEX => Confirm::NEGATIVE_LANG,
             ],
             'routes' => [],
             'default' => null,

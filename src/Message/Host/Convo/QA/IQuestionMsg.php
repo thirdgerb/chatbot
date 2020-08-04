@@ -39,6 +39,8 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 {
     protected $acceptAnyTextAsValue = true;
 
+    protected $slots = [];
+
     /**
      * IQuestionMsg constructor.
      * @param string $query
@@ -309,7 +311,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             return;
         }
 
-        $slots = $this->toArray();
+        $slots = $this->slots;
 
         // query
         $this->query = $translator->trans($this->query, $slots);
@@ -323,6 +325,12 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         );
 
         $this->translated = true;
+    }
+
+    public function withSlots(array $slots): QuestionMsg
+    {
+        $this->slots = $slots;
+        return $this;
     }
 
 

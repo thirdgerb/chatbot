@@ -50,6 +50,14 @@ interface QuestionMsg extends VerbalMsg, Conversational, SelfTranslatable
     public function getRoutes() : array;
 
     /**
+     * 添加 slots 参数, 方便做转义.
+     * @param array $slots
+     * @return QuestionMsg
+     */
+    public function withSlots(array $slots) : QuestionMsg;
+
+
+    /**
      * @param Cloner $cloner
      * @return AnswerMsg
      */

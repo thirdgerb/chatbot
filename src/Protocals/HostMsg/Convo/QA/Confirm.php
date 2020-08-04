@@ -21,6 +21,9 @@ interface Confirm extends QuestionMsg
     const DEFAULT_POSITIVE = 'y';
     const DEFAULT_NEGATIVE = 'n';
 
+    const POSITIVE_LANG = 'system.dialog.yes';
+    const NEGATIVE_LANG = 'system.dialog.no';
+
     public function setPositive(string $suggestion, Ucl $ucl = null) : Confirm;
 
     public function setNegative(string $suggestion, Ucl $ucl = null) : Confirm;
