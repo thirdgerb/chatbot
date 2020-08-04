@@ -150,6 +150,17 @@ class IStageBuilder implements StageBuilder
         return $this;
     }
 
+    public function otherwise($caller): StageBuilder
+    {
+        if (isset($this->operator)) {
+            return $this;
+        }
+
+        $this->operator = $this->dialog->container()->action($caller);
+        return $this;
+    }
+
+
     public function popOperator() : ? Operator
     {
         $operator = $this->operator;

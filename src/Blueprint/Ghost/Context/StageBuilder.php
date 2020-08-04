@@ -71,4 +71,11 @@ interface StageBuilder
      */
     public function onEventExcept($caller, string ...$events) : StageBuilder;
 
+    /**
+     * 如果前面的事件没有命中, 则触发这个事件.
+     * @param string|callable $caller
+     * @return StageBuilder
+     */
+    public function otherwise($caller) : StageBuilder;
+
 }
