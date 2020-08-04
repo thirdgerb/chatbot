@@ -162,6 +162,7 @@ class IProcess implements Process, HasIdGenerator, \Serializable
                 'blocking' => $this->_blocking,
                 'sleeping' => $this->_sleeping,
                 'dying' => $this->_dying,
+                'yielding' => $this->_yielding,
             ]
         ];
     }
@@ -281,17 +282,17 @@ class IProcess implements Process, HasIdGenerator, \Serializable
     {
         $this->setWaiting($ucl, Context::BLOCKING);
         $id = $ucl->getContextId();
-        $this->_depending[$id] = $priority;
+        $this->_blocking[$id] = $priority;
         ArrayUtils::maxLength($this->_depending, self::$maxBlocking);
     }
 
     public function firstBlocking(): ? Ucl
     {
-        if (empty($this->_depending)) {
+        if (empty($this->_blocking)) {
             return null;
         }
 
-        foreach ($this->_depending as $id => $priority) {
+        foreach ($this->_blocking as $id => $priority) {
             return $this->getContextUcl($id);
         }
 
@@ -300,7 +301,7 @@ class IProcess implements Process, HasIdGenerator, \Serializable
 
     public function eachBlocking(): \Generator
     {
-        foreach ($this->_depending as $id => $priority) {
+        foreach ($this->_blocking as $id => $priority) {
             yield $this->getContextUcl($id);
         }
     }
@@ -359,14 +360,28 @@ class IProcess implements Process, HasIdGenerator, \Serializable
     public function getDepending(string $dependedContextId): array
     {
         $result = [];
-        foreach ($this->_depending as $dependingId => $dependedContextId) {
-            if ($dependedContextId === $dependedContextId) {
-                $result[] = $this->decode($dependingId);
+        foreach ($this->_depending as $dependingId => $depended) {
+            if ($dependedContextId === $depended) {
+                $result[] = $this->getTaskById($dependingId)->getUcl();
             }
         }
 
         return $result;
     }
+
+    public function dumpDepending(string $dependedContextId): array
+    {
+        $result = [];
+        foreach ($this->_depending as $dependingId => $depended) {
+            if ($dependedContextId === $depended) {
+                $result[] = $this->getTaskById($dependingId)->getUcl();
+                unset($this->_depending[$dependingId]);
+            }
+        }
+
+        return $result;
+    }
+
 
     /*-------- callbacks --------*/
 
