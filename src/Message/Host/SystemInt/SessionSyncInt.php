@@ -18,6 +18,8 @@ use Commune\Protocals\HostMsg;
 /**
  * 告知 shell 变更对应 ghost 的 session, 从而与目标 session 同步.
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $session
  */
 class SessionSyncInt extends IIntentMsg
 {

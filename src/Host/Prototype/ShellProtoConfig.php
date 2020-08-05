@@ -19,6 +19,7 @@ use Commune\Protocals\HostMsg;
 use Commune\Blueprint\Kernel\Protocals;
 use Commune\Blueprint\Kernel\Handlers;
 use Commune\Shell\Providers\ShellSessionServiceProvider;
+use Commune\Shell\Render\SystemIntentRenderer;
 use Commune\Shell\Render\TranslatorRenderer;
 use Commune\Support\Protocal\ProtocalOption;
 
@@ -41,7 +42,10 @@ class ShellProtoConfig extends IShellConfig
             'components' => [],
 
             /**
+             * App 可以处理的各种协议.
+             *
              * @see ProtocalOption
+             * key 可以自己定义, 方便子类修改. 也可以不定义.
              */
             'protocals' => [
 
@@ -75,6 +79,21 @@ class ShellProtoConfig extends IShellConfig
                 /**
                  * Renderer
                  */
+                // 系统命令的 handler
+                [
+                    'protocal' => HostMsg\IntentMsg::class,
+                    'interface' => Renderer::class,
+                    'handlers' => [
+                        [
+                            'handler' => SystemIntentRenderer::class,
+                            'filters' => [
+                                'system.*'
+                            ],
+                            'params' => [],
+                        ],
+                    ],
+                    'default' => TranslatorRenderer::class,
+                ],
 
                 // 默认 handler
                 [
@@ -84,7 +103,7 @@ class ShellProtoConfig extends IShellConfig
                 ],
 
             ],
-            'sessionExpire' => 864000,
+            'sessionExpire' => 3600,
             'sessionLockerExpire' => 0,
         ];
     }
