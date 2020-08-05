@@ -208,23 +208,7 @@ class ICategory implements Category
             $option,
             $notExists
         );
-
-        if (!$success) {
-            return $success;
-        }
-
-        // 按需同步到 init.
-        $init = $this->getInitialStorage();
-        if (empty($init)) {
-            return $success;
-        }
-
-        return $init->getDriver()->save(
-            $this->categoryOption,
-            $init->getOption(),
-            $option,
-            $notExists
-        );
+        return $success;
     }
 
 
