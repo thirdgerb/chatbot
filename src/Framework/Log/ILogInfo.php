@@ -51,8 +51,7 @@ class ILogInfo implements LogInfo
 //
     public function bootingBootProvider(string $id, string $name): string
     {
-        $id = $id === $name ? '' : " [$id]";
-        return "boot provider: $name$id";
+        return "\nboot provider: $name;\nid: $id";
     }
 
     public function bootingRegisterProviderWarning(string $providerId, string $except, string $given): string
@@ -63,8 +62,7 @@ class ILogInfo implements LogInfo
 
     public function bootingRegisterProvider(string $id, string $name): string
     {
-        $id = $id === $name ? '' : " [$id]";
-        return "register provider: $name$id";
+        return "\nregister provider: $name;\nid: $id";
     }
 
     public function bootContractNotBound(string $abstract): string
