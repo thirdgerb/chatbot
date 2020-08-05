@@ -12,8 +12,11 @@
 namespace Commune\Ghost\Providers;
 
 use Commune\Blueprint\Framework\Auth\Authority;
+use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Blueprint\Framework\ReqContainer;
+use Commune\Blueprint\Framework\Session\SessionScene;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Ghost\Auth\ISupervise;
 use Commune\Ghost\Cloner as ICloner;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Ghost\Tools\Matcher;
@@ -91,6 +94,11 @@ class ClonerServiceProvider extends ServiceProvider
                 return ICloner\IClonerScope::factory($app);
             }
         );
+
+        $app->singleton(
+            SessionScene::class,
+            Cloner\ClonerScene::class
+        );
     }
 
     /**
@@ -117,6 +125,7 @@ class ClonerServiceProvider extends ServiceProvider
     protected function registerAuth(Container $app) : void
     {
         $app->singleton(Authority::class, IAuthority::class);
+        $app->singleton(Supervise::class, ISupervise::class);
     }
 
     protected function registerRuntime(Container $app) : void
@@ -146,5 +155,6 @@ class ClonerServiceProvider extends ServiceProvider
             Cloner\ClonerDispatcher::class,
             ICloner\IClonerDispatcher::class
         );
+
     }
 }
