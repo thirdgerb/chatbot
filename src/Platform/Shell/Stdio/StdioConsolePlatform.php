@@ -14,10 +14,7 @@ namespace Commune\Platform\Shell\Stdio;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
 use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Contracts\Messenger\Broadcaster;
-use Commune\Kernel\Protocals\IShellOutputRequest;
-use Commune\Support\Babel\Babel;
 use React\EventLoop\Factory;
 use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Host;
@@ -30,7 +27,6 @@ use Commune\Platform\Libs\Stdio\StdioPacker;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Platform\Libs\Stdio\StdioTextAdapter;
 
@@ -101,9 +97,8 @@ class StdioConsolePlatform extends AbsPlatform
             $this->runSubscribe();
 
             if (!$success) {
-                $this->loop->stop();
+                $this->shutdown();
             }
-
         });
 
         $this->loop->run();
@@ -180,7 +175,7 @@ class StdioConsolePlatform extends AbsPlatform
 
     public function shutdown(): void
     {
-        $this->loop->stop();
+        $this->stdio->end();
     }
 
     /**
