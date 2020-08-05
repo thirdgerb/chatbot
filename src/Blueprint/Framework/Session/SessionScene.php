@@ -9,9 +9,8 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Cloner;
+namespace Commune\Blueprint\Framework\Session;
 
-use Commune\Blueprint\Framework\Session\SessionScene;
 use Commune\Blueprint\Ghost\Ucl;
 
 
@@ -37,13 +36,14 @@ use Commune\Blueprint\Ghost\Ucl;
  * @property-read int $userLevel            用户等级信息
  * @property-read array $userInfo           用户更多信息. 视客户端决定是否存在.
  */
-interface ClonerScene extends SessionScene
+interface SessionScene
 {
-//
-//    // 语言类型.
-//    const ENV_LANG = 'lang';
-//    // 用户级别.
-//    const ENV_USER_LEVEL = 'userLevel';
-//    // 用户的附加属性.
-//    const ENV_USER_INFO = 'userInfo';
+    // 预定义的场景变量名. 表示这些参数可以通过 Env 数组传递给 Ghost
+
+    // 语言类型.
+    const ENV_LANG = 'lang';
+    // 用户级别.
+    const ENV_USER_LEVEL = 'userLevel';
+    // 用户的附加属性.
+    const ENV_USER_INFO = 'userInfo';
 }
