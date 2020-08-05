@@ -104,7 +104,15 @@ abstract class ASessionStorage implements SessionStorage
 
         $ttl = $this->session->getSessionExpire();
         $ttl = $ttl > 0 ? $ttl : null;
-        $success = $this->cache->set($key, $str, $ttl);
+
+        // 当缓存时间为 0 时视作要删除.
+        if ($ttl > 0) {
+            $success = $this->cache->set($key, $str, $ttl);
+        } elseif ($ttl < 0) {
+            $success = $this->cache->set($key, $str);
+        } else {
+            $success = $this->cache->forget($key);
+        }
 
         // Storage 是 Session 的关键数据, 不能丢失.
         if (!$success) {
