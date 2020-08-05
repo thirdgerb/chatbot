@@ -61,14 +61,14 @@ class JoinRequest extends ACodeContext
                 $currentSession = $cloner->getSessionId();
                 if ($currentSession === $this->session) {
                     return $dialog->send()
-                        ->error("目标 session 不能和当前一致!")
+                        ->error(JoinLang::ERROR_SESSION_SAME)
                         ->over()
                         ->cancel();
                 }
 
                 if (!$cloner->isClonerExists($this->session)) {
                     return $dialog->send()
-                        ->error("目标会话不存在")
+                        ->error(JoinLang::ERROR_SESSION_NOT_FOUND)
                         ->over()
                         ->cancel();
                 }

@@ -1,5 +1,6 @@
 <?php
 
+use Commune\Components\Predefined\Join\JoinLang;
 
 return [
 
@@ -41,5 +42,16 @@ return [
         ],
 
     ],
+
+    JoinLang::ERROR_SESSION_NOT_FOUND => "目标会话不存在",
+    JoinLang::ERROR_SESSION_SAME => "目标 session 不能和当前一致!",
+    JoinLang::APPLY_ASK => "接到加入会话申请, 来自 {fromApp} 的用户 {userName}, 请问是否通过?",
+    JoinLang::APPLY_CANCEL => '已忽略加入会话的申请.',
+    JoinLang::APPLY_REJECT => '已拒绝加入会话的申请',
+    JoinLang::APPLY_PROVE => '已通过加入会话的申请',
+    JoinLang::REPLY_CANCELED => '得到通知, 加入会话申请被忽略',
+    JoinLang::REPLY_PROVED => '得到通知, 加入会话申请得到通过. 接下来双方会话会同步.',
+    JoinLang::REPLY_REJECTED => '得到通知, 加入会话申请被拒绝.',
+
 ];
 

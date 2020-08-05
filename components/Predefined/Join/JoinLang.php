@@ -17,6 +17,8 @@ namespace Commune\Components\Predefined\Join;
  */
 class JoinLang
 {
+    const ERROR_SESSION_SAME = 'predefined.join.error.session_is_same';
+    const ERROR_SESSION_NOT_FOUND = 'predefined.join.error.session_not_found';
 
     const APPLY_ASK = 'predefined.join.apply.ask';
     const APPLY_PROVE = 'predefined.join.apply.prove';
