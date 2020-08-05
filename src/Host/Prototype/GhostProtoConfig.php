@@ -90,6 +90,7 @@ class GhostProtoConfig extends IGhostConfig
                 GhostCmd\Super\ProcessCmd::class,
                 GhostCmd\Super\IntentCmd::class,
                 GhostCmd\Super\RedirectCmd::class,
+                GhostCmd\Super\EnvCmd::class,
             ],
 
             'comprehensionPipes' => [

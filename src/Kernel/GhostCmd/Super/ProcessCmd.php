@@ -14,7 +14,6 @@ namespace Commune\Kernel\GhostCmd\Super;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Blueprint\Ghost\Runtime\Process;
-use Commune\Blueprint\Ghost\Runtime\Waiter;
 use Commune\Kernel\GhostCmd\AGhostCmd;
 use Commune\Message\Host\Convo\Verbal\JsonMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
