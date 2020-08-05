@@ -14,6 +14,10 @@ namespace Commune\Test\Support\Protocal;
 use Commune\Framework\Log\IConsoleLogger;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Host\IIntentMsg;
+use Commune\Message\Host\SystemInt\SessionSyncInt;
+use Commune\Protocals\HostMsg\IntentMsg;
+use Commune\Shell\Render\SystemIntentRenderer;
+use Commune\Shell\Render\TranslatorRenderer;
 use Commune\Support\Protocal\HandlerOption;
 use Commune\Support\Protocal\ProtocalMatcher;
 use Commune\Support\Protocal\ProtocalOption;
@@ -85,5 +89,29 @@ class ProtocalMatcherTest extends TestCase
 
     }
 
+    public function testIntentRendererCase()
+    {
+        $option1 = new ProtocalOption([
+            'protocal' => IntentMsg::class,
+            'handlers' => [
+                [
+                    'handler' => SystemIntentRenderer::class,
+                    'filters' => [
+                        'system.*'
+                    ],
+                    'params' => [],
+                ],
+            ],
+            'default' => TranslatorRenderer::class
+        ]);
+
+        $logger = new IConsoleLogger();
+        $manager = new ProtocalMatcher($logger, [$option1]);
+        
+        $option = $manager->matchFirst(SessionSyncInt::instance('test'));
+        
+        $this->assertNotNull($option);
+        $this->assertEquals(SystemIntentRenderer::class, $option->handler);
+    }
 
 }

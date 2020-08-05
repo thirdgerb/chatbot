@@ -31,12 +31,23 @@ class ProtocalMatcher
     protected $logger;
 
     /**
-     * ProtocalMatcher constructor.
-     * @param array $options
-     * @param LoggerInterface $logger
+     * @var string
      */
-    public function __construct(LoggerInterface $logger, array $options = [])
+    protected $wildcardPattern;
+
+    /**
+     * ProtocalMatcher constructor.
+     * @param LoggerInterface $logger
+     * @param array $options
+     * @param string $wildcardPattern
+     */
+    public function __construct(
+        LoggerInterface $logger,
+        array $options = [],
+        string $wildcardPattern = '[\.\w]+'
+    )
     {
+        $this->wildcardPattern = $wildcardPattern;
         $this->logger = $logger;
         foreach ($options as $option) {
             $this->addOption($option);
@@ -84,7 +95,9 @@ class ProtocalMatcher
                 // 如果校验规则正确, 返回 handler 的配置.
                 $handlers = $option->handlers;
                 foreach ($handlers as $handlerOption) {
-                    $matched = $this->matchProtocalId($protocal->getProtocalId(), $handlerOption->filters);
+                    $protocalId = $protocal->getProtocalId();
+                    $filters = $handlerOption->filters;
+                    $matched = $this->matchProtocalId($protocalId, $filters);
 
                     if (!$matched) {
                         continue;
@@ -150,7 +163,7 @@ class ProtocalMatcher
             // 允许用通配符.
             $matched = StringUtils::isWildcardPattern($rule)
                 // 只匹配字母的情况. 暂时不做更复杂的匹配逻辑.
-                ? StringUtils::wildcardMatch($rule, $protocalId, '\w+')
+                ? StringUtils::wildcardMatch($rule, $protocalId, $this->wildcardPattern)
                 : $rule === $protocalId;
 
             if ($matched) {

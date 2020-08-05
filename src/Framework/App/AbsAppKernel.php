@@ -38,8 +38,13 @@ use Commune\Blueprint\Exceptions\CommuneRuntimeException;
  */
 abstract class AbsAppKernel extends AbsApp implements AppKernel
 {
-
-
+    /**
+     * 对 protocal 进行通配时, 只匹配 . 与 \w.
+     * 更复杂的匹配规则请自行定义, 或者定义到 protocal handler interface 内部.
+     *
+     * @var string
+     */
+    protected $wildcardPattern = '[\.\w]+';
 
     /**
      * @var ProtocalMatcher
@@ -78,7 +83,8 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
         return $this->protocalMatcher
             ?? $this->protocalMatcher = new ProtocalMatcher(
                 $this->getConsoleLogger(),
-                $this->getProtocalOptions()
+                $this->getProtocalOptions(),
+                $this->wildcardPattern
             );
     }
 

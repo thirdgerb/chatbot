@@ -12,7 +12,6 @@
 namespace Commune\Framework;
 
 use Psr\Log\LogLevel;
-use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Framework\ProcContainer;
 use Commune\Framework\Bootstrap;
 use Commune\Blueprint\Framework\App;

@@ -354,4 +354,29 @@ EOF;
         $this->assertFalse(StringUtils::isValidDotDirName('前'));
         $this->assertFalse(StringUtils::isValidDotDirName('a..b'));
     }
+
+
+    public function testWildCardMatchCase()
+    {
+        $this->assertFalse((bool) preg_match('/\w/', '.'));
+        $this->assertTrue((bool) preg_match('/\w+/', 'abcAbc123-_'));
+
+        $pattern = StringUtils::wildcardToRegex('system.*', '[\.\w]+');
+        $this->assertEquals('/^system\.[\.\w]+$/', $pattern);
+
+        $this->assertTrue((bool) preg_match($pattern, 'system.session.sync'));
+
+        $case1 = StringUtils::wildcardMatch(
+            'system.*',
+            'system.session.sync'
+        );
+        $case2 = StringUtils::wildcardMatch(
+            'system.*',
+            'system.session.sync',
+            '[\.\w]+'
+        );
+
+        $this->assertTrue($case1);
+        $this->assertTrue($case2);
+    }
 }
