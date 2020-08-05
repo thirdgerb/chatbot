@@ -13,8 +13,6 @@ namespace Commune\Kernel\ClonePipes;
 
 use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Kernel\GhostCmd\AGhostCmdPipe;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
 
 /**
  * 管理员命令的管道.
@@ -30,9 +28,7 @@ class CloneSuperCmdPipe extends AGhostCmdPipe
 
     public function getAuthPolicies(): array
     {
-//        return [Supervise::class];
-        // todo
-        return [];
+        return [Supervise::class];
     }
 
 
