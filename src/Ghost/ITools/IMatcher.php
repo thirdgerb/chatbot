@@ -441,7 +441,7 @@ class IMatcher implements Matcher
         }
 
         $def = $reg->getDef($emotionName);
-        return $def->feels($this->cloner, $this->injectionContext);
+        return $def->feels($this->cloner, $this->injectionContext) ?? false;
     }
 
     public function isPositive(): Matcher

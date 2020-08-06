@@ -29,5 +29,5 @@ interface EmotionDef extends Def
     public function feels(
         Cloner $cloner,
         array $injectionContext = []
-    ): bool;
+    ): ? bool;
 }

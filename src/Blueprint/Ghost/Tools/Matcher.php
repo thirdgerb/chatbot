@@ -13,6 +13,7 @@ namespace Commune\Blueprint\Ghost\Tools;
 
 use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Ghost\Callables\Prediction;
+use Commune\Blueprint\Ghost\Callables\Verifier;
 use Commune\Support\SoundLike\SoundLikeInterface;
 
 
@@ -43,7 +44,7 @@ interface Matcher
      * 用一个 prediction callable 判断是否命中条件.
      * 命中后执行 interceptor
      *
-     * @param Prediction|callable|string $prediction
+     * @param Prediction|Verifier|callable|string $prediction
      * @return static
      */
     public function expect($prediction) : Matcher;

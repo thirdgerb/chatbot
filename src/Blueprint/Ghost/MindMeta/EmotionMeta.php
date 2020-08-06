@@ -11,7 +11,9 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
+use Commune\Blueprint\Ghost\Callables\Verifier;
 use Commune\Blueprint\Ghost\MindDef\AliasesForEmotion;
+use Commune\Blueprint\Ghost\MindDef\EmotionDef;
 use Commune\Ghost\IMindDef\IEmotionDef;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Wrapper;
@@ -26,8 +28,10 @@ use Commune\Support\Option\Wrapper;
  * @property-read string $name                  情感的id.
  * @property-read string $title                 情感的标题
  * @property-read string $desc                  情感的简介
+ * @property-read string[] $intents             情绪所包含的意图.
  * @property-read string[] $opposites           对立的情绪
- * @property-read string[] $matchers            自定义的匹配逻辑.
+ * @property-read string[] $verifiers           自定义的匹配逻辑.
+ * @see Verifier
  */
 class EmotionMeta extends AbsOption implements DefMeta
 {
@@ -39,28 +43,29 @@ class EmotionMeta extends AbsOption implements DefMeta
             'name' => '',
             'title' => '',
             'desc' => '',
+            'intents' => [],
             'opposites' => [],
-            'matchers' => [],
+            'verifiers' => [],
         ];
     }
 
-    public function __get_matcher() : array
+    public function __get_verifiers() : array
     {
         return array_map(
-            function (string $matcher) {
-                return AliasesForEmotion::getOriginFromAlias($matcher);
+            function (string $verifiers) {
+                return AliasesForEmotion::getOriginFromAlias($verifiers);
             },
-            $this->_data['matchers'] ?? []
+            $this->_data['verifiers'] ?? []
         );
     }
 
-    public function __set_matcher(string $name, array $matchers) : void
+    public function __set_verifiers(string $name, array $verifiers) : void
     {
         $this->_data[$name] = array_map(
-            function(string $matcher) {
-                return AliasesForEmotion::getAliasOfOrigin($matcher);
+            function(string $verifiers) {
+                return AliasesForEmotion::getAliasOfOrigin($verifiers);
             },
-            $matchers
+            $verifiers
         );
     }
 
@@ -69,6 +74,9 @@ class EmotionMeta extends AbsOption implements DefMeta
         return [];
     }
 
+    /**
+     * @return EmotionDef
+     */
     public function toWrapper(): Wrapper
     {
         return new IEmotionDef($this);

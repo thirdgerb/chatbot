@@ -62,22 +62,21 @@ class IEmotionDef implements EmotionDef
     public function feels(
         Cloner $cloner,
         array $injectionContext = []
-    ): bool
+    ): ? bool
     {
         $comprehension = $cloner->comprehension;
         $name = $this->getName();
 
+        // 是否已经有匹配结果了
+        $feel = $this->fromComprehendedEmotion($comprehension, $name);
+        // 是否有相反的情绪
+        $feel = $feel ?? $this->hasOppositeEmotions($comprehension, $name);
+        // 是否命中的意图是该情绪的子集
+        $feel = $feel ?? $this->hasMatchedIntentEmotion($comprehension, $cloner, $name);
+        // 运行自定义的情绪校验器.
+        $feel = $feel ?? $this->runEmotionMatchers($cloner, $comprehension, $name);
 
-                // 是否已经有匹配结果了
-        $feel = $this->hasEmotionComprehended($comprehension, $name)
-                // 是否有相反的情绪
-            ?? $this->hasOppositeEmotions($comprehension, $name)
-                // 是否命中的意图是该情绪的子集
-            ?? $this->hasMatchedIntentEmotion($comprehension, $cloner, $name)
-                // 运行自定义的情绪校验器.
-            ?? $this->runEmotionMatchers($comprehension, $name)
-                // 没匹配到就是没有.
-            ?? false;
+        // 没匹配到就是没有.
         return $feel;
     }
 
@@ -99,15 +98,28 @@ class IEmotionDef implements EmotionDef
         return null;
     }
 
-    protected function runEmotionMatchers(Comprehension $comprehension, string $name) : ? bool
+    protected function runEmotionMatchers(
+        Cloner $cloner,
+        Comprehension $comprehension,
+        string $name
+    ) : ? bool
     {
-        $matchers = $this->meta->matchers;
+        $matchers = $this->meta->verifiers;
         if (empty($matchers)) {
-            return $this->setEmotion($comprehension, $name, false);
+            return null;
         }
+
+        foreach ($matchers as $matcher) {
+            $verifier = $cloner->container->make($matcher);
+            $result = $verifier();
+            if (isset($result)) {
+                return $this->setEmotion($comprehension, $name, $result);
+            }
+        }
+
         return null;
     }
-   protected function hasEmotionComprehended(Comprehension $comprehension, string $name) : ? bool
+   protected function fromComprehendedEmotion(Comprehension $comprehension, string $name) : ? bool
     {
         return $comprehension->emotion->isEmotion($name);
     }

@@ -270,7 +270,9 @@ class IRuntime implements Runtime
 
         // Context 调度各自的存储方案.
         foreach ($this->contexts as $context) {
-            $context->isChanged() and $context->save();
+            if ($context->isChanged()) {
+                $context->save();
+            }
         }
 
         $expire = $this->cloner->getSessionExpire();
@@ -337,6 +339,7 @@ class IRuntime implements Runtime
             return $memory->isChanged();
         });
 
+
         if (empty($memories)) {
             return true;
         }
@@ -377,7 +380,6 @@ class IRuntime implements Runtime
 
     protected function ioSaveLongTermMemories() : bool
     {
-
         if (!isset($this->driver)) {
             return true;
         }
@@ -391,7 +393,6 @@ class IRuntime implements Runtime
         }
 
         try {
-
             return $this->driver->saveLongTermMemories(
                 $this->cloner->getSessionId(),
                 $memories
