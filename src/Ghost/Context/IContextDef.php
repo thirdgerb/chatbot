@@ -22,6 +22,7 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Ghost\Context\Traits\ContextDefTrait;
+use Commune\Ghost\IMindDef\IIntentDef;
 use Commune\Ghost\IMindDef\IMemoryDef;
 use Commune\Ghost\Stage\InitStage;
 use Commune\Support\Option\AbsOption;
@@ -42,7 +43,7 @@ use Commune\Support\Utils\ArrayUtils;
  *
  * ## 基础属性
  * @property-read int $priority                     语境的默认优先级
- * @property-read IntentMeta $asIntent
+ * @property-read IntentMeta|null $asIntent
  *
  * @property-read string[] $auth                    用户权限
  * @property-read string[] $queryNames              context 请求参数键名的定义, 如果是列表则要加上 []
@@ -69,7 +70,10 @@ use Commune\Support\Utils\ArrayUtils;
  */
 class IContextDef extends AbsOption implements ContextDef
 {
+
     use ContextDefTrait;
+
+    const IDENTITY = 'name';
 
     /**
      * @var MemoryDef
@@ -148,6 +152,7 @@ class IContextDef extends AbsOption implements ContextDef
         ];
     }
 
+
     public function fill(array $data): void
     {
         $asIntent = $data['asIntent'] ?? [];
@@ -178,20 +183,6 @@ class IContextDef extends AbsOption implements ContextDef
 
     /*------ properties -------*/
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->desc;
-    }
 
     public function getPriority(): int
     {
@@ -202,12 +193,6 @@ class IContextDef extends AbsOption implements ContextDef
     {
         return $this->onCancel;
     }
-
-    public function auth(): array
-    {
-        return $this->auth;
-    }
-
 
     public function onQuitStage(): ? string
     {
@@ -265,6 +250,17 @@ class IContextDef extends AbsOption implements ContextDef
 
     public function asStageDef() : StageDef
     {
+        $asIntent = $this->asIntent;
+        if (!isset($asIntent)) {
+            $intentDef = new IIntentDef([
+                'name' => $this->name,
+                'title' => $this->title,
+                'desc' => $this->desc,
+                'examples' => [],
+            ]);
+
+            $asIntent = $intentDef->toMeta();
+        }
         return $this->_asStageDef
             ?? $this->_asStageDef = new InitStage([
                 'name' => $this->name,
@@ -272,7 +268,7 @@ class IContextDef extends AbsOption implements ContextDef
                 'title' => $this->title,
                 'desc' => $this->desc,
                 'stageName' => '',
-                'asIntent' => $this->asIntent,
+                'asIntent' => $asIntent,
             ]);
     }
 

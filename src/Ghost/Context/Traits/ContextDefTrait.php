@@ -31,6 +31,7 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  * @property-read string $title
  * @property-read string $desc
  * @property-read string $contextWrapper
+ * @property-read string[] $auth
  *
  *
  * @mixin AbsOption
@@ -83,6 +84,27 @@ trait ContextDefTrait
         );
     }
 
+
+    public function auth(): array
+    {
+        return $this->auth;
+    }
+
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->desc;
+    }
 
     /*------ wrap -------*/
 
