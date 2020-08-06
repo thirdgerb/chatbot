@@ -134,6 +134,13 @@ interface Cloner extends Session
     /*----- 手动输出 -----*/
 
     /**
+     * 设置是否拒绝接受输入消息.
+     * 这样尽管经过了对话流程, 却不会接受消息.
+     * @param bool $silent
+     */
+    public function silence(bool $silent = true) : void;
+
+    /**
      * 输出消息.
      * @param OutputMsg $output
      * @param OutputMsg[] $outputs

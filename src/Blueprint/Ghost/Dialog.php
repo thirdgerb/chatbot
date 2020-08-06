@@ -303,6 +303,12 @@ interface Dialog
         int $gcTurns = 0
     ) : Operator;
 
+//    /**
+//     * 完成当前语境, 并且
+//     * @return Operator
+//     */
+//    public function fallbackHeed() : Operator;
+
     /**
      * 退出当前语境.
      * @return Operator

@@ -120,6 +120,10 @@ class ICloner extends ASession implements Cloner
      */
     protected $translator;
 
+    /**
+     * @var bool
+     */
+    protected $silent = false;
 
     /**
      * 判断当前 Cloner 的进程是否是子进程.
@@ -375,9 +379,19 @@ class ICloner extends ASession implements Cloner
 
     /*------- output -------*/
 
+    public function silence(bool $silent = true): void
+    {
+        $this->silent = $silent;
+    }
+
 
     public function output(OutputMsg $output, OutputMsg ...$outputs): void
     {
+        // 如果设置了静默, 则不接受任何消息. 当然也包括 intent 相关的控制消息.
+        if ($this->silent) {
+            return;
+        }
+
         array_unshift($outputs, $output);
         foreach ($outputs as $output) {
             $message = $output->getMessage();
@@ -490,16 +504,13 @@ class ICloner extends ASession implements Cloner
             return $steps;
         }
 
-        // storage 更新.
-        // 所以 Storage 是跟随 Session, 而不是跟随 Conversation
-        // 因此 Storage 可以跨越多个 Conversation 存在.
-        if ($this->isSingletonInstanced('storage')) {
-            $this->__get('storage')->save();
-            $steps[] = 'save storage';
-        }
 
         // 如果当前不是主进程, 会话又结束时, 删除主进程的 conversationId 缓存.
         if ($this->isConversationEnd()) {
+
+            // 同时也删除 storage 会话.
+            $this->setSessionExpire(0);
+            $steps[] = 'set session expire 0';
 
             // 会话的主进程, 删除 convoId 的缓存
             if (!$this->isSubProcess) {
@@ -515,6 +526,14 @@ class ICloner extends ASession implements Cloner
         ) {
             $this->cacheConvoId($this->conversationId);
             $steps[] = 'cache convo id';
+        }
+
+        // storage 更新.
+        // 所以 Storage 是跟随 Session, 而不是跟随 Conversation
+        // 因此 Storage 可以跨越多个 Conversation 存在.
+        if ($this->isSingletonInstanced('storage')) {
+            $this->__get('storage')->save();
+            $steps[] = 'save storage';
         }
 
         // 保存当前 conversation 的 runtime.
