@@ -18,6 +18,7 @@ use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Ghost\IMindDef\IIntentDef;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
@@ -31,7 +32,7 @@ use Commune\Support\Utils\ArrayUtils;
  * @property-read string $name
  * @property-read string $contextName
  * @property-read string $stageName
- * @property-read IntentMeta $asIntent
+ * @property-read IntentMeta|null $asIntent
  *
  * @property-read string $title
  * @property-read string $desc
@@ -52,7 +53,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
 
             'contextName' => '',
             'stageName' => '',
-            'asIntent' => [],
+            'asIntent' => null,
 
             'events' => [],
             'ifRedirect' => null,
@@ -175,7 +176,16 @@ abstract class AbsStageDef extends AbsOption implements StageDef
 
     public function asIntentDef(): IntentDef
     {
-        return $this->asIntent->toWrapper();
+        $asIntent = $this->asIntent;
+        if (!isset($asIntent)) {
+            return new IIntentDef([
+                'name' => $this->name,
+                'title' => $this->title,
+                'desc' => $this->desc,
+                'examples' => [],
+            ]);
+        }
+        return $asIntent->toWrapper();
     }
 
     /*------- wrapper -------*/
