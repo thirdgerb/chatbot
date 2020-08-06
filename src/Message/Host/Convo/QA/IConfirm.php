@@ -91,7 +91,7 @@ class IConfirm extends IQuestionMsg implements Confirm
                 return self::POSITIVE_INDEX;
             case 'n' :
             case '0' :
-                return self::NEGATIVE_LANG;
+                return self::NEGATIVE_INDEX;
             default:
                 return parent::parseInputText($text);
         }
