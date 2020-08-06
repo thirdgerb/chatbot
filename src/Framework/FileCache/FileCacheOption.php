@@ -22,6 +22,8 @@ use Commune\Support\Option\AbsOption;
  */
 class FileCacheOption extends AbsOption
 {
+    const IDENTITY = 'id';
+
     public static function stub(): array
     {
         return [
