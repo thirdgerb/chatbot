@@ -14,6 +14,7 @@ namespace Commune\Ghost\IMindDef;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 use Commune\Blueprint\Framework\Command\CommandDef;
+use Commune\Blueprint\Ghost\Callables\Verifier;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindDef\Intent\ExampleEntity;
 use Commune\Blueprint\Ghost\MindDef\Intent\IntentExample;
@@ -53,7 +54,8 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string[] $regex
  * @property-read string[] $ifEntity
  *
- * @property-read string|null $matcher
+ * @property-read string|null $verifier
+ * @see Verifier
  *
  * @property-read string|null $messageWrapper
  */
@@ -271,18 +273,10 @@ class IIntentDef extends AbsOption implements IntentDef
         }
 
         // 自定义的匹配器优先级相对高.
-        $selfMatcher = $this->matcher;
-        if (isset($selfMatcher)) {
-            if (
-                is_string($selfMatcher)
-                && class_exists($selfMatcher)
-                && method_exists($selfMatcher, '__invoke')
-            ) {
-                $selfMatcher = [$selfMatcher, '__invoke'];
-            }
-
+        $selfVerifier = $this->verifier;
+        if (isset($selfVerifier)) {
             try {
-                $predict = $cloner->container->call($selfMatcher, ['intentDef' => $this]);
+                $predict = $cloner->container->call($selfVerifier, ['intentDef' => $this]);
                 return $predict === true;
 
             } catch (\Exception $e) {

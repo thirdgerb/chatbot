@@ -12,7 +12,6 @@
 namespace Commune\Ghost\IMindDef;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Support\Parameter\ParamDefs;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Ghost\Memory\IRecollection;
@@ -32,11 +31,6 @@ class IMemoryDef implements MemoryDef
      * @var MemoryMeta
      */
     protected $meta;
-
-    /**
-     * @var ParamDefs
-     */
-    protected $params;
 
     /**
      * IMemoryDef constructor.
