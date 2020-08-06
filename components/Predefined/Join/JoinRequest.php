@@ -100,12 +100,15 @@ class JoinRequest extends ACodeContext
                     $response = $this->response;
 
                     if ($response->confirmed) {
-                        return $dialog
+
+                        $dialog
                             ->send()
                             ->info(JoinLang::REPLY_PROVED)
                             ->message(SessionSyncInt::instance($this->session))
-                            ->over()
-                            ->fulfill();
+                            ->over();
+                        // 后续的消息不发送给用户了.
+                        $dialog->cloner->silence(true);
+                        return $dialog->fulfill();
                     }
 
                     return $dialog

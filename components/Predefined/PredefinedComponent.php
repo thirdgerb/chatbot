@@ -69,6 +69,7 @@ class PredefinedComponent extends GhostComponent
         $this->loadPsr4MindRegister(
             $app,
             [
+                "Commune\\Components\\Predefined\\Context" => __DIR__ . '/Context',
                 "Commune\\Components\\Predefined\\Memory" => __DIR__ . '/Memory',
                 "Commune\\Components\\Predefined\\Intent" => __DIR__ . '/Intent',
                 "Commune\\Components\\Predefined\\Manager" => __DIR__ . '/Manager',
