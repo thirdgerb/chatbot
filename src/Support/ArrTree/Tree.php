@@ -22,6 +22,9 @@ class Tree implements ArrayAndJsonAble
 {
     use ArrayAbleToJson;
 
+    /**
+     * @var Branch[]
+     */
     public $branches = [];
 
     public function build(array $tree, string $rootName, string $appending = '') : Branch
