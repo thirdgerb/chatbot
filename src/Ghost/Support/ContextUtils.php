@@ -109,12 +109,6 @@ class ContextUtils
         return true;
     }
 
-    public static function isCallableClass($value) : bool
-    {
-        return is_string($value)
-            && class_exists($value)
-            && method_exists($value, '__invoke');
-    }
 
     public static function isWildcardIntentPattern(string $pattern) : bool
     {

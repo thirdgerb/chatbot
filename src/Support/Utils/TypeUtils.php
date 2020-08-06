@@ -249,4 +249,12 @@ class TypeUtils
 
         return null;
     }
+
+
+    public static function isInvokerClass($value) : bool
+    {
+        return is_string($value)
+            && class_exists($value)
+            && method_exists($value, '__invoke');
+    }
 }
