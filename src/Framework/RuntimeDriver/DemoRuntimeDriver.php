@@ -50,16 +50,16 @@ class DemoRuntimeDriver extends CachableRuntimeDriver
     ): bool
     {
         $category = $this->registry->getCategory(FileCacheOption::class);
-
         foreach ($memories as $memory) {
             /**
              * @var Memory $memory
              */
-            $id = $this->getSessionMemoriesCacheKey($clonerId, $memory->getId());
+            $id = $this->getLongTermMemoryId($clonerId, $memory->getId());
             $option = new FileCacheOption([
                 'id' => $id,
                 'serialized' => serialize($memory)
             ]);
+
             $category->save($option);
         }
 
