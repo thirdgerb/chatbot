@@ -41,8 +41,6 @@ class ORewind extends AbsFinale
             $this->setProcess($prev);
         }
         $this->runAwait($this->silent);
-        $this->cloner->noConversationState();
-
         return $this;
     }
 
