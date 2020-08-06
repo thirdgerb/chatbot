@@ -25,8 +25,8 @@ use Commune\Support\Struct\Struct;
  */
 class IConfirm extends IQuestionMsg implements Confirm
 {
-    const POSITIVE_INDEX = 1;
-    const NEGATIVE_INDEX = 0;
+    const POSITIVE_INDEX = 'y';
+    const NEGATIVE_INDEX = 'n';
 
     protected $acceptAnyTextAsValue = false;
 
