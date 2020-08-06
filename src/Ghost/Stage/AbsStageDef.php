@@ -114,7 +114,7 @@ abstract class AbsStageDef extends AbsOption implements StageDef
             $event = AliasesForStage::getOriginFromAlias($event);
             $action = AliasesForStage::getOriginFromAlias($action);
 
-            if (!is_a($dialog, $event, TRUE)) {
+            if (!$dialog->isEvent($event)) {
                 continue;
             }
 

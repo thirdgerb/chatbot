@@ -11,8 +11,18 @@
 
 namespace Commune\Ghost\Context\Traits;
 
+use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
+use Commune\Blueprint\Ghost\MindDef\MemoryDef;
+use Commune\Blueprint\Ghost\MindDef\StageDef;
+use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
+use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Context\IContext;
+use Commune\Ghost\IMindDef\IIntentDef;
+use Commune\Ghost\IMindDef\IMemoryDef;
+use Commune\Ghost\Stage\InitStage;
 use Commune\Support\Option\AbsOption;
 use Commune\Blueprint\Ghost\MindDef\AliasesForAuth;
 use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
@@ -24,14 +34,26 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 
 /**
- * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * 这个 Trait 尽量把纯定义的参数拆分出来
+ * 方便通过继承, 快速实现新的基于配置的 context def
+ *
+ * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $name
  * @property-read string $title
  * @property-read string $desc
  * @property-read string $contextWrapper
+ *
+ * @property-read int $priority
+ * @property-read string[] $queryNames
+ *
  * @property-read string[] $auth
+ *
+ * @property-read IntentMeta|null $asIntent
+ * @property-read string[] $memoryScopes
+ * @property-read array $memoryAttrs
+ *
  *
  *
  * @mixin AbsOption
@@ -39,6 +61,17 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  */
 trait ContextDefTrait
 {
+
+    /**
+     * @var MemoryDef
+     */
+    protected $_asMemoryDef;
+
+    /**
+     * @var StageDef
+     */
+    protected $_asStageDef;
+
 
     public static function validate(array $data): ? string /* errorMsg */
     {
@@ -88,6 +121,16 @@ trait ContextDefTrait
     public function auth(): array
     {
         return $this->auth;
+    }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function getQueryNames(): array
+    {
+        return $this->queryNames;
     }
 
 
@@ -146,5 +189,84 @@ trait ContextDefTrait
         $config['title'] = $meta->title;
         $config['desc'] = $meta->desc;
         return static::create($config);
+    }
+
+    /*------ memory ------*/
+
+    public function asMemoryDef() : MemoryDef
+    {
+        return $this->_asMemoryDef
+            ?? $this->_asMemoryDef = new IMemoryDef(new MemoryMeta([
+                'name' => $this->name,
+                'title' => $this->title,
+                'desc' => $this->desc,
+                'scopes' => $this->memoryScopes,
+                'attrs' => $this->memoryAttrs,
+            ]));
+    }
+
+    public function getScopes(): array
+    {
+        return $this->memoryScopes;
+    }
+
+    /*------ init stage ------*/
+
+    public function asStageDef() : StageDef
+    {
+        if (isset($this->_asStageDef)) {
+            return $this->_asStageDef;
+        }
+
+        $asIntent  = $this->getAsIntent();
+        return $this->_asStageDef = new InitStage([
+            'name' => $this->name,
+            'contextName' => $this->name,
+            'title' => $this->title,
+            'desc' => $this->desc,
+            'stageName' => '',
+            'asIntent' => $asIntent,
+        ]);
+    }
+
+    protected function getAsIntent() : IntentMeta
+    {
+        $asIntent = $this->asIntent;
+        if (!isset($asIntent)) {
+            $intentDef = new IIntentDef([
+                'name' => $this->name,
+                'title' => $this->title,
+                'desc' => $this->desc,
+                'examples' => [],
+            ]);
+
+            $asIntent = $intentDef->toMeta();
+        }
+        return $asIntent;
+    }
+
+    public function getPredefinedStageNames(bool $isFullname = false): array
+    {
+        $names = [];
+        foreach ($this->eachPredefinedStage() as $stage) {
+            /**
+             * @var StageDef $stage
+             */
+            $names[] = $isFullname
+                ? $stage->getName()
+                : $stage->getStageShortName();
+        }
+        return $names;
+    }
+
+    /*------ to context -------*/
+
+    public function wrapContext(Cloner $cloner, Ucl $ucl): Context
+    {
+        return call_user_func(
+            [$this->contextWrapper, Context::CREATE_FUNC],
+            $cloner,
+            $ucl
+        );
     }
 }

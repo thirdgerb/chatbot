@@ -11,20 +11,13 @@
 
 namespace Commune\Ghost\Context;
 
-use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Ghost\Context\Traits\ContextDefTrait;
-use Commune\Ghost\IMindDef\IIntentDef;
-use Commune\Ghost\IMindDef\IMemoryDef;
-use Commune\Ghost\Stage\InitStage;
 use Commune\Support\Option\AbsOption;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Support\Utils\ArrayUtils;
@@ -32,6 +25,7 @@ use Commune\Support\Utils\ArrayUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * ## 必要属性
  * @property-read string $name      当前配置的 ID
  * @property-read string $title     标题
  * @property-read string $desc      简介
@@ -43,28 +37,35 @@ use Commune\Support\Utils\ArrayUtils;
  *
  * ## 基础属性
  * @property-read int $priority                     语境的默认优先级
- * @property-read IntentMeta|null $asIntent
- *
- * @property-read string[] $auth                    用户权限
  * @property-read string[] $queryNames              context 请求参数键名的定义, 如果是列表则要加上 []
  *
+ * ## 意图相关
+ * @property-read IntentMeta|null $asIntent
  *
+ * ## 上下文记忆.
  * @property-read string[] $memoryScopes
- *
  * @property-read array $memoryAttrs
+ *
+ * ## 初始 stage
+ *
  * @property-read array $dependingNames
+ * @property-read null|string $ifRedirect
  *
- * @property-read null|array $comprehendPipes
  *
+ * ## 多轮规则相关
+ *
+ * @property-read string[] $auth                    用户权限
  * @property-read null|string $onCancel
  * @property-read null|string $onQuit
  *
- * @property-read null|string $ifRedirect
- *
- * @property-read string|null $firstStage
  * @property-read string[] $stageRoutes
  * @property-read string[] $contextRoutes
  *
+ * @property-read null|array $comprehendPipes
+ *
+ * ## predefined stage 预定义的 stage
+ *
+ * @property-read string|null $firstStage
  * @property-read StageMeta[] $stages
  *
  */
@@ -74,16 +75,6 @@ class IContextDef extends AbsOption implements ContextDef
     use ContextDefTrait;
 
     const IDENTITY = 'name';
-
-    /**
-     * @var MemoryDef
-     */
-    protected $_asMemoryDef;
-
-    /**
-     * @var StageDef
-     */
-    protected $_asStageDef;
 
     /**
      * @var StageMeta[]
@@ -114,8 +105,8 @@ class IContextDef extends AbsOption implements ContextDef
             // context 实例的封装类.
             'contextWrapper' => '',
 
-            // context 作为意图的默认配置. 可以被覆盖.
-            'asIntent' => IntentMeta::stub(),
+            // context 作为意图的默认配置.
+            'asIntent' => null,
 
             // 定义 context 上下文记忆的作用域.
             // 相关作用域参数, 会自动添加到 query 参数中.
@@ -183,12 +174,6 @@ class IContextDef extends AbsOption implements ContextDef
 
     /*------ properties -------*/
 
-
-    public function getPriority(): int
-    {
-        return $this->priority;
-    }
-
     public function onCancelStage(): ? string
     {
         return $this->onCancel;
@@ -209,80 +194,19 @@ class IContextDef extends AbsOption implements ContextDef
         return $this->contextRoutes;
     }
 
-    public function getScopes(): array
-    {
-        return $this->memoryScopes;
-    }
 
     public function getDependingNames(): array
     {
         return $this->dependingNames;
     }
 
-    public function getQueryNames(): array
-    {
-        return $this->queryNames;
-    }
 
     public function comprehendPipes(Dialog $current): ? array
     {
         return $this->comprehendPipes;
     }
 
-    public function firstStage(): ? string
-    {
-        return $this->firstStage;
-    }
 
-    /*------ relations -------*/
-
-    public function asMemoryDef() : MemoryDef
-    {
-        return $this->_asMemoryDef
-            ?? $this->_asMemoryDef = new IMemoryDef(new MemoryMeta([
-                'name' => $this->name,
-                'title' => $this->title,
-                'desc' => $this->desc,
-                'scopes' => $this->memoryScopes,
-                'attrs' => $this->memoryAttrs,
-            ]));
-    }
-
-    public function asStageDef() : StageDef
-    {
-        $asIntent = $this->asIntent;
-        if (!isset($asIntent)) {
-            $intentDef = new IIntentDef([
-                'name' => $this->name,
-                'title' => $this->title,
-                'desc' => $this->desc,
-                'examples' => [],
-            ]);
-
-            $asIntent = $intentDef->toMeta();
-        }
-        return $this->_asStageDef
-            ?? $this->_asStageDef = new InitStage([
-                'name' => $this->name,
-                'contextName' => $this->name,
-                'title' => $this->title,
-                'desc' => $this->desc,
-                'stageName' => '',
-                'asIntent' => $asIntent,
-            ]);
-    }
-
-
-    /*------ to context -------*/
-
-    public function wrapContext(Cloner $cloner, Ucl $ucl): Context
-    {
-        return call_user_func(
-            [$this->contextWrapper, Context::CREATE_FUNC],
-            $cloner,
-            $ucl
-        );
-    }
 
     /*------ redirect -------*/
 
@@ -302,27 +226,18 @@ class IContextDef extends AbsOption implements ContextDef
 
     /*------ stages -------*/
 
+    public function firstStage(): ? string
+    {
+        return $this->firstStage;
+    }
+
+
     public function eachPredefinedStage(): \Generator
     {
         foreach ($this->getStageMetaMap() as $stageMeta) {
             yield $stageMeta->toWrapper();
         }
     }
-
-    public function getPredefinedStageNames(bool $isFullname = false): array
-    {
-        return array_map(
-            function(StageMeta $meta) use ($isFullname) {
-                if ($isFullname) {
-                    return $meta->name;
-                }
-
-                return $meta->stageName;
-            },
-            $this->stages
-        );
-    }
-
 
     /**
      * @return StageMeta[]
