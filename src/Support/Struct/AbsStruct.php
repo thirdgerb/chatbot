@@ -279,7 +279,7 @@ abstract class AbsStruct implements Struct, ArrayAccess, \Serializable
     public function __destruct()
     {
         // 防止不回收垃圾.
-        $this->_data = [];
+        unset($this->_data);
     }
 
     public function serialize()

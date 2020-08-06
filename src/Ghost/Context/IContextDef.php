@@ -14,8 +14,6 @@ namespace Commune\Ghost\Context;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\MindDef\AliasesForAuth;
-use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
@@ -23,16 +21,11 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Ghost\MindMeta\MemoryMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
+use Commune\Ghost\Context\Traits\ContextDefTrait;
 use Commune\Ghost\IMindDef\IMemoryDef;
 use Commune\Ghost\Stage\InitStage;
-use Commune\Ghost\Support\ContextUtils;
-use Commune\Support\Alias\AbsAliases;
 use Commune\Support\Option\AbsOption;
-use Commune\Support\Option\Meta;
-use Commune\Support\Option\Wrapper;
-use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Support\Utils\ArrayUtils;
 
 /**
@@ -76,6 +69,7 @@ use Commune\Support\Utils\ArrayUtils;
  */
 class IContextDef extends AbsOption implements ContextDef
 {
+    use ContextDefTrait;
 
     /**
      * @var MemoryDef
@@ -182,91 +176,6 @@ class IContextDef extends AbsOption implements ContextDef
         parent::fill($data);
     }
 
-    public static function validate(array $data): ? string /* errorMsg */
-    {
-        $name = $data['name'] ?? '';
-
-        if (!ContextUtils::isValidContextName($name)) {
-            return "contextName $name is invalid";
-        }
-
-        return parent::validate($data);
-    }
-
-    public function __get_contextWrapper() : string
-    {
-        $wrapper = $this->_data['contextWrapper'] ?? '';
-        $wrapper = empty($wrapper)
-            ? IContext::class
-            : $wrapper;
-
-        return AliasesForContext::getOriginFromAlias($wrapper);
-    }
-
-    public function __set_contextWrapper($name, $value) : void
-    {
-        $this->_data[$name] = AliasesForContext::getAliasOfOrigin($value);
-    }
-
-    public function __set_auth($name, $value) : void
-    {
-        $this->_data[$name] = array_map(
-            [AliasesForAuth::class, AliasesForAuth::FUNC_GET_ALIAS],
-            $value
-        );
-
-    }
-
-    public function __get_auth() : array
-    {
-        $auth = $this->_data['auth'] ?? [];
-        return array_map(
-            [AliasesForAuth::class, AliasesForAuth::FUNC_GET_ORIGIN],
-            $auth
-        );
-    }
-
-    /*------ wrap -------*/
-
-    /**
-     * @return ContextMeta
-     */
-    public function toMeta(): Meta
-    {
-        $config = $this->toArray();
-        unset($config['name']);
-        unset($config['title']);
-        unset($config['desc']);
-
-        return new ContextMeta([
-            'name' => $this->name,
-            'title' => $this->title,
-            'desc' => $this->desc,
-            'wrapper' => static::class,
-            'config' => $config
-        ]);
-    }
-
-    /**
-     * @param Meta $meta
-     * @return Wrapper
-     */
-    public static function wrapMeta(Meta $meta): Wrapper
-    {
-        if (!$meta instanceof ContextMeta) {
-            throw new InvalidArgumentException(
-                __METHOD__
-                . ' only accept meta of subclass ' . ContextMeta::class
-            );
-        }
-
-        $config = $meta->config;
-        $config['name'] = $meta->name;
-        $config['title'] = $meta->title;
-        $config['desc'] = $meta->desc;
-        return new static($config);
-    }
-
     /*------ properties -------*/
 
     public function getName(): string
@@ -335,6 +244,10 @@ class IContextDef extends AbsOption implements ContextDef
         return $this->comprehendPipes;
     }
 
+    public function firstStage(): ? string
+    {
+        return $this->firstStage;
+    }
 
     /*------ relations -------*/
 
@@ -441,15 +354,13 @@ class IContextDef extends AbsOption implements ContextDef
     }
 
 
-    public function firstStage(): ? string
-    {
-        return $this->firstStage;
-    }
-
     public function __destruct()
     {
-        $this->_asMemoryDef = null;
-        $this->_asStageDef = null;
+        unset(
+            $this->_asMemoryDef,
+            $this->_asStageDef,
+            $this->_stageMetaMap
+        );
         parent::__destruct();
     }
 
