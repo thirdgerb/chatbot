@@ -134,7 +134,6 @@ class PlayMaze extends ACodeContext
                 'y' => Manager::BORN_LOCATION[0],
                 'x' => Manager::BORN_LOCATION[1],
                 'items' => [],
-                'toward' => null,
                 'score' => null,
             ],
             'stageRoutes' => [

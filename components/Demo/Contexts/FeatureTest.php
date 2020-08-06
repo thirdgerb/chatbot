@@ -333,8 +333,8 @@ EOF
                         return $dialog->reactivate();
 
                     })
-                    ->isChoice('a')
-                    ->is('sandbox')
+                        ->isChoice('a')
+                        ->is('sandbox')
 
                     ->then()
 
@@ -400,7 +400,7 @@ EOF
                     })
                     ->end(function(Dialog $dialog){
                         return $dialog->send()
-                            ->notice('nether yes nor no')
+                            ->notice('nether positive nor negative')
                             ->info($dialog->cloner->comprehension->toPrettyJson())
                             ->over()
                             ->next('start');
