@@ -20,11 +20,15 @@ use Commune\Blueprint\Framework\Auth\Authority;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Contracts\Cache;
+use Commune\Contracts\Messenger\Broadcaster;
+use Commune\Contracts\Messenger\MessageDB;
 use Commune\Contracts\Trans\SelfTranslatable;
 use Commune\Contracts\Trans\Translator;
 use Commune\Framework\ASession;
 use Commune\Ghost\IOperate\OStart;
+use Commune\Message\Intercom\IOutputMsg;
 use Commune\Protocals\Comprehension;
+use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\OutputMsg;
 use Psr\Log\LoggerInterface;
 use Commune\Protocals\Intercom\InputMsg;
@@ -382,6 +386,70 @@ class ICloner extends ASession implements Cloner
     public function silence(bool $silent = true): void
     {
         $this->silent = $silent;
+    }
+
+    public function broadcast(
+        string $eventGroup,
+        string $eventName,
+        ? string $creatorId,
+        ? string $creatorName,
+        HostMsg $message,
+        HostMsg ...$messages
+    ) : void
+    {
+        $creatorId = $creatorId ?? $this->avatar->getId();
+        $creatorName = $creatorName ?? $this->avatar->getName();
+
+        $traceId = $this->getTraceId();
+        $batchId = $this->createUuId();
+        $output = IOutputMsg::instance(
+            $message,
+            $eventName,
+            $batchId,
+            $creatorId,
+            $creatorName,
+            '',
+            null,
+           $eventGroup
+        );
+
+        $outputs = [];
+        foreach ($messages as $msg) {
+            $outputs[] = IOutputMsg::instance(
+                $msg,
+                $eventName,
+                $batchId,
+                $creatorId,
+                $creatorName,
+                '',
+                null,
+                $eventGroup
+            );
+        }
+        /**
+         * @var MessageDB $messageDB
+         */
+        $messageDB = $this->container->make(MessageDB::class);
+        $messageDB->recordMessages(
+            $traceId,
+            $this->scene->fromApp,
+            $this->scene->fromSession,
+            $output,
+            ...$outputs
+        );
+
+        /**
+         * @var Broadcaster $broadcaster
+         */
+        $broadcaster = $this->container->make(Broadcaster::class);
+        $broadcaster->publishBatchInfo(
+            $eventGroup,
+            $eventName,
+            $batchId,
+            $traceId,
+            $creatorId,
+            $creatorName
+        );
     }
 
 

@@ -19,8 +19,10 @@ use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Framework\Auth\Authority;
+use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Kernel\ClonePipes\CloneLockerPipe;
 use Commune\Protocals\Comprehension;
+use Commune\Protocals\HostMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Protocals\Intercom\OutputMsg;
 use Commune\Protocals\IntercomMsg;
@@ -180,6 +182,34 @@ interface Cloner extends Session
     public function getAsyncDeliveries() : array;
 
 
+    /**
+     * 基于 broadcaster 的广播机制.
+     * 可以把一组消息作为事件来进行广播.
+     *
+     * Shells 可以根据自己业务形态来决定是否监听它.
+     * 详见 @see Broadcaster
+     *
+     * 如果把 ShellId 作为 EventGroup
+     * 把 ShellSessionId 作为 EventName 来广播,
+     * 则可以把消息投递给指定 shell 的指定 session.
+     *
+     * 用这种策略可以把机器人作为一个云端通知工具, 将收到的消息推送给指定的客户端.
+     *
+     * @param string $eventGroup
+     * @param string $eventName
+     * @param string|null $creatorId            默认 avatar id
+     * @param string|null $creatorName          默认 avatar name
+     * @param HostMsg $message
+     * @param HostMsg ...$messages
+     */
+    public function broadcast(
+        string $eventGroup,
+        string $eventName,
+        ? string $creatorId,
+        ? string $creatorName,
+        HostMsg $message,
+        HostMsg ...$messages
+    ) : void;
 
     /*----- clone locker -----*/
 
