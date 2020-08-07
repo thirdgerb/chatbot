@@ -100,7 +100,7 @@ class ContextUtils
 
     public static function isValidIntentName(string $str) : bool
     {
-        $pattern = '/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]+)*(\.[a-z][a-z_0-9]+){0,1}$/';
+        $pattern = '/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)*(\.[a-z][a-z_0-9]*){0,1}$/';
         return (bool) preg_match($pattern, $str);
     }
 
