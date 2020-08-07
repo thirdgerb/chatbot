@@ -20,9 +20,13 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Dialog\IReceive;
 use Commune\Ghost\IOperate\OExiting\OCancel;
 use Commune\Ghost\IOperate\OExiting\OFulfill;
+use Commune\Ghost\Support\ContextUtils;
+use Commune\Protocals\Abstracted\Answer;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
+use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 use Commune\Protocals\HostMsg\ConvoMsg;
 use Commune\Protocals\Intercom\InputMsg;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -85,13 +89,22 @@ class OStart extends AbsOperator
         // 如果不是影响对话状态的 convo msg,
         // 则全部由 await ucl 来处理. 不走任何理解和路由.
         $operator = $operator ?? $this->isNotConvoMsgCall($input);
+
+        // 问题匹配. 由于问题里通常是简单的匹配规则, 因此优先级高于 comprehend pipe.
+        $operator = $operator ?? $this->parseByQuestion();
+
         // 以下是语义相关的环节.
         // 通过管道试图理解消息, 将理解结果保留在 comprehension 中.
         $operator = $operator ?? $this->runComprehendPipes($input);
-        // 问题匹配
-        $operator = $operator ?? $this->checkQuestion();
+
         // 检查是否命中了路由.
-        $operator = $operator  ?? $this->checkAwaitRoutes();
+        // 命中了的话会直接 redirect 走, 那么 answer 也不重要了.
+        $operator = $operator ?? $this->checkAwaitRoutes();
+
+        // 根据意图匹配的结果, 再对 question 进行一次检查.
+        $operator = $operator ?? $this->recheckQuestion();
+
+
         // 进行 listen 的逻辑.
         $operator = $operator ?? $this->heed();
 
@@ -238,42 +251,70 @@ class OStart extends AbsOperator
 
     protected function runComprehendPipes(InputMsg $input) : ? Operator
     {
-//
-//        $awaitUcl = $this->start;
-//        $contextDef = $awaitUcl->findContextDef($this->cloner);
-//
-//        $pipes = $contextDef->comprehendPipes($this->dialog);
-//
-//        if (is_null($pipes)) {
-//            return $this->runGhostComprehendPipes($input);
-//        }
-//
-//        $this->runComprehendPipeline($input, $pipes);
+
+        $awaitUcl = $this->start;
+        $contextDef = $awaitUcl->findContextDef($this->cloner);
+
+        $pipes = $contextDef->getStrategy($this->dialog)->comprehendPipes;
+        $pipes = $pipes ?? $this->cloner->config->comprehensionPipes;
+        $this->runComprehendPipeline($pipes);
         return null;
     }
 
-    protected function checkQuestion() : ? Operator
+    protected function parseByQuestion() : ? Operator
     {
         $question = $this->process->getAwaitQuestion();
         if (empty($question)) {
             return null;
         }
-
-        $question->parse($this->cloner);
-
-        return null;
+        $answer = $question->parse($this->cloner);
+        return $this->checkAnswer($answer);
     }
 
-    protected function runGhostComprehendPipes(InputMsg $input) : ? Operator
+    protected function recheckQuestion() : ? Operator
     {
-        return null;
-//        $pipes = $this->cloner->ghost->getConfig()->comprehensionPipes;
-//        $this->runComprehendPipeline($input, $pipes);
-//        return null;
+        $question = $this->process->getAwaitQuestion();
+        if (empty($question)) {
+            return null;
+        }
+        $answer = $question->match($this->cloner);
+        return $this->checkAnswer($answer);
     }
 
-    // todo 也许不用管道来做.
-    protected function runComprehendPipeline(InputMsg $input, array $pipes) : void
+    protected function checkAnswer(? AnswerMsg $answer) : ? Operator
+    {
+        if (empty($answer)) {
+            return null;
+        }
+
+        $comprehension = $this->cloner->comprehension;
+        $comprehension->answer->setAnswer($answer);
+        $comprehension->handled(
+            Answer::class,
+            __METHOD__,
+            true
+        );
+
+        // 如果命中了路由, 直接跳过后面的流程, 加快响应速度.
+        $route = $answer->getRoute();
+        if (isset($route)) {
+            return $this->dialog->redirectTo(Ucl::decode($route));
+        }
+
+        return null;
+    }
+
+    /**
+     * 用管道来做意图理解.
+     * 管道是一种串联的工具
+     *
+     * 当要调用多种 comprehender 工具, 例如 全文搜索/图片/分类/意图识别/实体提取 时,
+     * 还应该有并联的调用, 在 swoole 里可以用协程来实现并发调用.
+     * 这种并联调用规则就可以写到同一个 pipe 里.
+     *
+     * @param array $pipes
+     */
+    protected function runComprehendPipeline(array $pipes) : void
     {
         if (empty($pipes)) {
             return;
@@ -294,8 +335,7 @@ class OStart extends AbsOperator
 
     protected function checkAwaitRoutes() : ? Operator
     {
-        $routes = $this->process->getAwaitRoutes();
-
+        $routes = $this->cloner->runtime->getCurrentAwaitRoutes();
         if (empty($routes)) {
             return null;
         }
@@ -307,24 +347,35 @@ class OStart extends AbsOperator
             : null;
     }
 
-    protected function matchStageRoutes(Ucl $current, array $stages = []) : ? Ucl
+    protected function matchAwaitRoutes(Ucl ...$routes) : ? Ucl
     {
-        $matcher = $this->cloner->matcher->refresh();
-        foreach ($stages as $stage) {
-            $stageName = $current->getStageFullname($stage);
-            if ($matcher->matchStage($stageName)->truly()) {
-                return $current->goStage($stage);
+
+        $matched = $this->cloner
+            ->comprehension
+            ->intention
+            ->getMatchedIntent();
+
+        // 如果有 matched, 先用 matched 搜一遍.
+        // 绝大多数拥有匹配意图的情况在这个环节就可以结束了.
+        if (!empty($matched)) {
+            foreach ($routes as $route) {
+                $fullname = $route->getStageFullname();
+                if ($matched === $fullname) {
+                    return $route;
+                }
+
+                if (
+                    ContextUtils::isWildcardIntentPattern($fullname)
+                    && ContextUtils::wildcardIntentMatch($fullname, $matched)
+                ) {
+                    return $route;
+                }
             }
         }
 
-        return null;
-    }
-
-    protected function matchAwaitRoutes(Ucl ...$contexts) : ? Ucl
-    {
+        // 不行只好走逐个匹配的流程. 效率就比较差了.
         $matcher = $this->cloner->matcher->refresh();
-
-        foreach ($contexts as $ucl) {
+        foreach ($routes as $ucl) {
             // 这个 ucl 可能是假的, 用了通配符
             $fullname = $ucl->getStageFullname();
             if ($matcher->matchStage($fullname)->truly()) {

@@ -30,7 +30,11 @@ abstract class AbsRedirect extends AbsOperator
         $cloner = $this->dialog->cloner;
 
         // 权限校验.
-        $auth = $target->findContextDef($cloner)->auth();
+        $auth = $target
+            ->findContextDef($cloner)
+            ->getStrategy($this->dialog)
+            ->auth;
+
         if (!empty($auth)) {
             foreach ($auth as $ability) {
                 if (!$cloner->auth->allow($ability)) {
@@ -41,7 +45,8 @@ abstract class AbsRedirect extends AbsOperator
                             $target->contextName,
                             $ability
                         ))
-                        ->over()->rewind();
+                        ->over()
+                        ->rewind();
                 }
             }
         }

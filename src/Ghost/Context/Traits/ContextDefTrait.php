@@ -13,7 +13,9 @@ namespace Commune\Ghost\Context\Traits;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
+use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
+use Commune\Blueprint\Ghost\MindDef\ContextStrategyOption;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
@@ -48,11 +50,11 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  * @property-read int $priority
  * @property-read string[] $queryNames
  *
- * @property-read string[] $auth
- *
  * @property-read IntentMeta|null $asIntent
  * @property-read string[] $memoryScopes
  * @property-read array $memoryAttrs
+ *
+ * @property-read ContextStrategyOption $strategy
  *
  *
  *
@@ -99,29 +101,6 @@ trait ContextDefTrait
         $this->_data[$name] = AliasesForContext::getAliasOfOrigin($value);
     }
 
-    public function __set_auth($name, $value) : void
-    {
-        $this->_data[$name] = array_map(
-            [AliasesForAuth::class, AliasesForAuth::FUNC_GET_ALIAS],
-            $value
-        );
-
-    }
-
-    public function __get_auth() : array
-    {
-        $auth = $this->_data['auth'] ?? [];
-        return array_map(
-            [AliasesForAuth::class, AliasesForAuth::FUNC_GET_ORIGIN],
-            $auth
-        );
-    }
-
-
-    public function auth(): array
-    {
-        return $this->auth;
-    }
 
     public function getPriority(): int
     {
@@ -257,6 +236,12 @@ trait ContextDefTrait
                 : $stage->getStageShortName();
         }
         return $names;
+    }
+
+
+    public function getStrategy(Dialog $current): ContextStrategyOption
+    {
+        return $this->strategy;
     }
 
     /*------ to context -------*/

@@ -189,9 +189,13 @@ interface Dialog
      * 不会继续尝试 Wake 其它对话.
      *
      * @param bool $silent
+     * @param callable||null $fallbackStrategy
      * @return Operator
      */
-    public function confuse(bool $silent = false) : Operator;
+    public function confuse(
+        bool $silent = false,
+        $fallbackStrategy = null
+    ) : Operator;
 
     /*------ staging ------*/
 

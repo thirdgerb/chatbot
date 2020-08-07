@@ -90,7 +90,7 @@ class GhostProtoConfig extends IGhostConfig
                 GhostCmd\Super\ProcessCmd::class,
                 GhostCmd\Super\IntentCmd::class,
                 GhostCmd\Super\RedirectCmd::class,
-                GhostCmd\Super\EnvCmd::class,
+                GhostCmd\Super\SceneCmd::class,
             ],
 
             'comprehensionPipes' => [
@@ -110,6 +110,7 @@ class GhostProtoConfig extends IGhostConfig
             'defaultContextName' => Components\Demo\Contexts\DemoHome::genUcl()->encode(),
             'sceneContextNames' => [
             ],
+            'defaultHeedFallback' => null,
             'globalContextRoutes' => [
                 Navigation\CancelInt::genUcl()->encode(),
                 Navigation\RepeatInt::genUcl()->encode(),

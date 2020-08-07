@@ -151,9 +151,9 @@ abstract class AbsDialog extends AbsBaseDialog
         return new OExiting\OFulfill($this, $gcTurns, $restoreStage);
     }
 
-    public function confuse(bool $silent = false): Operator
+    public function confuse(bool $silent = false, $fallbackStrategy = null): Operator
     {
-        return new OExiting\OConfuse($this, $silent);
+        return new OExiting\OConfuse($this, $silent, $fallbackStrategy);
     }
 
 

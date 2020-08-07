@@ -33,17 +33,6 @@ interface ContextDef extends Def
      */
     public function getPriority() : int;
 
-    /**
-     * @param Dialog $current
-     * @return array|null
-     */
-    public function comprehendPipes(Dialog $current) : ? array;
-
-    /**
-     * @return string[]
-     */
-    public function auth() : array;
-
     /*------- properties -------*/
 
     /**
@@ -109,30 +98,18 @@ interface ContextDef extends Def
     public function firstStage() : ? string;
 
     /**
-     * @return null|string
+     * 语境相关的默认多轮对话策略.
+     *
+     * @param Dialog $current
+     * @return ContextStrategyOption
      */
-    public function onCancelStage() : ? string;
-
-    /**
-     * @return null|string
-     */
-    public function onQuitStage() : ? string;
-
-    /**
-     * @return array
-     */
-    public function commonStageRoutes() : array;
-
-    /**
-     * @return array
-     */
-    public function commonContextRoutes() : array;
+    public function getStrategy(Dialog $current) : ContextStrategyOption;
 
     /*------- stage -------*/
 
 
     /**
-     * @return StageDef[]
+     * @return StageDef[]|\Generator
      */
     public function eachPredefinedStage() : \Generator;
 

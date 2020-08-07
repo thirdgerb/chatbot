@@ -36,10 +36,19 @@ class OConfuse extends AbsOperator
      */
     protected $silent;
 
-    public function __construct(Dialog $dialog, bool $silent)
+    protected $fallbackStrategy;
+
+    /**
+     * OConfuse constructor.
+     * @param Dialog $dialog
+     * @param bool $silent
+     * @param callable|string|null $fallbackStrategy
+     */
+    public function __construct(Dialog $dialog, bool $silent, ? $fallbackStrategy)
     {
         $this->cloner = $dialog->cloner;
         $this->silent = $silent;
+        $this->fallbackStrategy = $fallbackStrategy;
         parent::__construct($dialog);
     }
 
@@ -56,7 +65,7 @@ class OConfuse extends AbsOperator
             // 是否有可以 restore 的路由
             ?? $this->tryToRestoreDying($process)
             // 是否有默认的理解程序
-            ?? $this->tryDefaultConfuseAction()
+            ?? $this->tryFallbackStrategy()
             // 默认的回复.
             ?? $this->reallyConfuse();
 
@@ -82,9 +91,24 @@ class OConfuse extends AbsOperator
         return null;
     }
 
-    protected function tryDefaultConfuseAction() : ? Operator
+    protected function tryFallbackStrategy() : ? Operator
     {
-        $action = $this->cloner->config->confuseHandler;
+        if (isset($this->fallbackStrategy)) {
+            $strategy = $this->fallbackStrategy;
+            return $this->dialog->container()->call($strategy);
+        }
+
+        $strategy = $this->dialog
+            ->ucl
+            ->findContextDef($this->cloner)
+            ->getStrategy($this->dialog)
+            ->heedfallbackStrategy;
+
+        if (isset($contextFallback)) {
+            return $this->dialog->container()->call($strategy);
+        }
+
+        $strategy = $this->cloner->config->defaultHeedFallback;
         if (isset($action)) {
             return $this->dialog->container()->call($action);
         }

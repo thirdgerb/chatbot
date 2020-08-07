@@ -70,11 +70,9 @@ class InitStage extends AbsStageDef
 
         $task = $dialog->task;
 
-        $ifCancel = $contextDef->onCancelStage();
-        $task->onCancel($ifCancel);
-
-        $ifQuit = $contextDef->onQuitStage();
-        $task->onQuit($ifQuit);
+        $strategy = $contextDef->getStrategy($dialog);
+        $task->onCancel($strategy->onCancel);
+        $task->onQuit($strategy->onQuit);
 
         // 如果 next 不存在, 直接 fulfill
         return $dialog->next($next);

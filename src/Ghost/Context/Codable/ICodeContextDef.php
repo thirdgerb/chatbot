@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\Context\CodeContext;
 use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
+use Commune\Blueprint\Ghost\MindDef\ContextStrategyOption;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
@@ -51,14 +52,7 @@ use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
  *
  * @property-read array $dependingNames
  *
- * @property-read null|array $comprehendPipes
- *
- * @property-read null|string $onCancel
- * @property-read null|string $onQuit
- *
- * @property-read string|null $firstStage
- * @property-read string[] $stageRoutes
- * @property-read string[] $contextRoutes
+ * @property-read ContextStrategyOption $strategy
  *
  */
 class ICodeContextDef extends AbsOption implements  ContextDef
@@ -119,7 +113,6 @@ class ICodeContextDef extends AbsOption implements  ContextDef
             'desc' => isset($meta) ? $meta->desc : $contextAnnotation->desc,
 
             'priority' => $config['priority'] ?? $option->priority,
-            'auth' => $config['auth'] ?? $option->auth,
 
             'queryNames' => $config['queryNames'] ?? $option->queryNames,
 
@@ -130,20 +123,27 @@ class ICodeContextDef extends AbsOption implements  ContextDef
 
             'dependingNames' => $config['dependingNames'] ?? array_keys($this->_depending->attrs),
 
-            'comprehendPipes' => $config['comprehendPipes'] ?? $option->comprehendPipes,
 
-            'onCancel' => $config['onCancel'] ?? $option->onCancel,
-            'onQuit' => $config['onQuit'] ?? $option->onQuit,
+            'strategy' => [
+                'auth' => $config['auth'] ?? $option->auth,
+                'comprehendPipes' => $config['comprehendPipes'] ?? $option->comprehendPipes,
 
-            'stageRoutes' => $config['stageRoutes'] ?? $option->stageRoutes,
-            'contextRoutes' => $config['contextRoutes'] ?? $option->contextRoutes,
+                'onCancel' => $config['onCancel'] ?? $option->onCancel,
+                'onQuit' => $config['onQuit'] ?? $option->onQuit,
+
+                'stageRoutes' => $config['stageRoutes'] ?? $option->stageRoutes,
+                'contextRoutes' => $config['contextRoutes'] ?? $option->contextRoutes,
+            ],
+
         ]);
         unset($creator);
     }
 
     public static function relations(): array
     {
-        return [];
+        return [
+            'strategy' => ContextStrategyOption::class,
+        ];
     }
 
 
@@ -158,9 +158,6 @@ class ICodeContextDef extends AbsOption implements  ContextDef
             'desc' => '',
             // context 的优先级. 若干个语境在 blocking 状态中, 根据优先级决定谁先恢复.
             'priority' => 0,
-
-            // auth, 访问时用户必须拥有的权限. 用类名表示.
-            'auth' => [],
 
             // context 的默认参数名, 类似 url 的 query 参数.
             // query 参数值默认是字符串.
@@ -179,12 +176,9 @@ class ICodeContextDef extends AbsOption implements  ContextDef
             // Context 启动时, 会依次检查的参数. 当这些参数都不是 null 时, 认为 Context::isPrepared
             'dependingNames' => [],
 
-            'comprehendPipes' => null,
+            'strategy' => [
 
-            'onCancel' => null,
-            'onQuit' => null,
-            'stageRoutes' => [],
-            'contextRoutes' => [],
+            ],
         ];
     }
 
@@ -297,32 +291,6 @@ class ICodeContextDef extends AbsOption implements  ContextDef
         return $this->priority;
     }
 
-    public function onCancelStage(): ? string
-    {
-        return $this->onCancel;
-    }
-
-    public function auth(): array
-    {
-        return $this->auth;
-    }
-
-
-    public function onQuitStage(): ? string
-    {
-        return $this->onQuit;
-    }
-
-    public function commonStageRoutes(): array
-    {
-        return $this->stageRoutes;
-    }
-
-    public function commonContextRoutes(): array
-    {
-        return $this->contextRoutes;
-    }
-
     public function getScopes(): array
     {
         return $this->memoryScopes;
@@ -338,11 +306,6 @@ class ICodeContextDef extends AbsOption implements  ContextDef
         return $this->queryNames;
     }
 
-    public function comprehendPipes(Dialog $current): ? array
-    {
-        return $this->comprehendPipes;
-    }
-
     /**
      * @return null|string
      */
@@ -350,6 +313,12 @@ class ICodeContextDef extends AbsOption implements  ContextDef
     {
         return CodeContext::FIRST_STAGE;
     }
+
+    public function getStrategy(Dialog $current): ContextStrategyOption
+    {
+        return $this->strategy;
+    }
+
 
     /*-------- meta wrap --------*/
 

@@ -85,13 +85,14 @@ class OAwait extends AbsFinale implements Await
 
         // todo routes with stage routes
         $config = $this->cloner->config;
+
+        $strategy = $contextDef->getStrategy($this->dialog);
         $this->routes = array_merge(
             $this->routes,
-            $this->wrapStage($contextDef->commonStageRoutes()),
+            $this->wrapStage($strategy->stageRoutes),
             $this->wrapStage($stageRoutes),
-            $this->wrapUcl($contextDef->commonContextRoutes()),
-            $this->wrapUcl($contextRoutes),
-            $this->wrapUcl($config->globalContextRoutes ?? [])
+            $this->wrapUcl($strategy->contextRoutes),
+            $this->wrapUcl($contextRoutes)
         );
     }
 

@@ -93,14 +93,14 @@ class IContextDef extends AbsOption implements ContextDef
             // context 的优先级. 若干个语境在 blocking 状态中, 根据优先级决定谁先恢复.
             'priority' => 0,
 
-            // auth, 访问时用户必须拥有的权限. 用类名表示.
-            'auth' => [],
-
             // context 的默认参数名, 类似 url 的 query 参数.
             // query 参数值默认是字符串.
             // query 参数如果是数组, 则定义参数名时应该用 [] 做后缀, 例如 ['key1', 'key2', 'key3[]']
             'queryNames' => [],
 
+            'strategy' => [
+
+            ],
 
             // context 实例的封装类.
             'contextWrapper' => '',
@@ -174,39 +174,10 @@ class IContextDef extends AbsOption implements ContextDef
 
     /*------ properties -------*/
 
-    public function onCancelStage(): ? string
-    {
-        return $this->onCancel;
-    }
-
-    public function onQuitStage(): ? string
-    {
-        return $this->onQuit;
-    }
-
-    public function commonStageRoutes(): array
-    {
-        return $this->stageRoutes;
-    }
-
-    public function commonContextRoutes(): array
-    {
-        return $this->contextRoutes;
-    }
-
-
     public function getDependingNames(): array
     {
         return $this->dependingNames;
     }
-
-
-    public function comprehendPipes(Dialog $current): ? array
-    {
-        return $this->comprehendPipes;
-    }
-
-
 
     /*------ redirect -------*/
 

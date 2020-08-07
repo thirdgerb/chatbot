@@ -148,15 +148,13 @@ class IHearing extends IMatcher implements Hearing
     }
 
 
-    public function end($action = null) : Operator
+    public function end($fallbackStrategy = null) : Operator
     {
         $this->then();
 
         if (isset($this->nextOperator)) {
             return $this->finale();
         }
-
-        $this->lastFallback = $action;
 
         if (!empty($this->fallback)) {
             foreach ($this->fallback as $fallback) {
@@ -178,16 +176,14 @@ class IHearing extends IMatcher implements Hearing
             return $this->finale();
         }
 
-        if (isset($this->lastFallback)) {
-            $this->nextOperator = $this->call($this->lastFallback);
-        }
-
-        return $this->finale();
+        return $this->finale($fallbackStrategy);
     }
 
-    protected function finale() : ? Operator
+    protected function finale($fallbackStrategy = null) : ? Operator
     {
-        $next = $this->nextOperator ?? $this->dialog->confuse();
+        $next = $this->nextOperator
+            ?? $this->dialog->confuse(false, $fallbackStrategy);
+
         unset(
             $this->faker,
             $this->dialog,
