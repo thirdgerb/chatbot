@@ -282,12 +282,14 @@ class ICodeContextDef extends AbsOption implements  ContextDef
 
     public function getTitle(): string
     {
-        return $this->title;
+        $title = $this->title;
+        return empty($title) ? $this->getName() : $title;
     }
 
     public function getDescription(): string
     {
-        return $this->desc;
+        $desc = $this->desc;
+        return empty($desc) ? $this->getName() : $desc;
     }
 
     public function getPriority(): int
