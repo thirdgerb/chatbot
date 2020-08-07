@@ -14,7 +14,6 @@ namespace Commune\Shell\Render;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Shell\Render\Renderer;
-use Commune\Contracts\Trans\Translator;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Host\IIntentMsg;
 use Commune\Message\Host\SystemInt\DialogConfuseInt;
@@ -90,7 +89,7 @@ class ConfuseRenderer implements Renderer
         );
 
         return [
-            IText::instance($text)
+            IText::instance($text, $message->getLevel())
         ];
     }
 

@@ -1,6 +1,9 @@
 <?php
 
 use Commune\Components\Predefined\Join\JoinLang;
+use Commune\Shell\Render\StageEventRenderer;
+use Commune\Protocals\HostMsg\DefaultIntents;
+
 
 return [
 
@@ -24,8 +27,6 @@ return [
 
         'dialog' => [
             'yield' => "任务在等待中",
-            'confuse' => "意图无法理解",
-            'unable' => "语境 [{await}] 目前无法响应 [{matched}] 意图.",
             'require' => "请输入 {attrName} :",
             'forbid' => "无权限访问当前功能",
             'yes' => '是',
@@ -54,5 +55,22 @@ return [
     JoinLang::REPLY_PROVED => '得到通知, 加入会话申请得到通过. 接下来双方会话会同步.',
     JoinLang::REPLY_REJECTED => '得到通知, 加入会话申请被拒绝.',
 
+
+    DefaultIntents::SYSTEM_DIALOG_CONFUSE => '意图无法理解',
+    DefaultIntents::SYSTEM_DIALOG_UNABLE => "语境 [{await}] 目前无法响应 [{matched}] 意图.",
+    // 可以再根据 await, 当前 stage, 定义 stage 独特的 confuse 话术.
+    DefaultIntents::SYSTEM_DIALOG_UNABLE => [
+        'some_stage_fullname' => 'special reply',
+    ],
+
+
+    StageEventRenderer::PREFIX => [
+        // 退出事件默认的回复
+        DefaultIntents::GUEST_NAVIGATE_CANCEL => '退出当前语境',
+        // 退出事件根据 stage name 再定义回复.
+        DefaultIntents::GUEST_NAVIGATE_CANCEL => [
+            'some_stage_fullname' => 'special reply',
+        ],
+    ],
 ];
 

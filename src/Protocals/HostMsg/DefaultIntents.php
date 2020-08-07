@@ -45,6 +45,8 @@ interface DefaultIntents
     const SYSTEM_DIALOG_CONFUSE = 'system.dialog.confuse';
     // 语境内的逻辑无法响应用户的意图
     const SYSTEM_DIALOG_UNABLE = 'system.dialog.unable';
+    // 用 stageName + intentName 来定义返回结果.
+    const SYSTEM_DIALOG_STAGE_EVENT = 'system.dialog.stage.event';
 
     // 要求用户输入一个属性的值
     const SYSTEM_DIALOG_REQUIRE = 'system.dialog.require';

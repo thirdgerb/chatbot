@@ -61,10 +61,18 @@ class SystemIntentRenderer implements Renderer
                 return $this->quitSession($message);
             case DefaultIntents::SYSTEM_DIALOG_CONFUSE :
                 return $this->confuse($message);
+            case DefaultIntents::SYSTEM_DIALOG_STAGE_EVENT :
+                return $this->stageEvent($message);
 
             default :
                 return $this->translate($message);
         }
+    }
+
+    protected function stageEvent(HostMsg\IntentMsg $message) : array
+    {
+        $renderer = $this->shellSession->container->make(StageEventRenderer::class);
+        return $renderer($message);
     }
 
     protected function confuse(HostMsg\IntentMsg $message) : array

@@ -17,6 +17,7 @@ use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
 use Commune\Shell\Render\ConfuseRenderer;
 use Commune\Shell\Render\EmptyRenderer;
+use Commune\Shell\Render\StageEventRenderer;
 use Commune\Shell\Render\SystemIntentRenderer;
 use Commune\Shell\Render\TranslatorRenderer;
 use Commune\Shell\Session\IShellLogger;
@@ -59,6 +60,7 @@ class ShellSessionServiceProvider extends ServiceProvider
             EmptyRenderer::class => EmptyRenderer::class,
             SystemIntentRenderer::class => SystemIntentRenderer::class,
             ConfuseRenderer::class => ConfuseRenderer::class,
+            StageEventRenderer::class => StageEventRenderer::class,
         ];
 
         foreach ($singletons as $abstract => $concrete) {
