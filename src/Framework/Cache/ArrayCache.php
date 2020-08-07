@@ -51,10 +51,9 @@ class ArrayCache implements Cache
 
     public function forget(string $key): bool
     {
-        $i = isset(self::$cached[$key]) || isset(self::$hashMap[$key]);
         unset(self::$cached[$key]);
         unset(self::$hashMap[$key]);
-        return $i;
+        return true;
     }
 
     public function unlock(string $key): bool

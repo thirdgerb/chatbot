@@ -111,7 +111,8 @@ abstract class ASessionStorage implements SessionStorage
         } elseif ($ttl < 0) {
             $success = $this->cache->set($key, $str);
         } else {
-            $success = $this->cache->forget($key);
+            $this->cache->forget($key);
+            $success = true;
         }
 
         // Storage 是 Session 的关键数据, 不能丢失.
