@@ -17,8 +17,7 @@ use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Container\ContainerContract;
-use Commune\Contracts\Trans\Translator;
-use Commune\Framework\Spy\SpyAgency;
+use Commune\Framework\Session\ASessionScene;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -26,18 +25,8 @@ use Commune\Framework\Spy\SpyAgency;
  * @property-read Ucl $entry
  * @property-read array $env        环境变量.
  */
-class IClonerScene implements ClonerScene
+class IClonerScene extends ASessionScene implements ClonerScene
 {
-
-    /**
-     * @var Ucl
-     */
-    protected $_entry;
-
-    /**
-     * @var array
-     */
-    protected $_env;
 
     /**
      * @var Cloner
@@ -47,9 +36,8 @@ class IClonerScene implements ClonerScene
     public function __construct(Cloner $cloner, Ucl $root, array $env)
     {
         $this->_cloner = $cloner;
-        $this->_entry = $root;
-        $this->_env = $env;
-        SpyAgency::incr(static::class);
+
+        parent::__construct($root, $env);
     }
 
     public static function factory(ContainerContract $app) : self
@@ -96,18 +84,10 @@ class IClonerScene implements ClonerScene
     {
 
         switch ($name) {
-            case 'entry' :
-                return $this->_entry;
-            case 'env' :
-                return $this->_env;
             case 'userId' :
                 return $this->_cloner->input->getCreatorId();
             case 'userName' :
                 return $this->_cloner->input->getCreatorName();
-            case 'userLevel' :
-                return $this->_env[ClonerScene::ENV_USER_LEVEL] ?? 0;
-            case 'userInfo' :
-                return $this->_env[ClonerScene::ENV_USER_INFO] ?? [];
             case 'conversationId' :
                 return $this->_cloner->getConversationId();
             case 'scene' :
@@ -120,26 +100,16 @@ class IClonerScene implements ClonerScene
             case 'fromSession' :
                 $request = $this->getGhostRequest();
                 return isset($request) ? $request->getFromSession() : '';
-            case 'lang' :
-                return $this->_env[ClonerScene::ENV_LANG]
-                    ?? $this->_cloner
-                        ->container
-                        ->get(Translator::class)
-                        ->getDefaultLocale();
-
             default:
-                return $this->_env[$name] ?? null;
+                return parent::__get($name);
         }
     }
 
     public function __destruct()
     {
         unset(
-            $this->_entry,
-            $this->_env,
             $this->_cloner
         );
-
-        SpyAgency::decr(static::class);
+        parent::__destruct();
     }
 }
