@@ -83,7 +83,7 @@ abstract class AbsBroadcaster implements Broadcaster
 
         foreach ($routes as $shellId => $shellSessionId) {
 
-            $publish = BroadcastProtocal::serializePublish(
+            $this->publishBatchInfo(
                 $shellId,
                 $shellSessionId,
                 $batchId,
@@ -92,23 +92,46 @@ abstract class AbsBroadcaster implements Broadcaster
                 $creatorName
             );
 
-            if (CommuneEnv::isDebug()) {
-                $this->logger->debug(
-                    __METHOD__
-                    . " publish data $publish",
-                    [
-                        'shell' => $shellId,
-                        'session' => $shellSessionId,
-                    ]
-                );
-            }
+        }
+    }
 
-            $this->doPublish(
-                $shellId,
-                $shellSessionId,
-                $publish
+    public function publishBatchInfo(
+        string $shellId,
+        string $shellSessionId,
+        string $batchId,
+        string $traceId = '',
+        string $creatorId = '',
+        string $creatorName = ''
+    ) : void
+    {
+        $traceId = empty($traceId) ? $batchId : $traceId;
+
+
+        $publish = BroadcastProtocal::serializePublish(
+            $shellId,
+            $shellSessionId,
+            $batchId,
+            $traceId,
+            $creatorId,
+            $creatorName
+        );
+
+        if (CommuneEnv::isDebug()) {
+            $this->logger->debug(
+                __METHOD__
+                . " publish data $publish",
+                [
+                    'shell' => $shellId,
+                    'session' => $shellSessionId,
+                ]
             );
         }
+
+        $this->doPublish(
+            $shellId,
+            $shellSessionId,
+            $publish
+        );
     }
 
     protected function prepareRoutes(array $routes, string $selfSessionId) : array

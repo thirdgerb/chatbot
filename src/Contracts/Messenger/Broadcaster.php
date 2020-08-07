@@ -44,6 +44,29 @@ interface Broadcaster
     ) : void;
 
     /**
+     * 通过这个方法广播一个消息批次.
+     * 客户端可以通过 batchId 来获取消息内容.
+     * 这个方法绕过 Request 和 Response,
+     * 可以直接对指定客户端进行广播,
+     * 或者把 shellId + shellSessionId 当成全局事件, 向所有的 shell 广播.
+     *
+     * @param string $shellId
+     * @param string $shellSessionId
+     * @param string $batchId
+     * @param string $traceId
+     * @param string $creatorId
+     * @param string $creatorName
+     */
+    public function publishBatchInfo(
+        string $shellId,
+        string $shellSessionId,
+        string $batchId,
+        string $traceId = '',
+        string $creatorId = '',
+        string $creatorName = ''
+    ) : void;
+
+    /**
      * @param callable $callback
      *
      * 传入参数 (string $chan, ShellOutputRequest $request)
