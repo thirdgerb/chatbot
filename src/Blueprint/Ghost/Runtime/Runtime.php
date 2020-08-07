@@ -27,6 +27,11 @@ use Commune\Protocals\HostMsg\Convo\ContextMsg;
 interface Runtime
 {
 
+    /**
+     * @return Ucl[]
+     */
+    public function getCurrentAwaitRoutes() : array;
+
     /*------ process -------*/
 
     /**

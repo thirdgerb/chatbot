@@ -78,6 +78,12 @@ class IRuntime implements Runtime
      */
     protected $contexts = [];
 
+
+    /**
+     * @var null|Ucl[]
+     */
+    protected $_globalRoutes;
+
     /**
      * IRuntime constructor.
      * @param Cloner $cloner
@@ -175,7 +181,24 @@ class IRuntime implements Runtime
         );
     }
 
+    /*------ routes ------*/
+    public function getCurrentAwaitRoutes(): array
+    {
+        $routes = $this->getCurrentProcess()->getAwaitRoutes();
+
+        $merge = $this->_globalRoutes
+            ?? $this->_globalRoutes = array_map(
+                [Ucl::class, 'decode'],
+                $this->cloner->config->globalContextRoutes
+            );
+
+        array_unshift($routes, ...$merge);
+        return $routes;
+    }
+
+
     /*------ context ------*/
+
     public function cacheContext(Context $context): void
     {
         $this->contexts[$context->getId()] = $context;
