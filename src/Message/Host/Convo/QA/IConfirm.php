@@ -85,15 +85,23 @@ class IConfirm extends IQuestionMsg implements Confirm
 
     protected function parseInputText(string $text): string
     {
+        $text = parent::parseInputText($text);
+        // 处理一些常见的单字符表示.
         switch($text) {
             case 'y' :
+            case '是' :
+            case '好' :
+            case '对' :
             case '1' :
                 return self::POSITIVE_INDEX;
             case 'n' :
+            case '否' :
+            case '不' :
+            case '别' :
             case '0' :
                 return self::NEGATIVE_INDEX;
             default:
-                return parent::parseInputText($text);
+                return $text;
         }
     }
 
@@ -116,7 +124,8 @@ class IConfirm extends IQuestionMsg implements Confirm
     {
         return new IConfirmation([
             'answer' => $answer,
-            'choice' => intval($choice) ? self::POSITIVE_INDEX : self::NEGATIVE_INDEX
+            'choice' => $choice,
+            'routes' => $this->routes[$choice] ?? null,
         ]);
     }
 

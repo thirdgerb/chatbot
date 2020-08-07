@@ -58,9 +58,21 @@ interface QuestionMsg extends VerbalMsg, Conversational, SelfTranslatable
 
 
     /**
+     * 前置分析. 在没有意图信息的情况下检查对话
+     * 如果有 route 结果, 直接重定向
+     *
      * @param Cloner $cloner
      * @return AnswerMsg
      */
     public function parse(Cloner $cloner) : ? AnswerMsg;
+
+    /**
+     * 后置分析, 在已经经过 comprehend pipe 后
+     * 检查是否有意图能够响应当前选项.
+     *
+     * @param Cloner $cloner
+     * @return AnswerMsg|null
+     */
+    public function match(Cloner $cloner) : ? AnswerMsg;
 
 }

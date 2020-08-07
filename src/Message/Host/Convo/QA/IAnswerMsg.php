@@ -11,6 +11,7 @@
 
 namespace Commune\Message\Host\Convo\QA;
 
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
@@ -20,6 +21,7 @@ use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
  *
  * @property-read string $answer
  * @property-read string|null $choice
+ * @property-read string|null $route
  */
 class IAnswerMsg extends AbsMessage implements AnswerMsg
 {
@@ -28,6 +30,7 @@ class IAnswerMsg extends AbsMessage implements AnswerMsg
         return [
             'answer' => '',
             'choice' => null,
+            'route' => null,
         ];
     }
 
@@ -58,6 +61,12 @@ class IAnswerMsg extends AbsMessage implements AnswerMsg
     {
         return HostMsg::INFO;
     }
+
+    public function getRoute(): ? string
+    {
+        return $this->route;
+    }
+
 
     public function isEmpty(): bool
     {

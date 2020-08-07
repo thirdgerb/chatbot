@@ -11,6 +11,7 @@
 
 namespace Commune\Message\Host\Convo\QA;
 
+use Commune\Protocals\HostMsg\Convo\QA\Confirm;
 use Commune\Protocals\HostMsg\Convo\QA\Confirmation;
 
 
@@ -21,12 +22,12 @@ class IConfirmation extends IAnswerMsg implements Confirmation
 {
     public function isPositive(): bool
     {
-        return strval($this->choice) === '1';
+        return strval($this->choice) === IConfirm::POSITIVE_INDEX;
     }
 
     public function isNegative(): bool
     {
-        return strval($this->choice) === '0';
+        return strval($this->choice) === IConfirm::NEGATIVE_INDEX;
     }
 
 

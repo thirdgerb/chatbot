@@ -34,6 +34,10 @@ class IChoose extends IQuestionMsg implements Choose
 
     protected function newAnswer(string $answer, string $choice = null): AnswerMsg
     {
-        return new IChoice(['answer' => $answer, 'choice' => $choice]);
+        return new IChoice([
+            'answer' => $answer,
+            'choice' => $choice,
+            'route' => $this->routes[$choice] ?? null,
+        ]);
     }
 }

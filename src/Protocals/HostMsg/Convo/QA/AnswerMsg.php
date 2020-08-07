@@ -21,4 +21,6 @@ interface AnswerMsg extends VerbalMsg
     public function getAnswer() : string;
 
     public function getChoice() : ? string;
+
+    public function getRoute() : ? string;
 }

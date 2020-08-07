@@ -14,6 +14,7 @@ namespace Commune\Message\Host\Convo\QA;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Trans\Translator;
+use Commune\Ghost\Support\ContextUtils;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
@@ -109,7 +110,6 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         $answer = $this->isDefault($message)
             ?? $this->acceptAnyAnswer($message)
             ?? $this->isInSuggestions($message)
-            ?? $this->parseAnswerByMatcher($cloner)
             ?? null;
 
         return isset($answer)
@@ -161,7 +161,6 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         if (empty($suggestions)) {
             return null;
         }
-
         foreach ($suggestions as $index => $suggestion) {
             $indexStr = StringUtils::normalizeString(strval($index));
 
@@ -199,6 +198,73 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
         return null;
     }
+
+    public function match(Cloner $cloner): ? AnswerMsg
+    {
+        return $this->parseAnswerByMatcher($cloner);
+            // ?? $this->parseByMatchedIntents($cloner);
+
+    }
+
+    /**
+     * 考虑这个方法意义不大, 暂时保留.
+     * @param Cloner $cloner
+     * @return AnswerMsg|null
+     */
+    public function parseByMatchedIntents(Cloner $cloner) : ? AnswerMsg
+    {
+        if (empty($this->routes)) {
+            return null;
+        }
+
+        $names = $cloner->comprehension
+            ->intention
+            ->getPossibleIntentNames(true);
+
+        if (empty($names)) {
+            return null;
+        }
+
+        $routes = $this->getRoutes();
+        // 按名称匹配
+        $map = [];
+        // 按正则匹配, 通常只会有一个, 估计.
+        $patterns = [];
+        foreach ($routes as $index => $route) {
+            $fullname = $route->getStageFullname();
+            if (ContextUtils::isWildcardIntentPattern($fullname)) {
+                $patterns[$fullname] = $index;
+            } else {
+                $map[$fullname] = $index;
+            }
+        }
+
+        $hasPattern = count($patterns);
+        foreach ($names as $name) {
+            if (isset($map[$name])) {
+                $index = $map[$name];
+                return $this->newAnswer(
+                    $this->suggestions[$index],
+                    $index
+                );
+
+            } elseif (!$hasPattern) {
+                continue;
+            }
+
+            foreach ($patterns as $index => $pattern) {
+                if (ContextUtils::wildcardIntentMatch($pattern, $name)) {
+                    return $this->newAnswer(
+                        $this->suggestions[$index],
+                        $index
+                    );
+                }
+            }
+        }
+
+        return null;
+    }
+
 
     protected function parseAnswerByMatcher(Cloner $cloner) : ? AnswerMsg
     {
@@ -242,9 +308,16 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
     protected function newAnswer(string $answer, string $choice = null) : AnswerMsg
     {
+        if (isset($choice)) {
+            $route = $this->routes[$choice] ?? null;
+        } else {
+            $route = null;
+        }
+
         return new IAnswerMsg([
             'answer' => $answer,
-            'choice' => $choice
+            'choice' => $choice,
+            'route' => $route
         ]);
     }
 
