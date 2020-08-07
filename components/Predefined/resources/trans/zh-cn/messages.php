@@ -25,7 +25,7 @@ return [
         'dialog' => [
             'yield' => "任务在等待中",
             'confuse' => "意图无法理解",
-            'unable' => "语境 [{await}] 目前无法响应意图 [{matched}]. ",
+            'unable' => "语境 [{await}] 目前无法响应 [{matched}] 意图.",
             'require' => "请输入 {attrName} :",
             'forbid' => "无权限访问当前功能",
             'yes' => '是',

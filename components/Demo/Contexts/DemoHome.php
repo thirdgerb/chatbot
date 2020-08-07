@@ -74,6 +74,13 @@ class DemoHome extends ACodeContext
         });
     }
 
+    /**
+     * @param StageBuilder $stage
+     * @return StageBuilder
+     *
+     * @title 选项菜单
+     * @desc 选择测试功能
+     */
     public function __on_menu(Stage $stage) : Stage
     {
         /**

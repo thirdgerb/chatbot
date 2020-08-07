@@ -12,6 +12,7 @@
 namespace Commune\Shell\Render;
 
 use Commune\Blueprint\Ghost\Mindset;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Shell\Render\Renderer;
 use Commune\Contracts\Trans\Translator;
 use Commune\Message\Host\Convo\IText;
@@ -99,12 +100,13 @@ class ConfuseRenderer implements Renderer
             return '';
         }
 
+        $stageName = Ucl::decode($await)->getStageFullname();
         $stageReg = $this->mindset->stageReg();
-        if ($stageReg->hasDef($await)) {
-            return $stageReg->getDef($await)->getTitle();
+        if ($stageReg->hasDef($stageName)) {
+            return $stageReg->getDef($stageName)->getTitle();
         }
 
-        return '';
+        return $stageName;
     }
 
     protected function parseMatched(? string $matched) : string
@@ -118,7 +120,7 @@ class ConfuseRenderer implements Renderer
             return $intentReg->getDef($matched)->getTitle();
         }
 
-        return '';
+        return $matched;
     }
 
 }
