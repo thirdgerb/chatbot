@@ -32,6 +32,12 @@ interface Translator
         string $lang = null
     ) : string;
 
+    public function hasTemplate(
+        string $id,
+        string $domain = null,
+        string $lang = null
+    ) : bool;
+
     /**
      * @param array $messages
      * @param string|null $locale

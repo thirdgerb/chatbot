@@ -56,6 +56,12 @@ class SymfonyTranslatorAdapter implements Translator
 
     protected $temps = [];
 
+    protected $maxLength = 0;
+
+    /**
+     * @var boolean
+     */
+    protected $intl;
 
     public function __construct(Category $category, LoggerInterface $logger,  string $locale, string $domain)
     {
@@ -64,6 +70,7 @@ class SymfonyTranslatorAdapter implements Translator
         $this->formatter = new MessageFormatter();
         $this->defaultDomain = $domain;
         $this->defaultLocale = $locale;
+        $this->intl = extension_loaded('intl');
 
         $this->init();
     }
@@ -87,11 +94,20 @@ class SymfonyTranslatorAdapter implements Translator
         $intl = $option->intl;
         $id = $option->transId;
 
+        if (mb_strlen($id) > $this->maxLength) {
+            $this->maxLength = mb_strlen($id);
+        }
+
         if ($intl) {
             $this->intlTemps[$locale][$domain][$id] = $temp;
         } else {
             $this->temps[$locale][$domain][$id] = $temp;
         }
+    }
+
+    protected function parseId(string $id) : string
+    {
+        return trim(strval($id));
     }
 
     public function trans(
@@ -101,15 +117,19 @@ class SymfonyTranslatorAdapter implements Translator
         string $lang = null
     ): string
     {
-        $id = trim(strval($id));
         $domain = $domain ?? $this->defaultDomain;
         $locale = $locale ?? $this->defaultLocale;
 
         $parameters = Arr::dot($parameters);
         $parameters = array_filter($parameters, [TypeUtils::class, 'maybeString']);
 
+        if (mb_strlen($id) > $this->maxLength) {
+            return self::mustacheTrans($this->formatter, $id, $locale, $parameters);
+        }
+
         return $this->transByIntlTemp($id, $locale, $domain, $parameters)
-            ?? $this->transByTemp($id, $locale, $domain, $parameters);
+            ?? $this->transByTemp($id, $locale, $domain, $parameters)
+            ?? self::mustacheTrans($this->formatter, $id, $locale, $parameters);
     }
 
     protected function getPrefix(string $locale, string $domain) : string
@@ -127,16 +147,21 @@ class SymfonyTranslatorAdapter implements Translator
             return null;
         }
 
-        return extension_loaded('intl')
+        return $this->intl
             ? $this->formatter->formatIntl($temp, $locale, $parameters)
             : self::mustacheTrans($this->formatter, $temp, $locale, $parameters);
     }
 
-    protected function transByTemp(string $id, string $locale, string $domain, array $parameters) : string
+    protected function transByTemp(string $id, string $locale, string $domain, array $parameters) : ? string
     {
-        $temp = $this->temps[$locale][$domain][$id] ?? $id;
+        $temp = $this->temps[$locale][$domain][$id] ?? null;
+        if (is_null($temp)) {
+            return null;
+        }
+
         return self::mustacheTrans($this->formatter, $temp, $locale, $parameters);
     }
+
 
     public static function mustacheTrans(
         MessageFormatterInterface $formatter,
@@ -190,6 +215,24 @@ class SymfonyTranslatorAdapter implements Translator
             $this->category->save($transOption, !$force);
         }
     }
+
+    public function hasTemplate(
+        string $id,
+        string $domain = null,
+        string $lang = null
+    ): bool
+    {
+        $id = $this->parseId($id);
+        $domain = $domain ?? $this->defaultDomain;
+        $locale = $locale ?? $this->defaultLocale;
+
+        return mb_strlen($id) <= $this->maxLength
+            && (
+                isset($this->intlTemps[$locale][$domain][$id])
+                || isset($this->temps[$locale][$domain][$id])
+            );
+    }
+
 
     public function getDefaultLocale(): string
     {
