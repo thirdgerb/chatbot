@@ -69,7 +69,7 @@ class ContextUtils
 
     public static function isValidContextName(string $str) : bool
     {
-        $pattern = '/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]+)*$/';
+        $pattern = '/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)*$/';
         return (bool) preg_match($pattern, $str);
     }
 

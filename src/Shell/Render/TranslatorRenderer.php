@@ -11,6 +11,7 @@
 
 namespace Commune\Shell\Render;
 
+use Commune\Blueprint\Shell;
 use Commune\Blueprint\Shell\Render\Renderer;
 use Commune\Contracts\Trans\SelfTranslatable;
 use Commune\Contracts\Trans\Translatable;
@@ -30,12 +31,28 @@ class TranslatorRenderer implements Renderer
     protected $translator;
 
     /**
-     * TranslatorRender constructor.
-     * @param Translator $translator
+     * @var string
      */
-    public function __construct(Translator $translator)
+    protected $domain;
+
+    /**
+     * @var string|null
+     */
+    protected $lang = null;
+
+    /**
+     * TranslatorRenderer constructor.
+     * @param Translator $translator
+     * @param Shell\ShellSession $session
+     */
+    public function __construct(
+        Translator $translator,
+        Shell\ShellSession $session
+    )
     {
         $this->translator = $translator;
+        $this->domain = $session->getAppId();
+        // todo 未来考虑从 session 中获取 lang 的参数.
     }
 
     public function __invoke(HostMsg $message): ? array
@@ -50,7 +67,7 @@ class TranslatorRenderer implements Renderer
         if ($message instanceof Translatable) {
             $slots = $message->getSlots();
             $id = $message->getProtocalId();
-            $text = $this->translator->trans($id, $slots);
+            $text = $this->translate($id, $slots);
             return [IText::instance($text, $message->getLevel())];
         }
 
@@ -58,5 +75,25 @@ class TranslatorRenderer implements Renderer
         return null;
     }
 
+    public function translate(
+        string $id,
+        array $slots
+    ) : string
+    {
+        $hasTemp = $this->translator->hasTemplate(
+            $id,
+            $this->domain,
+            $this->lang
+        );
+
+        if ($hasTemp) {
+            return $this
+                ->translator
+                ->trans($id, $slots, $this->domain, $this->lang);
+        }
+
+        return $this->translator
+            ->trans($id, $slots);
+    }
 
 }
