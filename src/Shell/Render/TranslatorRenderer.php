@@ -41,17 +41,25 @@ class TranslatorRenderer implements Renderer
     protected $lang = null;
 
     /**
+     * @var array
+     */
+    protected $environmentSlots = [];
+
+    /**
      * TranslatorRenderer constructor.
      * @param Translator $translator
      * @param Shell\ShellSession $session
+     * @param array $environmentSlots
      */
     public function __construct(
         Translator $translator,
-        Shell\ShellSession $session
+        Shell\ShellSession $session,
+        array $environmentSlots = []
     )
     {
         $this->translator = $translator;
         $this->domain = $session->getAppId();
+        $this->environmentSlots = $environmentSlots;
         // todo 未来考虑从 session 中获取 lang 的参数.
     }
 
@@ -71,8 +79,24 @@ class TranslatorRenderer implements Renderer
             return [IText::instance($text, $message->getLevel())];
         }
 
+        // verbal msg 默认不翻译. 想要翻译的类型请加上 translatable
+        if ($message instanceof HostMsg\Convo\VerbalMsg) {
+            return [$message];
+        }
+
         // 无法翻译的不渲染.
         return null;
+    }
+
+    public function isTranslatable(string $id)  :bool
+    {
+        $hasShellTransId = $this->translator->hasTemplate(
+                $id,
+                $this->domain,
+                $this->lang
+        );
+
+        return $hasShellTransId || $this->translator->hasTemplate($id);
     }
 
     public function translate(
@@ -85,6 +109,8 @@ class TranslatorRenderer implements Renderer
             $this->domain,
             $this->lang
         );
+
+        $slots = $slots + $this->environmentSlots;
 
         if ($hasTemp) {
             return $this

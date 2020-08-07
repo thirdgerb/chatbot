@@ -132,4 +132,11 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         return $this->getText();
     }
 
+    public static function isIntent($object, string $name) : ? IntentMsg
+    {
+        return ($object instanceof IntentMsg && $object->getIntentName() === $name)
+            ? $object
+            : null;
+
+    }
 }

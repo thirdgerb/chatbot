@@ -16,7 +16,7 @@ use Commune\Protocals\HostMsg;
 
 /**
  * 可以是进程级单例, 也可以是请求级单例.
- * 都会由请求级容器来实例化.
+ * 都会由请求级容器来实例化. 适合自行定义.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */

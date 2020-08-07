@@ -15,6 +15,10 @@ use Commune\Blueprint\Shell\Session\ShellLogger;
 use Commune\Blueprint\Shell\Session\ShellStorage;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
+use Commune\Shell\Render\ConfuseRenderer;
+use Commune\Shell\Render\EmptyRenderer;
+use Commune\Shell\Render\SystemIntentRenderer;
+use Commune\Shell\Render\TranslatorRenderer;
 use Commune\Shell\Session\IShellLogger;
 use Commune\Shell\Session\IShellStorage;
 use Psr\Log\LoggerInterface;
@@ -49,6 +53,12 @@ class ShellSessionServiceProvider extends ServiceProvider
                     $app
                 );
             },
+
+            // 系统预定义的 renderer
+            TranslatorRenderer::class => TranslatorRenderer::class,
+            EmptyRenderer::class => EmptyRenderer::class,
+            SystemIntentRenderer::class => SystemIntentRenderer::class,
+            ConfuseRenderer::class => ConfuseRenderer::class,
         ];
 
         foreach ($singletons as $abstract => $concrete) {

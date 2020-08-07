@@ -26,7 +26,10 @@ class DialogConfuseInt extends IIntentMsg
     const INTENT_NAME = HostMsg\DefaultIntents::SYSTEM_DIALOG_CONFUSE;
 
 
-    public static function instance(string $await = '', string $matche = '')
+    const ENTITY_AWAIT = 'await';
+    const ENTITY_MATCHED = 'matched';
+
+    public static function instance(string $await = '', string $matched = '')
     {
         return new static(get_defined_vars());
     }

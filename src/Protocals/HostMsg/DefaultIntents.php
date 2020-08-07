@@ -41,8 +41,11 @@ interface DefaultIntents
 
     // 当前语境正在 yield 状态
     const SYSTEM_DIALOG_YIELD = 'system.dialog.yield';
-    // 语境内的逻辑无法响应用户的意图
+    // 语境内的逻辑无法理解用户的意图
     const SYSTEM_DIALOG_CONFUSE = 'system.dialog.confuse';
+    // 语境内的逻辑无法响应用户的意图
+    const SYSTEM_DIALOG_UNABLE = 'system.dialog.unable';
+
     // 要求用户输入一个属性的值
     const SYSTEM_DIALOG_REQUIRE = 'system.dialog.require';
     // 用户没有访问权限.
