@@ -15,13 +15,14 @@ use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\MindMeta\SynonymMeta;
-use Commune\Ghost\Component\GhostComponent;
+use Commune\Components\Tree\TreeComponent;
+use Commune\Ghost\Component\AGhostComponent;
 use Commune\Support\Registry\Storage\FileStorageOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class DemoComponent extends GhostComponent
+class DemoComponent extends AGhostComponent
 {
     public static function stub(): array
     {
@@ -70,6 +71,9 @@ class DemoComponent extends GhostComponent
             true,
             false
         );
+
+
+        $this->dependComponent($app, TreeComponent::class);
     }
 
 }

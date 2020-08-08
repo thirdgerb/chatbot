@@ -22,7 +22,7 @@ use Commune\Ghost\Providers\Psr4SelfRegisterLoader;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class GhostComponent extends AComponentOption
+abstract class AGhostComponent extends AComponentOption
 {
 
     /**

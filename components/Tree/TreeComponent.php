@@ -12,7 +12,7 @@
 namespace Commune\Components\Tree;
 
 use Commune\Blueprint\Framework\App;
-use Commune\Framework\Component\AComponentOption;
+use Commune\Ghost\Component\AGhostComponent;
 
 
 /**
@@ -25,22 +25,39 @@ use Commune\Framework\Component\AComponentOption;
  * 进一步实现自动录制对话的功能. 不过这一点并非必须.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ *
+ *
+ * @property-read bool $loadDemo
  */
-class TreeComponent extends AComponentOption
+class TreeComponent extends AGhostComponent
 {
     public static function stub(): array
     {
-        // TODO: Implement stub() method.
+        return [
+
+            'loadDemo' => true,
+        ];
     }
 
     public static function relations(): array
     {
-        // TODO: Implement relations() method.
+        return [];
     }
 
     public function bootstrap(App $app): void
     {
-        // TODO: Implement bootstrap() method.
+
+        $preload = [
+            'Commune\Components\Tree\Impl' => __DIR__ . '/Impl',
+        ];
+        if ($this->loadDemo) {
+            $preload['Commune\Components\Tree\Demo'] = __DIR__ . '/Demo';
+        }
+        $this->loadPsr4MindRegister(
+            $app,
+            $preload
+        );
     }
 
 

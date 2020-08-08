@@ -12,7 +12,6 @@
 namespace Commune\Components\Tree\Prototype;
 
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
-use Commune\Ghost\Stage\AbsStageDef;
 use Commune\Ghost\Stage\IStageDef;
 
 
@@ -64,4 +63,15 @@ class BranchStageDef extends IStageDef
         ];
     }
 
+
+    /**
+     * 鉴定是否是完整的 def 定义.
+     * 原理很简单, 检查 name / title 是否一致.
+     * @return bool
+     */
+    public function isComplete() : bool
+    {
+        return $this->getTitle() !== $this->getName()
+            && $this->getDescription() !== $this->getName();
+    }
 }

@@ -14,7 +14,9 @@ namespace Commune\Platform\Shell\Stdio;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
 use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
+use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
 use Commune\Contracts\Messenger\Broadcaster;
+use Commune\Support\Babel\Babel;
 use React\EventLoop\Factory;
 use Clue\React\Stdio\Stdio;
 use Commune\Blueprint\Host;
@@ -114,7 +116,7 @@ class StdioConsolePlatform extends AbsPlatform
             ->make(Broadcaster::class);
 
         $broadcaster->subscribe(
-            function($chan, $request) {
+            function($chan, ShellOutputRequest $request) {
                 $packer = $this->makePacker('');
                 $adapter = $packer->adapt(
                     StdioTextAdapter::class,
@@ -175,6 +177,7 @@ class StdioConsolePlatform extends AbsPlatform
 
     public function shutdown(): void
     {
+        swoole_event_wait();
         $this->stdio->end();
     }
 

@@ -17,8 +17,10 @@ use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Components\Demo\Git\GitContext;
 use Commune\Components\Demo\Maze\Maze;
+use Commune\Components\Tree\Demo\TreeDemoContext;
 use Commune\Ghost\Context\ACodeContext;
 use Commune\Support\Registry\OptRegistry;
 
@@ -100,6 +102,7 @@ class DemoHome extends ACodeContext
                             FeatureTest::genUcl(),
                             $this->getStage('maze'),
                             GitContext::genUcl(),
+                            Ucl::decode(TreeDemoContext::NAME),
                         ]
                     );
 

@@ -15,13 +15,13 @@ use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
 use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
-use Commune\Ghost\Component\GhostComponent;
+use Commune\Ghost\Component\AGhostComponent;
 use Commune\Support\Registry\Storage\FileStorageOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class PredefinedComponent extends GhostComponent
+class PredefinedComponent extends AGhostComponent
 {
     public static function stub(): array
     {

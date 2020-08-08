@@ -13,8 +13,10 @@ namespace Commune\Components\Tree\Prototype;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
+use Commune\Blueprint\Ghost\MindDef\ContextStrategyOption;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
+use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Context\Traits\ContextDefTrait;
@@ -33,25 +35,23 @@ use Commune\Support\Option\AbsOption;
  * @property-read int $priority
  *
  *
+ * ## stage 相关定义.
  * @property-read array $tree
  * @property-read bool $appendingBranch
- * @property-read string[] $events
+ * @property-read string[] $stageEvents
  * @property-read string|null $relativeOption
+ * @property-read StageMeta[] $stages
  *
- *
- *
- * @property-read string[] $auth
+ * ## 属性定义
  * @property-read array $dependingNames
- *
  * @property-read string[] $memoryScopes
  * @property-read array $memoryAttrs
+ * @property-read ContextStrategyOption $strategy
  *
+ * ## 意图定义
  * @property-read IntentMeta|null $asIntent
- * @property-read null|array $comprehendPipes
  *
- * @property-read string[] $stageRoutes
- * @property-read string[] $contextRoutes
- *
+ * ## warpper
  * @property-read string $contextWrapper
  */
 class TreeContextDef extends AbsOption implements ContextDef
@@ -89,19 +89,25 @@ class TreeContextDef extends AbsOption implements ContextDef
             // query 参数如果是数组, 则定义参数名时应该用 [] 做后缀, 例如 ['key1', 'key2', 'key3[]']
             'queryNames' => [],
 
+            // 用一棵树来定义多轮对话结构.
+            // 每一个节点都会成为一个 stage.
+            // 该 stage 的响应策略则通过 Events 的方式来定义, 实现解耦.
             'tree' => [],
-            'events' => [],
+            // 树每个分支节点所使用的 Event
+            'stageEvents' => [],
+            // 树的节点是否通过 "." 符号连接成 stage_name
+            // 例如: [ 'a' => 'b' ] 中的 b 节点, 名字是否为 a.b
             'appendingBranch' => false,
+            // 关联配置类型.
+            // 如果存在, 可以到 OptRegistry 通过 stageName 获取相关配置.
             'relativeOption' => null,
 
 
+            // 通过 StageMeta, 而不是 tree 来定义的 stage 组件.
+            'stages' => [],
 
 
             /*---- 以下为可选参数 ----*/
-
-
-            // auth, 访问时用户必须拥有的权限. 用类名表示.
-            'auth' => [],
 
             // Context 启动时, 会依次检查的参数. 当这些参数都不是 null 时, 认为 Context::isPrepared
             'dependingNames' => [],
@@ -112,14 +118,13 @@ class TreeContextDef extends AbsOption implements ContextDef
             // 相关作用域参数, 会自动添加到 query 参数中.
             // 作用域为空, 则是一个 session 级别的短程记忆.
             // 不为空, 则是长程记忆, 会持久化保存.
-            'memoryScopes' => null,
+            'memoryScopes' => [],
             // memory 记忆体的默认值.
             'memoryAttrs' => [],
 
-            'comprehendPipes' => null,
-
-            'stageRoutes' => ['*'],
-            'contextRoutes' => ['*'],
+            'strategy' => [
+                'onCancel' => static::CANCEL_STAGE
+            ],
 
             // context 实例的封装类.
             'contextWrapper' => '',
@@ -129,7 +134,9 @@ class TreeContextDef extends AbsOption implements ContextDef
     public static function relations(): array
     {
         return [
+            'stages[]' => StageMeta::class,
             'asIntent' => IntentMeta::class,
+            'strategy' => ContextStrategyOption::class,
         ];
     }
 
@@ -156,12 +163,17 @@ class TreeContextDef extends AbsOption implements ContextDef
 
         $data = $this->tree;
         $tree = new Tree();
-        $append = $this->appendingBranch ? '.' : '';
+        $append = $this->appendingBranch ? '_' : '';
 
         $tree->build($data, static::FIRST_STAGE, $append);
         new Branch($tree, static::CANCEL_STAGE);
 
+        // 初始化预定义的
         $this->_stageMap = [];
+        foreach ($this->stages as $stageMeta) {
+            $def = $stageMeta->toWrapper();
+            $this->_stageMap[$def->getStageShortName()] = $def;
+        }
 
         foreach ($tree->branches as $branch) {
            $stage = $this->buildStage($branch);
@@ -204,7 +216,7 @@ class TreeContextDef extends AbsOption implements ContextDef
             'elder' => $this->getFullStageName($branch->elder),
             // 弟弟妹妹
             'younger' => $this->getFullStageName($branch->younger),
-            'events' => $this->events,
+            'events' => $this->stageEvents,
             'asIntent' => null,
             'ifRedirect' => null,
         ]);
@@ -224,25 +236,6 @@ class TreeContextDef extends AbsOption implements ContextDef
         return $this->dependingNames;
     }
 
-    public function comprehendPipes(Dialog $current): ? array
-    {
-        return $this->comprehendPipes;
-    }
-
-    /*-------- exit --------*/
-
-    public function onCancelStage(): ? string
-    {
-        return static::CANCEL_STAGE;
-    }
-
-    public function onQuitStage(): ? string
-    {
-        return null;
-    }
-
-
-
     /*-------- asStage --------*/
 
     public function onRedirect(Dialog $prev, Ucl $current): ? Operator
@@ -252,15 +245,6 @@ class TreeContextDef extends AbsOption implements ContextDef
 
     /*-------- common routes --------*/
 
-    public function commonStageRoutes(): array
-    {
-        return $this->stageRoutes;
-    }
-
-    public function commonContextRoutes(): array
-    {
-        return $this->contextRoutes;
-    }
 
     public function __destruct()
     {

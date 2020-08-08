@@ -56,6 +56,8 @@ class GhostProtoConfig extends IGhostConfig
             'components' => [
                 // 测试用例
                 Components\Demo\DemoComponent::class,
+                // tree 测试用例
+                Components\Tree\TreeComponent::class,
             ],
 
             // request protocals
