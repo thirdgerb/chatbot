@@ -31,6 +31,7 @@ class LocalBroadcaster extends AbsBroadcaster
     /**
      * LocalBroadcaster constructor.
      * @param Shell $shell
+     * @param LoggerInterface $logger
      */
     public function __construct(Shell $shell, LoggerInterface $logger)
     {
