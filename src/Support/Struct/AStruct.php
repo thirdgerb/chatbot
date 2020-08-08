@@ -13,8 +13,6 @@ namespace Commune\Support\Struct;
 
 use Commune\Support\Struct\Reflection\AnnotationFactory;
 use Commune\Support\Struct\Reflection\StructReflection;
-use Commune\Support\Utils\StringUtils;
-
 
 /**
  * Struct 的基础实现.
