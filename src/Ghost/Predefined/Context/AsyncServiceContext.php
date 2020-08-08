@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Predefined\Context;
 
+use Commune\Blueprint\Ghost\Callables\DialogicService;
 use Commune\Blueprint\Ghost\Context\CodeContextOption;
 use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
@@ -69,7 +70,17 @@ class AsyncServiceContext extends ACodeContext
 
     public function callService(Dialog $dialog) : Operator
     {
-        $service = $dialog->container()->make($this->service);
+        $service = $this->service;
+        if (!is_a($service, DialogicService::class, TRUE)) {
+
+            return $dialog
+                ->send()
+                ->error("invalid service class name $service")
+                ->error("mission incomplete.")
+                ->over()
+                ->quit();
+        }
+        $service = $dialog->container()->make($service);
         $service($this->payload, $dialog->send(true));
         return $dialog->quit();
     }

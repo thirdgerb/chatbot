@@ -572,60 +572,84 @@ class ICloner extends ASession implements Cloner
             return $steps;
         }
 
+        if ($this->isSubProcess) {
+            return $this->saveSubProcessSession($steps);
+        } else {
+            return $this->saveMainProcessSession($steps);
+        }
+    }
 
-        // 如果当前不是主进程, 会话又结束时, 删除主进程的 conversationId 缓存.
+    protected function saveMainProcessSession(array $steps) : array
+    {
         if ($this->isConversationEnd()) {
-
-            // 同时也删除 storage 会话.
             $this->setSessionExpire(0);
             $steps[] = 'set session expire 0';
+            $this->storage->save();
+            $steps[] = 'save storage';
 
+        } elseif ($this->isSingletonInstanced('storage')) {
+            $this->storage->save();
+            $steps[] = 'save storage';
+        }
+
+        $steps = $this->saveConvoId($steps);
+        $steps = $this->saveRuntime($steps);
+        return $steps;
+    }
+
+    protected function saveSubProcessSession(array $steps) : array
+    {
+        if ($this->isSingletonInstanced('storage')) {
+            $this->storage->save();
+            $steps[] = 'save storage';
+        }
+
+        // $steps = $this->saveConvoId($steps);
+        $steps = $this->saveRuntime($steps);
+        return $steps;
+    }
+
+    protected function saveConvoId(array $steps) : array
+    {
+        // 如果是主进程, 会话又结束时, 删除主进程的 conversationId 缓存.
+        if ($this->isConversationEnd()) {
             // 会话的主进程, 删除 convoId 的缓存
-            if (!$this->isSubProcess) {
-                $this->ioDeleteConvoIdCache();
-                $steps[] = 'del convo id cache';
-            }
+            $this->ioDeleteConvoIdCache();
+            $steps[] = 'del convo id cache';
 
-        //  给当前 conversation id 续命.
+            //  给当前 conversation id 续命.
         } elseif (
-            !$this->isSubProcess
-            && !$this->noConvoState
+            !$this->noConvoState
             && isset($this->conversationId)
         ) {
             $this->cacheConvoId($this->conversationId);
             $steps[] = 'cache convo id';
         }
+        return $steps;
+    }
 
-        // storage 更新.
-        // 所以 Storage 是跟随 Session, 而不是跟随 Conversation
-        // 因此 Storage 可以跨越多个 Conversation 存在.
-        if ($this->isSingletonInstanced('storage')) {
-            $this->__get('storage')->save();
-            $steps[] = 'save storage';
+    protected function saveRuntime(array $steps) : array
+    {
+
+        // 会话结束, 删除会话缓存
+        if ($this->isConversationEnd()) {
+            $runtime = $this->__get('runtime');
+            $runtime->flush();
+            $steps[] = 'flush runtime';
         }
 
-        // 保存当前 conversation 的 runtime.
+            // 保存当前 conversation 的 runtime.
         if ($this->isSingletonInstanced('runtime')) {
             /**
              * @var Ghost\Runtime\Runtime $runtime
              */
             $runtime = $this->__get('runtime');
-
-            // 会话结束, 删除会话缓存
-            if ($this->isConversationEnd()) {
-                $runtime->flush();
-                $steps[] = 'flush runtime';
-
-            // 允许保存会话状态.
-            } elseif (!$this->noConvoState) {
-                $runtime->save();
-                $steps[] = 'save runtime';
-            }
+            $runtime->save();
+            $steps[] = 'save runtime';
         }
 
         return $steps;
     }
-
 
     protected function flushInstances(): void
     {
