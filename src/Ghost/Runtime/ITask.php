@@ -85,7 +85,7 @@ class ITask implements Task
 
     public function isStatus(int $statusCode): bool
     {
-        return $this->status & $statusCode > 0;
+        return $statusCode === $this->status || $this->status & $statusCode > 0;
     }
 
 
