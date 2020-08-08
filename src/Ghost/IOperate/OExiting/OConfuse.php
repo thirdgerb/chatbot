@@ -44,7 +44,11 @@ class OConfuse extends AbsOperator
      * @param bool $silent
      * @param callable|string|null $fallbackStrategy
      */
-    public function __construct(Dialog $dialog, bool $silent, ? $fallbackStrategy)
+    public function __construct(
+        Dialog $dialog,
+        bool $silent,
+        $fallbackStrategy = null
+    )
     {
         $this->cloner = $dialog->cloner;
         $this->silent = $silent;
