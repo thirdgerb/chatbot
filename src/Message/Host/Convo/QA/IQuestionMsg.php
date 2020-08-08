@@ -108,8 +108,8 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         }
 
         $answer = $this->isDefault($message)
-            ?? $this->acceptAnyAnswer($message)
             ?? $this->isInSuggestions($message)
+            ?? $this->acceptAnyAnswer($message)
             ?? null;
 
         return isset($answer)
