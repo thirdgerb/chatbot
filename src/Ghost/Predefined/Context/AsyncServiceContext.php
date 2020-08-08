@@ -18,6 +18,7 @@ use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\Context\ACodeContext;
+use Commune\Message\Host\SystemInt\DialogForbidInt;
 
 
 /**
@@ -80,7 +81,23 @@ class AsyncServiceContext extends ACodeContext
                 ->over()
                 ->quit();
         }
+        /**
+         * @var DialogicService $service
+         */
         $service = $dialog->container()->make($service);
+
+        $auth = $service->auth();
+        $authority = $dialog->cloner->auth;
+        foreach ($auth as $ability) {
+            if (!$authority->allow($ability)) {
+                $forbidden = DialogForbidInt::instance($service->getId(), $ability);
+                $dialog->send()
+                    ->message($forbidden)
+                    ->over()
+                    ->quit();
+            }
+        }
+
         $service($this->payload, $dialog->send(true));
         return $dialog->quit();
     }

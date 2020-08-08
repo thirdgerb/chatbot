@@ -20,6 +20,7 @@ use Commune\Blueprint\Ghost\Tools\Deliver;
  */
 interface DialogicService
 {
+    public function auth() : array;
 
     public function __invoke(array $payload, Deliver $deliver) : void;
 }
