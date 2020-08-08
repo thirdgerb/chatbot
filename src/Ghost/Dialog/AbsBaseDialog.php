@@ -146,14 +146,6 @@ abstract class AbsBaseDialog implements
 
     public function call($caller, array $parameters = [])
     {
-        if (
-            is_string($caller)
-            && class_exists($caller)
-            && method_exists($caller, '__invoke')
-        ) {
-            $caller = [$caller, '__invoke'];
-        }
-
         $parameters = $this->getDialogicInjections($parameters);
 
         try {
@@ -173,7 +165,7 @@ abstract class AbsBaseDialog implements
         return $result;
     }
 
-    public function action(callable $caller, array $parameters = []): ? Operator
+    public function action($caller, array $parameters = []): ? Operator
     {
         $result = $this->call($caller, $parameters);
         if (is_null($result) || $result instanceof Operator) {

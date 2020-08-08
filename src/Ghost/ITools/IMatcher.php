@@ -89,14 +89,6 @@ class IMatcher implements Matcher
      */
     protected function call($caller)
     {
-        if (
-            is_string($caller)
-            && class_exists($caller)
-            && method_exists($caller, '__invoke')
-        ) {
-            $caller = [$caller, '__invoke'];
-        }
-
         $injection = $this->matchedParams + $this->injectionContext;
         return $this->cloner->container->call($caller, $injection);
     }
