@@ -18,6 +18,17 @@ class ArrayUtils
         return null;
     }
 
+    public static function nextTo(array $arr, $value)
+    {
+        while (!is_null($current = array_shift($arr))){
+            if ($value == $current) {
+                return array_shift($arr);
+            }
+        };
+
+        return null;
+    }
+
     public static function countIterable($iterator)
     {
         if (!is_iterable($iterator)) {

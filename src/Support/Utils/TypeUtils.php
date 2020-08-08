@@ -28,6 +28,25 @@ class TypeUtils
         return strtolower($className);
     }
 
+    public static function validateInstance(
+        $argument,
+        string $className,
+        string $methodAndThrow = null
+    ) : bool
+    {
+        if (static::isA($argument, $className)) {
+            return true;
+        }
+
+        if (!empty($methodAndThrow)) {
+            $type = static::getType($argument);
+            throw new \InvalidArgumentException(
+                "$methodAndThrow expect $className, $type given"
+            );
+        }
+
+        return false;
+    }
 
 
     /**
