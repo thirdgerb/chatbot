@@ -42,11 +42,11 @@ interface DialogContainer
     public function predict(callable $caller, array $parameters = []) : bool;
 
     /**
-     * @param callable $caller
+     * @param callable|string $caller
      * @param array $parameters
      * @return Dialog|null
      */
-    public function action(callable $caller, array $parameters = []) : ? Operator;
+    public function action($caller, array $parameters = []) : ? Operator;
 
 
 }
