@@ -21,8 +21,10 @@ use Commune\Kernel\Protocals\IShellInputRequest;
 use Commune\Message\Host\Convo\IEventMsg;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
+use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\HostMsg\DefaultEvents;
 use Commune\Protocals\HostMsg\DefaultIntents;
+use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Utils\TypeUtils;
 
 
@@ -131,6 +133,10 @@ class StdioTextAdapter implements Adapter
 
         foreach ($outputs as $output) {
             $message = $output->getMessage();
+
+            if ($output instanceof InputMsg && $message instanceof ContextMsg) {
+                continue;
+            }
 
             $text = $message->getText();
             $level = $message->getLevel();
