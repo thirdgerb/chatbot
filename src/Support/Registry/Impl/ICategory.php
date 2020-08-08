@@ -330,11 +330,6 @@ class ICategory implements Category
      */
     public function flush(bool $flushInitStorage = false): bool
     {
-        // 当只定义了一个 storage 的情况.
-        if (empty($this->categoryOption->storage) && !$flushInitStorage) {
-            return true;
-        }
-
         $storage = $this->getStorage();
         $success = $storage->getDriver()->flush(
             $this->categoryOption,
