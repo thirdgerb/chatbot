@@ -12,8 +12,8 @@
 namespace Commune\Components\Demo\Git;
 
 use Commune\Blueprint\CommuneEnv;
-use Commune\Blueprint\Ghost\Callables\DialogicService;
 use Commune\Blueprint\Ghost\Tools\Deliver;
+use Commune\Components\Predefined\Services\AbsDialogicService;
 use Commune\Message\Host\Convo\Verbal\MarkdownMsg;
 use Commune\Support\Swoole\SwooleUtils;
 use Swoole\Coroutine;
@@ -22,7 +22,7 @@ use Swoole\Coroutine;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class GitService implements DialogicService
+class GitService extends AbsDialogicService
 {
 
     /**
@@ -31,7 +31,7 @@ class GitService implements DialogicService
      * ]
      * @param Deliver $deliver
      */
-    public function __invoke(array $payload, Deliver $deliver): void
+    public function handle(array $payload, Deliver $deliver): void
     {
         $command = $payload['command'];
 
