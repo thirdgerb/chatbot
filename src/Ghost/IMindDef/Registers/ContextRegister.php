@@ -11,25 +11,21 @@
 
 namespace Commune\Ghost\IMindDef\Registers;
 
-use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
+use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindSelfRegister;
 use Commune\Blueprint\Ghost\Mindset;
 
-
 /**
- * 用类来注册 Emotion 的做法.
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class motionRegister implements MindSelfRegister
+abstract class ContextRegister implements MindSelfRegister
 {
-
-    abstract public static function makeMeta() : EmotionMeta;
+    abstract public static function makeDef() : ContextDef;
 
     public static function selfRegisterToMind(Mindset $mindset, bool $force = false): void
     {
-        $meta = static::makeMeta();
-        $mindset->emotionReg()->registerDef($meta->toWrapper(), $force);
+        $def = static::makeDef();
+        $mindset->contextReg()->registerDef($def, $force);
     }
 
 
