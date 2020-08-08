@@ -11,6 +11,8 @@
 
 namespace Commune\Ghost;
 
+use Commune\Blueprint\Ghost\MindMeta;
+use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Blueprint\Ghost\MindReg;
@@ -30,6 +32,16 @@ class IMindset implements Mindset
         MindReg\EmotionReg::class => IMindReg\IEmotionReg::class,
         MindReg\EntityReg::class => IMindReg\IEntityReg::class,
         MindReg\SynonymReg::class => IMindReg\ISynonymReg::class,
+    ];
+
+    const REGISTRY_META = [
+        MindMeta\ContextMeta::class => MindReg\ContextReg::class,
+        MindMeta\StageMeta::class => MindReg\StageReg::class,
+        MindMeta\IntentMeta::class => MindReg\IntentReg::class,
+        MindMeta\MemoryMeta::class => MindReg\MemoryReg::class,
+        MindMeta\EmotionMeta::class => MindReg\EmotionReg::class,
+        MindMeta\EntityMeta::class => MindReg\EntityReg::class,
+        MindMeta\SynonymMeta::class => MindReg\SynonymReg::class,
     ];
 
     /**
@@ -79,6 +91,18 @@ class IMindset implements Mindset
         $this->synonymReg()->flushCache();
         $this->emotionReg()->flushCache();
     }
+
+    public function getRegistry(DefMeta $meta): ? DefRegistry
+    {
+        foreach (self::REGISTRY_META as $metaType => $regType) {
+            if (is_a($meta, $metaType, true)) {
+                return $this->registries[$regType];
+            }
+        }
+
+        return null;
+    }
+
 
     /*---- registries ----*/
 

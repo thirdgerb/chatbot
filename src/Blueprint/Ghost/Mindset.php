@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\Ghost\MindReg\ContextReg;
 use Commune\Blueprint\Ghost\MindReg\DefRegistry;
 use Commune\Blueprint\Ghost\MindReg\EmotionReg;
@@ -38,6 +39,12 @@ interface Mindset
      * 清空所有的逻辑缓存
      */
     public function reload() : void;
+
+    /**
+     * @param DefMeta $meta
+     * @return DefRegistry
+     */
+    public function getRegistry(DefMeta $meta) : ? DefRegistry;
 
     /**
      * 上下文语境注册表.
