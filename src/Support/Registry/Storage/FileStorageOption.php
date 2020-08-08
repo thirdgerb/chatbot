@@ -25,12 +25,8 @@ use Symfony\Component\Finder\Finder;
  *
  * @property-read string $path  文件存储路径. 一个文件里只应该有一种option
  *
- * @property-read bool $isDir   path是文件名, 还是路径名. 如果是路径名, 会把文件的相对路径作为 option Id
+ * @property-read bool $isDir   判断 path 是路径名还是文件名. 如果是路径, 则每个 option 存放一个单独的文件. 否则所有的 option 存放在同一个文件中. 
  *
- * @property-read mixed $depth  目录搜索的深度.
- *
- *
- * @see Finder::depth()
  */
 abstract class FileStorageOption extends StorageOption
 {
@@ -50,7 +46,6 @@ abstract class FileStorageOption extends StorageOption
         return [
             'path' => '',
             'isDir' => true,
-            'depth' => 0,
         ];
     }
 

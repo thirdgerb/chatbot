@@ -222,7 +222,6 @@ abstract class AbsFileStorageDriver implements StorageDriver
         $finder = new Finder();
         $finder = $finder
             ->in($meta->path)
-            ->depth($meta->depth)
             ->name('/\.' . $this->ext . '$/');
 
 
@@ -300,11 +299,14 @@ abstract class AbsFileStorageDriver implements StorageDriver
     {
         $id = $id ?? '';
 
-        if ($meta->depth === 0 && StringUtils::isValidDotDirName($id)) {
+        if (StringUtils::isValidDotDirName($id)) {
             $sections = explode('.', $id);
             $id = implode(DIRECTORY_SEPARATOR, $sections);
         } else {
-            $id = $this->serializeId($id);
+
+        // 还是用序列化 ID. 否则很难和 finder 一致, 而且也无法控制字符.
+        $id = $this->serializeId($id);
+
         }
         return rtrim($meta->path, DIRECTORY_SEPARATOR)
             . DIRECTORY_SEPARATOR
