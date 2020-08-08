@@ -23,6 +23,7 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Exceptions\InvalidQueryException;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * Uniform Context Locator
@@ -260,7 +261,8 @@ class Ucl implements UclInterface
         }
 
         if (!is_string($string)) {
-            throw new InvalidArgumentException('should be Ucl instance or Ucl string');
+            $type = TypeUtils::getType($string);
+            throw new InvalidArgumentException("should be Ucl instance or Ucl string, $type given");
         }
 
         $string = strval($string);

@@ -218,6 +218,11 @@ class IRuntime implements Runtime
             return null;
         }
 
+        // 关键, 不能让子进程变更会话状态.
+        if ($this->cloner->isSubProcess()) {
+            return null;
+        }
+
         $waiter = $this->process->waiter;
         if (empty($waiter)) {
             return null;
