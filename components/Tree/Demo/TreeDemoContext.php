@@ -50,24 +50,27 @@ class TreeDemoContext extends ContextRegister
             // query 参数如果是数组, 则定义参数名时应该用 [] 做后缀, 例如 ['key1', 'key2', 'key3[]']
             'queryNames' => [],
 
+            'rootName' => TreeContextDef::FIRST_STAGE,
             // 用一棵树来定义多轮对话结构.
             // 每一个节点都会成为一个 stage.
             // 该 stage 的响应策略则通过 Events 的方式来定义, 实现解耦.
             'tree' => [
-                'a' => [
-                    'b' => ['c'],
-                    'd' => [
-                        'e',
-                        'f'
+                TreeContextDef::FIRST_STAGE => [
+                    'a' => [
+                        'b' => ['c'],
+                        'd' => [
+                            'e',
+                            'f'
+                        ],
                     ],
-                ],
-                'g',
-                'h' => [
-                    'j' => [
-                        'k'
+                    'g',
+                    'h' => [
+                        'j' => [
+                            'k'
+                        ],
+                        'l',
                     ],
-                    'l',
-                ],
+                ]
             ],
             // 树每个分支节点所使用的 Event
             'stageEvents' => [

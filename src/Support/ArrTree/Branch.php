@@ -53,26 +53,45 @@ class Branch implements ArrayAndJsonAble
     public $younger;
 
     /**
+     * @var int
+     */
+    public $order;
+
+    /**
+     * @var string
+     */
+    public $orderId;
+
+    /**
      * @var string
      */
     protected $appending;
+
+    protected $orderSeparator;
 
     /**
      * Branch constructor.
      * @param Tree $tree
      * @param string $name
      * @param Branch|null $parent
+     * @param Branch|null $elder
      * @param string $appending
+     * @param string $orderSeparator
      */
     public function __construct(
         Tree $tree,
         string $name,
         Branch $parent = null,
-        string $appending = ''
+        Branch $elder = null,
+        string $appending = '',
+        string $orderSeparator = '_'
     )
     {
         $this->tree = $tree;
+        $this->orderSeparator = $orderSeparator;
         $this->parent = $parent;
+        $this->appending = $appending;
+
         if (isset($this->parent)) {
             $this->parent->children[] = $this;
         }
@@ -86,8 +105,6 @@ class Branch implements ArrayAndJsonAble
         }
 
         $this->name = $name;
-
-        $this->appending = $appending;
         if (array_key_exists($this->name, $this->tree->branches)) {
             throw new \InvalidArgumentException(
                 "duplicated branch name "
@@ -95,8 +112,20 @@ class Branch implements ArrayAndJsonAble
             );
         }
 
-        $this->tree->branches[$name] = $this;
+        if (isset($elder)) {
+            $elder->younger = $this;
+            $this->elder = $elder;
+        }
 
+        $this->order = isset($elder)
+            ? $elder->order + 1
+            : 0;
+
+        $this->orderId = isset($this->parent)
+            ? ($this->parent->orderId . $this->orderSeparator . $this->order)
+            : $this->name;
+
+        $this->tree->branches[$name] = $this;
     }
 
     public function father(array $children) : void
@@ -119,11 +148,8 @@ class Branch implements ArrayAndJsonAble
                 );
             }
 
-            $self = new Branch($this->tree, $name, $this, $this->appending);
-            if (isset($current)) {
-                $current->younger = $self;
-                $self->elder = $current;
-            }
+            $self = new Branch($this->tree, $name, $this, $current, $this->appending);
+
             $current = $self;
             if (!empty($grandChildren)) {
                 $current->father($grandChildren);
@@ -145,7 +171,50 @@ class Branch implements ArrayAndJsonAble
         ];
     }
 
-    public function __destruct()
+    public function toTreeArr() : array
+    {
+        $data = [];
+        if (empty($this->children)) {
+            return $data;
+        }
+
+        foreach ($this->children as $child) {
+
+            $name = $child->name;
+            $childArr = $child->toTreeArr();
+            if (empty($childArr)) {
+                $data[] = $name;
+            } else {
+                $data[$name] = $childArr;
+            }
+        }
+
+        return $data;
+    }
+
+    public function toOrderArr()
+    {
+        $data = [];
+        if (empty($this->children)) {
+            return $data;
+        }
+
+        foreach ($this->children as $child) {
+
+            $name = $child->orderId;
+            $childArr = $child->toOrderArr();
+            if (empty($childArr)) {
+                $data[] = $name;
+            } else {
+                $data[$name] = $childArr;
+            }
+        }
+
+        return $data;
+
+    }
+
+    public function destroy() : void
     {
         unset(
             $this->parent,
@@ -153,6 +222,11 @@ class Branch implements ArrayAndJsonAble
             $this->elder,
             $this->children
         );
+    }
+
+    public function __destruct()
+    {
+        $this->destroy();
     }
 
 }

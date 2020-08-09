@@ -20,8 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ArrTreeTest extends TestCase
 {
-
-
     public function testTreeBuild()
     {
         $rootName = 'root';
@@ -114,6 +112,25 @@ class ArrTreeTest extends TestCase
 
         );
 
+        $this->assertEquals($data, $tree->toTreeArr()['root']);
+
+        $this->assertEquals(
+            array (
+                'root_0' =>
+                    array (
+                        'root_0_0' =>
+                            array (
+                                0 => 'root_0_0_0',
+                            ),
+                        0 => 'root_0_1',
+                    ),
+                0 => 'root_1',
+            ),
+            $tree->toOrderArr()['root']
+        );
+
+        $tree->destroy();
+
 
         $tree = new Tree();
 
@@ -127,9 +144,20 @@ class ArrTreeTest extends TestCase
                 'root.a.d',
                 'root.e',
             ],
-            array_keys($tree->branches)
+            $tree->getBranchNames()
         );
-
+        $this->assertEquals(
+            [
+                'root',
+                'root_0',
+                'root_0_0',
+                'root_0_0_0',
+                'root_0_1',
+                'root_1',
+            ],
+            $tree->getBranchOrders()
+        );
+        $tree->destroy();
     }
 
 }

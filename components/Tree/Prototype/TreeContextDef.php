@@ -20,6 +20,7 @@ use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Context\Traits\ContextDefTrait;
+use Commune\Ghost\Stage\CancelStage;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\ArrTree\Branch;
 use Commune\Support\ArrTree\Tree;
@@ -36,7 +37,8 @@ use Commune\Support\Option\AbsOption;
  *
  *
  * ## stage 相关定义.
- * @property-read array $tree
+ * @property-read array[] $tree
+ * @property-read string $rootName
  * @property-read bool $appendingBranch
  * @property-read string[] $stageEvents
  * @property-read string|null $relativeOption
@@ -89,10 +91,14 @@ class TreeContextDef extends AbsOption implements ContextDef
             // query 参数如果是数组, 则定义参数名时应该用 [] 做后缀, 例如 ['key1', 'key2', 'key3[]']
             'queryNames' => [],
 
+            // tree 的第一级的 key 是各个根节点.
             // 用一棵树来定义多轮对话结构.
             // 每一个节点都会成为一个 stage.
             // 该 stage 的响应策略则通过 Events 的方式来定义, 实现解耦.
+            // 实际上可以实现一个有向无环图.
             'tree' => [],
+
+            'rootName' => self::FIRST_STAGE,
             // 树每个分支节点所使用的 Event
             'stageEvents' => [],
             // 树的节点是否通过 "." 符号连接成 stage_name
@@ -144,7 +150,7 @@ class TreeContextDef extends AbsOption implements ContextDef
 
     public function firstStage(): ? string
     {
-        return static::FIRST_STAGE;
+        return $this->rootName;
     }
 
     public function eachPredefinedStage(): \Generator
@@ -165,8 +171,9 @@ class TreeContextDef extends AbsOption implements ContextDef
         $tree = new Tree();
         $append = $this->appendingBranch ? '_' : '';
 
-        $tree->build($data, static::FIRST_STAGE, $append);
-        new Branch($tree, static::CANCEL_STAGE);
+        foreach ($data as $rootName => $rootBatches) {
+            $tree->build($rootBatches, $rootName, $append);
+        }
 
         // 初始化预定义的
         $this->_stageMap = [];
@@ -175,11 +182,19 @@ class TreeContextDef extends AbsOption implements ContextDef
             $this->_stageMap[$def->getStageShortName()] = $def;
         }
 
+        // 插入 cancel stage.
+        $this->_stageMap[self::CANCEL_STAGE] = new CancelStage([
+            'name' => ContextUtils::makeFullStageName($this->name, self::CANCEL_STAGE),
+            'contextName' => $this->name,
+            'stageName' => self::CANCEL_STAGE,
+        ]);
+
         foreach ($tree->branches as $branch) {
            $stage = $this->buildStage($branch);
            $this->_stageMap[$stage->getStageShortName()] = $stage;
         }
 
+        $tree->destroy();
         return $this->_stageMap;
     }
 
