@@ -102,27 +102,6 @@ class Branch implements ArrayAndJsonAble
             $this->depth = $this->parent->depth + 1;
         }
 
-        if (!empty($appending)) {
-
-            $prefix = $this->parent
-                ? $this->parent->name . $appending
-                : '';
-            $name = $prefix.$name;
-        }
-
-        $this->name = $name;
-        if (array_key_exists($this->name, $this->tree->branches)) {
-            throw new \InvalidArgumentException(
-                "duplicated branch name "
-                . $this->name
-            );
-        }
-
-        if (isset($elder)) {
-            $elder->younger = $this;
-            $this->elder = $elder;
-        }
-
         $this->order = isset($elder)
             ? $elder->order + 1
             : 0;
@@ -131,7 +110,33 @@ class Branch implements ArrayAndJsonAble
             ? ($this->parent->orderId . $this->orderSeparator . $this->order)
             : $this->name;
 
+        if (empty($name)) {
+            $name = 'o' . $this->orderId;
+        }
+
+        if (!empty($appending)) {
+
+            $prefix = $this->parent
+                ? $this->parent->name . $appending
+                : '';
+            $name = $prefix.$name;
+        }
+        $this->name = $name;
+
+        if (array_key_exists($this->name, $this->tree->branches)) {
+            throw new \InvalidArgumentException(
+                "duplicated branch name "
+                . $this->name
+            );
+        }
+
         $this->tree->branches[$name] = $this;
+
+        if (isset($elder)) {
+            $elder->younger = $this;
+            $this->elder = $elder;
+        }
+
     }
 
     public function father(array $children) : void
