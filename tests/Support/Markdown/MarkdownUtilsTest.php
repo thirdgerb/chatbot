@@ -9,9 +9,9 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Test\Support\Utils;
+namespace Commune\Test\Support\Markdown;
 
-use Commune\Support\Utils\MarkdownUtils;
+use Commune\Support\Markdown\MarkdownUtils;
 use PHPUnit\Framework\TestCase;
 
 

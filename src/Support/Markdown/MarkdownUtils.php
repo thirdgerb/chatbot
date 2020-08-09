@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Support\Utils;
+namespace Commune\Support\Markdown;
 
 
 /**
@@ -17,7 +17,25 @@ namespace Commune\Support\Utils;
  */
 class MarkdownUtils
 {
-    const COMMENT_PATTERN = '/^\s*\[(.*)\]:(.*)$/';
+    const COMMENT_PATTERN = '/^\[(.*)\]:(.*)$/';
+
+
+    public static function parseSingleLine(string $line, string $method = null) : string
+    {
+        $line = trim($line);
+        if (!self::isSingleLine($line)) {
+            throw new \InvalidArgumentException(
+                ($method ?? __METHOD__)
+                . ' only accept single line'
+            );
+        }
+        return $line;
+    }
+
+    public static function isSingleLine(string $line) : bool
+    {
+        return mb_strpos($line, "\n") === false;
+    }
 
     public static function quote(string $text) : string
     {
@@ -34,14 +52,7 @@ class MarkdownUtils
 
     public static function parseCommentLine(string $line) : ? array
     {
-        $line = trim($line);
-        if (mb_strpos($line, "\n")) {
-            throw new \InvalidArgumentException(
-                __METHOD__
-                . ' only accept one line'
-            );
-        }
-
+        $line = self::parseSingleLine($line, __METHOD__);
         preg_match(self::COMMENT_PATTERN, $line, $matches);
         if (empty($matches)) {
             return null;

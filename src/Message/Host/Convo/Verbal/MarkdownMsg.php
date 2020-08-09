@@ -12,7 +12,7 @@
 namespace Commune\Message\Host\Convo\Verbal;
 
 use Commune\Message\Host\Convo\IText;
-use Commune\Support\Utils\MarkdownUtils;
+use Commune\Support\Markdown\MarkdownUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

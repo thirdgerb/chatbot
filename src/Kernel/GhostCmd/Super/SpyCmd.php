@@ -16,7 +16,7 @@ use Commune\Kernel\GhostCmd\AGhostCmd;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
-use Commune\Support\Utils\MarkdownUtils;
+use Commune\Support\Markdown\MarkdownUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
