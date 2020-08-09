@@ -98,7 +98,7 @@ abstract class AbsExiting extends AbsOperator
     {
         foreach ($each as $ucl) {
 
-            $this->addCanceling([$ucl]);
+            $this->addCanceling($ucl);
             $next = $this->recursiveWithdraw($process);
             if (isset($next)) {
                 return $next;
