@@ -45,7 +45,7 @@ class MindsetStorageConfigProvider extends ServiceProvider
     {
         return [
             'mindsetCacheExpire' => 599,
-            'resourcePath' => CommuneEnv::getResourcePath(),
+            'resourcePath' => CommuneEnv::getRuntimePath(),
             'storageCacheExpire' => 600,
             'storage' => null,
             'useFileInitStorage' => true,

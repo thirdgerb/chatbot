@@ -35,8 +35,8 @@ class FileCacheServiceProvider extends ServiceProvider
     {
         return [
             'path' => StringUtils::gluePath(
-                CommuneEnv::getResourcePath(),
-                'caches'
+                CommuneEnv::getRuntimePath(),
+                'filecaches'
             )
         ];
     }

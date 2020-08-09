@@ -123,7 +123,7 @@ class TranslatorBySymfonyProvider extends ServiceProvider
     {
         return (new JsonStorageOption([
             'path' => StringUtils::gluePath(
-                CommuneEnv::getResourcePath(),
+                CommuneEnv::getRuntimePath(),
                 'trans/lang.json'
             ),
             'isDir' => false,

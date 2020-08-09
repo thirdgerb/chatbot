@@ -15,7 +15,6 @@ use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\Storage\Json\JsonStorageOption;
 use Commune\Support\Registry\Storage\PHP\PHPStorageOption;
 use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
-use Symfony\Component\Finder\Finder;
 
 
 /**
@@ -25,7 +24,7 @@ use Symfony\Component\Finder\Finder;
  *
  * @property-read string $path  文件存储路径. 一个文件里只应该有一种option
  *
- * @property-read bool $isDir   判断 path 是路径名还是文件名. 如果是路径, 则每个 option 存放一个单独的文件. 否则所有的 option 存放在同一个文件中. 
+ * @property-read bool $isDir   判断 path 是路径名还是文件名. 如果是路径, 则每个 option 存放一个单独的文件. 否则所有的 option 存放在同一个文件中.
  *
  */
 abstract class FileStorageOption extends StorageOption
