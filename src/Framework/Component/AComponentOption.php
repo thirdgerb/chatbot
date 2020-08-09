@@ -50,6 +50,7 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
      * @param string $resourcePath
      * @param bool $isDir
      * @param string $loader
+     * @param bool $force
      */
     public function loadResourceOption(
         App $app,
@@ -57,7 +58,8 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
         string $optionClass,
         string $resourcePath,
         bool $isDir,
-        string $loader = FileStorageOption::OPTION_PHP
+        string $loader = FileStorageOption::OPTION_PHP,
+        bool $force = false
     ) : void
     {
         $registrar = $app->getServiceRegistry();
@@ -67,13 +69,14 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
             'resourcePath' => $resourcePath,
             'optionClass' => $optionClass,
             'loader' => $loader,
-            'isDir' => $isDir
+            'isDir' => $isDir,
         ]), false);
 
         $registrar->registerProcProvider(new RegisterComponentOption([
             'categoryName' => $categoryName,
             'componentName' => static::class,
             'optionClass' => $optionClass,
+            'force' => $force
         ]), false);
     }
 
@@ -81,7 +84,7 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
     public function loadTranslation(
         App $app,
         string $langDir,
-        bool $intl = false,
+        bool $intl = true,
         bool $force = false
     ) : void
     {

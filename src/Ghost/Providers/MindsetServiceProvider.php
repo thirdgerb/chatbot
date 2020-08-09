@@ -20,12 +20,16 @@ use Commune\Contracts\ServiceProvider;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read bool $reset
  */
 class MindsetServiceProvider extends ServiceProvider
 {
     public static function stub(): array
     {
-        return [];
+        return [
+            'reset' => CommuneEnv::isResetRegistry(),
+        ];
     }
 
     public function getDefaultScope(): string
@@ -46,7 +50,7 @@ class MindsetServiceProvider extends ServiceProvider
         $mindset = $app->get(Mindset::class);
         $logger = $app->get(ConsoleLogger::class);
 
-        if (CommuneEnv::isResetRegistry()) {
+        if ($this->reset) {
             $logger->warning("reset all mindset data!!");
             $mindset->reset();
         }

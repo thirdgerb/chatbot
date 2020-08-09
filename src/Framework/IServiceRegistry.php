@@ -247,8 +247,6 @@ class IServiceRegistry implements ServiceRegistry
                 );
 
                 $provider->boot($this->procC);
-
-                $this->consoleLogger->debug('done!');
             }
 
         } catch (\Throwable $e) {

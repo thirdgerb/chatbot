@@ -26,6 +26,7 @@ use Commune\Support\Registry\OptRegistry;
  * @property-read string $componentName     组件自身的名称.
  * @property-read string $optionClass       配置的类名
  * @property-read string $categoryName      OptRegistry 里的分类名称.
+ * @property-read bool $force
  */
 class RegisterComponentOption extends ServiceProvider
 {
@@ -37,6 +38,7 @@ class RegisterComponentOption extends ServiceProvider
             'componentName' => '',
             'optionClass' => '',
             'categoryName' => '',
+            'force' => false,
         ];
     }
 
@@ -45,12 +47,17 @@ class RegisterComponentOption extends ServiceProvider
         return self::SCOPE_PROC;
     }
 
+    /**
+     * Provider 的唯一 id
+     * @return string
+     */
     public function __get_id() : string
     {
-        return static::class
-            . ':'
+        return 'rgt'
+            . static::class
+            . ':com:'
             . $this->componentName
-            . ':'
+            . ':opt:'
             . $this->optionClass;
     }
 
@@ -82,8 +89,9 @@ class RegisterComponentOption extends ServiceProvider
 
         // 注册到正式的option 分类中.
         $ids = 0;
+        $notExists = !$this->force;
         foreach ($componentCategory->eachOption() as $option) {
-            $success = $category->save($option, true);
+            $success = $category->save($option, $notExists);
             if ($success) {
                 $ids ++;
             }

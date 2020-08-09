@@ -49,10 +49,10 @@ class TreeComponent extends AGhostComponent
     {
 
         $preload = [
-            'Commune\Components\Tree\Impl' => __DIR__ . '/Impl',
+            'Commune\\Components\\Tree\\Impl' => __DIR__ . '/Impl',
         ];
         if ($this->loadDemo) {
-            $preload['Commune\Components\Tree\Demo'] = __DIR__ . '/Demo';
+            $preload['Commune\\Components\\Tree\\Demo'] = __DIR__ . '/Demo';
         }
         $this->loadPsr4MindRegister(
             $app,

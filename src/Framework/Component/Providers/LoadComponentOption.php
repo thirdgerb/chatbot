@@ -21,7 +21,7 @@ use Commune\Support\Registry\Storage\FileStorageOption;
 use Commune\Support\Utils\TypeUtils;
 
 /**
- * 将组件里的 resource 文件夹下的配置先读取到注册表.
+ * 将组件里的自定义的配置, 加载到注册表 optRegistry.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
@@ -64,13 +64,20 @@ class LoadComponentOption extends ServiceProvider
 
     public function __get_id() : string
     {
-        return static::class
-            . ':'
+        return 'load:'
+            . static::class
+            . ':com:'
             . $this->componentName
-            . ':'
+            . ':opt:'
             . $this->optionClass;
     }
 
+    /**
+     * 生成本组件配置在 OptRegistry 内部的一个唯一 ID
+     * @param string $componentName
+     * @param string $optionClass
+     * @return string
+     */
     public static function makeComponentOptionId(
         string $componentName,
         string $optionClass

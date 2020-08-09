@@ -20,12 +20,18 @@ use Commune\Support\Registry\Storage\FileStorageOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read bool $trigger     Predefined 功能的开关. 如果关闭的话, 所有功能都不会运行.
+ *
+ * 可以搞一个自定义组件继承本类, 再去实现其中自定义的功能.
  */
 class PredefinedComponent extends AGhostComponent
 {
     public static function stub(): array
     {
-        return [];
+        return [
+            'trigger' => true,
+        ];
     }
 
     public static function relations(): array
@@ -35,6 +41,15 @@ class PredefinedComponent extends AGhostComponent
 
     public function bootstrap(App $app): void
     {
+        if (!$this->trigger) {
+            $app->getConsoleLogger()
+                ->warning(
+                    static::class
+                    . ' not running, trigger is false'
+                );
+            return;
+        }
+
         // 加载 emotion 配置.
         $this->loadResourceOption(
             $app,
@@ -80,8 +95,12 @@ class PredefinedComponent extends AGhostComponent
         // 加载语言配置
         $this->loadTranslation(
             $app,
-            __DIR__ . '/resources/trans'
+            __DIR__ . '/resources/trans',
+            true,
+            false
         );
+
+
     }
 
 

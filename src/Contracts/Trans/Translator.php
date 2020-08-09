@@ -50,7 +50,7 @@ interface Translator
         string $locale = null,
         string $domain = null,
         bool $intl = true,
-        bool $force = null
+        bool $force = true
     ) : void;
 
     public function getDefaultLocale() : string;

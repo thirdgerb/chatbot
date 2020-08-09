@@ -31,6 +31,8 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string $defaultDomain
  * @property-read StorageMeta|null $storage
  * @property-read StorageMeta|null $initStorage     定义自己的 init storage.
+ *
+ * @property-read bool $reset
  */
 class TranslatorBySymfonyProvider extends ServiceProvider
 {
@@ -44,6 +46,8 @@ class TranslatorBySymfonyProvider extends ServiceProvider
             'storage' => null,
 
             'initStorage' => null,
+
+            'reset' => CommuneEnv::isResetRegistry(),
         ];
     }
 
@@ -110,7 +114,7 @@ class TranslatorBySymfonyProvider extends ServiceProvider
             'initialStorage' => $initStorage,
         ]));
 
-        if (CommuneEnv::isResetRegistry()) {
+        if ($this->reset) {
             $logger->warning("reset trans data!!");
             $category = $registry->getCategory(TransOption::class);
             $category->flush(false);

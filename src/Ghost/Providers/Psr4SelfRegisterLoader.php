@@ -27,6 +27,7 @@ use Symfony\Component\Finder\Finder;
  *
  * @property-read string $id
  * @property-read string[] $psr4
+ * @property-read bool $force
  */
 class Psr4SelfRegisterLoader extends ServiceProvider
 {
@@ -37,6 +38,7 @@ class Psr4SelfRegisterLoader extends ServiceProvider
         return [
             'id' => static::class,
             'psr4' => [],
+            'force' => CommuneEnv::isResetRegistry(),
         ];
     }
 
@@ -50,12 +52,14 @@ class Psr4SelfRegisterLoader extends ServiceProvider
         $mind = $app->get(Ghost\Mindset::class);
         $logger = $app->get(ConsoleLogger::class);
 
+        $force = $this->force;
         foreach ($this->psr4 as $namespace => $path) {
             static::loadSelfRegister(
                 $mind,
                 $namespace,
                 $path,
-                $logger
+                $logger,
+                $force
             );
         }
     }
@@ -69,7 +73,8 @@ class Psr4SelfRegisterLoader extends ServiceProvider
         Ghost\Mindset $mind,
         string $namespace,
         string $directory,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        bool $force = false
     ) : void
     {
         $directory = realpath($directory);
@@ -107,7 +112,7 @@ class Psr4SelfRegisterLoader extends ServiceProvider
 
             $logger->debug("load mind self register: $clazz");
             $method = [$clazz, MindSelfRegister::REGISTER_METHOD];
-            $reset = CommuneEnv::isResetRegistry();
+            $reset = $force;
             call_user_func($method, $mind, $reset);
             $i ++;
         }
