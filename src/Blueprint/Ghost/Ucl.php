@@ -65,6 +65,11 @@ class Ucl implements UclInterface
     protected $_query;
 
     /**
+     * @var string|null
+     */
+    protected $_asIntent;
+
+    /**
      * @var bool
      */
     protected $instanced = false;
@@ -338,6 +343,17 @@ class Ucl implements UclInterface
 
     /*------- property -------*/
 
+    public function asIntent(string $intentName) : self
+    {
+        $this->_asIntent = $intentName;
+        return $this;
+    }
+
+    public function getIntentName() : string
+    {
+        return $this->_asIntent ?? $this->getStageFullname();
+    }
+
     public function getStageFullname(string $stage = null) : string
     {
         $stage = $stage ?? $this->_stageName;
@@ -550,6 +566,7 @@ class Ucl implements UclInterface
             '_contextName',
             '_stageName',
             '_query',
+            '_asIntent',
             'instanced',
         ];
     }

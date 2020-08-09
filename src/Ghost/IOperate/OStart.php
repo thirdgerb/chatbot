@@ -13,6 +13,7 @@ namespace Commune\Ghost\IOperate;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Pipe\ComprehendPipe;
 use Commune\Blueprint\Ghost\Runtime\Process;
@@ -26,7 +27,6 @@ use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 use Commune\Protocals\HostMsg\ConvoMsg;
 use Commune\Protocals\Intercom\InputMsg;
-use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -359,7 +359,7 @@ class OStart extends AbsOperator
         // 绝大多数拥有匹配意图的情况在这个环节就可以结束了.
         if (!empty($matched)) {
             foreach ($routes as $route) {
-                $fullname = $route->getStageFullname();
+                $fullname = $route->getIntentName();
                 if ($matched === $fullname) {
                     return $route;
                 }
@@ -379,8 +379,13 @@ class OStart extends AbsOperator
             // 这个 ucl 可能是假的, 用了通配符
             $fullname = $ucl->getStageFullname();
             if ($matcher->matchStage($fullname)->truly()) {
+                /**
+                 * @var StageDef $matched
+                 */
+                $matched = $matcher->getMatchedParams()['matchStage'];
+                $matchedFullname = $matched->getName();
                 // 这个 ucl 就是真的了.
-                return $ucl->goStageByFullname($fullname);
+                return $ucl->goStageByFullname($matchedFullname);
             }
         }
 
