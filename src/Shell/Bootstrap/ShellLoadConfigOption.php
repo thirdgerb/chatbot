@@ -14,7 +14,7 @@ namespace Commune\Shell\Bootstrap;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Shell;
 use Commune\Framework\Bootstrap\LoadConfigOption;
-use Commune\Ghost\Support\ValidateUtils;
+use Commune\Support\Utils\TypeUtils;
 
 
 /**
@@ -28,7 +28,7 @@ class ShellLoadConfigOption extends LoadConfigOption
      */
     protected function getConfigOptions(App $app): array
     {
-        ValidateUtils::isArgInstanceOf($app, Shell::class, true);
+        TypeUtils::validateInstance($app, Shell::class, __METHOD__);
         return $app->getConfig()->options;
     }
 

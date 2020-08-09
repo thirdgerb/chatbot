@@ -14,7 +14,7 @@ namespace Commune\Host\Bootstrap;
 use Commune\Blueprint\Host;
 use Commune\Blueprint\Framework\App;
 use Commune\Framework\Bootstrap\LoadConfigOption;
-use Commune\Ghost\Support\ValidateUtils;
+use Commune\Support\Utils\TypeUtils;
 
 
 /**
@@ -28,7 +28,7 @@ class HostLoadConfigOption extends LoadConfigOption
      */
     protected function getConfigOptions(App $app): array
     {
-        ValidateUtils::isArgInstanceOf($app, Host::class, true);
+        TypeUtils::validateInstance($app, Host::class, __METHOD__);
         return $app->getConfig()->options;
     }
 

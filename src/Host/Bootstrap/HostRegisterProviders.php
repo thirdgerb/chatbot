@@ -13,8 +13,8 @@ namespace Commune\Host\Bootstrap;
 
 use Commune\Blueprint\Host;
 use Commune\Blueprint\Framework\App;
-use Commune\Ghost\Support\ValidateUtils;
 use Commune\Framework\Bootstrap\RegisterProviders;
+use Commune\Support\Utils\TypeUtils;
 
 
 /**
@@ -28,7 +28,7 @@ class HostRegisterProviders extends RegisterProviders
      */
     public function getProviderConfigs(App $app): array
     {
-        ValidateUtils::isArgInstanceOf($app, Host::class, true);
+        TypeUtils::validateInstance($app, Host::class, __METHOD__);
         return $app->getConfig()->providers;
     }
 
