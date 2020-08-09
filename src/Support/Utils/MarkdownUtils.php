@@ -17,6 +17,7 @@ namespace Commune\Support\Utils;
  */
 class MarkdownUtils
 {
+    const COMMENT_PATTERN = '/^\s*\[(.*)\]:(.*)$/';
 
     public static function quote(string $text) : string
     {
@@ -29,5 +30,26 @@ class MarkdownUtils
     {
         $codeType = $codeType ?? '';
         return "```$codeType\n$text\n```";
+    }
+
+    public static function parseCommentLine(string $line) : ? array
+    {
+        $line = trim($line);
+        if (mb_strpos($line, "\n")) {
+            throw new \InvalidArgumentException(
+                __METHOD__
+                . ' only accept one line'
+            );
+        }
+
+        preg_match(self::COMMENT_PATTERN, $line, $matches);
+        if (empty($matches)) {
+            return null;
+        }
+
+        return [
+            $comment = trim($matches[1]),
+            $content = trim($matches[2]),
+        ];
     }
 }
