@@ -189,16 +189,13 @@ class SymfonyTranslatorAdapter implements Translator
         string $locale = null,
         string $domain = null,
         bool $intl = true,
-        bool $force = null
+        bool $force = true
     ): void
     {
         $locale = $locale ?? $this->defaultLocale;
         $domain = $domain ?? $this->defaultDomain;
         $prefix = $this->getPrefix($locale, $domain);
         $messages = Arr::dot($messages);
-
-        // 是否重置.
-        $force = $force ?? CommuneEnv::isResetRegistry();
 
         foreach ($messages as $id => $template) {
 

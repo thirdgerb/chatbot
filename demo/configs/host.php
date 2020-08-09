@@ -12,6 +12,10 @@ return new IHostConfig([
 
     'name' => 'demo',
 
+    'components' => [
+        \Commune\Components\Resource\ResourceComponent::class,
+    ],
+
     'providers' => [
 
         /* config services */

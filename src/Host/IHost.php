@@ -43,6 +43,8 @@ class IHost extends AbsApp implements Host
         Bootstrap\HostLoadConfigOption::class,
         // 注册服务
         Bootstrap\HostRegisterProviders::class,
+        // 注册组件.
+        Bootstrap\HostLoadComponents::class,
     ];
 
     /**

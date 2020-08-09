@@ -11,6 +11,7 @@
 
 namespace Commune\Host\Prototype;
 
+use Commune\Components\Resource\ResourceComponent;
 use Commune\Framework;
 use Commune\Host\IHostConfig;
 use Commune\Ghost\Providers as GhostProviders;
@@ -55,6 +56,10 @@ class HostProtoConfig extends IHostConfig
 
                 /* req services */
                 Framework\Providers\CacheByArrProvider::class,
+            ],
+            'components' => [
+                // 预加载系统 resource 路径下的资源.
+                ResourceComponent::class,
             ],
             'options' => [],
             'ghost' => [],

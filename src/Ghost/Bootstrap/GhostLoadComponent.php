@@ -22,6 +22,7 @@ use Commune\Framework\Bootstrap\LoadComponents;
 class GhostLoadComponent extends LoadComponents
 {
     /**
+     * Ghost 启动的时候默认加载 Predefined.
      * @param Ghost $app
      * @return array
      */

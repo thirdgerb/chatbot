@@ -28,6 +28,7 @@ use Commune\Support\Option\AbsOption;
  * @property-read string $name
  *
  * @property-read array $providers              所有 组件共享的服务配置.
+ * @property-read array $components             全局预加载的组件.
  * @property-read array $options
  *
  * # 关联配置
@@ -54,6 +55,7 @@ class IHostConfig extends AbsOption implements HostConfig
             'id' => '',
             'name' => '',
             'providers' => [],
+            'components' => [],
             'options' => [],
             'ghost' => [],
             'shells' => [],

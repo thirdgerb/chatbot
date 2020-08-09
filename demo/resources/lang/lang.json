@@ -1,0 +1,10 @@
+[
+  {
+    "id": "zh-cn:messages:commune.resource.example",
+    "transId": "commune.resource.example",
+    "locale": "zh-cn",
+    "domain": "messages",
+    "temp": "commune.resource.example",
+    "intl": false
+  }
+]

@@ -1,0 +1,6 @@
+name: entity_example
+title: example
+desc: ''
+values:
+  - entity_example
+blacklist: {  }

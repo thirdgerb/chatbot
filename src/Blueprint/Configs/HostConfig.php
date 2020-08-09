@@ -24,7 +24,8 @@ use Commune\Support\Option\Option;
  * @property-read string $name                  机器人对外暴露的名称. 
  *
  * @property-read array $providers              全局共享的服务配置.
- * @property-read array $options                Host 要绑定的配置单例. 
+ * @property-read array $options                Host 要绑定的配置单例.
+ * @property-read array $components             全局加载的组件.
  *
  * # 关联配置
  * @property-read GhostConfig $ghost            Ghost 的配置
