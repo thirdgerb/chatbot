@@ -223,6 +223,7 @@ class TreeContextDef extends AbsOption implements ContextDef
             'contextName' => $this->name,
             'stageName' => $branch->name,
 
+            'orderId' => $branch->orderId,
             // 爹妈
             'parent' => $this->getFullStageName($branch->parent),
             // 儿女
@@ -231,6 +232,9 @@ class TreeContextDef extends AbsOption implements ContextDef
             'elder' => $this->getFullStageName($branch->elder),
             // 弟弟妹妹
             'younger' => $this->getFullStageName($branch->younger),
+            // 深度
+            'depth' => $branch->depth,
+
             'events' => $this->stageEvents,
             'asIntent' => null,
             'ifRedirect' => null,

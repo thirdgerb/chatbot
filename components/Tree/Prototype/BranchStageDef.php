@@ -26,10 +26,12 @@ use Commune\Ghost\Stage\IStageDef;
  *
  * @property-read string[] $events
  *
+ * @property-read string $orderId
  * @property-read string|null $parent
  * @property-read string[] $children
  * @property-read string|null $elder
  * @property-read string|null $younger
+ * @property-read int $depth
  *
  * @property-read IntentMeta|null $asIntent
  * @property-read string|null $ifRedirect
@@ -46,6 +48,7 @@ class BranchStageDef extends IStageDef
             'contextName' => '',
             'stageName' => '',
 
+            'orderId' => '',
             // 爹妈
             'parent' => null,
             // 儿女
@@ -54,6 +57,7 @@ class BranchStageDef extends IStageDef
             'elder' => null,
             // 弟弟妹妹
             'younger' => null,
+            'depth' => 0,
 
 
             'events' => [],

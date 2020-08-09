@@ -63,6 +63,11 @@ class Branch implements ArrayAndJsonAble
     public $orderId;
 
     /**
+     * @var int
+     */
+    public $depth = 0;
+
+    /**
      * @var string
      */
     protected $appending;
@@ -94,6 +99,7 @@ class Branch implements ArrayAndJsonAble
 
         if (isset($this->parent)) {
             $this->parent->children[] = $this;
+            $this->depth = $this->parent->depth + 1;
         }
 
         if (!empty($appending)) {
@@ -168,6 +174,7 @@ class Branch implements ArrayAndJsonAble
             'children' => array_map(function(Branch $child) {
                 return $child->name;
             }, $this->children),
+            'depth' => $this->depth,
         ];
     }
 

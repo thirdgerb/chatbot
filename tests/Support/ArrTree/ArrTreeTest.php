@@ -56,6 +56,7 @@ class ArrTreeTest extends TestCase
                                 'a',
                                 'e',
                             ),
+                        'depth' => 0,
                     ),
                 'a' =>
                     array (
@@ -68,6 +69,7 @@ class ArrTreeTest extends TestCase
                                 'b',
                                 'd',
                             ),
+                        'depth' => 1,
                     ),
                 'b' =>
                     array (
@@ -79,6 +81,7 @@ class ArrTreeTest extends TestCase
                             array (
                                 'c',
                             ),
+                        'depth' => 2,
                     ),
                 'c' =>
                     array (
@@ -89,6 +92,7 @@ class ArrTreeTest extends TestCase
                         'children' =>
                             array (
                             ),
+                        'depth' => 3,
                     ),
                 'd' =>
                     array (
@@ -99,13 +103,15 @@ class ArrTreeTest extends TestCase
                         'children' =>
                             array (
                             ),
+                        'depth' => 2,
                     ),
                 'e' => [
                     'name' => 'e',
                     'parent' => 'root',
                     'elder' => 'a',
                     'younger' => NULL,
-                    'children' => []
+                    'children' => [],
+                    'depth' => 1,
                 ]
             ),
             $tree->toArray()
