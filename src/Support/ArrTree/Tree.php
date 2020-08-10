@@ -28,47 +28,85 @@ class Tree implements ArrayAndJsonAble
     public $branches = [];
 
     /**
-     * @var Branch[]
+     * @var Branch
      */
-    public $roots = [];
+    public $root;
 
-    public function build(array $tree, string $rootName, string $appending = '') : Branch
+    private function __construct()
     {
-        $root = new Branch($this, $rootName, null, null, $appending);
-        $root->father($tree);
-        $this->roots[$root->name] = $root;
+    }
 
-        return $root;
+    public static function build(array $tree, string $rootName, string $orderSeparator = '_') : Tree
+    {
+        $self = new static;
+        $root = new Branch($self, $rootName);
+        $root->orderSeparator = $orderSeparator;
+
+        $self->root = $root;
+        $self->branches[$root->orderId] = $root;
+
+        $root->build($tree);
+        return $self;
     }
 
     public function toArray() : array
     {
-        return array_map(function(Branch $branch) {
-            return $branch->toArray();
-        }, $this->branches);
+        $arr = [];
+        foreach ($this->branches as $branch) {
+            $arr[$branch->name] = $branch->toArray();
+        }
+        return $arr;
     }
 
     public function toTreeArr() : array
     {
         $tree = [];
-        foreach($this->roots as $root) {
-            $tree[$root->name] = $root->toTreeArr();
-        }
+        $root = $this->root;
+        $tree[$root->name] = $root->toTreeArr();
         return $tree;
     }
 
     public function toOrderArr() : array
     {
         $tree = [];
-        foreach($this->roots as $root) {
-            $tree[$root->name] = $root->toOrderArr();
-        }
+        $root = $this->root;
+        $tree[$root->name] = $root->toOrderArr();
         return $tree;
     }
 
     public function getBranchNames() : array
     {
-        return array_keys($this->branches);
+        return array_values(
+            array_map(
+                function(Branch $branch) {
+                    return $branch->name;
+                },
+                $this->branches
+            )
+        );
+    }
+
+
+    public function getBranchFamilyNames(string $join) : array
+    {
+        return array_values(
+            array_map(
+                function(Branch $branch) use ($join){
+                    return $branch->getFamilyName($join);
+                },
+                $this->branches
+            )
+        );
+    }
+
+    public function getBranchMapByName() : array
+    {
+        $branches = [];
+        foreach ($this->branches as $branch) {
+            $branches[$branch->name] = $branch;
+        }
+
+        return $branches;
     }
 
     public function getBranchOrders() : array

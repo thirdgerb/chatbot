@@ -33,10 +33,8 @@ class ArrTreeTest extends TestCase
             'e'
         ];
 
-        $tree = new Tree();
-        $tree->build($data, $rootName);
-
-        $b = $tree->branches['b'];
+        $tree = Tree::build($data, $rootName);
+        $b = $tree->getBranchMapByName()['b'];
         $this->assertEquals('a', $b->parent->name);
         $this->assertEquals('d', $b->younger->name);
         $this->assertEquals(1, count($b->children));
@@ -47,6 +45,7 @@ class ArrTreeTest extends TestCase
             array (
                 'root' =>
                     array (
+                        'orderId' => 'root',
                         'name' => 'root',
                         'parent' => NULL,
                         'elder' => NULL,
@@ -60,6 +59,7 @@ class ArrTreeTest extends TestCase
                     ),
                 'a' =>
                     array (
+                        'orderId' => 'root_0',
                         'name' => 'a',
                         'parent' => 'root',
                         'elder' => NULL,
@@ -73,6 +73,7 @@ class ArrTreeTest extends TestCase
                     ),
                 'b' =>
                     array (
+                        'orderId' => 'root_0_0',
                         'name' => 'b',
                         'parent' => 'a',
                         'elder' => NULL,
@@ -85,6 +86,7 @@ class ArrTreeTest extends TestCase
                     ),
                 'c' =>
                     array (
+                        'orderId' => 'root_0_0_0',
                         'name' => 'c',
                         'parent' => 'b',
                         'elder' => NULL,
@@ -96,6 +98,7 @@ class ArrTreeTest extends TestCase
                     ),
                 'd' =>
                     array (
+                        'orderId' => 'root_0_1',
                         'name' => 'd',
                         'parent' => 'a',
                         'elder' => 'b',
@@ -106,6 +109,7 @@ class ArrTreeTest extends TestCase
                         'depth' => 2,
                     ),
                 'e' => [
+                    'orderId' => 'root_1',
                     'name' => 'e',
                     'parent' => 'root',
                     'elder' => 'a',
@@ -121,26 +125,28 @@ class ArrTreeTest extends TestCase
         $this->assertEquals($data, $tree->toTreeArr()['root']);
 
         $this->assertEquals(
-            array (
-                'root_0' =>
-                    array (
-                        'root_0_0' =>
-                            array (
-                                0 => 'root_0_0_0',
-                            ),
-                        0 => 'root_0_1',
-                    ),
-                0 => 'root_1',
-            ),
-            $tree->toOrderArr()['root']
+            [
+                'root' => array (
+                    'root_0' =>
+                        array (
+                            'root_0_0' =>
+                                array (
+                                    0 => 'root_0_0_0',
+                                ),
+                            0 => 'root_0_1',
+                        ),
+                    0 => 'root_1',
+                ),
+            ],
+
+            $tree->toOrderArr()
         );
 
         $tree->destroy();
 
 
-        $tree = new Tree();
 
-        $tree->build($data, $rootName, '.');
+        $tree = Tree::build($data, $rootName);
         $this->assertEquals(
             [
                 'root',
@@ -150,7 +156,7 @@ class ArrTreeTest extends TestCase
                 'root.a.d',
                 'root.e',
             ],
-            $tree->getBranchNames()
+            $tree->getBranchFamilyNames('.')
         );
         $this->assertEquals(
             [

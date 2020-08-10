@@ -26,12 +26,12 @@ use Commune\Ghost\Stage\IStageDef;
  *
  * @property-read string[] $events
  *
- * @property-read string $orderId
- * @property-read string|null $parent
- * @property-read string[] $children
- * @property-read string|null $elder
- * @property-read string|null $younger
- * @property-read int $depth
+ * @property string $orderId
+ * @property string|null $parent
+ * @property string[] $children
+ * @property string|null $elder
+ * @property string|null $younger
+ * @property int $depth
  *
  * @property-read IntentMeta|null $asIntent
  * @property-read string|null $ifRedirect

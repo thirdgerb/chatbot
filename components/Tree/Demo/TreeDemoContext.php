@@ -51,26 +51,25 @@ class TreeDemoContext extends ContextRegister
             'queryNames' => [],
 
             'rootName' => TreeContextDef::FIRST_STAGE,
+
             // 用一棵树来定义多轮对话结构.
             // 每一个节点都会成为一个 stage.
             // 该 stage 的响应策略则通过 Events 的方式来定义, 实现解耦.
             'tree' => [
-                TreeContextDef::FIRST_STAGE => [
-                    'a' => [
-                        'b' => ['c'],
-                        'd' => [
-                            'e',
-                            'f'
-                        ],
+                'a' => [
+                    'b' => ['c'],
+                    'd' => [
+                        'e',
+                        'f'
                     ],
-                    'g',
-                    'h' => [
-                        'j' => [
-                            'k'
-                        ],
-                        'l',
+                ],
+                'g',
+                'h' => [
+                    'j' => [
+                        'k'
                     ],
-                ]
+                    'l',
+                ],
             ],
             // 树每个分支节点所使用的 Event
             'stageEvents' => [

@@ -33,7 +33,7 @@ class Branch implements ArrayAndJsonAble
     public $name;
 
     /**
-     * @var string|null
+     * @var Branch|null
      */
     public $parent;
 
@@ -55,100 +55,94 @@ class Branch implements ArrayAndJsonAble
     /**
      * @var int
      */
-    public $order;
+    public $order = 0;
 
-    /**
-     * @var string
-     */
-    public $orderId;
 
     /**
      * @var int
      */
     public $depth = 0;
 
+
     /**
      * @var string
      */
-    protected $appending;
+    public $orderId = 'root';
 
-    protected $orderSeparator;
+    public $orderSeparator = '_';
 
     /**
      * Branch constructor.
      * @param Tree $tree
      * @param string $name
-     * @param Branch|null $parent
-     * @param Branch|null $elder
-     * @param string $appending
-     * @param string $orderSeparator
      */
-    public function __construct(
-        Tree $tree,
-        string $name,
-        Branch $parent = null,
-        Branch $elder = null,
-        string $appending = '',
-        string $orderSeparator = '_'
-    )
+    public function __construct(Tree $tree, string $name)
     {
         $this->tree = $tree;
-        $this->orderSeparator = $orderSeparator;
-        $this->parent = $parent;
-        $this->appending = $appending;
-
-        if (isset($this->parent)) {
-            $this->parent->children[] = $this;
-            $this->depth = $this->parent->depth + 1;
-        }
-
-        $this->order = isset($elder)
-            ? $elder->order + 1
-            : 0;
-
-        $this->orderId = isset($this->parent)
-            ? ($this->parent->orderId . $this->orderSeparator . $this->order)
-            : $this->name;
-
-        if (empty($name)) {
-            $name = 'o' . $this->orderId;
-        }
-
-        if (!empty($appending)) {
-
-            $prefix = $this->parent
-                ? $this->parent->name . $appending
-                : '';
-            $name = $prefix.$name;
-        }
         $this->name = $name;
+    }
 
-        if (array_key_exists($this->name, $this->tree->branches)) {
+    public function getFamilyName(string $join) : string
+    {
+        $name = $this->name;
+        $parent = $this->parent;
+
+        while (isset($parent)) {
+            $name = $parent->name . $join . $name;
+            $parent = $parent->parent;
+        };
+
+        return $name;
+    }
+
+    public function father(string $name) : Branch
+    {
+        $child = new Branch($this->tree, $name);
+        $child->parent = $this;
+        $child->depth = $this->depth + 1;
+
+        $elder = array_pop($this->children);
+
+        if (isset($elder)) {
+            $child->order = $elder->order + 1;
+            $elder->younger = $child;
+            $child->elder = $elder;
+            array_push($this->children, $elder);
+        }
+
+        $child->orderId = $this->orderId . $this->orderSeparator . $child->order;
+
+
+        if (array_key_exists($child->orderId, $this->tree->branches)) {
             throw new \InvalidArgumentException(
-                "duplicated branch name "
-                . $this->name
+                "duplicated branch order id "
+                . $child->orderId
             );
         }
 
-        $this->tree->branches[$name] = $this;
+        $this->tree->branches[$child->orderId] = $child;
 
-        if (isset($elder)) {
-            $elder->younger = $this;
-            $this->elder = $elder;
-        }
-
+        // 户籍都搞定了再加到族谱里.
+        array_push($this->children, $child);
+        return $child;
     }
 
-    public function father(array $children) : void
+    public function build(array $children) : void
     {
         /**
          * @var Branch|null $current
          */
         $current = null;
+
         foreach ($children as $index => $value) {
+
+            // 有子孙时
             if (is_string($index) && is_array($value)) {
                 $name = $index;
                 $grandChildren = $value;
+
+
+            // 没有子孙时.
             } elseif (is_int($index) && is_string($value)) {
                 $name = $value;
                 $grandChildren = [];
@@ -159,11 +153,10 @@ class Branch implements ArrayAndJsonAble
                 );
             }
 
-            $self = new Branch($this->tree, $name, $this, $current, $this->appending);
+            $current = $this->father($name);
 
-            $current = $self;
             if (!empty($grandChildren)) {
-                $current->father($grandChildren);
+                $current->build($grandChildren);
             }
         }
     }
@@ -172,13 +165,22 @@ class Branch implements ArrayAndJsonAble
     public function toArray() : array
     {
         return [
+            'orderId' => $this->orderId,
+
             'name' => $this->name,
-            'parent' => $this->parent ? $this->parent->name : null,
+
+            'parent' => isset($this->parent)
+                ? $this->parent->name
+                : null,
+
             'elder' => $this->elder ? $this->elder->name : null,
+
             'younger' => $this->younger ? $this->younger->name : null,
+
             'children' => array_map(function(Branch $child) {
                 return $child->name;
             }, $this->children),
+
             'depth' => $this->depth,
         ];
     }

@@ -37,7 +37,7 @@ use Commune\Support\Option\AbsOption;
  *
  *
  * ## stage 相关定义.
- * @property-read array[] $tree
+ * @property-read array $tree
  * @property-read string $rootName
  * @property-read bool $appendingBranch
  * @property-read string[] $stageEvents
@@ -66,7 +66,7 @@ class TreeContextDef extends AbsOption implements ContextDef
     use ContextDefTrait;
 
     /**
-     * @var array|null
+     * @var StageDef[]|null
      */
     protected $_stageMap;
 
@@ -95,7 +95,6 @@ class TreeContextDef extends AbsOption implements ContextDef
             // 用一棵树来定义多轮对话结构.
             // 每一个节点都会成为一个 stage.
             // 该 stage 的响应策略则通过 Events 的方式来定义, 实现解耦.
-            // 实际上可以实现一个有向无环图.
             'tree' => [],
 
             'rootName' => self::FIRST_STAGE,
@@ -167,13 +166,9 @@ class TreeContextDef extends AbsOption implements ContextDef
             return $this->_stageMap;
         }
 
+        $rootName = $this->rootName;
         $data = $this->tree;
-        $tree = new Tree();
-        $append = $this->appendingBranch ? '_' : '';
-
-        foreach ($data as $rootName => $rootBatches) {
-            $tree->build($rootBatches, $rootName, $append);
-        }
+        $tree = Tree::build($data, $rootName);
 
         // 初始化预定义的
         $this->_stageMap = [];
@@ -190,12 +185,30 @@ class TreeContextDef extends AbsOption implements ContextDef
         ]);
 
         foreach ($tree->branches as $branch) {
-           $stage = $this->buildStage($branch);
-           $this->_stageMap[$stage->getStageShortName()] = $stage;
-        }
+            $shortName = $this->getShortStageName($branch);
 
+            // 允许预定义覆盖节点.
+            if (isset($this->_stageMap[$shortName])) {
+                /**
+                 * @var BranchStageDef
+                 */
+                $stage = $this->_stageMap[$shortName];
+                $this->_stageMap[$shortName] = $this->appendStage($stage, $branch);
+            } else {
+                $stage = $this->buildStage($branch);
+            }
+
+            $this->_stageMap[$stage->getStageShortName()] = $stage;
+        }
         $tree->destroy();
         return $this->_stageMap;
+    }
+
+    protected function getShortStageName(Branch $branch) : string
+    {
+        return $this->appendingBranch
+            ? $branch->getFamilyName('_')
+            : $branch->name;
     }
 
     protected function getFullStageName(?Branch $branch) : ? string
@@ -203,15 +216,34 @@ class TreeContextDef extends AbsOption implements ContextDef
         if (!isset($branch)) {
             return null;
         }
+
         return ContextUtils::makeFullStageName(
             $this->name,
-            $branch->name
+            $this->getShortStageName($branch)
         );
+    }
+
+    protected function appendStage(StageDef $stage, Branch $branch) : StageDef
+    {
+        if ($stage instanceof BranchStageDef) {
+            $stage->orderId = $branch->orderId;
+            $stage->parent = $this->getFullStageName($branch->parent);
+            $stage->elder = $this->getFullStageName($branch->elder);
+            $stage->younger = $this->getFullStageName($branch->younger);
+            $stage->children = array_map(function(Branch $branch) {
+                return $this->getFullStageName($branch);
+            }, $branch->children);
+            $stage->depth = $branch->depth;
+        }
+
+        return $stage;
     }
 
     protected function buildStage(Branch $branch) : BranchStageDef
     {
         $fullName = $this->getFullStageName($branch);
+        $shortName = $this->getShortStageName($branch);
+
         $children = array_map(function(Branch $branch) {
             return $this->getFullStageName($branch);
         }, $branch->children);
@@ -221,7 +253,7 @@ class TreeContextDef extends AbsOption implements ContextDef
             'title' => $fullName,
             'desc' => $fullName,
             'contextName' => $this->name,
-            'stageName' => $branch->name,
+            'stageName' => $shortName,
 
             'orderId' => $branch->orderId,
             // 爹妈

@@ -28,7 +28,7 @@
         }
     },
     "require": {
-        "php":">=7.2",
+        "php":">=7.3",
         "psr/container": "~1.0",
         "commune/container": "~0.3",
         "psr/log": "~1.0",
@@ -42,10 +42,10 @@
         "symfony/yaml": "^5.0",
         "monolog/monolog": "^2.0",
         "guzzlehttp/guzzle": "^6.2",
-        "overtrue/pinyin": "~4.0",
-        "swoole/ide-helper": "^4.4"
+        "overtrue/pinyin": "~4.0"
     },
     "require-dev": {
+      "swoole/ide-helper": "^4.4",
         "phpunit/phpunit": "^7.5",
         "symfony/var-dumper": "~5.1",
         "mockery/mockery": "^1.2"
