@@ -36,6 +36,8 @@ use Commune\Support\Markdown\Exceptions\InvalidTreeMarkdownException;
  * @property int[] $lineModes
  * @property int $index
  *
+ * @property-read string[] $archiveComments
+ *
  */
 interface MDParser
 {
@@ -51,7 +53,8 @@ interface MDParser
     public static function parse(
         string $id,
         string $rootName,
-        string $content
+        string $content,
+        array $archiveComments = []
     ) : MDParser;
 
 
@@ -74,9 +77,6 @@ interface MDParser
     public function getLineMode(int $index) : int;
 
     public function toMarkdown() : string;
-
-
-
 
     public function getDocument() : MDDocumentData;
 

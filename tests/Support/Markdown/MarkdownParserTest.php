@@ -22,25 +22,18 @@ class MarkdownParserTest extends TestCase
 {
     public function testParse()
     {
+        $archive = ['parser'];
         $content = $this->getContent();
-        $parser = IMDParser::parse('test', 'root', $content);
+        $parser = IMDParser::parse('test', 'root', $content, $archive);
         $parsedMD = $parser->toMarkdown();
 
-        $parser2 = IMDParser::parse('test', 'root', $parsedMD);
+        $parser2 = IMDParser::parse(
+            'test',
+            'root',
+            $parsedMD,
+            $archive
+        );
         $this->assertEquals($parsedMD, $parser2->toMarkdown());
-
-        $nameArr = array_map(function(MDSectionData $data) {
-            return $data->name;
-        }, $parser->getSections());
-
-        $this->assertTrue(in_array("title~1~3", $nameArr));
-
-        $nameArr2 = array_map(function(MDSectionData $data) {
-            return $data->name;
-        }, $parser2->getSections());
-
-        $this->assertEquals($nameArr, $nameArr2);
-
 
         $map = [];
         foreach ($parser2->getSections() as $orderId => $section) {

@@ -71,6 +71,8 @@ class IMDParser implements MDParser
     
     public $lineModes = [];
 
+    public $specialComments = [];
+
     /**
      * @var MDAnalyser[]
      */
@@ -80,9 +82,15 @@ class IMDParser implements MDParser
      * IMDParser constructor.
      * @param MDDocumentData $doc
      * @param Tree $tree
-     * @param string[] $lines
+     * @param array $lines
+     * @param array $archiveComments
      */
-    public function __construct(MDDocumentData $doc, Tree $tree, array $lines)
+    public function __construct(
+        MDDocumentData $doc,
+        Tree $tree,
+        array $lines,
+        array $archiveComments
+    )
     {
         $this->doc = $doc;
         $this->tree = $tree;
@@ -94,6 +102,7 @@ class IMDParser implements MDParser
             0
         );
 
+        $this->archiveComments = $archiveComments;
         $this->initAnalysers();
     }
 
@@ -108,7 +117,8 @@ class IMDParser implements MDParser
     public static function parse(
         string $id,
         string $rootName,
-        string $content
+        string $content,
+        array $archiveComments = []
     ): MDParser
     {
         $lines = explode(PHP_EOL, $content);
@@ -123,7 +133,7 @@ class IMDParser implements MDParser
 
         $tree = Tree::build([], $rootName, '_');
 
-        $self = new static($doc, $tree, $lines);
+        $self = new static($doc, $tree, $lines, $archiveComments);
 
         $linesCount = count($lines);
         for ($i = 0; $i < $linesCount; $i ++ ) {
