@@ -12,7 +12,6 @@
 namespace Commune\Ghost\IOperate\OFinale;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\MindMeta\ContextMeta;
 use Commune\Blueprint\Ghost\MindReg\StageReg;
 use Commune\Blueprint\Ghost\Operate\Await;
 use Commune\Blueprint\Ghost\Operate\Operator;
@@ -23,7 +22,6 @@ use Commune\Message\Host\Convo\QA\IConfirm;
 use Commune\Message\Host\Convo\QA\IQuestionMsg;
 use Commune\Protocals\HostMsg\Convo\QA\Confirm;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
-use Commune\Support\Registry\OptRegistry;
 use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
@@ -218,8 +216,9 @@ class OAwait extends AbsFinale implements Await
             || $this->addNormalSuggestion($question, $index, $suggestion);
 
         if (!$success) {
+            $actual = TypeUtils::getType($suggestion);
             throw new InvalidArgumentException(
-                "invalid type of question suggestion, only string or Ucl accepted"
+                "invalid type of question suggestion, only string or Ucl accepted, $actual given"
             );
         }
     }

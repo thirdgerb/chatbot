@@ -82,7 +82,7 @@ class TypeUtils
     }
 
     /**
-     * 获取目标的类型
+     * 获取目标的类型, 通常用于异常报告.
      * @param $value
      * @return string
      */
@@ -92,7 +92,23 @@ class TypeUtils
             return $value ? 'true' : 'false';
         }
 
-        return is_object($value) ? get_class($value) : gettype($value);
+        if (is_string($value)) {
+            return 'string: '.mb_substr($value, 0, 15) . '..';
+        }
+
+        if (is_object($value)) {
+
+            $type = get_class($value);
+
+            if (StringUtils::isString($value)) {
+                $text = mb_substr(strval($value), 0, 15) . '..';
+                return "$type: $text";
+            }
+
+            return $type;
+        }
+
+        return gettype($value);
     }
 
     /**

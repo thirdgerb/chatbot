@@ -49,7 +49,11 @@ class StringUtils
 
     public static function isString($str) : bool
     {
-        return is_string($str) || (is_object($str) && method_exists('__toString', $str));
+        return is_string($str)
+            || (
+                is_object($str)
+                && method_exists( $str, '__toString')
+            );
     }
 
     public static function isNotEmptyStr($str) : bool
@@ -517,4 +521,5 @@ class StringUtils
         return (preg_match('/^[a-zA-Z0-9_\-\.]+$/', $text) > 0)
             && (false === strstr($text, '..'));
     }
+
 }
