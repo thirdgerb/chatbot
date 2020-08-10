@@ -122,7 +122,7 @@ class ArrTreeTest extends TestCase
 
         );
 
-        $this->assertEquals($data, $tree->toTreeArr()['root']);
+        $this->assertEquals($data, $tree->toNameArr()['root']);
 
         $this->assertEquals(
             [
@@ -169,6 +169,19 @@ class ArrTreeTest extends TestCase
             ],
             $tree->getBranchOrders()
         );
+
+
+        // 用order 顺序再建一棵新树, 理论上除了名字外, 是复刻的.
+        $orderArr = $tree->toOrderArr();
+        $rootName = $tree->root->name;
+        $tree2 = Tree::build($orderArr[$rootName], $rootName);
+
+        // 完全用 orderId 复刻一棵树.
+        $this->assertEquals($orderArr, $tree2->toOrderArr());
+        $this->assertEquals($orderArr, $tree2->toNameArr());
+
+
+
         $tree->destroy();
     }
 

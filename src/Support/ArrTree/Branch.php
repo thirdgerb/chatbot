@@ -185,7 +185,7 @@ class Branch implements ArrayAndJsonAble
         ];
     }
 
-    public function toTreeArr() : array
+    public function toNameArr() : array
     {
         $data = [];
         if (empty($this->children)) {
@@ -195,7 +195,7 @@ class Branch implements ArrayAndJsonAble
         foreach ($this->children as $child) {
 
             $name = $child->name;
-            $childArr = $child->toTreeArr();
+            $childArr = $child->toNameArr();
             if (empty($childArr)) {
                 $data[] = $name;
             } else {

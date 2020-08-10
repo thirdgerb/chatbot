@@ -58,11 +58,11 @@ class Tree implements ArrayAndJsonAble
         return $arr;
     }
 
-    public function toTreeArr() : array
+    public function toNameArr() : array
     {
         $tree = [];
         $root = $this->root;
-        $tree[$root->name] = $root->toTreeArr();
+        $tree[$root->name] = $root->toNameArr();
         return $tree;
     }
 
