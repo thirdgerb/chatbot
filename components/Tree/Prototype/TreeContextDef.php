@@ -25,6 +25,7 @@ use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\ArrTree\Branch;
 use Commune\Support\ArrTree\Tree;
 use Commune\Support\Option\AbsOption;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -201,38 +202,31 @@ class TreeContextDef extends AbsOption implements ContextDef
 
             $this->_stageMap[$stage->getStageShortName()] = $stage;
         }
+
         $tree->destroy();
         return $this->_stageMap;
     }
 
-    protected function getShortStageName(Branch $branch) : string
+    protected function getShortStageName(? Branch $branch) : ? string
     {
-        return $this->appendingBranch
-            ? $branch->getFamilyName('_')
-            : $branch->name;
-    }
-
-    protected function getFullStageName(?Branch $branch) : ? string
-    {
-        if (!isset($branch)) {
+        if (empty($branch)) {
             return null;
         }
 
-        return ContextUtils::makeFullStageName(
-            $this->name,
-            $this->getShortStageName($branch)
-        );
+        return $this->appendingBranch
+            ? $branch->getFamilyName('_')
+            : $branch->name;
     }
 
     protected function appendStage(StageDef $stage, Branch $branch) : StageDef
     {
         if ($stage instanceof BranchStageDef) {
             $stage->orderId = $branch->orderId;
-            $stage->parent = $this->getFullStageName($branch->parent);
-            $stage->elder = $this->getFullStageName($branch->elder);
-            $stage->younger = $this->getFullStageName($branch->younger);
+            $stage->parent = $this->getShortStageName($branch->parent);
+            $stage->elder = $this->getShortStageName($branch->elder);
+            $stage->younger = $this->getShortStageName($branch->younger);
             $stage->children = array_map(function(Branch $branch) {
-                return $this->getFullStageName($branch);
+                return $this->getShortStageName($branch);
             }, $branch->children);
             $stage->depth = $branch->depth;
         }
@@ -242,11 +236,14 @@ class TreeContextDef extends AbsOption implements ContextDef
 
     protected function buildStage(Branch $branch) : BranchStageDef
     {
-        $fullName = $this->getFullStageName($branch);
         $shortName = $this->getShortStageName($branch);
+        $fullName = ContextUtils::makeFullStageName(
+            $this->name,
+            $shortName
+        );
 
         $children = array_map(function(Branch $branch) {
-            return $this->getFullStageName($branch);
+            return $this->getShortStageName($branch);
         }, $branch->children);
 
         $stage = new BranchStageDef([
@@ -258,13 +255,13 @@ class TreeContextDef extends AbsOption implements ContextDef
 
             'orderId' => $branch->orderId,
             // 爹妈
-            'parent' => $this->getFullStageName($branch->parent),
+            'parent' => $this->getShortStageName($branch->parent),
             // 儿女
             'children' => $children,
             // 哥哥姐姐
-            'elder' => $this->getFullStageName($branch->elder),
+            'elder' => $this->getShortStageName($branch->elder),
             // 弟弟妹妹
-            'younger' => $this->getFullStageName($branch->younger),
+            'younger' => $this->getShortStageName($branch->younger),
             // 深度
             'depth' => $branch->depth,
 

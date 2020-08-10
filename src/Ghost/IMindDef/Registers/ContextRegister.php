@@ -25,7 +25,7 @@ abstract class ContextRegister implements MindSelfRegister
     public static function selfRegisterToMind(Mindset $mindset, bool $force = false): void
     {
         $def = static::makeDef();
-        $mindset->contextReg()->registerDef($def, $force);
+        $mindset->contextReg()->registerDef($def, !$force);
     }
 
 

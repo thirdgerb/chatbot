@@ -29,7 +29,7 @@ abstract class motionRegister implements MindSelfRegister
     public static function selfRegisterToMind(Mindset $mindset, bool $force = false): void
     {
         $meta = static::makeMeta();
-        $mindset->emotionReg()->registerDef($meta->toWrapper(), $force);
+        $mindset->emotionReg()->registerDef($meta->toWrapper(), !$force);
     }
 
 

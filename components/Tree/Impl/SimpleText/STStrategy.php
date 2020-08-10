@@ -44,13 +44,13 @@ class STStrategy extends ATreeActivateStrategy
         $parent = $def->parent;
         $children = $def->children;
         if (!empty($parent)) {
-            $choices[] = $current->goStageByFullname($parent);
+            $choices[] = $current->goStage($parent);
         }
 
         if (!empty($children)) {
             array_push(
                 $choices,
-                ...array_map([$current, 'goStageByFullname'], $children)
+                ...array_map([$current, 'goStage'], $children)
             );
         }
 
