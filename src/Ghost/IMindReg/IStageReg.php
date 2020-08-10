@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\IMindReg;
 
+use Commune\Blueprint\Ghost\MindDef\Def;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\MindReg\StageReg;
@@ -73,4 +74,21 @@ class IStageReg extends AbsDefRegistry implements StageReg
         return false;
     }
 
+    /**
+     * @param StageDef $def
+     * @param bool $notExists
+     * @return bool
+     */
+    public function registerDef(Def $def, bool $notExists = true): bool
+    {
+        $success =  parent::registerDef($def, $notExists);
+        $force = !$notExists;
+
+        // 强制注册时要主动刷新掉关联的 intent
+        if ($force && $success) {
+            $intentDef = $def->asIntentDef();
+            $this->mindset->intentReg()->registerDef($intentDef, false);
+        }
+        return $success;
+    }
 }

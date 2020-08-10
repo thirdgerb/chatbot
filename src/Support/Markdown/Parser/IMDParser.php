@@ -185,7 +185,6 @@ class IMDParser implements MDParser
         $section = new MDSectionData([
             'id' => $this->doc->id . "." . $branch->orderId,
             'orderId' => $branch->orderId,
-            'name' => $branch->name,
             'order' => $branch->order,
             'title' => $title,
             'level' => $level,
@@ -217,7 +216,7 @@ class IMDParser implements MDParser
         $text = implode(PHP_EOL . PHP_EOL, $texts);
 
         //再 trim 掉多余的信息.
-        return trim($text);
+        return PHP_EOL . PHP_EOL . trim($text);
     }
 
 

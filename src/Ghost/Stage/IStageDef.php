@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Ghost\Stage;
+
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Blueprint\Ghost\Dialog\Receive;

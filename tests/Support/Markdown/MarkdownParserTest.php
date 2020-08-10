@@ -61,6 +61,34 @@ class MarkdownParserTest extends TestCase
             ],
             $map
         );
+
+        $comments = $parser2->getSections()['root_0']->comments;
+
+        $this->assertEquals(
+            [
+                'parser' => [
+                    '@name',
+                ]
+            ],
+            $comments
+        );
+
+        $ids = array_map(function(MDSectionData $data) {
+            return $data->id;
+        }, $parser2->getSections());
+
+        $this->assertEquals(
+            [
+                'root' => 'test.root',
+                'root_0' => 'test.root_0',
+                'root_0_0' => 'test.root_0_0',
+                'root_0_1' => 'test.root_0_1',
+                'root_0_1_0' => 'test.root_0_1_0',
+                'root_0_1_1' => 'test.root_0_1_1',
+                'root_0_2' => 'test.root_0_2',
+            ],
+            $ids
+        );
     }
 
     protected function getContent()

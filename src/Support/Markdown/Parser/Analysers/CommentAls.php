@@ -27,7 +27,6 @@ class CommentAls extends MDAnalyser
     ];
 
     protected $methodComments = [
-        'name' => 'setName'
     ];
 
 
@@ -73,13 +72,6 @@ class CommentAls extends MDAnalyser
 
         }
 
-        return MDParser::LINE_COMMENT;
-    }
-
-    protected function setName(string $content) : int
-    {
-        $this->parser->currentSection->name = trim($content);
-        $this->appendComment('name', $content);
         return MDParser::LINE_COMMENT;
     }
 

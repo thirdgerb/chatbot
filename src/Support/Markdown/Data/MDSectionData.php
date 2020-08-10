@@ -26,7 +26,6 @@ use Commune\Support\Utils\TypeUtils;
  * @property-read int $order               文档块在父级 section 中的序号.
  * @property-read int $depth               在树状结构中的深度
  *
- * @property string $name                  文档块的 ID.
  * @property string $title                 标题的内容.
  * @property int $level                    标题的级别. h1 h2 h3...
  * @property string $text                  文本块内容.
@@ -42,7 +41,6 @@ class MDSectionData extends AbsOption
         return [
             'id' => '',
             'orderId' => '',
-            'name' => '',
             'order' => 0,
             'title' => '',
             'level' => 0,

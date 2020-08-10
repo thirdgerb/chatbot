@@ -184,6 +184,7 @@ class TreeContextDef extends AbsOption implements ContextDef
             'stageName' => self::CANCEL_STAGE,
         ]);
 
+        // branch
         foreach ($tree->branches as $branch) {
             $shortName = $this->getShortStageName($branch);
 

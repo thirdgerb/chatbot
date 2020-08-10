@@ -11,8 +11,15 @@
 
 namespace Commune\Components\Markdown;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Framework\App;
+use Commune\Components\Markdown\Options\MDGroupOption;
+use Commune\Components\Markdown\Providers\MDGroupContextLoader;
+use Commune\Components\Markdown\Providers\MDOptRegistryProvider;
+use Commune\Components\Tree\TreeComponent;
 use Commune\Ghost\Component\AGhostComponent;
+use Commune\Support\Registry\Meta\StorageMeta;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
@@ -27,32 +34,109 @@ use Commune\Ghost\Component\AGhostComponent;
  * 用 @comment 注解的形式来定义其中的对话逻辑细节. 包括视频对话.
  * php 8.0 会实装 Attribute 功能, 现阶段先称注解的做法为 Annotation.
  *
- * 希望这个功能能够成功!! 我只有不到两天时间来开发这个功能.  ~2020-08-09
- *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
  *
  *
  *
+ * @property-read bool $reset               是否重置配置. 否则只更新 updated
+ * @property-read MDGroupOption[] $groups
  *
+ *
+ *
+ *
+ * # 可选配置
+ *
+ * @property-read string $resourcePath      放置 markdown 的源文件.
+ * @property-read string $runtimePath       放置解析后的 markdown option 文件
+ * @property-read StorageMeta|null $docStorage
+ * @property-read StorageMeta|null $sectionStorage
+ * @property-read StorageMeta|null $docInitialStorage
+ * @property-read StorageMeta|null $sectionInitialStorage
  *
  */
 class MarkdownComponent extends AGhostComponent
 {
     public static function stub(): array
     {
-        return [];
+        return [
+
+            'reset' => CommuneEnv::isResetRegistry(),
+            'groups' => [
+                [
+                    'groupName' => 'Demo',
+                    'relativePath' => 'demo',
+                    // 命名空间 + 文件的相对路径 = document id
+                    'namespace' => 'md.demo',
+                    // 将 option 变成 ContextDef 的工具.
+                    'contextParser' => '',
+
+                ]
+
+            ],
+
+            // 可选配置
+            'runtimePath' => StringUtils::gluePath(
+                CommuneEnv::getRuntimePath(),
+                'markdown'
+            ),
+            'resourcePath' => StringUtils::gluePath(
+                CommuneEnv::getResourcePath(),
+                'markdown'
+            ),
+            'docStorage' => null,
+            'docInitialStorage' => null,
+            'sectionStorage' => null,
+            'sectionInitialStorage' => null,
+        ];
     }
 
     public static function relations(): array
     {
-        return [];
+        return [
+            'groups[]' => MDGroupOption::class,
+            'docStorage' => StorageMeta::class,
+            'docInitialStorage' => StorageMeta::class,
+            'sectionStorage' => StorageMeta::class,
+            'sectionInitialStorage' => StorageMeta::class,
+        ];
     }
+
 
     public function bootstrap(App $app): void
     {
+        // 注册两个 option 仓库.
+        $registry = $app->getServiceRegistry();
+        $registry->registerConfigProvider(
+                new MDOptRegistryProvider([
+                    'runtimePath' => $this->runtimePath,
+                    'docStorage' => null,
+                    'docInitialStorage' => null,
+                    'sectionStorage' => null,
+                    'sectionInitialStorage' => null,
+                ]),
+                false
+            );
+
+
+        // 注册所有的 group 组件.
+        foreach ($this->groups as $group) {
+            $registry->registerProcProvider(
+                new MDGroupContextLoader([
+                    'id' => $group->groupName,
+                    'forceUpdate' => $this->reset,
+                    'resourcePath' => $this->resourcePath,
+                    'group' => $group,
+                ]),
+                false
+            );
+        }
+
+        $this->dependComponent($app, TreeComponent::class);
     }
+
+
 
 
 }

@@ -17,7 +17,6 @@ use Commune\Blueprint\Ghost\MindReg\SynonymReg;
 use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
-use Commune\Support\Utils\StringUtils;
 use Commune\Support\WordSearch\Tree;
 
 

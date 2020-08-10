@@ -39,6 +39,8 @@ use Commune\Support\Markdown\Exceptions\InvalidTreeMarkdownException;
  */
 interface MDParser
 {
+    const FUNC_PARSE = 'parse';
+
     // 我们的需求只要有以下几种就可以了.
     const LINE_EMPTY = 0;
     const LINE_STRING = 1;

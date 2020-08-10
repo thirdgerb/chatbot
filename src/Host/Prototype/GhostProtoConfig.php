@@ -49,6 +49,7 @@ class GhostProtoConfig extends IGhostConfig
 
                 // clone service
                 GhostProviders\ClonerServiceProvider::class,
+
             ],
 
             'options' => [],
@@ -58,6 +59,9 @@ class GhostProtoConfig extends IGhostConfig
                 Components\Demo\DemoComponent::class,
                 // tree 测试用例
                 Components\Tree\TreeComponent::class,
+
+                // Markdown 组件
+                Components\Markdown\MarkdownComponent::class,
             ],
 
             // request protocals
