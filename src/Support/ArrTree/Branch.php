@@ -110,6 +110,11 @@ class Branch implements ArrayAndJsonAble
             array_push($this->children, $elder);
         }
 
+        if (empty($name)) {
+            $name = (string) $child->order;
+        }
+        $child->name = $name;
+
         $child->orderId = $this->orderId . $this->orderSeparator . $child->order;
 
 

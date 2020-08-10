@@ -11,6 +11,8 @@
 
 namespace Commune\Support\Markdown;
 
+use Commune\Support\Utils\StringUtils;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -18,6 +20,7 @@ namespace Commune\Support\Markdown;
 class MarkdownUtils
 {
     const COMMENT_PATTERN = '/^\[(.*)\]:(.*)$/';
+    const TITLE_PATTERN = '/^(#+)\s+(.+)$/';
 
 
     public static function parseSingleLine(string $line, string $method = null) : string
@@ -50,6 +53,17 @@ class MarkdownUtils
         return "```$codeType\n$text\n```";
     }
 
+
+    public static function isDividerLine(string $last, string $current) : bool
+    {
+        $last = trim($last);
+        $current = trim($current);
+
+        return StringUtils::isEmptyStr($last)
+            && (bool) preg_match('/^----+$/', $current);
+    }
+
+
     public static function parseCommentLine(string $line) : ? array
     {
         $line = self::parseSingleLine($line, __METHOD__);
@@ -57,10 +71,44 @@ class MarkdownUtils
         if (empty($matches)) {
             return null;
         }
+        $comment = trim($matches[1]);
+        $content = trim($matches[2]);
+
+        if (empty($comment) || empty($content)) {
+            return null;
+        }
 
         return [
-            $comment = trim($matches[1]),
-            $content = trim($matches[2]),
+            $comment,
+            $content
         ];
+    }
+
+    public static function parseTitle(string $line) : ? array
+    {
+        $line = self::parseSingleLine($line, __METHOD__);
+        preg_match(self::TITLE_PATTERN, $line, $matches);
+
+        if (empty($matches)) {
+            return null;
+        }
+
+        return [
+            $level = strlen($matches[1]),
+            $title = trim($matches[2]),
+        ];
+    }
+
+    public static function maybeTitleUnderline(string $line) : int
+    {
+        $line = trim($line);
+        if (
+            (bool) preg_match('/^-+$/', $line)
+            || (bool) preg_match('/^=+$/', $line)
+        )  {
+            return strlen($line);
+        }
+
+        return 0;
     }
 }

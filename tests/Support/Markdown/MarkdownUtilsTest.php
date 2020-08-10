@@ -54,4 +54,21 @@ class MarkdownUtilsTest extends TestCase
         $this->assertEquals('hello world', $content);
     }
 
+    public function testTitle()
+    {
+        $line = '[-_-] hello world';
+        $this->assertNull(MarkdownUtils::parseTitle($line));
+
+        $line = ' ## hello world  ';
+        list($level, $title) = MarkdownUtils::parseTitle($line);
+        $this->assertEquals(2, $level);
+        $this->assertEquals('hello world', $title);
+
+        $line = ' # hello world  ';
+        list($level, $title) = MarkdownUtils::parseTitle($line);
+        $this->assertEquals(1, $level);
+        $this->assertEquals('hello world', $title);
+
+    }
+
 }
