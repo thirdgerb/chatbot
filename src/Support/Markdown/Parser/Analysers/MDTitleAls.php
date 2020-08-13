@@ -20,7 +20,7 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class TitleAls extends MDAnalyser
+class MDTitleAls extends MDAnalyser
 {
     public function __invoke(int $index, string $line): ? int
     {

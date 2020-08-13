@@ -30,7 +30,7 @@ use Commune\Blueprint\Ghost\Ucl;
  * @property-read string $stageName
  * @property-read IntentMeta $asIntent
  */
-class InitStage extends AbsStageDef
+class InitStage extends AStageDef
 {
     const IDENTITY = 'name';
 
@@ -67,7 +67,6 @@ class InitStage extends AbsStageDef
         $contextDef = $dialog->ucl->findContextDef($cloner);
 
         $next = $contextDef->firstStage();
-
         $task = $dialog->task;
 
         $strategy = $contextDef->getStrategy($dialog);

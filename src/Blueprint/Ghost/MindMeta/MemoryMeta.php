@@ -20,11 +20,11 @@ use Commune\Blueprint\Ghost\MindDef\MemoryDef;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name              当前配置的 ID
- * @property-read string $title             标题
- * @property-read string $desc              简介
- * @property-read string[] $scopes          记忆的作用域.
- * @property-read array $attrs              默认值, 也是记忆体数据的样板.
+ * @property string $name              当前配置的 ID
+ * @property string $title             标题
+ * @property string $desc              简介
+ * @property string[] $scopes          记忆的作用域.
+ * @property array $attrs              默认值, 也是记忆体数据的样板.
  *
  */
 class MemoryMeta extends AbsOption implements DefMeta

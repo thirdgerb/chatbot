@@ -67,6 +67,7 @@ class IWaiter implements Waiter
         );
     }
 
+
     public function toArray(): array
     {
         return [

@@ -269,6 +269,19 @@ class StringUtils
 
     }
 
+    public static function separateAnnotation(string $comment) : ? array
+    {
+        $comment = trim($comment);
+        preg_match('/^@([a-zA-Z]+)(\s+.+){0,1}$/', $comment, $matches);
+        if (empty($matches)) {
+            return null;
+        }
+
+        return [
+            $name = trim($matches[1]),
+            $content = trim($matches[2] ?? ''),
+        ];
+    }
 
     /**
      * 是否包含某个注解

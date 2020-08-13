@@ -11,34 +11,27 @@
 
 namespace Commune\Ghost\Stage;
 
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\MindDef\AliasesForStage;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
-use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\IMindDef\IIntentDef;
 use Commune\Support\Option\AbsOption;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
-use Commune\Support\Utils\ArrayUtils;
+
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
  * @property-read string $name
+ * @property-read string $title
+ * @property-read string $desc
  * @property-read string $contextName
  * @property-read string $stageName
  * @property-read IntentMeta|null $asIntent
- *
- * @property-read string $title
- * @property-read string $desc
- *
- * @property-read string[] $events
- * @property-read string|null $ifRedirect
  */
 abstract class AbsStageDef extends AbsOption implements StageDef
 {
@@ -50,15 +43,12 @@ abstract class AbsStageDef extends AbsOption implements StageDef
             'name' => '',
             'title' => '',
             'desc' => '',
-
             'contextName' => '',
             'stageName' => '',
             'asIntent' => null,
-
-            'events' => [],
-            'ifRedirect' => null,
         ];
     }
+
 
     public static function relations(): array
     {
@@ -67,82 +57,6 @@ abstract class AbsStageDef extends AbsOption implements StageDef
         ];
     }
 
-    public function fill(array $data): void
-    {
-        $data['asIntent'] = IntentMeta::mergeStageInfo(
-            ArrayUtils::fetchArray($data, 'asIntent'),
-            $data['name'] ?? '',
-            $data['title'] ?? '',
-            $data['desc'] ?? ''
-        );
-
-        parent::fill($data);
-    }
-
-    public function __get_events() : array
-    {
-        $events = $this->_data['events'] ?? [];
-        $results = [];
-        foreach ($events as $event => $action) {
-
-            $event = AliasesForStage::getOriginFromAlias($event);
-            $action = AliasesForStage::getOriginFromAlias($action);
-
-            $results[$event] = $action;
-        }
-
-        return $results;
-    }
-
-    public function __set_events(string $name, array $events) : void
-    {
-        $results = [];
-        foreach ($events as $event => $action) {
-            $event = AliasesForStage::getAliasOfOrigin($event);
-            $action = AliasesForStage::getAliasOfOrigin($action);
-            $results[$event] = $action;
-        }
-
-        $this->_data[$name] = $results;
-    }
-
-    /*------- methods -------*/
-
-    protected function fireEvent(Dialog $dialog) : ? Operator
-    {
-        foreach ($this->events as $event => $action) {
-
-            $event = AliasesForStage::getOriginFromAlias($event);
-            $action = AliasesForStage::getOriginFromAlias($action);
-
-            if (!$dialog->isEvent($event)) {
-                continue;
-            }
-
-            $operator = $dialog->container()->action($action);
-
-            if (isset($operator)) {
-                return $operator;
-            }
-        }
-
-        return null;
-    }
-
-    protected function fireRedirect(Dialog $prev) : ? Operator
-    {
-        $redirect = $this->ifRedirect;
-
-        if (isset($redirect)) {
-            return $prev
-                ->container()
-                ->action($redirect, ['prev' => $prev]);
-        }
-
-        return null;
-    }
-
-    /*------- properties -------*/
 
     public function getName(): string
     {
@@ -187,7 +101,12 @@ abstract class AbsStageDef extends AbsOption implements StageDef
                 'desc' => $this->desc,
                 'examples' => [],
             ]);
+        } else {
+            $asIntent->name = $this->name;
+            $asIntent->title = $this->title;
+            $asIntent->desc = $this->desc;
         }
+
         return $asIntent->toWrapper();
     }
 

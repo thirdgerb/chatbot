@@ -238,13 +238,20 @@ class IProcess implements Process, HasIdGenerator, \Serializable
 
     public function getAwaitRoutes(): array
     {
-        $contexts = isset($this->_waiter)
-            ? $this->_waiter->routes
+        if (!isset($this->_waiter)) {
+            return [];
+        }
+
+        $question = $this->_waiter->question;
+        $routes = isset($question)
+            ? array_values($question->getRoutes())
             : [];
 
-        return array_map(function(string $contextName) {
-            return $this->decode($contextName);
-        }, $contexts);
+        foreach ($this->_waiter->routes as $routeStr) {
+            $routes[] = $this->decode($routeStr);
+        }
+
+        return $routes;
     }
 
     public function getWaiter(): ? Waiter

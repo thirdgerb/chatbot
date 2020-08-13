@@ -346,13 +346,13 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
     public function addSuggestion(string $suggestion, $index = null, Ucl $ucl = null): void
     {
-        $i = 0;
         if (is_null($index)) {
-            $i ++;
-            $index = $i;
+            $this->_data['suggestions'][] = $suggestion;
+            $keys = array_keys($this->_data['suggestions']);
+            $index = end($keys);
+        } else {
+            $this->_data['suggestions'][$index] = $suggestion;
         }
-
-        $this->_data['suggestions'][$index] = $suggestion;
 
 
         if (isset($ucl)) {

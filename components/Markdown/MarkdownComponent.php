@@ -38,13 +38,8 @@ use Commune\Support\Utils\StringUtils;
  *
  *
  *
- *
- *
  * @property-read bool $reset               是否重置配置. 否则只更新 updated
  * @property-read MDGroupOption[] $groups
- *
- *
- *
  *
  * # 可选配置
  *
@@ -58,6 +53,11 @@ use Commune\Support\Utils\StringUtils;
  */
 class MarkdownComponent extends AGhostComponent
 {
+    /**
+     * @var MDGroupOption[]|null
+     */
+    protected $_groupMap;
+
     public static function stub(): array
     {
         return [
@@ -69,9 +69,6 @@ class MarkdownComponent extends AGhostComponent
                     'relativePath' => 'demo',
                     // 命名空间 + 文件的相对路径 = document id
                     'namespace' => 'md.demo',
-                    // 将 option 变成 ContextDef 的工具.
-                    'contextParser' => '',
-
                 ]
 
             ],
@@ -136,7 +133,25 @@ class MarkdownComponent extends AGhostComponent
         $this->dependComponent($app, TreeComponent::class);
     }
 
+    public function getGroupOptionByName(string $groupName) : ? MDGroupOption
+    {
+        if (!isset($this->_groupMap)) {
+            $this->_groupMap = [];
+            foreach ($this->groups as $group) {
+                $this->_groupMap[$group->groupName] = $group;
+            }
+        }
+
+        return $this->_groupMap[$groupName] ?? null;
+    }
 
 
+    public function __destruct()
+    {
+        unset(
+            $this->_groupMap
+        );
+        parent::__destruct();
+    }
 
 }

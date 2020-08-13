@@ -35,29 +35,29 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name
- * @property-read string $title
- * @property-read string $desc
+ * @property string $name
+ * @property string $title
+ * @property string $desc
  *
  * ## 意图内容.
- * @property-read string[] $examples
- * @property-read string[] $emotions
- * @property-read string[] $entityNames
+ * @property string[] $examples
+ * @property string[] $emotions
+ * @property string[] $entityNames
  *
  * ## 自定义匹配规则
  *
- * @property-read string|null $alias
- * @property-read string[] $extends
- * @property-read string $spell
- * @property-read string $signature
- * @property-read string[] $keywords
- * @property-read string[] $regex
- * @property-read string[] $ifEntity
+ * @property string|null $alias
+ * @property string[] $extends
+ * @property string $spell
+ * @property string $signature
+ * @property string[] $keywords
+ * @property string[] $regex
+ * @property string[] $ifEntity
  *
- * @property-read string|null $verifier
+ * @property string|null $verifier
  * @see Verifier
  *
- * @property-read string|null $messageWrapper
+ * @property string|null $messageWrapper
  */
 class IIntentDef extends AbsOption implements IntentDef
 {

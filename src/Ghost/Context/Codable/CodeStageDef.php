@@ -19,13 +19,13 @@ use Commune\Blueprint\Ghost\Dialog\Resume;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Context\Builders\IStageBuilder;
-use Commune\Ghost\Stage\AbsStageDef;
+use Commune\Ghost\Stage\AStageDef;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  */
-class CodeStageDef extends AbsStageDef
+class CodeStageDef extends AStageDef
 {
 
     public static function stub(): array

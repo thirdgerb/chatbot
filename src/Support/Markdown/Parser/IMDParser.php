@@ -27,8 +27,8 @@ class IMDParser implements MDParser
     /*----- config -----*/
 
     protected $analysers = [
-        Analysers\TitleAls::class,
-        Analysers\CommentAls::class,
+        Analysers\MDTitleAls::class,
+        Analysers\MDCommentAls::class,
     ];
     
 
@@ -253,5 +253,14 @@ class IMDParser implements MDParser
     public function getLineMode(int $index): int
     {
         return $this->lineModes[$index] ?? MDParser::LINE_EMPTY;
+    }
+
+    public function __destruct()
+    {
+        unset(
+            $this->tree,
+            $this->sections,
+            $this->doc
+        );
     }
 }

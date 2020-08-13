@@ -13,7 +13,6 @@ namespace Commune\Blueprint\Ghost\MindMeta;
 
 use Commune\Support\Option\AbsMeta;
 use Commune\Ghost\Support\ContextUtils;
-use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Ghost\Context\IContextDef;
 use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
 use Commune\Support\Option\Wrapper;
@@ -24,13 +23,13 @@ use Commune\Support\Option\Wrapper;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name      当前配置的 ID
- * @property-read string $title     标题
- * @property-read string $desc      简介
- * @property-read string $wrapper   目标 Wrapper 的类名. 允许用别名.
+ * @property string $name      当前配置的 ID
+ * @property string $title     标题
+ * @property string $desc      简介
+ * @property string $wrapper   目标 Wrapper 的类名. 允许用别名.
  * @see Aliases
  *
- * @property-read array $config     wrapper 对应的配置.
+ * @property array $config     wrapper 对应的配置.
  */
 class ContextMeta extends AbsMeta implements DefMeta
 {

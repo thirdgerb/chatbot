@@ -13,6 +13,7 @@ namespace Commune\Components\Markdown\Providers;
 
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Mindset;
+use Commune\Components\Markdown\Mindset\MDContextDef;
 use Commune\Components\Markdown\Options\MDGroupOption;
 use Commune\Components\Markdown\Parsers\MD2ContextParser;
 use Commune\Components\Tree\Prototype\TreeContextDef;
@@ -150,11 +151,10 @@ class MDGroupContextLoader extends ServiceProvider
             [$parserName, MDParser::FUNC_PARSE],
             $markdownId,
             TreeContextDef::FIRST_STAGE,
-            $content
+            $content,
+            // 将静态的注解从原来的正文中抽离出来.
+            $staticComments = $group->getStaticComments()
         );
-
-//        var_dump($parser->toMarkdown());
-//        exit;
 
         $doc = $parser->getDocument();
 
@@ -175,8 +175,6 @@ class MDGroupContextLoader extends ServiceProvider
         $logger->debug(
             "markdown: save $filePath to OptRegistry, id $markdownId"
         );
-        exit;
-
 
         /**
          * @var MD2ContextParser $contextParser
@@ -184,6 +182,22 @@ class MDGroupContextLoader extends ServiceProvider
         $contextParser = $app->make($group->contextParser);
         $contextDef = $contextParser->parse($group, $parser);
 
+        if ($contextDef instanceof MDContextDef) {
+
+            // 为了防止重复数据浪费资源, 所以主动拿出来 stage 的定义.
+            $stageMetas = $contextDef->stages;
+            $contextDef->stages = [];
+
+            // 强制注册所有的.
+            $mindset->contextReg()->registerDef($contextDef, false);
+            $stageReg = $mindset->stageReg();
+            foreach ($stageMetas as $meta) {
+                $stageReg->registerDef($meta->toWrapper(), false);
+            }
+
+        } else {
+            $mindset->contextReg()->registerDef($contextDef, false);
+        }
     }
 
     protected function checkShouldUpdate(

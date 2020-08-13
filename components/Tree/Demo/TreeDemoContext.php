@@ -78,9 +78,6 @@ class TreeDemoContext extends ContextRegister
             // 树的节点是否通过 "." 符号连接成 stage_name
             // 例如: [ 'a' => 'b' ] 中的 b 节点, 名字是否为 a.b
             'appendingBranch' => true,
-            // 关联配置类型.
-            // 如果存在, 可以到 OptRegistry 通过 stageName 获取相关配置.
-            'relativeOption' => null,
         ]);
     }
 

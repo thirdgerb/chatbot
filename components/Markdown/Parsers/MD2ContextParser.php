@@ -13,7 +13,6 @@ namespace Commune\Components\Markdown\Parsers;
 
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Components\Markdown\Options\MDGroupOption;
-use Commune\Support\Markdown\Data\MDDocumentData;
 use Commune\Support\Markdown\Parser\MDParser;
 
 

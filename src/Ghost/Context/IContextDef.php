@@ -12,6 +12,7 @@
 namespace Commune\Ghost\Context;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\MindDef\ContextStrategyOption;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
@@ -26,47 +27,50 @@ use Commune\Support\Utils\ArrayUtils;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * ## 必要属性
- * @property-read string $name      当前配置的 ID
- * @property-read string $title     标题
- * @property-read string $desc      简介
+ * @property string $name      当前配置的 ID
+ * @property string $title     标题
+ * @property string $desc      简介
  *
  *
  * ## context wrapper
- * @property-read string $contextWrapper       Context 的包装器.
+ * @property string $contextWrapper       Context 的包装器.
  *
  *
  * ## 基础属性
- * @property-read int $priority                     语境的默认优先级
- * @property-read string[] $queryNames              context 请求参数键名的定义, 如果是列表则要加上 []
+ * @property int $priority                     语境的默认优先级
+ * @property string[] $queryNames              context 请求参数键名的定义, 如果是列表则要加上 []
  *
  * ## 意图相关
- * @property-read IntentMeta|null $asIntent
+ * @property IntentMeta|null $asIntent
  *
  * ## 上下文记忆.
- * @property-read string[] $memoryScopes
- * @property-read array $memoryAttrs
+ * @property string[] $memoryScopes
+ * @property array $memoryAttrs
+ *
+ * ## 更多配置
+ *
+ * @property ContextStrategyOption $strategy   Context 的一些必要但非标准的上下文规则.
  *
  * ## 初始 stage
  *
- * @property-read array $dependingNames
- * @property-read null|string $ifRedirect
- *
+ * @property array $dependingNames
+ * @property null|string $ifRedirect
  *
  * ## 多轮规则相关
  *
- * @property-read string[] $auth                    用户权限
- * @property-read null|string $onCancel
- * @property-read null|string $onQuit
+ * @property string[] $auth                    用户权限
+ * @property null|string $onCancel
+ * @property null|string $onQuit
  *
- * @property-read string[] $stageRoutes
- * @property-read string[] $contextRoutes
+ * @property string[] $stageRoutes
+ * @property string[] $contextRoutes
  *
- * @property-read null|array $comprehendPipes
+ * @property null|array $comprehendPipes
  *
  * ## predefined stage 预定义的 stage
  *
- * @property-read string|null $firstStage
- * @property-read StageMeta[] $stages
+ * @property string|null $firstStage
+ * @property StageMeta[] $stages
  *
  */
 class IContextDef extends AbsOption implements ContextDef
@@ -140,6 +144,7 @@ class IContextDef extends AbsOption implements ContextDef
         return [
             'stages[]' => StageMeta::class,
             'asIntent' => IntentMeta::class,
+            'strategy' => ContextStrategyOption::class,
         ];
     }
 
@@ -219,6 +224,7 @@ class IContextDef extends AbsOption implements ContextDef
             return $this->_stageMetaMap;
         }
 
+        $this->_stageMetaMap = [];
         foreach ($this->stages as $stageMeta) {
             $shortName = $stageMeta->stageName;
             $this->_stageMetaMap[$shortName] = $stageMeta;

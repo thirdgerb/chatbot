@@ -21,13 +21,13 @@ use Commune\Blueprint\Ghost\MindDef\AliasesForStage;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name
- * @property-read string $stageName
- * @property-read string $contextName
- * @property-read string $title
- * @property-read string $desc
- * @property-read string $wrapper
- * @property-read array $config
+ * @property string $name
+ * @property string $stageName
+ * @property string $contextName
+ * @property string $title
+ * @property string $desc
+ * @property string $wrapper
+ * @property array $config
  *
  * @method StageDef toWrapper(): Wrapper
  */

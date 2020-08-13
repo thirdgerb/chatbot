@@ -121,6 +121,14 @@ class Tree implements ArrayAndJsonAble
         );
     }
 
+    /**
+     * @return Branch[]
+     */
+    public function getBranchMapByOrderId() : array
+    {
+        return $this->branches;
+    }
+
     public function destroy() : void
     {
         foreach ($this->branches as $branch) {

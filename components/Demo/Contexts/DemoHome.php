@@ -102,7 +102,8 @@ class DemoHome extends ACodeContext
                             FeatureTest::genUcl(),
                             $this->getStage('maze'),
                             GitContext::genUcl(),
-                            Ucl::decode(TreeDemoContext::NAME),
+                            Ucl::make('md.demo.intro'),
+                            Ucl::make(TreeDemoContext::NAME),
                         ]
                     );
 

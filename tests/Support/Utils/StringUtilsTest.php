@@ -379,4 +379,21 @@ EOF;
         $this->assertTrue($case1);
         $this->assertTrue($case2);
     }
+
+
+    public function testSeparateAnnotation()
+    {
+        $data = StringUtils::separateAnnotation('  @test  abc');
+        $this->assertEquals(['test', 'abc'], $data);
+
+        $data = StringUtils::separateAnnotation('  @test  ');
+        $this->assertEquals(['test', ''], $data);
+
+        $data = StringUtils::separateAnnotation('  @ test  ');
+        $this->assertNull($data);
+
+        $data = StringUtils::separateAnnotation('@test  @test2 @test3   ');
+        $this->assertEquals(['test', '@test2 @test3'], $data);
+
+    }
 }

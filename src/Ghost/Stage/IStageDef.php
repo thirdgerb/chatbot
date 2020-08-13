@@ -23,7 +23,7 @@ use Commune\Blueprint\Ghost\Ucl;
  * 标准的 stage 定义.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IStageDef extends AbsStageDef
+class IStageDef extends AStageDef
 {
     public function onActivate(Activate $dialog): Operator
     {

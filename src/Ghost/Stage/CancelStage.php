@@ -24,7 +24,7 @@ use Commune\Protocals\HostMsg\DefaultIntents;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class CancelStage extends AbsStageDef
+class CancelStage extends AStageDef
 {
     public static function stub(): array
     {

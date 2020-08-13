@@ -26,7 +26,7 @@ use Commune\Blueprint\Ghost\Ucl;
  * @property-read string|null $dependedAttr
  * @property-read string|null $validator
  */
-class DependStageDef extends AbsStageDef
+class DependStageDef extends AStageDef
 {
     public static function stub(): array
     {

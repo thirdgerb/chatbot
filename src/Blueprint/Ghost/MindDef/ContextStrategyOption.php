@@ -17,13 +17,13 @@ use Commune\Support\Struct\AStruct;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string|null $onCancel
- * @property-read string|null $onQuit
- * @property-read string|null $heedfallbackStrategy
- * @property-read string[] $stageRoutes
- * @property-read string[] $contextRoutes
- * @property-read string[]|null $comprehendPipes
- * @property-read string[] $auth
+ * @property string|null $onCancel
+ * @property string|null $onQuit
+ * @property string|null $heedFallbackStrategy
+ * @property string[] $stageRoutes
+ * @property string[] $contextRoutes
+ * @property string[]|null $comprehendPipes
+ * @property string[] $auth
  */
 class ContextStrategyOption extends AStruct
 {

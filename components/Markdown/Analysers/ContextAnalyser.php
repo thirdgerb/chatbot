@@ -9,24 +9,26 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Markdown\Parsers;
+namespace Commune\Components\Markdown\Analysers;
+
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
-use Commune\Components\Markdown\Options\MDGroupOption;
-use Commune\Support\Markdown\Parser\MDParser;
+use Commune\Components\Markdown\Mindset\MDContextDef;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class TreeMd2CtxParser implements MD2ContextParser
+interface ContextAnalyser extends AnalyserInterface
 {
-    public function parse(
-        MDGroupOption $group,
-        MDParser $parser
-    ): ContextDef
-    {
-        // TODO: Implement parse() method.
-    }
 
+    /**
+     * @param string $content
+     * @param MDContextDef $def
+     * @return ContextDef
+     */
+    public function __invoke(
+        string $content,
+        MDContextDef $def
+    ) : ContextDef;
 
 }

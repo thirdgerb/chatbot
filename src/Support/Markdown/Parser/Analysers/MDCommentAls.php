@@ -19,12 +19,8 @@ use Commune\Support\Markdown\Parser\MDParser;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class CommentAls extends MDAnalyser
+class MDCommentAls extends MDAnalyser
 {
-    protected $archivingComments = [
-        'parser',
-        'await',
-    ];
 
     protected $methodComments = [
     ];
@@ -57,7 +53,7 @@ class CommentAls extends MDAnalyser
 
     protected function addComment(string $comment, string $content) : int
     {
-        if (in_array($comment, $this->archivingComments)) {
+        if (in_array($comment, $this->parser->archiveComments)) {
             $this->parser
                 ->currentSection
                 ->appendComment($comment, $content);

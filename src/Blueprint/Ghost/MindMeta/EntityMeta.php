@@ -19,11 +19,11 @@ use Commune\Support\Option\Wrapper;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name          entity 名称.
- * @property-read string $title         标题
- * @property-read string $desc          摘要
- * @property-read string[] $values      entity 的值
- * @property-read string[] $blacklist   黑名单.
+ * @property string $name          entity 名称.
+ * @property string $title         标题
+ * @property string $desc          摘要
+ * @property string[] $values      entity 的值
+ * @property string[] $blacklist   黑名单.
  */
 class EntityMeta extends AbsOption implements DefMeta
 {

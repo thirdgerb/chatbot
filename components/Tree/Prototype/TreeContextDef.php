@@ -20,51 +20,46 @@ use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Context\Traits\ContextDefTrait;
-use Commune\Ghost\Stage\CancelStage;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\ArrTree\Branch;
 use Commune\Support\ArrTree\Tree;
 use Commune\Support\Option\AbsOption;
-use Commune\Support\Utils\StringUtils;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name
- * @property-read string $title
- * @property-read string $desc
- * @property-read int $priority
+ * @property string $name
+ * @property string $title
+ * @property string $desc
+ * @property int $priority
  *
  *
  * ## stage 相关定义.
- * @property-read array $tree
- * @property-read string $rootName
- * @property-read bool $appendingBranch
- * @property-read string[] $stageEvents
- * @property-read string|null $relativeOption
- * @property-read StageMeta[] $stages
+ * @property array $tree
+ * @property string $rootName
+ * @property bool $appendingBranch
+ * @property string[] $stageEvents
+ * @property StageMeta[] $stages
  *
  * ## 属性定义
- * @property-read array $dependingNames
- * @property-read string[] $memoryScopes
- * @property-read array $memoryAttrs
- * @property-read ContextStrategyOption $strategy
+ * @property array $dependingNames
+ * @property string[] $memoryScopes
+ * @property array $memoryAttrs
+ * @property ContextStrategyOption $strategy
  *
  * ## 意图定义
- * @property-read IntentMeta|null $asIntent
+ * @property IntentMeta|null $asIntent
  *
  * ## warpper
- * @property-read string $contextWrapper
+ * @property string $contextWrapper
  */
 class TreeContextDef extends AbsOption implements ContextDef
 {
-    const IDENTITY = 'name';
-
-    const FIRST_STAGE = 'root';
-    const CANCEL_STAGE = 'cancel';
-
     use ContextDefTrait;
+
+    const IDENTITY = 'name';
+    const FIRST_STAGE = 'root';
 
     /**
      * @var StageDef[]|null
@@ -104,10 +99,6 @@ class TreeContextDef extends AbsOption implements ContextDef
             // 树的节点是否通过 "." 符号连接成 stage_name
             // 例如: [ 'a' => 'b' ] 中的 b 节点, 名字是否为 a.b
             'appendingBranch' => false,
-            // 关联配置类型.
-            // 如果存在, 可以到 OptRegistry 通过 stageName 获取相关配置.
-            'relativeOption' => null,
-
 
             // 通过 StageMeta, 而不是 tree 来定义的 stage 组件.
             'stages' => [],
@@ -129,7 +120,6 @@ class TreeContextDef extends AbsOption implements ContextDef
             'memoryAttrs' => [],
 
             'strategy' => [
-                'onCancel' => static::CANCEL_STAGE
             ],
 
             // context 实例的封装类.
@@ -177,13 +167,6 @@ class TreeContextDef extends AbsOption implements ContextDef
             $def = $stageMeta->toWrapper();
             $this->_stageMap[$def->getStageShortName()] = $def;
         }
-
-        // 插入 cancel stage.
-        $this->_stageMap[self::CANCEL_STAGE] = new CancelStage([
-            'name' => ContextUtils::makeFullStageName($this->name, self::CANCEL_STAGE),
-            'contextName' => $this->name,
-            'stageName' => self::CANCEL_STAGE,
-        ]);
 
         // branch
         foreach ($tree->branches as $branch) {

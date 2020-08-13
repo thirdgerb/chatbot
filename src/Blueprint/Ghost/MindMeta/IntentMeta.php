@@ -22,15 +22,15 @@ use Commune\Blueprint\Ghost\MindDef\IntentDef;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
- * @property-read string $name
- * @property-read string $title
- * @property-read string $desc
- * @property-read string $wrapper
- * @property-read string[] $examples
- * @property-read string[] $entityNames
- * @property-read string[] $emotions
+ * @property string $name
+ * @property string $title
+ * @property string $desc
+ * @property string $wrapper
+ * @property string[] $examples
+ * @property string[] $entityNames
+ * @property string[] $emotions
  *
- * @property-read array $config
+ * @property array $config
  *
  * @method IntentDef toWrapper(): Wrapper
  */

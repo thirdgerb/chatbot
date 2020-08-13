@@ -11,6 +11,8 @@
 
 namespace Commune\Support\Option;
 
+use Commune\Blueprint\Exceptions\CommuneLogicException;
+
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
@@ -23,6 +25,15 @@ abstract class AbsMeta extends AbsOption implements Meta
     public function toWrapper(): Wrapper
     {
         $wrapperName = $this->wrapper;
+        if (!is_a($wrapperName, Wrapper::class, true)) {
+
+            $json = $this->toJson();
+            $current = static::class;
+            $expect = Wrapper::class;
+            throw new CommuneLogicException(
+                "$current toWrapper expect $expect, \"$wrapperName\" given. data: $json"
+            );
+        }
         return call_user_func([$wrapperName, Wrapper::WRAP_META_FUNC], $this);
     }
 

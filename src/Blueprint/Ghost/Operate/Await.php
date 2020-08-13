@@ -24,14 +24,6 @@ interface Await extends Finale
     /*-------- question ---------*/
 
     /**
-     * 添加参数供后续的问题使用.
-     *
-     * @param array $slots
-     * @return Await
-     */
-    public function withSlots(array $slots) : Await;
-
-    /**
      * @param string $query
      * @param string[]|Ucl[] $suggestions
      * @param int|string $defaultChoice
@@ -83,4 +75,18 @@ interface Await extends Finale
     public function ask(
         QuestionMsg $question
     ) : Operator;
+
+    /*-------- 属性操作 ---------*/
+
+
+    /**
+     * 添加参数供后续的问题使用.
+     *
+     * @param array $slots
+     * @return Await
+     */
+    public function withSlots(array $slots) : Await;
+
+    public function getCurrentQuestion() : ? QuestionMsg;
+
 }

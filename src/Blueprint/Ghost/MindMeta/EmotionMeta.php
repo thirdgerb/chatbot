@@ -25,12 +25,12 @@ use Commune\Support\Option\Wrapper;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name                  情感的id.
- * @property-read string $title                 情感的标题
- * @property-read string $desc                  情感的简介
- * @property-read string[] $intents             情绪所包含的意图.
- * @property-read string[] $opposites           对立的情绪
- * @property-read string[] $verifiers           自定义的匹配逻辑.
+ * @property string $name                  情感的id.
+ * @property string $title                 情感的标题
+ * @property string $desc                  情感的简介
+ * @property string[] $intents             情绪所包含的意图.
+ * @property string[] $opposites           对立的情绪
+ * @property string[] $verifiers           自定义的匹配逻辑.
  * @see Verifier
  */
 class EmotionMeta extends AbsOption implements DefMeta

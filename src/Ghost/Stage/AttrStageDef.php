@@ -27,7 +27,7 @@ use Commune\Protocals\HostMsg\Convo\VerbalMsg;
  * @property-read string $query
  * @property-read string|null $validator
  */
-class AttrStageDef extends AbsStageDef
+class AttrStageDef extends AStageDef
 {
     public static function stub(): array
     {

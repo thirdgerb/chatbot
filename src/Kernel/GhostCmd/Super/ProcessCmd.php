@@ -14,6 +14,7 @@ namespace Commune\Kernel\GhostCmd\Super;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Blueprint\Ghost\Runtime\Process;
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Kernel\GhostCmd\AGhostCmd;
 use Commune\Message\Host\Convo\Verbal\JsonMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
@@ -28,6 +29,7 @@ class ProcessCmd extends AGhostCmd
        {--w|waiter : 当前语境的状态}
        {--b|backtrace : 检查返回路径}
        {--s|serialize : 检查序列化压缩结果}
+       {--r|routes : 检查当前监控输入信息的路由}
     ';
 
     const DESCRIPTION = '查看多轮对话进程的数据';
@@ -40,6 +42,8 @@ class ProcessCmd extends AGhostCmd
         $w = $message['--waiter'] ?? false;
         $b = $message['--backtrace'] ?? false;
         $s = $message['--serialize'] ?? false;
+        $r = $message['--routes'] ?? false;
+
 
         if ($w) {
             $this->showWaiter($process);
@@ -48,6 +52,10 @@ class ProcessCmd extends AGhostCmd
             $this->showBacktrace($process);
         } elseif($s) {
             $this->showSerialize($process);
+
+        } elseif($r) {
+            $this->showRoutes($process);
+
         } else {
             $this->output(JsonMsg::instance($process->toPrettyJson()));
             $json = $process->toJson();
@@ -116,5 +124,18 @@ class ProcessCmd extends AGhostCmd
             "process unserialize time is {time}us",
             ['time' => $time]
         );
+    }
+
+    protected function showRoutes(Process $process) : void
+    {
+        $routes = $process->getAwaitRoutes();
+
+        $data = array_map(function(Ucl $ucl) {
+            return $ucl->encode();
+        }, $routes);
+
+        $this->info(JsonMsg::instance(
+           json_encode($data, ArrayAndJsonAble::PRETTY_JSON)
+        ));
     }
 }

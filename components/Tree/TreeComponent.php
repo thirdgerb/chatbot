@@ -35,7 +35,6 @@ class TreeComponent extends AGhostComponent
     public static function stub(): array
     {
         return [
-
             'loadDemo' => true,
         ];
     }

@@ -201,6 +201,11 @@ class OAwait extends AbsFinale implements Await
         return $this;
     }
 
+    public function getCurrentQuestion(): ? QuestionMsg
+    {
+        return $this->question;
+    }
+
 
     protected function addSuggestions(QuestionMsg $question, array $suggestions) : QuestionMsg
     {
@@ -254,8 +259,7 @@ class OAwait extends AbsFinale implements Await
             return false;
         }
 
-        $this->routes[] = $suggestion;
-
+        // $this->routes[] = $suggestion;
         $def = $this->getStageReg()->getDef($fullname);
         $question->addSuggestion($def->getDescription(), $index, $suggestion);
 

@@ -23,10 +23,10 @@ use Commune\Support\Utils\StringUtils;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name
- * @property-read string $title
- * @property-read string $desc
- * @property-read string[] $synonyms
+ * @property string $name
+ * @property string $title
+ * @property string $desc
+ * @property string[] $synonyms
  *
  */
 class SynonymMeta extends AbsOption implements DefMeta
