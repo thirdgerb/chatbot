@@ -105,7 +105,7 @@ class AnnotationReflector
             // 命中任意 entity
             'ifEntity' => [],
             // 自定义校验器. 字符串, 通常是类名或者方法名.
-            'matcher' => $matcher,
+            'verifier' => $matcher,
         ]);
 
         return $def->toMeta();
