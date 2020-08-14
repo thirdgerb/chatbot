@@ -75,7 +75,7 @@ class MDCommentAls extends MDAnalyser
         // 把格式改标准一些.
         $this->parser
             ->currentSection
-            ->appendLine("[$comment]: $content");
+            ->appendLine("\n[//]: # (@$comment $content)");
     }
 
 

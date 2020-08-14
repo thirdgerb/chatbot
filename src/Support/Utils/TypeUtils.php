@@ -100,8 +100,8 @@ class TypeUtils
 
             $type = get_class($value);
 
-            if (StringUtils::isString($value)) {
-                $text = mb_substr(strval($value), 0, 15) . '..';
+            if (method_exists($value, '__toString')) {
+                $text = mb_substr($value->__toString(), 0, 15) . '..';
                 return "$type: $text";
             }
 

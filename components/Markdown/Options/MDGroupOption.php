@@ -12,12 +12,12 @@
 namespace Commune\Components\Markdown\Options;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Components\Markdown\Mindset\SectionDefStrategy;
 use Commune\Support\Option\AbsOption;
 use Commune\Components\Markdown\Analysers;
 use Commune\Blueprint\Exceptions\CommuneLogicException;
 use Commune\Components\Markdown\Analysers\AnalyserInterface;
 use Commune\Components\Markdown\Parsers\IMD2ContextParser;
+use Commune\Components\Markdown\DefStrategy\SectionStrategy;
 use Commune\Support\Markdown\Parser\IMDParser;
 
 /**
@@ -53,13 +53,17 @@ class MDGroupOption extends AbsOption
             // 根节点的名称. 用于 contextDef 的定义, 但不作为 stage
             'rootName' => 'root',
 
+            // 公共的 stage 事件.
             'stageEvents' => [
-                Dialog::ANY => SectionDefStrategy::class,
+                Dialog::ANY => SectionStrategy::class,
             ],
+
+
+
+
 
             // markdown 默认的分析器.
             'markdownParser' =>  IMDParser::class,
-
             // 将 option 变成 ContextDef 的工具.
             'contextParser' => IMD2ContextParser::class,
 
@@ -67,12 +71,12 @@ class MDGroupOption extends AbsOption
             'staticAnalysers' => [
 
                 // branch
-                'branch.name' => Analysers\Stage\StageNameAls::class,
-                'branch.title' => Analysers\Stage\StageTitleAls::class,
-                'branch.desc' => Analysers\Stage\StageDescAls::class,
-                'branch.event' => Analysers\Stage\StageEventAls::class,
-                'branch.int.example' => Analysers\Stage\IntentExampleAls::class,
-                'branch.int.spell' => Analysers\Stage\IntentSpellAls::class,
+                'stageName' => Analysers\Stage\StageNameAls::class,
+                'stageTitle' => Analysers\Stage\StageTitleAls::class,
+                'stageDesc' => Analysers\Stage\StageDescAls::class,
+                'stageEvent' => Analysers\Stage\StageEventAls::class,
+                'intentExample' => Analysers\Stage\IntentExampleAls::class,
+                'intentSpell' => Analysers\Stage\IntentSpellAls::class,
 
                 // context
                 // 'context.name'
@@ -84,6 +88,7 @@ class MDGroupOption extends AbsOption
 
             // 动态分析工具.
             'dynamicAnalysers' => [
+                'break' => Analysers\Message\BreakAls::class,
 
             ],
 

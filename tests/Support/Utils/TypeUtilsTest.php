@@ -73,5 +73,12 @@ class TypeUtilsTest extends TestCase
 
     }
 
+    public function testGetType()
+    {
+        $a = function() {};
+
+        $this->assertEquals(\Closure::class, TypeUtils::getType($a));
+
+    }
 
 }

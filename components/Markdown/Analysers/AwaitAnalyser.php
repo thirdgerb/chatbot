@@ -18,7 +18,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface AwaitAnalyser extends AnalyserInterface
+interface AwaitAnalyser
 {
 
     public function __invoke(string $comment, Await $await) : ? Operator;

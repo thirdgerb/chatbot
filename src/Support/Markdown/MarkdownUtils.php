@@ -21,7 +21,7 @@ class MarkdownUtils
 {
     // 标准方式.
     //  [//]: # (@comment content)
-    const COMMENT_PATTERN = '/^\[\/\/\]:\s*#\s+\(\s*@([a-zA-Z0-9-_]+)(\s+.*)\)$/';
+    const COMMENT_PATTERN = '/^\[\/\/\]:\s*#\s+\(\s*@([a-zA-Z0-9-_]+)(\s+.*){0,1}\)$/';
     const TITLE_PATTERN = '/^(#+)\s+(.+)$/';
 
 
@@ -68,15 +68,16 @@ class MarkdownUtils
 
     public static function parseCommentLine(string $line) : ? array
     {
-        $line = self::parseSingleLine($line, __METHOD__);
+        $line = self::parseSingleLine($line);
         preg_match(self::COMMENT_PATTERN, $line, $matches);
+
         if (empty($matches)) {
             return null;
         }
         $comment = trim($matches[1]);
-        $content = trim($matches[2]);
+        $content = trim($matches[2] ?? '');
 
-        if (empty($comment) || empty($content)) {
+        if (empty($comment)) {
             return null;
         }
 

@@ -20,12 +20,8 @@ use Commune\Ghost\IMindDef\IIntentDef;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IntentSpellAls implements BranchAnalyser
+class IntentSpellAls
 {
-    public static function getCommentID(): string
-    {
-        return 'branch.int.spell';
-    }
 
     public function __invoke(
         string $content,

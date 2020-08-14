@@ -16,6 +16,7 @@ use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Blueprint\Ghost\MindReg\StageReg;
 use Commune\Ghost\Support\ContextUtils;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -45,26 +46,26 @@ class IStageReg extends AbsDefRegistry implements StageReg
             return true;
         }
 
+        list($contextName, $stageName) = ContextUtils::separateContextAndStageFromFullname($defName);
+
         // 如果当前 def 名就是 context 的 name
         $contextReg = $this->mindset->contextReg();
-        if ($contextReg->hasDef($defName)) {
+        if (StringUtils::isEmptyStr($stageName)) {
             $contextDef = $contextReg->getDef($defName);
             $this->registerDef($contextDef->asStageDef());
             return true;
         }
 
-        list($maybeContextName, $stage) = ContextUtils::divideContextNameFromStageName($defName);
-
-        if (empty($maybeContextName)) {
+        if (empty($contextName)) {
             return false;
         }
 
-        if (!$contextReg->hasDef($maybeContextName)) {
+        if (!$contextReg->hasDef($contextName)) {
             return false;
         }
 
-        $contextDef = $contextReg->getDef($maybeContextName);
-        $stageDef = $contextDef->getPredefinedStage($stage);
+        $contextDef = $contextReg->getDef($contextName);
+        $stageDef = $contextDef->getPredefinedStage($stageName);
 
         if (isset($stageDef)) {
             $this->registerDef($stageDef);

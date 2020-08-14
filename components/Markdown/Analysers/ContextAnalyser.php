@@ -18,7 +18,7 @@ use Commune\Components\Markdown\Mindset\MDContextDef;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ContextAnalyser extends AnalyserInterface
+interface ContextAnalyser
 {
 
     /**

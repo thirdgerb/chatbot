@@ -9,29 +9,32 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Markdown\Analysers;
+namespace Commune\Components\Markdown\Analysers\Message;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Components\Markdown\Analysers\MessageAnalyser;
+use Commune\Message\Host\Convo\Verbal\MarkdownMsg;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface MessageAnalyser
+class BreakAls implements MessageAnalyser
 {
-
-    /**
-     * @param string $content
-     * @param array $bufferedLines      系统正准备发送的消息. 如果要打断, 可自行发送.
-     * @param Dialog $dialog
-     * @return Operator|null
-     */
     public function __invoke(
         string $content,
         array &$bufferedLines,
         Dialog $dialog
-    ) : ? Operator;
+    ): ? Operator
+    {
+        if (!empty($bufferedLines)) {
+            $text = implode(PHP_EOL, $bufferedLines);
+            $dialog->send()->message(MarkdownMsg::instance($text));
+        }
+        $bufferedLines = [];
+        return null;
+    }
 
 
 }

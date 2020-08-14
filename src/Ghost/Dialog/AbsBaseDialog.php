@@ -151,7 +151,8 @@ abstract class AbsBaseDialog implements
         try {
             return $this->_cloner->container->call($caller, $parameters);
         } catch (\Exception $e) {
-            throw new BrokenRequestException('', $e);
+            $type = TypeUtils::getType($caller);
+            throw new BrokenRequestException("fail to call $type", $e);
         }
     }
 

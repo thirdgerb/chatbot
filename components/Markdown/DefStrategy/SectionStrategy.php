@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Markdown\Mindset;
+namespace Commune\Components\Markdown\DefStrategy;
 
 use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 use Commune\Blueprint\Ghost\Dialog;
@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Components\Markdown\Analysers\MessageAnalyser;
 use Commune\Components\Markdown\Exceptions\MarkdownOptNotFoundException;
 use Commune\Components\Markdown\MarkdownComponent;
+use Commune\Components\Markdown\Mindset\SectionStageDef;
 use Commune\Components\Markdown\Options\MDGroupOption;
 use Commune\Message\Host\Convo\Verbal\MarkdownMsg;
 use Commune\Support\Markdown\Data\MDSectionData;
@@ -27,7 +28,7 @@ use Commune\Support\Utils\TypeUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class SectionDefStrategy
+class SectionStrategy
 {
 
     /**
@@ -41,7 +42,7 @@ class SectionDefStrategy
     protected $registry;
 
     /**
-     * SectionDefStrategy constructor.
+     * SectionStrategy constructor.
      * @param MarkdownComponent $component
      * @param OptRegistry $registry
      */
@@ -172,18 +173,20 @@ class SectionDefStrategy
                     if (isset($operator)) {
                         return $operator;
                     }
-
-                    continue;
                 }
+            } else {
+                // buffers 处理.
+                $buffers[] = $line;
             }
 
-            // buffers 处理.
-            $buffers[] = $line;
         }
 
         if (!empty($buffers)) {
             $text = implode(PHP_EOL, $buffers);
-            $dialog->send()->message(MarkdownMsg::instance($text))->over();
+            $text = trim($text);
+            if (!empty($text)) {
+                $dialog->send()->message(MarkdownMsg::instance($text))->over();
+            }
         }
 
         return null;

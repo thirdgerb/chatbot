@@ -30,29 +30,31 @@ class MDTitleAls extends MDAnalyser
             return $this->addTitle($level, $title);
         }
 
-        $level = MarkdownUtils::maybeTitleUnderline($line);
-
-        if ($level <= 0) {
-            return null;
-        }
-
-        $lastLine = $this->parser->lines[$index - 1] ?? '';
-        $lastLine = trim($lastLine);
-        // 上一行不能为空.
-        if (StringUtils::isEmptyStr($lastLine)) {
-            return null;
-        }
-
-        $mode = $this->parser->lineModes[$index - 2] ?? MDParser::LINE_EMPTY;
-        // 上两行必须为空.
-        if ($mode !== MDParser::LINE_EMPTY) {
-            return null;
-        }
-
-        $title = $lastLine;
-        // 变更类型.
-        $this->parser->lineModes[$index - 1] = MDParser::LINE_TITLE;
-        return $this->addTitle($level, $title);
+        return null;
+//        // 更多情况暂时先不考虑. 还有列表等各种冲突情况. 未来还是要有一个严谨的 markdown 解析器为前提.
+//        $level = MarkdownUtils::maybeTitleUnderline($line);
+//
+//        if ($level <= 0) {
+//            return null;
+//        }
+//
+//        $lastLine = $this->parser->lines[$index - 1] ?? '';
+//        $lastLine = trim($lastLine);
+//        // 上一行不能为空.
+//        if (StringUtils::isEmptyStr($lastLine)) {
+//            return null;
+//        }
+//
+//        $mode = $this->parser->lineModes[$index - 2] ?? MDParser::LINE_EMPTY;
+//        // 上两行必须为空.
+//        if ($mode !== MDParser::LINE_EMPTY) {
+//            return null;
+//        }
+//
+//        $title = $lastLine;
+//        // 变更类型.
+//        $this->parser->lineModes[$index - 1] = MDParser::LINE_TITLE;
+//        return $this->addTitle($level, $title);
     }
 
 

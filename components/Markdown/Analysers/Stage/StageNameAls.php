@@ -26,12 +26,6 @@ use Commune\Ghost\Support\ContextUtils;
  */
 class StageNameAls implements BranchAnalyser
 {
-    public static function getCommentID(): string
-    {
-        return 'branch.name';
-    }
-
-
     public function __invoke(
         string $content,
         SectionStageDef $def

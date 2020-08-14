@@ -76,7 +76,7 @@ class DocRootStageDef extends AbsStageDef
 
     protected function always(Dialog $dialog) : Operator
     {
-        $doc = $this->document;
+        $doc = trim($this->document);
         if (!StringUtils::isEmptyStr($doc)) {
             $dialog
                 ->send()

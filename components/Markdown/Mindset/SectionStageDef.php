@@ -28,7 +28,7 @@ use Commune\Ghost\Stage\IStageDef;
  * @property string $contextName
  * @property string $stageName
  *
- * @property-read string[] $events
+ * @property string[] $events
  *
  * @property string $groupName
  *

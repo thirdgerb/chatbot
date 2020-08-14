@@ -78,10 +78,7 @@ class MarkdownComponent extends AGhostComponent
                 CommuneEnv::getRuntimePath(),
                 'markdown'
             ),
-            'resourcePath' => StringUtils::gluePath(
-                CommuneEnv::getResourcePath(),
-                'markdown'
-            ),
+            'resourcePath' => realpath(__DIR__ . '/../../demo/resources/markdown'),
             'docStorage' => null,
             'docInitialStorage' => null,
             'sectionStorage' => null,

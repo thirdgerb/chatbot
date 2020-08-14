@@ -22,10 +22,6 @@ use Commune\Components\Markdown\Mindset\SectionStageDef;
  */
 class StageTitleAls implements BranchAnalyser
 {
-    public static function getCommentID(): string
-    {
-        return 'branch.title';
-    }
 
     public function __invoke(
         string $content,

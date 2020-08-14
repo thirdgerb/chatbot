@@ -53,6 +53,12 @@ class MarkdownUtilsTest extends TestCase
         list($comment, $content) = MarkdownUtils::parseCommentLine($line4);
         $this->assertEquals('test', $comment);
         $this->assertEquals('hello world', $content);
+
+
+        $line5 = "[//]: # (@break)";
+        list($comment, $content) = MarkdownUtils::parseCommentLine($line5);
+        $this->assertEquals('break', $comment);
+        $this->assertEmpty($content);
     }
 
     public function testTitle()

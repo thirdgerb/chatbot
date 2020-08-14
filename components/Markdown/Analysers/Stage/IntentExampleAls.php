@@ -33,10 +33,4 @@ class IntentExampleAls implements BranchAnalyser
         return $def;
     }
 
-    public static function getCommentID(): string
-    {
-        return 'branch.int.example';
-    }
-
-
 }

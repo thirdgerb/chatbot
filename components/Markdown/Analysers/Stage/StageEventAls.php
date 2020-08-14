@@ -37,12 +37,6 @@ class StageEventAls implements BranchAnalyser
         $this->logger = $logger;
     }
 
-
-    public static function getCommentID(): string
-    {
-        return 'branch.event';
-    }
-
     /**
      * @param string $content    eventName | handler
      * @param SectionStageDef $def
@@ -69,6 +63,11 @@ class StageEventAls implements BranchAnalyser
             );
             return $def;
         }
+
+        $events = $def->events;
+        $events = [$eventName => $handler] + $events;
+        $def->events = $events;
+        return $def;
     }
 
     protected function isValidHandler(string $handler) : bool
