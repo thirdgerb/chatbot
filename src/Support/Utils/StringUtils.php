@@ -531,7 +531,7 @@ class StringUtils
 
     public static function isValidDotDirName(string $text) : bool
     {
-        return (preg_match('/^[a-zA-Z0-9_\-\.]+$/', $text) > 0)
+        return (preg_match('/^[a-zA-Z0-9_\-\/\.]+$/', $text) > 0)
             && (false === strstr($text, '..'));
     }
 
