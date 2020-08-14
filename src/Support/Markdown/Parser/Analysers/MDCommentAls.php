@@ -32,7 +32,6 @@ class MDCommentAls extends MDAnalyser
         if (empty($commentInfo)) {
             return null;
         }
-
         $parser = $this->parser;
 
         // 继续看上一行.

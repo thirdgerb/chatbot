@@ -12,7 +12,6 @@
 namespace Commune\Support\Markdown\Data;
 
 use Commune\Support\Option\AbsOption;
-use Commune\Support\Struct\AStruct;
 use Commune\Support\Utils\TypeUtils;
 
 
@@ -93,7 +92,7 @@ class MDSectionData extends AbsOption
         $text .= PHP_EOL;
         foreach ($comments as $type => $contents) {
             foreach ($contents as $content) {
-                $text .=  (PHP_EOL . "[$type]: $content");
+                $text .=  (PHP_EOL . "[//]: # (@$type $content)");
             }
         }
 

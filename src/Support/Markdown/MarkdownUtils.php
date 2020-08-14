@@ -19,7 +19,9 @@ use Commune\Support\Utils\StringUtils;
  */
 class MarkdownUtils
 {
-    const COMMENT_PATTERN = '/^\[(.*)\]:(.*)$/';
+    // 标准方式.
+    //  [//]: # (@comment content)
+    const COMMENT_PATTERN = '/^\[\/\/\]:\s*#\s+\(\s*@([a-zA-Z0-9-_]+)(\s+.*)\)$/';
     const TITLE_PATTERN = '/^(#+)\s+(.+)$/';
 
 

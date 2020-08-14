@@ -28,14 +28,15 @@ class MarkdownUtilsTest extends TestCase
         $this->assertNull($parsed);
 
 
-        $line = '[-_-]: hello world';
+        $line = '[//]: # (@test- hello world)';
+
         list($comment, $content) = MarkdownUtils::parseCommentLine($line);
-        $this->assertEquals('-_-', $comment);
+        $this->assertEquals('test-', $comment);
         $this->assertEquals('hello world', $content);
 
-        $line1 = '[  -_-  ]:   hello world       ';
+        $line1 = '[//]:   #  ( @test hello world       )';
         list($comment, $content) = MarkdownUtils::parseCommentLine($line1);
-        $this->assertEquals('-_-', $comment);
+        $this->assertEquals('test', $comment);
         $this->assertEquals('hello world', $content);
 
 
@@ -50,7 +51,7 @@ class MarkdownUtilsTest extends TestCase
 
         $line4 = "$line1\n ";
         list($comment, $content) = MarkdownUtils::parseCommentLine($line4);
-        $this->assertEquals('-_-', $comment);
+        $this->assertEquals('test', $comment);
         $this->assertEquals('hello world', $content);
     }
 

@@ -88,11 +88,11 @@ class MarkdownParserTest extends TestCase
     {
         return <<<EOF
 
-[intent]: intentName
-[title]: title
-[desc]: desc
+[//]: # (@intent  intentName)
+[//]: # (@title  title)
+[//]: # (@desc desc)
 
-[name]: test
+[//]: # (@name test)
 
 测试前缀内容.
 
@@ -100,22 +100,21 @@ class MarkdownParserTest extends TestCase
 
 测试
 
-[empty]: empty
-[title]: 注释一定要有内容
+[//]: # (@title  注释一定要有内容)
 
 
 测试其它的文本, 包括 ```abc```
 
 正确的 parser 位置
 
-[parser]: @name
+[//]: # (@parser @name)
 
 * list
 * list2
-[parser]: never
+[//]: # (@parser never load this)
 * list3
 
-[name]: title1
+[//]: # (@name title1)
 
 ## title 1.1
 
@@ -146,7 +145,7 @@ class MarkdownParserTest extends TestCase
 
 测试
 
-[name]: title~1~3
+[//]: # (@name title~1~3)
 
 EOF;
 
