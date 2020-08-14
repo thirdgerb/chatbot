@@ -30,11 +30,13 @@ class ContextUtils
         );
     }
 
-    public static function divideContextNameFromStageName(string $stageFullname) : array
+    public static function separateContextAndStageFromFullname(string $stageFullname) : array
     {
-        $exploded = explode(Context::CONTEXT_STAGE_DELIMITER, $stageFullname);
-        $stageName = array_pop($exploded);
-        return [implode(Context::CONTEXT_STAGE_DELIMITER, $exploded), $stageName];
+        $exploded = explode(Context::CONTEXT_STAGE_DELIMITER, $stageFullname, 2);
+        return [
+            $exploded[0],
+            $exploded[1] ?? ''
+        ];
     }
 
     public static function parseShortStageName(string $stageFullName, string $contextName) : string
@@ -69,7 +71,7 @@ class ContextUtils
 
     public static function isValidContextName(string $str) : bool
     {
-        $pattern = '/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)*$/';
+        $pattern = '/^[a-z][a-z_0-9]*(\.[a-z][a-z_0-9]*)*$/';
         return (bool) preg_match($pattern, $str);
     }
 
@@ -85,7 +87,18 @@ class ContextUtils
 
     public static function isValidStageFullName(string $str) : bool
     {
-        return self::isValidIntentName($str);
+        $parts = explode(Context::CONTEXT_STAGE_DELIMITER, $str, 2);
+        if (!self::isValidContextName($parts[0])) {
+            return false;
+        }
+
+        $stage = $parts[1] ?? null;
+
+        if (is_null($stage) || StringUtils::isEmptyStr($stage)) {
+            return true;
+        }
+
+        return self::isValidStageName($stage);
     }
 
     public static function isValidStageName(string $name) : bool
@@ -100,8 +113,7 @@ class ContextUtils
 
     public static function isValidIntentName(string $str) : bool
     {
-        $pattern = '/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)*(\.[a-z][a-z_0-9]*){0,1}$/';
-        return (bool) preg_match($pattern, $str);
+        return self::isValidStageFullName($str);
     }
 
     public static function isValidEntityName(string $str) : bool

@@ -135,6 +135,7 @@ class Ucl implements UclInterface
     ): Ucl
     {
         $contextName = ContextUtils::normalizeContextName($contextName);
+        $stageName = ContextUtils::normalizeStageName($stageName);
         return new static($contextName, $stageName, $query);
     }
 
@@ -271,13 +272,16 @@ class Ucl implements UclInterface
         }
 
         $string = strval($string);
+        // 分离 query
         $ex = explode(Ucl::QUERY_SEPARATOR, $string, 2);
         $prefix = $ex[0];
         $queryStr = $ex[1] ?? '';
 
-        $query = static::decodeQueryStr($queryStr);
-        $ex = explode(Ucl::STAGE_SEPARATOR, $prefix, 2);
 
+        $query = static::decodeQueryStr($queryStr);
+
+        // 分离 context 和 stage
+        $ex = explode(Ucl::STAGE_SEPARATOR, $prefix, 2);
         $contextName = $ex[0];
         $stageName = $ex[1] ?? '';
         $query = is_array($query) ? $query : [];

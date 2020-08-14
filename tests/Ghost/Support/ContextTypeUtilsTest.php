@@ -75,24 +75,29 @@ class ContextTypeUtilsTest extends TestCase
 
     public function testValidStageName()
     {
+        $validCases = [
+            'bc.efg_hij',
+            'ab0c.ef1g.h3ij',
+            'f.a0_1_2_3_4',
 
+        ];
 
-        $this->assertTrue(ContextUtils::isValidStageFullName('bc.efg_hij'));
-        // 混合数字
-        $this->assertTrue(ContextUtils::isValidStageFullName('ab0c.ef1g.h3ij'));
-        // 单字母类名
-        $this->assertTrue(ContextUtils::isValidStageFullName('f.a0_1_2_3_4'));
-        // contextName 有大写
-        $this->assertFalse(ContextUtils::isValidStageFullName('Ab0c.tt_ef1g_h3ij'));
-        // stageName 有大写
-        $this->assertFalse(ContextUtils::isValidStageFullName('ab0c.tt_Ef1g_h3ij'));
-        // 下划线开头, 不允许.
-        $this->assertFalse(ContextUtils::isValidStageFullName('c._abc'));
+        $invalidCases = [
+            'Ab0c.tt_ef1g_h3ij',
+            'ab0c.tt_Ef1g_h3ij'
 
+        ];
+
+        foreach ($validCases as $case) {
+            $this->assertTrue(ContextUtils::isValidStageFullName($case), $case);
+        }
+
+        foreach ($invalidCases as $case) {
+            $this->assertFalse(ContextUtils::isValidStageFullName($case), $case);
+        }
 
         $this->assertTrue(ContextUtils::isValidStageName('efg_hij'));
         $this->assertTrue(ContextUtils::isValidStageName('tt_ef1g_h3ij'));
-
         $this->assertFalse(ContextUtils::isValidStageName('tt_Ef1g_h3ij'));
 
 

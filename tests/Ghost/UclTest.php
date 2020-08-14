@@ -21,10 +21,10 @@ class UclTest extends TestCase
 {
     protected $validCases = [
         // full
-        'abc.efg.ijk/stage_name?a=1&b=2' => 'abc.efg.ijk.stage_name',
+        'abc.efg.ijk/stage_name?a=1&b=2' => 'abc.efg.ijk/stage_name',
 
         // no query
-        'abc/stage_name' => 'abc.stage_name',
+        'abc/stage_name' => 'abc/stage_name',
 
         // only query
         'abc?a=1&b=2' => 'abc',
@@ -32,15 +32,17 @@ class UclTest extends TestCase
         // list query
         'abc?a=1&b[]=1&b[]=2' => 'abc',
         'abc?a[1]=1&a[k]=10' => 'abc',
+
+        // upper case auto change to lower case
+        'abc.stageName' => 'abc.stagename',
     ];
 
 
     protected $invalidCases = [
         // no context
-        'stage_name',
+        'stage~name',
 
-        // upper case
-        'abc/stageName',
+        'abc-stageName',
     ];
 
     public function testUcl()
@@ -48,6 +50,7 @@ class UclTest extends TestCase
         foreach ($this->validCases as $case => $intent) {
             $this->doTestUcl($case, $intent);
         }
+
 
         foreach ($this->invalidCases as $case) {
             $caseObj = Ucl::decode($case);
@@ -57,11 +60,10 @@ class UclTest extends TestCase
 
     protected function doTestUcl(string $case, string $fullname)
     {
-
         // case1
         $caseObj = Ucl::decode($case);
         $this->assertTrue($caseObj->isValidPattern(), $case);
-        $this->assertEquals($fullname, $caseObj->getStageFullname());
+        $this->assertEquals($fullname, $caseObj->getStageFullname(), $case);
 
         // case2
         $case2 = $caseObj->encode();
