@@ -41,11 +41,15 @@ interface HostMsg extends Message, Protocal
 
 
     /**
+     * 消息作为协议, 应该有一个区别自己和同类消息的 protocalId
+     * 决定消息的处理逻辑.
+     *
      * @return string
      */
     public function getProtocalId() : string;
 
     /**
+     * 所有的消息都要求有一个文字表达形式
      * @return string
      */
     public function getText() : string;

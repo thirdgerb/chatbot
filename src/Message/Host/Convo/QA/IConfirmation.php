@@ -11,7 +11,6 @@
 
 namespace Commune\Message\Host\Convo\QA;
 
-use Commune\Protocals\HostMsg\Convo\QA\Confirm;
 use Commune\Protocals\HostMsg\Convo\QA\Confirmation;
 
 

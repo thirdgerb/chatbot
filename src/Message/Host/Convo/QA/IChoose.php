@@ -13,7 +13,6 @@ namespace Commune\Message\Host\Convo\QA;
 
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 use Commune\Protocals\HostMsg\Convo\QA\Choose;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -22,22 +21,26 @@ class IChoose extends IQuestionMsg implements Choose
 {
     protected $acceptAnyTextAsValue = false;
 
-    public function __construct(string $query, string $default = null, array $suggestions = [], array $routes = [])
+    public static function newChoose(
+        string $query,
+        $default = null,
+        array $suggestions = [],
+        array $routes = []
+    ): IQuestionMsg
     {
-        parent::__construct($query, $default, $suggestions, $routes);
+        return parent::instance($query, $default, $suggestions, $routes);
     }
 
-    protected function acceptAnyAnswer(VerbalMsg $message) : ? AnswerMsg
-    {
-        return null;
-    }
-
-    protected function newAnswer(string $answer, string $choice = null): AnswerMsg
+    protected function makeAnswerInstance(
+        string $answer,
+        $choice = null,
+        string $route = null
+    ): AnswerMsg
     {
         return new IChoice([
             'answer' => $answer,
             'choice' => $choice,
-            'route' => $this->routes[$choice] ?? null,
+            'route' => $route,
         ]);
     }
 }

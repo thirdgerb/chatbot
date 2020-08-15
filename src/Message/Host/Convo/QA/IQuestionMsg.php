@@ -18,6 +18,7 @@ use Commune\Ghost\Support\ContextUtils;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
@@ -28,10 +29,10 @@ use Commune\Support\Utils\StringUtils;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
- * @property-read string $query
- * @property-read string[] $suggestions
- * @property-read string[] $routes
- * @property-read string|null $default
+ * @property string $query
+ * @property string[] $suggestions
+ * @property string[] $routes
+ * @property string|null $default
  *
  *
  * @property-read bool $translated
@@ -43,28 +44,30 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
     protected $slots = [];
 
     /**
-     * IQuestionMsg constructor.
      * @param string $query
-     * @param string|int|null $default
-     * @param string[] $suggestions
-     * @param Ucl[]|string[] $routes
+     * @param null $default
+     * @param array $suggestions
+     * @param array $routes
+     * @return static
      */
-    public function __construct(
+    public static function instance(
         string $query,
         $default = null,
         array $suggestions = [],
         array $routes = []
-    )
+    ) : IQuestionMsg
     {
-        parent::__construct([
+        $question = new static([
             'query' => $query,
             'default' => $default,
             'routes' => array_map('strval', $routes)
         ]);
 
         foreach ($suggestions as $index => $suggestion) {
-            $this->addSuggestion($suggestion, $index);
+            $question->addSuggestion($suggestion, $index);
         }
+
+        return $question;
     }
 
     public static function stub(): array
@@ -81,12 +84,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
     public static function create(array $data = []): Struct
     {
-        return new static(
-            $data['query'] ?? '',
-            $data['default'] ?? null,
-            $data['suggestions'] ?? [],
-            $data['routes'] ?? []
-        );
+        return new static($data);
     }
 
     /*-------- parser --------*/
@@ -102,20 +100,34 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             return $answer;
         }
 
-        $message = $input->getMessage();
-        if (!$message instanceof VerbalMsg) {
-            return null;
-        }
 
-        $answer = $this->isDefault($message)
-            ?? $this->isInSuggestions($message)
-            ?? $this->acceptAnyAnswer($message)
-            ?? null;
+        $answer = $this->parseAnswerByType($input)
+            ?? $this->parseAnswerByVerbal($input);
 
         return isset($answer)
             ? $this->setAnswerToComprehension($answer, $comprehension)
             : null;
     }
+
+    protected function parseAnswerByType(InputMsg $inputMsg) : ? AnswerMsg
+    {
+        return null;
+    }
+
+    protected function parseAnswerByVerbal(InputMsg $input) : ? AnswerMsg
+    {
+        $message = $input->getMessage();
+        if (!$message instanceof VerbalMsg) {
+            return null;
+        }
+
+        return $this->isDefault($message)
+            ?? $this->isInSuggestions($message)
+            ?? $this->acceptAnyVerbalAnswer($message)
+            ?? null;
+    }
+
+
 
     protected function setAnswerToComprehension(AnswerMsg $answer, Comprehension $comprehension) : AnswerMsg
     {
@@ -132,10 +144,11 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         return $answer;
     }
 
-    protected function acceptAnyAnswer(VerbalMsg $message) : ? AnswerMsg
+    protected function acceptAnyVerbalAnswer(VerbalMsg $message) : ? AnswerMsg
     {
         if ($this->acceptAnyTextAsValue) {
-            return $this->newAnswer($message->getText());
+            $text = $message->getText();
+            return $this->newAnswer($text);
         }
         return null;
     }
@@ -306,14 +319,22 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
     }
 
 
-    protected function newAnswer(string $answer, string $choice = null) : AnswerMsg
+    protected function newAnswer(string $answer, $choice = null) : AnswerMsg
     {
         if (isset($choice)) {
             $route = $this->routes[$choice] ?? null;
         } else {
             $route = null;
         }
+        return $this->makeAnswerInstance($answer, $choice, $route);
+    }
 
+    protected function makeAnswerInstance(
+        string $answer,
+        $choice = null,
+        string $route = null
+    ) : AnswerMsg
+    {
         return new IAnswerMsg([
             'answer' => $answer,
             'choice' => $choice,
@@ -344,7 +365,13 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         return $this->suggestions;
     }
 
-    public function addSuggestion(string $suggestion, $index = null, Ucl $ucl = null): void
+    /**
+     * @param string $suggestion
+     * @param null $index
+     * @param Ucl|null $ucl
+     * @return mixed
+     */
+    public function addSuggestion(string $suggestion, $index = null, Ucl $ucl = null)
     {
         if (is_null($index)) {
             $this->_data['suggestions'][] = $suggestion;
@@ -358,6 +385,8 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         if (isset($ucl)) {
             $this->_data['routes'][$index] = $ucl->encode();
         }
+
+        return $index;
     }
 
     public function isEmpty(): bool

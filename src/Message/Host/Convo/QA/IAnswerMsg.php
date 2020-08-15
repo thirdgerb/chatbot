@@ -11,7 +11,6 @@
 
 namespace Commune\Message\Host\Convo\QA;
 
-use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;

@@ -41,8 +41,9 @@ interface QuestionMsg extends VerbalMsg, Conversational, SelfTranslatable
      * @param string $suggestion
      * @param string|int|null $index
      * @param Ucl|null $ucl
+     * @return mixed                返回索引.
      */
-    public function addSuggestion(string $suggestion, $index = null, Ucl $ucl = null) : void;
+    public function addSuggestion(string $suggestion, $index = null, Ucl $ucl = null);
 
     /**
      * @return Ucl[]

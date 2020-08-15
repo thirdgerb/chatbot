@@ -12,6 +12,7 @@
 namespace Commune\Protocals\HostMsg\Convo\QA;
 
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Contracts\Trans\SystemLang;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -21,8 +22,8 @@ interface Confirm extends QuestionMsg
     const DEFAULT_POSITIVE = 'y';
     const DEFAULT_NEGATIVE = 'n';
 
-    const POSITIVE_LANG = 'system.dialog.yes';
-    const NEGATIVE_LANG = 'system.dialog.no';
+    const POSITIVE_LANG = SystemLang::POSITIVE_LANG;
+    const NEGATIVE_LANG = SystemLang::NEGATIVE_LANG;
 
     public function setPositive(string $suggestion, Ucl $ucl = null) : Confirm;
 

@@ -50,7 +50,10 @@ class IStageReg extends AbsDefRegistry implements StageReg
 
         // 如果当前 def 名就是 context 的 name
         $contextReg = $this->mindset->contextReg();
-        if (StringUtils::isEmptyStr($stageName)) {
+        if (
+            StringUtils::isEmptyStr($stageName)
+            && $contextReg->hasDef($contextName)
+        ) {
             $contextDef = $contextReg->getDef($defName);
             $this->registerDef($contextDef->asStageDef());
             return true;

@@ -14,6 +14,7 @@ namespace Commune\Blueprint\Ghost\Operate;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Protocals\HostMsg\Convo\QA\Confirm;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
+use Commune\Protocals\HostMsg\DefaultIntents;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -67,6 +68,24 @@ interface Await extends Finale
         array $suggestions = []
     ) : Operator;
 
+    /**
+     * 要求用户输入任何信息继续, 然后拿到一个值.
+     * @param string $query
+     * @param int $current
+     * @param int $max
+     * @param array $suggestions
+     * @param null|string $next         表示继续的选项
+     * @param null|string $break        表示跳出流程的选项.
+     * @return Operator
+     */
+    public function askStepper(
+        string $query,
+        int $current,
+        int $max,
+        array $suggestions = [],
+        ?string $next = DefaultIntents::GUEST_LOOP_NEXT,
+        ?string $break = DefaultIntents::GUEST_LOOP_BREAK
+    ) : Operator;
 
     /**
      * @param QuestionMsg $question

@@ -20,8 +20,10 @@ use Commune\Ghost\Support\ContextUtils;
 use Commune\Message\Host\Convo\QA\IChoose;
 use Commune\Message\Host\Convo\QA\IConfirm;
 use Commune\Message\Host\Convo\QA\IQuestionMsg;
+use Commune\Message\Host\Convo\QA\IStepper;
 use Commune\Protocals\HostMsg\Convo\QA\Confirm;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
+use Commune\Protocals\HostMsg\DefaultIntents;
 use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
@@ -81,9 +83,6 @@ class OAwait extends AbsFinale implements Await
         $this->current = $this->dialog->ucl;
         $contextDef = $this->current->findContextDef($this->cloner);
 
-        // todo routes with stage routes
-        $config = $this->cloner->config;
-
         $strategy = $contextDef->getStrategy($this->dialog);
         $this->routes = array_merge(
             $this->routes,
@@ -140,6 +139,37 @@ class OAwait extends AbsFinale implements Await
         return $this;
     }
 
+    /*----------- ask -----------*/
+    public function askStepper(
+        string $query,
+        int $current,
+        int $max,
+        array $suggestions = [],
+        ?string $next = DefaultIntents::GUEST_LOOP_NEXT,
+        ?string $break = DefaultIntents::GUEST_LOOP_BREAK
+    ): Operator
+    {
+        $stepper = IStepper::newStepper(
+            $query,
+            $current,
+            $max
+        );
+
+        if (isset($next)) {
+            $index = $stepper->addSuggestion($next, null);
+            $stepper->nextIndex = $index;
+        }
+
+        if (isset($break)) {
+            $index = $stepper->addSuggestion($break);
+            $stepper->breakIndex = $index;
+        }
+
+        $this->question = $this->addSuggestions($stepper, $suggestions);
+        return $this;
+    }
+
+
     public function askChoose(
         string $query,
         array $suggestions = [],
@@ -147,7 +177,7 @@ class OAwait extends AbsFinale implements Await
         array $routes = []
     ): Operator
     {
-        $choose = new IChoose($query, $defaultChoice, [], $routes);
+        $choose = IChoose::newChoose($query, $defaultChoice, [], $routes);
         $this->question = $this->addSuggestions($choose, $suggestions);
         return $this;
     }
@@ -161,7 +191,7 @@ class OAwait extends AbsFinale implements Await
         string $negative = Confirm::NEGATIVE_LANG
     ): Operator
     {
-        $confirm = new IConfirm($query, $default);
+        $confirm = IConfirm::newConfirm($query, $default);
         $positiveRoute = isset($positiveRoute) ? Ucl::decode($positiveRoute) : null;
         $negativeRoute = isset($negativeRoute) ? Ucl::decode($negativeRoute) : null;
         $confirm->setPositive($positive, $positiveRoute);
@@ -175,7 +205,7 @@ class OAwait extends AbsFinale implements Await
         array $suggestions = []
     ): Operator
     {
-        $question = new IQuestionMsg($query, null);
+        $question = IQuestionMsg::instance($query, null);
         $question = $this->addSuggestions($question, $suggestions);
         return $this->ask($question);
     }
@@ -215,7 +245,7 @@ class OAwait extends AbsFinale implements Await
         return $question;
     }
 
-    protected function addSuggestionToQuestion(QuestionMsg $question, $index, $suggestion) : void
+    public function addSuggestionToQuestion(QuestionMsg $question, $index, $suggestion) : void
     {
         $success = $this->addUclToQuestion($question, $index, $suggestion)
             || $this->addNormalSuggestion($question, $index, $suggestion);
@@ -259,23 +289,31 @@ class OAwait extends AbsFinale implements Await
             return false;
         }
 
-        // $this->routes[] = $suggestion;
-        $def = $this->getStageReg()->getDef($fullname);
-        $question->addSuggestion($def->getDescription(), $index, $suggestion);
+        $route = $suggestion;
+        if (is_string($index)) {
+            $parts = explode('|', $index, 2);
+            $index = $parts[0];
+            $suggestion = !empty($parts[2])
+                ? $parts[2]
+                : $this->getStageReg()->getDef($fullname)->getDescription();
 
+        } else {
+            $suggestion = $this->getStageReg()->getDef($fullname)->getDescription();
+        }
+
+        $question->addSuggestion($suggestion, $index, $route);
         return true;
     }
 
-    protected function destroy(): void
+    public function __destruct()
     {
-        unset($this->cloner);
-        unset($this->process);
-        unset($this->stageReg);
-        unset($this->routes);
-        unset($this->question);
-        unset($this->current);
-        unset($this->expire);
-
-        parent::destroy();
+        unset(
+            $this->routes,
+            $this->slots,
+            $this->dialog,
+            $this->question,
+            $this->stageReg
+        );
+        parent::__destruct();
     }
 }

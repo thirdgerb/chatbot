@@ -287,6 +287,17 @@ class IMatcher implements Matcher
         return $this;
     }
 
+    public function isAnswerOf(string $answerInterface): Matcher
+    {
+        $answer = $this->comprehension->answer->getAnswer();
+        if (isset($answer) && is_a($answer, $answerInterface, true)) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $answer;
+        }
+        return $this;
+    }
+
+
     public function isChoice($suggestionIndex): Matcher
     {
         $suggestionIndex = strval($suggestionIndex);

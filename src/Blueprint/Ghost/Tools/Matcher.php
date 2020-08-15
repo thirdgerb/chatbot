@@ -181,6 +181,12 @@ interface Matcher
      */
     public function isAnswered() : Matcher;
 
+    /**
+     * @param string $answerInterface
+     * @return static
+     * @matched answerInterface $isAnswerOf
+     */
+    public function isAnswerOf(string $answerInterface) : Matcher;
 
     // public function isAnswer(string $answer) : Matcher;
 

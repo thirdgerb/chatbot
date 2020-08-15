@@ -45,11 +45,24 @@ interface DefaultIntents
     const SYSTEM_DIALOG_CONFUSE = 'system.dialog.confuse';
     // 语境内的逻辑无法响应用户的意图
     const SYSTEM_DIALOG_UNABLE = 'system.dialog.unable';
-    // 用 stageName + intentName 来定义返回结果.
+
+
+
+    /**
+     * 用 stageName + intentName 来定义返回结果.
+     * @param string $event
+     * @param string $stage
+     * @param string[] $slots
+     */
     const SYSTEM_DIALOG_STAGE_EVENT = 'system.dialog.stage.event';
 
-    // 要求用户输入一个属性的值
+    /**
+     *
+     * 要求用户输入一个属性的值
+     * @param string $attrName
+     */
     const SYSTEM_DIALOG_REQUIRE = 'system.dialog.require';
+
     // 用户没有访问权限.
     const SYSTEM_DIALOG_FORBID = 'system.dialog.forbid';
 

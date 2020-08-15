@@ -155,6 +155,10 @@ class FakeHearing implements Hearing
         return $this;
     }
 
+    public function isAnswerOf(string $answerInterface): Matcher
+    {
+        return $this;
+    }
 
     public function isChoice($suggestionIndex): Matcher
     {

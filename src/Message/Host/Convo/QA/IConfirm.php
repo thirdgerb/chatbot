@@ -18,7 +18,6 @@ use Commune\Blueprint\Ghost\MindDef\EmotionDef;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 use Commune\Protocals\HostMsg\Convo\QA\Confirm;
 use Commune\Protocals\HostMsg\Convo\QA\Confirmation;
-use Commune\Support\Struct\Struct;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -30,7 +29,7 @@ class IConfirm extends IQuestionMsg implements Confirm
 
     protected $acceptAnyTextAsValue = false;
 
-    public function __construct(
+    public static function newConfirm(
         string $query,
         bool $default = null,
         string $positive = null,
@@ -49,23 +48,15 @@ class IConfirm extends IQuestionMsg implements Confirm
             )
             : null;
 
-        parent::__construct(
-            $query,
-            $default,
-            $suggestions,
-            $routes
-        );
-    }
+        $data = [
+            'query' => $query,
+            'suggestions' => $suggestions,
+            'routes' => $routes,
+            'default' => $default,
 
-    public static function create(array $data = []): Struct
-    {
-        return new static(
-            $data['query'] ?? '',
-            $data['default'] === self::POSITIVE_INDEX,
-            $data['suggestions'][self::POSITIVE_INDEX] ?? null,
-            $data['suggestions'][self::NEGATIVE_INDEX] ?? null,
-            $data['routes'] ?? []
-        );
+        ];
+
+        return new static($data);
     }
 
     protected function parseAnswerByMatcher(Cloner $cloner): ? AnswerMsg
@@ -120,12 +111,16 @@ class IConfirm extends IQuestionMsg implements Confirm
         return $answer;
     }
 
-    protected function newAnswer(string $answer, string $choice = null): AnswerMsg
+    protected function makeAnswerInstance(
+        string $answer,
+        $choice = null,
+        string $route = null
+    ): AnswerMsg
     {
         return new IConfirmation([
             'answer' => $answer,
             'choice' => $choice,
-            'routes' => $this->routes[$choice] ?? null,
+            'routes' => $route,
         ]);
     }
 
