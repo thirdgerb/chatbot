@@ -128,7 +128,7 @@ class ProcessCmd extends AGhostCmd
 
     protected function showRoutes(Process $process) : void
     {
-        $routes = $process->getAwaitRoutes();
+        $routes = $this->cloner->runtime->getCurrentAwaitRoutes();
 
         $data = array_map(function(Ucl $ucl) {
             return $ucl->encode();

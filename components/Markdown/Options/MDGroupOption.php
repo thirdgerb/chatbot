@@ -12,10 +12,10 @@
 namespace Commune\Components\Markdown\Options;
 
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Components\Markdown\Mindset\MDContextDef;
 use Commune\Support\Option\AbsOption;
 use Commune\Components\Markdown\Analysers;
 use Commune\Blueprint\Exceptions\CommuneLogicException;
-use Commune\Components\Markdown\Analysers\AnalyserInterface;
 use Commune\Components\Markdown\Parsers\IMD2ContextParser;
 use Commune\Components\Markdown\DefStrategy\SectionStrategy;
 use Commune\Support\Markdown\Parser\IMDParser;
@@ -28,6 +28,9 @@ use Commune\Support\Markdown\Parser\IMDParser;
  * @property-read string $relativePath          文件夹相对路径.
  * @property-read string $namespace
  *
+ *
+ * @property-read array $contextStub            context 的默认配置.
+ * @see MDContextDef
  *
  * @property-read string[] $stageEvents         stageEvent => handler Map
  *
@@ -59,8 +62,13 @@ class MDGroupOption extends AbsOption
             ],
 
 
-
-
+            'contextStub' => [
+                'priority' => 1,
+                'strategy' => [
+                    'stageRoutes' => ['*'],
+                    'contextRoutes' => ['*'],
+                ],
+            ],
 
             // markdown 默认的分析器.
             'markdownParser' =>  IMDParser::class,
@@ -88,7 +96,9 @@ class MDGroupOption extends AbsOption
 
             // 动态分析工具.
             'dynamicAnalysers' => [
-                'break' => Analysers\Message\BreakAls::class,
+                'info' => Analysers\Message\InfoAls::class,
+                'error' => Analysers\Message\ErrorAls::class,
+                'warning' => Analysers\Message\WarningAls::class,
 
             ],
 

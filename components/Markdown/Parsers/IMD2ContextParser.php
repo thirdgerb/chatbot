@@ -42,12 +42,6 @@ class IMD2ContextParser implements MD2ContextParser
     protected $container;
 
     /**
-     * @var array
-     */
-    protected $contextStub = [
-    ];
-
-    /**
      * TreeMd2CtxParser constructor.
      * @param ProcContainer $container
      */
@@ -127,9 +121,6 @@ class IMD2ContextParser implements MD2ContextParser
             'title' => isset($first) ? $first->title : '',
             'desc' => isset($first) ? $first->desc : '',
 
-            'priority' => 1,
-            'queryNames' => [],
-
             // 实际的 stage 是没有标题的环节.
             'rootName' => $parser->tree->root->orderId,
             'tree' => $parser->tree->toNameArr(),
@@ -138,15 +129,11 @@ class IMD2ContextParser implements MD2ContextParser
             // 所有的 branch 都关联到 MDSectionData.
             // 通过 StageMeta, 而不是 tree 来定义的 stage 组件.
             'stages' => $stageMetas,
-            'dependingNames' => [],
             'asIntent' => [],
-            'memoryScopes' => [],
-            'memoryAttrs' => [],
-            'strategy' => [],
             'contextWrapper' => IContext::class,
         ];
 
-        $data = $data + $this->contextStub;
+        $data = $data + $group->contextStub;
 
         $def =  new MDContextDef($data);
         $map = $group->getAnalyserMapByInterface(
@@ -195,7 +182,7 @@ class IMD2ContextParser implements MD2ContextParser
             'stageName' => $root->orderId,
             'asIntent' => null,
 
-            'document' => $root->text,
+            'document' => $root->toText(),
             'nextStage' => $nextStageName,
         ]);
 

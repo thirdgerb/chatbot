@@ -87,9 +87,18 @@ class SectionStrategy
 
     protected function onActivate(SectionStageDef $def, Dialog\Activate $dialog) : Operator
     {
+
+
+
         $group = $this->getGroupOption($def->groupName);
         $section = $this->getSectionOption($def->contextName, $def->orderId);
 
+        $isSameContext = $dialog->process->getAwait()->isSameContext($dialog->ucl);
+        if (! $isSameContext) {
+            $dialog->context[$def->stageName] = 0;
+        }
+
+        // 通过计数器了解当前要输出的片段.
         $max = count($section->texts) - 1;
         $current = $dialog->context[$def->stageName] ?? 0;
 
@@ -107,8 +116,6 @@ class SectionStrategy
         if ($current < $max) {
             return $this->askContinue($dialog, $current, $max);
         } else {
-            $key = $def->stageName;
-            $dialog->context[$key] = 0;
             return $this->askAwait($def, $group, $section, $dialog);
         }
     }

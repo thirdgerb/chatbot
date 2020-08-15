@@ -13,6 +13,7 @@ namespace Commune\Components\Markdown\Analysers\Message;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Components\Markdown\Analysers\MessageAnalyser;
 use Commune\Message\Host\Convo\Verbal\MarkdownMsg;
 use Commune\Support\Utils\StringUtils;
@@ -21,7 +22,7 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-abstract class AbsSendAls implements MessageAnalyser
+abstract class AbsMessageAls implements MessageAnalyser
 {
     public function __invoke(
         string $content,
@@ -29,6 +30,7 @@ abstract class AbsSendAls implements MessageAnalyser
         Dialog $dialog
     ): ? Operator
     {
+        // 将 buffer 的 message 先发送.
         $deliver = $dialog->send();
         if (!empty($bufferedLines)) {
             $text = implode(PHP_EOL, $bufferedLines);
@@ -36,14 +38,19 @@ abstract class AbsSendAls implements MessageAnalyser
         }
         $bufferedLines = [];
 
+        $this->deliverCommentContent($deliver, $content);
+        $deliver->over();
+        return null;
+    }
+
+    protected function deliverCommentContent(Deliver $deliver, string $content) : void
+    {
         $content = trim($content);
         if (!StringUtils::isEmptyStr($content)) {
             $level = $this->getLevel();
             $deliver->{$level}($content);
-        }
 
-        $deliver->over();
-        return null;
+        }
     }
 
     abstract protected function getLevel() : string;
