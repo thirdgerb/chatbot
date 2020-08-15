@@ -228,7 +228,9 @@ class Ucl implements UclInterface
 
     public function goStage(string $stageName = ContextDef::START_STAGE_NAME) : Ucl
     {
-        if (!ContextUtils::isValidStageName($stageName)) {
+        $isWildcardPattern = StringUtils::isWildcardPattern($stageName);
+
+        if (!$isWildcardPattern && !ContextUtils::isValidStageName($stageName)) {
             throw new InvalidArgumentException("invalid stage pattern: $stageName");
         }
 
