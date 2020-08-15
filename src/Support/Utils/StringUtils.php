@@ -535,4 +535,18 @@ class StringUtils
             && (false === strstr($text, '..'));
     }
 
+
+    public static function fetchSrcFromDom(string $dom) : ? string
+    {
+        $pattern = '/src=([^\s]+)\s+/';
+        preg_match($pattern, $dom, $matches);
+        if (empty($matches)) {
+            return null;
+        }
+
+        $matched = $matches[1];
+        $matched = trim(trim($matched), '\'"');
+        return $matched;
+    }
+
 }

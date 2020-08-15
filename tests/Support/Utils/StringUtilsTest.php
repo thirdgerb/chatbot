@@ -396,4 +396,14 @@ EOF;
         $this->assertEquals(['test', '@test2 @test3'], $data);
 
     }
+
+    public function testFetchSrc()
+    {
+        $dom = '<iframe src="//player.bilibili.com/player.html?aid=669185843&bvid=BV1xa4y1J71q&cid=221442831&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>';
+
+        $fetched = StringUtils::fetchSrcFromDom($dom);
+        $this->assertNotNull($fetched);
+
+        $this->assertEquals('//player.bilibili.com/player.html?aid=669185843&bvid=BV1xa4y1J71q&cid=221442831&page=1', $fetched);
+    }
 }

@@ -99,6 +99,7 @@ class MDGroupOption extends AbsOption
                 'info' => Analysers\Message\InfoAls::class,
                 'error' => Analysers\Message\ErrorAls::class,
                 'warning' => Analysers\Message\WarningAls::class,
+                'bili' => Analysers\Message\BiliAls::class,
 
             ],
 

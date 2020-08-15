@@ -48,45 +48,53 @@ class ResourceComponent extends AComponentOption
             'rootPath' => CommuneEnv::getResourcePath(),
             'langPath' => 'lang',
             'resources' => [],
-            'predefined' => [
-                [
-                    'name' => 'contexts',
-                    'optionClass' => ContextMeta::class,
-                    'isDir' => true,
-                    'loader' => ResourceOption::LOADER_PHP,
-                ],
-                [
-                    'name' => 'stages',
-                    'optionClass' => StageMeta::class,
-                    'isDir' => true,
-                    'loader' => ResourceOption::LOADER_PHP,
-                ],
-                [
-                    'name' => 'intents',
-                    'optionClass' => IntentMeta::class,
-                    'isDir' => true,
-                    'loader' => ResourceOption::LOADER_PHP,
-                ],
-                [
-                    'name' => 'emotions',
-                    'optionClass' => EmotionMeta::class,
-                    'isDir' => true,
-                    'loader' => ResourceOption::LOADER_PHP,
-                ],
-                [
-                    'name' => 'entities',
-                    'optionClass' => EntityMeta::class,
-                    'isDir' => true,
-                    'loader' => ResourceOption::LOADER_YML,
-                ],
-                [
-                    'name' => 'synonyms',
-                    'optionClass' => SynonymMeta::class,
-                    'isDir' => true,
-                    'loader' => ResourceOption::LOADER_YML,
-                ],
+            'predefined' => self::predefined(),
+        ];
+    }
+
+    public static function predefined(array ...$appends) : array
+    {
+        $predefined = [
+            [
+                'name' => 'contexts',
+                'optionClass' => ContextMeta::class,
+                'isDir' => true,
+                'loader' => ResourceOption::LOADER_PHP,
+            ],
+            [
+                'name' => 'stages',
+                'optionClass' => StageMeta::class,
+                'isDir' => true,
+                'loader' => ResourceOption::LOADER_PHP,
+            ],
+            [
+                'name' => 'intents',
+                'optionClass' => IntentMeta::class,
+                'isDir' => true,
+                'loader' => ResourceOption::LOADER_PHP,
+            ],
+            [
+                'name' => 'emotions',
+                'optionClass' => EmotionMeta::class,
+                'isDir' => true,
+                'loader' => ResourceOption::LOADER_PHP,
+            ],
+            [
+                'name' => 'entities',
+                'optionClass' => EntityMeta::class,
+                'isDir' => true,
+                'loader' => ResourceOption::LOADER_YML,
+            ],
+            [
+                'name' => 'synonyms',
+                'optionClass' => SynonymMeta::class,
+                'isDir' => true,
+                'loader' => ResourceOption::LOADER_YML,
             ],
         ];
+
+        array_push($predefined, ...$appends);
+        return $predefined;
     }
 
     public static function relations(): array
