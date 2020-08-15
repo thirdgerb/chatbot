@@ -11,7 +11,9 @@
 
 namespace Commune\Support\Markdown\Data;
 
+use Commune\Support\Markdown\MarkdownUtils;
 use Commune\Support\Option\AbsOption;
+use Commune\Support\Utils\StringUtils;
 use Commune\Support\Utils\TypeUtils;
 
 
@@ -27,13 +29,18 @@ use Commune\Support\Utils\TypeUtils;
  *
  * @property string $title                 标题的内容.
  * @property int $level                    标题的级别. h1 h2 h3...
- * @property string $text                  文本块内容.
+ *
+ * @property string[] $texts                  文本块内容.
  * @property string[][] $comments               注释内容.
  *
  */
 class MDSectionData extends AbsOption
 {
     const IDENTITY = 'id';
+
+    const BLOCK_SEPARATOR = 'break';
+
+    protected $_text;
 
     public static function stub(): array
     {
@@ -43,7 +50,7 @@ class MDSectionData extends AbsOption
             'order' => 0,
             'title' => '',
             'level' => 0,
-            'text' => '',
+            'texts' => [],
             'comments' => [],
         ];
     }
@@ -62,7 +69,15 @@ class MDSectionData extends AbsOption
 
     public function appendLine(string $line) : void
     {
-        $this->_data['text'] = $this->_data['text'] . PHP_EOL . $line;
+        $texts = $this->_data['texts'] ?? [];
+        $text = array_pop($texts);
+        if (is_null($text)) {
+            $text = $line;
+        } else {
+            $text .= PHP_EOL . $line;
+        }
+        array_push($texts, $text);
+        $this->_data['texts'] = $texts;
     }
 
     public function appendComment(string $comment, string $content) : void
@@ -72,41 +87,70 @@ class MDSectionData extends AbsOption
         $this->_data['comments'][$comment] = $contents;
     }
 
+    public function appendBlock() : void
+    {
+        $this->_data['texts'][] = '';
+    }
+
     public function toText() : string
     {
+        if (isset($this->_text)) {
+            return $this->_text;
+        }
+
         $level = $this->level;
-        $text = PHP_EOL;
-        for($i =0; $i < $level; $i ++) {
-            $text.= "#";
-        }
 
-        $text.= ' ' . $this->title;
-
-        $text .= PHP_EOL . PHP_EOL . trim($this->text);
-        $comments = $this->comments;
-        if (empty($comments)) {
-            return $text;
-        }
-
-        // 分割.
-        $text .= PHP_EOL;
-        foreach ($comments as $type => $contents) {
-            foreach ($contents as $content) {
-                $text .=  (PHP_EOL . "[//]: # (@$type $content)");
+        // 完成 title
+        $title = '';
+        if (!empty($level) && !StringUtils::isEmptyStr($this->title)) {
+            for($i =0; $i < $level; $i ++) {
+                $title.= "#";
             }
+            $title.= ' ' . $this->title;
+        }
+
+        // 文本块.
+        $blockText = '';
+        $blocks = $this->texts;
+        if (!empty($blocks)) {
+            $separator = MarkdownUtils::createCommentLine(self::BLOCK_SEPARATOR);
+            $blockText = implode(
+                PHP_EOL . $separator . PHP_EOL ,
+                array_map('trim', $blocks)
+            );
+        }
+
+        // 注释块
+        $comments = $this->comments;
+        $commentBlock = '';
+        if (!empty($comments)) {
+            $commentTypes = [];
+            foreach ($comments as $type => $contents) {
+
+                $commentContents = [];
+                foreach ($contents as $content) {
+                    $commentLine = MarkdownUtils::createCommentLine($type, $content);
+                    $commentContents[] = $commentLine;
+                }
+                $commentTypes[] = implode(PHP_EOL, $commentContents);
+            }
+            $commentBlock = implode(PHP_EOL, $commentTypes);
         }
 
         // 保证大块之间上下都无空行.
-        return $text;
-    }
+        $sections = [];
+        if (!StringUtils::isEmptyStr($title)) {
+            $sections[] = trim($title);
+        }
+        if (!StringUtils::isEmptyStr($blockText)) {
+            $sections[] = trim($blockText);
+        }
+        if (!StringUtils::isEmptyStr($commentBlock)) {
+            $sections[] = trim($commentBlock);
+        }
 
-//    public function __destruct()
-//    {
-//        unset(
-//            $this->_commentMap,
-//            $this->_content
-//        );
-//        parent::__destruct();
-//    }
+        $text = implode(PHP_EOL . PHP_EOL , $sections);
+        return $this->_text = trim($text);
+    }
 
 }

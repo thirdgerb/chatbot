@@ -11,6 +11,7 @@
 
 namespace Commune\Support\Markdown\Parser\Analysers;
 
+use Commune\Support\Markdown\Data\MDSectionData;
 use Commune\Support\Markdown\MarkdownUtils;
 use Commune\Support\Markdown\Parser\MDAnalyser;
 use Commune\Support\Markdown\Parser\MDParser;
@@ -57,25 +58,33 @@ class MDCommentAls extends MDAnalyser
                 ->currentSection
                 ->appendComment($comment, $content);
 
+        } elseif ($comment === MDSectionData::BLOCK_SEPARATOR) {
+
+            $this->parser
+                ->currentSection
+                ->appendBlock();
+
         } elseif (array_key_exists($comment, $this->methodComments)) {
 
             $method = $this->methodComments[$comment];
             return $this->{$method} ($content);
 
         } else {
-            $this->appendComment($comment, $content);
+
+            $this->appendCommentLine($comment, $content);
 
         }
 
         return MDParser::LINE_COMMENT;
     }
 
-    protected function appendComment(string $comment, string $content) : void
+    protected function appendCommentLine(string $comment, string $content) : void
     {
+        $line = MarkdownUtils::createCommentLine($comment, $content);
         // 把格式改标准一些.
         $this->parser
             ->currentSection
-            ->appendLine("\n[//]: # (@$comment $content)");
+            ->appendLine($line);
     }
 
 

@@ -37,6 +37,11 @@ class MarkdownUtils
         return $line;
     }
 
+    public static function createCommentLine(string $comment, string $content = '') : string
+    {
+        return "[//]: # (@$comment $content)";
+    }
+
     public static function isSingleLine(string $line) : bool
     {
         return mb_strpos($line, "\n") === false;
