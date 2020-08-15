@@ -532,7 +532,8 @@ class IMatcher implements Matcher
         $intention = $this->cloner->comprehension->intention;
         $possibles = $intention->getPossibleIntentNames(true);
         foreach ($possibles as $possible) {
-            if (ContextUtils::wildcardIntentMatch($intent, $possible)) {
+            $matched = ContextUtils::wildcardIntentMatch($intent, $possible);
+            if (isset($matched)) {
                 return $possible;
             }
         }

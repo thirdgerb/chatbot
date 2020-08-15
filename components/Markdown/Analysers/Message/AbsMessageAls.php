@@ -15,12 +15,13 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Components\Markdown\Analysers\MessageAnalyser;
 use Commune\Message\Host\Convo\Verbal\MarkdownMsg;
+use Commune\Support\Utils\StringUtils;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class BreakAls implements MessageAnalyser
+abstract class AbsSendAls implements MessageAnalyser
 {
     public function __invoke(
         string $content,
@@ -28,13 +29,23 @@ class BreakAls implements MessageAnalyser
         Dialog $dialog
     ): ? Operator
     {
+        $deliver = $dialog->send();
         if (!empty($bufferedLines)) {
             $text = implode(PHP_EOL, $bufferedLines);
-            $dialog->send()->message(MarkdownMsg::instance($text));
+            $deliver->message(MarkdownMsg::instance($text, $this->getLevel()));
         }
         $bufferedLines = [];
+
+        $content = trim($content);
+        if (!StringUtils::isEmptyStr($content)) {
+            $level = $this->getLevel();
+            $deliver->{$level}($content);
+        }
+
+        $deliver->over();
         return null;
     }
 
+    abstract protected function getLevel() : string;
 
 }

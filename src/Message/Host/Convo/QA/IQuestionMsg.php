@@ -266,7 +266,8 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             }
 
             foreach ($patterns as $index => $pattern) {
-                if (ContextUtils::wildcardIntentMatch($pattern, $name)) {
+                $matched = ContextUtils::wildcardIntentMatch($pattern, $name);
+                if (isset($matched)) {
                     return $this->newAnswer(
                         $this->suggestions[$index],
                         $index

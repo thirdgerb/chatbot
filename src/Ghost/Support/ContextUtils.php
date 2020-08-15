@@ -127,9 +127,11 @@ class ContextUtils
         return StringUtils::isWildcardPattern($pattern);
     }
 
-    public static function wildcardIntentMatch(string $wildcardId, string $actual) : bool
+    public static function wildcardIntentMatch(string $wildcardId, string $actual) : ? string
     {
-        return StringUtils::wildcardMatch($wildcardId, $actual, '\w+');
+        return StringUtils::wildcardMatch($wildcardId, $actual, '\w+')
+            ? $actual
+            : null;
     }
 
     public static function wildcardIntentSearch(string $wildcardId, array $searches) : array

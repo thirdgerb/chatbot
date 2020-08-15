@@ -364,11 +364,9 @@ class OStart extends AbsOperator
                     return $route;
                 }
 
-                if (
-                    ContextUtils::isWildcardIntentPattern($fullname)
-                    && ContextUtils::wildcardIntentMatch($fullname, $matched)
-                ) {
-                    return $route;
+                if (ContextUtils::isWildcardIntentPattern($fullname)) {
+                    $name = ContextUtils::wildcardIntentMatch($fullname, $matched);
+                    return $route->goStageByFullname($name);
                 }
             }
         }
