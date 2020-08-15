@@ -19,5 +19,15 @@ use Commune\Protocals\HostMsg\ConvoMsg;
  */
 interface MediaMsg extends ConvoMsg
 {
+    /**
+     * 对资源的基本描述. 用于 renderer 去筛选.
+     * @return string
+     */
     public function getResource() : string;
+
+    /**
+     * 对资源的文字描述, 有些场景可以用来做降级.
+     * @return string
+     */
+    public function getText(): string;
 }

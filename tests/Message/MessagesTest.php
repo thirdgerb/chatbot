@@ -28,6 +28,7 @@ class MessagesTest extends MessageTestCase
         Message\Host\Convo\IAudioMsg::class,
         Message\Host\Convo\IImageMsg::class,
         Message\Host\Convo\IContextMsg::class,
+        Message\Host\Convo\Media\IVideoMsg::class,
 
         // intent
         Message\Host\IIntentMsg::class,
@@ -55,6 +56,8 @@ class MessagesTest extends MessageTestCase
         Message\Host\Convo\QA\IChoice::class,
         Message\Host\Convo\QA\IConfirm::class,
         Message\Host\Convo\QA\IConfirmation::class,
+        Message\Host\Convo\QA\IStepper::class,
+        Message\Host\Convo\QA\IStep::class,
 
         // api
         Message\Host\IApiMsg::class,
