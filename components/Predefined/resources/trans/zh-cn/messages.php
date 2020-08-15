@@ -7,6 +7,8 @@ use Commune\Protocals\HostMsg\DefaultIntents;
 
 return [
 
+    /*------- system -------*/
+
     'system' => [
         'command' => [
             'list' => "当前可用命令:\n{cmdList}",
@@ -33,8 +35,16 @@ return [
             'no' => '否',
 
         ],
-
     ],
+
+
+    /*------- suggestions -------*/
+
+    DefaultIntents::GUEST_LOOP_NEXT => '继续',
+    DefaultIntents::GUEST_LOOP_BREAK => '跳过',
+
+
+    /*------- predefined -------*/
 
     // 预定义各种功能所需要的文本.
     'predefined' => [
@@ -56,6 +66,8 @@ return [
     JoinLang::REPLY_REJECTED => '得到通知, 加入会话申请被拒绝.',
 
 
+    /*------- confuse -------*/
+
     DefaultIntents::SYSTEM_DIALOG_CONFUSE => '意图无法理解',
     DefaultIntents::SYSTEM_DIALOG_UNABLE => "语境 [{await}] 目前无法响应 [{matched}] 意图.",
     // 可以再根据 await, 当前 stage, 定义 stage 独特的 confuse 话术.
@@ -63,6 +75,8 @@ return [
         'some_stage_fullname' => 'special reply',
     ],
 
+
+    /*------- stage event -------*/
 
     StageEventRenderer::PREFIX => [
         // 退出事件默认的回复

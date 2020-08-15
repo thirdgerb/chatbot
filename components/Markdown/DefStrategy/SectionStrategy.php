@@ -15,17 +15,21 @@ use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Components\Markdown\Analysers\MessageAnalyser;
+use Commune\Components\Markdown\Constants\MDContextLang;
 use Commune\Components\Markdown\Exceptions\MarkdownOptNotFoundException;
 use Commune\Components\Markdown\MarkdownComponent;
 use Commune\Components\Markdown\Mindset\SectionStageDef;
 use Commune\Components\Markdown\Options\MDGroupOption;
 use Commune\Message\Host\Convo\Verbal\MarkdownMsg;
+use Commune\Protocals\HostMsg\Convo\QA\Step;
 use Commune\Support\Markdown\Data\MDSectionData;
 use Commune\Support\Markdown\MarkdownUtils;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Support\Utils\TypeUtils;
 
 /**
+ * Markdown 文档转 stage 的解析策略.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class SectionStrategy
@@ -86,12 +90,45 @@ class SectionStrategy
         $group = $this->getGroupOption($def->groupName);
         $section = $this->getSectionOption($def->contextName, $def->orderId);
 
-        $this->sendMessage($group, $section, $dialog);
+        $max = count($section->texts) - 1;
+        $current = $dialog->context[$def->stageName] ?? 0;
 
-        return $this->doAwait($def, $group, $section, $dialog);
+        $operator = null;
+        if ($current <= $max) {
+            $text = $section->texts[$current];
+            $text = trim($text);
+            $operator = $this->sendMessage($group, $text, $dialog);
+        }
+
+        if (isset($operator)) {
+            return $operator;
+        }
+
+        if ($current < $max) {
+            return $this->askContinue($dialog, $current, $max);
+        } else {
+            $key = $def->stageName;
+            $dialog->context[$key] = 0;
+            return $this->askAwait($def, $group, $section, $dialog);
+        }
     }
 
-    protected function doAwait(
+    protected function askContinue(
+        Dialog $dialog,
+        int $current,
+        int $max
+    ) : Operator
+    {
+        return $dialog
+            ->await()
+            ->askStepper(
+                MDContextLang::ASK_CONTINUE,
+                $current,
+                $max
+            );
+    }
+
+    protected function askAwait(
         SectionStageDef $def,
         MDGroupOption $group,
         MDSectionData $section,
@@ -140,11 +177,10 @@ class SectionStrategy
 
     protected function sendMessage(
         MDGroupOption $group,
-        MDSectionData $section,
+        string $text,
         Dialog $dialog
     ) : ? Operator
     {
-        $text = trim($section->text);
         $lines = explode(PHP_EOL, $text);
         $buffers = [];
 
@@ -196,7 +232,15 @@ class SectionStrategy
 
     protected function onReceive(SectionStageDef $def, Dialog\Receive $dialog) : Operator
     {
-        return $dialog->confuse();
+        $name = $def->stageName;
+        return $dialog
+            ->hearing()
+            ->isAnswerOf(Step::class)
+            ->then(function(Dialog $dialog, Step $answer) use ($name){
+                $dialog->context[$name] = $answer->getStep();
+                return $dialog->reactivate();
+            })
+            ->end();
     }
 
     protected function onResume(SectionStageDef $def, Dialog\Resume $dialog) : ? Operator

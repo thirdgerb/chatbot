@@ -39,6 +39,7 @@ use Commune\Support\Utils\StringUtils;
  *
  *
  * @property-read bool $reset               是否重置配置. 否则只更新 updated
+ * @property-read string $langDir           相关文本的配置路径.
  * @property-read MDGroupOption[] $groups
  *
  * # 可选配置
@@ -63,6 +64,7 @@ class MarkdownComponent extends AGhostComponent
         return [
 
             'reset' => CommuneEnv::isResetRegistry(),
+            'langDir' => __DIR__ . '/resources/trans',
             'groups' => [
                 [
                     'groupName' => 'Demo',
@@ -126,6 +128,13 @@ class MarkdownComponent extends AGhostComponent
                 false
             );
         }
+
+        $this->loadTranslation(
+            $app,
+            $this->langDir,
+            true,
+            $this->reset
+        );
 
         $this->dependComponent($app, TreeComponent::class);
     }
