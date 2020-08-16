@@ -72,14 +72,14 @@ class Psr4SelfRegisterLoader extends ServiceProvider
     public static function loadSelfRegister(
         Ghost\Mindset $mind,
         string $namespace,
-        string $directory,
+        string $dir,
         LoggerInterface $logger,
         bool $force = false
     ) : void
     {
-        $directory = realpath($directory);
+        $directory = realpath($dir);
         if ($directory === false) {
-            throw new CommuneLogicException("directory $directory not exists");
+            throw new CommuneLogicException("directory $directory for namespace $namespace not exists");
         }
 
         $finder = new Finder();
