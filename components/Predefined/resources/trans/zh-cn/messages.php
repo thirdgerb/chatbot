@@ -38,10 +38,15 @@ return [
     ],
 
 
-    /*------- suggestions -------*/
+    /*------- suggestions to guest -------*/
 
     DefaultIntents::GUEST_LOOP_NEXT => '继续',
     DefaultIntents::GUEST_LOOP_BREAK => '跳过',
+
+
+    /*------- replies to guest intents -------*/
+
+    DefaultIntents::GUEST_NAVIGATE_BOT_WRONG => "非常感谢您的提示, 我为自己的不完善向您表示歉意. 让我试着回到上一步.",
 
 
     /*------- predefined -------*/

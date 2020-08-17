@@ -26,7 +26,11 @@ class MindSavePayload extends AStruct
 {
     public static function stub(): array
     {
-        return [];
+        return [
+            'metaName' => '',
+            'metaData' => [],
+            'force' => null
+        ];
     }
 
     public static function validate(array $data): ? string /* errorMsg */

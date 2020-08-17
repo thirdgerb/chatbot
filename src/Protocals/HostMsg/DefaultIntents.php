@@ -43,7 +43,12 @@ interface DefaultIntents
     const SYSTEM_DIALOG_YIELD = 'system.dialog.yield';
     // 语境内的逻辑无法理解用户的意图
     const SYSTEM_DIALOG_CONFUSE = 'system.dialog.confuse';
-    // 语境内的逻辑无法响应用户的意图
+
+    /**
+     * 语境内的逻辑无法响应用户的意图
+     * @param {await}
+     * @param {matched}
+     */
     const SYSTEM_DIALOG_UNABLE = 'system.dialog.unable';
 
 
@@ -74,6 +79,7 @@ interface DefaultIntents
     const GUEST_NAVIGATE_BACK = 'navigation.backward';
     const GUEST_NAVIGATE_REPEAT = 'navigation.repeat';
     const GUEST_NAVIGATE_RESTART = 'navigation.restart';
+    const GUEST_NAVIGATE_BOT_WRONG = 'navigation.bot.wrong';
 
     const GUEST_ATTITUDES_AFFIRM = 'attitude.affirm';
     const GUEST_ATTITUDES_AGREE = 'attitude.agree';
