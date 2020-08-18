@@ -19,6 +19,7 @@ use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\Auth\Authority;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\NLU\NLUManager;
 use Commune\Contracts\Cache;
 use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Contracts\Messenger\MessageDB;
@@ -55,6 +56,7 @@ class ICloner extends ASession implements Cloner
         'avatar' => Cloner\ClonerAvatar::class,
         'dispatcher' => Cloner\ClonerDispatcher::class,
 
+        'nlu' => NLUManager::class,
         'cache' => Cache::class,
         'auth' => Authority::class,
 

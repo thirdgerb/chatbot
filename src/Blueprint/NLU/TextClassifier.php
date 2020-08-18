@@ -9,17 +9,17 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Blueprint\Ghost\Pipe;
-
-use Commune\Protocals\Intercom\InputMsg;
+namespace Commune\Blueprint\NLU;
 
 /**
+ * 文本分类工具.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface ComprehendPipe
+interface TextClassifier extends NLUService
 {
-    const HANDLE = 'handle';
 
-    public function handle(InputMsg $input, \Closure $next) : InputMsg;
+    public function learn(string $text, string $type);
+
+    public function predict(string $text) : ? string;
 
 }

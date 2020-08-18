@@ -11,8 +11,10 @@
 
 namespace Commune\Components\Tree\Demo;
 
+use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
+use Commune\Blueprint\Ghost\MindDef\ContextStrategyOption;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Components\Tree\Impl\SimpleText\STStrategy;
 use Commune\Components\Tree\Prototype\TreeContextDef;
@@ -78,6 +80,11 @@ class TreeDemoContext extends ContextRegister
             // 树的节点是否通过 "." 符号连接成 stage_name
             // 例如: [ 'a' => 'b' ] 中的 b 节点, 名字是否为 a.b
             'appendingBranch' => true,
+
+            'strategy' => new ContextStrategyOption([
+
+                'auth' => [Supervise::class],
+            ]),
         ]);
     }
 

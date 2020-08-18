@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost;
 
+use Commune\Blueprint\NLU\NLUManager;
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Ghost;
 use Commune\Contracts\Cache;
@@ -60,6 +61,11 @@ use Commune\Blueprint\Ghost\Cloner\ClonerDispatcher;
  * @property-read Ghost\Tools\Matcher $matcher      默认的匹配逻辑工具
  * @property-read Cloner\ClonerAvatar $avatar       当前分身的形象数据.
  * @property-read ClonerDispatcher $dispatcher      异步任务的工具类.
+ *
+ *
+ * # 自然语言模块
+ *
+ * @property-read NLUManager $nlu                   自然语言理解模块
  *
  * # 功能组件
  * @property-read Cache $cache                      公共缓存

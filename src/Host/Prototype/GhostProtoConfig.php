@@ -20,6 +20,7 @@ use Commune\Ghost\Providers as GhostProviders;
 use Commune\Components\Predefined\Intent\Navigation;
 use Commune\Kernel\Handlers\IGhostRequestHandler;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\NLU\NLUServiceProvider;
 
 
 /**
@@ -50,6 +51,8 @@ class GhostProtoConfig extends IGhostConfig
                 // clone service
                 GhostProviders\ClonerServiceProvider::class,
 
+                // nlu service
+                NLUServiceProvider::class,
             ],
 
             'options' => [],
@@ -118,12 +121,14 @@ class GhostProtoConfig extends IGhostConfig
             ],
             'defaultHeedFallback' => null,
             'globalContextRoutes' => [
+                // 其实也可以用 __name(), 但下面这个方法才最本质.
                 Navigation\CancelInt::genUcl()->encode(),
                 Navigation\RepeatInt::genUcl()->encode(),
                 Navigation\QuitInt::genUcl()->encode(),
                 Navigation\HomeInt::genUcl()->encode(),
                 Navigation\BackwardInt::genUcl()->encode(),
                 Navigation\RestartInt::genUcl()->encode(),
+                Navigation\WrongInt::genUcl()->encode(),
             ]
         ];
 

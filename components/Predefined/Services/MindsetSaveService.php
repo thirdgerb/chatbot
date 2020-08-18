@@ -15,7 +15,6 @@ use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Blueprint\Ghost\MindMeta;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Blueprint\Ghost\Tools\Deliver;
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Components\Predefined\Services\Payload\MindSavePayload;
 
 /**

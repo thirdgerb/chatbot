@@ -81,7 +81,7 @@ interface DefRegistry
 
     /**
      * 遍历.
-     * @return \Generator
+     * @return \Generator | Def[]
      */
     public function each() : \Generator;
 
