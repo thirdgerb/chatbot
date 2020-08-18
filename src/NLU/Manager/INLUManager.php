@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Comprehenders\Manager;
+namespace Commune\NLU\Manager;
 
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Blueprint\NLU\NLUManager;

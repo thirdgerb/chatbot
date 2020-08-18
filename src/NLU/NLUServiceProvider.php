@@ -12,7 +12,7 @@
 namespace Commune\NLU;
 
 use Commune\Blueprint\NLU\NLUManager;
-use Commune\Comprehenders\Manager\INLUManager;
+use Commune\NLU\Manager\INLUManager;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\ServiceProvider;
 

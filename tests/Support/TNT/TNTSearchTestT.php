@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Test\Support\NLU;
+namespace Commune\Test\Support\TNT;
 
 use PHPUnit\Framework\TestCase;
 use TeamTNT\TNTSearch\Classifier\TNTClassifier;
@@ -17,12 +17,14 @@ use Fukuball\Jieba\Jieba;
 use Fukuball\Jieba\Finalseg;
 use TeamTNT\TNTSearch\Support\TokenizerInterface;
 
-ini_set('memory_limit', '750m');
+// ini_set('memory_limit', '750m');
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * 结论: Tnt search 不适合做 classifier.
  */
-class TNTSearchTest extends TestCase
+class TNTSearchTestT extends TestCase
 {
     // 单测开关. 需要占用 750 mb 左右内存.
     protected $run = false;
@@ -70,6 +72,8 @@ class TNTSearchTest extends TestCase
                 $classifier->learn($line, $intent);
             }
         }
+        $classifier->learn($line = "如果后天北京刮风的话, 我就去春游", 'when');
+        $guess = $classifier->predict($line);
 
         $guess = $classifier->predict("长沙明天天气如何");
         $this->assertEquals('demo.cases.tellweather', $guess['label']);
@@ -80,35 +84,9 @@ class TNTSearchTest extends TestCase
 
         $guess = $classifier->predict("会刮风吗");
         $this->assertEquals('demo.cases.tellweather', $guess['label']);
+
     }
 
-//    public function testFullTextSearch()
-//    {
-//        if (!$this->run) return;
-//
-//        $tnt = new TNTSearch();
-//        $tnt->loadConfig([
-//            'driver'    => 'mysql',
-//            'host'      => 'localhost',
-//            'database'  => 'dbname',
-//            'username'  => 'user',
-//            'password'  => 'pass',
-//            'storage'   => __DIR__,
-//        ]);
-//        $tnt->tokenizer = $this->getJiebaTokenizer();
-//        $index = $tnt->createIndex('intent');
-//        $index->setPrimaryKey('intent');
-//        $data = $this->getIntents();
-//
-//        $i = 0;
-//        foreach ($data as $intent => $content) {
-//            $i ++ ;
-//            $index->insert(['id' => $i, 'intent' => $intent, 'content' => $content]);
-//        }
-//
-//        $r = $tnt->search('北京', 10);
-//        var_dump($r);
-//    }
 
 
     protected function getIntents() : array

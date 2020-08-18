@@ -17,10 +17,12 @@ namespace Commune\Blueprint\NLU;
  */
 interface Tokenizer extends NLUService
 {
+
     /**
      * @param string $sentence
-     * @return string[] words
+     * @param array|null $stopWords   为 null 表示使用默认的 stopWords
+     * @return array
      */
-    public function tokenize(string $sentence) : array;
+    public function tokenize(string $sentence, array $stopWords = null) : array;
 
 }
