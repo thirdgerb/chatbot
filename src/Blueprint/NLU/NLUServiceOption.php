@@ -19,11 +19,11 @@ use Commune\Support\Option\AbsOption;
  *
  * @property-read string $id,
  * @property-read string $desc,
- * @property-read string $serviceInterface,
  * @property-read string $serviceAbstract,
  * @property-read string[] $listening
  *
  * @property-read string|null $managerUcl       用对话管理该服务的对话地址.
+ * @property-read int $priority
  */
 class NLUServiceOption extends AbsOption
 {
@@ -34,10 +34,10 @@ class NLUServiceOption extends AbsOption
         return [
             'id' => '',
             'desc' => '',
-            'serviceInterface' => NLUService::class,
             'serviceAbstract' => '',
             'managerUcl' => null,
             'listening' => [],
+            'priority' => 10,
         ];
     }
 

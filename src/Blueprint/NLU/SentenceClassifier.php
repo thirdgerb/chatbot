@@ -17,9 +17,6 @@ namespace Commune\Blueprint\NLU;
  */
 interface SentenceClassifier extends NLUService
 {
-
-    public function learn(string $text, string $type);
-
-    public function predict(string $text) : ? string;
+    public function predict(string $sentence) : ? string;
 
 }

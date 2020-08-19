@@ -11,7 +11,6 @@
 
 namespace Commune\Blueprint\NLU;
 
-use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\InputMsg;
@@ -24,13 +23,6 @@ interface NLUService
     public function getOption() : NLUServiceOption;
 
     /**
-     * 保存一个 meta 数据. 只应该保存和当前相关的.
-     * @param DefMeta $meta
-     * @return string|null   error message
-     */
-    public function saveMeta(DefMeta $meta) : ? string;
-
-    /**
      * 同步 Mindset
      * @param Mindset $mind
      * @return string|null  error message
@@ -38,6 +30,7 @@ interface NLUService
     public function syncMind(Mindset $mind) : ? string;
 
     /**
+     * 分析输入信息.
      * @param InputMsg $message
      * @param Comprehension $comprehension
      * @return Comprehension

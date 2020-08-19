@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\NLU;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\MindMeta\DefMeta;
+use Commune\NLU\Exceptions\NLUServiceNotFoundException;
 
 /**
  * 所有的 NLU 模块的公共管理中心.
@@ -22,37 +22,51 @@ use Commune\Blueprint\Ghost\MindMeta\DefMeta;
  */
 interface NLUManager
 {
-    /*------- full text search ------*/
 
     /**
+     * 列出已有的服务.
      * @param string $serviceInterface
      * @return NLUServiceOption[]
      */
     public function listService(string $serviceInterface) : array;
 
     /**
+     * 获取一个服务. 如果服务不存在, 抛出异常.
+     * @param Cloner $cloner
      * @param string $serviceInterface
-     * @param string|null $id
      * @return NLUService
+     * @throws NLUServiceNotFoundException
      */
     public function getService(
-        string $serviceInterface,
-        string $id = null
-    ) : NLUService;
-
-    public function hasService(
-        string $serviceInterface,
-        string $id = null
-    ) : bool;
+        Cloner $cloner,
+        string $serviceInterface
+    ) : ? NLUService;
 
     /**
-     * @param Cloner $cloner
-     * @param DefMeta $meta
-     * @return string[] 执行过 save 的模块名
+     * 注册一个服务
+     * @param NLUServiceOption $option
      */
-    public function save(Cloner $cloner, DefMeta $meta) : array;
-
     public function registerService(NLUServiceOption $option) : void;
 
+    /*------- learn ------*/
+//
+//    /**
+//     * 保存一个 meta 数据. 只应该保存和当前功能相关的.
+//     * @param DefMeta $meta
+//     * @return string|null   error message
+//     */
+//    public function saveMeta(DefMeta $meta) : ? string;
+//
+//
+//    const LEARN_INTENT = 1;
+//    const LEARN_ENTITY = 2;
+//    const LEARN_SYNONYM = 3;
+//    const LEARN_CHAT = 4;
+//
+//    public function learn(
+//        int $mode,
+//        string $name,
+//        string $value
+//    ) : void;
 
 }
