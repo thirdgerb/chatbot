@@ -66,13 +66,13 @@ abstract class AbsStageDef extends AbsOption implements StageDef
     public function getTitle(): string
     {
         $title = $this->title;
-        return empty($title) ? $this->getName() : $title;
+        return empty($title) ? $this->getStageShortName() : $title;
     }
 
     public function getDescription(): string
     {
         $desc = $this->desc;
-        return empty($desc) ? $this->getName() : $desc;
+        return empty($desc) ? $this->getTitle() : $desc;
     }
 
 

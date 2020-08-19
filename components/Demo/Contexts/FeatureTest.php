@@ -42,12 +42,14 @@ class FeatureTest extends ACodeContext
     public static function __option(): CodeContextOption
     {
         return new CodeContextOption([
-            'onCancel' => 'cancel',
-            'onQuit' => 'quit',
-            'stageRoutes' => [
-                'quit',
-                'rewind',
-                'cancel'
+            'strategy' => [
+                'onCancel' => 'cancel',
+                'onQuit' => 'quit',
+                'stageRoutes' => [
+                    'quit',
+                    'rewind',
+                    'cancel'
+                ],
             ],
         ]);
     }

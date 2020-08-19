@@ -73,7 +73,9 @@ class Maze extends ACodeContext
     public static function __option(): CodeContextOption
     {
         return new CodeContextOption([
-            'onCancel' => 'cancel_game',
+            'strategy' => [
+                'onCancel' => 'cancel_game',
+            ],
         ]);
     }
 

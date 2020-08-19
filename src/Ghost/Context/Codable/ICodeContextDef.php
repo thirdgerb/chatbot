@@ -123,17 +123,7 @@ class ICodeContextDef extends AbsOption implements  ContextDef
 
             'dependingNames' => $config['dependingNames'] ?? array_keys($this->_depending->attrs),
 
-
-            'strategy' => [
-                'auth' => $config['auth'] ?? $option->auth,
-                'comprehendPipes' => $config['comprehendPipes'] ?? $option->comprehendPipes,
-
-                'onCancel' => $config['onCancel'] ?? $option->onCancel,
-                'onQuit' => $config['onQuit'] ?? $option->onQuit,
-
-                'stageRoutes' => $config['stageRoutes'] ?? $option->stageRoutes,
-                'contextRoutes' => $config['contextRoutes'] ?? $option->contextRoutes,
-            ],
+            'strategy' => $config['strategy'] ?? $option->strategy,
 
         ]);
         unset($creator);

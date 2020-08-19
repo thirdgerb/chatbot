@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\Context;
 
+use Commune\Blueprint\Ghost\MindDef\ContextStrategyOption;
 use Commune\Support\Option\AbsOption;
 
 /**
@@ -24,13 +25,7 @@ use Commune\Support\Option\AbsOption;
  * @property-read string[] $memoryScopes
  * @property-read array $memoryAttrs
  *
- * @property-read null|array $comprehendPipes
- *
- * @property-read null|string $onCancel
- * @property-read null|string $onQuit
- *
- * @property-read string[] $stageRoutes
- * @property-read string[] $contextRoutes
+ * @property-read ContextStrategyOption $strategy
  *
  */
 class CodeContextOption extends AbsOption
@@ -38,9 +33,6 @@ class CodeContextOption extends AbsOption
     public static function stub(): array
     {
         return [
-            // 访问时用户必须拥有的权限.
-            'auth' => [],
-
             // context 的优先级. 若干个语境在 blocking 状态中, 根据优先级决定谁先恢复.
             'priority' => 0,
 
@@ -59,22 +51,23 @@ class CodeContextOption extends AbsOption
             // memory 记忆体的默认值.
             'memoryAttrs' => [],
 
-            // context 的全局 comprehendPipes 配置. 影响所有的 stage
-            'comprehendPipes' => null,
-            // context 默认的 cancel 拦截
-            'onCancel' => null,
-            // context 默认的 quit 拦截
-            'onQuit' => null,
-            // context 默认的 stage 路由
-            'stageRoutes' => [],
-            // context 默认的 context 路由.
-            'contextRoutes' => [],
+            'strategy' => [
+                'auth' => [],
+                'onCancel' => null,
+                'onQuit' => null,
+                'heedFallbackStrategy' => null,
+                'comprehendPipes' => null,
+                'stageRoutes' => [],
+                'contextRoutes' => [],
+            ],
         ];
     }
 
     public static function relations(): array
     {
-        return [];
+        return [
+            'strategy' => ContextStrategyOption::class,
+        ];
     }
 
 

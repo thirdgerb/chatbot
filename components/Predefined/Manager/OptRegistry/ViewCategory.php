@@ -25,6 +25,8 @@ use Commune\Support\Utils\CallablePaginator;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @deprecated  未实现
+ *
  * @property-read string $categoryName
  *
  * @property int $page

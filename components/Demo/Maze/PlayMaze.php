@@ -136,12 +136,13 @@ class PlayMaze extends ACodeContext
                 'items' => [],
                 'score' => null,
             ],
-            'stageRoutes' => [
-                'end_game',
-                'location',
-                'cancel',
+            'strategy' => [
+                'stageRoutes' => [
+                    'end_game',
+                    'location',
+                    'cancel',
+                ],
             ],
-
         ]);
     }
 

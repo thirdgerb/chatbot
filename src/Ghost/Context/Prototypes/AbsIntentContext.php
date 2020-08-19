@@ -14,8 +14,6 @@ namespace Commune\Ghost\Context\Prototypes;
 use Commune\Blueprint\Ghost\Context\CodeContextOption;
 use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
-use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\Context\Codable\AbsCodeContext;
 
 /**

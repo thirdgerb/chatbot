@@ -30,13 +30,13 @@ class ContextStrategyOption extends AStruct
     public static function stub(): array
     {
         return [
+            'auth' => [],
             'onCancel' => null,
             'onQuit' => null,
             'heedFallbackStrategy' => null,
             'comprehendPipes' => null,
             'stageRoutes' => [],
             'contextRoutes' => [],
-            'auth' => [],
         ];
     }
 
