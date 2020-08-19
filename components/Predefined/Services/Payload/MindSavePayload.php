@@ -47,6 +47,17 @@ class MindSavePayload extends AStruct
         return parent::validate($data);
     }
 
+    public function toMeta() : DefMeta
+    {
+        return call_user_func(
+            [
+                $this->metaName,
+                DefMeta::FUNC_CREATE
+            ],
+            $this->metaData
+        );
+    }
+
     public static function relations(): array
     {
         return [];

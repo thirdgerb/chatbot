@@ -32,7 +32,11 @@ interface DefaultIntents
 
     // 命令输入错误
     const SYSTEM_COMMAND_ERROR = 'system.command.error';
-    // 命令列表
+
+    /**
+     * 命令列表
+     * @param {cmdList}
+     */
     const SYSTEM_COMMAND_LIST = 'system.command.list';
     // 命令不存在
     const SYSTEM_COMMAND_MISS = 'system.command.miss';

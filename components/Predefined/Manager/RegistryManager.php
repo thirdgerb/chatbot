@@ -28,6 +28,8 @@ use Commune\Support\Utils\ArrPaginator;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @deprecated  未实现
+ *
  * @title  配置注册表管理
  * @desc 配置注册表管理
  *
@@ -45,14 +47,15 @@ class RegistryManager extends ACodeContext
     public static function __option(): CodeContextOption
     {
         return new CodeContextOption([
-
-            'auth' => [
-                Supervise::class
-            ],
             'memoryAttrs' => [
                 'page' => 1,
                 'limit' => 10
-            ]
+            ],
+            'strategy' => [
+                'auth' => [
+                    Supervise::class
+                ],
+            ],
         ]);
     }
 

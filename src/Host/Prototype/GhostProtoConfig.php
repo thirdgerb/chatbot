@@ -65,6 +65,9 @@ class GhostProtoConfig extends IGhostConfig
 
                 // Markdown 组件
                 Components\Markdown\MarkdownComponent::class,
+
+                // heed fallback
+                Components\HeedFallback\HeedFallbackComponent::class,
             ],
 
             // request protocals
@@ -119,7 +122,7 @@ class GhostProtoConfig extends IGhostConfig
             'defaultContextName' => Components\Demo\Contexts\DemoHome::genUcl()->encode(),
             'sceneContextNames' => [
             ],
-            'defaultHeedFallback' => null,
+            'defaultHeedFallback' => Components\HeedFallback\Action\HeedFallback::class,
             'globalContextRoutes' => [
                 // 其实也可以用 __name(), 但下面这个方法才最本质.
                 Navigation\CancelInt::genUcl()->encode(),

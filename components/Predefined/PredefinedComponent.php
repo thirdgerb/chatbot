@@ -86,7 +86,7 @@ class PredefinedComponent extends AGhostComponent
             [
                 "Commune\\Components\\Predefined\\Memory" => __DIR__ . '/Memory',
                 "Commune\\Components\\Predefined\\Intent" => __DIR__ . '/Intent',
-                "Commune\\Components\\Predefined\\Manager" => __DIR__ . '/Manager',
+                // "Commune\\Components\\Predefined\\Manager" => __DIR__ . '/Manager',
                 "Commune\\Components\\Predefined\\Join" => __DIR__ . '/Join',
             ]
         );
