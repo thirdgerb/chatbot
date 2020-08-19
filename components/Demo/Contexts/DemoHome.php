@@ -20,6 +20,7 @@ use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Components\Demo\Git\GitContext;
 use Commune\Components\Demo\Maze\Maze;
+use Commune\Components\HeedFallback\Context\TeachTasks;
 use Commune\Components\Tree\Demo\TreeDemoContext;
 use Commune\Ghost\Context\ACodeContext;
 use Commune\Support\Registry\OptRegistry;
@@ -40,8 +41,10 @@ class DemoHome extends ACodeContext
     public static function __option(): CodeContextOption
     {
         return new CodeContextOption([
-            'onQuit' => 'quit',
-            'onCancel' => 'cancel',
+            'strategy' => [
+                'onQuit' => 'quit',
+                'onCancel' => 'cancel',
+            ],
         ]);
     }
 
@@ -104,6 +107,7 @@ class DemoHome extends ACodeContext
                             GitContext::genUcl(),
                             Ucl::make('md.demo.commune_v2_intro'),
                             Ucl::make(TreeDemoContext::NAME),
+                            TeachTasks::genUcl(),
                         ]
                     );
 
