@@ -13,7 +13,6 @@ namespace Commune\Support\Registry;
 
 use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Exceptions\CategoryNotFoundException;
-use Psr\Log\LoggerInterface;
 
 
 /**

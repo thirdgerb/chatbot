@@ -31,6 +31,7 @@ use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
 use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Platform\Libs\Stdio\StdioTextAdapter;
+use Swoole\Coroutine;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -84,26 +85,29 @@ class StdioConsolePlatform extends AbsPlatform
 
     public function serve(): void
     {
-        $this->stdio->setPrompt('> ');
+        Coroutine\run(function() {
+            $this->stdio->setPrompt('> ');
 
-        $initPacker = $this->makePacker('#connect');
-        $this->onPacker($initPacker, StdioTextAdapter::class);
-        unset($initPacker);
+            $initPacker = $this->makePacker('#connect');
+            $this->onPacker($initPacker, StdioTextAdapter::class);
+            unset($initPacker);
 
-        $this->stdio->on('data', function($line) {
+            $this->stdio->on('data', function($line) {
 
-            $packer = $this->makePacker($line);
-            $success = $this->onPacker($packer, StdioTextAdapter::class);
+                $packer = $this->makePacker($line);
+                $success = $this->onPacker($packer, StdioTextAdapter::class);
 
-            $this->runAsyncInput();
-            $this->runSubscribe();
+                $this->runAsyncInput();
+                $this->runSubscribe();
 
-            if (!$success) {
-                $this->shutdown();
-            }
+                if (!$success) {
+                    $this->shutdown();
+                }
+            });
+
+            $this->loop->run();
         });
 
-        $this->loop->run();
     }
 
     protected function runSubscribe() : void
