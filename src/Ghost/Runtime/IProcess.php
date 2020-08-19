@@ -290,6 +290,11 @@ class IProcess implements Process, HasIdGenerator, \Serializable
         $this->setWaiting($ucl, Context::BLOCKING);
         $id = $ucl->getContextId();
         $this->_blocking[$id] = $priority;
+        // priority 高的排前面.
+        uasort($this->_blocking, function($p1, $p2) {
+            return $p2 - $p1;
+        });
+
         ArrayUtils::maxLength($this->_depending, self::$maxBlocking);
     }
 
