@@ -11,14 +11,10 @@
 
 namespace Commune\NLU\Manager;
 
-use Commune\Blueprint\Ghost\Mindset;
 use Commune\Blueprint\NLU\NLUManager;
 use Commune\Blueprint\NLU\NLUService;
 use Commune\Blueprint\NLU\NLUServiceOption;
-use Commune\Blueprint\Framework\ProcContainer;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\MindMeta\DefMeta;
-use Commune\Components\Predefined\Services\MindsetSaveService;
 
 
 /**
@@ -33,10 +29,8 @@ class INLUManager implements NLUManager
     protected $options = [];
 
     /**
-     * @var ProcContainer
+     * @var array
      */
-    protected $container;
-
     protected $map;
 
     public function listService(string $serviceInterface): array
@@ -44,85 +38,100 @@ class INLUManager implements NLUManager
         return $this->options;
     }
 
-
-    public function getService(
-        string $serviceInterface,
-        string $id = null
-    ): NLUService
+    public function getService(Cloner $cloner, string $serviceInterface): ? NLUService
     {
-        if (!isset($this->map[$serviceInterface])) {
-            $this->map[$serviceInterface] = $this->makeMap($serviceInterface);
+        $option = $this->findServiceOption($serviceInterface);
+        if (empty($option)) {
+            return null;
         }
 
-        if (isset($id)) {
-            return $this->map[$serviceInterface][$id];
-        } else {
-            $map = $this->map[$serviceInterface];
-            return current($map);
-        }
+        return $cloner->container->make($option->serviceAbstract);
     }
 
-    public function hasService(
-        string $serviceInterface,
-        string $id = null
-    ): bool
+    public function findServiceOption(string $serviceInterface) : ? NLUServiceOption
     {
-        if (!isset($this->map[$serviceInterface])) {
-            $this->map[$serviceInterface] = $this->makeMap($serviceInterface);
+        $map = $this->getServiceMap();
+        if (isset($map[$serviceInterface])) {
+            return $map[$serviceInterface];
         }
 
-        if (isset($id)) {
-            return isset($this->map[$serviceInterface][$id]);
-        } else {
-            $map = $this->map[$serviceInterface];
-            return count($map) > 0;
+        foreach ($map as $serviceAbstract => $option) {
+            if (is_a($serviceAbstract, $serviceInterface, true)) {
+                $this->map[$serviceInterface] = $option;
+                return $option;
+            }
         }
+
+        return null;
     }
 
-    protected function makeMap(string $serviceInterface) : array
+    protected function getServiceMap() : array
     {
-        $map = [];
+        if (isset($this->map)) {
+            return $this->map;
+        }
+
+        $this->map = [];
         foreach ($this->options as $option) {
-            if (is_a($option->serviceInterface, $serviceInterface, true )) {
-                $map[$option->id] = $option;
-            }
+            $abstract = $option->serviceAbstract;
+            $this->map[$abstract] = $option;
         }
-        return $map;
+
+        return $this->map;
     }
 
-    public function save(Cloner $cloner, DefMeta $meta): array
-    {
-        $ran = [];
-        $dispatcher = $cloner->dispatcher;
-        $dispatcher->asyncService(
-            MindsetSaveService::class,
-            [
-                'metaName' => get_class($meta),
-                'metaData' => $meta->toArray(),
-                'force' => true
-            ]
-        );
-
-        $ran[] = Mindset::class;
-        foreach ($this->options as $option)  {
-            foreach ($option->listening as $event) {
-                if (is_a($meta, $event, true)) {
-                    $service = $this->getService(
-                        $option->serviceInterface,
-                        $option->serviceAbstract
-                    );
-
-                    $service->saveMeta($meta);
-                    $ran[] = $option->id;
-                }
-            }
-        }
-        return $ran;
-    }
+//
+//
+//    public function asyncSaveMeta(Cloner $cloner, DefMeta $meta): void
+//    {
+//        $protocal = new MindSavePayload([
+//            get_class($meta),
+//            $meta->toArray(),
+//            true
+//        ]);
+//
+//        $cloner
+//            ->dispatcher
+//            ->asyncService(
+//                NLUSaveMetaService::class,
+//                $protocal->toArray()
+//            );
+//    }
+//
+//
+//    public function saveMeta(Cloner $cloner, DefMeta $meta): array
+//    {
+//        $ran = [];
+//        $registry = $cloner->mind->getRegistry($meta);
+//        $registry->registerDef($meta->toWrapper());
+//        $ran[] = get_class($registry) . '::registerDef';
+//
+//        $ran[] = Mindset::class;
+//        foreach ($this->options as $option)  {
+//            foreach ($option->listening as $event) {
+//                if (is_a($meta, $event, true)) {
+//                    $abstract = $option->serviceAbstract;
+//                    $service = $this->getService($cloner, $abstract);
+//                    $service->saveMeta($meta);
+//                    $ran[] = "$abstract::saveMeta";
+//                }
+//            }
+//        }
+//        return $ran;
+//    }
 
     public function registerService(NLUServiceOption $option): void
     {
         $this->options[$option->getId()] = $option;
+
+        // 插入一个排序一次.
+        uasort(
+            $this->options,
+            function(NLUServiceOption $opt1, NLUServiceOption $opt2) {
+                // 倒排, 优先级大的排前面.
+                return $opt2->priority - $opt1->priority;
+            }
+        );
     }
 
     public function __destruct()

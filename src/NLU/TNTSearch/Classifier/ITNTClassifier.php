@@ -12,7 +12,7 @@
 namespace Commune\NLU\TNTSearch\Classifier;
 
 use Commune\Blueprint\NLU\NLUServiceOption;
-use Commune\Blueprint\NLU\TextClassifier;
+use Commune\Blueprint\NLU\SentenceClassifier;
 use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\Mindset;
@@ -28,7 +28,7 @@ use TeamTNT\TNTSearch\Support\TokenizerInterface;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class ITNTClassifier implements TextClassifier
+class ITNTClassifier implements SentenceClassifier
 {
     /**
      * @var TNTClassifier

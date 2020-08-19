@@ -15,7 +15,7 @@ namespace Commune\Blueprint\NLU;
  * 文本分类工具.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface TextClassifier extends NLUService
+interface SentenceClassifier extends NLUService
 {
 
     public function learn(string $text, string $type);
