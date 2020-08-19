@@ -65,7 +65,7 @@ class IIntentDef extends AbsOption implements IntentDef
     /**
      * @var IntentExample[]
      */
-    protected $exampleObjects = [];
+    protected $exampleObjects;
 
     /**
      * @var CommandDef|null
@@ -411,7 +411,6 @@ class IIntentDef extends AbsOption implements IntentDef
         $config['examples'] = $meta->examples;
         $config['emotions'] = $meta->emotions;
         $config['entityNames'] = $meta->entityNames;
-
 
         return new static($config);
     }
