@@ -147,4 +147,5 @@ interface Cache
      */
     public function hGetAll(string $key) : array;
 
+    public function hDel(string $key, string $memberKey) : bool;
 }

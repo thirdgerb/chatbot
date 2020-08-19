@@ -230,6 +230,22 @@ trait RedisCacheTrait
         );
     }
 
+
+    public function hDel(string $key, string $memberKey): bool
+    {
+        $key = $this->parseKey($key);
+        return $this->call(
+            __METHOD__,
+            function($client) use ($key, $memberKey) {
+                /**
+                 * @var \Redis $client
+                 */
+                return $client->hDel($key, $memberKey) !== false;
+            }
+        );
+    }
+
+
     public function hMSet(string $key, array $values, int $ttl = null): bool
     {
         $key = $this->parseKey($key);

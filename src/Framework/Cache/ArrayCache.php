@@ -113,6 +113,13 @@ class ArrayCache implements Cache
         return static::$hashMap[$key] ?? [];
     }
 
+    public function hDel(string $key, string $memberKey): bool
+    {
+        unset(static::$hashMap[$key][$memberKey]);
+        return true;
+    }
+
+
     public function hMSet(string $key, array $values, int $ttl = null): bool
     {
         foreach ($values as $memberKey => $val) {

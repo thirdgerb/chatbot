@@ -57,6 +57,7 @@ class RedisPoolCache implements Cache
         return $this->prefix . $key;
     }
 
+
     protected function call(string $method, callable $query)
     {
         $connection = $this->pool->get();
