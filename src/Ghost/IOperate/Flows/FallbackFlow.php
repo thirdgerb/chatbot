@@ -33,7 +33,7 @@ class FallbackFlow extends AbsOperator
 
     protected function redirect(Ucl $target = null) : ? Operator
     {
-        if (isset($target)) {
+        if (isset($target) && !$target->equals($this->dialog->ucl)) {
             return $this->dialog->redirectTo($target);
         }
 

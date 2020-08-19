@@ -49,9 +49,12 @@ abstract class AbsExiting extends AbsOperator
         }
 
         $current = $this->dialog->ucl;
-        // 自己内部的 withdraw 不用拦截. 完全可以自己重定向去退出.
         if ($watcher->equals($current)) {
             return null;
+        }
+
+        if ($watcher->isSameContext($current)) {
+            return $this->dialog->goStage($watcher->stageName);
         }
 
         return $this->dialog->redirectTo($watcher);

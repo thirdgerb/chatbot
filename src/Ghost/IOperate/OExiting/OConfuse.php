@@ -13,6 +13,7 @@ namespace Commune\Ghost\IOperate\OExiting;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\MindDef\ContextStrategyOption;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
@@ -102,21 +103,24 @@ class OConfuse extends AbsOperator
             return $this->dialog->container()->call($strategy);
         }
 
-        $strategy = $this->dialog
+        /**
+         * @var ContextStrategyOption $contextStrategy
+         */
+        $contextStrategy = $this->dialog
             ->ucl
             ->findContextDef($this->cloner)
-            ->getStrategy($this->dialog)
-            ->heedfallbackStrategy;
+            ->getStrategy($this->dialog);
 
-        if (isset($contextFallback)) {
-            return $this->dialog->container()->call($strategy);
+        $fallback = $contextStrategy->heedFallbackStrategy;
+        if (!isset($contextFallback)) {
+            $fallback = $this->cloner->config->defaultHeedFallback;
         }
 
-        $strategy = $this->cloner->config->defaultHeedFallback;
-        if (isset($action)) {
-            return $this->dialog->container()->call($action);
+        if (empty($fallback)) {
+            return null;
         }
-        return null;
+
+        return $this->dialog->container()->call($fallback);
     }
 
     /**
