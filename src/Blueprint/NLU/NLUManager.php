@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\NLU;
 
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\NLU\Exceptions\NLUServiceNotFoundException;
 
 /**
@@ -49,13 +50,18 @@ interface NLUManager
     public function registerService(NLUServiceOption $option) : void;
 
     /*------- learn ------*/
-//
-//    /**
-//     * 保存一个 meta 数据. 只应该保存和当前功能相关的.
-//     * @param DefMeta $meta
-//     * @return string|null   error message
-//     */
-//    public function saveMeta(DefMeta $meta) : ? string;
+
+    public function asyncSaveMeta(Cloner $cloner, DefMeta $meta) : void;
+
+    /**
+     * 保存一个 meta 数据.
+     * 并且通知所有的 service
+     *
+     * @param Cloner $cloner
+     * @param DefMeta $meta
+     * @return null|string
+     */
+    public function saveMeta(Cloner $cloner, DefMeta $meta) : ? string;
 //
 //
 //    const LEARN_INTENT = 1;

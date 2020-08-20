@@ -11,6 +11,8 @@
 
 namespace Commune\Blueprint\NLU;
 
+use Commune\Blueprint\Ghost\Cloner;
+use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\InputMsg;
@@ -40,4 +42,6 @@ interface NLUService
         Comprehension $comprehension
     ) : Comprehension;
 
+
+    public function saveMeta(Cloner $cloner, DefMeta $meta) : ? string ;
 }

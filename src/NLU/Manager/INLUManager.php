@@ -11,10 +11,13 @@
 
 namespace Commune\NLU\Manager;
 
+use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\NLU\NLUManager;
 use Commune\Blueprint\NLU\NLUService;
 use Commune\Blueprint\NLU\NLUServiceOption;
 use Commune\Blueprint\Ghost\Cloner;
+use Commune\Components\Predefined\Services\Payload\MindSavePayload;
+use Commune\NLU\Services\NLUSaveMetaService;
 
 
 /**
@@ -80,45 +83,39 @@ class INLUManager implements NLUManager
         return $this->map;
     }
 
-//
-//
-//    public function asyncSaveMeta(Cloner $cloner, DefMeta $meta): void
-//    {
-//        $protocal = new MindSavePayload([
-//            get_class($meta),
-//            $meta->toArray(),
-//            true
-//        ]);
-//
-//        $cloner
-//            ->dispatcher
-//            ->asyncService(
-//                NLUSaveMetaService::class,
-//                $protocal->toArray()
-//            );
-//    }
-//
-//
-//    public function saveMeta(Cloner $cloner, DefMeta $meta): array
-//    {
-//        $ran = [];
-//        $registry = $cloner->mind->getRegistry($meta);
-//        $registry->registerDef($meta->toWrapper());
-//        $ran[] = get_class($registry) . '::registerDef';
-//
-//        $ran[] = Mindset::class;
-//        foreach ($this->options as $option)  {
-//            foreach ($option->listening as $event) {
-//                if (is_a($meta, $event, true)) {
-//                    $abstract = $option->serviceAbstract;
-//                    $service = $this->getService($cloner, $abstract);
-//                    $service->saveMeta($meta);
-//                    $ran[] = "$abstract::saveMeta";
-//                }
-//            }
-//        }
-//        return $ran;
-//    }
+
+    public function asyncSaveMeta(Cloner $cloner, DefMeta $meta): void
+    {
+        $protocal = new MindSavePayload([
+            get_class($meta),
+            $meta->toArray(),
+            true
+        ]);
+
+        $cloner
+            ->dispatcher
+            ->asyncService(
+                NLUSaveMetaService::class,
+                $protocal->toArray()
+            );
+    }
+
+
+    public function saveMeta(Cloner $cloner, DefMeta $meta): ? string
+    {
+        $registry = $cloner->mind->getRegistry($meta);
+        $registry->registerDef($meta->toWrapper());
+
+        foreach ($this->options as $option)  {
+            $abstract = $option->serviceAbstract;
+            $service = $this->getService($cloner, $abstract);
+            $error = $service->saveMeta($cloner, $meta);
+            if (isset($error)) {
+                return $error;
+            }
+        }
+        return null;
+    }
 
     public function registerService(NLUServiceOption $option): void
     {

@@ -57,8 +57,11 @@ class NLUSaveMetaService extends AbsDialogicService
         $meta = $saving->toMeta();
         $info = $this->manager->saveMeta($this->cloner, $meta);
 
-        $ran = implode("\n- ", $info);
-        $deliver->info(__METHOD__ . " success : \n$ran" );
+        if (!empty($info)) {
+            $deliver->error($info);
+        } else {
+            $deliver->info(__METHOD__ . ' success');
+        }
     }
 
 
