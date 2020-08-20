@@ -517,16 +517,6 @@ abstract class AbsFileStorageDriver implements StorageDriver
         return count($this->optionCaches[$cateId] ?? []);
     }
 
-    public function searchIds(
-        CategoryOption $categoryOption,
-        StorageOption $storageOption,
-        string $wildcardId
-    ): array
-    {
-        $ids = $this->getAllIds($categoryOption, $storageOption);
-        return StringUtils::wildcardSearch($wildcardId, $ids);
-    }
-
     public function eachId(
         CategoryOption $categoryOption,
         StorageOption $storageOption
@@ -538,6 +528,104 @@ abstract class AbsFileStorageDriver implements StorageDriver
         }
     }
 
+    public function searchIds(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ): array
+    {
+        $options = $this->searchOptions(
+            $categoryOption,
+            $storageOption,
+            $query,
+            $offset,
+            $limit
+        );
+
+        return array_map(function(Option $option) {
+            return $option->getId();
+        }, $options);
+    }
+
+    public function searchOptions(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ): array
+    {
+        $i = 0;
+        $ids = $this->getAllIds($categoryOption, $storageOption);
+        $end = $offset + $limit;
+        $found = [];
+        foreach ($ids as $id) {
+            $option = $this->find($categoryOption, $storageOption, $id);
+
+            $match = $this->queryMatchOption($query, $option);
+            if ($match) {
+                if ($i >= $offset) {
+                    $found[] = $option;
+                }
+
+                $i ++;
+                if ($i >= $end) {
+                    return $found;
+                }
+            }
+        }
+
+        return $found;
+    }
+
+    protected function queryMatchOption(string $query, Option $option) : bool
+    {
+        $id = $option->getId();
+        $title = $option->getTitle();
+        $desc = $option->getDescription();
+
+        return strlen($query) === 0
+        || $query === '*'
+        || mb_strpos($id, $query) !== false
+        || mb_strpos($title, $query) !== false
+        || mb_strpos($desc, $query) !== false;
+    }
+
+    public function paginateOptions(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        int $offset = 0,
+        int $limit = 20
+    ): array
+    {
+        return $this->searchOptions(
+            $categoryOption,
+            $storageOption,
+            '',
+            $offset,
+            $limit
+        );
+    }
+
+    public function searchCount(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        string $query
+    ): int
+    {
+        $ids = $this->getAllIds($categoryOption, $storageOption);
+        $count = 0;
+        foreach ($ids as $id) {
+            $option = $this->find($categoryOption, $storageOption, $id);
+            if ($this->queryMatchOption($query, $option)) {
+                $count ++;
+            }
+        }
+        return $count;
+    }
+
     public function paginateIds(
         CategoryOption $categoryOption,
         StorageOption $storageOption,
@@ -545,13 +633,12 @@ abstract class AbsFileStorageDriver implements StorageDriver
         int $limit = 20
     ): array
     {
-        $ids = $this->getAllIds($categoryOption, $storageOption);
-        if (empty($ids)) {
-            return [];
-        }
-
-        return array_slice($ids, $offset, $limit);
+        $options = $this->paginateOptions($categoryOption, $storageOption, $offset, $limit);
+        return array_map(function(Option $option) {
+            return $option->getId();
+        }, $options);
     }
+
 
     public function flush(
         CategoryOption $categoryOption,

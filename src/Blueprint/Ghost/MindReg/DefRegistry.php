@@ -65,19 +65,7 @@ interface DefRegistry
      */
     public function registerDef(Def $def, bool $notExists = true) : bool;
 
-    /**
-     * 用通配符查找可能的 id
-     * @param string $wildcardId
-     * @return string[]
-     */
-    public function searchIds(string $wildcardId) : array;
-
-    /**
-     * 用通配符计算出匹配的数量.
-     * @param string $wildcardId
-     * @return int
-     */
-    public function searchIdExists(string $wildcardId) : int;
+    /*------- 搜索 --------*/
 
     /**
      * 遍历.
@@ -86,9 +74,49 @@ interface DefRegistry
     public function each() : \Generator;
 
     /**
+     * 用通配符查找可能的 id
+     * @param string $query
+     * @param int $offset
+     * @param int $limit
+     * @return string[]
+     */
+    public function searchIds(
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ) : array;
+
+    /**
+     * @param string $query
+     * @param int $offset
+     * @param int $limit
+     * @return Def[]
+     */
+    public function searchDefs(
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ) : array;
+
+    /**
+     * 用通配符计算出匹配的数量.
+     * @param string $query
+     * @return int
+     */
+    public function searchCount(string $query) : int;
+
+    /**
      * @param int $offset
      * @param int $limit
      * @return Def[]
      */
     public function paginate(int $offset = 0, int $limit = 20) : array;
+
+
+    /**
+     * @param int $offset
+     * @param int $limit
+     * @return string[]
+     */
+    public function paginateIds(int $offset = 0, int $limit = 20) : array;
 }

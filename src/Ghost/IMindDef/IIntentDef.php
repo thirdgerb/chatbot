@@ -205,7 +205,7 @@ class IIntentDef extends AbsOption implements IntentDef
     public function getDescription(): string
     {
         $desc = $this->desc;
-        return empty($desc) ? $this->name : $desc;
+        return empty($desc) ? $this->getTitle() : $desc;
     }
 
     public function getIntentName(): string

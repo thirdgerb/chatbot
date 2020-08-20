@@ -106,37 +106,6 @@ interface Category
     public function count() : int;
 
     /**
-     * 分页列举 options, 自然排序
-     *
-     * @param int $offset
-     * @param int $limit
-     * @return Option[]
-     */
-    public function paginate(int $offset = 0, int $limit = 20) : array;
-
-
-    /**
-     * @param int $offset
-     * @param int $limit
-     * @return string[]
-     */
-    public function paginateId(int $offset = 0, int $limit = 20) : array;
-
-    /**
-     * 用通配符查找可能的 id
-     * @param string $wildcardId
-     * @return string[]
-     */
-    public function searchIds(string $wildcardId) : array;
-
-    /**
-     * 用通配符计算出匹配的数量.
-     * @param string $wildcardId
-     * @return int
-     */
-    public function searchIdExists(string $wildcardId) : int;
-
-    /**
      * @return \Generator|string
      */
     public function eachId() : \Generator;
@@ -156,4 +125,56 @@ interface Category
      * @return Storage|null
      */
     public function getInitialStorage() : ? Storage;
+
+    /*---- search ----*/
+
+    /**
+     * 分页列举 options, 自然排序
+     *
+     * @param int $offset
+     * @param int $limit
+     * @return Option[]
+     */
+    public function paginate(int $offset = 0, int $limit = 20) : array;
+
+    /**
+     * @param int $offset
+     * @param int $limit
+     * @return string[]
+     */
+    public function paginateId(int $offset = 0, int $limit = 20) : array;
+
+    /**
+     * 用通配符查找可能的 id
+     *
+     * @param string $query
+     * @param int $offset
+     * @param int $limit
+     * @return array
+     */
+    public function searchIds(
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ) : array;
+
+    /**
+     * @param string $query
+     * @param int $offset
+     * @param int $limit
+     * @return Option[]
+     */
+    public function search(
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ) : array;
+
+    /**
+     * 用通配符计算出匹配的数量.
+     * @param string $query
+     * @return int
+     */
+    public function searchCount(string $query) : int;
+
 }

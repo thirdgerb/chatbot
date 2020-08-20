@@ -118,17 +118,6 @@ interface StorageDriver
         array $ids
     ) : array;
 
-    /**
-     * @param CategoryOption $categoryOption
-     * @param StorageOption $storageOption
-     * @param string $wildcardId
-     * @return array
-     */
-    public function searchIds(
-        CategoryOption $categoryOption,
-        StorageOption $storageOption,
-        string $wildcardId
-    ) : array;
 
     /**
      * @param CategoryOption $categoryOption
@@ -141,20 +130,6 @@ interface StorageDriver
     ) : \Generator;
 
     /**
-     * @param CategoryOption $categoryOption
-     * @param StorageOption $storageOption
-     * @param int $offset
-     * @param int $limit
-     * @return array
-     */
-    public function paginateIds(
-        CategoryOption $categoryOption,
-        StorageOption $storageOption,
-        int $offset = 0,
-        int $limit = 20
-    ) : array;
-
-    /**
      * 清除所有的数据. 非常危险的操作.
      *
      * @param CategoryOption $categoryOption
@@ -165,4 +140,84 @@ interface StorageDriver
         CategoryOption $categoryOption,
         StorageOption $storageOption
     ) : bool;
+
+
+    /*------- search -------*/
+
+    /**
+     * 基于 query 搜索 id 的策略.
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param string $query
+     * @param int $offset
+     * @param int $limit
+     * @return string[]
+     */
+    public function searchIds(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ) : array;
+
+    /**
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param string $query
+     * @return int
+     */
+    public function searchCount(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        string $query
+    ) : int;
+
+    /**
+     * 基于 query 搜索 Option.
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param string $query
+     * @param int $offset
+     * @param int $limit
+     * @return Option[]
+     */
+    public function searchOptions(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ) : array;
+
+    /**
+     * 无搜索分页查找.
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param int $offset
+     * @param int $limit
+     * @return Option[]
+     */
+    public function paginateOptions(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        int $offset = 0,
+        int $limit = 20
+    ): array;
+
+
+    /**
+     * 无搜索分页查找.
+     * @param CategoryOption $categoryOption
+     * @param StorageOption $storageOption
+     * @param int $offset
+     * @param int $limit
+     * @return string[]
+     */
+    public function paginateIds(
+        CategoryOption $categoryOption,
+        StorageOption $storageOption,
+        int $offset = 0,
+        int $limit = 20
+    ): array;
 }

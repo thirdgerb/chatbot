@@ -267,21 +267,61 @@ class ICategory implements Category
     }
 
 
-    public function searchIds(string $wildcardId): array
+//    public function searchIds(string $wildcardId): array
+//    {
+//        $storage = $this->getStorage();
+//        return $storage->getDriver()
+//            ->searchIds(
+//                $this->categoryOption,
+//                $storage->getOption(),
+//                $wildcardId
+//            );
+//    }
+    public function searchIds(
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ): array
     {
         $storage = $this->getStorage();
         return $storage->getDriver()
             ->searchIds(
                 $this->categoryOption,
                 $storage->getOption(),
-                $wildcardId
+                $query,
+                $offset,
+                $limit
             );
     }
 
-    public function searchIdExists(string $wildcardId): int
+    public function search(
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ): array
     {
-        $ids = $this->searchIds($wildcardId);
-        return count($ids);
+        $storage = $this->getStorage();
+        return $storage->getDriver()
+            ->searchOptions(
+                $this->categoryOption,
+                $storage->getOption(),
+                $query,
+                $offset,
+                $limit
+            );
+    }
+
+
+    public function searchCount(string $query): int
+    {
+        $storage = $this->getStorage();
+        return $storage
+            ->getDriver()
+            ->searchCount(
+                $this->categoryOption,
+                $storage->getOption(),
+                $query
+            );
     }
 
 
@@ -289,12 +329,14 @@ class ICategory implements Category
     public function paginateId(int $offset = 0, int $limit = 20): array
     {
         $storage = $this->getStorage();
-        return $storage->getDriver()->paginateIds(
-            $this->categoryOption,
-            $storage->getOption(),
-            $offset,
-            $limit
-        );
+        return $storage
+            ->getDriver()
+            ->paginateIds(
+                $this->categoryOption,
+                $storage->getOption(),
+                $offset,
+                $limit
+            );
     }
 
     public function eachId(): \Generator

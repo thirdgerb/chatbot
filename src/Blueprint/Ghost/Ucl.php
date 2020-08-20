@@ -429,7 +429,7 @@ class Ucl implements UclInterface
 
     public function findIntentDef(Cloner $cloner) : ? IntentDef
     {
-        $intentName = $this->getStageFullname();
+        $intentName = $this->getIntentName();
 
         if ($this->intentDef === false) {
             return null;

@@ -182,14 +182,40 @@ abstract class AbsDefRegistry implements DefRegistry
         return $def;
     }
 
-    public function searchIds(string $wildcardId): array
+    public function searchCount(string $query): int
     {
-        return $this->getMetaRegistry()->searchIds($wildcardId);
+        return $this->getMetaRegistry()->searchCount($query);
     }
 
-    public function searchIdExists(string $wildcardId): int
+    public function searchIds(
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ): array
     {
-        return $this->getMetaRegistry()->searchIdExists($wildcardId);
+        return $this->getMetaRegistry()->searchIds(
+            $query,
+            $offset,
+            $limit
+        );
+    }
+
+    public function searchDefs(
+        string $query,
+        int $offset = 0,
+        int $limit = 20
+    ): array
+    {
+        return $this->getMetaRegistry()->search(
+            $query,
+            $offset,
+            $limit
+        );
+    }
+
+    public function paginateIds(int $offset = 0, int $limit = 20): array
+    {
+        return $this->getMetaRegistry()->paginateId($offset, $limit);
     }
 
 
