@@ -23,20 +23,20 @@ use Commune\Blueprint\Ghost\Ucl;
  */
 interface FallbackStrategy
 {
-    const FUNC_CREATION = 'creation';
-    const FUNC_HANDLER = 'handler';
+    const FUNC_CREATION = 'onCreation';
+    const FUNC_HANDLER = 'onHandler';
 
     /**
      * 创建一个策略.
      * @param string $id
      * @return Ucl
      */
-    public static function creation(string $id) : Ucl;
+    public static function onCreation(string $id) : Ucl;
 
     /**
      * 执行一个策略.
      * @param string $id
      * @return Ucl
      */
-    public static function handler(string $id) : Ucl;
+    public static function onHandler(string $id) : Ucl;
 }

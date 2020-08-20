@@ -49,6 +49,13 @@ class FallbackStrategyManagerProvider extends ServiceProvider
 
     public function boot(ContainerContract $app): void
     {
+        /**
+         * @var FallbackStrategyManager $manager
+         */
+        $manager = $app->make(FallbackStrategyManager::class);
+        foreach ($this->strategies as $strategy) {
+            $manager->register($strategy);
+        }
     }
 
     public function register(ContainerContract $app): void

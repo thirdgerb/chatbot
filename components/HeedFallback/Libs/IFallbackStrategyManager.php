@@ -11,6 +11,7 @@
 
 namespace Commune\Components\HeedFallback\Libs;
 
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Components\HeedFallback\Data\FallbackStrategyInfo;
 
 
@@ -30,6 +31,22 @@ class IFallbackStrategyManager implements FallbackStrategyManager
     public function register(FallbackStrategyInfo $info): void
     {
         $this->all[$info->strategyClass] = $info;
+    }
+
+    public function getCreation(string $strategyClass, string $id): Ucl
+    {
+        return call_user_func(
+            [$strategyClass, FallbackStrategy::FUNC_CREATION],
+            $id
+        );
+    }
+
+    public function getHandler(string $strategyClass, string $id): Ucl
+    {
+        return call_user_func(
+            [$strategyClass, FallbackStrategy::FUNC_HANDLER],
+            $id
+        );
     }
 
 

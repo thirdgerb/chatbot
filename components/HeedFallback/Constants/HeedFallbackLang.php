@@ -38,8 +38,6 @@ class HeedFallbackLang
 
     const REQUIRE_OPERATION = 'heed.fallback.require.operation';
 
-    const REQUIRE_INTENT_NAME = 'heed.fallback.require.intentName';
-
     const REQUIRE_DIRECT_REPLY = 'heed.fallback.require.reply';
 
     /**
@@ -58,4 +56,46 @@ class HeedFallbackLang
     const CONFIRM_START_TASK = 'heed.fallback.task.start';
 
     const TASK_DISAPPEAR = 'heed.fallback.task.disappear';
+
+
+
+    /**
+     * @param {text}
+     */
+    const REQUIRE_INTENT_NAME = 'heed.fallback.require.intentName';
+
+    const REQUIRE_SEARCH_INTENT = 'heed.fallback.search.intentName';
+
+    const REQUIRE_TRANS_REPLY = 'heed.fallback.require.transReply';
+
+    /**
+     * @param {intent}
+     */
+    const REQUIRE_INTENT_CREATE = 'heed.fallback.require.createIntent';
+
+
+    /**
+     * @param {intent}
+     */
+    const SELECTED_INTENT_NOT_FOUND = 'heed.fallback.intent.notFound';
+
+    /**
+     * @param {selected}
+     */
+    const CONFIRM_INTENT = 'heed.fallback.intent.confirm';
+
+
+    const STRATEGY_CHOOSE_SCOPE = 'heed.fallback.strategy.scope';
+
+    const STRATEGY_SCOPE_CONTEXT = 'heed.fallback.strategy.scope.context';
+    const STRATEGY_SCOPE_STAGE = 'heed.fallback.strategy.scope.stage';
+    const STRATEGY_SCOPE_INTENT = 'heed.fallback.strategy.scope.intent';
+
+
+    /**
+     * @param {id}
+     */
+    const STRATEGY_CHOOSE = 'heed.fallback.strategy.choose';
+
+    const REPLY_IS_PREPARING = 'heed.fallback.reply.preparing';
 }

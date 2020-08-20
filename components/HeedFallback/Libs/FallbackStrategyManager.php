@@ -11,6 +11,7 @@
 
 namespace Commune\Components\HeedFallback\Libs;
 
+use Commune\Blueprint\Ghost\Ucl;
 use Commune\Components\HeedFallback\Data\FallbackStrategyInfo;
 
 
@@ -26,5 +27,9 @@ interface FallbackStrategyManager
     public function listStrategies() : array;
 
     public function register(FallbackStrategyInfo $info) : void;
+
+    public function getCreation(string $strategyClass, string $id) : Ucl;
+
+    public function getHandler(string $strategyClass, string $id) : Ucl;
 
 }

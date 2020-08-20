@@ -16,6 +16,7 @@ use Commune\Components\HeedFallback\Data\FallbackStrategyInfo;
 use Commune\Components\HeedFallback\Libs\FallbackSceneRepoDemo;
 use Commune\Components\HeedFallback\Providers\FallbackStrategyManagerProvider;
 use Commune\Components\HeedFallback\Providers\FallbackStrategyRegistryProvider;
+use Commune\Components\HeedFallback\Strategies\TransStrategy;
 use Commune\Ghost\Component\AGhostComponent;
 use Commune\Support\Registry\Meta\StorageMeta;
 
@@ -95,6 +96,11 @@ class HeedFallbackComponent extends AGhostComponent
         return [
 
             'strategies' => [
+                [
+                    'name' => '文字回复',
+                    'desc' => '使用 translator 模块直接回复',
+                    'strategyClass' => TransStrategy::class,
+                ],
             ],
             'title' => '上下文回复策略',
             'desc' => '上下文相关回复策略仓库',
@@ -112,6 +118,7 @@ class HeedFallbackComponent extends AGhostComponent
         return [
             'storage' => StorageMeta::class,
             'initStorage' => StorageMeta::class,
+            'strategies[]' => FallbackStrategyInfo::class,
         ];
     }
 
@@ -135,6 +142,7 @@ class HeedFallbackComponent extends AGhostComponent
             $app,
             [
                 "Commune\\Components\\HeedFallback\\Context" => __DIR__ . '/Context',
+                "Commune\\Components\\HeedFallback\\Strategies" => __DIR__ . '/Strategies',
             ]
         );
 

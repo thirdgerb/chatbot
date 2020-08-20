@@ -34,4 +34,29 @@ return [
     Lang::CONFIRM_START_TASK => "是否开始一个教学课程?",
 
     Lang::TASK_DISAPPEAR => "oh no! 目标任务消失了!",
+
+    Lang::REQUIRE_INTENT_NAME => "请为对话内容选择一个意图:\n {text}\n\n",
+
+    Lang::REQUIRE_SEARCH_INTENT => "请输入字符串搜索一个意图, 或作为新建意图 ID",
+
+    Lang::REQUIRE_TRANS_REPLY => "请提供一个文字回复给用户",
+
+    Lang::REQUIRE_INTENT_CREATE => '尝试创建意图 {intent}, 请为之拟定一个方便理解的标题: ',
+
+    Lang::SELECTED_INTENT_NOT_FOUND => "找到不到指定的意图 {intent}, 或名称不合法",
+
+    Lang::CONFIRM_INTENT => "确认使用意图名 {selected}: ",
+
+    Lang::STRATEGY_CHOOSE_SCOPE => '请为上下文语义相关回复策略选择一个作用域: ',
+
+    Lang::STRATEGY_SCOPE_CONTEXT => "上下文语境 (context) 相关",
+
+    Lang::STRATEGY_SCOPE_CONTEXT => "当前对话场景 (stage) 相关",
+
+    Lang::STRATEGY_SCOPE_INTENT => "仅意图相关",
+
+    Lang::STRATEGY_CHOOSE => '请给 id 为 {id} 的对话场景选择一个回复策略: ',
+
+    Lang::REPLY_IS_PREPARING => "sorry, 回复内容还在准备中... ",
+
 ];

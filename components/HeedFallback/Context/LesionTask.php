@@ -37,6 +37,10 @@ use Commune\Support\Utils\StringUtils;
  * @property-read string $batchId  来自query
  *
  *
+ * @property string|null $selectedIntent
+ * @property string[] $intentChoices
+ * @property string|null $createIntent
+ * @property string|null $strategyScope
  *
  * # getters
  * @property-read FallbackSceneOption|null $scene
@@ -44,6 +48,8 @@ use Commune\Support\Utils\StringUtils;
  */
 class LesionTask extends ACodeContext
 {
+    use LesionTrait;
+
     /**
      * @var FallbackSceneOption|null
      */
@@ -60,13 +66,20 @@ class LesionTask extends ACodeContext
             'priority' => 0,
             'queryNames' => ['batchId'],
             'memoryScopes' => [],
-            'memoryAttrs' => [],
+            'memoryAttrs' => [
+                'selectedIntent' => null,
+                'intentChoices' => [],
+                'createIntent' => null,
+                'strategyScope' => null,
+            ],
             'strategy' => [
                 'auth' => [Supervise::class],
                 'comprehendPipes' => null,
                 'onCancel' => 'cancel',
                 'onQuit' => 'quit',
-                'stageRoutes' => [],
+                'stageRoutes' => [
+                    'menu',
+                ],
                 'contextRoutes' => [],
                 'heedFallbackStrategy' => '',
             ],
@@ -157,6 +170,7 @@ class LesionTask extends ACodeContext
 
     /**
      * @title 选择菜单
+     * @spell #menu
      * @param StageBuilder $stage
      * @return StageBuilder
      */
@@ -169,7 +183,7 @@ class LesionTask extends ACodeContext
 
                 $choices = [
                     // 意图策略
-                    // $this->getStage('intention'),
+                     $this->getStage('archive'),
                     // 直接回复
                     $this->getStage('reply'),
                     // 跳过
@@ -192,42 +206,6 @@ class LesionTask extends ACodeContext
         });
     }
 
-    /**
-     * @title 使用意图.
-     * @param StageBuilder $stage
-     * @return StageBuilder
-     */
-    public function __on_intention(StageBuilder $stage) : StageBuilder
-    {
-        $routes = $this->getCandidateRoutes();
-
-        return $stage
-            ->always([$this, 'checkSceneExists'])
-            ->onActivate(function(Dialog $dialog) use ($routes){
-
-                return $dialog
-                    ->await()
-                    ->askVerbal(
-                        HeedFallbackLang::REQUIRE_INTENT_NAME,
-                        [
-                            's|查找意图' => $this->getStage('search_intent'),
-                            'n|新建意图' => $this->getStage('create_intent'),
-                            'b|返回' => $this->getStage('menu'),
-                        ]
-                    );
-            })
-            ->onReceive(function(Dialog $dialog) use ($routes){
-
-                return $dialog
-                    ->hearing()
-                    ->isAnswered()
-                    ->then(function(Dialog $dialog) {
-
-                    })
-                    ->end();
-
-            });
-    }
 
 
     /*-------- candidate ---------*/
@@ -300,7 +278,10 @@ class LesionTask extends ACodeContext
                 return $dialog
                     ->await()
                     ->askVerbal(
-                        HeedFallbackLang::REQUIRE_DIRECT_REPLY
+                        HeedFallbackLang::REQUIRE_DIRECT_REPLY,
+                        [
+                            'b|返回' => $this->getStage('menu'),
+                        ]
                     );
 
             })->onReceive(function(Dialog $dialog) {
@@ -373,7 +354,7 @@ class LesionTask extends ACodeContext
                         HeedFallbackLang::SIMPLE_CHAT_CONFIRM,
                         [
                             'c|confirm' => $this->getStage('done'),
-                            $this->getStage('cancel'),
+                            'b|返回' => $this->getStage('menu'),
                         ]
                     );
             })
