@@ -112,7 +112,7 @@ class OConfuse extends AbsOperator
             ->getStrategy($this->dialog);
 
         $fallback = $contextStrategy->heedFallbackStrategy;
-        if (!isset($contextFallback)) {
+        if (!isset($fallback)) {
             $fallback = $this->cloner->config->defaultHeedFallback;
         }
 
