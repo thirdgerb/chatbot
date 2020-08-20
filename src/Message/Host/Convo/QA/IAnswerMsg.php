@@ -14,12 +14,13 @@ namespace Commune\Message\Host\Convo\QA;
 use Commune\Protocals\HostMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $answer
- * @property-read string|null $choice
+ * @property-read mixed|null $choice
  * @property-read string|null $route
  */
 class IAnswerMsg extends AbsMessage implements AnswerMsg
@@ -43,11 +44,11 @@ class IAnswerMsg extends AbsMessage implements AnswerMsg
         return $this->answer;
     }
 
-    public function getChoice(): ? string
+    public function getChoice()
     {
         $choice = $this->choice;
-        return isset($choice)
-            ? (string) $choice
+        return !is_null($choice)
+            ? $choice
             : null;
     }
 
@@ -69,8 +70,8 @@ class IAnswerMsg extends AbsMessage implements AnswerMsg
 
     public function isEmpty(): bool
     {
-        return empty($this->_data['answer'])
-            && empty($this->_data['choice']);
+        return StringUtils::isEmptyStr($this->_data['answer'])
+            && is_null($this->_data['choice'] ?? null);
     }
 
     public function getText(): string

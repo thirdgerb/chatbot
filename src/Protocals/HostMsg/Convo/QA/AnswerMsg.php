@@ -20,7 +20,10 @@ interface AnswerMsg extends VerbalMsg
 {
     public function getAnswer() : string;
 
-    public function getChoice() : ? string;
+    /**
+     * @return mixed
+     */
+    public function getChoice();
 
     public function getRoute() : ? string;
 }

@@ -19,7 +19,9 @@ use Commune\Protocals\HostMsg\Convo\QA\Choose;
  */
 class IChoose extends IQuestionMsg implements Choose
 {
-    protected $acceptAnyTextAsValue = false;
+    const MODE = self::MATCH_INDEX
+        | self::MATCH_SUGGESTION
+        | self::MATCH_INTENT;
 
     public static function newChoose(
         string $query,

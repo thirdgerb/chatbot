@@ -33,13 +33,18 @@ use Commune\Support\Utils\StringUtils;
  * @property string[] $suggestions
  * @property string[] $routes
  * @property string|null $default
+ * @property int $mode
  *
  *
  * @property-read bool $translated
  */
 class IQuestionMsg extends AbsMessage implements QuestionMsg
 {
-    protected $acceptAnyTextAsValue = true;
+
+    const MODE = self::MATCH_INDEX
+        | self::MATCH_SUGGESTION
+        | self::MATCH_INTENT
+        | self::MATCH_ANY;
 
     protected $slots = [];
 
@@ -77,6 +82,8 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             'suggestions' => [],
             'routes' => [],
             'default' => null,
+            'mode' => self::MODE,
+
             'translated' => false,
         ];
     }
@@ -86,6 +93,28 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
     {
         return new static($data);
     }
+
+    /*-------- match mode --------*/
+    public function isMatchMode(int $mode): bool
+    {
+        return ($mode & $this->mode) > 0;
+    }
+
+    public function setMatchMode(int $mode): void
+    {
+        $this->mode = $mode;
+    }
+
+    public function withoutMatchMode(int $mode): void
+    {
+        $this->mode = $this->mode ^ $mode;
+    }
+
+    public function getMatchMode(): int
+    {
+        return $this->mode;
+    }
+
 
     /*-------- parser --------*/
 
@@ -114,7 +143,12 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         return null;
     }
 
-    protected function parseAnswerByVerbal(InputMsg $input) : ? AnswerMsg
+    /**
+     * 开放给外部可以用于单测的方法.
+     * @param InputMsg $input
+     * @return AnswerMsg|null
+     */
+    public function parseAnswerByVerbal(InputMsg $input) : ? AnswerMsg
     {
         $message = $input->getMessage();
         if (!$message instanceof VerbalMsg) {
@@ -146,7 +180,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
     protected function acceptAnyVerbalAnswer(VerbalMsg $message) : ? AnswerMsg
     {
-        if ($this->acceptAnyTextAsValue) {
+        if ($this->isMatchMode(self::MATCH_ANY)) {
             $text = $message->getText();
             return $this->newAnswer($text);
         }
@@ -170,23 +204,35 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             return null;
         }
 
+        $matchIndex = $this->isMatchMode(self::MATCH_INDEX);
+        $matchSuggestion = $this->isMatchMode(self::MATCH_SUGGESTION);
+
+        if (!$matchIndex && !$matchSuggestion) {
+            return null;
+        }
+
         $suggestions = $this->suggestions;
         if (empty($suggestions)) {
             return null;
         }
-        foreach ($suggestions as $index => $suggestion) {
-            $indexStr = StringUtils::normalizeString(strval($index));
 
-            // index 需要完全匹配的情况.
-            if ($indexStr === $text) {
-                return $this->newAnswer($suggestion, $index);
+        foreach ($suggestions as $index => $suggestion) {
+
+            if ($matchIndex) {
+                $indexStr = StringUtils::normalizeString(strval($index));
+                // index 需要完全匹配的情况.
+                if ($indexStr === $text) {
+                    return $this->newAnswer($suggestion, $index);
+                }
             }
 
             // 对内容进行部分匹配
-            $suggestion = StringUtils::normalizeString($suggestion);
-            // 如果是其中一部分.
-            if (mb_strstr($suggestion, $text) !== false) {
-                $matchedSuggestions[] = $index;
+            if ($matchSuggestion) {
+                $suggestion = StringUtils::normalizeString($suggestion);
+                // 如果是其中一部分.
+                if (mb_strstr($suggestion, $text) !== false) {
+                    $matchedSuggestions[] = $index;
+                }
             }
         }
 
@@ -215,8 +261,6 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
     public function match(Cloner $cloner): ? AnswerMsg
     {
         return $this->parseAnswerByMatcher($cloner);
-            // ?? $this->parseByMatchedIntents($cloner);
-
     }
 
     /**

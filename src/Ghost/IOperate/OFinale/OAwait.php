@@ -63,6 +63,12 @@ class OAwait extends AbsFinale implements Await
      */
     protected $slots = [];
 
+
+    /**
+     * @var callable[]
+     */
+    protected $questionCallbacks = [];
+
     /**
      * IAwait constructor.
      * @param Dialog $dialog
@@ -214,13 +220,21 @@ class OAwait extends AbsFinale implements Await
         QuestionMsg $question
     ): Operator
     {
-        $this->question = $question->withSlots($this->slots);
+        $question = $question->withSlots($this->slots);
+        if (!empty($this->questionCallbacks)) {
+            foreach ($this->questionCallbacks as $caller) {
+                $caller($question);
+            }
+        }
 
-        $routes = $question->getRoutes();
-        $this->routes = array_merge(
-            $this->routes,
-            array_values($routes)
-        );
+        $this->question = $question;
+
+        // process 那一步已经做了这个.
+//        $routes = $question->getRoutes();
+//        $this->routes = array_merge(
+//            $this->routes,
+//            array_values($routes)
+//        );
 
         return $this;
     }
@@ -275,11 +289,12 @@ class OAwait extends AbsFinale implements Await
 
     protected function addUclToQuestion(QuestionMsg $question, $index, $suggestion) : bool
     {
-        $suggestion = Ucl::decode($suggestion);
+        // $suggestion = Ucl::decode($suggestion);
+        // 现在必须手动生成 ucl, 才能避免性能开销和字符串的误判
+        // 否则所有和 context 同名的字符串都无法作为一般字符串呈现.
         if (!$suggestion instanceof Ucl) {
             return false;
         }
-
 
         $fullname = $suggestion->getStageFullname();
         $isValid = ContextUtils::isValidStageFullName($fullname)
@@ -293,8 +308,8 @@ class OAwait extends AbsFinale implements Await
         if (is_string($index)) {
             $parts = explode('|', $index, 2);
             $index = $parts[0];
-            $suggestion = !empty($parts[2])
-                ? $parts[2]
+            $suggestion = !empty($parts[1])
+                ? $parts[1]
                 : $this->getStageReg()->getDef($fullname)->getDescription();
 
         } else {
@@ -305,6 +320,13 @@ class OAwait extends AbsFinale implements Await
         return true;
     }
 
+    public function withQuestion(callable $caller): Await
+    {
+        $this->questionCallbacks[] = $caller;
+        return $this;
+    }
+
+
     public function __destruct()
     {
         unset(
@@ -312,7 +334,8 @@ class OAwait extends AbsFinale implements Await
             $this->slots,
             $this->dialog,
             $this->question,
-            $this->stageReg
+            $this->stageReg,
+            $this->questionCallbacks
         );
         parent::__destruct();
     }

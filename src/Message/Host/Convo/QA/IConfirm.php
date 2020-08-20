@@ -27,7 +27,9 @@ class IConfirm extends IQuestionMsg implements Confirm
     const POSITIVE_INDEX = 'y';
     const NEGATIVE_INDEX = 'n';
 
-    protected $acceptAnyTextAsValue = false;
+    const MODE = self::MATCH_INDEX
+        | self::MATCH_SUGGESTION
+        | self::MATCH_INTENT;
 
     public static function newConfirm(
         string $query,
@@ -53,7 +55,6 @@ class IConfirm extends IQuestionMsg implements Confirm
             'suggestions' => $suggestions,
             'routes' => $routes,
             'default' => $default,
-
         ];
 
         return new static($data);

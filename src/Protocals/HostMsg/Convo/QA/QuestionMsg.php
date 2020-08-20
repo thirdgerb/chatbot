@@ -22,6 +22,11 @@ use Commune\Protocals\HostMsg\Tags\Conversational;
  */
 interface QuestionMsg extends VerbalMsg, Conversational, SelfTranslatable
 {
+    const MATCH_INDEX = 1;
+    const MATCH_SUGGESTION = 1 << 1;
+    const MATCH_INTENT = 1 << 2;
+    const MATCH_ANY = 1 << 5;
+
     /**
      * @return string
      */
@@ -76,4 +81,13 @@ interface QuestionMsg extends VerbalMsg, Conversational, SelfTranslatable
      */
     public function match(Cloner $cloner) : ? AnswerMsg;
 
+    /*------ 设置匹配模式 ------*/
+
+    public function isMatchMode(int $mode) : bool;
+
+    public function setMatchMode(int $mode) : void;
+
+    public function withoutMatchMode(int $mode) : void;
+
+    public function getMatchMode() : int;
 }

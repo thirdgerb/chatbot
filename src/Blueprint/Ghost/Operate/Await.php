@@ -99,6 +99,13 @@ interface Await extends Finale
 
 
     /**
+     * @return QuestionMsg|null
+     */
+    public function getCurrentQuestion() : ? QuestionMsg;
+
+    /*-------- 预设的回调方法 ---------*/
+
+    /**
      * 添加参数供后续的问题使用.
      *
      * @param array $slots
@@ -106,6 +113,12 @@ interface Await extends Finale
      */
     public function withSlots(array $slots) : Await;
 
-    public function getCurrentQuestion() : ? QuestionMsg;
+
+    /**
+     * 为接下来要设置的  Question 添加回调方法.
+     * @param callable $caller
+     * @return Await
+     */
+    public function withQuestion(callable $caller) : Await;
 
 }

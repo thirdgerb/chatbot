@@ -32,7 +32,10 @@ use Commune\Protocals\Intercom\InputMsg;
  */
 class IStepper extends IQuestionMsg implements Stepper
 {
-    protected $acceptAnyTextAsValue = true;
+    const MODE = self::MATCH_INDEX
+        | self::MATCH_SUGGESTION
+        | self::MATCH_INTENT
+        | self::MATCH_ANY;
 
     public static function newStepper(
         string $query,
@@ -77,6 +80,7 @@ class IStepper extends IQuestionMsg implements Stepper
             'routes' => [],
             'default' => null,
             'translated' => false,
+            'mode' => self::MODE,
         ];
     }
 

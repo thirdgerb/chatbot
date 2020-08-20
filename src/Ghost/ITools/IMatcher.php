@@ -300,7 +300,6 @@ class IMatcher implements Matcher
 
     public function isChoice($suggestionIndex): Matcher
     {
-        $suggestionIndex = strval($suggestionIndex);
         $answer = $this->comprehension->answer->getAnswer();
         if (isset($answer) && $answer->getChoice() === $suggestionIndex) {
             $this->matched = true;
@@ -309,6 +308,19 @@ class IMatcher implements Matcher
 
         return $this;
     }
+
+    public function isAnswer(string $answerText): Matcher
+    {
+        $answerText = StringUtils::normalizeString($answerText);
+        $answer = $this->comprehension->answer->getAnswer();
+        if (isset($answer) && $answer->getAnswer() == $answerText) {
+            $this->matched = true;
+            $this->matchedParams[__FUNCTION__] = $answer;
+        }
+
+        return $this;
+    }
+
 
     public function isCommand(string $signature, bool $correct = false) : Matcher
     {

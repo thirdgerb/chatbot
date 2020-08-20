@@ -193,9 +193,17 @@ interface Matcher
     /**
      * @param string $index
      * @return static
-     * @matched string $isChoice
+     * @matched AnswerMsg $isChoice
      */
     public function isChoice(string $index) : Matcher;
+
+
+    /**
+     * @param string $answer
+     * @return static
+     * @matched AnswerMsg $isAnswer
+     */
+    public function isAnswer(string $answer) : Matcher;
 
     /*------- command -------*/
 
