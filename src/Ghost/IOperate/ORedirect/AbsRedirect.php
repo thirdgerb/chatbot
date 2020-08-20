@@ -52,13 +52,17 @@ abstract class AbsRedirect extends AbsOperator
         }
 
         // 检查重定向是否被拦截.
-        $intercepted = $target
-            ->findStageDef($this->dialog->cloner)
-            ->onRedirect($this->dialog, $target);
+        // 自身就不需要调用 redirect 方法.
+        if (!$target->equals($this->dialog->ucl)) {
+            $intercepted = $target
+                ->findStageDef($this->dialog->cloner)
+                ->onRedirect($this->dialog, $target);
 
-        if (isset($intercepted )) {
-            return $intercepted;
+            if (isset($intercepted )) {
+                return $intercepted;
+            }
         }
+
 
         $task = $this->dialog->process->getTask($target);
         // 如果目标 Context 是新建, 则需要从起点开始走. 否则不需要.
