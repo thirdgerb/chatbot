@@ -61,6 +61,7 @@ use Commune\Support\Utils\StringUtils;
  */
 class IIntentDef extends AbsOption implements IntentDef
 {
+    const IDENTITY = 'name';
 
     /**
      * @var IntentExample[]
@@ -357,6 +358,14 @@ class IIntentDef extends AbsOption implements IntentDef
     {
         return $this->examples;
     }
+
+    public function appendExample(string $example): void
+    {
+        $examples = $this->examples;
+        $examples[] = $example;
+        $this->examples = array_unique($examples);
+    }
+
 
     public function getExampleObjects(): array
     {

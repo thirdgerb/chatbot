@@ -76,6 +76,9 @@ interface IntentDef extends Def
      */
     public function getExamples() : array;
 
+
+    public function appendExample(string $example) : void;
+
     /**
      * 封装后的语料对象
      * @return IntentExample[]
