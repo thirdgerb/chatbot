@@ -189,7 +189,7 @@ class LesionTask extends ACodeContext
                     // 跳过
                     $this->getStage('skip'),
                     // 闲聊策略
-                    $this->getStage('chat'),
+                    // $this->getStage('chat'),
                     // 忽略掉
                     $this->getStage('ignore'),
                     // 退出
@@ -325,6 +325,7 @@ class LesionTask extends ACodeContext
     public function __on_chat(StageBuilder $stage) : StageBuilder
     {
         return $stage
+            ->always([$this, 'checkSceneExists'])
             ->onActivate(function(Dialog $dialog) {
                 // 如果没有闲聊服务.
                 $cloner = $dialog->cloner;
@@ -390,12 +391,34 @@ class LesionTask extends ACodeContext
 //                            );
 //                        }
 
-                        return $dialog->goStage('done');
+                        return $dialog->goStage('learned');
                     })
                     ->end();
             });
     }
 
+    public function __on_learned(StageBuilder $stage) : StageBuilder
+    {
+        return $stage
+            ->always([$this, 'checkSceneExists'])
+            ->onActivate(function(Dialog $dialog) {
+
+                $session = $this->scene->sessionId;
+                $text = $this->scene->text;
+                return $dialog
+                    ->send()
+                    ->withSessionId($session)
+                    ->info(
+                        HeedFallbackLang::STRATEGY_LEARNED,
+                        [
+                            'text' => $text
+                        ]
+                    )
+                    ->over()
+                    ->goStage('done');
+            });
+
+    }
 
     /**
      * @title 完成任务.

@@ -20,6 +20,7 @@ use Commune\Components\HeedFallback\Constants\HeedFallbackLang;
 use Commune\Components\HeedFallback\Data\FallbackStrategyInfo;
 use Commune\Components\HeedFallback\Data\StrategyMatcherOption;
 use Commune\Components\HeedFallback\Libs\FallbackStrategyManager;
+use Commune\Components\HeedFallback\Support\HeedFallbackUtils;
 use Commune\Ghost\IMindDef\IIntentDef;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
@@ -375,6 +376,32 @@ trait LesionTrait
         return $stage
             ->always([$this, 'checkSceneExists'])
             ->onActivate(function(Dialog $dialog) {
+
+                $intent = $this->selectedIntent;
+                $category = $dialog->cloner
+                    ->registry
+                    ->getCategory(StrategyMatcherOption::class);
+
+                $await = $this->scene->await;
+                $ucl = Ucl::decode($await);
+                $ids = HeedFallbackUtils::makeAllStrategyIds($intent, $ucl->contextName, $ucl->stageName);
+                foreach ($ids as $id) {
+                    if ($category->has($id)) {
+                        return $dialog
+                            ->send()
+                            ->info(
+                                HeedFallbackLang::STRATEGY_EXISTS,
+                                [
+                                    'intent' => $intent,
+                                    'await' => $await,
+                                    'id' => $id
+                                ]
+                            )->over()->goStage('learned');
+                    }
+                }
+
+
+
                 return $dialog
                     ->await()
                     ->askChoose(
@@ -464,7 +491,7 @@ trait LesionTrait
                     ->end();
             })
             ->onResume(function(Dialog $dialog) {
-                return $dialog->goStage('done');
+                return $dialog->goStage('learned');
             });
 
     }

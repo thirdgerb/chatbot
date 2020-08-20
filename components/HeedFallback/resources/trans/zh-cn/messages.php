@@ -59,4 +59,7 @@ return [
 
     Lang::REPLY_IS_PREPARING => "sorry, 回复内容还在准备中... ",
 
+    Lang::STRATEGY_LEARNED => "您之前说过的 \"{text}\", 我刚学会了如何回复. 感谢!",
+
+    Lang::STRATEGY_EXISTS => "当对话语境在 {await}, 意图为 {intent} 时, 回复策略已经确定. id 为 {id}.",
 ];

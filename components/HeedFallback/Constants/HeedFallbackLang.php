@@ -98,4 +98,15 @@ class HeedFallbackLang
     const STRATEGY_CHOOSE = 'heed.fallback.strategy.choose';
 
     const REPLY_IS_PREPARING = 'heed.fallback.reply.preparing';
+
+    /**
+     * @param {text}
+     */
+    const STRATEGY_LEARNED = 'heed.fallback.strategy.learned';
+
+    /**
+     * @param {intent}
+     * @param {await}
+     */
+    const STRATEGY_EXISTS = 'heed.fallback.strategy.exists';
 }
