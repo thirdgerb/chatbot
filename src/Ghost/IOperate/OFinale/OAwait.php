@@ -24,6 +24,7 @@ use Commune\Message\Host\Convo\QA\IStepper;
 use Commune\Protocals\HostMsg\Convo\QA\Confirm;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Protocals\HostMsg\DefaultIntents;
+use Commune\Support\Utils\StringUtils;
 use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
@@ -308,6 +309,7 @@ class OAwait extends AbsFinale implements Await
         if (is_string($index)) {
             $parts = explode('|', $index, 2);
             $index = $parts[0];
+            $index = StringUtils::isEmptyStr($index) ? null : $index;
             $suggestion = !empty($parts[1])
                 ? $parts[1]
                 : $this->getStageReg()->getDef($fullname)->getDescription();
