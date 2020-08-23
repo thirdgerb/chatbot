@@ -17,7 +17,7 @@ use Commune\Components\HeedFallback\Libs\FallbackSceneRepoDemo;
 use Commune\Components\HeedFallback\Providers\FallbackStrategyManagerProvider;
 use Commune\Components\HeedFallback\Providers\FallbackStrategyRegistryProvider;
 use Commune\Components\HeedFallback\Strategies\TransStrategy;
-use Commune\Ghost\Component\AGhostComponent;
+use Commune\Framework\Component\AComponentOption;
 use Commune\Support\Registry\Meta\StorageMeta;
 
 
@@ -89,7 +89,7 @@ use Commune\Support\Registry\Meta\StorageMeta;
  * @property-read StorageMeta|null $storage
  * @property-read StorageMeta $initStorage
  */
-class HeedFallbackComponent extends AGhostComponent
+class HeedFallbackComponent extends AComponentOption
 {
     public static function stub(): array
     {

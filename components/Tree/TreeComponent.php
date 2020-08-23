@@ -12,7 +12,7 @@
 namespace Commune\Components\Tree;
 
 use Commune\Blueprint\Framework\App;
-use Commune\Ghost\Component\AGhostComponent;
+use Commune\Framework\Component\AComponentOption;
 
 
 /**
@@ -30,7 +30,7 @@ use Commune\Ghost\Component\AGhostComponent;
  *
  * @property-read bool $loadDemo
  */
-class TreeComponent extends AGhostComponent
+class TreeComponent extends AComponentOption
 {
     public static function stub(): array
     {

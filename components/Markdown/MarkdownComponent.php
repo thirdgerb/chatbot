@@ -17,7 +17,7 @@ use Commune\Components\Markdown\Options\MDGroupOption;
 use Commune\Components\Markdown\Providers\MDGroupContextLoader;
 use Commune\Components\Markdown\Providers\MDOptRegistryProvider;
 use Commune\Components\Tree\TreeComponent;
-use Commune\Ghost\Component\AGhostComponent;
+use Commune\Framework\Component\AComponentOption;
 use Commune\Support\Registry\Meta\StorageMeta;
 use Commune\Support\Utils\StringUtils;
 
@@ -52,7 +52,7 @@ use Commune\Support\Utils\StringUtils;
  * @property-read StorageMeta|null $sectionInitialStorage
  *
  */
-class MarkdownComponent extends AGhostComponent
+class MarkdownComponent extends AComponentOption
 {
     /**
      * @var MDGroupOption[]|null

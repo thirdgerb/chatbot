@@ -16,13 +16,13 @@ use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\MindMeta\SynonymMeta;
 use Commune\Components\Tree\TreeComponent;
-use Commune\Ghost\Component\AGhostComponent;
+use Commune\Framework\Component\AComponentOption;
 use Commune\Support\Registry\Storage\FileStorageOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class DemoComponent extends AGhostComponent
+class DemoComponent extends AComponentOption
 {
     public static function stub(): array
     {

@@ -15,7 +15,7 @@ use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
 use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
-use Commune\Ghost\Component\AGhostComponent;
+use Commune\Framework\Component\AComponentOption;
 use Commune\Support\Registry\Storage\FileStorageOption;
 
 /**
@@ -25,7 +25,7 @@ use Commune\Support\Registry\Storage\FileStorageOption;
  *
  * 可以搞一个自定义组件继承本类, 再去实现其中自定义的功能.
  */
-class PredefinedComponent extends AGhostComponent
+class PredefinedComponent extends AComponentOption
 {
     public static function stub(): array
     {

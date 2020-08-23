@@ -18,6 +18,8 @@ use Commune\Blueprint\Framework\ComponentOption;
 use Commune\Framework\Component\Providers\LoadComponentOption;
 use Commune\Framework\Component\Providers\RegisterComponentOption;
 use Commune\Support\Registry\Storage\FileStorageOption;
+use Commune\Blueprint\Ghost\MindSelfRegister;
+use Commune\Ghost\Providers\Psr4SelfRegisterLoader;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -100,4 +102,27 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
             false
         );
     }
+
+
+    /**
+     * 根据 psr4 规则, 预加载可以自注册的 Mindset 套件.
+     *
+     * @see MindSelfRegister
+     *
+     * @param App $app
+     * @param array $namespaceToPaths
+     */
+    public function loadPsr4MindRegister(
+        App $app,
+        array $namespaceToPaths
+    ) : void
+    {
+        $option = [
+            'id' => static::class . ':' . Psr4SelfRegisterLoader::class,
+            'psr4' => $namespaceToPaths,
+        ];
+        $provider = new Psr4SelfRegisterLoader($option);
+        $app->getServiceRegistry()->registerProcProvider($provider, false);
+    }
+
 }
