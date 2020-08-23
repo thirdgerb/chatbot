@@ -12,6 +12,7 @@
 namespace Commune\Blueprint\Ghost;
 
 use Commune\Blueprint\Ghost\MindMeta\DefMeta;
+use Commune\Blueprint\Ghost\MindReg\ChatReg;
 use Commune\Blueprint\Ghost\MindReg\ContextReg;
 use Commune\Blueprint\Ghost\MindReg\DefRegistry;
 use Commune\Blueprint\Ghost\MindReg\EmotionReg;
@@ -84,4 +85,8 @@ interface Mindset
      */
     public function synonymReg() : DefRegistry;
 
+    /**
+     * @return ChatReg
+     */
+    public function chatReg() : DefRegistry;
 }

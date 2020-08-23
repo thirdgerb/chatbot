@@ -21,6 +21,7 @@ use Commune\Support\Registry\Meta\CategoryOption;
 use Commune\Support\Registry\Meta\StorageMeta;
 use Commune\Support\Registry\Meta\StorageOption;
 use Commune\Support\Registry\OptRegistry;
+use Commune\Support\Registry\Storage\Json\JsonStorageOption;
 use Commune\Support\Registry\Storage\PHP\PHPStorageOption;
 use Commune\Support\Registry\Storage\Yaml\YmlStorageOption;
 
@@ -83,13 +84,65 @@ class MindsetStorageConfigProvider extends ServiceProvider
     protected function getCategoriesConfigs() : array
     {
         return [
-            'contexts' => [MindMeta\ContextMeta::class, PHPStorageOption::class, '语境', '上下文语境配置'],
-            'stages' => [MindMeta\StageMeta::class, PHPStorageOption::class, 'stage', '多轮对话节点逻辑配置'],
-            'intents' => [MindMeta\IntentMeta::class, PHPStorageOption::class, '意图', '对话意图配置'],
-            'memories' => [MindMeta\MemoryMeta::class, PHPStorageOption::class, '记忆', '上下文记忆配置'],
-            'emotions' => [MindMeta\EmotionMeta::class, PHPStorageOption::class, '情绪', '情绪逻辑配置, 用于复杂意图匹配'],
-            'entities' => [MindMeta\EntityMeta::class, YmlStorageOption::class, '实体词典', '实体词典配置'],
-            'synonyms' => [MindMeta\SynonymMeta::class, YmlStorageOption::class, '同义词词典', '同义词词典配置'],
+            // 逻辑库
+            'contexts' => [
+                MindMeta\ContextMeta::class,
+                PHPStorageOption::class,
+                '语境',
+                '上下文语境配置',
+                null
+            ],
+            'stages' => [
+                MindMeta\StageMeta::class,
+                PHPStorageOption::class,
+                'stage',
+                '多轮对话节点逻辑配置',
+                null,
+            ],
+            'intents' => [
+                MindMeta\IntentMeta::class,
+                PHPStorageOption::class,
+                '意图',
+                '对话意图配置',
+                null,
+            ],
+            'memories' => [
+                MindMeta\MemoryMeta::class,
+                PHPStorageOption::class,
+                '记忆',
+                '上下文记忆配置',
+                null
+            ],
+            'emotions' => [
+                MindMeta\EmotionMeta::class,
+                PHPStorageOption::class,
+                '情绪',
+                '情绪逻辑配置, 用于复杂意图匹配',
+                null,
+            ],
+
+            // 语料库
+            'entities' => [
+                MindMeta\EntityMeta::class,
+                YmlStorageOption::class,
+                '实体词典',
+                '实体词典配置',
+                null,
+            ],
+            'synonyms' => [
+                MindMeta\SynonymMeta::class,
+                YmlStorageOption::class,
+                '同义词词典',
+                '同义词词典配置',
+                '/data.yml',
+            ],
+            'chats' => [
+                MindMeta\ChatMeta::class,
+                JsonStorageOption::class,
+                '闲聊语料库',
+                '闲聊语料库配置',
+                '/data.json'
+            ]
         ];
     }
 
@@ -98,7 +151,9 @@ class MindsetStorageConfigProvider extends ServiceProvider
         $metas = $this->getCategoriesConfigs();
 
         // 遍历获取所有的 Category 配置.
-        foreach ($metas as $type => list($metaName, $storageName, $title, $desc)) {
+        foreach ($metas as $name => list($metaName, $storageName, $title, $desc, $path)) {
+            $path = $path ?? '';
+            $resourcePath = $this->resourcePath . '/' . $name . $path;
             /**
              * @var StorageOption $storage
              */
@@ -106,9 +161,9 @@ class MindsetStorageConfigProvider extends ServiceProvider
                 ? new StorageMeta([
                     'wrapper' => $storageName,
                     'config' => [
-                        'name' => $type,
-                        'path' => $this->resourcePath . '/' . $type,
-                        'isDir' => true,
+                        'name' => $name,
+                        'path' => $resourcePath,
+                        'isDir' => is_dir($resourcePath),
                     ]
                 ])
                 : null;

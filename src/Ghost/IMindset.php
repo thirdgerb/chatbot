@@ -32,6 +32,7 @@ class IMindset implements Mindset
         MindReg\EmotionReg::class => IMindReg\IEmotionReg::class,
         MindReg\EntityReg::class => IMindReg\IEntityReg::class,
         MindReg\SynonymReg::class => IMindReg\ISynonymReg::class,
+        MindReg\ChatReg::class => IMindReg\IChatReg::class
     ];
 
     const REGISTRY_META = [
@@ -42,6 +43,7 @@ class IMindset implements Mindset
         MindMeta\EmotionMeta::class => MindReg\EmotionReg::class,
         MindMeta\EntityMeta::class => MindReg\EntityReg::class,
         MindMeta\SynonymMeta::class => MindReg\SynonymReg::class,
+        MindMeta\ChatMeta::class => MindReg\ChatReg::class,
     ];
 
     /**
@@ -173,6 +175,14 @@ class IMindset implements Mindset
     {
         return $this->getReg(
            MindReg\EmotionReg::class,
+            $this->cacheExpire
+        );
+    }
+
+    public function chatReg(): DefRegistry
+    {
+        return $this->getReg(
+            MindReg\ChatReg::class,
             $this->cacheExpire
         );
     }
