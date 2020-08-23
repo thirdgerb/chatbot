@@ -111,16 +111,27 @@ class OConfuse extends AbsOperator
             ->findContextDef($this->cloner)
             ->getStrategy($this->dialog);
 
-        $fallback = $contextStrategy->heedFallbackStrategy;
-        if (!isset($fallback)) {
-            $fallback = $this->cloner->config->defaultHeedFallback;
+        $fallbackArr = $contextStrategy->heedFallbackStrategies;
+        $fallbackArr = $fallbackArr ?? [];
+
+
+        $defaultFallback = $this->cloner->config->defaultHeedFallback;
+        if (!empty($defaultFallback)) {
+            $fallbackArr[] = $defaultFallback;
         }
 
-        if (empty($fallback)) {
+        if (empty($fallbackArr)) {
             return null;
         }
 
-        return $this->dialog->container()->call($fallback);
+        foreach ($fallbackArr as $fallback) {
+            $operator = $this->dialog->container()->call($fallback);
+            if (isset($operator)) {
+                return $operator;
+            }
+        }
+
+        return null;
     }
 
     /**

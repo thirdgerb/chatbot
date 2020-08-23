@@ -40,7 +40,7 @@ class TeachTasks extends ACodeContext
                 'comprehendPipes' => null,
                 'stageRoutes' => [],
                 'contextRoutes' => [],
-                'heedFallbackStrategy' => '',
+                'heedFallbackStrategy' => [],
             ],
         ]);
     }

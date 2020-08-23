@@ -19,7 +19,7 @@ use Commune\Support\Struct\AStruct;
  *
  * @property string|null $onCancel
  * @property string|null $onQuit
- * @property string|null $heedFallbackStrategy
+ * @property string[]|null $heedFallbackStrategies
  * @property string[] $stageRoutes
  * @property string[] $contextRoutes
  * @property string[]|null $comprehendPipes
