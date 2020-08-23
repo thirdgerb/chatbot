@@ -71,6 +71,8 @@ abstract class ASession implements Session, HasIdGenerator
         $this->traceId = $container->getId();
         // 允许为 null
         $this->sessionId = $sessionId ?? $this->createUuId();
+
+        $container->share(Session::class, $this);
         SpyAgency::incr(static::class);
     }
 
