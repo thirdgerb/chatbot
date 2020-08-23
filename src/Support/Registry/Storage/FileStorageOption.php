@@ -69,8 +69,8 @@ abstract class FileStorageOption extends StorageOption
         if ($dir && !is_dir($path)) {
             return "resource directory path $path not exits";
 
-        } elseif (!$dir && !file_exists($path)) {
-            return "resource file $path not exits";
+        } elseif (!$dir && !is_dir(dirname($path))) {
+            return "resource file $path dir not exits";
         }
 
         return parent::validate($data);

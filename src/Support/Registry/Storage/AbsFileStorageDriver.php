@@ -247,7 +247,11 @@ abstract class AbsFileStorageDriver implements StorageDriver
 
     protected function readSingleFile(string $path) : ? array
     {
-        $content = file_get_contents($path);
+        $content = null;
+        if (file_exists($path)) {
+            $content = file_get_contents($path);
+        }
+
         if (empty($content)) {
             return null;
         }
