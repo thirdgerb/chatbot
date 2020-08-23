@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Predefined\Services;
+namespace Commune\Ghost\Predefined\Services;
 
 use Commune\Blueprint\Ghost\Callables\DialogicService;
 use Commune\Blueprint\Ghost\Tools\Deliver;

@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Predefined\Intent\Navigation;
+namespace Commune\Ghost\Predefined\Intent\Navigation;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
@@ -19,27 +19,22 @@ use Commune\Protocals\HostMsg\DefaultIntents;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
- * 
- * @title 重复对话
- * @desc 重复上一轮的对话
  *
- * @example 再说一遍
- * @example 刚才说什么
- * @example 现在说的是啥
- * @example 你问什么
- * @example 刚才说啥
- * 
+ * @title 返回根语境
+ * @desc 回到当前对话的根语境
+ *
  */
-class RepeatInt extends AIntentContext
+class HomeInt extends AIntentContext
 {
 
     public static function __name(): string
     {
-        return DefaultIntents::GUEST_NAVIGATE_REPEAT;
+        return DefaultIntents::GUEST_NAVIGATE_HOME;
     }
 
     public static function __redirect(Dialog $prev): Operator
     {
-        return $prev->reactivate();
+        return $prev->reset();
     }
+
 }

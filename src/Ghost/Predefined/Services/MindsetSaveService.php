@@ -9,13 +9,13 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Predefined\Services;
+namespace Commune\Ghost\Predefined\Services;
 
 use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Blueprint\Ghost\MindMeta;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Blueprint\Ghost\Tools\Deliver;
-use Commune\Components\Predefined\Services\Payload\MindSavePayload;
+use Commune\Ghost\Predefined\Services\Payload\MindSavePayload;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Predefined\Intent\Navigation;
+namespace Commune\Ghost\Predefined\Intent\Navigation;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
@@ -20,26 +20,26 @@ use Commune\Protocals\HostMsg\DefaultIntents;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
+ * @title 返回
+ * @desc 返回上一步
  *
- * @title 退出多轮对话
- * @desc 退出当前多轮对话
- *
- * @example 再见
- * @example 我走了
- * @example 拜拜
- * @example 我想退出
+ * @example 回到上一步
+ * @example 返回上一步
+ * @example 回到刚才那个问题
+ * @example 返回前面的问题
+ * @example 再说一次上一个问题
  */
-class QuitInt extends AIntentContext
+class BackwardInt extends AIntentContext
 {
 
     public static function __name(): string
     {
-        return DefaultIntents::GUEST_NAVIGATE_QUIT;
+        return DefaultIntents::GUEST_NAVIGATE_BACK;
     }
 
     public static function __redirect(Dialog $prev): Operator
     {
-        return $prev->quit();
+        return $prev->backStep(1);
     }
 
 }

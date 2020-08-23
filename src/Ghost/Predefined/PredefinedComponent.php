@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Predefined;
+namespace Commune\Ghost\Predefined;
 
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
@@ -84,10 +84,11 @@ class PredefinedComponent extends AComponentOption
         $this->loadPsr4MindRegister(
             $app,
             [
-                "Commune\\Components\\Predefined\\Memory" => __DIR__ . '/Memory',
-                "Commune\\Components\\Predefined\\Intent" => __DIR__ . '/Intent',
-                // "Commune\\Components\\Predefined\\Manager" => __DIR__ . '/Manager',
-                "Commune\\Components\\Predefined\\Join" => __DIR__ . '/Join',
+                "Commune\\Ghost\\Predefined\\Context" => __DIR__ . '/Context',
+                "Commune\\Ghost\\Predefined\\Memory" => __DIR__ . '/Memory',
+                "Commune\\Ghost\\Predefined\\Intent" => __DIR__ . '/Intent',
+                "Commune\\Ghost\\Predefined\\Manager" => __DIR__ . '/Manager',
+                "Commune\\Ghost\\Predefined\\Join" => __DIR__ . '/Join',
             ]
         );
 

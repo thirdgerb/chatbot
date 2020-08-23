@@ -13,7 +13,7 @@ namespace Commune\Components\Demo\Git;
 
 use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Ghost\Tools\Deliver;
-use Commune\Components\Predefined\Services\AbsDialogicService;
+use Commune\Ghost\Predefined\Services\AbsDialogicService;
 use Commune\Message\Host\Convo\Verbal\MarkdownMsg;
 use Commune\Support\Swoole\SwooleUtils;
 use Swoole\Coroutine;

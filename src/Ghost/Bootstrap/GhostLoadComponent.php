@@ -13,7 +13,7 @@ namespace Commune\Ghost\Bootstrap;
 
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost;
-use Commune\Components\Predefined\PredefinedComponent;
+use Commune\Ghost\Predefined\PredefinedComponent;
 use Commune\Framework\Bootstrap\LoadComponents;
 
 /**

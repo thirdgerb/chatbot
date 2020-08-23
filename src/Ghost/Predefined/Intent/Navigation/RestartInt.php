@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Predefined\Intent\Navigation;
+namespace Commune\Ghost\Predefined\Intent\Navigation;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
@@ -20,26 +20,28 @@ use Commune\Protocals\HostMsg\DefaultIntents;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @title 返回
- * @desc 返回上一步
+ * @title 重启语境
+ * @desc 当前语境从头开始对话
  *
- * @example 回到上一步
- * @example 返回上一步
- * @example 回到刚才那个问题
- * @example 返回前面的问题
- * @example 再说一次上一个问题
+ * @example 重来一次
+ * @example 重来一遍吧
+ * @example 从头开始
+ * @example 重新来一次
+ * @example 从第一步再来
+ * @example 能不能重新开始
+ * @example 我想要重来一遍
  */
-class BackwardInt extends AIntentContext
+class RestartInt extends AIntentContext
 {
 
     public static function __name(): string
     {
-        return DefaultIntents::GUEST_NAVIGATE_BACK;
+        return DefaultIntents::GUEST_NAVIGATE_RESTART;
     }
 
     public static function __redirect(Dialog $prev): Operator
     {
-        return $prev->backStep(1);
+        return $prev->goStage('');
     }
 
 }

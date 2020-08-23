@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
+use Commune\Blueprint\Ghost\MindDef\ChatDef;
 use Commune\Ghost\IMindDef\IChatDef;
 use Commune\Support\Option\AbsMeta;
 
@@ -22,6 +23,9 @@ use Commune\Support\Option\AbsMeta;
  * @property string $say
  * @property string $reply
  * @property string $index
+ *
+ *
+ * @method ChatDef toWrapper() : Wrapper
  */
 class ChatMeta extends AbsMeta implements DefMeta
 {

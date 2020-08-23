@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Predefined\Intent\Navigation;
+namespace Commune\Ghost\Predefined\Intent\Navigation;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
@@ -20,32 +20,26 @@ use Commune\Protocals\HostMsg\DefaultIntents;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @title 答非所问
- * @desc 机器人答非所问
  *
- * @example 答非所问
- * @example 胡说八道
- * @example 你胡扯些什么
- * @example 前言不搭后语
- * @example 完全理解错了
- * @example 你没有理解我的意思
- * @example 你搞错了
+ * @title 退出多轮对话
+ * @desc 退出当前多轮对话
+ *
+ * @example 再见
+ * @example 我走了
+ * @example 拜拜
+ * @example 我想退出
  */
-class WrongInt extends AIntentContext
+class QuitInt extends AIntentContext
 {
 
     public static function __name(): string
     {
-        return DefaultIntents::GUEST_NAVIGATE_BOT_WRONG;
+        return DefaultIntents::GUEST_NAVIGATE_QUIT;
     }
 
     public static function __redirect(Dialog $prev): Operator
     {
-        return $prev
-            ->send()
-            ->info(DefaultIntents::GUEST_NAVIGATE_BOT_WRONG)
-            ->over()
-            ->backStep(1);
+        return $prev->quit();
     }
 
 }

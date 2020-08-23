@@ -14,10 +14,11 @@ namespace Commune\Host\Prototype;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
 use Commune\Framework;
 use Commune\Components;
+use Commune\Ghost\Predefined\Join\JoinCmd;
 use Commune\Kernel\GhostCmd;
 use Commune\Ghost\IGhostConfig;
 use Commune\Ghost\Providers as GhostProviders;
-use Commune\Components\Predefined\Intent\Navigation;
+use Commune\Ghost\Predefined\Intent\Navigation;
 use Commune\Kernel\Handlers\IGhostRequestHandler;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\NLU\NLUServiceProvider;
@@ -68,6 +69,9 @@ class GhostProtoConfig extends IGhostConfig
 
                 // heed fallback
                 Components\HeedFallback\HeedFallbackComponent::class,
+
+                // SpaCy-NLU
+                # Components\SpaCyNLU\SpaCyNLUComponent::class,
             ],
 
             // request protocals
@@ -91,7 +95,7 @@ class GhostProtoConfig extends IGhostConfig
                 GhostCmd\User\BackCmd::class,
                 GhostCmd\User\RepeatCmd::class,
                 GhostCmd\User\RestartCmd::class,
-                Components\Predefined\Join\JoinCmd::class,
+                JoinCmd::class,
             ],
 
             // 管理员命令

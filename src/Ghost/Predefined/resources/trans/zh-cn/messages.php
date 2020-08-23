@@ -1,6 +1,6 @@
 <?php
 
-use Commune\Components\Predefined\Join\JoinLang;
+use Commune\Ghost\Predefined\Join\JoinLang;
 use Commune\Shell\Render\StageEventRenderer;
 use Commune\Protocals\HostMsg\DefaultIntents;
 
@@ -91,5 +91,8 @@ return [
             'some_stage_fullname' => 'special reply',
         ],
     ],
+
+
+    /*------- predefined -------*/
 ];
 

@@ -9,12 +9,12 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Components\Predefined\Services;
+namespace Commune\Ghost\Predefined\Services;
 
 use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Contracts\Trans\Translator;
-use Commune\Components\Predefined\Services\Payload\TransSavePayload;
+use Commune\Ghost\Predefined\Services\Payload\TransSavePayload;
 
 
 /**

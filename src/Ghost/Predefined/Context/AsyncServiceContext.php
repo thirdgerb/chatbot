@@ -71,12 +71,12 @@ class AsyncServiceContext extends ACodeContext
 
     public function callService(Dialog $dialog) : Operator
     {
-        $service = $this->service;
-        if (!is_a($service, DialogicService::class, TRUE)) {
+        $serviceName = $this->service;
 
+        if (!is_a($serviceName, DialogicService::class, TRUE)) {
             return $dialog
                 ->send()
-                ->error("invalid service class name $service")
+                ->error("invalid service class name $serviceName")
                 ->error("mission incomplete.")
                 ->over()
                 ->quit();
@@ -84,13 +84,13 @@ class AsyncServiceContext extends ACodeContext
         /**
          * @var DialogicService $service
          */
-        $service = $dialog->container()->make($service);
+        $service = $dialog->container()->make($serviceName);
 
         $auth = $service->auth();
         $authority = $dialog->cloner->auth;
         foreach ($auth as $ability) {
             if (!$authority->allow($ability)) {
-                $forbidden = DialogForbidInt::instance($service->getId(), $ability);
+                $forbidden = DialogForbidInt::instance($serviceName, $ability);
                 $dialog->send()
                     ->message($forbidden)
                     ->over()
