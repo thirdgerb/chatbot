@@ -11,15 +11,16 @@
 
 namespace Commune\NLU\TNTSearch\Classifier;
 
+use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\NLU\NLUServiceOption;
 use Commune\Blueprint\NLU\SentenceClassifier;
 use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Ghost\IMindDef\Intent\IIntentExample;
+use Commune\NLU\Support\ParserTrait;
 use Commune\Protocals\Abstracted\Intention;
 use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Utils\StringUtils;
 use TeamTNT\TNTSearch\Classifier\TNTClassifier;
@@ -30,6 +31,8 @@ use TeamTNT\TNTSearch\Support\TokenizerInterface;
  */
 class ITNTClassifier implements SentenceClassifier
 {
+    use ParserTrait;
+
     /**
      * @var TNTClassifier
      */
@@ -111,23 +114,13 @@ class ITNTClassifier implements SentenceClassifier
         return null;
     }
 
-    public function parse(
-        InputMsg $message,
+    public function doParse(
+        InputMsg $input,
+        string $sentence,
+        Session $session,
         Comprehension $comprehension
     ): Comprehension
     {
-        $handled = $comprehension->isHandled(Intention::class);
-        if ($handled) {
-            return $comprehension;
-        }
-
-        $msg = $message->getMessage();
-        if (!$msg instanceof VerbalMsg) {
-            return $comprehension;
-        }
-        $sentence = $msg->getText();
-        $sentence = trim($sentence);
-
         if (
             StringUtils::isEmptyStr($sentence)
             || is_numeric($sentence)

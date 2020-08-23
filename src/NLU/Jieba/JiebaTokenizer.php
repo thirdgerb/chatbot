@@ -11,10 +11,13 @@
 
 namespace Commune\NLU\Jieba;
 
+use Commune\Blueprint\Framework\Session;
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\NLU\NLUServiceOption;
 use Commune\Blueprint\NLU\Tokenizer;
 use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\Ghost\Mindset;
+use Commune\NLU\Support\ParserTrait;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\Intercom\InputMsg;
@@ -28,6 +31,7 @@ use Commune\Blueprint\NLU\Tokenizer as ComprehendTokenizer;
  */
 class JiebaTokenizer implements Tokenizer
 {
+    use ParserTrait;
 
     protected static $booted = false;
 
@@ -90,7 +94,7 @@ class JiebaTokenizer implements Tokenizer
     }
 
 
-    public function saveMeta(DefMeta $meta): string
+    public function saveMeta(Cloner $cloner, DefMeta $meta): string
     {
         // todo 未来可能加入同义词词典
         // 不过 php-jieba 本来就是测试用的, 不考虑生产环境再去复杂使用.
@@ -102,24 +106,24 @@ class JiebaTokenizer implements Tokenizer
         return '';
     }
 
-    public function parse(
-        InputMsg $message,
+    public function doParse(
+        InputMsg $input,
+        string $sentence,
+        Session $session,
         Comprehension $comprehension
     ): Comprehension
     {
-        $isHandled = $comprehension->isHandled(ComprehendTokenizer::class);
-        if ($isHandled) {
+        $isSucceed = $comprehension->isSucceed(ComprehendTokenizer::class);
+        if ($isSucceed) {
             return $comprehension;
         }
 
-        $msg = $message->getMessage();
+        $msg = $input->getMessage();
         if (!$msg instanceof VerbalMsg) {
             return $comprehension;
         }
 
-        $sentence = $msg->getText();
         $tokens = $this->tokenize($sentence);
-
         $comprehension->tokens->addTokens($tokens);
         $comprehension->handled(
             ComprehendTokenizer::class,

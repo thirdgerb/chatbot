@@ -15,8 +15,8 @@ use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Blueprint\NLU\NLUManager;
-use Commune\Components\Predefined\Services\AbsDialogicService;
-use Commune\Components\Predefined\Services\Payload\MindSavePayload;
+use Commune\Ghost\Predefined\Services\AbsDialogicService;
+use Commune\Ghost\Predefined\Services\Payload\MindSavePayload;
 
 
 /**

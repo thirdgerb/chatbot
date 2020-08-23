@@ -28,6 +28,8 @@ class NLUServiceOption extends AbsOption
 {
     const IDENTITY = 'id';
 
+    const MIDDLE_PRIORITY = 10;
+
     public static function stub(): array
     {
         return [
@@ -35,7 +37,7 @@ class NLUServiceOption extends AbsOption
             'desc' => '',
             'serviceAbstract' => '',
             'managerUcl' => null,
-            'priority' => 10,
+            'priority' => self::MIDDLE_PRIORITY,
         ];
     }
 

@@ -11,6 +11,7 @@
 
 namespace Commune\NLU\Support;
 
+use Commune\Blueprint\Framework\Session;
 use Commune\Protocals\Abstracted\Intention;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
@@ -22,30 +23,32 @@ use Commune\Protocals\Intercom\InputMsg;
  */
 trait ParserTrait
 {
+    protected $handlerType = Intention::class;
 
     public function parse(
-        InputMsg $message,
+        InputMsg $input,
+        Session $session,
         Comprehension $comprehension
     ): Comprehension
     {
-        $msg = $message->getMessage();
-        if (!$msg instanceof VerbalMsg) {
+        if (!$input->isMsgType(VerbalMsg::class)) {
             return $comprehension;
         }
 
-        $text = $message->getNormalizedText();
+        $text = $input->getNormalizedText();
         if (NLUUtils::isNotNatureLanguage($text)) {
             return $comprehension;
         }
 
-        $handled = $comprehension->isHandled(Intention::class);
+        $handled = $comprehension->isSucceed($this->handlerType);
         if ($handled) {
             return $comprehension;
         }
 
         return $this->doParse(
-            $message,
+            $input,
             $text,
+            $session,
             $comprehension
         );
     }
@@ -53,6 +56,7 @@ trait ParserTrait
     abstract protected function doParse(
         InputMsg $input,
         string $normalizedText,
+        Session $session,
         Comprehension $comprehension
     ) : Comprehension;
 

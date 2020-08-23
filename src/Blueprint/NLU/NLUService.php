@@ -11,6 +11,7 @@
 
 namespace Commune\Blueprint\NLU;
 
+use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\Ghost\Mindset;
@@ -22,7 +23,6 @@ use Commune\Protocals\Intercom\InputMsg;
  */
 interface NLUService
 {
-    public function getOption() : NLUServiceOption;
 
     /**
      * 同步 Mindset
@@ -32,13 +32,14 @@ interface NLUService
     public function syncMind(Mindset $mind) : ? string;
 
     /**
-     * 分析输入信息.
-     * @param InputMsg $message
+     * @param InputMsg $input
+     * @param Session $session
      * @param Comprehension $comprehension
      * @return Comprehension
      */
     public function parse(
-        InputMsg $message,
+        InputMsg $input,
+        Session $session,
         Comprehension $comprehension
     ) : Comprehension;
 
