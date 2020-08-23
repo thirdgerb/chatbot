@@ -72,7 +72,12 @@ class CommandUtils
      */
     public static function getCommandStr(string $text, string $commandMark = null) : ? string
     {
+        $text = trim($text);
         $commandMark = $commandMark ?? self::$userCommandMark;
+
+        if (empty($commandMark)) {
+            return StringUtils::sbc2dbc($text);
+        }
 
         $hasMark = strlen($commandMark) === 0
             || mb_strpos($text, $commandMark) === 0;

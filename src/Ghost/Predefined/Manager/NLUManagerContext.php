@@ -18,7 +18,9 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\NLU\NLUService;
 use Commune\Blueprint\NLU\NLUServiceOption;
-use Commune\Ghost\Context\ACodeContext;
+use Commune\Ghost\Context\ACommandContext;
+use Commune\Ghost\Context\Command\AContextCmdDef;
+use Commune\Ghost\Context\Command\CancelCmdDef;
 
 /**
  * 所有的中文描述未来再改吧....
@@ -31,7 +33,7 @@ use Commune\Ghost\Context\ACodeContext;
  *
  * @property-read NLUServiceOption[] $serviceManagers    服务管理对话
  */
-class NLUManagerContext extends ACodeContext
+class NLUManagerContext extends ACommandContext
 {
     /**
      * @var NLUServiceOption|null
@@ -49,6 +51,14 @@ class NLUManagerContext extends ACodeContext
     {
         return $depending;
     }
+
+    public static function __command_defs(): array
+    {
+        return [
+            new CancelCmdDef()
+        ];
+    }
+
 
     public function __on_start(StageBuilder $stage): StageBuilder
     {
@@ -83,8 +93,6 @@ class NLUManagerContext extends ACodeContext
                     );
 
             });
-
-
     }
 
     public function __get_serviceManagers() : array

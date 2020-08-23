@@ -58,11 +58,16 @@ abstract class AbsCodeContext extends IContext implements CodeContext
         if (isset($meta)) {
             $name = static::__name();
             return self::$_defs[$name]
-                ?? self::$_defs[$name] = new ICodeContextDef(static::class, $meta);
+                ?? self::$_defs[$name] = static::__make_def($meta);
         }
 
-        // 配置不存在时, 直接生成一个.
-        return new ICodeContextDef(static::class);
+        // 配置不存在时, 直接生成一个. 并且不缓存
+        return static::__make_def($meta);
+    }
+
+    public static function __make_def(ContextMeta $meta = null) : ICodeContextDef
+    {
+        return new ICodeContextDef(static::class, $meta);
     }
 
     public static function create(Cloner $cloner, Ucl $ucl): Context
