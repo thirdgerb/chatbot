@@ -33,7 +33,7 @@ class ContextStrategyOption extends AStruct
             'auth' => [],
             'onCancel' => null,
             'onQuit' => null,
-            'heedFallbackStrategy' => null,
+            'heedFallbackStrategies' => null,
             'comprehendPipes' => null,
             'stageRoutes' => [],
             'contextRoutes' => [],

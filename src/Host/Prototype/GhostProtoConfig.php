@@ -71,7 +71,7 @@ class GhostProtoConfig extends IGhostConfig
                 Components\HeedFallback\HeedFallbackComponent::class,
 
                 // SpaCy-NLU
-                # Components\SpaCyNLU\SpaCyNLUComponent::class,
+                Components\SpaCyNLU\SpaCyNLUComponent::class,
             ],
 
             // request protocals
@@ -126,7 +126,10 @@ class GhostProtoConfig extends IGhostConfig
             'defaultContextName' => Components\Demo\Contexts\DemoHome::genUcl()->encode(),
             'sceneContextNames' => [
             ],
-            'defaultHeedFallback' => Components\HeedFallback\Action\HeedFallback::class,
+            'defaultHeedFallback' =>[
+                Components\HeedFallback\Action\HeedFallback::class,
+            ],
+
             'globalContextRoutes' => [
                 // 其实也可以用 __name(), 但下面这个方法才最本质.
                 Navigation\CancelInt::genUcl()->encode(),
