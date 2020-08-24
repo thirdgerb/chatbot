@@ -34,7 +34,7 @@ return array (
       'contextRoutes' => 
       array (
       ),
-      'heedFallbackStrategy' => NULL,
+      'heedFallbackStrategies' => NULL,
     ),
   ),
 );

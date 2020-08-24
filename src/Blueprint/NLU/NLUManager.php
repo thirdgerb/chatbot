@@ -51,6 +51,10 @@ interface NLUManager
 
     /*------- learn ------*/
 
+    /**
+     * @param Cloner $cloner
+     * @param DefMeta $meta
+     */
     public function asyncSaveMeta(Cloner $cloner, DefMeta $meta) : void;
 
     /**

@@ -18,6 +18,7 @@ namespace Commune\Blueprint\NLU;
  */
 interface SimpleChat extends NLUService
 {
-    public function reply(string $query) : ? string;
+
+    public function reply(string $query, string $index = '') : ? string;
 
 }

@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Predefined\Manager;
 
+use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Blueprint\Ghost\Context\CodeContextOption;
 use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
@@ -19,7 +20,6 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\NLU\NLUService;
 use Commune\Blueprint\NLU\NLUServiceOption;
 use Commune\Ghost\Context\ACommandContext;
-use Commune\Ghost\Context\Command\AContextCmdDef;
 use Commune\Ghost\Context\Command\CancelCmdDef;
 
 /**
@@ -44,6 +44,9 @@ class NLUManagerContext extends ACommandContext
     {
         return new CodeContextOption([
             'priority' => 1,
+            'strategy' => [
+                'auth' => [Supervise::class],
+            ],
         ]);
     }
 
@@ -65,7 +68,7 @@ class NLUManagerContext extends ACommandContext
         return $stage->onActivate(function(Dialog $dialog) {
             return $dialog
                 ->send()
-                ->info('管理 NLU 的各种服务')
+                ->info('管理 NLU 的各种服务 (输入 .help 查看可用命令)')
                 ->over()
                 ->goStage('services');
         });
@@ -79,8 +82,9 @@ class NLUManagerContext extends ACommandContext
                 $services = $this->serviceManagers;
                 $map = [];
                 foreach ($services as $option) {
+                    $id = $option->id;
                     $desc = $option->desc;
-                    $key = "|$desc";
+                    $key = "|$id ($desc)";
                     $ucl = Ucl::decode($option->managerUcl);
                     $map[$key] = $ucl;
                 }
@@ -89,7 +93,7 @@ class NLUManagerContext extends ACommandContext
                     ->await()
                     ->askChoose(
                         "请选择要管理的服务:",
-                        $services
+                        $map
                     );
 
             });

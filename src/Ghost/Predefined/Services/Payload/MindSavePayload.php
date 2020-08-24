@@ -37,7 +37,7 @@ class MindSavePayload extends AStruct
     {
         $metaName = $data['metaName'] ?? '';
         if (!is_a($metaName, DefMeta::class, TRUE)) {
-            return 'invalid meta name';
+            return "invalid meta name $metaName";
         }
 
         if (empty($data['metaData'])) {

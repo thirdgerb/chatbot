@@ -23,7 +23,10 @@ use Commune\Protocals\Intercom\InputMsg;
  */
 trait ParserTrait
 {
-    protected $handlerType = Intention::class;
+    protected function getHandlerType() : string
+    {
+        return Intention::class;
+    }
 
     public function parse(
         InputMsg $input,
@@ -40,7 +43,8 @@ trait ParserTrait
             return $comprehension;
         }
 
-        $handled = $comprehension->isSucceed($this->handlerType);
+
+        $handled = $comprehension->isSucceed($this->getHandlerType());
         if ($handled) {
             return $comprehension;
         }
