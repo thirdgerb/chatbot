@@ -43,6 +43,9 @@ class IChatDef implements ChatDef
         ]);
     }
 
+    /**
+     * @return ChatMeta
+     */
     public function toMeta(): Meta
     {
         return $this->meta;
@@ -55,10 +58,10 @@ class IChatDef implements ChatDef
     public static function wrapMeta(Meta $meta): Wrapper
     {
         return new static(
-            $meta->cid,
             $meta->say,
             $meta->reply,
-            $meta->index
+            $meta->index,
+            $meta->cid
         );
     }
 

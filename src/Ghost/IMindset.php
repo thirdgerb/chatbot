@@ -80,6 +80,7 @@ class IMindset implements Mindset
         $this->entityReg()->reset();
         $this->synonymReg()->reset();
         $this->emotionReg()->reset();
+        $this->chatReg()->reset();
     }
 
 
@@ -92,6 +93,7 @@ class IMindset implements Mindset
         $this->entityReg()->flushCache();
         $this->synonymReg()->flushCache();
         $this->emotionReg()->flushCache();
+        $this->chatReg()->flushCache();
     }
 
     public function getRegistry(DefMeta $meta): ? DefRegistry
