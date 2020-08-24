@@ -400,13 +400,14 @@ trait LesionTrait
                     }
                 }
 
-
+                $scopes = $this->scopes;
+                $scopes[] = $this->getStage('done');
 
                 return $dialog
                     ->await()
                     ->askChoose(
                         HeedFallbackLang::STRATEGY_CHOOSE_SCOPE,
-                        $this->scopes
+                        $scopes
                     );
             })
             ->onReceive(function(Dialog $dialog) {

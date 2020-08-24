@@ -20,9 +20,11 @@ use Commune\Components\HeedFallback\Constants\HeedFallbackLang;
 use Commune\Components\HeedFallback\Context\LesionTask;
 use Commune\Components\HeedFallback\Data\FallbackSceneOption;
 use Commune\Components\HeedFallback\Data\StrategyMatcherOption;
+use Commune\Components\HeedFallback\HeedFallbackComponent;
 use Commune\Components\HeedFallback\Libs\FallbackStrategy;
 use Commune\Components\HeedFallback\Libs\FallbackSceneRepository;
 use Commune\Components\HeedFallback\Support\HeedFallbackUtils;
+use Commune\NLU\Support\NLUUtils;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Support\Registry\Category;
 use Commune\Support\Registry\OptRegistry;
@@ -39,7 +41,7 @@ class HeedFallback
 {
     /*------ config -------*/
 
-    protected $allowSimpleChat = false;
+//    protected $allowSimpleChat = false;
 
     /*------ cached -------*/
 
@@ -120,6 +122,13 @@ class HeedFallback
             return null;
         }
 
+        // 否则仍然尝试用闲聊模块.
+        // 但这个闲聊模块要允许返回 null, 不能全部都硬答.
+        $operator = $this->simpleChat($dialog, $message->getText());
+        if (isset($operator)) {
+            return $operator;
+        }
+
         $cloner = $dialog->cloner;
         // 记录现场.
         $scene = FallbackSceneOption::createFromCloner($cloner);
@@ -137,11 +146,7 @@ class HeedFallback
             $this->repo->push($scene);
         }
 
-        // 否则仍然尝试用闲聊模块.
-        // 但这个闲聊模块要允许返回 null, 不能全部都硬答.
-        return $this->allowSimpleChat
-            ? $this->simpleChat($dialog, $scene->text)
-            : null;
+        return null;
     }
 
     /**
@@ -154,6 +159,10 @@ class HeedFallback
     {
         $nlu = $dialog->cloner->nlu;
 
+        if (NLUUtils::isNotNatureLanguage($text)) {
+            return null;
+        }
+
         /**
          * @var SimpleChat $chat
          */
@@ -161,7 +170,9 @@ class HeedFallback
         if (empty($chat)) {
             return null;
         }
-        $reply = $chat->reply($text);
+
+
+        $reply = $chat->reply($text, HeedFallbackComponent::class);
 
         if (empty($reply)) {
             return null;
@@ -171,7 +182,7 @@ class HeedFallback
             ->send()
             ->info($reply)
             ->over()
-            ->rewind();
+            ->dumb();
     }
 
     protected function runStrategy(Dialog $dialog, StrategyMatcherOption $option) : ? Operator

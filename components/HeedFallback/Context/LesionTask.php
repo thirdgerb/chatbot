@@ -21,8 +21,11 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\NLU\SimpleChat;
 use Commune\Components\HeedFallback\Constants\HeedFallbackLang;
 use Commune\Components\HeedFallback\Data\FallbackSceneOption;
+use Commune\Components\HeedFallback\HeedFallbackComponent;
 use Commune\Components\HeedFallback\Libs\FallbackSceneRepository;
 use Commune\Ghost\Context\ACodeContext;
+use Commune\Ghost\IMindDef\IChatDef;
+use Commune\Message\Host\Convo\IText;
 use Commune\Message\Host\Convo\Verbal\ReplyMsg;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 use Commune\Support\Utils\StringUtils;
@@ -81,7 +84,7 @@ class LesionTask extends ACodeContext
                     'menu',
                 ],
                 'contextRoutes' => [],
-                'heedFallbackStrategy' => '',
+                'heedFallbackStrategies' => [],
             ],
         ]);
     }
@@ -189,7 +192,7 @@ class LesionTask extends ACodeContext
                     // 跳过
                     $this->getStage('skip'),
                     // 闲聊策略
-                    // $this->getStage('chat'),
+                    $this->getStage('chat'),
                     // 忽略掉
                     $this->getStage('ignore'),
                     // 退出
@@ -342,7 +345,7 @@ class LesionTask extends ACodeContext
                 /**
                  * @var SimpleChat $chat
                  */
-                $reply = $chat->reply($this->scene->text);
+                $reply = $chat->reply($this->scene->text, HeedFallbackComponent::class);
 
                 return $dialog
                     ->send()
@@ -373,25 +376,26 @@ class LesionTask extends ACodeContext
                                 ->over()
                                 ->rewind();
                         }
-//
-//                        /**
-//                         * @var SimpleChat $chat
-//                         */
-//                        $chat = $dialog->cloner->nlu->getService(
-//                            $dialog->cloner,
-//                        SimpleChat::class
-//                        );
-//
-//                        // todo 应该给 simple chat 创建一个 ChatMeta, 长期保存语料.
-//                        // 它的原理和文本分类是不一样的.
-//                        if (!empty($chat)) {
-//                            $chat->learn(
-//                                $this->scene->text,
-//                                $text
-//                            );
-//                        }
 
-                        return $dialog->goStage('learned');
+                        $def = new IChatDef(
+                            $this->scene->text,
+                            $text,
+                            HeedFallbackComponent::class
+                        );
+
+                        $cloner = $dialog->cloner;
+                        $cloner
+                            ->nlu
+                            ->asyncSaveMeta($cloner, $def->toMeta());
+
+
+                        $scene = $this->scene;
+                        return $dialog
+                            ->send()
+                            ->withSessionId($scene->sessionId)
+                            ->message(IText::instance($text))
+                            ->over()
+                            ->goStage('done');
                     })
                     ->end();
             });

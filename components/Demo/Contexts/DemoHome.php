@@ -23,6 +23,7 @@ use Commune\Components\Demo\Maze\Maze;
 use Commune\Components\HeedFallback\Context\TeachTasks;
 use Commune\Components\Tree\Demo\TreeDemoContext;
 use Commune\Ghost\Context\ACodeContext;
+use Commune\Ghost\Predefined\Manager\NLUManagerContext;
 use Commune\Support\Registry\OptRegistry;
 
 
@@ -107,6 +108,7 @@ class DemoHome extends ACodeContext
                             GitContext::genUcl(),
                             Ucl::make('md.demo.commune_v2_intro'),
                             Ucl::make(TreeDemoContext::NAME),
+                            NLUManagerContext::genUcl(),
                             TeachTasks::genUcl(),
                         ]
                     );
