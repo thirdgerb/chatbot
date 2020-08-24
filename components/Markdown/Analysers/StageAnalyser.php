@@ -17,7 +17,7 @@ use Commune\Components\Markdown\Mindset\SectionStageDef;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-interface BranchAnalyser
+interface StageAnalyser
 {
 
     /**

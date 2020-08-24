@@ -20,8 +20,8 @@ use Commune\Protocals\HostMsg\DefaultIntents;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  * 
- * @title 取消
- * @desc 取消语境
+ * @title 退出
+ * @desc 退出语境
  *
  * @example 退出
  * @example 我要退出

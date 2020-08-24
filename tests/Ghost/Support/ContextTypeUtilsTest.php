@@ -100,7 +100,11 @@ class ContextTypeUtilsTest extends TestCase
         $this->assertTrue(ContextUtils::isValidStageName('tt_ef1g_h3ij'));
         $this->assertFalse(ContextUtils::isValidStageName('tt_Ef1g_h3ij'));
 
+    }
 
+    public function testStageNameCases()
+    {
+        $this->assertTrue(ContextUtils::isValidStageName('v2_technology_exploration'));
     }
 
 }

@@ -12,10 +12,19 @@
 namespace Commune\Message\Host\Convo\Verbal;
 
 use Commune\Message\Host\Convo\IText;
+use Commune\Support\Arr\ArrayAndJsonAble;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class JsonMsg extends IText
 {
+
+    public static function fromArr(
+        array $data
+    ) : JsonMsg
+    {
+        $info = json_encode($data, ArrayAndJsonAble::PRETTY_JSON);
+        return static::instance($info);
+    }
 }

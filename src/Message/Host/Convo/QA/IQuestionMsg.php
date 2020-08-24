@@ -157,7 +157,11 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
         return $this->isDefault($message)
             ?? $this->isInSuggestions($message)
-            ?? $this->acceptAnyVerbalAnswer($message)
+            ?? (
+                $this->isMatchMode(self::MATCH_ANY)
+                ? $this->acceptAnyVerbalAnswer($message)
+                : null
+            )
             ?? null;
     }
 
@@ -180,11 +184,8 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
 
     protected function acceptAnyVerbalAnswer(VerbalMsg $message) : ? AnswerMsg
     {
-        if ($this->isMatchMode(self::MATCH_ANY)) {
-            $text = $message->getText();
-            return $this->newAnswer($text);
-        }
-        return null;
+        $text = $message->getText();
+        return $this->newAnswer($text);
     }
 
     protected function parseInputText(string $text) : string

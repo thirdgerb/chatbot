@@ -85,21 +85,25 @@ class MDGroupOption extends AbsOption
                 'stageEvent' => Analysers\Stage\StageEventAls::class,
                 'intentExample' => Analysers\Stage\IntentExampleAls::class,
                 'intentSpell' => Analysers\Stage\IntentSpellAls::class,
+                // word1,word2,word3
+                'intentKeywords' => Analysers\Stage\IntentKeywordAls::class,
 
-                // context
-                // 'context.name'
-                // 'context.title'
-                // 'context.desc'
 
-                // await
+
             ],
 
             // 动态分析工具.
             'dynamicAnalysers' => [
+                // message
                 'info' => Analysers\Message\InfoAls::class,
                 'error' => Analysers\Message\ErrorAls::class,
                 'warning' => Analysers\Message\WarningAls::class,
                 'bili' => Analysers\Message\BiliAls::class,
+
+                // await
+                'goNext' => Analysers\Await\GoNextAls::class,
+                'routeToStage' => Analysers\Await\RouteToStageAls::class,
+                'routeUcl' => Analysers\Await\RouteUclAls::class,
 
             ],
 

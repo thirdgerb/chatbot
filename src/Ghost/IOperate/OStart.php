@@ -17,11 +17,14 @@ use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
+use Commune\Blueprint\NLU\NLUManager;
+use Commune\Blueprint\NLU\NLUService;
 use Commune\Ghost\Dialog\IReceive;
 use Commune\Ghost\IOperate\OExiting\OCancel;
 use Commune\Ghost\IOperate\OExiting\OFulfill;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Protocals\Abstracted\Answer;
+use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 use Commune\Protocals\HostMsg\ConvoMsg;
@@ -250,13 +253,12 @@ class OStart extends AbsOperator
 
     protected function runComprehendPipes(InputMsg $input) : ? Operator
     {
-
         $awaitUcl = $this->start;
         $contextDef = $awaitUcl->findContextDef($this->cloner);
 
         $pipes = $contextDef->getStrategy($this->dialog)->comprehendPipes;
-        $pipes = $pipes ?? $this->cloner->config->comprehensionPipes;
-        $this->runComprehendPipeline($pipes);
+        $pipes = $pipes ?? $this->cloner->config->comprehendPipes;
+        $this->runComprehendPipeline($pipes, $input);
         return null;
     }
 
@@ -310,23 +312,30 @@ class OStart extends AbsOperator
      * 当要调用多种 comprehender 工具, 例如 全文搜索/图片/分类/意图识别/实体提取 时,
      * 还应该有并联的调用, 在 swoole 里可以用协程来实现并发调用.
      * 这种并联调用规则就可以写到同一个 pipe 里.
-     *
+
      * @param array $pipes
+     * @param InputMsg $input
      */
-    protected function runComprehendPipeline(array $pipes) : void
+    protected function runComprehendPipeline(array $pipes, InputMsg $input) : void
     {
         if (empty($pipes)) {
             return;
         }
 
-        $pipeline = $this->cloner->buildPipeline(
-            $pipes,
-            ComprehendPipe::HANDLE,
-            function(Cloner $cloner) : Cloner{
-                return $cloner;
-            });
+        $container = $this->cloner->container;
+        $nluManager = $this->cloner->nlu;
+        $comprehension = $this->cloner->comprehension;
+        foreach ($pipes as $pipe) {
 
-        $pipeline($this->cloner);
+            if (is_a($pipe, NLUService::class, TRUE)) {
+
+                $service = $nluManager->getService($this->cloner, $pipe);
+                if (isset($service)) {
+                    $comprehension = $service->parse($input, $this->cloner, $comprehension);
+                }
+            }
+        }
+        $container->share(Comprehension::class, $comprehension);
     }
 
 
@@ -365,7 +374,9 @@ class OStart extends AbsOperator
 
                 if (ContextUtils::isWildcardIntentPattern($fullname)) {
                     $name = ContextUtils::wildcardIntentMatch($fullname, $matched);
-                    return $route->goStageByFullname($name);
+                    if (isset($name)) {
+                        return $route->goStageByFullname($name);
+                    }
                 }
             }
         }

@@ -24,6 +24,7 @@ use Commune\Components\HeedFallback\HeedFallbackComponent;
 use Commune\Components\HeedFallback\Libs\FallbackStrategy;
 use Commune\Components\HeedFallback\Libs\FallbackSceneRepository;
 use Commune\Components\HeedFallback\Support\HeedFallbackUtils;
+use Commune\Ghost\Support\ContextUtils;
 use Commune\NLU\Support\NLUUtils;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Support\Registry\Category;
@@ -78,8 +79,18 @@ class HeedFallback
      */
     public function __invoke(Receive $dialog) : ? Operator
     {
-        $cloner = $dialog->cloner;
+        $input = $dialog->input;
 
+        if (!$input->isMsgType(VerbalMsg::class)) {
+            return null;
+        }
+
+        $text = $input->getMessage()->getText();
+        if (NLUUtils::isNotNatureLanguage($text)) {
+            return null;
+        }
+
+        $cloner = $dialog->cloner;
         $matched = $cloner->comprehension->intention->getMatchedIntent();
 
         // 如果有 matched intent.

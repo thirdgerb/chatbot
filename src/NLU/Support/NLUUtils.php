@@ -25,8 +25,8 @@ class NLUUtils
         $str = trim($str);
         return StringUtils::isEmptyStr($str)
             || is_numeric($str)
-            // 单字符
-            || preg_match('/^[\p{L}\p{P}\p{S}\p{Z}]$/', $str);
+            // 纯字符
+            || preg_match('/^[\p{L}\p{P}\p{S}\p{Z}]\+$/', $str);
     }
 
 }

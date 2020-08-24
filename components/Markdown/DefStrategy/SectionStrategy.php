@@ -13,7 +13,9 @@ namespace Commune\Components\Markdown\DefStrategy;
 
 use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
 use Commune\Blueprint\Ghost\Dialog;
+use Commune\Blueprint\Ghost\Operate\Await;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Components\Markdown\Analysers\AwaitAnalyser;
 use Commune\Components\Markdown\Analysers\MessageAnalyser;
 use Commune\Components\Markdown\Constants\MDContextLang;
 use Commune\Components\Markdown\Exceptions\MarkdownOptNotFoundException;
@@ -88,11 +90,11 @@ class SectionStrategy
     protected function onActivate(SectionStageDef $def, Dialog\Activate $dialog) : Operator
     {
 
-
-
         $group = $this->getGroupOption($def->groupName);
         $section = $this->getSectionOption($def->contextName, $def->orderId);
 
+        // 每一个 stage 都可以拆分成多段对话
+        // 在内部切换时会保留上下文记忆, 避免重复.
         $isSameContext = $dialog->process->getAwait()->isSameContext($dialog->ucl);
         if (! $isSameContext) {
             $dialog->context[$def->stageName] = 0;
@@ -102,11 +104,13 @@ class SectionStrategy
         $max = count($section->texts) - 1;
         $current = $dialog->context[$def->stageName] ?? 0;
 
+        // 逐行扫描发现的动态注释.
+        $comments = [];
         $operator = null;
         if ($current <= $max) {
             $text = $section->texts[$current];
             $text = trim($text);
-            $operator = $this->sendMessage($group, $text, $dialog);
+            $operator = $this->sendMessage($group, $text, $dialog, $comments);
         }
 
         if (isset($operator)) {
@@ -114,13 +118,21 @@ class SectionStrategy
         }
 
         if ($current < $max) {
-            return $this->askContinue($dialog, $current, $max);
+            $await = $this->defaultContinue($dialog, $current, $max);
         } else {
-            return $this->askAwait($def, $group, $section, $dialog);
+            $await = $this->defaultAwait($def, $dialog);
         }
+
+        return $this->askAwait(
+            $await,
+            $def,
+            $group,
+            $dialog,
+            $comments
+        );
     }
 
-    protected function askContinue(
+    protected function defaultContinue(
         Dialog $dialog,
         int $current,
         int $max
@@ -129,37 +141,21 @@ class SectionStrategy
         return $dialog
             ->await()
             ->askStepper(
-                MDContextLang::ASK_CONTINUE,
+                MDContextLang::ASK_CHOOSE,
                 $current,
                 $max
             );
     }
 
-    protected function askAwait(
-        SectionStageDef $def,
-        MDGroupOption $group,
-        MDSectionData $section,
-        Dialog\Activate $dialog
-    ) : Operator
-    {
-        $await = $this->defaultAwait($def, $dialog);
-
-
-        // todo ...
-
-        return $await;
-    }
 
     protected function defaultAwait(
         SectionStageDef $def,
         Dialog\Activate $dialog
     )
     {
-
         $await = $dialog->await();
-        $await->askChoose("请选择");
+        $await->askChoose(MDContextLang::ASK_CHOOSE);
         $question = $await->getCurrentQuestion();
-
 
         $parent = $def->parent;
         $children = $def->children;
@@ -175,7 +171,54 @@ class SectionStrategy
             );
         }
         if (isset($parent)) {
-            $question->addSuggestion('返回', 'b', $ucl->goStage($parent));
+            $question->addSuggestion(
+                MDContextLang::BACKWARD
+                ,
+                'b',
+                $ucl->goStage($parent)
+            );
+        }
+
+        return $await;
+    }
+
+
+    protected function askAwait(
+        Await $await,
+        SectionStageDef $def,
+        MDGroupOption $group,
+        Dialog\Activate $dialog,
+        array &$comments
+    ) : Operator
+    {
+        if (empty($comments)) {
+            return $await;
+        }
+
+        $awaitAlsMap = $group->getAnalyserMapByInterface(
+            AwaitAnalyser::class,
+            false
+        );
+
+        if (empty($awaitAlsMap)) {
+            return $await;
+        }
+
+        // 遍历所有的动态注解.
+        $container = $dialog->container();
+        foreach ($comments as list($comment, $content)) {
+            if (array_key_exists($comment, $awaitAlsMap)) {
+                /**
+                 * @var AwaitAnalyser $als
+                 */
+                $alsName = $awaitAlsMap[$comment];
+                $als = $container->make($alsName);
+                $await = $als($dialog, $def, $content, $await);
+
+                if (!$await instanceof Await) {
+                    return $await;
+                }
+            }
         }
 
         return $await;
@@ -185,7 +228,8 @@ class SectionStrategy
     protected function sendMessage(
         MDGroupOption $group,
         string $text,
-        Dialog $dialog
+        Dialog $dialog,
+        array &$comments
     ) : ? Operator
     {
         $lines = explode(PHP_EOL, $text);
@@ -202,6 +246,7 @@ class SectionStrategy
 
             // 如果有注释
             if (!empty($commentInfo)) {
+                $comments[] = $commentInfo;
                 list($comment, $content) = $commentInfo;
                 $analyserName = $messageAlsMap[$comment] ?? null;
 

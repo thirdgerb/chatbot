@@ -87,6 +87,13 @@ interface Await extends Finale
         ?string $break = DefaultIntents::GUEST_LOOP_BREAK
     ) : Operator;
 
+
+    public function askAny(
+        string $query,
+        array $suggestions = [],
+        $defaultChoice = 0
+    ) ;
+
     /**
      * @param QuestionMsg $question
      * @return Operator

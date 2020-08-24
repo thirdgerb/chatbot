@@ -12,14 +12,14 @@
 namespace Commune\Components\Markdown\Analysers\Stage;
 
 use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Components\Markdown\Analysers\BranchAnalyser;
+use Commune\Components\Markdown\Analysers\StageAnalyser;
 use Commune\Components\Markdown\Mindset\SectionStageDef;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StageDescAls implements BranchAnalyser
+class StageDescAls implements StageAnalyser
 {
 
     public function __invoke(

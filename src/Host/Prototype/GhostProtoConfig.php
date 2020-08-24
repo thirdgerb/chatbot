@@ -12,6 +12,7 @@
 namespace Commune\Host\Prototype;
 
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
+use Commune\Blueprint\NLU\NLUService;
 use Commune\Framework;
 use Commune\Components;
 use Commune\Ghost\Predefined\Join\JoinCmd;
@@ -107,10 +108,11 @@ class GhostProtoConfig extends IGhostConfig
                 GhostCmd\Super\IntentCmd::class,
                 GhostCmd\Super\RedirectCmd::class,
                 GhostCmd\Super\SceneCmd::class,
+                GhostCmd\Super\StageCmd::class,
             ],
 
-            'comprehensionPipes' => [
-
+            'comprehendPipes' => [
+                NLUService::class,
             ],
 
             'mindPsr4Registers' => [

@@ -18,6 +18,8 @@ namespace Commune\Components\Markdown\Constants;
 class MDContextLang
 {
 
-    const ASK_CONTINUE = 'markdown.dialog.askContinue';
+    const ASK_CHOOSE = 'markdown.dialog.askChoose';
+
+    const BACKWARD ='markdown.dialog.backward';
 
 }

@@ -230,6 +230,18 @@ class IIntentDef extends AbsOption implements IntentDef
         return $this->keywords;
     }
 
+    public function appendKeywords(array $words): void
+    {
+        if (empty($words)) {
+            return;
+        }
+
+        $keywords = $this->keywords;
+        array_push($keywords, ...$words);
+        $this->keywords = array_unique($keywords);
+    }
+
+
     public function getRegex(): array
     {
         return $this->regex;

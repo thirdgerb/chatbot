@@ -78,4 +78,5 @@ class BranchStageDef extends IStageDef
         return $this->getTitle() !== $this->getName()
             && $this->getDescription() !== $this->getName();
     }
+
 }

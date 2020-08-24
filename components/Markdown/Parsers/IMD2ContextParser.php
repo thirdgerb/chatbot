@@ -15,13 +15,12 @@ use Commune\Blueprint\Framework\ProcContainer;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
-use Commune\Components\Markdown\Analysers\BranchAnalyser;
+use Commune\Components\Markdown\Analysers\StageAnalyser;
 use Commune\Components\Markdown\Analysers\ContextAnalyser;
 use Commune\Components\Markdown\Mindset\DocRootStageDef;
 use Commune\Components\Markdown\Mindset\MDContextDef;
 use Commune\Components\Markdown\Mindset\SectionStageDef;
 use Commune\Components\Markdown\Options\MDGroupOption;
-use Commune\Components\Tree\Prototype\BranchStageDef;
 use Commune\Ghost\Context\IContext;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\ArrTree\Branch;
@@ -263,7 +262,7 @@ class IMD2ContextParser implements MD2ContextParser
      * @param Branch $branch
      * @param MDSectionData $data
      * @param string $markdownId
-     * @return StageDef|BranchStageDef
+     * @return StageDef|SectionStageDef
      */
     protected function  makeStageDef(
         MDGroupOption $group,
@@ -294,7 +293,7 @@ class IMD2ContextParser implements MD2ContextParser
             return $def;
         }
 
-        $analyserMap = $group->getAnalyserMapByInterface(BranchAnalyser::class, true);
+        $analyserMap = $group->getAnalyserMapByInterface(StageAnalyser::class, true);
 
         foreach ($analyserMap as $comment => $analyserName) {
             $contents = $comments[$comment] ?? [];
@@ -303,14 +302,14 @@ class IMD2ContextParser implements MD2ContextParser
             }
 
             /**
-             * @var BranchAnalyser $analyser
+             * @var StageAnalyser $analyser
              */
             $analyser = $this->container->make($analyserName);
 
             foreach ($contents as $content) {
                 $def = $analyser($content, $def);
                 // 如果 def 被替换了就直接返回.
-                if (!$def instanceof BranchStageDef) {
+                if (!$def instanceof SectionStageDef) {
                     return $def;
                 }
             }

@@ -17,6 +17,7 @@ use Commune\Blueprint\Ghost\Operate\Await;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\Support\ContextUtils;
+use Commune\Message\Host\Convo\QA\IAnything;
 use Commune\Message\Host\Convo\QA\IChoose;
 use Commune\Message\Host\Convo\QA\IConfirm;
 use Commune\Message\Host\Convo\QA\IQuestionMsg;
@@ -147,6 +148,7 @@ class OAwait extends AbsFinale implements Await
     }
 
     /*----------- ask -----------*/
+
     public function askStepper(
         string $query,
         int $current,
@@ -167,7 +169,7 @@ class OAwait extends AbsFinale implements Await
             $stepper->nextIndex = $index;
         }
 
-        if (isset($break)) {
+        if (isset($break) && $max > $current) {
             $index = $stepper->addSuggestion($break);
             $stepper->breakIndex = $index;
         }
@@ -188,6 +190,21 @@ class OAwait extends AbsFinale implements Await
         $this->question = $this->addSuggestions($choose, $suggestions);
         return $this;
     }
+
+    public function askAny(
+        string $query,
+        array $suggestions = [],
+        $defaultChoice = 0
+    )
+    {
+        $any = IAnything::instance(
+            $query,
+            $defaultChoice
+        );
+        $this->question = $this->addSuggestions($any, $suggestions);
+        return $this;
+    }
+
 
     public function askConfirm(
         string $query,

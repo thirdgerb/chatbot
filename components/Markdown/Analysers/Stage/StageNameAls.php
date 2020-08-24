@@ -12,7 +12,7 @@
 namespace Commune\Components\Markdown\Analysers\Stage;
 
 use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Components\Markdown\Analysers\BranchAnalyser;
+use Commune\Components\Markdown\Analysers\StageAnalyser;
 use Commune\Components\Markdown\Mindset\SectionStageDef;
 use Commune\Ghost\Support\ContextUtils;
 
@@ -24,7 +24,7 @@ use Commune\Ghost\Support\ContextUtils;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StageNameAls implements BranchAnalyser
+class StageNameAls implements StageAnalyser
 {
     public function __invoke(
         string $content,

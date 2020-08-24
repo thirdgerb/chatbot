@@ -12,7 +12,7 @@
 namespace Commune\Components\Markdown\Analysers\Stage;
 
 use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Components\Markdown\Analysers\BranchAnalyser;
+use Commune\Components\Markdown\Analysers\StageAnalyser;
 use Commune\Components\Markdown\Mindset\SectionStageDef;
 use Commune\Ghost\IMindDef\IIntentDef;
 
@@ -20,7 +20,7 @@ use Commune\Ghost\IMindDef\IIntentDef;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class IntentSpellAls
+class IntentSpellAls implements StageAnalyser
 {
 
     public function __invoke(

@@ -34,8 +34,7 @@ class IStepper extends IQuestionMsg implements Stepper
 {
     const MODE = self::MATCH_INDEX
         | self::MATCH_SUGGESTION
-        | self::MATCH_INTENT
-        | self::MATCH_ANY;
+        | self::MATCH_INTENT;
 
     public static function newStepper(
         string $query,

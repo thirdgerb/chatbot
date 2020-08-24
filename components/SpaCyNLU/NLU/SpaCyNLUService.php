@@ -74,7 +74,7 @@ class SpaCyNLUService implements NLUService
             'desc' => '使用 SpaCy nlu 实现的意图识别组件',
             'serviceAbstract' => SpaCyNLUService::class,
             'managerUcl' => NLUServiceManager::genUcl()->encode(),
-            'priority' => 10,
+            'priority' => NLUServiceOption::MIDDLE_PRIORITY + 2,
             'strategy' => [
                 'auth' => [Supervise::class],
             ],

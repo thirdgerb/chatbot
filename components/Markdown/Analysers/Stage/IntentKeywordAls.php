@@ -17,18 +17,28 @@ use Commune\Components\Markdown\Mindset\SectionStageDef;
 
 
 /**
- * [title]: title
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StageTitleAls implements StageAnalyser
+class IntentKeywordAls implements StageAnalyser
 {
-
     public function __invoke(
         string $content,
         SectionStageDef $def
-    ) : StageDef
+    ): StageDef
     {
-        $def->title = $content;
+        $words = explode(',', $content);
+        $words = array_map('trim', $words);
+        $words = array_filter($words, function($word){
+            return empty($word);
+        });
+
+        if (empty($words)) {
+            return $def;
+        }
+
+        $intentDef = $def->asIntent->toWrapper();
+        $intentDef->appendKeywords(...$words);
+        $def->asIntent = $intentDef->toMeta();
         return $def;
     }
 

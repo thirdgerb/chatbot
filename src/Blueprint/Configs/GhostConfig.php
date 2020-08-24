@@ -64,7 +64,7 @@ use Commune\Support\Protocal\ProtocalOption;
  *
  * @property-read string[] $mindPsr4Registers               Mind 模块自定义加载路径.
  *
- * @property-read string[] $comprehensionPipes              对输入信息进行抽象理解的管道.
+ * @property-read string[] $comprehendPipes              对输入信息进行抽象理解的管道.
  * @property-read int $maxRedirectTimes                     单词对话语境重定向的最大次数
  * @property-read int $maxRequestFailTimes                  对话最大的请求异常次数, 超过了就会重启会话
  *

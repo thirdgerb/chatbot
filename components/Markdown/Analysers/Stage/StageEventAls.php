@@ -13,7 +13,7 @@ namespace Commune\Components\Markdown\Analysers\Stage;
 
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Components\Markdown\Analysers\BranchAnalyser;
+use Commune\Components\Markdown\Analysers\StageAnalyser;
 use Commune\Components\Markdown\Mindset\SectionStageDef;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Support\Utils\TypeUtils;
@@ -21,7 +21,7 @@ use Commune\Support\Utils\TypeUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class StageEventAls implements BranchAnalyser
+class StageEventAls implements StageAnalyser
 {
     /**
      * @var ConsoleLogger
