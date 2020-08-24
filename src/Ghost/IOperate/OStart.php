@@ -297,7 +297,7 @@ class OStart extends AbsOperator
         // 如果命中了路由, 直接跳过后面的流程, 加快响应速度.
         $route = $answer->getRoute();
         if (isset($route)) {
-            return $this->dialog->redirectTo(Ucl::decode($route));
+            return $this->dialog->redirectTo(Ucl::decode($route), false);
         }
 
         return null;
@@ -342,7 +342,7 @@ class OStart extends AbsOperator
         $matched = $this->matchAwaitRoutes(...$routes);
 
         return isset($matched)
-            ? $this->dialog->redirectTo($matched)
+            ? $this->dialog->redirectTo($matched, false)
             : null;
     }
 
@@ -413,7 +413,7 @@ class OStart extends AbsOperator
         // 可以占据成功.
         if ($awaitPriority <= $challengerPriority) {
             $this->process->addBlocking($this->start, $awaitPriority);
-            return $this->dialog->redirectTo($challenger);
+            return $this->dialog->redirectTo($challenger, true);
 
         // 无法抢占成功
         } else {
