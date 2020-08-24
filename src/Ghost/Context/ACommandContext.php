@@ -33,7 +33,7 @@ abstract class ACommandContext extends ACodeContext
      * 在命令前的参数.
      * @var string
      */
-    protected static $_command_mark = '';
+    protected static $_command_mark = '.';
 
 
 
@@ -47,6 +47,11 @@ abstract class ACommandContext extends ACodeContext
      * @return AContextCmdDef[]
      */
     abstract public static function __command_defs() : array;
+
+    public function getCommandMark() : string
+    {
+        return static::$_command_mark;
+    }
 
     /**
      * @return AContextCmdDef[]
@@ -81,6 +86,11 @@ abstract class ACommandContext extends ACodeContext
         return $def;
     }
 
+    public function checkCommand() : callable
+    {
+        return [static::class, 'commandFallback'];
+    }
+
 
     public static function commandFallback(Dialog $dialog) : ? Operator
     {
@@ -99,6 +109,10 @@ abstract class ACommandContext extends ACodeContext
         }
 
         $cmdStr = CommandUtils::getCommandStr($text, static::$_command_mark);
+        if (empty($cmdStr)) {
+            return null;
+        }
+
         $cmdName = CommandUtils::getCommandNameStr($cmdStr);
 
         if (empty($cmdName)) {

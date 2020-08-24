@@ -29,6 +29,11 @@ abstract class AbsDialogicService implements DialogicService
         return $this->auth;
     }
 
+    /**
+     * @param array $payload
+     * @param Deliver $deliver
+     * @throws \Throwable
+     */
     public function __invoke(array $payload, Deliver $deliver): void
     {
         try {
@@ -38,12 +43,13 @@ abstract class AbsDialogicService implements DialogicService
 
             $deliver
                 ->error(
-                    __METHOD__
+                    static::class . '::' . __FUNCTION__
                     . ' failed: '
                     . get_class($e)
                     . ':'
                     . $e->getMessage()
                 );
+            throw $e;
         }
     }
 

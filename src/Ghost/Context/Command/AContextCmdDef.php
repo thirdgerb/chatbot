@@ -35,6 +35,7 @@ abstract class AContextCmdDef extends AStruct
      */
     private static $_defs = [];
 
+
     public static function stub(): array
     {
         return [

@@ -10,6 +10,7 @@
  */
 
 namespace Commune\Ghost\Context\Command;
+use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
@@ -23,8 +24,33 @@ use Commune\Blueprint\Ghost\Operate\Operator;
  * @property-read string $signature
  * @property-read callable $handler
  */
-class ACallableCmdDef extends AContextCmdDef
+class CallableCmdDef extends AContextCmdDef
 {
+
+    /**
+     * @param string $signature
+     * @param string $desc
+     * @param array $callable       为防止必然发生的用了闭包导致内存不释放, 干脆禁止数组外的形式.
+     * @return CallableCmdDef
+     */
+    public static function instance(
+        string $signature,
+        string $desc,
+        array $callable
+    ) : CallableCmdDef
+    {
+        if (!is_callable($callable)) {
+            throw new InvalidArgumentException(
+                "expect callable"
+            );
+        }
+
+        return new static([
+            'desc' => $desc,
+            'signature' => $signature,
+            'handler' => $callable,
+        ]);
+    }
 
     public static function stub(): array
     {

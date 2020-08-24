@@ -48,24 +48,27 @@ class HelpCmdDef extends AContextCmdDef
             return null;
         }
 
+        $mark = $context->getCommandMark();
         if (empty($message['commandName'])) {
-            return $this->helpContext($dialog, $context);
+            return $this->helpContext($dialog, $context, $mark);
         } else {
-            return $this->helpCommandName($message['commandName'], $context);
+            return $this->helpCommandName($dialog, $message['commandName'], $context);
         }
     }
 
 
     public function helpContext(
         Dialog $dialog,
-        ACommandContext $context
+        ACommandContext $context,
+        string $commandMark
     ) : Operator
     {
         $defs = $context->getContextCmdDefMap();
         $messages = [];
         foreach ($defs as $def) {
             $commandDef = $def->getCommandDef();
-            $messages[$commandDef->getCommandName()] = $def->getDescription();
+            $key = $commandMark . $commandDef->getCommandName();
+            $messages[$key] = $def->getDescription();
         }
 
 
