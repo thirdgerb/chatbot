@@ -138,6 +138,12 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             : null;
     }
 
+    public function match(Cloner $cloner): ? AnswerMsg
+    {
+        return $this->parseAnswerByMatcher($cloner);
+    }
+
+
     protected function parseAnswerByType(InputMsg $inputMsg) : ? AnswerMsg
     {
         return null;
@@ -257,11 +263,6 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         }
 
         return null;
-    }
-
-    public function match(Cloner $cloner): ? AnswerMsg
-    {
-        return $this->parseAnswerByMatcher($cloner);
     }
 
     /**

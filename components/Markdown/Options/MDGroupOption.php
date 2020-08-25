@@ -101,7 +101,7 @@ class MDGroupOption extends AbsOption
                 'bili' => Analysers\Message\BiliAls::class,
 
                 // await
-                'goNext' => Analysers\Await\GoNextAls::class,
+                'askNext' => Analysers\Await\AskNextAls::class,
                 'routeToStage' => Analysers\Await\RouteToStageAls::class,
                 'routeUcl' => Analysers\Await\RouteUclAls::class,
 

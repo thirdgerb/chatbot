@@ -89,7 +89,6 @@ class SectionStrategy
 
     protected function onActivate(SectionStageDef $def, Dialog\Activate $dialog) : Operator
     {
-
         $group = $this->getGroupOption($def->groupName);
         $section = $this->getSectionOption($def->contextName, $def->orderId);
 
@@ -107,11 +106,23 @@ class SectionStrategy
         // 逐行扫描发现的动态注释.
         $comments = [];
         $operator = null;
-        if ($current <= $max) {
-            $text = $section->texts[$current];
-            $text = trim($text);
-            $operator = $this->sendMessage($group, $text, $dialog, $comments);
-        }
+
+        $textIndex = $current > $max ? $max : $current;
+        $text = $section->texts[$textIndex] ?? '';
+        $text = trim($text);
+        $silence = $current > $max;
+        $cloner = $dialog->cloner;
+        $cloner->silence($silence);
+        $operator = $this->sendMessage(
+            $group,
+            $text,
+            $dialog,
+            $comments
+        );
+        $cloner->silence(false);
+
+        // 表示来过当前节点了. 如果没有 askStepper 重置， 过了最后一个节点就不会再发消息
+        $dialog->context[$def->stageName] = $current + 1;
 
         if (isset($operator)) {
             return $operator;

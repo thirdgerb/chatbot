@@ -21,7 +21,7 @@ use Commune\Components\Markdown\Mindset\SectionStageDef;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class GoNextAls extends AbsAwaitAnalyser
+class AskNextAls extends AbsAwaitAnalyser
 {
     public function __invoke(
         Dialog $dialog,
@@ -44,9 +44,8 @@ class GoNextAls extends AbsAwaitAnalyser
             ->await()
             ->askChoose(
                 $query,
-                [
-                    $ucl
-                ]
+                [ 0 => $ucl],
+                0
             );
     }
 

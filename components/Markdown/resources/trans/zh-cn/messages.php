@@ -14,4 +14,6 @@ use Commune\Components\Markdown\Constants\MDContextLang;
 return [
 
     MDContextLang::ASK_CHOOSE => '请选择',
+
+    MDContextLang::BACKWARD => '返回上一层',
 ];

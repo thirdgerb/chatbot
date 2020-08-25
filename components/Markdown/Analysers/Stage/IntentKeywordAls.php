@@ -29,7 +29,7 @@ class IntentKeywordAls implements StageAnalyser
         $words = explode(',', $content);
         $words = array_map('trim', $words);
         $words = array_filter($words, function($word){
-            return empty($word);
+            return !empty($word);
         });
 
         if (empty($words)) {
@@ -37,7 +37,7 @@ class IntentKeywordAls implements StageAnalyser
         }
 
         $intentDef = $def->asIntent->toWrapper();
-        $intentDef->appendKeywords(...$words);
+        $intentDef->appendKeywords($words);
         $def->asIntent = $intentDef->toMeta();
         return $def;
     }

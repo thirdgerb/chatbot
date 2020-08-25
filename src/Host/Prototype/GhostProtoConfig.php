@@ -108,7 +108,7 @@ class GhostProtoConfig extends IGhostConfig
                 GhostCmd\Super\IntentCmd::class,
                 GhostCmd\Super\RedirectCmd::class,
                 GhostCmd\Super\SceneCmd::class,
-                GhostCmd\Super\StageCmd::class,
+                GhostCmd\Super\WhereCmd::class,
             ],
 
             'comprehendPipes' => [

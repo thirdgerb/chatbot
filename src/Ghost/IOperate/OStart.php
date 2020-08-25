@@ -101,7 +101,11 @@ class OStart extends AbsOperator
 
         // 检查是否命中了路由.
         // 命中了的话会直接 redirect 走, 那么 answer 也不重要了.
+        $a = microtime(true);
         $operator = $operator ?? $this->checkAwaitRoutes();
+        $b = microtime(true);
+        var_dump(round(($b - $a) * 1000000));
+
 
         // 根据意图匹配的结果, 再对 question 进行一次检查.
         $operator = $operator ?? $this->recheckQuestion();

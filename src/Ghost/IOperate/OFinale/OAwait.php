@@ -90,19 +90,41 @@ class OAwait extends AbsFinale implements Await
         $this->expire = $expire;
         $this->current = $this->dialog->ucl;
         $contextDef = $this->current->findContextDef($this->cloner);
-
         $strategy = $contextDef->getStrategy($this->dialog);
-        $this->routes = array_merge(
+
+
+        $stageRoutes = array_merge($strategy->stageRoutes, $stageRoutes);
+        $contextRoutes = array_merge( $strategy->contextRoutes, $contextRoutes);
+
+        $routes = array_merge(
             $this->routes,
-            $this->wrapStage($strategy->stageRoutes),
             $this->wrapStage($stageRoutes),
-            $this->wrapUcl($strategy->contextRoutes),
             $this->wrapUcl($contextRoutes)
         );
+
+        $this->routes = array_unique($routes);
     }
 
     protected function wrapStage(array $stages) : array
     {
+        // 如果有批量匹配 stage 的场景, 理论上应该全部用 intent 来匹配
+        // 但这样自定义的匹配逻辑就一点用没有了...
+        // 有很多种优化的办法, 现阶段就先都不优化好了
+        // $index = array_search('*', $stages);
+        // if ($index !== false) {
+        //     unset($stages[$index]);
+        //     $cloner = $this->dialog->cloner;
+        //     $names = $this->dialog
+        //         ->ucl
+        //         ->findContextDef($cloner)->getPredefinedStageNames(false// );
+        //     // 设置一个初值
+        //     if (count($names) < 25) {
+        //         $stages = array_merge($stages, $names);
+        //     }
+        // }
+
+        $stages = array_unique($stages);
+
         return array_map(
             function($stage) : Ucl {
                 return $stage instanceof Ucl
@@ -182,19 +204,18 @@ class OAwait extends AbsFinale implements Await
     public function askChoose(
         string $query,
         array $suggestions = [],
-        $defaultChoice = null,
-        array $routes = []
+        $defaultChoice = null
     ): Operator
     {
-        $choose = IChoose::newChoose($query, $defaultChoice, [], $routes);
+        $choose = IChoose::newChoose($query, $defaultChoice, []);
         $this->question = $this->addSuggestions($choose, $suggestions);
         return $this;
     }
 
     public function askAny(
         string $query,
-        array $suggestions = [],
-        $defaultChoice = 0
+        array $suggestions,
+        $defaultChoice
     )
     {
         $any = IAnything::instance(

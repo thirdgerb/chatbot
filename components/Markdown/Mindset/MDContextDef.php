@@ -16,6 +16,8 @@ use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\MindMeta\StageMeta;
 use Commune\Ghost\Context\IContext;
 use Commune\Ghost\Context\IContextDef;
+use Commune\Ghost\Support\ContextUtils;
+use Commune\Support\ArrTree\Tree;
 
 /**
  * 通过 markdown 文档生成的多轮对话语境.
@@ -112,6 +114,22 @@ class MDContextDef extends IContextDef
     public function firstStage(): ? string
     {
         return $this->rootName;
+    }
+
+    public function getPredefinedStageNames(bool $isFullname = false): array
+    {
+        $tree = Tree::build($this->tree, self::ROOT_STAGE, '_');
+        $names = $tree->getBranchNames();
+
+        if ($isFullname) {
+            $contextName = $this->getName();
+
+            $names = array_map(function(string $name) use ($contextName){
+                return ContextUtils::makeFullStageName($contextName, $name);
+            }, $names);
+        }
+
+        return $names;
     }
 
 }

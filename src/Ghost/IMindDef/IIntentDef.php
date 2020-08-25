@@ -342,10 +342,9 @@ class IIntentDef extends AbsOption implements IntentDef
 
         // 关键词
         $keywords = $this->getKeywords();
-        if (!empty($keywords) && StringUtils::expectKeywords($text, $keywords, true)) {
+        if (!empty($keywords) && StringUtils::expectKeywords($text, $keywords, false)) {
             return true;
         }
-
 
         return false;
     }
@@ -366,9 +365,24 @@ class IIntentDef extends AbsOption implements IntentDef
 
     /*---------- example ----------*/
 
+    /**
+     * @var null|array
+     */
+    protected $_examples;
+
     public function getExamples(): array
     {
-        return $this->examples;
+        if (isset($this->_examples)) {
+            return $this->_examples;
+        }
+
+        $desc = $this->desc;
+        $examples = $this->examples;
+        if (isset($desc)) {
+            $examples[] = $desc;
+        }
+        $examples = array_unique($examples);
+        return $this->_examples = $examples;
     }
 
     public function appendExample(string $example): void
@@ -386,7 +400,7 @@ class IIntentDef extends AbsOption implements IntentDef
                 function(string $example){
                     return new IIntentExample($example);
                 },
-                $this->examples
+                $this->getExamples()
             );
     }
 

@@ -11,6 +11,7 @@
 
 namespace Commune\Message\Host\Convo\QA;
 
+use Commune\Blueprint\Ghost\Cloner;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 
@@ -25,13 +26,30 @@ class IAnything extends IQuestionMsg
         | self::MATCH_INTENT
         | self::MATCH_ANY;
 
+    protected $_matchedAny = false;
+
     protected function acceptAnyVerbalAnswer(VerbalMsg $message): ? AnswerMsg
     {
-        $choice = $this->default;
-        $answer = $this->suggestions[$choice] ?? '';
-        return $this->newAnswer(
-            $answer,
-            $choice
-        );
+        $this->_matchedAny = true;
+        return null;
+
     }
+
+    public function match(Cloner $cloner): ? AnswerMsg
+    {
+        if ($this->_matchedAny) {
+            $choice = $this->default;
+            $answerText = $this->suggestions[$choice] ?? '';
+            $answer = $this->newAnswer(
+                $answerText,
+                $choice
+            );
+            $this->setAnswerToComprehension($answer, $cloner->comprehension);
+            return $answer;
+        }
+
+        return parent::match($cloner);
+    }
+
+
 }

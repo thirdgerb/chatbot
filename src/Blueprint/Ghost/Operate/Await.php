@@ -28,14 +28,12 @@ interface Await extends Finale
      * @param string $query
      * @param string[]|Ucl[] $suggestions
      * @param int|string $defaultChoice
-     * @param Ucl[] $routes
      * @return Operator
      */
     public function askChoose(
         string $query,
         array $suggestions = [],
-        $defaultChoice = null,
-        array $routes = []
+        $defaultChoice = null
     ) : Operator;
 
     /**
@@ -88,10 +86,18 @@ interface Await extends Finale
     ) : Operator;
 
 
+    /**
+     * 用户的表达如果没有命中其它意图和路由 就命中默认选项
+     *
+     * @param string $query
+     * @param array $suggestions
+     * @param int $defaultChoice
+     * @return Operator
+     */
     public function askAny(
         string $query,
-        array $suggestions = [],
-        $defaultChoice = 0
+        array $suggestions,
+        $defaultChoice
     ) ;
 
     /**

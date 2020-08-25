@@ -49,6 +49,8 @@ return [
 
     Lang::STRATEGY_CHOOSE_SCOPE => '请为上下文语义相关回复策略选择一个作用域: ',
 
+    Lang::STRATEGY_SCOPE_STAGE => '场景与意图 (stage-intent) 相关',
+
     Lang::STRATEGY_SCOPE_CONTEXT => "上下文语境 (context) 相关",
 
     Lang::STRATEGY_SCOPE_CONTEXT => "当前对话场景 (stage) 相关",

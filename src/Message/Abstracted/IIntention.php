@@ -15,7 +15,6 @@ use Commune\Ghost\Support\ContextUtils;
 use Commune\Protocals\Abstracted\Intention;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Utils\ArrayUtils;
-use Commune\Support\Utils\StringUtils;
 
 /**
  * 意图的理解. 可以来自 NLU 或者其它的解析策略.
