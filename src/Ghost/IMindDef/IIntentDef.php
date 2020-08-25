@@ -378,7 +378,7 @@ class IIntentDef extends AbsOption implements IntentDef
 
         $desc = $this->desc;
         $examples = $this->examples;
-        if (isset($desc)) {
+        if (!empty($desc)) {
             $examples[] = $desc;
         }
         $examples = array_unique($examples);
