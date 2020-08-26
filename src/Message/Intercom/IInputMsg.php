@@ -43,7 +43,7 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         string $scene = ''
     ) : self
     {
-        $deliverAt = $deliverAt ?? time();
+        $deliverAt = $deliverAt ?? intval(microtime(true) * 1000);
         $data = [
             'message' => $message,
             'sessionId' => $sessionId,

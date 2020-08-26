@@ -23,7 +23,7 @@ use Commune\Support\Utils\TypeUtils;
  * @property string $sessionId     会话Id, 为空则是 guestId
  * @property string $creatorId     创建消息的用户 ID
  * @property string $creatorName   创建消息的用户名
- * @property int $createdAt        创建时间.
+ * @property int $createdAt        创建时间. 单位为毫秒
  * @property int $deliverAt        发送时间. 默认为0.
  * @property HostMsg $message      输入消息
  * @property string $convoId       多轮会话的 ID. 允许为空. 除非客户端有指定的 conversation.
@@ -42,7 +42,7 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
         string $scene = ''
     ) : self
     {
-        $deliverAt = $deliverAt ?? time();
+        $deliverAt = $deliverAt ?? intval(microtime(true) * 1000);
         return new static([
             'message' => $message,
             'batchId' => $batchId,

@@ -36,8 +36,7 @@ class ISupervise implements Supervise
 
     public function invoke(array $payload = []): bool
     {
-        return true;
-//        return $this->cloner->scene->userLevel >= Supervise::SUPERVISOR;
+        return $this->cloner->scene->userLevel >= Supervise::SUPERVISOR;
     }
 
 

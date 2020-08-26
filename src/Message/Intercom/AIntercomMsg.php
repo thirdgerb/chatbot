@@ -78,7 +78,7 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
             'message' => new IText(),
 
             // 发布时间
-            'deliverAt' => $now = time(),
+            'deliverAt' => $now = intval(microtime(true) * 1000),
 
             // 创建时间
             'createdAt' => $now,
