@@ -75,10 +75,13 @@ return [
 
     DefaultIntents::SYSTEM_DIALOG_CONFUSE => '意图无法理解',
     DefaultIntents::SYSTEM_DIALOG_UNABLE => "语境 [{await}] 目前无法响应 [{matched}] 意图.",
+
     // 可以再根据 await, 当前 stage, 定义 stage 独特的 confuse 话术.
-    DefaultIntents::SYSTEM_DIALOG_UNABLE => [
-        'some_stage_fullname' => 'special reply',
-    ],
+//    'system.dialog' => [
+//        'unable' =>[
+//            'some_stage_fullname' => 'special reply',
+//        ],
+//    ],
 
 
     /*------- stage event -------*/

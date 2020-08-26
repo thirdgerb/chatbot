@@ -70,13 +70,13 @@ class ConfuseRenderer implements Renderer
             ? HostMsg\DefaultIntents::SYSTEM_DIALOG_UNABLE
             : $confuseId;
 
-        if (!empty($await)) {
-            $awaitTransId = HostMsg\DefaultIntents::SYSTEM_DIALOG_UNABLE . "." . $await;
-
-            $transId = $this->translator->isTranslatable($awaitTransId)
-                ? $awaitTransId
-                : $transId;
-        }
+//        if (!empty($await)) {
+//            $awaitTransId = HostMsg\DefaultIntents::SYSTEM_DIALOG_UNABLE . "." . $await;
+//
+//            $transId = $this->translator->isTranslatable($awaitTransId)
+//                ? $awaitTransId
+//                : $transId;
+//        }
 
         $matchedDesc = $this->parseMatched($matched);
         $awaitDesc = $this->parseAwait($await);
