@@ -130,7 +130,7 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
         string $scene = null
     ): IntercomMsg
     {
-        $deliverAt = $deliverAt ?? time();
+        $deliverAt = $deliverAt ?? intval(microtime(true) * 1000);
         $messageId = $this->createUuId();
         $vars = get_defined_vars();
 

@@ -46,6 +46,10 @@ class ConfuseRenderer implements Renderer
         $this->translator = $translator;
     }
 
+    public static function makeAwaitTransId(string $await) : string
+    {
+        return HostMsg\DefaultIntents::SYSTEM_DIALOG_UNABLE . ".await." . $await;
+    }
 
     public function __invoke(HostMsg $message): ? array
     {
@@ -70,13 +74,12 @@ class ConfuseRenderer implements Renderer
             ? HostMsg\DefaultIntents::SYSTEM_DIALOG_UNABLE
             : $confuseId;
 
-//        if (!empty($await)) {
-//            $awaitTransId = HostMsg\DefaultIntents::SYSTEM_DIALOG_UNABLE . "." . $await;
-//
-//            $transId = $this->translator->isTranslatable($awaitTransId)
-//                ? $awaitTransId
-//                : $transId;
-//        }
+        if (!empty($await)) {
+            $awaitTransId = static::makeAwaitTransId($await);
+            $transId = $this->translator->isTranslatable($awaitTransId)
+                ? $awaitTransId
+                : $transId;
+        }
 
         $matchedDesc = $this->parseMatched($matched);
         $awaitDesc = $this->parseAwait($await);

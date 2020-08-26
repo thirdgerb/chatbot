@@ -36,7 +36,7 @@ class AskNextAls extends AbsAwaitAnalyser
         }
 
         $query = empty($content)
-            ? MDContextLang::ASK_CHOOSE
+            ? MDContextLang::ASK_NEXT
             : $content;
 
         $ucl = $dialog->ucl->goStage($next->getStageShortName());

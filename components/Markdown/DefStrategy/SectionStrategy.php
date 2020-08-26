@@ -94,7 +94,8 @@ class SectionStrategy
 
         // 每一个 stage 都可以拆分成多段对话
         // 在内部切换时会保留上下文记忆, 避免重复.
-        $isSameContext = $dialog->process->getAwait()->isSameContext($dialog->ucl);
+        $await = $dialog->process->getAwait();
+        $isSameContext = isset($await) && $await->isSameContext($dialog->ucl);
         if (! $isSameContext) {
             $dialog->context[$def->stageName] = 0;
         }

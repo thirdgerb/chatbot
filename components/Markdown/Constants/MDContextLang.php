@@ -20,6 +20,8 @@ class MDContextLang
 
     const ASK_CHOOSE = 'markdown.dialog.askChoose';
 
+    const ASK_NEXT = 'markdown.dialog.askNext';
+
     const BACKWARD ='markdown.dialog.backward';
 
 }

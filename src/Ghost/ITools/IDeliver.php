@@ -136,13 +136,13 @@ class IDeliver implements Deliver
      */
     public function deliverAt(int $timestamp) : Deliver
     {
-        $this->deliverAt = $timestamp;
+        $this->deliverAt = $timestamp * 1000;
         return $this;
     }
 
     public function deliverAfter(int $sections): Deliver
     {
-        $this->deliverAt = time() + $sections;
+        $this->deliverAt = intval(microtime(true) * 1000) + $sections;
         return $this;
     }
 

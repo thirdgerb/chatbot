@@ -67,7 +67,16 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
 
     protected function getClient() : Client
     {
-        return new Client(['base_uri' => $this->config->host]);
+        $option = $this->getClientOption();
+        return new Client($option);
+    }
+    
+    protected function getClientOption() : array
+    {
+        return [
+            'base_uri' => $this->config->host,
+            'timeout' => $this->config->requestTimeOut,
+        ];
     }
 
     protected function request(
@@ -76,7 +85,6 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
         array $option
     ) : NLUResponse
     {
-        $option['timeout'] = $this->config->requestTimeOut;
         if ($this->debug) {
             $start = microtime(true);
             // 记录 debug 日志.

@@ -85,7 +85,7 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         string $scene = null
     ): OutputMsg
     {
-        $deliverAt = $deliverAt ?? time();
+        $deliverAt = $deliverAt ?? intval(microtime(true) * 1000);
         return IOutputMsg::instance(
             $message,
             $sessionId ?? $this->getSessionId(),

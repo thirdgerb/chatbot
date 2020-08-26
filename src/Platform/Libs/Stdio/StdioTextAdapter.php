@@ -11,6 +11,8 @@
 
 namespace Commune\Platform\Libs\Stdio;
 
+use Commune\Blueprint\Framework\Auth\Supervise;
+use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Blueprint\Kernel\Protocals\AppRequest;
 use Commune\Blueprint\Kernel\Protocals\AppResponse;
 use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
@@ -94,7 +96,11 @@ class StdioTextAdapter implements Adapter
 
         $request = IShellInputRequest::instance(
             false,
-            $inputMsg
+            $inputMsg,
+            '',
+            [
+                ClonerScene::ENV_USER_LEVEL => Supervise::SUPERVISOR
+            ]
         );
 
         return $this->request = $request;

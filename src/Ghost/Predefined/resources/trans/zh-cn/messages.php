@@ -73,15 +73,13 @@ return [
 
     /*------- confuse -------*/
 
-    DefaultIntents::SYSTEM_DIALOG_CONFUSE => '意图无法理解',
-    DefaultIntents::SYSTEM_DIALOG_UNABLE => "语境 [{await}] 目前无法响应 [{matched}] 意图.",
+    DefaultIntents::SYSTEM_DIALOG_CONFUSE => "sorry, 您的意图暂时无法理解. 开发者教我如何回复后会第一时间通知您!",
+    DefaultIntents::SYSTEM_DIALOG_UNABLE => "语境 [{await}] 目前无法响应 [{matched}] 意图. 开发者教我如何回复后会第一时间通知您!",
 
     // 可以再根据 await, 当前 stage, 定义 stage 独特的 confuse 话术.
-//    'system.dialog' => [
-//        'unable' =>[
-//            'some_stage_fullname' => 'special reply',
-//        ],
-//    ],
+    \Commune\Shell\Render\ConfuseRenderer::makeAwaitTransId('') => [
+        'some_stage_fullname' => 'special reply',
+    ],
 
 
     /*------- stage event -------*/

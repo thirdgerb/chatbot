@@ -15,5 +15,7 @@ return [
 
     MDContextLang::ASK_CHOOSE => '请选择',
 
+    MDContextLang::ASK_NEXT => '接下来',
+
     MDContextLang::BACKWARD => '返回上一层',
 ];
