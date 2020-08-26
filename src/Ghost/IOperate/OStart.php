@@ -258,6 +258,9 @@ class OStart extends AbsOperator
 
         $pipes = $contextDef->getStrategy($this->dialog)->comprehendPipes;
         $pipes = $pipes ?? $this->cloner->config->comprehendPipes;
+        if (empty($pipes)) {
+            return null;
+        }
         $this->runComprehendPipeline($pipes, $input);
         return null;
     }

@@ -86,12 +86,15 @@ class IStageReg extends AbsDefRegistry implements StageReg
     public function registerDef(Def $def, bool $notExists = true): bool
     {
         $success =  parent::registerDef($def, $notExists);
-        $force = !$notExists;
 
-        // 强制注册时要主动刷新掉关联的 intent
-        if ($force && $success) {
+        // 强制注册时, 仍然不能刷新掉关联的 intent
+        // 否则已经定义过的 examples 等就都丢失了
+        if ($success) {
             $intentDef = $def->asIntentDef();
-            $this->mindset->intentReg()->registerDef($intentDef, false);
+            $this->mindset->intentReg()->registerDef(
+                $intentDef,
+                true
+            );
         }
         return $success;
     }

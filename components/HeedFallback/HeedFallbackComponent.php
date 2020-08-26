@@ -96,11 +96,7 @@ class HeedFallbackComponent extends AComponentOption
         return [
 
             'strategies' => [
-                [
-                    'name' => '文字回复',
-                    'desc' => '使用 translator 模块直接回复',
-                    'strategyClass' => TransStrategy::class,
-                ],
+                static::defaultStrategy(),
             ],
             'title' => '上下文回复策略',
             'desc' => '上下文相关回复策略仓库',
@@ -110,6 +106,15 @@ class HeedFallbackComponent extends AComponentOption
             'sceneRepository' => FallbackSceneRepoDemo::class,
 
             'trans' => __DIR__ . '/resources/trans'
+        ];
+    }
+    
+    public static function defaultStrategy() : array
+    {
+        return [
+            'name' => '文字回复',
+            'desc' => '使用 translator 模块直接回复',
+            'strategyClass' => TransStrategy::class,
         ];
     }
 
