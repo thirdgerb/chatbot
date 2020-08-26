@@ -25,7 +25,7 @@ use Commune\Support\Markdown\Parser\IMDParser;
  *
  *
  * @property-read string $groupName
- * @property-read string $relativePath          文件夹相对路径.
+ * @property-read string $resourceDir          文件夹相对路径.
  * @property-read string $namespace
  *
  *
@@ -50,7 +50,7 @@ class MDGroupOption extends AbsOption
     {
         return [
             'groupName' => '',
-            'relativePath' => '',
+            'resourceDir' => '',
             // 命名空间 + 文件的相对路径 = document id
             'namespace' => '',
             // 根节点的名称. 用于 contextDef 的定义, 但不作为 stage
@@ -107,6 +107,16 @@ class MDGroupOption extends AbsOption
 
             ],
 
+        ];
+    }
+
+    public static function defaultOption() : array
+    {
+        return [
+            'groupName' => 'Demo',
+            'resourceDir' => __DIR__ . '/../resources/demo',
+            // 命名空间 + 文件的相对路径 = document id
+            'namespace' => 'md.demo',
         ];
     }
 

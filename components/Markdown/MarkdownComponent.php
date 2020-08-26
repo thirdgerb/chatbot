@@ -44,7 +44,6 @@ use Commune\Support\Utils\StringUtils;
  *
  * # 可选配置
  *
- * @property-read string $resourcePath      放置 markdown 的源文件.
  * @property-read string $runtimePath       放置解析后的 markdown option 文件
  * @property-read StorageMeta|null $docStorage
  * @property-read StorageMeta|null $sectionStorage
@@ -66,12 +65,7 @@ class MarkdownComponent extends AComponentOption
             'reset' => CommuneEnv::isResetRegistry(),
             'langDir' => __DIR__ . '/resources/trans',
             'groups' => [
-                [
-                    'groupName' => 'Demo',
-                    'relativePath' => 'demo',
-                    // 命名空间 + 文件的相对路径 = document id
-                    'namespace' => 'md.demo',
-                ]
+                MDGroupOption::defaultOption(),
 
             ],
 
@@ -80,7 +74,6 @@ class MarkdownComponent extends AComponentOption
                 CommuneEnv::getRuntimePath(),
                 'markdown'
             ),
-            'resourcePath' => realpath(__DIR__ . '/../../demo/resources/markdown'),
             'docStorage' => null,
             'docInitialStorage' => null,
             'sectionStorage' => null,
@@ -122,7 +115,6 @@ class MarkdownComponent extends AComponentOption
                 new MDGroupContextLoader([
                     'id' => $group->groupName,
                     'forceUpdate' => $this->reset,
-                    'resourcePath' => $this->resourcePath,
                     'group' => $group,
                 ]),
                 false

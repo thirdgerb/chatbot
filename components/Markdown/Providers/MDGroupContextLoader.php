@@ -35,7 +35,6 @@ use Symfony\Component\Finder\Finder;
  *
  * @property-read string $id
  * @property-read bool $forceUpdate
- * @property-read string $resourcePath
  * @property-read MDGroupOption $group
  */
 class MDGroupContextLoader extends ServiceProvider
@@ -52,7 +51,6 @@ class MDGroupContextLoader extends ServiceProvider
         return [
             'id' => '',
             'forceUpdate' => false,
-            'resourcePath' => '',
             'group' => [
 
             ],
@@ -77,11 +75,7 @@ class MDGroupContextLoader extends ServiceProvider
         $registry = $app->make(OptRegistry::class);
         $mindset = $app->make(Mindset::class);
 
-        $path = StringUtils::gluePath(
-            $this->resourcePath,
-            $group->relativePath
-        );
-        $path = realpath($path);
+        $path = realpath($group->resourceDir);
 
         $finder = new Finder();
 
