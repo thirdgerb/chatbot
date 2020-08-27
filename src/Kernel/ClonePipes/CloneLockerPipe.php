@@ -102,7 +102,7 @@ class CloneLockerPipe extends AClonePipe
         /**
          * @var GhostMessenger $messenger
          */
-        $messenger = $this->cloner->container->get(ShellMessenger::class);
+        $messenger = $this->cloner->container->get(GhostMessenger::class);
         $messenger->asyncSendRequest($request);
         return $request->response();
     }
