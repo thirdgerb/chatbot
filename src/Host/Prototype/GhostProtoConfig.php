@@ -23,6 +23,7 @@ use Commune\Ghost\Predefined\Intent\Navigation;
 use Commune\Kernel\Handlers\IGhostRequestHandler;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\NLU\NLUServiceProvider;
+use Commune\Components\Demo\Maze\Maze;
 
 
 /**
@@ -127,6 +128,8 @@ class GhostProtoConfig extends IGhostConfig
             'maxBacktrace' => 3,
             'defaultContextName' => Components\Demo\Contexts\DemoHome::genUcl()->encode(),
             'sceneContextNames' => [
+                Maze::genUcl()->encode(),
+                'md.demo.commune_v2_intro',
             ],
             'defaultHeedFallback' =>[
                 Components\HeedFallback\Action\HeedFallback::class,
