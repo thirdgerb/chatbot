@@ -82,6 +82,7 @@
 - name : attitude.greet
   examples :
     - 你好
+    - 你好啊
     - 您好呀
     - hello
     - 哈喽

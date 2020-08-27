@@ -309,7 +309,7 @@ class LesionTask extends ACodeContext
 
                         return $dialog
                             ->send()
-                            ->withSessionId($scene->sessionId)
+                            ->withSessionId($scene->sessionId, true)
                             ->message($message)
                             ->over()
                             ->goStage('done');
@@ -411,7 +411,7 @@ class LesionTask extends ACodeContext
                 $text = $this->scene->text;
                 return $dialog
                     ->send()
-                    ->withSessionId($session)
+                    ->withSessionId($session, true)
                     ->info(
                         HeedFallbackLang::STRATEGY_LEARNED,
                         [

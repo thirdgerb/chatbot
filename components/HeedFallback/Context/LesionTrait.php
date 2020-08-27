@@ -118,7 +118,7 @@ trait LesionTrait
 
                         // 确定了意图.
                         $this->selectedIntent = $route->getIntentName();
-                        return $dialog->goStage('create_strategy');
+                        return $dialog->goStage('confirm_intent');
 
                     })
                     ->end();
@@ -378,6 +378,8 @@ trait LesionTrait
             ->onActivate(function(Dialog $dialog) {
 
                 $intent = $this->selectedIntent;
+
+
                 $category = $dialog->cloner
                     ->registry
                     ->getCategory(StrategyMatcherOption::class);
@@ -498,9 +500,12 @@ trait LesionTrait
                     })
                     ->end();
             })
-            ->onResume(function(Dialog $dialog) {
-                return $dialog->goStage('learned');
-            });
+            ->onEvent(
+                Dialog::CALLBACK,
+                function(Dialog $dialog) {
+                    return $dialog->goStage('learned');
+                }
+            );
 
     }
 

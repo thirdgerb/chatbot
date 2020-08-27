@@ -55,7 +55,7 @@ return [
 
     Lang::STRATEGY_SCOPE_INTENT => "仅意图 (intent) 相关",
 
-    Lang::STRATEGY_CHOOSE => '请给 id 为 {id} 的对话场景选择一个回复策略: ',
+    Lang::STRATEGY_CHOOSE => '请选择一个回复策略: ',
 
     Lang::REPLY_IS_PREPARING => "sorry, 回复内容还在准备中... ",
 
