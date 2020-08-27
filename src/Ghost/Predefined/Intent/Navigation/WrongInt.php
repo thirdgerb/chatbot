@@ -29,7 +29,6 @@ use Commune\Protocals\HostMsg\DefaultIntents;
  * @example 前言不搭后语
  * @example 完全理解错了
  * @example 你没有理解我的意思
- * @example 你搞错了
  */
 class WrongInt extends AIntentContext
 {

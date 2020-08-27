@@ -25,9 +25,9 @@ use Commune\Blueprint\NLU\NLUServiceOption;
 use Commune\Components\SpaCyNLU\Blueprint\SpaCyNLUClient;
 use Commune\Components\SpaCyNLU\Configs\NLUModuleConfig;
 use Commune\Components\SpaCyNLU\Managers\NLUServiceManager;
+use Commune\NLU\Support\ParserTrait;
 use Commune\Protocals\Abstracted\Intention;
 use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
@@ -41,6 +41,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  */
 class SpaCyNLUService implements NLUService
 {
+    use ParserTrait;
 
     /**
      * @var SpaCyNLUClient
@@ -111,26 +112,14 @@ class SpaCyNLUService implements NLUService
         return null;
     }
 
-    public function parse(
+
+    public function doParse(
         InputMsg $input,
+        string $text,
         Session $session,
         Comprehension $comprehension
     ): Comprehension
     {
-        $isVerbal = $input->isMsgType(VerbalMsg::class);
-        // 不是文本, 处理不了.
-        if (!$isVerbal) {
-            return $comprehension;
-        }
-
-        // 处理过了也不管了.
-        $succeed = $comprehension->isSucceed(Intention::class);
-        if ($succeed) {
-            return $comprehension;
-        }
-
-        $text = $input->getNormalizedText();
-
         if ($session instanceof Cloner) {
             $routes = $session->runtime->getCurrentAwaitRoutes();
             if (empty($routes)) {

@@ -365,24 +365,9 @@ class IIntentDef extends AbsOption implements IntentDef
 
     /*---------- example ----------*/
 
-    /**
-     * @var null|array
-     */
-    protected $_examples;
-
     public function getExamples(): array
     {
-        if (isset($this->_examples)) {
-            return $this->_examples;
-        }
-
-        $desc = $this->desc;
-        $examples = $this->examples;
-        if (!empty($desc)) {
-            $examples[] = $desc;
-        }
-        $examples = array_unique($examples);
-        return $this->_examples = $examples;
+        return $this->examples;
     }
 
     public function appendExample(string $example): void

@@ -60,9 +60,10 @@ class TransStrategy extends ACodeContext implements FallbackStrategy
 
                 $id = static::PREFIX . $this->id;
                 if ($translator->hasTemplate($id)) {
+                    $lang = $translator->trans($id);
                     return $dialog
                         ->send()
-                        ->info($id)
+                        ->info($lang)
                         ->over()
                         ->fulfill();
                 }

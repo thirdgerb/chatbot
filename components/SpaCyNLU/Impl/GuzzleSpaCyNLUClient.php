@@ -23,7 +23,6 @@ use Commune\Components\SpaCyNLU\Protocals\ChatReplyData;
 use Commune\Components\SpaCyNLU\Blueprint\SpaCyNLUClient;
 use Commune\Components\SpaCyNLU\Protocals\NLUResponse;
 use Commune\Components\SpaCyNLU\SpaCyNLUComponent;
-use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 
@@ -117,7 +116,6 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
                     . " response in $gap us : $content"
                 );
             }
-
 
             $resProto = json_decode($content, true);
             if (!is_array($resProto)) {

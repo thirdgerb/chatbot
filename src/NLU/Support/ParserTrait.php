@@ -38,7 +38,8 @@ trait ParserTrait
             return $comprehension;
         }
 
-        $text = $input->getNormalizedText();
+        $text = $input->getMessage()->getText();
+        $text = trim($text);
         if (NLUUtils::isNotNatureLanguage($text)) {
             return $comprehension;
         }
@@ -59,7 +60,7 @@ trait ParserTrait
 
     abstract protected function doParse(
         InputMsg $input,
-        string $normalizedText,
+        string $originText,
         Session $session,
         Comprehension $comprehension
     ) : Comprehension;
