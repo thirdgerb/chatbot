@@ -414,8 +414,9 @@ trait LesionTrait
                 return $dialog->hearing()
                     ->isAnswered()
                     ->then(function(Dialog $dialog, AnswerMsg $answer) {
+                        $choice = $answer->getChoice();
                         $text = $answer->getAnswer();
-                        if (!in_array($text, $this->scopes)) {
+                        if (!isset($choice) || !array_key_exists($choice, $this->scopes)) {
                             return $dialog
                                 ->send()
                                 ->error("$text is invalid!")
@@ -423,7 +424,7 @@ trait LesionTrait
                                 ->rewind();
                         }
 
-                        $this->strategyScope = $text;
+                        $this->strategyScope = $this->scopes[$choice];
 
                         return $dialog->goStage('choose_strategy');
                     })
@@ -471,7 +472,13 @@ trait LesionTrait
                         $lists = $manager->listStrategies();
                         $lists = array_values($lists);
                         $choice = $isAnswered->getChoice();
-                        $option = $lists[$choice];
+                        $option = $lists[$choice] ?? null;
+
+                        if (empty($option)) {
+                            $answer = $isAnswered->getAnswer();
+                            return $dialog->send()
+                                ->error("option $answer not exists");
+                        }
 
                         $cloner = $dialog->cloner;
 

@@ -53,9 +53,7 @@ return [
 
     Lang::STRATEGY_SCOPE_CONTEXT => "上下文语境 (context) 相关",
 
-    Lang::STRATEGY_SCOPE_CONTEXT => "当前对话场景 (stage) 相关",
-
-    Lang::STRATEGY_SCOPE_INTENT => "仅意图相关",
+    Lang::STRATEGY_SCOPE_INTENT => "仅意图 (intent) 相关",
 
     Lang::STRATEGY_CHOOSE => '请给 id 为 {id} 的对话场景选择一个回复策略: ',
 
