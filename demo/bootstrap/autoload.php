@@ -12,7 +12,7 @@ CommuneEnv::defineResetMind(in_array('-r', $argv));
 
 
 // 启动异构的服务.
-$config = include __DIR__ . '/../configs/host.php';
+$config = include __DIR__ . '/../config/host.php';
 
 $host = new IHost($config);
 

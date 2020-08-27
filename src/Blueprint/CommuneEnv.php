@@ -29,6 +29,7 @@ class CommuneEnv
     const BASE_PATH = 'COMMUNE_BASE_PATH';
     const RUNTIME_PATH = 'COMMUNE_RUNTIME_PATH';
     const RESOURCE_PATH = 'COMMUNE_RESOURCE_PATH';
+    const CONFIG_PATH = 'COMMUNE_CONFIG_PATH';
     const LOG_PATH = 'COMMUNE_LOG_PATH';
 
     /*------- path ------*/
@@ -45,6 +46,28 @@ class CommuneEnv
     {
         self::set(self::BASE_PATH, $path);
     }
+
+
+    public static function getConfigPath() : string
+    {
+        return self::get(
+            self::CONFIG_PATH,
+            StringUtils::gluePath(
+                self::getBasePath(),
+                'config'
+            )
+        );
+    }
+
+    public static function defineConfigPath(string $path) : void
+    {
+        self::set(self::CONFIG_PATH, $path);
+    }
+
+
+
+
+    /*------- runtime path ------*/
 
     public static function getRuntimePath() : string
     {
