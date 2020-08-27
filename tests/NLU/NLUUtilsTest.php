@@ -29,10 +29,12 @@ class NLUUtilsTest extends TestCase
         $this->assertTrue(NLUUtils::isNotNatureLanguage('A'));
         $this->assertTrue(NLUUtils::isNotNatureLanguage('~'));
         $this->assertTrue(NLUUtils::isNotNatureLanguage('#'));
-
+        $this->assertTrue(NLUUtils::isNotNatureLanguage('?'));
+        $this->assertTrue(NLUUtils::isNotNatureLanguage('??'));
 
 
         $this->assertFalse(NLUUtils::isNotNatureLanguage('好'));
+        $this->assertFalse(NLUUtils::isNotNatureLanguage('yes'));
     }
 
 }

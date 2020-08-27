@@ -22,6 +22,7 @@ use Commune\Protocals\HostMsg\DefaultIntents;
  * 
  * @title 重复对话
  * @desc 重复上一轮的对话
+ * @spell ?
  *
  * @example 再说一遍
  * @example 刚才说什么
