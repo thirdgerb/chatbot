@@ -54,7 +54,7 @@ class FallbackStrategyRegistryProvider extends ServiceProvider
             'wrapper' => JsonStorageOption::class,
             'config' => [
                 'path' => StringUtils::gluePath(
-                    CommuneEnv::getRuntimePath(),
+                    CommuneEnv::getResourcePath(),
                     'strategy/all.json'
                 ),
                 'isDir' => false,

@@ -83,6 +83,15 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
     }
 
 
+    public function getResourceOptionId(string $optionClass) : string
+    {
+        return LoadComponentOption::makeComponentOptionId(
+            static::class,
+            $optionClass
+        );
+    }
+
+
     public function loadTranslation(
         App $app,
         string $langDir,
