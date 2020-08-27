@@ -236,6 +236,9 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             // 对内容进行部分匹配
             if ($matchSuggestion) {
                 $suggestion = StringUtils::normalizeString($suggestion);
+                if ($suggestion === $text) {
+                    return $this->newAnswer($suggestion, $index);
+                }
                 // 如果是其中一部分.
                 if (mb_strstr($suggestion, $text) !== false) {
                     $matchedSuggestions[] = $index;
