@@ -28,11 +28,13 @@ interface AppKernel
      *
      * @param AppRequest $protocal
      * @param string|null $interface
+     * @param ReqContainer|null $container
      * @return AppResponse
      */
     public function handleRequest(
         AppRequest $protocal,
-        string $interface = null
+        string $interface = null,
+        ReqContainer $container = null
     ) : AppResponse;
 
 

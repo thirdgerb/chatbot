@@ -152,11 +152,13 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
     /**
      * @param AppRequest $request
      * @param string|null $interface
+     * @param ReqContainer|null $container
      * @return AppResponse
      */
     public function handleRequest(
         AppRequest $request,
-        string $interface = null
+        string $interface = null,
+        ReqContainer $container = null
     ) : AppResponse
     {
 
@@ -171,7 +173,8 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
             $this->validateAppRequest($request);
 
             // 根据请求衍生的唯一ID 来生成 container 的容器.
-            $container = $this->newReqContainerIns($this->makeContainerId($request));
+            $container = $container
+                    ?? $this->newReqContainerIns($this->makeContainerId($request));
 
             // 创建 Session
             $session = $this->makeSession($container, $request);
