@@ -68,6 +68,11 @@ abstract class AbsDialog extends AbsBaseDialog
         return new ORedirect\OBackStep($this, $step);
     }
 
+    public function close(): Operator
+    {
+        return new OFinale\OCloseSession($this);
+    }
+
 
     public function goStage(string $stageName, string ...$stageNames): Operator
     {

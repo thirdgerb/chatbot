@@ -320,9 +320,15 @@ interface Dialog
     public function cancel() : Operator;
 
     /**
-     * 退出整个对话
+     * 退出整个对话, 走退出流程, 允许被拦截.
      * @return Operator
      */
     public function quit() : Operator;
+
+    /**
+     * 直接关闭整个会话, 没有退出流程.
+     * @return Operator
+     */
+    public function close() : Operator;
 
 }

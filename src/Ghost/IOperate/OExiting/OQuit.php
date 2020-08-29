@@ -34,14 +34,10 @@ class OQuit extends AbsExiting
             ?? $this->quitBatch($process, $process->eachCallbacks())
             ?? $this->quitBatch($process, $process->eachBlocking())
             ?? $this->quitBatch($process, $process->eachSleeping())
-            ?? $this->quitSession();
+            ?? $this->dialog->close();
     }
 
 
-    protected function quitSession()
-    {
-        return new OCloseSession($this->dialog);
-    }
 
     protected function getWithdrawWatcher(Task $task): ? Ucl
     {

@@ -49,7 +49,7 @@ abstract class AbsRedirect extends AbsOperator
                         ))
                         ->over();
                     if ($await->isSameContext($target)) {
-                        return $dialog->quit();
+                        return $dialog->close();
                     } else {
                         return $dialog->rewind();
                     }
