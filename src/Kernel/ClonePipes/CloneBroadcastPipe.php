@@ -140,36 +140,26 @@ class CloneBroadcastPipe extends AClonePipe
          */
         $messenger = $this->cloner->container->get(GhostMessenger::class);
 
-        $traceId = $request->getTraceId();
-        $fromApp = $request->getFromApp();
-        $fromSession = $request->getFromSession();
-
         // 发送异步的输入消息
         $this->sendAsyncGhostMessages(
+            $request,
             $messenger,
-            $traceId,
-            $fromApp,
-            $fromSession,
             false,
             $inputs
         );
 
         // 发送异步的投递消息.
         $this->sendAsyncGhostMessages(
+            $request,
             $messenger,
-            $traceId,
-            $fromApp,
-            $fromSession,
             true,
             $deliveries
         );
     }
 
     protected function sendAsyncGhostMessages(
+        GhostRequest $request,
         GhostMessenger $messenger,
-        string $traceId,
-        string $fromApp,
-        string $fromSession,
         bool $isDelivery,
         array $messages
     ) : void
@@ -178,14 +168,20 @@ class CloneBroadcastPipe extends AClonePipe
         if (empty($messages)) {
             return;
         }
+        $traceId = $request->getTraceId();
+        $fromApp = $request->getFromApp();
+        $fromSession = $request->getFromSession();
+        $env = $request->getEnv();
+
         $deliveryRequests = array_map(
-            function(InputMsg $input) use ($traceId, $fromApp, $fromSession, $isDelivery) {
+            function(InputMsg $input)
+                use ($traceId, $fromApp, $fromSession, $env, $isDelivery) {
                 return IGhostRequest::instance(
                     $fromApp,
                     true,
                     $input,
                     '', //不需要 entry, 反正是直接投递.
-                    [],
+                    $env,
                     null,
                     $isDelivery,
                     $traceId,
