@@ -35,18 +35,24 @@ abstract class AbsRedirect extends AbsOperator
             ->getStrategy($this->dialog)
             ->auth;
 
+
         if (!empty($auth)) {
+            $await = $this->dialog->process->getAwait();
             foreach ($auth as $ability) {
                 if (!$cloner->auth->allow($ability)) {
-                    return $this
+                    $dialog = $this
                         ->dialog
                         ->send()
                         ->message(DialogForbidInt::instance(
                             $target->contextName,
                             $ability
                         ))
-                        ->over()
-                        ->rewind();
+                        ->over();
+                    if ($await->isSameContext($target)) {
+                        return $dialog->quit();
+                    } else {
+                        return $dialog->rewind();
+                    }
                 }
             }
         }
