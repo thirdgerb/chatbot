@@ -392,7 +392,7 @@ class LesionTask extends ACodeContext
                         $scene = $this->scene;
                         return $dialog
                             ->send()
-                            ->withSessionId($scene->sessionId)
+                            ->withSessionId($scene->sessionId, true)
                             ->message(IText::instance($text))
                             ->over()
                             ->goStage('done');

@@ -100,7 +100,7 @@ class IMindset implements Mindset
     {
         foreach (self::REGISTRY_META as $metaType => $regType) {
             if (is_a($meta, $metaType, true)) {
-                return $this->registries[$regType];
+                return $this->getReg($regType, $this->cacheExpire);
             }
         }
 
