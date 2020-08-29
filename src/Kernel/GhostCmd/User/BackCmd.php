@@ -11,28 +11,21 @@
 
 namespace Commune\Kernel\GhostCmd\User;
 
-use Commune\Blueprint\Framework\Command\CommandMsg;
-use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
-use Commune\Kernel\GhostCmd\AGhostCmd;
 use Commune\Protocals\HostMsg\DefaultIntents;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class BackCmd extends AGhostCmd
+class BackCmd extends AbsIntentCmd
 {
     const SIGNATURE = 'back';
 
     const DESCRIPTION = '返回上一轮对话';
 
-    protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
+    protected function getIntentName(): string
     {
-        $this->cloner->comprehension
-            ->intention
-            ->setMatchedIntent(DefaultIntents::GUEST_NAVIGATE_BACK);
-
-        $this->goNext();
+        return DefaultIntents::GUEST_NAVIGATE_BACK;
     }
+
 
 }

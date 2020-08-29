@@ -11,28 +11,21 @@
 
 namespace Commune\Kernel\GhostCmd\User;
 
-use Commune\Blueprint\Framework\Command\CommandMsg;
-use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
-use Commune\Kernel\GhostCmd\AGhostCmd;
 use Commune\Protocals\HostMsg\DefaultIntents;
-
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RestartCmd extends AGhostCmd
+class RestartCmd extends AbsIntentCmd
 {
     const SIGNATURE = 'restart';
 
     const DESCRIPTION = '当前对话语境从头开始';
 
-    protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
+    protected function getIntentName(): string
     {
-        $this->cloner->comprehension
-            ->intention
-            ->setMatchedIntent(DefaultIntents::GUEST_NAVIGATE_RESTART);
-
-        $this->goNext();
+        return DefaultIntents::GUEST_NAVIGATE_RESTART;
     }
+
 
 }

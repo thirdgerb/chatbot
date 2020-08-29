@@ -11,28 +11,21 @@
 
 namespace Commune\Kernel\GhostCmd\User;
 
-use Commune\Blueprint\Framework\Command\CommandMsg;
-use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
-use Commune\Kernel\GhostCmd\AGhostCmd;
 use Commune\Protocals\HostMsg\DefaultIntents;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class CancelCmd extends AGhostCmd
+class CancelCmd extends AbsIntentCmd
 {
     const SIGNATURE = 'cancel';
 
     const DESCRIPTION = '退出当前上下文语境';
 
-    protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
+    protected function getIntentName(): string
     {
-        $this->cloner->comprehension
-            ->intention
-            ->setMatchedIntent(DefaultIntents::GUEST_NAVIGATE_CANCEL);
-
-        $this->goNext();
+        return DefaultIntents::GUEST_NAVIGATE_CANCEL;
     }
 
 }

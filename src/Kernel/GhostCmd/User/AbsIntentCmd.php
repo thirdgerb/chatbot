@@ -10,25 +10,31 @@
  */
 
 namespace Commune\Kernel\GhostCmd\User;
-
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Kernel\GhostCmd\AGhostCmd;
-use Commune\Protocals\HostMsg\DefaultIntents;
+use Commune\Protocals\Abstracted\Intention;
 
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class RepeatCmd extends AbsIntentCmd
+abstract class AbsIntentCmd extends AGhostCmd
 {
-    const SIGNATURE = 'repeat';
+    abstract protected function getIntentName() : string;
 
-    const DESCRIPTION = '重复当前对话';
-
-    protected function getIntentName(): string
+    protected function handle(CommandMsg $message, RequestCmdPipe $pipe): void
     {
-        return DefaultIntents::GUEST_NAVIGATE_REPEAT;
+        $intentName = $this->getIntentName();
+        $comprehension = $this->cloner->comprehension;
+        $comprehension->intention->setMatchedIntent($intentName);
+        $comprehension->handled(
+            Intention::class,
+            get_class($pipe),
+            true
+        );
+
+        $this->goNext();
     }
 
 
