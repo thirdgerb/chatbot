@@ -34,7 +34,10 @@ abstract class AbsMessageAls implements MessageAnalyser
         $deliver = $dialog->send();
         if (!empty($bufferedLines)) {
             $text = implode(PHP_EOL, $bufferedLines);
-            $deliver->message(MarkdownMsg::instance($text, $this->getLevel()));
+            $text = trim($text);
+            if (!empty($text)) {
+                $deliver->message(MarkdownMsg::instance($text, $this->getLevel()));
+            }
         }
         $bufferedLines = [];
 
