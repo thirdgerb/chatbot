@@ -388,12 +388,16 @@ class LesionTask extends ACodeContext
                             ->nlu
                             ->asyncSaveMeta($cloner, $def->toMeta());
 
+                        $message = ReplyMsg::instance(
+                            $this->scene->text,
+                            $text
+                        );
 
                         $scene = $this->scene;
                         return $dialog
                             ->send()
                             ->withSessionId($scene->sessionId, true)
-                            ->message(IText::instance($text))
+                            ->message($message)
                             ->over()
                             ->goStage('done');
                     })
