@@ -197,7 +197,6 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
     protected function parseInputText(string $text) : string
     {
         $text = StringUtils::normalizeString($text);
-        $text = StringUtils::trim($text);
         return $text;
     }
 

@@ -406,4 +406,11 @@ EOF;
 
         $this->assertEquals('//player.bilibili.com/player.html?aid=669185843&bvid=BV1xa4y1J71q&cid=221442831&page=1', $fetched);
     }
+
+
+    public function testNormalizeChineseStr()
+    {
+        $text = StringUtils::normalizeString("你好啊。");
+        $this->assertEquals('你好啊', $text);
+    }
 }
