@@ -10,7 +10,6 @@
  */
 
 namespace Commune\Components\Markdown\Analysers\Await;
-
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Await;
 use Commune\Blueprint\Ghost\Operate\Operator;
@@ -20,7 +19,7 @@ use Commune\Components\Markdown\Mindset\SectionStageDef;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class GoStageAls extends AbsAwaitAnalyser
+class GoFulfillAls extends AbsAwaitAnalyser
 {
     public function __invoke(
         Dialog $dialog,
@@ -29,8 +28,7 @@ class GoStageAls extends AbsAwaitAnalyser
         Await $await
     ): ? Operator
     {
-        list ($route, $index) = $this->separateRouteAndIndex($content);
-        return $dialog->goStage($route);
+        return $dialog->fulfill();
     }
 
 

@@ -17,6 +17,7 @@ namespace Commune\Components\Markdown\Constants;
  */
 class MDContextLang
 {
+    const LOCATION = 'markdown.dialog.location';
 
     const ASK_CHOOSE = 'markdown.dialog.askChoose';
 

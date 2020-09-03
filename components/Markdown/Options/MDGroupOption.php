@@ -102,9 +102,15 @@ class MDGroupOption extends AbsOption
 
                 // await
                 'askNext' => Analysers\Await\AskNextAls::class,
+                'askChoose' => Analysers\Await\AskChooseAls::class,
                 'routeToStage' => Analysers\Await\RouteToStageAls::class,
                 'routeUcl' => Analysers\Await\RouteUclAls::class,
+                'routeToRelation' => Analysers\Await\RouteToRelationAls::class,
 
+                // redirect
+                'goStage' => Analysers\Await\GoStageAls::class,
+                'goFulfill' => Analysers\Await\GoFulfillAls::class,
+                'goUcl' => Analysers\Await\GoUclAls::class,
             ],
 
         ];

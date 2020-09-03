@@ -48,7 +48,7 @@ abstract class AbsAwaitAnalyser implements AwaitAnalyser
         $parent = $current->parent;
         // 选择父节点的后续节点
         if (!empty($parent)) {
-            $ucl = $dialog->ucl->goStage($younger);
+            $ucl = $dialog->ucl->goStage($parent);
             $def = $this->getSectionStageDef($ucl, $cloner);
             return $this->getNextStage($dialog, $def, false);
         }

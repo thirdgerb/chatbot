@@ -18,4 +18,6 @@ return [
     MDContextLang::ASK_NEXT => '接下来',
 
     MDContextLang::BACKWARD => '返回上一层',
+
+    MDContextLang::LOCATION => '{title}',
 ];

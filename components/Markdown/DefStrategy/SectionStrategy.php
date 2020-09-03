@@ -95,9 +95,15 @@ class SectionStrategy
         // 每一个 stage 都可以拆分成多段对话
         // 在内部切换时会保留上下文记忆, 避免重复.
         $await = $dialog->process->getAwait();
-        $isSameContext = isset($await) && $await->isSameContext($dialog->ucl);
+        $current = $dialog->ucl;
+        $isSameContext = isset($await) && $await->isSameContext($current);
         if (! $isSameContext) {
             $dialog->context[$def->stageName] = 0;
+        }
+
+        $isSameStage = isset($await) && $await->equals($current) ;
+        if (!$isSameStage) {
+            $this->sendTitle($def, $dialog);
         }
 
         // 通过计数器了解当前要输出的片段.
@@ -111,9 +117,11 @@ class SectionStrategy
         $textIndex = $current > $max ? $max : $current;
         $text = $section->texts[$textIndex] ?? '';
         $text = trim($text);
-        $silence = $current > $max;
+        $moreThenEnd = $current > $max;
         $cloner = $dialog->cloner;
-        $cloner->silence($silence);
+        if ($moreThenEnd) {
+            $cloner->silence($moreThenEnd);
+        }
         $operator = $this->sendMessage(
             $group,
             $text,
@@ -142,6 +150,22 @@ class SectionStrategy
             $dialog,
             $comments
         );
+    }
+
+    protected function sendTitle(
+        SectionStageDef $def,
+        Dialog $dialog
+    ) : void
+    {
+        $level = $def->depth;
+
+        $prefix = implode('', array_fill(0, $level, '#' ));
+        $dialog
+            ->send()
+            ->info(MDContextLang::LOCATION, [
+                'title' => $prefix. ' ' . $def->getTitle(),
+            ])
+            ->over();
     }
 
     protected function defaultContinue(
