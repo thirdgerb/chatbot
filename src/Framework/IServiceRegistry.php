@@ -319,6 +319,8 @@ class IServiceRegistry implements ServiceRegistry
         $this->consoleLogger->debug(
             $this->logInfo->bootingRegisterComponent($id, $by)
         );
+        $this->procC->instance($id, $componentOption);
+        $this->reqC->instance($id, $componentOption);
         return true;
     }
 

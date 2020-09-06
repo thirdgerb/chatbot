@@ -27,6 +27,11 @@ use Commune\Ghost\Providers\Psr4SelfRegisterLoader;
 abstract class AComponentOption extends AbsOption implements ComponentOption
 {
 
+    public function getId(): string
+    {
+        return static::class;
+    }
+
     /**
      * 当前组件依赖另一个组件.
      *
