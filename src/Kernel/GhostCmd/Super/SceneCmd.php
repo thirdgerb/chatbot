@@ -24,8 +24,9 @@ use Commune\Support\Arr\ArrayAndJsonAble;
 class SceneCmd extends AGhostCmd
 {
     const SIGNATURE = 'scene
-       {--routes : 当前会话的路由状态}
-       {--awaits : 监听中的用户意图}
+       {--r|routes : 当前会话的路由状态}
+       {--w|awaits : 监听中的用户意图}
+       {--m|memory : 内存使用状态}
     ';
 
     const DESCRIPTION = '用于查看当前会话的环境变量';
@@ -74,5 +75,23 @@ class SceneCmd extends AGhostCmd
         );
     }
 
+    protected function __memory() : string
+    {
+        $peak = memory_get_peak_usage();
+
+        $units = "kmg";
+        $len = strlen($units);
+        $t = '';
+        for ($i = 0; $i < $len ; $i ++ ) {
+            $t = $units[$i];
+            $peak = $peak / 1024;
+            if ($peak < 1024) {
+                break;
+            }
+        }
+
+        $peak = round($peak, 3);
+        return "内存使用: $peak $t";
+    }
 
 }
