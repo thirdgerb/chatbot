@@ -98,13 +98,10 @@ class SectionStrategy
         $current = $dialog->ucl;
         $isSameContext = isset($await) && $await->isSameContext($current);
         if (! $isSameContext) {
+            $this->sendTitle($def, $dialog);
             $dialog->context[$def->stageName] = 0;
         }
 
-        $isSameStage = isset($await) && $await->equals($current) ;
-        if (!$isSameStage) {
-            $this->sendTitle($def, $dialog);
-        }
 
         // 通过计数器了解当前要输出的片段.
         $max = count($section->texts) - 1;
@@ -120,6 +117,7 @@ class SectionStrategy
         $moreThenEnd = $current > $max;
         $cloner = $dialog->cloner;
         if ($moreThenEnd) {
+            $this->sendTitle($def, $dialog);
             $cloner->silence($moreThenEnd);
         }
         $operator = $this->sendMessage(
