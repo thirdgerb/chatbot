@@ -107,10 +107,10 @@
 接下来您可以选择自己感兴趣的话题，让我们深入探讨。
 
 [//]: # (@askChoose)
+[//]: # (@routeUcl md.demo.complete_demo_video)
 [//]: # (@routeUcl md.demo.half_open_conversational_system)
-[//]: # (@routeUcl md.demo.conversational_video)
+[//]: # (@routeUcl md.demo.conversational_video_app)
 [//]: # (@routeUcl md.demo.chatlog_intro)
-[//]: # (@routeUcl md.demo.conversational_wiki)
 [//]: # (@routeUcl md.demo.ghost_in_shells)
 [//]: # (@routeUcl md.demo.codable_configable_core)
-[//]: # (@routeUcl md.demo.complete_demo_video)
+[//]: # (@routeUcl md.demo.conversational_wiki)

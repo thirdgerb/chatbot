@@ -52,7 +52,7 @@
 "半开放域" 对话系统要成立，最核心的一个假设是基于二八法则的。系统最核心的功能为服务方主导，在冷启动时已经具备。而剩下的开放域对话，可能百分之八十的需求集中在百分之二十的问题上，可以在日后长期的维护中不断充实。
 
 [//]: # (@askNext)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 ## 为何机器学习并非银弹
 
@@ -85,7 +85,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 ### 严谨多轮对话流程
 
@@ -111,7 +111,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 
 ### 复杂上下文切换
@@ -143,7 +143,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 ### 复杂工程任务
 
@@ -178,7 +178,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 
 ### 人类学习的主观能动性
@@ -203,7 +203,7 @@
 可以预期，未来的对话系统就像曾经的触屏系统一样，优秀的产品经理也是不可或缺的，对话流程上的改进可能比自然语言理解的容错更为高效率。
 
 [//]: # (@askNext)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 
 ## 对话式交互系统
@@ -240,7 +240,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation children)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 #### 语音交互解放生产力
 
@@ -265,7 +265,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 
 #### 意图直达
@@ -290,7 +290,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 
 #### 更好的平台适配性
@@ -318,7 +318,7 @@
 在一些用对话可以实现的应用，比如问卷调查、简单的增删改查、命令式的操作等等……通过一个微信聊天就可以实现了，很可能在这个领域取代绝大多数视觉交互应用。
 
 [//]: # (@askNext)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 ### 交互系统的必要功能
 
@@ -363,7 +363,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 #### 多任务调度
 
@@ -381,7 +381,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 
 #### 规则校验
@@ -397,7 +397,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 
 #### 严谨交互流程
@@ -408,7 +408,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 #### 上下文容错
 
@@ -429,7 +429,7 @@
 
 [//]: # (@askChoose)
 [//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 
 #### 自我解释与管理
@@ -455,7 +455,7 @@
 类似《西部世界》中管理员对 host 说 "停止运行机能"、"开始调试模式"、"bring yourself online" 等等。
 
 [//]: # (@askNext)
-[//]: # (@routeToRelation parent |返回)
+[//]: # (@routeToRelation parent b|返回)
 
 ## 工程方案与自然语言技术的结合
 
