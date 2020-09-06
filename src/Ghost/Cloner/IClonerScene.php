@@ -18,6 +18,7 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Session\ASessionScene;
+use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -54,22 +55,73 @@ class IClonerScene extends ASessionScene implements ClonerScene
             $root = $request->getEntry();
         }
 
+        $entry = static::matchSceneEntry($root, $app);
+        $cloner = $app->make(Cloner::class);
+        return new static($cloner, $entry, $env);
+    }
+
+
+    public static function defaultEntry(
+        ContainerContract $app
+    ) : Ucl
+    {
+
+        /**
+         * @var GhostConfig $config
+         */
+        $config = $app->make(GhostConfig::class);
+        return Ucl::decode($config->defaultContextName);
+    }
+
+    public static function matchSceneEntry(
+        string $root,
+        ContainerContract $app
+    ) : Ucl
+    {
+        if (empty($root)) {
+            return static::defaultEntry($app);
+        }
+
         /**
          * @var GhostConfig $config
          */
         $config = $app->make(GhostConfig::class);
         $scenes = $config->sceneContextNames;
-
         $entry = Ucl::decode($root);
-        $isValid = $entry->isValidPattern()
-            && in_array($entry->contextName, $scenes);
 
-        $entry = $isValid
-            ? $entry
-            : Ucl::decode($config->defaultContextName);
+        if (!$entry->isValidPattern()) {
+            return static::defaultEntry($app);
+        }
 
-        $cloner = $app->make(Cloner::class);
-        return new static($cloner, $entry, $env);
+        $allowEntry = in_array('*', $scenes)
+            || in_array($entry->contextName, $scenes);
+
+        if ($allowEntry) {
+            return $entry;
+        }
+
+        if (static::allowWildcardEntry($root, $scenes)) {
+            return $entry;
+        }
+
+        return static::defaultEntry($app);
+    }
+
+    public static function allowWildcardEntry(
+        string $root,
+        array $scenes
+    ) : bool
+    {
+        foreach ($scenes as $scene) {
+            if (
+                StringUtils::isWildcardPattern($scene)
+                && StringUtils::wildcardMatch($scene, $root)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function getGhostRequest() : ? GhostRequest

@@ -129,7 +129,7 @@ class GhostProtoConfig extends IGhostConfig
             'defaultContextName' => Components\Demo\Contexts\DemoHome::genUcl()->encode(),
             'sceneContextNames' => [
                 Maze::genUcl()->encode(),
-                'md.demo.commune_v2_intro',
+                'md.demo.*',
             ],
             'defaultHeedFallback' =>[
                 Components\HeedFallback\Action\HeedFallback::class,
