@@ -104,4 +104,10 @@ interface IntentDef extends Def
      */
     public function getEmotions() : array;
 
+
+    /**
+     * @param IntentDef $def
+     * @return bool    changed
+     */
+    public function mergeDef(IntentDef $def) : bool;
 }

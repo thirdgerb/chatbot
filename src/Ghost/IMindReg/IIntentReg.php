@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\IMindReg;
 
+use Commune\Blueprint\Ghost\MindDef\Def;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\MindReg\IntentReg;
@@ -52,6 +53,24 @@ class IIntentReg extends AbsDefRegistry implements IntentReg
 
         $stageDef = $stageReg->getDef($defName);
         $this->registerDef($stageDef->asIntentDef());
+        return true;
+    }
+
+    /**
+     * @param IntentDef $def
+     * @return bool
+     */
+    protected function alreadyHasDef(Def $def): bool
+    {
+        $name = $def->getName();
+        /**
+         * @var IntentDef $registered
+         */
+        $registered = $this->getDef($name);
+        $changed = $registered->mergeDef($def);
+        if ($changed) {
+            $this->getMetaRegistry()->save($registered->toMeta());
+        }
         return true;
     }
 }

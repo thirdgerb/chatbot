@@ -389,6 +389,17 @@ class IIntentDef extends AbsOption implements IntentDef
             );
     }
 
+    /*---------- merge ----------*/
+    public function mergeDef(IntentDef $def): bool
+    {
+        $examples = $this->examples;
+        $examples = array_merge($examples, $def->getExamples());
+        $this->examples = array_unique($examples);
+        return true;
+    }
+
+
+
 
     /*---------- meta ----------*/
 

@@ -227,11 +227,16 @@ abstract class AbsDefRegistry implements DefRegistry
         $name = $def->getName();
 
         if ($notExists && $this->getMetaRegistry()->has($name)) {
-            return false;
+            return $this->alreadyHasDef($def);
         }
 
         $this->setDefCache($name, $def);
         return $this->doRegisterDef($def, $notExists);
+    }
+
+    protected function alreadyHasDef(Def $def) : bool
+    {
+        return false;
     }
 
     protected function setDefCache(string $name, Def $def) : void

@@ -93,7 +93,7 @@ class IStageReg extends AbsDefRegistry implements StageReg
             $intentDef = $def->asIntentDef();
             $this->mindset->intentReg()->registerDef(
                 $intentDef,
-                true
+                $notExists
             );
         }
         return $success;
