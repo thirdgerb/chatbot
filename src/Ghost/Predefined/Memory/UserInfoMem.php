@@ -21,8 +21,8 @@ use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $name
- * @property-read int $loginTimes
+ * @property string $name
+ * @property int $loginTimes
  *
  * # 用注解的方式定义 Context 的标题和简介.
  *
