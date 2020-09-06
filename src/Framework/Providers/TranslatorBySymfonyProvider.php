@@ -16,6 +16,7 @@ use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\ServiceProvider;
 use Commune\Contracts\Trans\Translator;
+use Commune\Framework\Component\Providers\LoadTranslations;
 use Commune\Framework\Trans\SymfonyTranslatorAdapter;
 use Commune\Framework\Trans\TransOption;
 use Commune\Support\Registry\Meta\CategoryOption;
@@ -33,6 +34,9 @@ use Commune\Support\Utils\StringUtils;
  * @property-read StorageMeta|null $initStorage     定义自己的 init storage.
  *
  * @property-read bool $reset
+ *
+ *
+ * @property-read string $resource 初始资源
  */
 class TranslatorBySymfonyProvider extends ServiceProvider
 {
@@ -48,6 +52,11 @@ class TranslatorBySymfonyProvider extends ServiceProvider
             'initStorage' => null,
 
             'reset' => CommuneEnv::isResetRegistry(),
+
+            'resource' => StringUtils::gluePath(
+                CommuneEnv::getResourcePath(),
+                'trans'
+            )
         ];
     }
 
@@ -120,6 +129,15 @@ class TranslatorBySymfonyProvider extends ServiceProvider
             $category->flush(false);
             $category->initialize();
         }
+
+        // 加载最初的配置.
+        LoadTranslations::load(
+            $this->resource,
+            $app->make(Translator::class),
+            $logger,
+            true,
+            true
+        );
 
     }
 
