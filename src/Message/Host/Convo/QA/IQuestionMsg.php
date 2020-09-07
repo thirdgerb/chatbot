@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Trans\Translator;
 use Commune\Ghost\Support\ContextUtils;
+use Commune\Message\Intercom\IInputMsg;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
@@ -121,7 +122,6 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
     public function parse(Cloner $cloner): ? AnswerMsg
     {
 
-        $input = $cloner->input;
         $comprehension = $cloner->comprehension;
         $answer = $comprehension->answer->getAnswer();
 
@@ -129,13 +129,18 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             return $answer;
         }
 
-
-        $answer = $this->parseAnswerByType($input)
-            ?? $this->parseAnswerByVerbal($input);
+        $input = $cloner->input;
+        $answer = $this->parseInput($input);
 
         return isset($answer)
             ? $this->setAnswerToComprehension($answer, $comprehension)
             : null;
+    }
+
+    public function parseInput(InputMsg $input) : ? AnswerMsg
+    {
+        return $this->parseAnswerByType($input)
+            ?? $this->parseAnswerByVerbal($input);
     }
 
     public function match(Cloner $cloner): ? AnswerMsg

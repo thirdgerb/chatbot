@@ -118,7 +118,7 @@ class IConfirm extends IQuestionMsg implements Confirm
                 ->emotion
                 ->setEmotion(
                     EmotionDef::EMO_NEGATIVE,
-                    false
+                   true
                 );
         }
 
@@ -135,6 +135,7 @@ class IConfirm extends IQuestionMsg implements Confirm
             'answer' => $answer,
             'choice' => $choice,
             'routes' => $route,
+            'positive' => $choice === self::POSITIVE_INDEX
         ]);
     }
 

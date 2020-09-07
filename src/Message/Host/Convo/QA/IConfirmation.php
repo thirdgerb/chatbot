@@ -16,17 +16,30 @@ use Commune\Protocals\HostMsg\Convo\QA\Confirmation;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read bool|null $positive
  */
 class IConfirmation extends IAnswerMsg implements Confirmation
 {
+    public static function stub(): array
+    {
+        return [
+            'answer' => '',
+            'choice' => null,
+            'route' => null,
+            'positive' => null,
+        ];
+    }
+
+
     public function isPositive(): bool
     {
-        return strval($this->choice) === IConfirm::POSITIVE_INDEX;
+        return $this->positive === true;
     }
 
     public function isNegative(): bool
     {
-        return strval($this->choice) === IConfirm::NEGATIVE_INDEX;
+        return $this->positive === false;
     }
 
 

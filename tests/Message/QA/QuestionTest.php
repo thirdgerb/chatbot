@@ -11,8 +11,12 @@
 
 namespace Commune\Test\Message\QA;
 
+use Commune\Message\Host\Convo\IText;
 use Commune\Message\Host\Convo\QA\IConfirm;
+use Commune\Message\Host\Convo\QA\IConfirmation;
 use Commune\Message\Host\Convo\QA\IQuestionMsg;
+use Commune\Message\Intercom\IInputMsg;
+use Commune\Protocals\HostMsg\Convo\QA\Confirmation;
 use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
 use PHPUnit\Framework\TestCase;
 
@@ -59,6 +63,19 @@ class QuestionTest extends TestCase
         $this->assertEquals(0, QuestionMsg::MATCH_ANY & $q->mode);
 
         $this->assertEquals(QuestionMsg::MATCH_SUGGESTION, $q->mode & QuestionMsg::MATCH_SUGGESTION);
+
+
+        $q = IConfirm::newConfirm('test', null, 'y', 'n');
+
+        $input = IInputMsg::instance(
+            IText::instance('n'),
+            'test'
+        );
+
+        $a = $q->parseInput($input);
+        $this->assertTrue($a instanceof Confirmation);
+        $this->assertTrue($a->isNegative());
     }
+
 
 }
