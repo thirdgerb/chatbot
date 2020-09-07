@@ -2,6 +2,8 @@
 # 对话式视频应用
 
 [//]: # (@stageName intro)
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=842077760&bvid=BV1f54y1C7zy&cid=233000617&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
+
 
 对话式视频应用，简单而言就是用对话交互形式来驱动小视频的展示，进一步用对话的形式来创作小视频。它的价值建立在影音视频自身的表现力基础上，通过对话的方式把碎片化的小视频组织起来，并且通过对话来提供一种上下文语境的体验。
 
@@ -29,6 +31,8 @@
 
 [//]: # (@stageName what)
 
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=927041987&bvid=BV1PT4y1A75n&cid=232998507&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
+
 "对话式视频" 作为一个科幻概念，早就为大众所熟知了。例如《超人》里克拉克与父亲影像对话，《守望者》里政府部门的接待员，最常见的是未来商城里视频墙上的商品推销员。
 
 [//]: # (@info)
@@ -51,6 +55,8 @@
 ## 对话式视频不是什么
 
 [//]: # (@stageName not_what)
+
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=969595658&bvid=BV1hp4y1e7Xi&cid=232999830&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 由于长期作为科幻想象存在，许多人不一定能分清不同领域的技术设想，会将它们糅合在一起。
 所以这里也要强调对话式视频不是什么：
@@ -84,6 +90,7 @@
 ## 对话式视频如何运作
 
 [//]: # (@stageName how)
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=584529731&bvid=BV1W64y1F7op&cid=233000301&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 我理解的对话式视频，它的呈现方式和其它对话式应用不需要有本质的差别，无非是多了视频展示，在客户端层面要把视频展示做得更加流畅，还要考虑一些交互细节，比如等待时、无法回复时也要有细微的互动。但还并不需要完全拟人的虚拟形象。
 
@@ -107,6 +114,8 @@
 ## 对话式视频的核心技术
 
 [//]: # (@stageName foundations)
+
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=372118504&bvid=BV1eZ4y1N79a&cid=233021430&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 本人认为 "对话式视频" 的基础技术早就全部具备了，只缺用各种工程手段将基础技术汇聚起来。
 所以 "对话式视频" 本质上是一个 "产品思路"， 而不是 "技术思路"。
@@ -148,6 +157,7 @@
 ### 用户主导获取资讯
 
 [//]: # (@stageName user_guidance)
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=669614929&bvid=BV1xa4y1j7R9&cid=233003746&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 各种视频类网站，用户获取视频的方式无非三种：
 
@@ -180,6 +190,8 @@
 ### 将碎片化的小视频组织起来
 
 [//]: # (@stageName video_organization)
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=329537375&bvid=BV1tA411E7Tv&cid=233021283&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
+
 
 长视频让位于小视频，是已经很明显的信息时代趋势。然而小视频最大的优势是碎片化，最大的缺点也是缺乏组织。
 于是出现了带有讽刺意味的 "小视频综艺"、"小视频电影" 等称呼。
@@ -207,6 +219,8 @@
 ### 对话式引导创作
 
 [//]: # (@stageName dialog_guidance)
+
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=839506018&bvid=BV1y54y127dk&cid=233000891&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 作者个人认为，对话式视频最具爆发力的一个领域就是陌生人社交。根本原因一句话可以概括，这种形式可以更好地引导用户创作。
 
@@ -237,9 +251,11 @@
 [//]: # (@routeToRelation parent b|返回)
 
 
-### 最重要的，时空非一致性对话
+### 时空非一致性对话
 
 [//]: # (@stageName time_space_free)
+
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=712080448&bvid=BV1MD4y1o7sA&cid=233003433&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 就我个人之所以产生对话式视频的设想，最根本的动机来自于时空非一致性对话。
 
@@ -275,9 +291,10 @@
 [//]: # (@routeToRelation parent b|返回)
 
 
-### 人类迈向永生的新台阶
+### 闲谈 "永生"
 
 [//]: # (@stageName after_life_existance)
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=287087564&bvid=BV1gf4y1D74X&cid=233002349&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 最后我想和读者谈谈与主题无关的， "人类迈向永生" 这个命题。
 
@@ -324,41 +341,10 @@
 [//]: # (@routeToRelation parent b|返回)
 
 
-### 知识宣讲
-
-[//]: # (@stageName knowledge_propaganda)
-
-对话视频应该非常贴合知识宣讲的场景。因为知识宣讲往往是高度结构化的，很容易创建冷启动所需的结构化对话。您现在看到的多轮对话就属于一种知识宣讲，我想您现在接受到的信息，已经远远超过读原文时愿意接受的信息量了。
-
-[//]: # (@info)
-
-知识宣讲最典型的场景就是在线教育。在线教育本就有视频课程、直播和互动游戏教学三种形式，各有优缺点。
-
-- 视频课程呈现的知识最丰富系统，但对学生注意力有较高的要求，无法互动
-- 互动游戏教学能很好掌控学生注意力，但开发成本非常高，所以往往用于浅显的儿童教学
-- 直播教学是两方面结合得比较好的，显然最大的缺点是要求时间一致性，劳动成本很高。
-
-[//]: # (@info)
-
-我个人猜想即便没有强人工智能，对话式视频也能成为几种教学形式的粘合剂。本质上就是把原本设计过课纲、高度结构化的课程内容拆分成若干个节点，用多轮对话组织起来。
-
-[//]: # (@info)
-
-学生按既定顺序与对话视频互动，就相当于看了一个长课程。而任何一个节点上都可以打断对话，提出自己的想法问题。老师如果已经教机器人回答过，则学生立刻能拿到答案。不能由机器人学会的回答，老师可以现场值守，或在别的时间抽空回答，携带对话上下文再发还给学生。
-
-[//]: # (@info)
-
-这样，每一个课程都将是一个渐进式的过程，需要很长的时间去完善它。但只要课程对话机器人第一次 "冷" 启动了，就像其它长视频一样取消了反反复复讲的重复劳动。
-
-
-[//]: # (@askChoose)
-[//]: # (@routeToRelation brothers)
-[//]: # (@routeToRelation parent b|返回)
-
-
 ### 电子商务导购
 
 [//]: # (@stageName e_commerce)
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=499598751&bvid=BV16K411K7JC&cid=233021904&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 电子商务网站，比如淘宝，早就有各种商品介绍、卖家秀、带货介绍之类的视频或者直播。另一方面，用户需要与商家进行复杂的沟通，也有了为商家提供的对话机器人。
 
@@ -388,6 +374,8 @@
 
 [//]: # (@stageName knowledge_share)
 
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=202104056&bvid=BV1mh411R7Be&cid=233004272&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
+
 知识分享社区，目前最具代表性的可能是知乎了。如果知乎推出对话式视频，它很可能产生一个巨大的变革。就是把问题为中心的知识创作与查询，引导向以答主为中心。
 
 [//]: # (@info)
@@ -412,9 +400,44 @@
 [//]: # (@routeToRelation parent b|返回)
 
 
-### 陌生人社交
+### 结构化知识宣讲
+
+[//]: # (@stageName knowledge_propaganda)
+
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=712032197&bvid=BV1AD4y1o7Cz&cid=233002924&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
+
+对话视频应该非常贴合知识宣讲的场景。因为知识宣讲往往是高度结构化的，很容易创建冷启动所需的结构化对话。您现在看到的多轮对话就属于一种知识宣讲，我想您现在接受到的信息，已经远远超过读原文时愿意接受的信息量了。
+
+[//]: # (@info)
+
+知识宣讲最典型的场景就是在线教育。在线教育本就有视频课程、直播和互动游戏教学三种形式，各有优缺点。
+
+- 视频课程呈现的知识最丰富系统，但对学生注意力有较高的要求，无法互动
+- 互动游戏教学能很好掌控学生注意力，但开发成本非常高，所以往往用于浅显的儿童教学
+- 直播教学是两方面结合得比较好的，显然最大的缺点是要求时间一致性，劳动成本很高。
+
+[//]: # (@info)
+
+我个人猜想即便没有强人工智能，对话式视频也能成为几种教学形式的粘合剂。本质上就是把原本设计过课纲、高度结构化的课程内容拆分成若干个节点，用多轮对话组织起来。
+
+[//]: # (@info)
+
+学生按既定顺序与对话视频互动，就相当于看了一个长课程。而任何一个节点上都可以打断对话，提出自己的想法问题。老师如果已经教机器人回答过，则学生立刻能拿到答案。不能由机器人学会的回答，老师可以现场值守，或在别的时间抽空回答，携带对话上下文再发还给学生。
+
+[//]: # (@info)
+
+这样，每一个课程都将是一个渐进式的过程，需要很长的时间去完善它。但只要课程对话机器人第一次 "冷" 启动了，就像其它长视频一样取消了反反复复讲的重复劳动。
+
+
+[//]: # (@askChoose)
+[//]: # (@routeToRelation brothers)
+[//]: # (@routeToRelation parent b|返回)
+
+### 广义陌生人社交
 
 [//]: # (@stageName strangers_socialize)
+
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=712063629&bvid=BV1VD4y1o7kS&cid=233002627&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 广义的陌生人社交，可以进一步包括招聘、面试、公众人物自我营销等等。简单而言就是双方都相互陌生的情况下建立理解。
 
@@ -436,11 +459,13 @@
 [//]: # (@routeToRelation parent b|返回)
 
 
-### 偶像交流
+### 偶像文化应用
 
 [//]: # (@stageName idol_communication)
 
-偶像经济可能是对话式视频最有经济价值的领域。我本想将它归于陌生人社交，但考虑到它的特殊性所以单独拿出来。
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=754509728&bvid=BV1nk4y1y7pT&cid=233003260&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
+
+偶像经济可能是对话式视频最有经济价值的领域。我本想将它归于广义陌生人社交，但考虑到它的特殊性所以单独拿出来。
 
 [//]: # (@info)
 

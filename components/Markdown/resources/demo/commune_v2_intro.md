@@ -28,6 +28,8 @@
 
 [//]: # (@stageName what_is_commune_chatbot)
 
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=712044178&bvid=BV1oD4y1d7eX&cid=232996782&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
+
 "Commune" 是 "亲密交谈" 的意思，CommuneChatbot 是一个对话机器人的开源项目。
 
 [//]: # (@info)
@@ -44,6 +46,8 @@
 
 [//]: # (@stageName difference_from_other_chatbots)
 
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=669512318&bvid=BV1xa4y1E7hR&cid=232997599&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
+
 为了说明本项目和常见的在线客服、智能问答、闲聊机器人的不同之处，我临时提出了 "半开放域对话式交互系统" 的命题。
 
 [//]: # (@info)
@@ -58,9 +62,12 @@
 - 低资源（语料资源）启动
 - 围绕主题，支持与用户进行长尾的开放式对话，不断积累语料与对话能力
 
-[//]: # (@info)
+[//]: # (@break)
+
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=202068665&bvid=BV1Bh411R7fb&cid=232997899&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 对话式交互系统:
+
 - 核心在于交互而非对话
 - 目的是用对话形式控制各种设备，系统，执行复杂任务
 - 交互能力对标其它交互系统，包括异步、多任务调度、协同任务管理等
@@ -76,6 +83,8 @@
 ## 主要的产品思路和技术功能
 
 [//]: # (@stageName major_production_prototypes)
+
+[//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=499526166&bvid=BV14K411K7ZB&cid=232998171&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 在 "半开放域对话式交互系统" 的命题下，本项目初步探索了几种产品思路：
 

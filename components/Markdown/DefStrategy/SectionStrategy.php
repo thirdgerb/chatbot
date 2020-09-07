@@ -118,7 +118,7 @@ class SectionStrategy
         $cloner = $dialog->cloner;
         if ($moreThenEnd) {
             $this->sendTitle($def, $dialog);
-            $cloner->silence($moreThenEnd);
+            // $cloner->silence($moreThenEnd);
         }
         $operator = $this->sendMessage(
             $group,
