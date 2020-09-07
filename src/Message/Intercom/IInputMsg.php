@@ -97,8 +97,9 @@ class IInputMsg extends AIntercomMsg implements InputMsg
             $scene ?? $this->scene
         );
 
-        if ($output->createdAt < $this->createdAt) {
-            $output->createdAt = $this->createdAt + 1;
+        // 为防止客户端和服务端时间戳不一致, 强制回复消息大于输入消息
+        if ($output->createdAt <= $this->createdAt) {
+            $output->createdAt = $this->createdAt + 10;
         }
 
         return $output;
