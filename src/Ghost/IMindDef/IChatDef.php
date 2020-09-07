@@ -35,8 +35,9 @@ class IChatDef implements ChatDef
     )
     {
         $cid = $cid ?? md5($say);
+        $rCid = "$index:$cid";
         $this->meta = new ChatMeta([
-            'cid' => $cid,
+            'cid' => $rCid,
             'say' => $say,
             'reply' => $reply,
             'index' => $index,

@@ -11,7 +11,6 @@
 
 namespace Commune\NLU\Services;
 
-use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Blueprint\NLU\NLUManager;
@@ -36,7 +35,7 @@ class NLUSaveMetaService extends AbsDialogicService
     protected $cloner;
 
     protected $auth = [
-        Supervise::class,
+        // Supervise::class,
     ];
 
     /**
