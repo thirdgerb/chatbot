@@ -22,10 +22,10 @@ use Commune\Protocals\HostMsg\Tags\Conversational;
  */
 interface QuestionMsg extends VerbalMsg, Conversational, SelfTranslatable
 {
-    const MATCH_INDEX = 1;
-    const MATCH_SUGGESTION = 1 << 1;
-    const MATCH_INTENT = 1 << 2;
-    const MATCH_ANY = 1 << 5;
+    const MATCH_INDEX = 1 << 1;
+    const MATCH_SUGGESTION = 1 << 2;
+    const MATCH_INTENT = 1 << 3;
+    const MATCH_ANY = 1 << 4;
 
     /**
      * @return string

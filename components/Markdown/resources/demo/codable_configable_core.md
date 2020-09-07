@@ -9,9 +9,9 @@ CommuneChatbot 项目的多轮对话内核不仅实现了很多复杂的对话�
 
 它定义了 "完全可编程" 和 "完全可配置" 两个必须要实现的特性，最终形成了 编程-配置-编程/配置 的三明治架构。
 
-
 [//]: # (@askChoose)
 [//]: # (@routeToRelation children)
+[//]: # (@routeToStage ending)
 
 ## 可编程与可配置的区别
 
@@ -42,8 +42,8 @@ CommuneChatbot 项目的多轮对话内核不仅实现了很多复杂的对话�
 
 这些能力对于非技术的运营人员非常惹眼，但开发者应该明白他们本质是一样的。
 
-
 [//]: # (@askChoose)
+[//]: # (@routeToRelation brothers)
 [//]: # (@routeToRelation parent b|返回)
 
 ## 对话逻辑配置的可平移性
@@ -57,6 +57,7 @@ CommuneChatbot 项目的多轮对话内核不仅实现了很多复杂的对话�
 这样的多轮对话是可平移的，比如我有信心把任何 DuerOS 或 DialogFlow 里的多轮对话配置平移到本项目，并且完全兼容。这是建立在本项目的底层多轮对话能力必须比它们更完善的前提下。
 
 [//]: # (@askChoose)
+[//]: # (@routeToRelation brothers)
 [//]: # (@routeToRelation parent b|返回)
 
 ## 编程-配置-编程/配置 的三明治架构
@@ -83,6 +84,7 @@ CommuneChatbot 项目的多轮对话内核不仅实现了很多复杂的对话�
 
 
 [//]: # (@askChoose)
+[//]: # (@routeToRelation brothers)
 [//]: # (@routeToRelation parent b|返回)
 
 
@@ -109,6 +111,7 @@ CommuneChatbot 项目的多轮对话内核不仅实现了很多复杂的对话�
 而底层的完全可编程驱动，则是通过[SectionStrategy](https://github.com/thirdgerb/chatbot/blob/master/components/Markdown/DefStrategy/SectionStrategy.php) 来实现的。
 
 [//]: # (@askChoose)
+[//]: # (@routeToRelation brothers)
 [//]: # (@routeToRelation parent b|返回)
 
 ## 三明治架构的代码式 Demo
@@ -134,7 +137,7 @@ CommuneChatbot 项目的多轮对话内核不仅实现了很多复杂的对话�
 而底层驱动逻辑的代码，则定义在[ContextDef](https://github.com/thirdgerb/chatbot/blob/master/src/Ghost/Context/Codable/ICodeContextDef.php) 这样的基类中。
 
 [//]: # (@routeToRelation parent b|返回)
-[//]: # (@routeUcl )
+[//]: # (@routeToStage ending)
 
 
 # 结束

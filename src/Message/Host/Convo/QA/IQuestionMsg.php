@@ -82,7 +82,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             'suggestions' => [],
             'routes' => [],
             'default' => null,
-            'mode' => self::MODE,
+            'mode' => static::MODE,
 
             'translated' => false,
         ];
@@ -161,14 +161,16 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
             return null;
         }
 
-        return $this->isDefault($message)
-            ?? $this->isInSuggestions($message)
-            ?? (
+        $answer = $this->isDefault($message);
+        $answer = $answer ?? $this->isInSuggestions($message);
+        $answer = $answer ?? (
                 $this->isMatchMode(self::MATCH_ANY)
                 ? $this->acceptAnyVerbalAnswer($message)
                 : null
             )
             ?? null;
+
+        return $answer;
     }
 
 

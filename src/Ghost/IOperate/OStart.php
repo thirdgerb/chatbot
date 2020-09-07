@@ -252,6 +252,10 @@ class OStart extends AbsOperator
 
     protected function runComprehendPipes(InputMsg $input) : ? Operator
     {
+        if ($this->cloner->comprehension->command->hasCmdStr()) {
+            return null;
+        }
+
         $awaitUcl = $this->start;
         $contextDef = $awaitUcl->findContextDef($this->cloner);
 

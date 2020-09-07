@@ -104,10 +104,23 @@ class IConfirm extends IQuestionMsg implements Confirm
      */
     protected function setAnswerToComprehension(AnswerMsg $answer, Comprehension $comprehension): AnswerMsg
     {
-        $positive = $answer->isPositive();
+        if ($answer->isPositive()) {
+            $comprehension
+                ->emotion
+                ->setEmotion(
+                    EmotionDef::EMO_POSITIVE,
+                    true
+                );
+        }
 
-        $comprehension->emotion->setEmotion(EmotionDef::EMO_POSITIVE, $positive);
-        $comprehension->emotion->setEmotion(EmotionDef::EMO_NEGATIVE, !$positive);
+        if ($answer->isNegative()) {
+            $comprehension
+                ->emotion
+                ->setEmotion(
+                    EmotionDef::EMO_NEGATIVE,
+                    false
+                );
+        }
 
         return $answer;
     }
