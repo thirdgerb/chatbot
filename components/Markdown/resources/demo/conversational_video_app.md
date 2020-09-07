@@ -4,6 +4,8 @@
 [//]: # (@stageName intro)
 [//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=842077760&bvid=BV1f54y1C7zy&cid=233000617&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
+[//]: # (@intentExample 什么是对话式视频)
+[//]: # (@intentExample 对话式视频是什么)
 
 对话式视频应用，简单而言就是用对话交互形式来驱动小视频的展示，进一步用对话的形式来创作小视频。它的价值建立在影音视频自身的表现力基础上，通过对话的方式把碎片化的小视频组织起来，并且通过对话来提供一种上下文语境的体验。
 

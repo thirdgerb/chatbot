@@ -26,6 +26,7 @@ use Commune\Protocals\HostMsg\DefaultIntents;
  * @example 退出
  * @example 我要退出
  * @example cancel
+ * @example 返回
  * @example 不玩了
  * @example 取消
  * @example 取消任务

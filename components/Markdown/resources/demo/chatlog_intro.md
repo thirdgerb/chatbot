@@ -1,6 +1,7 @@
 # 聊客 (chatlog)
 
 [//]: # (@stageName intro)
+[//]: # (@intentExample 什么是聊客)
 
 和对话式视频一样，从 "半开放域对话交互系统" 出发，作者设想了 "聊客"（chatlog）这样的产品。
 
