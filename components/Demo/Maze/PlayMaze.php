@@ -39,7 +39,6 @@ use Commune\Protocals\HostMsg\Convo\VerbalMsg;
  */
 class PlayMaze extends ACodeContext
 {
-    const DESCRIPTION = '运行迷宫游戏';
 
     /**
      * @var UserPlayHistory

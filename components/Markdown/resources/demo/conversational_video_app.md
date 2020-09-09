@@ -4,8 +4,6 @@
 [//]: # (@stageName intro)
 [//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=842077760&bvid=BV1f54y1C7zy&cid=233000617&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
-[//]: # (@intentExample 什么是对话式视频)
-[//]: # (@intentExample 对话式视频是什么)
 
 对话式视频应用，简单而言就是用对话交互形式来驱动小视频的展示，进一步用对话的形式来创作小视频。它的价值建立在影音视频自身的表现力基础上，通过对话的方式把碎片化的小视频组织起来，并且通过对话来提供一种上下文语境的体验。
 
@@ -32,6 +30,10 @@
 ## 什么是对话式视频
 
 [//]: # (@stageName what)
+
+[//]: # (@intentExample 什么是对话式视频)
+[//]: # (@intentExample 对话式视频是什么)
+[//]: # (@intentExample 啥叫对话式视频)
 
 [//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=927041987&bvid=BV1PT4y1A75n&cid=232998507&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
@@ -94,6 +96,8 @@
 [//]: # (@stageName how)
 [//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=584529731&bvid=BV1W64y1F7op&cid=233000301&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
+[//]: # (@intentExample 对话式视频怎么运作呢?)
+
 我理解的对话式视频，它的呈现方式和其它对话式应用不需要有本质的差别，无非是多了视频展示，在客户端层面要把视频展示做得更加流畅，还要考虑一些交互细节，比如等待时、无法回复时也要有细微的互动。但还并不需要完全拟人的虚拟形象。
 
 [//]: # (@info)
@@ -116,6 +120,9 @@
 ## 对话式视频的核心技术
 
 [//]: # (@stageName foundations)
+
+[//]: # (@intentExample 有哪些核心技术)
+[//]: # (@intentExample 要用到哪些基础技术)
 
 [//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=372118504&bvid=BV1eZ4y1N79a&cid=233021430&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
@@ -147,6 +154,9 @@
 ## 对话式视频的核心价值、相对优势是什么
 
 [//]: # (@stageName advantages)
+
+[//]: # (@intentExample 对话式视频的核心价值是什么)
+[//]: # (@intentExample 对话视频有什么相对优势吗?)
 
 我认为，对话式视频最本质的价值在于 "上下文相关、语义直达的影像互动"，仍然从属于影像互动本身的价值。"对话交互形式" 主要提供相对优势，可以和其它应用比较的出来。
 
@@ -334,6 +344,7 @@
 ## 对话式视频的应用场景
 
 [//]: # (@stageName applications)
+
 
 我把 "对话式视频" 理解为交互方式上的升级，可以给传统应用带来小视频影音上的表现力。因此它早期的应用场景我们都可以从现有的应用中推导。
 

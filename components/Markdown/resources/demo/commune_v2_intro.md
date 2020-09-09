@@ -28,6 +28,9 @@
 
 [//]: # (@stageName what_is_commune_chatbot)
 
+[//]: # (@intentExample 这是一个什么项目)
+[//]: # (@intentExample 这是啥项目啊)
+
 [//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=712044178&bvid=BV1oD4y1d7eX&cid=232996782&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 
 "Commune" 是 "亲密交谈" 的意思，CommuneChatbot 是一个对话机器人的开源项目。
@@ -45,6 +48,10 @@
 ## 和其它对话机器人系统的区别
 
 [//]: # (@stageName difference_from_other_chatbots)
+
+[//]: # (@intentExample 这个项目有什么特点)
+[//]: # (@intentExample 与其它对话机器人有什么区别)
+[//]: # (@intentExample 项目的特色是什么)
 
 [//]: # (@bili <iframe src="//player.bilibili.com/player.html?aid=669512318&bvid=BV1xa4y1E7hR&cid=232997599&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>)
 

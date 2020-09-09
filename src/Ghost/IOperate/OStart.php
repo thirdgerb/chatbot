@@ -353,7 +353,6 @@ class OStart extends AbsOperator
         if (empty($routes)) {
             return null;
         }
-
         $matched = $this->matchAwaitRoutes(...$routes);
 
         return isset($matched)
@@ -373,16 +372,9 @@ class OStart extends AbsOperator
         // 绝大多数拥有匹配意图的情况在这个环节就可以结束了.
         if (!empty($matched)) {
             foreach ($routes as $route) {
-                $fullname = $route->getIntentName();
-                if ($matched === $fullname) {
+                $intentName = $route->getIntentName();
+                if ($matched === $intentName) {
                     return $route;
-                }
-
-                if (ContextUtils::isWildcardIntentPattern($fullname)) {
-                    $name = ContextUtils::wildcardIntentMatch($fullname, $matched);
-                    if (isset($name)) {
-                        return $route->goStageByFullname($name);
-                    }
                 }
             }
         }
@@ -391,15 +383,24 @@ class OStart extends AbsOperator
         $matcher = $this->cloner->matcher->refresh();
         foreach ($routes as $ucl) {
             // 这个 ucl 可能是假的, 用了通配符
-            $fullname = $ucl->getStageFullname();
-            if ($matcher->matchStage($fullname)->truly()) {
+            $intentName = $ucl->getIntentName();
+
+            if ($matcher->matchStage($intentName)->truly()) {
                 /**
                  * @var StageDef $matched
                  */
                 $matched = $matcher->getMatchedParams()['matchStage'];
+
+                // 这个 matched 应该是真的.
                 $matchedFullname = $matched->getName();
-                // 这个 ucl 就是真的了.
-                return $ucl->goStageByFullname($matchedFullname);
+                $matchedUcl = Ucl::decode($matchedFullname);
+
+                // 用当前 ucl 的 query
+                return Ucl::make(
+                    $matchedUcl->contextName,
+                    $ucl->query,
+                    $matchedUcl->stageName
+                );
             }
         }
 

@@ -720,9 +720,26 @@ class IMatcher implements Matcher
 
     public function matchStage(string $stageFullname): Matcher
     {
-        $matched = $this->singleIntentMatch($stageFullname);
-
         $stageReg = $this->cloner->mind->stageReg();
+
+        $matched = null;
+        // 通配符号专门处理以提速.
+        if ($stageFullname === '*') {
+
+            $possibles = $this->comprehension
+                ->intention
+                ->getPossibleIntentNames(true);
+
+            foreach ($possibles as $possible) {
+                if ($stageReg->hasDef($possible)) {
+                    $matched = $possible;
+                    break;
+                }
+            }
+        }
+
+        $matched = $matched ?? $this->singleIntentMatch($stageFullname);
+
         if ($matched && $stageReg->hasDef($matched)) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $stageReg->getDef($matched);
