@@ -4,6 +4,7 @@
 
 Demo 介绍视频已经可以查看： https://www.bilibili.com/video/BV1tK4y1a75B
 
+微信公众号 CommuneChatbot，qq群：907985715 欢迎交流！
 
 核心功能:
 
