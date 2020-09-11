@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\Operate\Await;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Components\Markdown\Mindset\SectionStageDef;
+use Commune\Ghost\Support\ContextUtils;
 
 
 /**
@@ -31,6 +32,8 @@ class RouteUclAls extends AbsAwaitAnalyser
     {
 
         list($uclStr, $index) = $this->separateRouteAndIndex($content);
+
+        $uclStr = ContextUtils::normalizeContextName($uclStr);
 
         $cloner = $dialog->cloner;
         $ucl = Ucl::decode($uclStr);
