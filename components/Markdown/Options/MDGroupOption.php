@@ -111,6 +111,7 @@ class MDGroupOption extends AbsOption
                 'goStage' => Analysers\Await\GoStageAls::class,
                 'goFulfill' => Analysers\Await\GoFulfillAls::class,
                 'goUcl' => Analysers\Await\GoUclAls::class,
+                'goNext' => Analysers\Await\GoNextAls::class,
             ],
 
         ];

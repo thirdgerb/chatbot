@@ -98,7 +98,8 @@ class SectionStrategy
         $current = $dialog->ucl;
         $isSameContext = isset($await) && $await->isSameContext($current);
         if (! $isSameContext) {
-            $this->sendTitle($def, $dialog);
+            // 先不发送标题，看看对话体验会不会好一些？
+            // $this->sendTitle($def, $dialog);
             $dialog->context[$def->stageName] = 0;
         }
 
