@@ -128,6 +128,18 @@ class IIntentDef extends AbsOption implements IntentDef
         ];
     }
 
+    public function isEmpty(): bool
+    {
+        $data = $this->_data;
+        unset($data['name']);
+        foreach ($data as $val) {
+            if (!empty($val)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     public static function relations(): array
     {
@@ -306,10 +318,10 @@ class IIntentDef extends AbsOption implements IntentDef
         }
 
         $text = $message->getText();
-        $text = StringUtils::normalizeString($text);
+        $normalized = StringUtils::normalizeString($text);
         $spell = $this->spell;
 
-        if (!empty($spell) && $text === $spell) {
+        if (!empty($spell) && ($text === $spell || $text === $normalized)) {
             return true;
         }
 
@@ -326,7 +338,7 @@ class IIntentDef extends AbsOption implements IntentDef
         // 命令
         $cmdDef = $this->getCommandDef();
         if (!empty($cmdDef)) {
-            if ($cmdDef->parseCommandMessage($text)->isCorrect()) {
+            if ($cmdDef->parseCommandMessage($normalized)->isCorrect()) {
                 return true;
             }
         }
@@ -342,7 +354,7 @@ class IIntentDef extends AbsOption implements IntentDef
 
         // 关键词
         $keywords = $this->getKeywords();
-        if (!empty($keywords) && StringUtils::expectKeywords($text, $keywords, false)) {
+        if (!empty($keywords) && StringUtils::expectKeywords($normalized, $keywords, false)) {
             return true;
         }
 

@@ -73,27 +73,17 @@ class IMindset implements Mindset
 
     public function reset(): void
     {
-        $this->contextReg()->reset();
-        $this->intentReg()->reset();
-        $this->stageReg()->reset();
-        $this->memoryReg()->reset();
-        $this->entityReg()->reset();
-        $this->synonymReg()->reset();
-        $this->emotionReg()->reset();
-        $this->chatReg()->reset();
+        foreach (self::REGISTRY_META as $regName) {
+            $this->getReg($regName, $this->cacheExpire)->reset();
+        }
     }
 
 
     public function reload(): void
     {
-        $this->contextReg()->flushCache();
-        $this->intentReg()->flushCache();
-        $this->stageReg()->flushCache();
-        $this->memoryReg()->flushCache();
-        $this->entityReg()->flushCache();
-        $this->synonymReg()->flushCache();
-        $this->emotionReg()->flushCache();
-        $this->chatReg()->flushCache();
+        foreach (self::REGISTRY_META as $regName) {
+            $this->getReg($regName, $this->cacheExpire)->flushCache();
+        }
     }
 
     public function getRegistry(DefMeta $meta): ? DefRegistry

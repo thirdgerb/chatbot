@@ -110,4 +110,11 @@ interface IntentDef extends Def
      * @return bool    changed
      */
     public function mergeDef(IntentDef $def) : bool;
+
+
+    /**
+     * 是否是一个空定义
+     * @return bool
+     */
+    public function isEmpty() : bool;
 }

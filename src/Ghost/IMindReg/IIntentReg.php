@@ -38,6 +38,19 @@ class IIntentReg extends AbsDefRegistry implements IntentReg
         return IntentMeta::class;
     }
 
+    /**
+     * @param IntentDef $def
+     * @param bool $notExists
+     * @return bool
+     */
+    public function registerDef(Def $def, bool $notExists = true): bool
+    {
+        if ($def->isEmpty()) {
+            return true;
+        }
+        return parent::registerDef($def, $notExists);
+    }
+
     protected function hasRegisteredMeta(string $defName): bool
     {
         // 先检查 Stage, 会尝试注册 Context
