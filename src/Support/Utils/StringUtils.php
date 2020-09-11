@@ -208,7 +208,7 @@ class StringUtils
 
         return array_map(
             function($matched){
-                return self::trim($matched);
+                return trim($matched);
             },
             $matches[1] ?? []
         );

@@ -16,6 +16,7 @@ use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Ghost\Callables\Prediction;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindDef\EmotionDef;
+use Commune\Blueprint\Ghost\MindReg\StageReg;
 use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Framework\Command\ICommandDef;
 use Commune\Framework\Spy\SpyAgency;
@@ -723,22 +724,14 @@ class IMatcher implements Matcher
         $stageReg = $this->cloner->mind->stageReg();
 
         $matched = null;
-        // 通配符号专门处理以提速.
-        if ($stageFullname === '*') {
 
-            $possibles = $this->comprehension
-                ->intention
-                ->getPossibleIntentNames(true);
+        $possibles = $this->comprehension
+            ->intention
+            ->getPossibleIntentNames(true);
 
-            foreach ($possibles as $possible) {
-                if ($stageReg->hasDef($possible)) {
-                    $matched = $possible;
-                    break;
-                }
-            }
-        }
-
-        $matched = $matched ?? $this->singleIntentMatch($stageFullname);
+        $matched = $this->matchAnyStage($stageFullname, $possibles, $stageReg)
+            ?? $this->matchWildcardStage($stageFullname, $possibles, $stageReg)
+            ?? $this->singleExactlyIntentMatch($stageFullname);
 
         if ($matched && $stageReg->hasDef($matched)) {
             $this->matched = true;
@@ -746,6 +739,43 @@ class IMatcher implements Matcher
         }
 
         return $this;
+    }
+
+    protected function matchAnyStage(
+        string $stageFullname,
+        array $possibles,
+        StageReg $stageReg
+    ) : ? string
+    {
+        // 通配符号专门处理以提速.
+        if ($stageFullname === '*') {
+            foreach ($possibles as $possible) {
+                if ($stageReg->hasDef($possible)) {
+                    return $possible;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    protected function matchWildcardStage(
+        string $stageFullname,
+        array $possibles,
+        StageReg $stageReg
+    ) : ? string
+    {
+        // 如果查找的是通配符...
+        if (StringUtils::isWildcardPattern($stageFullname)) {
+            foreach ($possibles as $possible) {
+                $wildcardMatched = StringUtils::wildcardMatch($stageFullname, $possible);
+                if ($wildcardMatched && $stageReg->hasDef($possible)) {
+                    return $possible;
+                }
+            }
+        }
+        return null;
+
     }
 
     public function matchStageIn(array $intents): Matcher

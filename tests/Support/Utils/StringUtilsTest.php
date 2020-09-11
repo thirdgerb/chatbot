@@ -413,4 +413,16 @@ EOF;
         $text = StringUtils::normalizeString("你好啊。");
         $this->assertEquals('你好啊', $text);
     }
+
+    public function testSpellAnnotation()
+    {
+        $text = <<<EOF
+        /**
+         * @spell ?
+         */
+EOF;
+        $values = StringUtils::fetchAnnotation($text, 'spell');
+
+        $this->assertEquals('?', $values[0]);
+    }
 }
