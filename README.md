@@ -4,6 +4,10 @@
 
 Demo 介绍视频已经可以查看： https://www.bilibili.com/video/BV1tK4y1a75B
 
+- 展示网站：https://communechatbot.com/chatlog
+- v0.1网站： https://communechatbot.com/
+- v0.1文档： https://communechatbot.com/docs/#/
+
 微信公众号 CommuneChatbot，qq群：907985715 欢迎交流！
 
 核心功能:
