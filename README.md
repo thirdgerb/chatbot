@@ -4,7 +4,7 @@
 
 Demo 介绍视频已经可以查看: https://www.bilibili.com/video/BV1tK4y1a75B
 
-- 展示网站:https://communechatbot.com/chatlog
+- 展示网站: https://communechatbot.com/chatlog
 - v0.1网站: https://communechatbot.com/
 - v0.1分枝: https://github.com/thirdgerb/chatbot/tree/v0.1.x
 - v0.1文档: https://communechatbot.com/docs/#/
@@ -29,7 +29,7 @@ Demo 介绍视频已经可以查看: https://www.bilibili.com/video/BV1tK4y1a75B
 
 ## 本地运行 Demo
 
-项目有一个本地 demo, 配置文件在 [/src/demo/config/host.php](/src/demo/config/host.php)
+项目有一个本地 demo, 配置文件在 [/demo/config/host.php](/demo/config/host.php)
 
 通过以下指令可以进入对话, 输入 ```#help```, ```/help``` 可以查看用户与管理员指令.
 
