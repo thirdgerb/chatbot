@@ -24,7 +24,7 @@ Demo 介绍视频已经可以查看: https://www.bilibili.com/video/BV1tK4y1a75B
 - nlu单元: https://github.com/thirdgerb/spacy-nlu
 
 对源码感兴趣的话, 推荐查阅 [/src/Blueprint](/src/Blueprint) 文件夹,
-以及 [/src/Blueprint](/src/Contracts) 文件夹,
+以及 [/src/Contracts](/src/Contracts) 文件夹,
 其中有项目完整的 interface 设计.
 
 ## 本地运行 Demo
