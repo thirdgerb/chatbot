@@ -321,7 +321,7 @@ class IIntentDef extends AbsOption implements IntentDef
         $normalized = StringUtils::normalizeString($text);
         $spell = $this->spell;
 
-        if (!empty($spell) && ($text === $spell || $text === $normalized)) {
+        if (!empty($spell) && ($spell === $text || $spell === $normalized)) {
             return true;
         }
 
