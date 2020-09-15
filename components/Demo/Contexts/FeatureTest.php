@@ -308,7 +308,7 @@ EOF
                         [
                             'a' => 'sandbox : 测试在config里定义的 memory',
                             'b' => 'sandbox class: 测试用类定义的 memory',
-                            '返回',
+                            '|返回' => $this->getStage('start'),
                         ]
                     );
 
