@@ -65,7 +65,11 @@ class IIntentReg extends AbsDefRegistry implements IntentReg
         }
 
         $stageDef = $stageReg->getDef($defName);
-        $this->registerDef($stageDef->asIntentDef());
+        $intentDef = $stageDef->asIntentDef();
+        if ($intentDef->isEmpty()) {
+            return false;
+        }
+        $this->registerDef($intentDef);
         return true;
     }
 
