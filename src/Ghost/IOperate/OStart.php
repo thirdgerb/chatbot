@@ -21,7 +21,6 @@ use Commune\Blueprint\NLU\NLUService;
 use Commune\Ghost\Dialog\IReceive;
 use Commune\Ghost\IOperate\OExiting\OCancel;
 use Commune\Ghost\IOperate\OExiting\OFulfill;
-use Commune\Ghost\Support\ContextUtils;
 use Commune\Protocals\Abstracted\Answer;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
@@ -108,6 +107,7 @@ class OStart extends AbsOperator
 
         // 进行 listen 的逻辑.
         $operator = $operator ?? $this->heed();
+
 
         return $operator;
     }
@@ -354,7 +354,6 @@ class OStart extends AbsOperator
             return null;
         }
         $matched = $this->matchAwaitRoutes(...$routes);
-
         return isset($matched)
             ? $this->dialog->redirectTo($matched, false)
             : null;

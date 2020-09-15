@@ -91,7 +91,7 @@ class ITrace implements Trace
         $this->last = $now;
         $name = $operator->getName();
         $ucl = $operator->getDialog()->ucl->encode();
-        $this->operates[] = [$name, $ucl, $gap];
+        $this->operates[] = [ "passed $gap us", $name, $ucl];
     }
 
 

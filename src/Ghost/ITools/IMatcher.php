@@ -535,9 +535,10 @@ class IMatcher implements Matcher
         }
 
         $def = $reg->getDef($intent);
-        return $def->match($this->cloner)
-            ? $intent
-            : null;
+        if ($def->match($this->cloner)) {
+            return $intent;
+        }
+        return null;
     }
 
     protected function singleWildcardIntentMatch(string $intent) : ? string
