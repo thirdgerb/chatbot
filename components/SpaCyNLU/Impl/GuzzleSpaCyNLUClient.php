@@ -147,7 +147,13 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
             ]);
 
         } catch (GuzzleException $e) {
-            $this->logger->warning($e);
+            $this->logger->warning(
+                __METHOD__
+                . " failed: "
+                . get_class($e)
+                . ', '
+                . $e->getMessage()
+            );
             return new NLUResponse([
                 'code' => 500,
                 'msg' => 'request failed: '. $e->getMessage()
