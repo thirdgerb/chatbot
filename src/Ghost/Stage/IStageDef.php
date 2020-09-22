@@ -15,6 +15,7 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Dialog\Activate;
 use Commune\Blueprint\Ghost\Dialog\Receive;
 use Commune\Blueprint\Ghost\Dialog\Resume;
+use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 
@@ -22,6 +23,17 @@ use Commune\Blueprint\Ghost\Ucl;
 /**
  * 标准的 stage 定义.
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read string $name
+ * @property-read string $contextName
+ * @property-read string $stageName
+ * @property-read IntentMeta|null $asIntent
+ *
+ * @property-read string $title
+ * @property-read string $desc
+ *
+ * @property-read string[] $events
+ * @property-read string|null $ifRedirect
  */
 class IStageDef extends AStageDef
 {

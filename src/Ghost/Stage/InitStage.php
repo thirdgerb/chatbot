@@ -21,6 +21,9 @@ use Commune\Blueprint\Ghost\Ucl;
 
 
 /**
+ * 所有 ACodeContext 默认的启动 stage.
+ * 会检查 entity 等.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $name
@@ -69,7 +72,7 @@ class InitStage extends AStageDef
         $next = $contextDef->firstStage();
         $task = $dialog->task;
 
-        $strategy = $contextDef->getStrategy($dialog);
+        $strategy = $contextDef->getStrategy();
         $task->onCancel($strategy->onCancel);
         $task->onQuit($strategy->onQuit);
 

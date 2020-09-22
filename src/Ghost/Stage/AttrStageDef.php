@@ -22,6 +22,9 @@ use Commune\Message\Host\SystemInt\DialogRequireInt;
 use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 
 /**
+ * 默认的属性类节点, 通常用于定义 Context 的 Entity 属性
+ * 自带标准的对话形式, 接受用户输入的 VerbalMsg, 进行校验, 然后进入下一步.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $query

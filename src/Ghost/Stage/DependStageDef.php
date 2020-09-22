@@ -20,6 +20,10 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 
 /**
+ * 标准的依赖型 Stage. 依赖另一个 Context 的结果.
+ * 通常用于 Context 的 Entity 定义.
+ *
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $dependedUcl

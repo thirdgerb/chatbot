@@ -22,6 +22,9 @@ use Commune\Protocals\HostMsg\DefaultIntents;
 
 
 /**
+ * 默认的退出对话的节点.
+ * 将退出对话作为一个独立的节点, 好处是可以通过意图来命中.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class CancelStage extends AStageDef
