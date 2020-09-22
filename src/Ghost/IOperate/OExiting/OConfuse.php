@@ -21,6 +21,7 @@ use Commune\Ghost\IOperate\AbsOperator;
 use Commune\Message\Host\SystemInt\DialogConfuseInt;
 use Commune\Protocals\HostMsg\Convo\EventMsg;
 use Commune\Protocals\HostMsg\DefaultEvents;
+use Commune\Support\Utils\TypeUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -109,7 +110,7 @@ class OConfuse extends AbsOperator
         $contextStrategy = $this->dialog
             ->ucl
             ->findContextDef($this->cloner)
-            ->getStrategy($this->dialog);
+            ->getStrategy();
 
         $fallbackArr = $contextStrategy->heedFallbackStrategies
             ?? $this->cloner->config->defaultHeedFallback;
@@ -118,13 +119,25 @@ class OConfuse extends AbsOperator
             return null;
         }
 
-        foreach ($fallbackArr as $fallback) {
-            $operator = $this->dialog->container()->call($fallback);
-            if (isset($operator)) {
-                return $operator;
+        $fallbackType = null;
+        try {
+            foreach ($fallbackArr as $fallback) {
+                $fallbackType = TypeUtils::getType($fallback);
+                $operator = $this->dialog->container()->call($fallback);
+                if (isset($operator)) {
+                    return $operator;
+                }
             }
+        } catch (\Throwable $e) {
+            var_dump($e->getMessage());
+            $this->cloner->logger->error(
+                __METHOD__
+                . " call fallback $fallbackType failed: "
+                . get_class($e)
+                . ", "
+                . $e->getMessage()
+            );
         }
-
         return null;
     }
 

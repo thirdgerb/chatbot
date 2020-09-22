@@ -25,10 +25,10 @@ use Commune\Message\Host\SystemInt\DialogForbidInt;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @title 用于子进程执行任务 Context.
+ *
  * 它最大的好处是, 可以给 Service 使用 Context - Cloner - Dialog 的各种组件.
  *
  * @property-read string $service   AsyncService 的类名
- *
  * @property array $payload    调用该 Service 时传入的参数.
  */
 class AsyncServiceContext extends ACodeContext
@@ -81,24 +81,33 @@ class AsyncServiceContext extends ACodeContext
                 ->over()
                 ->quit();
         }
-        /**
-         * @var DialogicService $service
-         */
-        $service = $dialog->container()->make($serviceName);
+        try {
+            /**
+             * @var DialogicService $service
+             */
+            $service = $dialog->container()->make($serviceName);
 
-        $auth = $service->auth();
-        $authority = $dialog->cloner->auth;
-        foreach ($auth as $ability) {
-            if (!$authority->allow($ability)) {
-                $forbidden = DialogForbidInt::instance($serviceName, $ability);
-                $dialog->send()
-                    ->message($forbidden)
-                    ->over()
-                    ->quit();
+            $auth = $service->auth();
+            $authority = $dialog->cloner->auth;
+            foreach ($auth as $ability) {
+                if (!$authority->allow($ability)) {
+                    $forbidden = DialogForbidInt::instance($serviceName, $ability);
+                    $dialog->send()
+                        ->message($forbidden)
+                        ->over()
+                        ->quit();
+                }
             }
-        }
 
-        $service($this->payload, $dialog->send(true));
-        return $dialog->quit();
+            $service($this->payload, $dialog->send(true));
+            return $dialog->quit();
+
+        } catch (\Throwable $e) {
+            return $dialog
+                ->send()
+                ->error(get_class($e) . ':' . $e->getMessage())
+                ->over()
+                ->quit();
+        }
     }
 }

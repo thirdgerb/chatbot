@@ -19,7 +19,7 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\NLU\NLUService;
 use Commune\Blueprint\NLU\NLUServiceOption;
-use Commune\Ghost\Context\ACommandContext;
+use Commune\Ghost\Context\ACodeContext;
 use Commune\Ghost\Context\Command\CancelCmdDef;
 
 /**
@@ -33,7 +33,7 @@ use Commune\Ghost\Context\Command\CancelCmdDef;
  *
  * @property-read NLUServiceOption[] $serviceManagers    服务管理对话
  */
-class NLUManagerContext extends ACommandContext
+class NLUManagerContext extends ACodeContext
 {
     /**
      * @var NLUServiceOption|null
@@ -46,6 +46,9 @@ class NLUManagerContext extends ACommandContext
             'priority' => 1,
             'strategy' => [
                 'auth' => [Supervise::class],
+                'commands' => [
+                    CancelCmdDef::class,
+                ],
             ],
         ]);
     }
@@ -55,20 +58,14 @@ class NLUManagerContext extends ACommandContext
         return $depending;
     }
 
-    public static function __command_defs(): array
-    {
-        return [
-            new CancelCmdDef()
-        ];
-    }
-
 
     public function __on_start(StageBuilder $stage): StageBuilder
     {
         return $stage->onActivate(function(Dialog $dialog) {
+            $mark = $this->getDef()->getStrategy()->commandMark;
             return $dialog
                 ->send()
-                ->info('管理 NLU 的各种服务 (输入 .help 查看可用命令)')
+                ->info('管理 NLU 的各种服务 (输入 {mark}help 查看可用命令)', ['mark' => $mark])
                 ->over()
                 ->goStage('services');
         });

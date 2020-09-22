@@ -32,7 +32,7 @@ abstract class AbsRedirect extends AbsOperator
         // 权限校验.
         $auth = $target
             ->findContextDef($cloner)
-            ->getStrategy($this->dialog)
+            ->getStrategy()
             ->auth;
 
 

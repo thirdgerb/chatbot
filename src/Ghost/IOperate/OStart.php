@@ -18,6 +18,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Runtime\Process;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\NLU\NLUService;
+use Commune\Ghost\Context\Command\CommandDefMap;
 use Commune\Ghost\Dialog\IReceive;
 use Commune\Ghost\IOperate\OExiting\OCancel;
 use Commune\Ghost\IOperate\OExiting\OFulfill;
@@ -25,6 +26,7 @@ use Commune\Protocals\Abstracted\Answer;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocals\HostMsg\Convo\VerbalMsg;
 use Commune\Protocals\HostMsg\ConvoMsg;
 use Commune\Protocals\Intercom\InputMsg;
 
@@ -73,7 +75,6 @@ class OStart extends AbsOperator
         // 先 activate
         $process->activate($this->start);
         $input = $this->cloner->input;
-
         // 链式的启动流程.
         // 以下流程其实可以拆分成若干个独立的 Operator.
         // 但为什么没有这么做呢?
@@ -83,12 +84,18 @@ class OStart extends AbsOperator
 
         // 检查是否是强制同步状态的 contextMsg
         $operator = $this->isContextMsgCall($input);
-            // ?? $this->checkBlocking()
+
+        // ?? $this->checkBlocking()
+
         // 检查是否是 session 第一次输入, 是的话要初始化 session
         $operator = $operator ?? $this->isSessionStart();
+
         // 如果不是影响对话状态的 convo msg,
         // 则全部由 await ucl 来处理. 不走任何理解和路由.
         $operator = $operator ?? $this->isNotConvoMsgCall($input);
+
+        // 先检查上下文相关的指令, 如果命中指令, 则其它所有流程都不执行了.
+        $operator = $operator ?? $this->parseByContextualCommands($input);
 
         // 问题匹配. 由于问题里通常是简单的匹配规则, 因此优先级高于 comprehend pipe.
         $operator = $operator ?? $this->parseByQuestion();
@@ -103,7 +110,6 @@ class OStart extends AbsOperator
 
         // 根据意图匹配的结果, 再对 question 进行一次检查.
         $operator = $operator ?? $this->recheckQuestion();
-
 
         // 进行 listen 的逻辑.
         $operator = $operator ?? $this->heed();
@@ -259,7 +265,7 @@ class OStart extends AbsOperator
         $awaitUcl = $this->start;
         $contextDef = $awaitUcl->findContextDef($this->cloner);
 
-        $pipes = $contextDef->getStrategy($this->dialog)->comprehendPipes;
+        $pipes = $contextDef->getStrategy()->comprehendPipes;
         $pipes = $pipes ?? $this->cloner->config->comprehendPipes;
         if (empty($pipes)) {
             return null;
@@ -344,9 +350,37 @@ class OStart extends AbsOperator
         $container->share(Comprehension::class, $comprehension);
     }
 
+    /*--------- command parser ---------*/
+
+    /**
+     * 检查是否命中了语境的命令.
+     *
+     * @param InputMsg $input
+     * @return Operator|null
+     */
+    protected function parseByContextualCommands(InputMsg $input) : ? Operator
+    {
+        $message = $input->getMessage();
+        if (!$message instanceof VerbalMsg) {
+            return null;
+        }
+
+        $contextDef = $this->dialog->ucl->findContextDef($this->dialog->cloner);
+        $map = CommandDefMap::findMap($contextDef);
+
+        return isset($map)
+            ? $map->runCommand($this->dialog, $message->getText())
+            : null;
+    }
+
 
     /*--------- intent match ---------*/
 
+    /**
+     * 检查是否命中了等待中的路由.
+     *
+     * @return Operator|null
+     */
     protected function checkAwaitRoutes() : ? Operator
     {
         $routes = $this->cloner->runtime->getCurrentAwaitRoutes();

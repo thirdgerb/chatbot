@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Components\SpaCyNLU\NLU\SpaCyNLUService;
-use Commune\Ghost\Context\ACommandContext;
+use Commune\Ghost\Context\ACodeContext;
 use Commune\Ghost\Context\Command\CancelCmdDef;
 use Commune\Ghost\Context\Command\QuitCmdDef;
 use Commune\Message\Host\Convo\Verbal\JsonMsg;
@@ -28,7 +28,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * @title SpaCyNLU 意图模块管理
  */
-class NLUServiceManager extends ACommandContext
+class NLUServiceManager extends ACodeContext
 {
 
     protected static $_command_mark = '.';
@@ -38,7 +38,11 @@ class NLUServiceManager extends ACommandContext
         return new CodeContextOption([
             'strategy' => [
                 'comprehendPipes' => [], //设置为没有.
-                'heedFallbackStrategies' => []
+                'heedFallbackStrategies' => [],
+                'commands' => [
+                    CancelCmdDef::class,
+                    QuitCmdDef::class,
+                ]
             ]
         ]);
     }
@@ -46,14 +50,6 @@ class NLUServiceManager extends ACommandContext
     public static function __depending(Depending $depending): Depending
     {
         return $depending;
-    }
-
-    public static function __command_defs(): array
-    {
-        return [
-            new CancelCmdDef(),
-            new QuitCmdDef(),
-        ];
     }
 
     public function __on_start(StageBuilder $stage): StageBuilder
@@ -68,7 +64,7 @@ class NLUServiceManager extends ACommandContext
                     ->over()
                     ->await()
                     ->askChoose(
-                        "请选择想要测试的功能 (输入 .help 查看命令) :",
+                        "请选择想要测试的功能 (输入 !help 查看命令) :",
                         [
                             $this->getStage('sync_mind'),
                             $this->getStage('nlu_test'),

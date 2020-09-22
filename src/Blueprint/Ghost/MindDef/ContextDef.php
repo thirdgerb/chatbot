@@ -100,10 +100,9 @@ interface ContextDef extends Def
     /**
      * 语境相关的默认多轮对话策略.
      *
-     * @param Dialog $current
      * @return ContextStrategyOption
      */
-    public function getStrategy(Dialog $current) : ContextStrategyOption;
+    public function getStrategy() : ContextStrategyOption;
 
     /*------- stage -------*/
 

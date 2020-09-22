@@ -304,7 +304,7 @@ class ICodeContextDef extends AbsOption implements  ContextDef
         return CodeContext::FIRST_STAGE;
     }
 
-    public function getStrategy(Dialog $current): ContextStrategyOption
+    public function getStrategy(): ContextStrategyOption
     {
         return $this->strategy;
     }

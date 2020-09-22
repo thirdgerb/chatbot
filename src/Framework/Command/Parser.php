@@ -12,6 +12,23 @@ use Symfony\Component\Console\Input\InputOption;
  * 将 Laravel 的代码复制出来.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @see https://laravel.com/docs/8.x/artisan#defining-input-expectations
+ *
+ * 一个完整的命令定义如下:
+ *
+ * $signature = "
+ *  commandName
+ *  {arg1 : arg1 简介, 注意 : 两边都要空格}
+ *  {arg2? : arg2 简介, 添加问号为可选}
+ *  {arg3=abc : arg3 简介, 表示默认值是 abc}
+ *  {arg4* : arg4 简介, 表示默认值是数组形式的 arg, 应该是最后一位}
+ *  {--option1 : 定义 option 的方式}
+ *  {--r|option2 : 定义 option, 同时允许用  -r 的短标记来表示}
+ *  {--option3=abc : 定义 option, 设置默认值}
+ *  {--o|option4=* : 定义数组形式 option, 可以多次赋值, 如 -o=1 -o=2 }
+ * "
+ *
  */
 class Parser
 {

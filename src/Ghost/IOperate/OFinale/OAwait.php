@@ -90,7 +90,7 @@ class OAwait extends AbsFinale implements Await
         $this->expire = $expire;
         $this->current = $this->dialog->ucl;
         $contextDef = $this->current->findContextDef($this->cloner);
-        $strategy = $contextDef->getStrategy($this->dialog);
+        $strategy = $contextDef->getStrategy();
 
 
         $stageRoutes = array_merge($strategy->stageRoutes, $stageRoutes);

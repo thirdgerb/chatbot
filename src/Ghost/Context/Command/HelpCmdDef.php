@@ -13,6 +13,7 @@ namespace Commune\Ghost\Context\Command;
 
 use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Framework\Command\CommandMsg;
+use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\Context\ACommandContext;
@@ -44,11 +45,7 @@ class HelpCmdDef extends AContextCmdDef
     ): ? Operator
     {
         $context = $dialog->context;
-        if (!$context instanceof ACommandContext) {
-            return null;
-        }
-
-        $mark = $context->getCommandMark();
+        $mark = $context->getDef()->getStrategy()->commandMark;
         if (empty($message['commandName'])) {
             return $this->helpContext($dialog, $context, $mark);
         } else {
@@ -59,11 +56,21 @@ class HelpCmdDef extends AContextCmdDef
 
     public function helpContext(
         Dialog $dialog,
-        ACommandContext $context,
+        Context $context,
         string $commandMark
     ) : Operator
     {
-        $defs = $context->getContextCmdDefMap();
+        // @deprecated
+        if ($context instanceof ACommandContext) {
+            $defs = $context->getContextCmdDefMap();
+
+        } else {
+            $map = CommandDefMap::findMap($context->getDef());
+            $defs = isset($map)
+                ? $map->getContextCmdDefMap()
+                : [];
+        }
+
         $messages = [];
         foreach ($defs as $def) {
             $commandDef = $def->getCommandDef();
@@ -85,10 +92,13 @@ class HelpCmdDef extends AContextCmdDef
     public function helpCommandName(
         Dialog $dialog,
         string $commandName,
-        ACommandContext $context
+        Context $context
     ) : Operator
     {
-        $map = $context->getContextCmdDefMap();
+        $defMap = CommandDefMap::findMap($context->getDef());
+        $map = isset($defMap)
+            ? $defMap->getContextCmdDefMap()
+            : [];
 
         if (!isset($map[$commandName])) {
             return $dialog
@@ -99,7 +109,6 @@ class HelpCmdDef extends AContextCmdDef
         }
 
         $def = $map[$commandName];
-
         return $this->helpCommand(
             $dialog,
             $def->getCommandDef(),

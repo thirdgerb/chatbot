@@ -25,16 +25,19 @@ use Commune\Protocals\HostMsg\Convo\VerbalMsg;
  * 可以使用命令行的 Context.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @deprecated
+ * 命令行被设定为全局功能, 所有的 Context 都可以专门设置.
+ * 于是不需要专门定义 CommandContext 了.
  */
 abstract class ACommandContext extends ACodeContext
 {
 
     /**
-     * 在命令前的参数.
+     * 在命令前的标志, 例如 !help
      * @var string
      */
-    protected static $_command_mark = '.';
-
+    protected static $_command_mark = '!';
 
 
     /**
@@ -54,6 +57,7 @@ abstract class ACommandContext extends ACodeContext
     }
 
     /**
+     * 获取当前语境下所有已定义的命令.
      * @return AContextCmdDef[]
      */
     final public static function getContextCmdDefMap() : array

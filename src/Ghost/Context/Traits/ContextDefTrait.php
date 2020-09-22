@@ -13,7 +13,6 @@ namespace Commune\Ghost\Context\Traits;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
-use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindDef\ContextStrategyOption;
 use Commune\Blueprint\Ghost\MindDef\MemoryDef;
@@ -26,7 +25,6 @@ use Commune\Ghost\IMindDef\IIntentDef;
 use Commune\Ghost\IMindDef\IMemoryDef;
 use Commune\Ghost\Stage\InitStage;
 use Commune\Support\Option\AbsOption;
-use Commune\Blueprint\Ghost\MindDef\AliasesForAuth;
 use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\Meta;
@@ -239,7 +237,7 @@ trait ContextDefTrait
     }
 
 
-    public function getStrategy(Dialog $current): ContextStrategyOption
+    public function getStrategy(): ContextStrategyOption
     {
         return $this->strategy;
     }
