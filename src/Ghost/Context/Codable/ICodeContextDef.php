@@ -338,7 +338,7 @@ class ICodeContextDef extends AbsOption implements  ContextDef
     {
         if (!$meta instanceof ContextMeta) {
             throw new InvalidArgumentException(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . ' only accept meta of subclass ' . ContextMeta::class
             );
         }

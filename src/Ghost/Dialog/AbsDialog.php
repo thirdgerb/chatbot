@@ -98,14 +98,14 @@ abstract class AbsDialog extends AbsBaseDialog
     public function dependOn(Dependable $dependable, string $fieldName = null): Operator
     {
         $dependUcl = $dependable->toFulfillUcl();
-        $this->shouldNotBeSameContext(__METHOD__, $dependUcl);
+        $this->shouldNotBeSameContext(static::class . '::'. __FUNCTION__, $dependUcl);
 
         return new ORedirect\ODependOn($this, $dependable, $fieldName);
     }
 
     public function blockTo(Ucl $target, int $priority = null): Operator
     {
-        $this->shouldNotBeSameContext(__METHOD__, $target);
+        $this->shouldNotBeSameContext(static::class . '::'. __FUNCTION__, $target);
         return new ORedirect\OBlockTo($this, $target, $priority);
     }
 
@@ -123,7 +123,7 @@ abstract class AbsDialog extends AbsBaseDialog
 
     public function sleepTo(Ucl $target, array $wakenStages = []): Operator
     {
-        $this->shouldNotBeSameContext(__METHOD__, $target);
+        $this->shouldNotBeSameContext(static::class . '::'. __FUNCTION__, $target);
         return new ORedirect\OSleepTo($this, $target, $wakenStages);
     }
 
@@ -134,9 +134,9 @@ abstract class AbsDialog extends AbsBaseDialog
         string $convoId = null
     ): Operator
     {
-        $this->shouldNotBeSameContext(__METHOD__, $target->getUcl());
+        $this->shouldNotBeSameContext(static::class . '::'. __FUNCTION__, $target->getUcl());
         if (isset($fallback)) {
-            $this->shouldNotBeSameContext(__METHOD__, $fallback);
+            $this->shouldNotBeSameContext(static::class . '::'. __FUNCTION__, $fallback);
         }
         return new ORedirect\OYieldTo(
             $this,

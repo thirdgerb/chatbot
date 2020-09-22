@@ -38,7 +38,7 @@ class HostContext
             return self::$host;
         }
 
-        throw new CommuneNotRunningException(__METHOD__);
+        throw new CommuneNotRunningException(static::class . '::'. __FUNCTION__);
     }
 
     private function __construct()

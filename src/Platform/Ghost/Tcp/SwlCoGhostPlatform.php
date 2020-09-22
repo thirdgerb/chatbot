@@ -84,7 +84,7 @@ class SwlCoGhostPlatform extends AbsPlatform
 
     public function shutdown(): void
     {
-        $this->host->getConsoleLogger()->info(__METHOD__);
+        $this->host->getConsoleLogger()->info(static::class . '::'. __FUNCTION__);
         $this->poolFactory->shutdown();
     }
 

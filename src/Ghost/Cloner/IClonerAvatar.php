@@ -76,7 +76,7 @@ class IClonerAvatar implements ClonerAvatar
         if (!is_a($presenter, AvatarPresenter::class, TRUE)) {
             $expect = AvatarPresenter::class;
             throw new InvalidArgumentException(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " only accept subclass of $expect, $presenter given"
             );
         }

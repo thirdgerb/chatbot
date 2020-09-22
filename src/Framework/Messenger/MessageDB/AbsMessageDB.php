@@ -153,7 +153,7 @@ abstract class AbsMessageDB implements MessageDB
         // 不符合逻辑.
         if (empty($decode)) {
             $this->logger->warning(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " get empty cache messages that batchId is $batchId"
             );
             return [];
@@ -167,7 +167,7 @@ abstract class AbsMessageDB implements MessageDB
             if (!$message instanceof IntercomMsg) {
                 $type = TypeUtils::getType($message);
                 $this->logger->warning(
-                    __METHOD__
+                    static::class . '::'. __FUNCTION__
                     . " get decoded message serialized string $babelSerialized that can not unserialize to intercom message, $type given"
                 );
                 continue;

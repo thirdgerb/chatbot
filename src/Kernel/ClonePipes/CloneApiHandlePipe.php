@@ -52,7 +52,7 @@ class CloneApiHandlePipe extends AClonePipe
         if (!$response instanceof GhostResponse) {
             $type = TypeUtils::getType($response);
             $this->cloner->logger->error(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . ' invalid response from api handler, api '
                 . $message->getApiName()
                 . ", $type given"

@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerDispatcher;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Ghost\Predefined\Context\AsyncServiceContext;
+use Commune\Ghost\Services\Context\AsyncServiceContext;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
@@ -44,7 +44,7 @@ class IClonerDispatcher implements ClonerDispatcher, HasIdGenerator
     }
 
 
-    public function asyncService(string $service, array $params): void
+    public function asyncService(string $service, array $params, string $method = '__invoke'): void
     {
         $expect = DialogicService::class;
         if (!is_a($service, $expect, true)) {
@@ -53,6 +53,7 @@ class IClonerDispatcher implements ClonerDispatcher, HasIdGenerator
 
         $ucl = AsyncServiceContext::genUcl([
             'service' => $service,
+            'method' => $method
         ]);
 
         /**

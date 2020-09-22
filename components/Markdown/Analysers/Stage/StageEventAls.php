@@ -58,7 +58,7 @@ class StageEventAls implements StageAnalyser
         ) {
 
             $this->logger->warning(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " invalid comment content $content"
             );
             return $def;

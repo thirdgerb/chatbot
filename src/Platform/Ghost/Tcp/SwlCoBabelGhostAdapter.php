@@ -63,7 +63,7 @@ class SwlCoBabelGhostAdapter extends TcpAdapterAbstract
         if (!$response instanceof BabelSerializable) {
             $type = TypeUtils::getType($response);
             throw new CommuneLogicException(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . ' only accept '
                 . BabelSerializable::class
                 . ' ghost response, '

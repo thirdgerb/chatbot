@@ -39,7 +39,7 @@ class RouteUclAls extends AbsAwaitAnalyser
         $ucl = Ucl::decode($uclStr);
         if (!$ucl->isValidPattern()) {
             $cloner->logger->error(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " ucl [$content] is invalid"
             );
             return $await;
@@ -48,7 +48,7 @@ class RouteUclAls extends AbsAwaitAnalyser
         if (!$ucl->stageExists($cloner)) {
             $stageName = $ucl->getStageFullname();
             $cloner->logger->error(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " stage $stageName not exists "
             );
             return $await;

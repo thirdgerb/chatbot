@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Predefined\Services\Payload;
+namespace Commune\Ghost\Services\Payload;
 
 use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Support\Struct\AStruct;

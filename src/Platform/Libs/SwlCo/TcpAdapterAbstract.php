@@ -118,7 +118,7 @@ abstract class TcpAdapterAbstract implements Adapter
         if (!is_a($response, $interface, true)) {
             $type = TypeUtils::getType($response);
             throw new CommuneLogicException(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " only accept $interface response, $type given"
             );
         }

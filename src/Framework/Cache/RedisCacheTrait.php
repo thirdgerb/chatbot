@@ -30,7 +30,7 @@ trait RedisCacheTrait
         $key = $this->parseKey($key);
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key, $value, $ttl){
                 /** @var Redis $client */
                 if (isset($ttl) && $ttl > 0) {
@@ -47,7 +47,7 @@ trait RedisCacheTrait
         $key = $this->parseKey($key);
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key) {
                 /** @var Redis $client */
                 return $client->exists($key);
@@ -60,7 +60,7 @@ trait RedisCacheTrait
         $key = $this->parseKey($key);
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key) {
                 /** @var Redis $client */
 
@@ -86,13 +86,13 @@ trait RedisCacheTrait
     public function getMultiple(array $keys, array $default = null): array
     {
         foreach ($keys as $key) {
-            $this->checkKey(__METHOD__, $key);
+            $this->checkKey(static::class . '::'. __FUNCTION__, $key);
         }
 
         $keys = array_map([$this,'parseKey'], $keys);
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($keys, $default) {
                 /** @var Redis $client */
 
@@ -115,12 +115,12 @@ trait RedisCacheTrait
     public function setMultiple(array $values, int $ttl = null): bool
     {
         foreach ($values as $key => $value) {
-            $this->checkKey(__METHOD__, $key);
+            $this->checkKey(static::class . '::'. __FUNCTION__, $key);
             $values[$this->parseKey($key)] = $value;
         }
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($values, $ttl) {
                 /** @var Redis $client */
 
@@ -143,7 +143,7 @@ trait RedisCacheTrait
         $key = $this->parseKey($key);
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key, $ttl) {
                 /** @var Redis $client */
 
@@ -157,7 +157,7 @@ trait RedisCacheTrait
         $key = $this->parseKey($key);
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key) {
                 /** @var Redis $client */
                 return $client->del($key) > 0;
@@ -168,13 +168,13 @@ trait RedisCacheTrait
     public function delMultiple(array $keys): bool
     {
         foreach ($keys as $key) {
-            $this->checkKey(__METHOD__, $key);
+            $this->checkKey(static::class . '::'. __FUNCTION__, $key);
         }
 
         $keys = array_map([$this, 'parseKey'], $keys);
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($keys) {
                 /** @var Redis $client */
                 return $client->del(...$keys) > 0;
@@ -187,7 +187,7 @@ trait RedisCacheTrait
         $key = $this->parseKey($key);
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key, $ttl) {
                 /** @var Redis $client */
 
@@ -210,7 +210,7 @@ trait RedisCacheTrait
         $key = $this->parseKey($key);
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key, $memberKey, $value, $ttl) {
                 /** @var Redis $client */
                 $result = $client->hSet(
@@ -235,7 +235,7 @@ trait RedisCacheTrait
     {
         $key = $this->parseKey($key);
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key, $memberKey) {
                 /**
                  * @var \Redis $client
@@ -251,11 +251,11 @@ trait RedisCacheTrait
         $key = $this->parseKey($key);
 
         foreach ($values as $valKey => $val) {
-            $this->checkKey(__METHOD__, $valKey);
+            $this->checkKey(static::class . '::'. __FUNCTION__, $valKey);
         }
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key, $values, $ttl) {
                 /** @var Redis $client */
                 $success = $client->hMset(
@@ -277,11 +277,11 @@ trait RedisCacheTrait
         $key = $this->parseKey($key);
 
         foreach ($memberKeys as $memberKey) {
-            $this->checkKey(__METHOD__, $memberKey);
+            $this->checkKey(static::class . '::'. __FUNCTION__, $memberKey);
         }
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key, $memberKeys) {
                 /** @var Redis $client */
                 return $client->hMGet($key, $memberKeys);
@@ -294,7 +294,7 @@ trait RedisCacheTrait
         $key = $this->parseKey($key);
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key, $memberKey) {
                 /** @var Redis $client */
                 $result = $client->hGet($key, $memberKey);
@@ -308,7 +308,7 @@ trait RedisCacheTrait
         $key = $this->parseKey($key);
 
         return $this->call(
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             function($client) use ($key) {
                 /** @var Redis $client */
                 return $client->hGetAll($key);

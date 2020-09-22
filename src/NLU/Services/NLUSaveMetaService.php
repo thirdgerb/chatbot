@@ -14,8 +14,8 @@ namespace Commune\NLU\Services;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Blueprint\NLU\NLUManager;
-use Commune\Ghost\Predefined\Services\AbsDialogicService;
-use Commune\Ghost\Predefined\Services\Payload\MindSavePayload;
+use Commune\Ghost\Services\AbsDialogicService;
+use Commune\Ghost\Services\Payload\MindSavePayload;
 
 
 /**
@@ -59,7 +59,7 @@ class NLUSaveMetaService extends AbsDialogicService
         if (!empty($info)) {
             $deliver->error($info);
         } else {
-            $deliver->info(__METHOD__ . ' success');
+            $deliver->info(static::class . '::'. __FUNCTION__ . ' success');
         }
     }
 

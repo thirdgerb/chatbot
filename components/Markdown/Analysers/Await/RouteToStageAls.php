@@ -34,7 +34,7 @@ class RouteToStageAls extends AbsAwaitAnalyser
         $cloner = $dialog->cloner;
         if (!$ucl->stageExists($cloner)) {
             $cloner->logger->error(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " stage $ucl not exists"
             );
             return $await;

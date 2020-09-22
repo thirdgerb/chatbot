@@ -98,7 +98,7 @@ class GhtMessengerBySwlChan implements GhostMessenger
             // 记录推送失败日志, 很危险.
             if (! $success) {
                 $this->logger->error(
-                    __METHOD__
+                    static::class . '::'. __FUNCTION__
                     . ' send async request fail',
                     LogContext::requestToContext($request)
                 );
@@ -114,7 +114,7 @@ class GhtMessengerBySwlChan implements GhostMessenger
         if (!$data instanceof GhostRequest) {
             $type = TypeUtils::getType($data);
             $this->logger->error(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " receive invalid channel package, $type given"
             );
 
@@ -124,7 +124,7 @@ class GhtMessengerBySwlChan implements GhostMessenger
         // 必须是异步请求
         if (!$data->isAsync()) {
             $this->logger->error(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . ' only accept async request',
                 LogContext::requestToContext($data)
             );

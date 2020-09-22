@@ -131,7 +131,7 @@ class OConfuse extends AbsOperator
         } catch (\Throwable $e) {
             var_dump($e->getMessage());
             $this->cloner->logger->error(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " call fallback $fallbackType failed: "
                 . get_class($e)
                 . ", "

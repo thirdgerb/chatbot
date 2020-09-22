@@ -35,7 +35,7 @@ class Psr16CacheAdapter implements CacheInterface
 
     public function get($key, $default = null)
     {
-        $this->checkKey(__METHOD__, $key);
+        $this->checkKey(static::class . '::'. __FUNCTION__, $key);
         $value = $this->cache->get($key);
         $value = isset($value) ? unserialize($value) : null;
         return $value ?? $default;
@@ -43,14 +43,14 @@ class Psr16CacheAdapter implements CacheInterface
 
     public function set($key, $value, $ttl = null)
     {
-        $this->checkKey(__METHOD__, $key);
+        $this->checkKey(static::class . '::'. __FUNCTION__, $key);
         $value = serialize($value);
         $this->cache->set($key, $value, intval($ttl));
     }
 
     public function delete($key)
     {
-        $this->checkKey(__METHOD__, $key);
+        $this->checkKey(static::class . '::'. __FUNCTION__, $key);
         $this->cache->forget($key);
     }
 
@@ -62,7 +62,7 @@ class Psr16CacheAdapter implements CacheInterface
     public function getMultiple($keys, $default = null)
     {
         foreach ($keys as $key) {
-            $this->checkKey(__METHOD__, $key);
+            $this->checkKey(static::class . '::'. __FUNCTION__, $key);
         }
         $values = $this->cache->getMultiple($keys);
 
@@ -75,7 +75,7 @@ class Psr16CacheAdapter implements CacheInterface
     {
         $inputs = [];
         foreach ($values as $key => $value) {
-            $this->checkKey(__METHOD__, $key);
+            $this->checkKey(static::class . '::'. __FUNCTION__, $key);
             $inputs[$key] = serialize($value);
         }
         return $this->cache->setMultiple($inputs, $ttl);
@@ -84,7 +84,7 @@ class Psr16CacheAdapter implements CacheInterface
     public function deleteMultiple($keys)
     {
         foreach ($keys as $key) {
-            $this->checkKey(__METHOD__, $key);
+            $this->checkKey(static::class . '::'. __FUNCTION__, $key);
         }
         $this->cache->delMultiple($keys);
     }

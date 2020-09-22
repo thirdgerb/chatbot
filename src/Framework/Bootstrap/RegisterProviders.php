@@ -31,7 +31,7 @@ abstract class RegisterProviders implements Bootstrapper
         $console = $app->getConsoleLogger();
         $info = $app->getLogInfo();
 
-        $console->debug($info->bootingStartKeyStep(__METHOD__));
+        $console->debug($info->bootingStartKeyStep(static::class . '::'. __FUNCTION__));
 
         foreach ($this->getProviderConfigs($app) as $key => $val) {
             $provider = $this->wrapProvider($key, $val);
@@ -50,7 +50,7 @@ abstract class RegisterProviders implements Bootstrapper
             }
         }
 
-        $console->debug($info->bootingEndKeyStep(__METHOD__));
+        $console->debug($info->bootingEndKeyStep(static::class . '::'. __FUNCTION__));
     }
 
     public static function registerProviderByConfig(ServiceRegistry $registry, array $configs) : void

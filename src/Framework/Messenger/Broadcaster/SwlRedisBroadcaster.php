@@ -110,7 +110,7 @@ class SwlRedisBroadcaster extends AbsBroadcaster
             $connection->release();
 
             if (CommuneEnv::isDebug()) {
-                $this->logger->debug(__METHOD__ . " publish $shellChan/$sessionChan: $publish");
+                $this->logger->debug(static::class . '::'. __FUNCTION__ . " publish $shellChan/$sessionChan: $publish");
             }
 
         } catch (\Throwable $e) {

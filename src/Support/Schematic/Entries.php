@@ -167,7 +167,7 @@ class Entries implements \IteratorAggregate, IEntries, \ArrayAccess
     public function offsetSet($offset, $value)
     {
         throw new \BadMethodCallException(
-            __METHOD__
+            static::class . '::'. __FUNCTION__
             . ' not allowed'
         );
     }
@@ -175,7 +175,7 @@ class Entries implements \IteratorAggregate, IEntries, \ArrayAccess
     public function offsetUnset($offset)
     {
         throw new \BadMethodCallException(
-            __METHOD__
+            static::class . '::'. __FUNCTION__
             . ' not allowed'
         );
     }

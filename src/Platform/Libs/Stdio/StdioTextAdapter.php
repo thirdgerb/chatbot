@@ -114,7 +114,7 @@ class StdioTextAdapter implements Adapter
                 ->platform
                 ->getLogger()
                 ->error(
-                    __METHOD__
+                    static::class . '::'. __FUNCTION__
                     . " only accept ShellOutputResponse, $type given"
                 );
             return;

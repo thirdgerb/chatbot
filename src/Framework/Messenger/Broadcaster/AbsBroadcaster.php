@@ -118,7 +118,7 @@ abstract class AbsBroadcaster implements Broadcaster
 
         if (CommuneEnv::isDebug()) {
             $this->logger->debug(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " publish data $publish",
                 [
                     'shell' => $shellId,

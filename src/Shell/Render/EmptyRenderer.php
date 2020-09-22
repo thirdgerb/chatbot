@@ -42,7 +42,7 @@ class EmptyRenderer implements Renderer
         $id = $message->getProtocalId();
 
         $this->logger->info(
-            __METHOD__
+            static::class . '::'. __FUNCTION__
             . " eat message $class : $id"
         );
         return [];

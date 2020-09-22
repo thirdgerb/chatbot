@@ -60,14 +60,14 @@ abstract class AbsOperator implements Operator
         // 每个 Dialog 实例只能 tick 一次.
         if ($this->ticked) {
             throw new CommuneLogicException(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . ' try to tick dialog that ticked'
             );
         }
 
         if ($this->ticking) {
             throw new CommuneLogicException(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . ' try to tick dialog that ticking'
             );
         }

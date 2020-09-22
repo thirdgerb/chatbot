@@ -84,7 +84,7 @@ class PredefinedComponent extends AComponentOption
         $this->loadPsr4MindRegister(
             $app,
             [
-                "Commune\\Ghost\\Predefined\\Context" => __DIR__ . '/Context',
+                "Commune\\Ghost\\Services\\Context" => realpath(__DIR__ . '/../Services/Context'),
                 "Commune\\Ghost\\Predefined\\Memory" => __DIR__ . '/Memory',
                 "Commune\\Ghost\\Predefined\\Intent" => __DIR__ . '/Intent',
                 "Commune\\Ghost\\Predefined\\Manager" => __DIR__ . '/Manager',

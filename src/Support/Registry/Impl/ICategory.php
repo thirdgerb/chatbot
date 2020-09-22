@@ -190,7 +190,7 @@ class ICategory implements Category
 
         if (empty($option)) {
             throw new OptionNotFoundException(
-                __METHOD__,
+                static::class . '::'. __FUNCTION__,
                 $this->categoryOption->name,
                 $optionId
             );

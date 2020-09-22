@@ -28,7 +28,7 @@ class ShellLoadComponents extends LoadComponents
      */
     public function getComponentConfigs(App $app): array
     {
-        TypeUtils::validateInstance($app, Shell::class, __METHOD__);
+        TypeUtils::validateInstance($app, Shell::class, static::class . '::'. __FUNCTION__);
         return $app->getConfig()->components;
     }
 

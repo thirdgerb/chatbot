@@ -16,7 +16,7 @@ use Commune\Blueprint\NLU\NLUManager;
 use Commune\Blueprint\NLU\NLUService;
 use Commune\Blueprint\NLU\NLUServiceOption;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Ghost\Predefined\Services\Payload\MindSavePayload;
+use Commune\Ghost\Services\Payload\MindSavePayload;
 use Commune\NLU\Services\NLUSaveMetaService;
 
 

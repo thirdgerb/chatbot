@@ -135,7 +135,7 @@ abstract class TcpAdapterAbstract implements Adapter
                 ->platform
                 ->getLogger()
                 ->warning(
-                    __METHOD__
+                    static::class . '::'. __FUNCTION__
                     . " connection not available",
                     LogContext::responseToContext($response)
                 );

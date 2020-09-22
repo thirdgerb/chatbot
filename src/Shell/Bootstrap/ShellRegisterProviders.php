@@ -27,7 +27,7 @@ class ShellRegisterProviders extends RegisterProviders
      */
     public function getProviderConfigs(App $app): array
     {
-        TypeUtils::validateInstance($app, Shell::class, __METHOD__);
+        TypeUtils::validateInstance($app, Shell::class, static::class . '::'. __FUNCTION__);
         return $app->getConfig()->providers;
     }
 

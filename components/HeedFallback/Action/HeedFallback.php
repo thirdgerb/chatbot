@@ -201,7 +201,7 @@ class HeedFallback
         if (!is_a($className, FallbackStrategy::class, true)) {
             $expect = FallbackStrategy::class;
             $dialog->cloner->logger->error(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " expect $expect, $className given"
             );
             return null;

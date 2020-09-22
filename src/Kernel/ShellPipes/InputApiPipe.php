@@ -55,7 +55,7 @@ class InputApiPipe extends AShellPipe
         // 检查 handler 类型
         if (!$controller instanceof ApiController) {
             $this->session->logger->error(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " expect api controller extends $expect, $given given, api is $apiName"
             );
 
@@ -69,7 +69,7 @@ class InputApiPipe extends AShellPipe
             $expect = ShellInputResponse::class;
             $actual = TypeUtils::getType($response);
             $this->session->logger->error(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " expect api controller response $expect, given $actual"
             );
         };

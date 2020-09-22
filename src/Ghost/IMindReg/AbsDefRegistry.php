@@ -222,7 +222,7 @@ abstract class AbsDefRegistry implements DefRegistry
     public function registerDef(Def $def, bool $notExists = true): bool
     {
         $this->checkExpire();
-        $this->checkDefType(__METHOD__, $def);
+        $this->checkDefType(static::class . '::'. __FUNCTION__, $def);
 
         $name = $def->getName();
 

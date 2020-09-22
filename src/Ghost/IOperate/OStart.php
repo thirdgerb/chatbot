@@ -304,7 +304,7 @@ class OStart extends AbsOperator
         $comprehension->answer->setAnswer($answer);
         $comprehension->handled(
             Answer::class,
-            __METHOD__,
+            static::class . '::'. __FUNCTION__,
             true
         );
 

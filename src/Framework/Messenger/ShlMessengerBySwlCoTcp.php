@@ -134,7 +134,7 @@ class ShlMessengerBySwlCoTcp implements ShellMessenger
     protected function fail(GhostRequest $request, string $error = '') : GhostResponse
     {
         $this->logger->error(
-            __METHOD__
+            static::class . '::'. __FUNCTION__
             . ' send request fail: '
             . $error,
             LogContext::requestToContext($request)

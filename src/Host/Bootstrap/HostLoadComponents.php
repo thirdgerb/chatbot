@@ -28,7 +28,7 @@ class HostLoadComponents extends LoadComponents
      */
     public function getComponentConfigs(App $app): array
     {
-        TypeUtils::validateInstance($app, Host::class, __METHOD__);
+        TypeUtils::validateInstance($app, Host::class, static::class . '::'. __FUNCTION__);
         return $app->getConfig()->components;
 
     }

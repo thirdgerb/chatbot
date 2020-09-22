@@ -49,7 +49,7 @@ abstract class ATreeActivateStrategy
     protected function getBranchStageDef(Dialog $dialog) : BranchStageDef
     {
         $def = $dialog->ucl->findStageDef($dialog->cloner);
-        TypeUtils::validateInstance($def, BranchStageDef::class, __METHOD__);
+        TypeUtils::validateInstance($def, BranchStageDef::class, static::class . '::'. __FUNCTION__);
         /**
          * @var BranchStageDef $def
          */

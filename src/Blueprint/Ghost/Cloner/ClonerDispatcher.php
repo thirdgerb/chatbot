@@ -33,8 +33,10 @@ interface ClonerDispatcher
      * 对话式的服务 @see DialogicService
      *
      * @param array $params
+     *
+     * @param string $method  服务调用的方法.
      */
-    public function asyncService(string $service, array $params) : void;
+    public function asyncService(string $service, array $params, string $method = '__invoke') : void;
 
 
     /**

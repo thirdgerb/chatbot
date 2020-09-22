@@ -28,7 +28,7 @@ class HostRegisterProviders extends RegisterProviders
      */
     public function getProviderConfigs(App $app): array
     {
-        TypeUtils::validateInstance($app, Host::class, __METHOD__);
+        TypeUtils::validateInstance($app, Host::class, static::class . '::'. __FUNCTION__);
         return $app->getConfig()->providers;
     }
 

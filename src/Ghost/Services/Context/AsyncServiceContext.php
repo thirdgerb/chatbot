@@ -9,7 +9,7 @@
  * @license  https://github.com/thirdgerb/chatbot/blob/master/LICENSE
  */
 
-namespace Commune\Ghost\Predefined\Context;
+namespace Commune\Ghost\Services\Context;
 
 use Commune\Blueprint\Ghost\Callables\DialogicService;
 use Commune\Blueprint\Ghost\Context\CodeContextOption;
@@ -24,11 +24,13 @@ use Commune\Message\Host\SystemInt\DialogForbidInt;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @title 用于子进程执行任务 Context.
+ * @title 子进程执行一次性任务 Context.
  *
  * 它最大的好处是, 可以给 Service 使用 Context - Cloner - Dialog 的各种组件.
  *
  * @property-read string $service   AsyncService 的类名
+ * @property-read string $method    调用的 AsyncService  的方法.
+ *
  * @property array $payload    调用该 Service 时传入的参数.
  */
 class AsyncServiceContext extends ACodeContext
@@ -44,6 +46,7 @@ class AsyncServiceContext extends ACodeContext
             // query 参数如果是数组, 则定义参数名时应该用 [] 做后缀, 例如 ['key1', 'key2', 'key3[]']
             'queryNames' => [
                 'service',
+                'method',
             ],
 
             // memory 记忆体的默认值.
@@ -99,8 +102,17 @@ class AsyncServiceContext extends ACodeContext
                 }
             }
 
-            $service($this->payload, $dialog->send(true));
-            return $dialog->quit();
+            if ($this->method === '__invoke') {
+                $operator = $service($dialog, $this->payload);
+            } else {
+                $operator = $dialog->container()->call(
+                    [$service, $this->method],
+                    [
+                        'payload' => $this->payload,
+                    ]
+                );
+            }
+            return $operator ?? $dialog->quit();
 
         } catch (\Throwable $e) {
             return $dialog

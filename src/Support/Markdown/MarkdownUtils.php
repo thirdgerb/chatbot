@@ -30,7 +30,7 @@ class MarkdownUtils
         $line = trim($line);
         if (!self::isSingleLine($line)) {
             throw new \InvalidArgumentException(
-                ($method ?? __METHOD__)
+                ($method ?? static::class . '::'. __FUNCTION__)
                 . ' only accept single line'
             );
         }
@@ -94,7 +94,7 @@ class MarkdownUtils
 
     public static function parseTitle(string $line) : ? array
     {
-        $line = self::parseSingleLine($line, __METHOD__);
+        $line = self::parseSingleLine($line, static::class . '::'. __FUNCTION__);
         preg_match(self::TITLE_PATTERN, $line, $matches);
 
         if (empty($matches)) {

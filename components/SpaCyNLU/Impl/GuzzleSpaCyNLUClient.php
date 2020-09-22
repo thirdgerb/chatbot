@@ -88,7 +88,7 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
             $start = microtime(true);
             // 记录 debug 日志.
             $this->logger->debug(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . ' start : '
                 . json_encode([
                     'method' => $method,
@@ -112,7 +112,7 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
                 $end = microtime(true);
                 $gap = ceil(($end - $start) * 1000000);
                 $this->logger->debug(
-                    __METHOD__
+                    static::class . '::'. __FUNCTION__
                     . " response in $gap us : $content"
                 );
             }
@@ -121,14 +121,14 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
             if (!is_array($resProto)) {
                 $error = json_last_error();
                 $this->logger->warning(
-                    __METHOD__. " invalid response protocal: $error"
+                    static::class . '::'. __FUNCTION__. " invalid response protocal: $error"
                 );
             }
 
             $response = new NLUResponse($resProto);
             if (! $response->isSuccess()) {
                 $this->logger->warning(
-                    __METHOD__
+                    static::class . '::'. __FUNCTION__
                     . ' is failed, '
                     . ' code is : '
                     . $response->getCode()
@@ -148,7 +148,7 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
 
         } catch (GuzzleException $e) {
             $this->logger->warning(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " failed: "
                 . get_class($e)
                 . ', '

@@ -115,7 +115,7 @@ class MDGroupContextLoader extends ServiceProvider
 
         if (empty($i)) {
             $logger->warning(
-                __METHOD__
+                static::class . '::'. __FUNCTION__
                 . " no markdown file in path $path"
             );
         }
