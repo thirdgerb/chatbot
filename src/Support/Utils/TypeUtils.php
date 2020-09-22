@@ -93,7 +93,7 @@ class TypeUtils
         }
 
         if (is_string($value)) {
-            return 'string: '.mb_substr($value, 0, 15) . '..';
+            return 'string: '.mb_substr($value, 0, 100) . '..';
         }
 
         if (is_object($value)) {
@@ -101,7 +101,7 @@ class TypeUtils
             $type = get_class($value);
 
             if (method_exists($value, '__toString')) {
-                $text = mb_substr($value->__toString(), 0, 15) . '..';
+                $text = mb_substr($value->__toString(), 0, 100) . '..';
                 return "$type: $text";
             }
 
