@@ -76,7 +76,7 @@ class DemoHome extends ACodeContext
                 ->send()
                 ->notice('canceling pass by cancel stage')
                 ->over()
-                ->goStage('menu');
+                ->cancel();
         });
     }
 

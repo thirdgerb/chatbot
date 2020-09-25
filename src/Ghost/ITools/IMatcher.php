@@ -515,6 +515,11 @@ class IMatcher implements Matcher
         );
     }
 
+    /**
+     * 匹配单一意图.
+     * @param string $intentName
+     * @return null|string
+     */
     protected function singleIntentMatch(string $intentName) : ? string
     {
         return ContextUtils::isWildcardIntentPattern($intentName)
@@ -522,14 +527,21 @@ class IMatcher implements Matcher
             : $this->singleExactlyIntentMatch($intentName);
     }
 
+    /**
+     * 进行单一意图的精确匹配.
+     * @param string $intent
+     * @return null|string
+     */
     protected function singleExactlyIntentMatch(string $intent) : ? string
     {
         $reg = $this->cloner->mind->intentReg();
         $intention = $this->cloner->comprehension->intention;
+        // 如果意图名在可能的意图中, 直接返回命中.
         if ($intention->hasPossibleIntent($intent)) {
             return $intent;
         }
 
+        // 必须有设置好的 IntentDef 才能进行下一步.
         if (!$reg->hasDef($intent)) {
             return null;
         }

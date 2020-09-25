@@ -492,6 +492,8 @@ class Ucl implements UclInterface
             return $context;
         }
 
+        // 如果没有缓存, 创建一个新的 context.
+
         $def = $this->findContextDef($cloner);
         $context = $def->wrapContext($cloner, $this);
 
@@ -503,8 +505,12 @@ class Ucl implements UclInterface
 
         // 匹配到了 entity 的话, 默认会合并.
         if (!empty($entities)) {
+
             $intentDef = $this->findIntentDef($cloner);
-            $entities = $intentDef->parseEntities($entities);
+            if (isset($intentDef)) {
+                $entities = $intentDef->parseEntities($entities);
+            }
+
             $context->merge($entities);
         }
 

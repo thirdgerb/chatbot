@@ -27,16 +27,11 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read Abstracted\Emotion        $emotion        情绪模块, 从各种模块中得到的综合抽象, 可以代表多种模块
  *
  * @property-read Abstracted\Intention      $intention      意图理解模块
- * @property-read Abstracted\Query          $query          认为用户输入是个问题
- *
  *
  * @property-read Abstracted\Replies        $replies        回复模块, 如果第三方 API 能给出答案.
- * @property-read Abstracted\Selection      $selection      认为输入是一个多项选择.
+ * @property-read Abstracted\Tokenize       $tokens         分词, 这一步还不完善, 可能要做
  *
- *
- * @property-read Abstracted\Tokenize       $tokens
- * @property-read Abstracted\Vector         $vector
- *
+ * @property-read Abstracted\Routing        $routing        设置重定向的目的地.
  */
 interface Comprehension extends ArrayAndJsonAble
 {
@@ -44,12 +39,18 @@ interface Comprehension extends ArrayAndJsonAble
     const TYPE_COMMAND = 'command';
     const TYPE_EMOTION = 'emotion';
     const TYPE_INTENTION = 'intent';
-    const TYPE_QUERY = 'query';
     const TYPE_REPLIES = 'replies';
-    const TYPE_SELECTION = 'selection';
     const TYPE_TOKENIZE = 'tokenize';
-    const TYPE_VECTOR = 'vector';
+    const TYPE_ROUTING = 'routing';
 
+    /**
+     * 表示某个功能已经被处理过了. 这在调用多个 NLU 时可以防止重复调用.
+     * 多个 NLU 通常是串行处理. 如果需要并行, 应该合并到一个 NLUService 中.
+     *
+     * @param string $type
+     * @param string $comprehenderId
+     * @param bool $success
+     */
     public function handled(
         string $type,
         string $comprehenderId,

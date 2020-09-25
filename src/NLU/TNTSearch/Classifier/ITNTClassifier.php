@@ -135,13 +135,13 @@ class ITNTClassifier implements SentenceClassifier
         if (isset($type)) {
             $comprehension->intention->setMatchedIntent($type);
             $comprehension->handled(
-                Intention::class,
+                Comprehension::TYPE_INTENTION,
                 static::class,
                 true
             );
         } else {
             $comprehension->handled(
-                Intention::class,
+                Comprehension::TYPE_INTENTION,
                 static::class,
                 false
             );

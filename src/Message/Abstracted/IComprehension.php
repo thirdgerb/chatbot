@@ -12,7 +12,6 @@
 namespace Commune\Message\Abstracted;
 
 use Commune\Ghost\Support\CommandUtils;
-use Commune\Ghost\Support\MathUtils;
 use Commune\Protocals\Abstracted;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg;
@@ -22,15 +21,13 @@ use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property AnswerMsg|null $answer
- * @property string|null $cmd
+ * @property null|AnswerMsg $answer
+ * @property null|string $cmd
  * @property array $emotions
- * @property Abstracted\Intention $intention
- * @property string|null $query
- * @property HostMsg[]|null $replies
- * @property float[]|null $vector
- * @property string[]|null $tokens
- * @property string[] $selections
+ * @property array $intention
+ * @property null|HostMsg[] $replies
+ * @property null|array $tokens
+ * @property string|null $redirection
  * @property array $handledBy
  */
 class IComprehension extends AbsMessage implements
@@ -39,10 +36,8 @@ class IComprehension extends AbsMessage implements
     Abstracted\Replies,
     Abstracted\Tokenize,
     Abstracted\Cmd,
-    Abstracted\Query,
-    Abstracted\Vector,
-    Abstracted\Selection,
-    Abstracted\Answer
+    Abstracted\Answer,
+    Abstracted\Routing
 {
     protected $transferNoEmptyRelations = true;
 
@@ -55,11 +50,9 @@ class IComprehension extends AbsMessage implements
             'cmd' => null,
             'emotions' => [],
             'intention' => [],
-            'queryId' => null,
             'replies' => null,
-            'vector' => null,
             'tokens' => null,
-            'selections' => [],
+            'redirection' => null,
             'handledBy' => [],
         ];
     }
@@ -68,44 +61,7 @@ class IComprehension extends AbsMessage implements
     {
         return [
             'intention' => IIntention::class,
-            'replies[]' => HostMsg::class,
-            'answer' => AnswerMsg::class
         ];
-    }
-
-    /*------- selection -------*/
-
-    public function setSelections(array $selections) : void
-    {
-        $this->_data['selections'] = $selections;
-    }
-
-    public function getSelections(): array
-    {
-        return $this->_data['selections'] ?? [];
-    }
-
-    public function isSelected(string $choice): bool
-    {
-        return !in_array($choice, $this->getSelections());
-    }
-
-
-    /*------- question -------*/
-
-    public function setQuery(string $queryId): void
-    {
-        $this->_data['queryId'] = $queryId;
-    }
-
-    public function hasQueryId(): bool
-    {
-        return isset($this->_data['queryId']);
-    }
-
-    public function getQueryId(): ? string
-    {
-        return $this->_data['queryId'] ?? null;
     }
 
 
@@ -135,31 +91,6 @@ class IComprehension extends AbsMessage implements
             : null;
     }
 
-    /*------- vector -------*/
-
-    public function setVector(array $vector): void
-    {
-        $this->_data['vector'] = $vector;
-    }
-
-    public function getVector(): ? array
-    {
-        return $this->_data['vector'] ?? null;
-    }
-
-    public function hasVector(): bool
-    {
-        return isset($this->_data['vector']);
-    }
-
-    public function cosineSimilarity(array $vector): float
-    {
-        if ($this->hasVector()) {
-            return MathUtils::cosineSimilarity($this->getVector(), $vector);
-        }
-        return 0.0; // 萌萌哒
-    }
-
 
     /*------- emotions -------*/
 
@@ -186,6 +117,17 @@ class IComprehension extends AbsMessage implements
     public function isEmotion(string $emotionName): ? bool
     {
         return $this->_data['emotions'][$emotionName] ?? null;
+    }
+
+    /*------- routing -------*/
+    public function setRedirection(string $routeName): void
+    {
+        $this->_data['redirection'] = $routeName;
+    }
+
+    public function getRedirection(): ? string
+    {
+        return $this->_data['redirection'] ?? null;
     }
 
 
@@ -315,20 +257,10 @@ class IComprehension extends AbsMessage implements
 
     public function __get($name)
     {
-        if (
-            $name === 'answer'
-            || $name === 'command'
-            || $name === 'emotion'
-            || $name === 'question'
-            || $name === 'replies'
-            || $name === 'tokens'
-            || $name === 'vector'
-            || $name === 'selection'
-        ) {
-            return $this;
+        if ($name === 'intention') {
+            return parent::__get($name);
         }
-
-        return parent::__get($name);
+        return $this;
     }
 
     public function getText(): string

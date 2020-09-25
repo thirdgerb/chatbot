@@ -40,17 +40,8 @@ use Commune\Protocals\HostMsg\IntentMsg;
  */
 interface IntentDef extends Def
 {
-    /**
-     * @param Cloner $cloner
-     * @return bool
-     */
-    public function match(Cloner $cloner) : bool;
 
-    /**
-     * @param Cloner $cloner
-     * @return IntentMsg
-     */
-    public function toIntentMessage(Cloner $cloner) : IntentMsg;
+    /*------ getters ------*/
 
     /**
      * @return string
@@ -63,22 +54,11 @@ interface IntentDef extends Def
     public function getEntityNames() : array;
 
     /**
-     * @param string[][] $entities  entity 的特征是可能同时命中多个值. 但对于语义而言, 要区分是列表还是非列表.
-     *
-     * @return array
-     */
-    public function parseEntities(array $entities) : array;
-
-    /**
      * 语料
      * @return string[]
      */
     public function getExamples() : array;
 
-    /**
-     * @param string $example
-     */
-    public function appendExample(string $example) : void;
 
     /**
      * 封装后的语料对象
@@ -91,6 +71,9 @@ interface IntentDef extends Def
      */
     public function getKeywords() : array;
 
+    /**
+     * @param array $words
+     */
     public function appendKeywords(array $words) : void;
 
     /**
@@ -104,6 +87,7 @@ interface IntentDef extends Def
      */
     public function getEmotions() : array;
 
+    /*------ methods ------*/
 
     /**
      * @param IntentDef $def
@@ -111,6 +95,31 @@ interface IntentDef extends Def
      */
     public function mergeDef(IntentDef $def) : bool;
 
+    /**
+     * @param string[][] $entities  entity 的特征是可能同时命中多个值. 但对于语义而言, 要区分是列表还是非列表.
+     *
+     * @return array
+     */
+    public function parseEntities(array $entities) : array;
+
+    /**
+     * @param string $example
+     */
+    public function appendExample(string $example) : void;
+
+    /**
+     * @param Cloner $cloner
+     * @return bool
+     */
+    public function match(Cloner $cloner) : bool;
+
+    /**
+     * @param Cloner $cloner
+     * @return IntentMsg
+     */
+    public function toIntentMessage(Cloner $cloner) : IntentMsg;
+
+    /*------ state ------*/
 
     /**
      * 是否是一个空定义

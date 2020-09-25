@@ -126,7 +126,7 @@ class JiebaTokenizer implements Tokenizer
         $tokens = $this->tokenize($sentence);
         $comprehension->tokens->addTokens($tokens);
         $comprehension->handled(
-            ComprehendTokenizer::class,
+            Comprehension::TYPE_TOKENIZE,
             static::class,
             true
         );

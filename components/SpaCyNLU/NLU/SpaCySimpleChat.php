@@ -111,7 +111,7 @@ class SpaCySimpleChat implements SimpleChat
         $reply = $this->reply($text);
         if (empty($reply)) {
             $comprehension->handled(
-                Replies::class,
+                Comprehension::TYPE_REPLIES,
                 static::class,
                 false
             );
@@ -120,7 +120,7 @@ class SpaCySimpleChat implements SimpleChat
 
         $comprehension->replies->addReplies( IText::instance($reply));
         $comprehension->handled(
-            Replies::class,
+            Comprehension::TYPE_REPLIES,
             static::class,
             true
         );

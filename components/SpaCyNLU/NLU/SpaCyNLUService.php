@@ -26,7 +26,6 @@ use Commune\Components\SpaCyNLU\Blueprint\SpaCyNLUClient;
 use Commune\Components\SpaCyNLU\Configs\NLUModuleConfig;
 use Commune\Components\SpaCyNLU\Managers\NLUServiceManager;
 use Commune\NLU\Support\ParserTrait;
-use Commune\Protocals\Abstracted\Intention;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\Intercom\InputMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
@@ -146,7 +145,7 @@ class SpaCyNLUService implements NLUService
 
         if (empty($predictions)) {
             $comprehension->handled(
-                Intention::class,
+                Comprehension::TYPE_INTENTION,
                 static::class,
                 false
             );
@@ -163,7 +162,7 @@ class SpaCyNLUService implements NLUService
         }
 
         $comprehension->handled(
-            Intention::class,
+            Comprehension::TYPE_INTENTION,
             static::class,
             true
         );

@@ -59,6 +59,8 @@ class CodeContextOption extends AbsOption
                 'comprehendPipes' => null,
                 'stageRoutes' => [],
                 'contextRoutes' => [],
+                'commandMark' => '!',
+                'commands' => [],
             ],
         ];
     }

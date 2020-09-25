@@ -138,21 +138,25 @@ interface Context extends
     /*----- assignment -----*/
 
     /**
-     * 没有 query 的属性部分.
+     * 获取 Query 之外的属性.
+     * 重写这个方法, 可以定义 Context 的数据源头.
+     * 要和 Save 方法保持一致.
      *
      * @return Recollection
      */
     public function getRecollection() : Recollection;
 
     /**
+     * 主动保存当前数据.
+     * 可以更改 Context 的数据保存策略.
+     */
+    public function save() : void;
+
+    /**
+     * 合并数据.
      * @param array $data
      */
     public function merge(array $data) : void;
-
-    /**
-     * 主动保存当前数据.
-     */
-    public function save() : void;
 
     /*----- array -----*/
 

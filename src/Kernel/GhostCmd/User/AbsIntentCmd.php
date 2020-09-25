@@ -10,13 +10,15 @@
  */
 
 namespace Commune\Kernel\GhostCmd\User;
+
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Kernel\GhostCmd\AGhostCmd;
-use Commune\Protocals\Abstracted\Intention;
+use Commune\Protocals\Comprehension;
 
 
 /**
+ * 意图类命令. 命中命令会相当于命中一个意图.
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 abstract class AbsIntentCmd extends AGhostCmd
@@ -29,7 +31,7 @@ abstract class AbsIntentCmd extends AGhostCmd
         $comprehension = $this->cloner->comprehension;
         $comprehension->intention->setMatchedIntent($intentName);
         $comprehension->handled(
-            Intention::class,
+            Comprehension::TYPE_INTENTION,
             get_class($pipe),
             true
         );
