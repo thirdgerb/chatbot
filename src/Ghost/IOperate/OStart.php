@@ -22,7 +22,6 @@ use Commune\Ghost\Context\Command\CommandDefMap;
 use Commune\Ghost\Dialog\IReceive;
 use Commune\Ghost\IOperate\OExiting\OCancel;
 use Commune\Ghost\IOperate\OExiting\OFulfill;
-use Commune\Protocals\Abstracted\Answer;
 use Commune\Protocals\Comprehension;
 use Commune\Protocals\HostMsg\Convo\ContextMsg;
 use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
@@ -103,6 +102,9 @@ class OStart extends AbsOperator
         // 以下是语义相关的环节.
         // 通过管道试图理解消息, 将理解结果保留在 comprehension 中.
         $operator = $operator ?? $this->runComprehendPipes($input);
+
+        // 如果 nlu 决定了下一步通向的位置, 只好相信它.
+        $operator = $operator ?? $this->nluDecidedNextStage();
 
         // 检查是否命中了路由.
         // 命中了的话会直接 redirect 走, 那么 answer 也不重要了.
@@ -303,7 +305,7 @@ class OStart extends AbsOperator
         $comprehension = $this->cloner->comprehension;
         $comprehension->answer->setAnswer($answer);
         $comprehension->handled(
-            Answer::class,
+            Comprehension::TYPE_ANSWER,
             static::class . '::'. __FUNCTION__,
             true
         );
@@ -348,6 +350,28 @@ class OStart extends AbsOperator
             }
         }
         $container->share(Comprehension::class, $comprehension);
+    }
+
+    protected function nluDecidedNextStage() : ? Operator
+    {
+        $comprehension = $this->cloner->comprehension;
+        $redirection = $comprehension->routing->getRedirection();
+
+        if (empty($redirection)) {
+            return null;
+        }
+
+        // 如果命中了路由, 让路由去定义后续流程.
+        $routes = $this->cloner->runtime->getCurrentAwaitRoutes();
+        foreach ($routes as $route) {
+            if ($redirection === $route->getIntentName()) {
+                return $this->dialog->redirectTo($route, false);
+            }
+        }
+
+        // 否则直接重定向.
+        $redirectTo = Ucl::decode($redirection);
+        return $this->dialog->redirectTo($redirectTo);
     }
 
     /*--------- command parser ---------*/
@@ -395,7 +419,6 @@ class OStart extends AbsOperator
 
     protected function matchAwaitRoutes(Ucl ...$routes) : ? Ucl
     {
-
         $matched = $this->cloner
             ->comprehension
             ->intention
@@ -418,6 +441,7 @@ class OStart extends AbsOperator
             // 这个 ucl 可能是假的, 用了通配符
             $intentName = $ucl->getIntentName();
 
+            // stage 命中了.
             if ($matcher->matchStage($intentName)->truly()) {
                 /**
                  * @var StageDef $matched
