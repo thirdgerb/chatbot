@@ -17,6 +17,18 @@ use Commune\Support\Option\AbsOption;
 /**
  * Swoole Server 的基础配置.
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * 具体配置项请查看: @see https://wiki.swoole.com/#/server/setting
+ *
+ *
+ * @property bool $enable_coroutine
+ * @property int $worker_num
+ * @property bool $open_tcp_nodelay
+ * @property int $max_coroutine
+ * @property bool $open_http2_protocol
+ * @property int $max_request
+ * @property int $socket_buffer_size
+ * @property int $buffer_output_size
  */
 class ServerSettingOption extends AbsOption
 {

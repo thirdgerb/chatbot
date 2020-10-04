@@ -27,7 +27,7 @@ use Commune\Support\Option\AbsOption;
  *
  * ## Swoole 的服务端配置.
  * 
- * @property-read array $serverSettings
+ * @property-read ServerSettingOption $serverSettings
  * 具体配置项请查看: @see https://wiki.swoole.com/#/server/setting
  *
  * ## 从 ServerSettings 衍生出来的配置
@@ -58,7 +58,7 @@ class ServerOption extends AbsOption
     public function __get_workerNum() : int
     {
         $settings = $this->serverSettings;
-        return $settings['worker_num'] ?? 2;
+        return $settings->worker_num ?? 2;
     }
 
     public function __get_ssl() : bool
@@ -70,7 +70,9 @@ class ServerOption extends AbsOption
 
     public static function relations(): array
     {
-        return [];
+        return [
+            'serverSettings' => ServerSettingOption::class
+        ];
     }
 
 

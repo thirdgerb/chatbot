@@ -76,7 +76,7 @@ class SwlDuplexShellPlatform extends AbsPlatform implements SwlAsyncPlatform
     {
         $serverOption = $this->option->serverOption;
         $server = new Server($serverOption->host, $serverOption->port);
-        $server->set($serverOption->serverSettings);
+        $server->set($serverOption->serverSettings->toArray());
 
         $table = new Swoole\Table($this->option->tableSize);
         $table->column('fd', Swoole\Table::TYPE_INT);

@@ -102,7 +102,7 @@ class ProcPoolFactory
 
         // 必须允许协程.
         $serverOption['enable_coroutine'] = true;
-        $pool->set($serverOption);
+        $pool->set($serverOption->toArray());
 
         return $pool;
     }
