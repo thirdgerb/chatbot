@@ -11,6 +11,7 @@
 
 namespace Commune\Components\SpaCyNLU;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\NLU\NLUServiceOption;
 use Commune\Components\SpaCyNLU\Configs\NLUModuleConfig;
@@ -25,6 +26,8 @@ use Commune\Framework\Component\AComponentOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property-read bool $load    启动时是否加载资源.
  *
  * # SpaCy NLU 的服务配置.
  *
@@ -50,6 +53,7 @@ class SpaCyNLUComponent extends AComponentOption
         return [
             'host' => '127.0.0.1:10830',
             'requestTimeOut' => 0.3,
+            'load' => CommuneEnv::isLoadingResource(),
 
             'nluModuleConfig' => [
                 'matchLimit' => 5,
@@ -94,6 +98,9 @@ class SpaCyNLUComponent extends AComponentOption
 
         $registrar->registerProcProvider(new SpaCyNLURegisterProvider(), false);
 
+        if (!$this->load) {
+            return;
+        }
 
         // 加载相关管理工具.
         $this->loadPsr4MindRegister(

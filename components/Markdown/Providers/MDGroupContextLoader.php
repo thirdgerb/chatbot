@@ -24,7 +24,6 @@ use Commune\Support\Markdown\Data\MDDocumentData;
 use Commune\Support\Markdown\Data\MDSectionData;
 use Commune\Support\Markdown\Parser\MDParser;
 use Commune\Support\Registry\OptRegistry;
-use Commune\Support\Utils\StringUtils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 
@@ -34,8 +33,9 @@ use Symfony\Component\Finder\Finder;
  *
  *
  * @property-read string $id
- * @property-read bool $forceUpdate
- * @property-read MDGroupOption $group
+ * @property-read bool $load 加载配置
+ * @property-read bool $reset 重置所有的缓存
+ * @property-read MDGroupOption $group 分组的信息
  */
 class MDGroupContextLoader extends ServiceProvider
 {
@@ -50,7 +50,8 @@ class MDGroupContextLoader extends ServiceProvider
     {
         return [
             'id' => '',
-            'forceUpdate' => false,
+            'load' => true,
+            'reset' => false,
             'group' => [
 
             ],
@@ -75,6 +76,17 @@ class MDGroupContextLoader extends ServiceProvider
         $registry = $app->make(OptRegistry::class);
         $mindset = $app->make(Mindset::class);
 
+        // 重置现有数据.
+        if ($this->reset) {
+            $registry->getCategory(MDSectionData::class)->flush();
+            $registry->getCategory(MDDocumentData::class)->flush();
+        }
+
+        // 是否不加载数据.
+        if (!$this->load) {
+            return;
+        }
+
         $path = realpath($group->resourceDir);
 
         $finder = new Finder();
@@ -93,7 +105,7 @@ class MDGroupContextLoader extends ServiceProvider
             $filePath = $file->getRealPath();
             $markdownId = $this->getMarkdownId($path, $group, $filePath);
 
-            $update = $this->forceUpdate
+            $update = $this->reset
                 || $this->checkShouldUpdate($markdownId, $file->getMTime(), $registry);
 
             if ($update) {

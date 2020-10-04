@@ -28,15 +28,17 @@ use Commune\Support\Utils\StringUtils;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $defaultLocale
- * @property-read string $defaultDomain
- * @property-read StorageMeta|null $storage
- * @property-read StorageMeta|null $initStorage     定义自己的 init storage.
- *
- * @property-read bool $reset
+ * @property-read string $defaultLocale             系统默认的 locale
+ * @property-read string $defaultDomain             系统默认的 domain
+ * @property-read StorageMeta|null $storage         自定义的 storage
+ * @property-read StorageMeta|null $initStorage     自定义的 init storage. 默认是文件.
  *
  *
- * @property-read string $resource 初始资源
+ * @property-read string $resource                  初始资源所在文件夹. 内部继续按 zh-cn/messages.php 这样的方式来定义 locale 与 domain.
+ *
+ *
+ * @property-read bool $load                        是否加载资源.
+ * @property-read bool $reset                       是否重置所有的资源.
  */
 class TranslatorBySymfonyProvider extends ServiceProvider
 {
@@ -51,12 +53,14 @@ class TranslatorBySymfonyProvider extends ServiceProvider
 
             'initStorage' => null,
 
-            'reset' => CommuneEnv::isResetRegistry(),
-
             'resource' => StringUtils::gluePath(
                 CommuneEnv::getResourcePath(),
                 'trans'
-            )
+            ),
+
+
+            'load' => CommuneEnv::isLoadingResource(),
+            'reset' => CommuneEnv::isResetRegistry(),
         ];
     }
 
@@ -123,11 +127,17 @@ class TranslatorBySymfonyProvider extends ServiceProvider
             'initialStorage' => $initStorage,
         ]));
 
+        // 如果要重置, 清空所有的数据.
         if ($this->reset) {
             $logger->warning("reset trans data!!");
             $category = $registry->getCategory(TransOption::class);
             $category->flush(false);
             $category->initialize();
+        }
+
+        // 看看是否要加载资源.
+        if (!$this->load) {
+            return;
         }
 
         // 加载最初的配置.

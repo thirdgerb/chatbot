@@ -31,9 +31,14 @@ class CommuneEnv
     const RESOURCE_PATH = 'COMMUNE_RESOURCE_PATH';
     const CONFIG_PATH = 'COMMUNE_CONFIG_PATH';
     const LOG_PATH = 'COMMUNE_LOG_PATH';
+    const LOADING_RESOURCE = 'COMMUNE_LOADING_RESOURCE';
 
     /*------- path ------*/
 
+    /**
+     * Commune 项目的根目录
+     * @return string
+     */
     public static function getBasePath() : string
     {
         return self::get(
@@ -48,6 +53,10 @@ class CommuneEnv
     }
 
 
+    /**
+     * 配置文件所在路径
+     * @return string
+     */
     public static function getConfigPath() : string
     {
         return self::get(
@@ -69,6 +78,10 @@ class CommuneEnv
 
     /*------- runtime path ------*/
 
+    /**
+     * Runtime 所在目录. 这里存放 pid/文件缓存等等.
+     * @return string
+     */
     public static function getRuntimePath() : string
     {
         return self::get(
@@ -89,6 +102,10 @@ class CommuneEnv
     /*------- log path ------*/
 
 
+    /**
+     * 日志所在路径. 默认是 runtime/log
+     * @return string
+     */
     public static function getLogPath() : string
     {
         return self::get(
@@ -103,7 +120,7 @@ class CommuneEnv
     public static function defineLogPath(string $path) : void
     {
         if (!is_dir($path)) {
-            throw new CommuneLogicException("path $path is invalid dir");
+            throw new CommuneLogicException("path [$path] is invalid dir");
         }
         self::set(self::LOG_PATH, $path);
     }
@@ -111,6 +128,14 @@ class CommuneEnv
 
     /*------- path ------*/
 
+    /**
+     * Resource 资源文件所在路径.
+     * 资源是项目启动时可以加载的数据.
+     * 和 Runtime 不一样, 资源文件在运行中是不应该修改的.
+     * 项目也可以把各种数据 dump 到资源文件中, 方便用文件的形式传递和版本控制.
+     *
+     * @return string
+     */
     public static function getResourcePath() : string
     {
         return self::get(
@@ -122,7 +147,7 @@ class CommuneEnv
     public static function defineResourcePath(string $path) : void
     {
         if (!is_dir($path)) {
-            throw new CommuneLogicException("path $path is invalid dir");
+            throw new CommuneLogicException("path [$path] is invalid dir");
         }
         self::set(self::RESOURCE_PATH, $path);
     }
@@ -130,6 +155,11 @@ class CommuneEnv
 
     /*------- debug ------*/
 
+    /**
+     * 是否在 debug 状态下运行.
+     * Debug 状态会增加许多性能消耗较大的解析环节.
+     * @return bool
+     */
     public static function isDebug() : bool
     {
         return self::get(self::DEBUG, false);
@@ -142,6 +172,11 @@ class CommuneEnv
 
     /*------- mind ------*/
 
+    /**
+     * 是否重置注册表. 如果重置注册表, 则所有注册表理应在启动时主动清空一遍.
+     * 这个参数要非常慎用. 是毁灭性的效果.
+     * @return bool
+     */
     public static function isResetRegistry() : bool
     {
         return self::get(self::RESET_REGISTRY, false);
@@ -152,13 +187,38 @@ class CommuneEnv
         self::set(self::RESET_REGISTRY, $boolean);
     }
 
+    /*------- load resource ------*/
+
+    /**
+     * 是否加载 Resource 资源.
+     * 启动时主动加载资源, 会产生大量的 IO 查询资源是否存在, 是否可以被覆盖等.
+     * 所以不建议每次启动都加载.
+     *
+     * 但 isResetRegistry 的时候, loading Resource 一定为 True
+     *
+     * @return bool
+     */
+    public static function isLoadingResource() : bool
+    {
+        return self::isResetRegistry() || self::get(self::LOADING_RESOURCE, false);
+    }
+    
+    
+    public static function defineLoadingResource(bool $loading) : void
+    {
+        self::set(self::LOADING_RESOURCE, $loading);
+    }
+
     /*------- private ------*/
 
     private static function get(string $name, $default)
     {
-        return defined($name)
-            ? constant($name)
-            : $default;
+        if (defined($name)) {
+            return constant($name);
+        }
+
+        define($name, $default);
+        return $default;
     }
 
     private static function set(string $name, $value) : void

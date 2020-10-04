@@ -11,7 +11,6 @@
 
 namespace Commune\Framework\Component\Providers;
 
-use Commune\Blueprint\CommuneEnv;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\ServiceProvider;

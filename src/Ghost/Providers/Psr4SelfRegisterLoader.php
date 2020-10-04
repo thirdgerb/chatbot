@@ -25,9 +25,10 @@ use Symfony\Component\Finder\Finder;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read string $id
- * @property-read string[] $psr4
- * @property-read bool $force
+ * @property-read string $id        当前 Provider 的 id
+ * @property-read string[] $psr4    用 psr-4 规范寻找需要加载的类文件
+ * @property-read bool $load        是否加载相关数据
+ * @property-read bool $force       是否强制加载相关数据.
  */
 class Psr4SelfRegisterLoader extends ServiceProvider
 {
@@ -38,6 +39,7 @@ class Psr4SelfRegisterLoader extends ServiceProvider
         return [
             'id' => static::class,
             'psr4' => [],
+            'load' => CommuneEnv::isLoadingResource(),
             'force' => CommuneEnv::isResetRegistry(),
         ];
     }
@@ -49,6 +51,10 @@ class Psr4SelfRegisterLoader extends ServiceProvider
 
     public function boot(ContainerContract $app): void
     {
+        if (!$this->load) {
+            return;
+        }
+
         $mind = $app->get(Ghost\Mindset::class);
         $logger = $app->get(ConsoleLogger::class);
 

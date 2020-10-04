@@ -21,13 +21,15 @@ use Commune\Contracts\ServiceProvider;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read bool $reset
+ * @property-read bool $reset   是否清空所有注册表.
+ * @property-read bool $load    是否根据配置文件的 psr4 规范加载相关资源.
  */
 class MindsetServiceProvider extends ServiceProvider
 {
     public static function stub(): array
     {
         return [
+            'load' => CommuneEnv::isLoadingResource(),
             'reset' => CommuneEnv::isResetRegistry(),
         ];
     }
@@ -55,13 +57,19 @@ class MindsetServiceProvider extends ServiceProvider
             $mindset->reset();
         }
 
+        // 否则就不加载
+        if (!$this->load) {
+            return;
+        }
+
         // 加载项目 默认的 self register
         foreach ($config->mindPsr4Registers as $namespace => $path) {
             Psr4SelfRegisterLoader::loadSelfRegister(
                 $mindset,
                 $namespace,
                 $path,
-                $logger
+                $logger,
+                $this->reset
             );
         }
     }

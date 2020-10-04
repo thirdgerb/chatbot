@@ -11,6 +11,7 @@
 
 namespace Commune\Components\HeedFallback;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Framework\App;
 use Commune\Components\HeedFallback\Data\FallbackStrategyInfo;
 use Commune\Components\HeedFallback\Libs\FallbackSceneRepoDemo;
@@ -83,8 +84,9 @@ use Commune\Support\Registry\Meta\StorageMeta;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  *
+ * @property-read bool $load                            是否加载数据.
  * @property-read string $trans                         文本文件所在路径
- * @property-read string $sceneRepository               记录 fallback 场景的仓库.
+ * @property-read string $sceneRepository               记录 fallback 场景的仓库, 用什么实现.
  * @property-read FallbackStrategyInfo[] $strategies    系统支持的 fallback 策略.
  * @property-read StorageMeta|null $storage
  * @property-read StorageMeta $initStorage
@@ -95,6 +97,7 @@ class HeedFallbackComponent extends AComponentOption
     {
         return [
 
+            'load' => CommuneEnv::isLoadingResource(),
             'strategies' => [
                 static::defaultStrategy(),
             ],
@@ -141,7 +144,10 @@ class HeedFallbackComponent extends AComponentOption
             'initStorage' => $this->initStorage
         ]), false);
 
-
+        // 剩下的资源可以不主动加载, 减少 IO
+        if (!$this->load) {
+            return;
+        }
 
         $this->loadPsr4MindRegister(
             $app,
@@ -150,7 +156,6 @@ class HeedFallbackComponent extends AComponentOption
                 "Commune\\Components\\HeedFallback\\Strategies" => __DIR__ . '/Strategies',
             ]
         );
-
 
         // 加载翻译文本资源.
         $this->loadTranslation(

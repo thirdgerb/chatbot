@@ -38,9 +38,11 @@ use Commune\Support\Utils\StringUtils;
  *
  *
  *
- * @property-read bool $reset               是否重置配置. 否则只更新 updated
+ * @property-read bool $load                是否加载更新的配置.
+ * @property-read bool $reset               是否重置配置. 会删除之前已经有的
+ *
  * @property-read string $langDir           相关文本的配置路径.
- * @property-read MDGroupOption[] $groups
+ * @property-read MDGroupOption[] $groups   分组的配置. 每个文件夹可以提供一个分组. 可定义不同的解析逻辑.
  *
  * # 可选配置
  *
@@ -62,6 +64,7 @@ class MarkdownComponent extends AComponentOption
     {
         return [
 
+            'load' => CommuneEnv::isLoadingResource(),
             'reset' => CommuneEnv::isResetRegistry(),
             'langDir' => __DIR__ . '/resources/trans',
             'groups' => [
@@ -98,27 +101,31 @@ class MarkdownComponent extends AComponentOption
         // 注册两个 option 仓库.
         $registry = $app->getServiceRegistry();
         $registry->registerConfigProvider(
-                new MDOptRegistryProvider([
-                    'runtimePath' => $this->runtimePath,
-                    'docStorage' => null,
-                    'docInitialStorage' => null,
-                    'sectionStorage' => null,
-                    'sectionInitialStorage' => null,
-                ]),
-                false
-            );
-
+            new MDOptRegistryProvider([
+                'runtimePath' => $this->runtimePath,
+                'docStorage' => null,
+                'docInitialStorage' => null,
+                'sectionStorage' => null,
+                'sectionInitialStorage' => null,
+            ]),
+            false
+        );
 
         // 注册所有的 group 组件.
         foreach ($this->groups as $group) {
             $registry->registerProcProvider(
                 new MDGroupContextLoader([
                     'id' => $group->groupName,
-                    'forceUpdate' => $this->reset,
+                    'load' => $this->load,
+                    'reset' => $this->reset,
                     'group' => $group,
                 ]),
                 false
             );
+        }
+
+        if (!$this->load) {
+            return;
         }
 
         $this->loadTranslation(
@@ -128,7 +135,6 @@ class MarkdownComponent extends AComponentOption
             $this->reset
         );
 
-        $this->dependComponent($app, TreeComponent::class);
     }
 
     public function getGroupOptionByName(string $groupName) : ? MDGroupOption

@@ -11,6 +11,7 @@
 
 namespace Commune\Components\Tree;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Framework\App;
 use Commune\Framework\Component\AComponentOption;
 
@@ -26,16 +27,14 @@ use Commune\Framework\Component\AComponentOption;
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- *
- *
- * @property-read bool $loadDemo
+ * @property-read bool $load
  */
 class TreeComponent extends AComponentOption
 {
     public static function stub(): array
     {
         return [
-            'loadDemo' => true,
+            'load' => CommuneEnv::isLoadingResource(),
         ];
     }
 
@@ -46,13 +45,15 @@ class TreeComponent extends AComponentOption
 
     public function bootstrap(App $app): void
     {
+        if (!$this->load) {
+            return;
+        }
 
         $preload = [
             'Commune\\Components\\Tree\\Impl' => __DIR__ . '/Impl',
+            'Commune\\Components\\Tree\\Demo' => __DIR__ . '/Demo',
         ];
-        if ($this->loadDemo) {
-            $preload['Commune\\Components\\Tree\\Demo'] = __DIR__ . '/Demo';
-        }
+
         $this->loadPsr4MindRegister(
             $app,
             $preload

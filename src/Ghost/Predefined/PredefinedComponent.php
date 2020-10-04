@@ -11,6 +11,7 @@
 
 namespace Commune\Ghost\Predefined;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
 use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
@@ -21,7 +22,7 @@ use Commune\Support\Registry\Storage\FileStorageOption;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read bool $trigger     Predefined 功能的开关. 如果关闭的话, 所有功能都不会运行.
+ * @property-read bool $load    是否加载所有的配置
  *
  * 可以搞一个自定义组件继承本类, 再去实现其中自定义的功能.
  */
@@ -30,7 +31,7 @@ class PredefinedComponent extends AComponentOption
     public static function stub(): array
     {
         return [
-            'trigger' => true,
+            'load' => CommuneEnv::isLoadingResource(),
         ];
     }
 
@@ -41,12 +42,7 @@ class PredefinedComponent extends AComponentOption
 
     public function bootstrap(App $app): void
     {
-        if (!$this->trigger) {
-            $app->getConsoleLogger()
-                ->warning(
-                    static::class
-                    . ' not running, trigger is false'
-                );
+        if (!$this->load) {
             return;
         }
 

@@ -11,6 +11,7 @@
 
 namespace Commune\Components\Demo;
 
+use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Ghost\MindMeta\EntityMeta;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
@@ -21,12 +22,16 @@ use Commune\Support\Registry\Storage\FileStorageOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
+ *
+ * @property bool $load     是否加载相关资源.
  */
 class DemoComponent extends AComponentOption
 {
     public static function stub(): array
     {
-        return [];
+        return [
+            'load' => CommuneEnv::isLoadingResource(),
+        ];
     }
 
     public static function relations(): array
@@ -36,6 +41,14 @@ class DemoComponent extends AComponentOption
 
     public function bootstrap(App $app): void
     {
+
+        $this->dependComponent($app, TreeComponent::class);
+
+        // 如果不加 load, 启动时就不尝试重复扫描配置了. 减少启动的 IO
+        if (!$this->load) {
+            return;
+        }
+
         // 注册组件.
         $this->loadPsr4MindRegister(
             $app,
@@ -72,8 +85,6 @@ class DemoComponent extends AComponentOption
             false
         );
 
-
-        $this->dependComponent($app, TreeComponent::class);
     }
 
 }
