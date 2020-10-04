@@ -56,6 +56,8 @@ class TcpCoGhostPlatformConfig extends IPlatformConfig
                         'port' => '9501',
                         'serverSettings' => [
                             'workerNum' => 2,
+                            'open_eof_split' => true, // 启用 EOF 自动分包
+                            'package_eof' => "\r\n",
                         ],
                     ],
                     /**
