@@ -26,7 +26,6 @@ class IClonerStorage extends ASessionStorage implements ClonerStorage
     protected $session;
 
     protected $_data = [
-        'requestFailTimes' => 0,
         'shellSessionRoutes' => []
     ];
 

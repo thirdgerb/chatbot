@@ -28,6 +28,8 @@ use Commune\Blueprint\Exceptions\Runtime\BrokenSessionException;
  */
 class CloneTryCatchPipe extends AClonePipe
 {
+    const FAIL_TIME_KEY = '_requestFailTimes';
+
     /**
      * @var string[]
      */
@@ -78,13 +80,13 @@ class CloneTryCatchPipe extends AClonePipe
     {
 
         $storage = $this->cloner->storage;
-        $times = $storage->requestFailTimes ?? 0;
+        $times = $storage[self::FAIL_TIME_KEY] ?? 0;
         $times ++;
         if ($times >= $this->cloner->config->maxRequestFailTimes) {
             return $this->quitSession($request, $e);
         }
 
-        $storage->requestFailTimes = $times;
+        $storage[self::FAIL_TIME_KEY] = $times;
 
         return $request->output(
             $this->cloner->avatar->getId(),
@@ -116,6 +118,6 @@ class CloneTryCatchPipe extends AClonePipe
     protected function resetFailureCount() : void
     {
         $storage = $this->cloner->storage;
-        $storage->requestFailTimes = 0;
+        $storage[self::FAIL_TIME_KEY] = 0;
     }
 }
