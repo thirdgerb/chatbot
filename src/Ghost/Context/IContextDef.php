@@ -56,17 +56,6 @@ use Commune\Support\Utils\ArrayUtils;
  * @property array $dependingNames
  * @property null|string $ifRedirect
  *
- * ## 多轮规则相关
- *
- * @property string[] $auth                    用户权限
- * @property null|string $onCancel
- * @property null|string $onQuit
- *
- * @property string[] $stageRoutes
- * @property string[] $contextRoutes
- *
- * @property null|array $comprehendPipes
- *
  * ## predefined stage 预定义的 stage
  *
  * @property string|null $firstStage
@@ -102,6 +91,7 @@ class IContextDef extends AbsOption implements ContextDef
             // query 参数如果是数组, 则定义参数名时应该用 [] 做后缀, 例如 ['key1', 'key2', 'key3[]']
             'queryNames' => [],
 
+            // 多轮对话部分规则.
             'strategy' => [
 
             ],
@@ -124,12 +114,6 @@ class IContextDef extends AbsOption implements ContextDef
             // Context 启动时, 会依次检查的参数. 当这些参数都不是 null 时, 认为 Context::isPrepared
             'dependingNames' => [],
 
-            'comprehendPipes' => null,
-
-            'onCancel' => null,
-            'onQuit' => null,
-            'stageRoutes' => [],
-            'contextRoutes' => [],
             'firstStage' => null,
 
             // 预定义的 stage 的配置. StageMeta

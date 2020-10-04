@@ -24,7 +24,7 @@ interface Adapter
 {
 
     /**
-     * 异常检查.
+     * 请求是否异常检查.
      * @return null|string
      */
     public function isInvalidRequest() : ? string;
