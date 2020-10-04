@@ -17,6 +17,7 @@ use Commune\Protocals\IntercomMsg;
 /**
  * 消息的存储与读取.
  * 这样可以做到和客户端 推/拉 结合地获取消息.
+ * 主要用在广播的场景中.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
@@ -44,23 +45,25 @@ interface MessageDB
      */
     public function fetchBatch(string $batchId) : array;
 
-    /**
-     * @param callable $fetcher
-     * @return IntercomMsg[]
-     */
-    public function fetch(callable $fetcher) : array;
-
-
-    /**
-     * 按条件获取若干消息
-     * @return Condition
-     */
-    public function where() : Condition;
-
-    /**
-     * 获取消息.
-     * @param string $messageId
-     * @return IntercomMsg|null
-     */
-    public function find(string $messageId) : ? IntercomMsg;
+//  目前还没有明确场景用到这些功能.
+//
+//    /**
+//     * @param callable $fetcher
+//     * @return IntercomMsg[]
+//     */
+//    public function fetch(callable $fetcher) : array;
+//
+//
+//    /**
+//     * 按条件获取若干消息
+//     * @return Condition
+//     */
+//    public function where() : Condition;
+//
+//    /**
+//     * 获取消息.
+//     * @param string $messageId
+//     * @return IntercomMsg|null
+//     */
+//    public function find(string $messageId) : ? IntercomMsg;
 }
