@@ -52,16 +52,16 @@ use Commune\Blueprint\Ghost\Cloner\ClonerDispatcher;
  * @property-read ReqContainer $container           容器
  *
  * # 请求相关
+ *
+ * ## 输入信息
  * @property-read InputMsg $input                   输入
  * @property-read Comprehension $comprehension      理解模块
- * @property-read Cloner\ClonerScene $scene         场景信息. 代表请求中与消息无关的信息.
- * @property-read Cloner\ClonerScope $scope         当前分身的维度.
- *
- * # 请求级组件
  * @property-read Ghost\Tools\Matcher $matcher      默认的匹配逻辑工具
- * @property-read Cloner\ClonerAvatar $avatar       当前分身的形象数据.
- * @property-read ClonerDispatcher $dispatcher      异步任务的工具类.
  *
+ * ## 环境信息
+ * @property-read Cloner\ClonerScene $scene         场景信息. 代表请求中与消息无关的信息.
+ * @property-read Cloner\ClonerScope $scope         当前请求的维度.
+ * @property-read Cloner\ClonerAvatar $avatar       当前分身的形象数据.
  *
  * # 自然语言模块
  *
@@ -70,6 +70,7 @@ use Commune\Blueprint\Ghost\Cloner\ClonerDispatcher;
  * # 功能组件
  * @property-read Cache $cache                      公共缓存
  * @property-read Authority $auth                   授权模块
+ * @property-read ClonerDispatcher $dispatcher      异步任务的工具类.
  *
  * # 复杂对话逻辑组件
  *

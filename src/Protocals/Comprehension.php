@@ -29,7 +29,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  * @property-read Abstracted\Intention      $intention      意图理解模块
  *
  * @property-read Abstracted\Replies        $replies        回复模块, 如果第三方 API 能给出答案.
- * @property-read Abstracted\Tokenize       $tokens         分词, 这一步还不完善, 可能要做
+ * @property-read Abstracted\Tokenize       $tokenize         分词, 这一步还不完善, 可能要做
  *
  * @property-read Abstracted\Routing        $routing        设置重定向的目的地.
  */

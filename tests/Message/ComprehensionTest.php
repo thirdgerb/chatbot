@@ -35,15 +35,6 @@ class ComprehensionTest extends TestCase
 
         // vector
         $vector = [0.11, 0.22, 0.33];
-        $this->assertFalse($com->vector->hasVector());
-        $this->assertNull($com->vector->getVector());
-        $this->assertEquals(0, $com->vector->cosineSimilarity($vector));
-        $com->vector->setVector($vector);
-        $this->assertTrue($com->vector->hasVector());
-        $this->assertEquals($vector, $com->vector->getVector());
-        $this->assertEquals(1, $com->vector->cosineSimilarity($vector));
-
-        // 余弦算法.
 
         // emotions
         $emotions = ['positive', 'agreed'];
@@ -58,10 +49,10 @@ class ComprehensionTest extends TestCase
         $this->assertEquals('hello', $com->command->getCmdName());
 
         // token
-        $this->assertFalse($com->tokens->hasTokens());
+        $this->assertFalse($com->tokenize->hasTokens());
         $com->tokens->addTokens($tokens = ['a', 'b', 'c']);
-        $this->assertTrue($com->tokens->hasTokens());
-        $this->assertEquals($tokens, $com->tokens->getTokens());
+        $this->assertTrue($com->tokenize->hasTokens());
+        $this->assertEquals($tokens, $com->tokenize->getTokens());
         $this->checkBabelSerialize($com);
     }
 

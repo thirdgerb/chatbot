@@ -21,14 +21,7 @@ use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property null|AnswerMsg $answer
- * @property null|string $cmd
- * @property array $emotions
- * @property array $intention
- * @property null|HostMsg[] $replies
- * @property null|array $tokens
- * @property string|null $redirection
- * @property array $handledBy
+ * @property-read Abstracted\Intention $intention
  */
 class IComprehension extends AbsMessage implements
     Comprehension,
