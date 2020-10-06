@@ -100,7 +100,6 @@ class IGhostConfig extends AbsOption implements GhostConfig
             'maxRequestFailTimes' => 3,
             'maxBacktrace' => 3,
             'defaultContextName' => '',
-            'sceneContextNames' => [],
             'globalContextRoutes' => [],
             'defaultHeedFallback' => null,
         ];

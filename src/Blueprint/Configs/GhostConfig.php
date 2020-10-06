@@ -74,7 +74,6 @@ use Commune\Support\Protocal\ProtocalOption;
  * @property-read int $maxBacktrace                         可以返回上一步的最大深度.
  * @property-read string[]|null $defaultHeedFallback          公共的 fallback strategy 处理器, 处理语境无法理解的信息.
  *
- * @property-read string[] $sceneContextNames               场景对应的 context
  * @property-read string $defaultContextName                默认启动场景.
  *
  * @property-read string[] $globalContextRoutes             全局的高优先级路由. 注意性能开销.
