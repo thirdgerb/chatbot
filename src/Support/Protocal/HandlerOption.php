@@ -40,16 +40,6 @@ class HandlerOption extends AbsOption
         return [];
     }
 
-    public function __get_handler(string $name) : string
-    {
-        return AliasesForProtocal::getOriginFromAlias($this->_data[$name] ?? '');
-    }
-
-    public function __set_handler(string $name, string $value) : void
-    {
-        $this->_data[$name] = AliasesForProtocal::getAliasOfOrigin($value);
-    }
-
     public static function validate(array $data): ? string /* errorMsg */
     {
         return TypeUtils::requireFields($data, ['handler']) ?? parent::validate($data);

@@ -12,7 +12,6 @@
 namespace Commune\Support\Protocal;
 
 use Commune\Support\Option\AbsOption;
-use Commune\Support\Utils\TypeUtils;
 
 
 /**
@@ -43,6 +42,15 @@ class ProtocalOption extends AbsOption
         ];
     }
 
+    /**
+     * 添加新的 Handler
+     * @param HandlerOption $handlerOption
+     */
+    public function pushHandler(HandlerOption $handlerOption) : void
+    {
+        $this->_data['handlers'][] = $handlerOption;
+    }
+
     public static function relations(): array
     {
         return [
@@ -50,33 +58,13 @@ class ProtocalOption extends AbsOption
         ];
     }
 
+
     public function getId(): string
     {
         return $this->_id ?? $this->_id = $this->getHash();
     }
 
-    public function __set_protocal(string $name, string $val)
-    {
-        $this->_data[$name] = AliasesForProtocal::getAliasOfOrigin($val);
-    }
-
-    public function __get_protocal(string $name) : string
-    {
-        return AliasesForProtocal::getOriginFromAlias($this->_data[$name] ?? '');
-    }
-
-    public function __set_interface(string $name, string $val) : void
-    {
-        $this->_data[$name] = AliasesForProtocal::getAliasOfOrigin($val);
-    }
-
-
-    public function __get_interface(string $name) : string
-    {
-        return AliasesForProtocal::getOriginFromAlias($this->_data[$name] ?? '');
-    }
-
-    public function getDefaultHandler() : ? HandlerOption
+   public function getDefaultHandler() : ? HandlerOption
     {
         if (isset($this->_default)) {
             return $this->_default;
