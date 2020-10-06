@@ -2,6 +2,8 @@
 
 0.2 版本正在开发中...应用完成之后才开始撰写文档.
 
+现阶段可能因为改动, 导致 demo 无法启动, 见谅.
+
 Demo 介绍视频已经可以查看: https://www.bilibili.com/video/BV1tK4y1a75B
 
 - 展示网站: https://communechatbot.com/chatlog
