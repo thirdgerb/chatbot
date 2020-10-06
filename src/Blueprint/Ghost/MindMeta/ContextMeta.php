@@ -14,7 +14,6 @@ namespace Commune\Blueprint\Ghost\MindMeta;
 use Commune\Support\Option\AbsMeta;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Ghost\Context\IContextDef;
-use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
 use Commune\Support\Option\Wrapper;
 
 /**
@@ -47,20 +46,6 @@ class ContextMeta extends AbsMeta implements DefMeta
         ];
     }
 
-    public function __get_wrapper() : string
-    {
-        $wrapper = $this->_data['wrapper'] ?? '';
-        $wrapper = empty($wrapper)
-            ? AliasesForContext::getAliasOfOrigin(IContextDef::class)
-            : $wrapper;
-
-        return AliasesForContext::getOriginFromAlias($wrapper);
-    }
-
-    public function __set_wrapper(string $name, $value) : void
-    {
-        $this->_data[$name] = AliasesForContext::getAliasOfOrigin(strval($value));
-    }
 
     public static function relations(): array
     {

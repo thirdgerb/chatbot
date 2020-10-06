@@ -12,7 +12,6 @@
 namespace Commune\Blueprint\Ghost\MindMeta;
 
 use Commune\Blueprint\Ghost\Callables\Verifier;
-use Commune\Blueprint\Ghost\MindDef\AliasesForEmotion;
 use Commune\Blueprint\Ghost\MindDef\EmotionDef;
 use Commune\Ghost\IMindDef\IEmotionDef;
 use Commune\Support\Option\AbsOption;
@@ -47,26 +46,6 @@ class EmotionMeta extends AbsOption implements DefMeta
             'opposites' => [],
             'verifiers' => [],
         ];
-    }
-
-    public function __get_verifiers() : array
-    {
-        return array_map(
-            function (string $verifiers) {
-                return AliasesForEmotion::getOriginFromAlias($verifiers);
-            },
-            $this->_data['verifiers'] ?? []
-        );
-    }
-
-    public function __set_verifiers(string $name, array $verifiers) : void
-    {
-        $this->_data[$name] = array_map(
-            function(string $verifiers) {
-                return AliasesForEmotion::getAliasOfOrigin($verifiers);
-            },
-            $verifiers
-        );
     }
 
     public static function relations(): array

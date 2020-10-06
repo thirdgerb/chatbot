@@ -25,7 +25,6 @@ use Commune\Ghost\IMindDef\IIntentDef;
 use Commune\Ghost\IMindDef\IMemoryDef;
 use Commune\Ghost\Stage\InitStage;
 use Commune\Support\Option\AbsOption;
-use Commune\Blueprint\Ghost\MindDef\AliasesForContext;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
@@ -87,18 +86,10 @@ trait ContextDefTrait
     public function __get_contextWrapper() : string
     {
         $wrapper = $this->_data['contextWrapper'] ?? '';
-        $wrapper = empty($wrapper)
+        return empty($wrapper)
             ? IContext::class
             : $wrapper;
-
-        return AliasesForContext::getOriginFromAlias($wrapper);
     }
-
-    public function __set_contextWrapper($name, $value) : void
-    {
-        $this->_data[$name] = AliasesForContext::getAliasOfOrigin($value);
-    }
-
 
     public function getPriority(): int
     {

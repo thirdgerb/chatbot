@@ -14,7 +14,6 @@ namespace Commune\Blueprint\Ghost\MindMeta;
 use Commune\Support\Option\AbsMeta;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
-use Commune\Blueprint\Ghost\MindDef\AliasesForStage;
 
 /**
  * Stage 的元数据.
@@ -46,16 +45,6 @@ class StageMeta extends AbsMeta implements DefMeta
             'wrapper' => '',
             'config' => [],
         ];
-    }
-
-    public function __get_wrapper() : string
-    {
-        return AliasesForStage::getOriginFromAlias($this->_data['wrapper'] ?? '');
-    }
-
-    public function __set_wrapper(string $name, $wrapper) : void
-    {
-        $this->_data[$name] = AliasesForStage::getAliasOfOrigin(strval($wrapper));
     }
 
     /**

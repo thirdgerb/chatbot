@@ -11,7 +11,6 @@
 
 namespace Commune\Blueprint\Ghost\MindMeta;
 
-use Commune\Blueprint\Ghost\MindDef\AliasesForIntent;
 use Commune\Ghost\IMindDef\IIntentDef;
 use Commune\Support\Option\AbsMeta;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
@@ -98,16 +97,9 @@ class IntentMeta extends AbsMeta implements DefMeta
     public function __get_wrapper() : string
     {
         $wrapper = $this->_data['wrapper'] ?? '';
-        $wrapper = empty($wrapper)
+        return empty($wrapper)
             ? IIntentDef::class
             : $wrapper;
-
-        return AliasesForIntent::getOriginFromAlias( $wrapper);
-    }
-
-    public function __set_wrapper(string $name, $wrapper) : void
-    {
-        $this->_data[$name] = AliasesForIntent::getAliasOfOrigin(strval($wrapper));
     }
 
     public static function relations(): array

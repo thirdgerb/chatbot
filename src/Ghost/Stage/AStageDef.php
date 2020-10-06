@@ -12,7 +12,6 @@
 namespace Commune\Ghost\Stage;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Blueprint\Ghost\MindDef\AliasesForStage;
 use Commune\Blueprint\Ghost\MindMeta\IntentMeta;
 use Commune\Blueprint\Ghost\Operate\Operator;
 
@@ -56,10 +55,6 @@ abstract class AStageDef extends AbsStageDef
         $events = $this->_data['events'] ?? [];
         $results = [];
         foreach ($events as $event => $action) {
-
-            $event = AliasesForStage::getOriginFromAlias($event);
-            $action = AliasesForStage::getOriginFromAlias($action);
-
             $results[$event] = $action;
         }
 
@@ -70,8 +65,6 @@ abstract class AStageDef extends AbsStageDef
     {
         $results = [];
         foreach ($events as $event => $action) {
-            $event = AliasesForStage::getAliasOfOrigin($event);
-            $action = AliasesForStage::getAliasOfOrigin($action);
             $results[$event] = $action;
         }
 
@@ -83,10 +76,6 @@ abstract class AStageDef extends AbsStageDef
     protected function fireEvent(Dialog $dialog) : ? Operator
     {
         foreach ($this->events as $event => $action) {
-
-            $event = AliasesForStage::getOriginFromAlias($event);
-            $action = AliasesForStage::getOriginFromAlias($action);
-
             if (!$dialog->isEvent($event)) {
                 continue;
             }
