@@ -243,7 +243,7 @@ abstract class AbsApp implements App
         }
 
         try {
-            // 总是要把 logo 打出来. 希望接下来不要出错打脸.
+            // 总是要把 logo 打出来.
             $welcome = new Bootstrap\WelcomeToCommune();
             $welcome->bootstrap($this);
 

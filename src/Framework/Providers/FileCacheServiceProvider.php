@@ -28,6 +28,7 @@ use Commune\Support\Utils\StringUtils;
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $path
+ * @property-read bool $reset
  */
 class FileCacheServiceProvider extends ServiceProvider
 {
@@ -37,7 +38,8 @@ class FileCacheServiceProvider extends ServiceProvider
             'path' => StringUtils::gluePath(
                 CommuneEnv::getRuntimePath(),
                 'filecaches'
-            )
+            ),
+            'reset' => CommuneEnv::isResetRegistry(),
         ];
     }
 
@@ -68,6 +70,10 @@ class FileCacheServiceProvider extends ServiceProvider
                 ],
             ])
         ]));
+
+        if ($this->reset) {
+            $registry->getCategory(FileCacheOption::class)->flush();
+        }
     }
 
     public function register(ContainerContract $app): void

@@ -21,10 +21,6 @@ use Psr\Log\LoggerInterface;
  */
 class LocalBroadcaster extends AbsBroadcaster
 {
-    /**
-     * @var Shell
-     */
-    protected $shell;
 
     protected $chan = [];
 
@@ -33,9 +29,8 @@ class LocalBroadcaster extends AbsBroadcaster
      * @param Shell $shell
      * @param LoggerInterface $logger
      */
-    public function __construct(Shell $shell, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger)
     {
-        $this->shell = $shell;
         parent::__construct($logger, []);
     }
 
