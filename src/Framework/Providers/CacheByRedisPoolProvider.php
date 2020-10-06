@@ -18,6 +18,8 @@ use Commune\Contracts\ServiceProvider;
 use Commune\Framework\Cache\RedisPoolCache;
 
 /**
+ * 基于 RedisPool 实现的 Cache.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $cachePrefix   缓存的默认前缀.

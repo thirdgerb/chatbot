@@ -21,6 +21,8 @@ use Swoole\Database\RedisPool as SwooleRedisPool;
 
 
 /**
+ * 基于 Swoole Redis Pool 实现的广播模块.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string[] $listeningShells

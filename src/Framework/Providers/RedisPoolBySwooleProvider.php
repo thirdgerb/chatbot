@@ -21,6 +21,8 @@ use Swoole\Database\RedisConfig;
 
 
 /**
+ * 提供 Swoole Redis Pool 服务.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read int $size

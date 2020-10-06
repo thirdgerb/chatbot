@@ -18,6 +18,7 @@ use Commune\Framework\RuntimeDriver\DemoRuntimeDriver;
 
 
 /**
+ * 注册 Cache + file cache 实现的 runtime driver
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class RuntimeDriverDemoProvider extends ServiceProvider

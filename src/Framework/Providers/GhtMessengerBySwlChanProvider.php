@@ -18,8 +18,10 @@ use Commune\Framework\Messenger\GhtMessengerBySwlChan;
 use Psr\Log\LoggerInterface;
 
 /**
- * @author thirdgerb <thirdgerb@gmail.com>
+ * 基于 Swoole 协程 channel 实现的 GhostMessenger 模块.
+ * 用协程来执行一个 Cloner 2 Cloner 的异步请求.
  *
+ * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read int $chanCapacity
  * @property-read float $pushTimeout

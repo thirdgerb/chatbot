@@ -26,6 +26,8 @@ use Commune\Support\Registry\Storage\Json\JsonStorageOption;
 use Commune\Support\Utils\StringUtils;
 
 /**
+ * 基于 Symfony 实现的 translator 模块
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $defaultLocale             系统默认的 locale

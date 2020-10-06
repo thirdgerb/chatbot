@@ -18,7 +18,9 @@ use Commune\Framework\Cache\ArrayCache;
 
 
 /**
- * 用数组模拟缓存的模块. 也可以用于单体机器人中. 但不存在过期功能.
+ * 用数组模拟缓存的模块. 也可以用于单体机器人中.
+ * 但不存在过期功能, 因此内存会不断增加.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class CacheByArrProvider extends ServiceProvider

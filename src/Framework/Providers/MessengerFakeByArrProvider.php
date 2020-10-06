@@ -24,7 +24,7 @@ use Commune\Framework\Messenger\Fake\LocalShellMessenger;
 
 
 /**
- * 假的 messenger 相关功能. 用于测试.
+ * 假的 messenger 相关功能. 用数组等实现存储与通信. 通常用于测试.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  */

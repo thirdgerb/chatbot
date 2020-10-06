@@ -22,8 +22,7 @@ use Swoole\ConnectionPool;
 
 
 /**
- * Shell 发送同步 GhostRequest 给予 Ghost
- * 通过 Swoole 的 Tcp 协程客户端.
+ * 基于 Swoole 的 TCP 协程 (EOF 协议) 实现的 Shell 2 Ghost 通信.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
  *

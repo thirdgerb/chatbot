@@ -21,9 +21,9 @@ use Psr\Log\LoggerInterface;
 
 /**
  * 基于 Cache 提供 MessageDB 的服务, 但仅仅用于缓存.
+ * 无法提供持久化的 Message.
  *
  * @author thirdgerb <thirdgerb@gmail.com>
- *
  *
  * @property-read int $cacheTtl 缓存过期时间.
  */

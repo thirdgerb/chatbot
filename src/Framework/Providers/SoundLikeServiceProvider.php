@@ -20,6 +20,10 @@ use Overtrue\Pinyin\MemoryFileDictLoader;
 use Overtrue\Pinyin\Pinyin;
 
 /**
+ * 基于 PinyinParser 实现的中文拼音模块.
+ * 许多对话系统拼音转文字并不准确, 而在具体场景中往往只要发音相似就够了.
+ * 因此粗糙地实现了一个语音相似匹配的模块, 可作为语音转文字模块的补充.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string[] $parsers
