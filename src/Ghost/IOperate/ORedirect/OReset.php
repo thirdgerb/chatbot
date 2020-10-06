@@ -32,7 +32,7 @@ class OReset extends AbsRedirect
         parent::__construct($dialog);
 
         $this->root = $reset
-            ?? $this->dialog->cloner->scene->entry;
+            ?? $this->dialog->cloner->scene->getEntry();
     }
 
     protected function toNext(): Operator

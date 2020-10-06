@@ -138,23 +138,23 @@ interface Matcher
      * 用于弥补其它系统对语音识别有限的问题.
      *
      * @param string $text
-     * @param string $lang
+     * @param string|null $lang
      * @return static
      */
     public function soundLike(
         string $text,
-        string $lang = SoundLikeInterface::ZH
+        string $lang = null
     ) : Matcher;
 
     /**
      * @param string $text
      * @param int $type
-     * @param string $lang
+     * @param string|null $lang
      * @return static
      */
     public function soundLikePart(
         string $text,
-        string $lang = SoundLikeInterface::ZH,
+        string $lang = null,
         int $type = SoundLikeInterface::COMPARE_ANY_PART
     ) : Matcher;
 

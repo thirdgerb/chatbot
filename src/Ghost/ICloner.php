@@ -46,24 +46,29 @@ class ICloner extends ASession implements Cloner
 {
     const SINGLETONS =  [
         'logger' => Cloner\ClonerLogger::class,
+
         'storage' => Cloner\ClonerStorage::class,
+        'cache' => Cache::class,
+        'auth' => Authority::class,
+        'matcher' => Ghost\Tools\Matcher::class,
+        'nlu' => NLUManager::class,
+        'dispatcher' => Cloner\ClonerDispatcher::class,
 
         'input' => InputMsg::class,
         'comprehension' => Comprehension::class,
+
+        'env' => Cloner\ClonerEnv::class,
         'scene' => Cloner\ClonerScene::class,
         'scope' => Cloner\ClonerScope::class,
-        'matcher' => Ghost\Tools\Matcher::class,
         'avatar' => Cloner\ClonerAvatar::class,
-        'dispatcher' => Cloner\ClonerDispatcher::class,
+        'guest' => Cloner\ClonerGuest::class,
 
-        'nlu' => NLUManager::class,
-        'cache' => Cache::class,
-        'auth' => Authority::class,
-
-        'mind' => Ghost\Mindset::class,
-        'runtime' => Ghost\Runtime\Runtime::class,
 
         'registry' => OptRegistry::class,
+        'mind' => Ghost\Mindset::class,
+
+        'runtime' => Ghost\Runtime\Runtime::class,
+
     ];
 
     /*------- components -------*/
@@ -438,8 +443,8 @@ class ICloner extends ASession implements Cloner
         $messageDB = $this->container->make(MessageDB::class);
         $messageDB->recordMessages(
             $traceId,
-            $this->scene->fromApp,
-            $this->scene->fromSession,
+            $this->guest->fromApp(),
+            $this->guest->fromSession(),
             $output,
             ...$outputs
         );

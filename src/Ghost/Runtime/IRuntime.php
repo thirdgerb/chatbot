@@ -163,7 +163,7 @@ class IRuntime implements Runtime
         }
 
         // 创建一个新的.
-        $root = $this->cloner->scene->entry;
+        $root = $this->cloner->scene->getEntry();
         return $this->process = $this->createProcess($root);
     }
 

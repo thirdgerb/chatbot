@@ -38,6 +38,11 @@ class IClonerAvatar implements ClonerAvatar
     protected $id;
 
     /**
+     * @var array|null
+     */
+    protected $info;
+
+    /**
      * IClonerAvatar constructor.
      * @param Cloner $cloner
      */
@@ -54,19 +59,19 @@ class IClonerAvatar implements ClonerAvatar
         }
 
         // 这样对外暴露了 sessionId, 是有风险的.
-        return $this->id
-            ?? $this->id = $this->cloner->getSessionId();
+        return $this->id ?? $this->id
+            = $this->cloner->env->botId ?? $this->cloner->getSessionId();
     }
 
     public function getName(): string
     {
-        return $this->name
-            ?? $this->name = $this->cloner->ghost->getName();
+        return $this->name ?? $this->name
+            = $this->cloner->env->botName ?? $this->cloner->ghost->getName();
     }
 
     public function getInfo(): array
     {
-        return [];
+        return $this->info ?? $this->info = $this->cloner->env->botInfo;
     }
 
 

@@ -130,7 +130,7 @@ class FakeHearing implements Hearing
 
     public function soundLike(
         string $text,
-        string $lang = SoundLikeInterface::ZH
+        string $lang = null
     ): Matcher
     {
         return $this;
@@ -138,7 +138,7 @@ class FakeHearing implements Hearing
 
     public function soundLikePart(
         string $text,
-        string $lang = SoundLikeInterface::ZH,
+        string $lang = null,
         int $type = SoundLikeInterface::COMPARE_ANY_PART
     ): Matcher
     {

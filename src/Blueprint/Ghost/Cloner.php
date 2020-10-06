@@ -62,6 +62,8 @@ use Commune\Blueprint\Ghost\Cloner\ClonerDispatcher;
  * @property-read Cloner\ClonerScene $scene         场景信息. 代表请求中与消息无关的信息.
  * @property-read Cloner\ClonerScope $scope         当前请求的维度.
  * @property-read Cloner\ClonerAvatar $avatar       当前分身的形象数据.
+ * @property-read Ghost\Cloner\ClonerEnv $env       当前请求的环境变量
+ * @property-read Ghost\Cloner\ClonerGuest $guest   当前请求的用户信息
  *
  * # 自然语言模块
  *

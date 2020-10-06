@@ -12,60 +12,57 @@
 namespace Commune\Ghost\Cloner;
 
 use Commune\Blueprint\Configs\GhostConfig;
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Blueprint\Kernel\Protocals\GhostRequest;
 use Commune\Container\ContainerContract;
-use Commune\Framework\Session\ASessionScene;
-use Commune\Support\Utils\StringUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @property-read Ucl $entry
- * @property-read array $env        环境变量.
  */
-class IClonerScene extends ASessionScene implements ClonerScene
+class IClonerScene implements ClonerScene
 {
+    /**
+     * @var string
+     */
+    protected $scene;
 
     /**
-     * @var Cloner
+     * @var Ucl
      */
-    protected $_cloner;
+    protected $entry;
 
-    public function __construct(Cloner $cloner, Ucl $root, array $env)
+    /**
+     * @var string
+     */
+    protected $root;
+
+    public function __construct(string $scene, string $root)
     {
-        $this->_cloner = $cloner;
-
-        parent::__construct($root, $env);
+        $this->scene = $scene;
+        $this->root = $root;
     }
 
     public static function factory(ContainerContract $app) : self
     {
-
-        $env = [];
+        $scene = '';
         $root = '';
         if ($app->bound(GhostRequest::class)) {
             /**
              * @var GhostRequest $request
              */
             $request = $app->make(GhostRequest::class);
-            $env = $request->getEnv();
             $root = $request->getEntry();
+            $scene = $request->getInput()->getScene();
         }
 
-        $entry = static::matchSceneEntry($root, $app);
-        $cloner = $app->make(Cloner::class);
-        return new static($cloner, $entry, $env);
+        $root = empty($root) ? static::defaultEntry($app) : $root;
+        return new static($scene, $root);
     }
 
-
-    public static function defaultEntry(
-        ContainerContract $app
-    ) : Ucl
+    public static function defaultEntry(ContainerContract $app) : Ucl
     {
-
         /**
          * @var GhostConfig $config
          */
@@ -73,95 +70,16 @@ class IClonerScene extends ASessionScene implements ClonerScene
         return Ucl::decode($config->defaultContextName);
     }
 
-    public static function matchSceneEntry(
-        string $root,
-        ContainerContract $app
-    ) : Ucl
+    public function getName(): string
     {
-        if (empty($root)) {
-            return static::defaultEntry($app);
-        }
-
-        /**
-         * @var GhostConfig $config
-         */
-        $config = $app->make(GhostConfig::class);
-        $scenes = $config->sceneContextNames;
-        $entry = Ucl::decode($root);
-
-        if (!$entry->isValidPattern()) {
-            return static::defaultEntry($app);
-        }
-
-        $allowEntry = in_array('*', $scenes)
-            || in_array($entry->contextName, $scenes);
-
-        if ($allowEntry) {
-            return $entry;
-        }
-
-        if (static::allowWildcardEntry($root, $scenes)) {
-            return $entry;
-        }
-
-        return static::defaultEntry($app);
+        return $this->scene;
     }
 
-    public static function allowWildcardEntry(
-        string $root,
-        array $scenes
-    ) : bool
+    public function getEntry(): Ucl
     {
-        foreach ($scenes as $scene) {
-            if (
-                StringUtils::isWildcardPattern($scene)
-                && StringUtils::wildcardMatch($scene, $root)
-            ) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->entry ?? $this->entry
+            = Ucl::decode($this->root);
     }
 
-    protected function getGhostRequest() : ? GhostRequest
-    {
-        $container = $this->_cloner->container;
-        return $container->bound(GhostRequest::class)
-            ? $container->get(GhostRequest::class)
-            : null;
-    }
 
-    public function __get($name)
-    {
-
-        switch ($name) {
-            case 'userId' :
-                return $this->_cloner->input->getCreatorId();
-            case 'userName' :
-                return $this->_cloner->input->getCreatorName();
-            case 'conversationId' :
-                return $this->_cloner->getConversationId();
-            case 'scene' :
-                return $this->_cloner->input->getScene();
-            case 'sessionId' :
-                return $this->_cloner->getSessionId();
-            case 'fromApp' :
-                $request = $this->getGhostRequest();
-                return isset($request) ? $request->getFromApp() : '';
-            case 'fromSession' :
-                $request = $this->getGhostRequest();
-                return isset($request) ? $request->getFromSession() : '';
-            default:
-                return parent::__get($name);
-        }
-    }
-
-    public function __destruct()
-    {
-        unset(
-            $this->_cloner
-        );
-        parent::__destruct();
-    }
 }

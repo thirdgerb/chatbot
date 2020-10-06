@@ -235,9 +235,13 @@ class IMatcher implements Matcher
 
     public function soundLike(
         string $text,
-        string $lang = SoundLikeInterface::ZH
+        string $lang = null
     ): Matcher
     {
+        $lang = $lang
+            ?? $this->cloner->env->lang
+            ?? SoundLikeInterface::ZH;
+
         return $this->soundLikePart(
             $text,
             $lang,
@@ -247,10 +251,14 @@ class IMatcher implements Matcher
 
     public function soundLikePart(
         string $text,
-        string $lang = SoundLikeInterface::ZH,
+        string $lang = null,
         int $type = SoundLikeInterface::COMPARE_ANY_PART
     ): Matcher
     {
+        $lang = $lang
+            ?? $this->cloner->env->lang
+            ?? SoundLikeInterface::ZH;
+
         $message = $this->input->getMessage();
         /**
          * @var SoundLikeInterface $soundLike

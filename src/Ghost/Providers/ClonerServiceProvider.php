@@ -56,6 +56,8 @@ class ClonerServiceProvider extends ServiceProvider
         $this->registerCloneScope($app);
         $this->registerCloneLogger($app);
         $this->registerCloneScene($app);
+        $this->registerCloneEnv($app);
+        $this->registerCloneGuest($app);
         $this->registerCloneMatcher($app);
         $this->registerAuth($app);
         $this->registerRuntime($app);
@@ -93,6 +95,40 @@ class ClonerServiceProvider extends ServiceProvider
             Cloner\ClonerScene::class,
             function(Container $app) {
                 return ICloner\IClonerScene::factory($app);
+            }
+        );
+    }
+
+    /**
+     * 场景信息.
+     * @param Container $app
+     */
+    protected function registerCloneGuest(Container $app) : void
+    {
+        if ($app->bound(Cloner\ClonerGuest::class)) {
+            return;
+        }
+
+        $app->singleton(
+            Cloner\ClonerGuest::class,
+            ICloner\IClonerGuest::class
+        );
+    }
+
+    /**
+     * 场景信息.
+     * @param Container $app
+     */
+    protected function registerCloneEnv(Container $app) : void
+    {
+        if ($app->bound(Cloner\ClonerEnv::class)) {
+            return;
+        }
+
+        $app->singleton(
+            Cloner\ClonerEnv::class,
+            function(Container $app) {
+                return ICloner\IClonerEnv::factory($app);
             }
         );
     }
