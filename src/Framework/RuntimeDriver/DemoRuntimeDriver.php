@@ -18,6 +18,7 @@ use Commune\Support\Registry\OptRegistry;
 use Commune\Blueprint\Ghost\Cloner\ClonerLogger;
 
 /**
+ * 使用 cache 缓存 + 文件存储实现的 Demo 版 runtime driver
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class DemoRuntimeDriver extends CachableRuntimeDriver

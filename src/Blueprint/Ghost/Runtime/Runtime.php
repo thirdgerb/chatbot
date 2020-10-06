@@ -11,7 +11,6 @@
 
 namespace Commune\Blueprint\Ghost\Runtime;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Ucl;
@@ -28,6 +27,7 @@ interface Runtime
 {
 
     /**
+     * 获取当前对话进程中可以重定向的路由.
      * @return Ucl[]
      */
     public function getCurrentAwaitRoutes() : array;
@@ -57,12 +57,14 @@ interface Runtime
     /*------ context -------*/
 
     /**
+     * 获取缓存的 Context
      * @param string $id
      * @return Context|null
      */
     public function getCachedContext(string $id) : ? Context;
 
     /**
+     * 缓存一个 Context
      * @param Context $context
      */
     public function cacheContext(Context $context) : void;
@@ -70,8 +72,6 @@ interface Runtime
     /**
      * 状态变更的消息, 用于和客户端同步.
      * 如果状态没有变更, 就没有消息.
-     *
-     * @param Cloner $cloner
      * @return ContextMsg|null
      */
     public function toChangedContextMsg() : ? ContextMsg;
@@ -90,7 +90,13 @@ interface Runtime
 
     /*------ save -------*/
 
+    /**
+     * 保存 Runtime 状态
+     */
     public function save() : void;
 
+    /**
+     * 清除 runtime 状态.
+     */
     public function flush() : void;
 }

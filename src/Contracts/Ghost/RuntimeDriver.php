@@ -21,20 +21,20 @@ interface RuntimeDriver
 {
 
     /**
-     * @param string $cloneId
+     * @param string $cloneSessionId
      * @param string $convoId
      * @param Process $process
      * @param int $expire
      * @return bool
      */
-    public function cacheProcess(string $cloneId, string $convoId, Process $process, int $expire) : bool;
+    public function cacheProcess(string $cloneSessionId, string $convoId, Process $process, int $expire) : bool;
 
     /**
-     * @param string $cloneId
+     * @param string $cloneSessionId
      * @param string $convoId
      * @return Process|null
      */
-    public function fetchProcess(string $cloneId, string $convoId) : ? Process;
+    public function fetchProcess(string $cloneSessionId, string $convoId) : ? Process;
 
     /**
      * @param string $cloneId

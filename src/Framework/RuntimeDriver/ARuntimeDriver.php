@@ -38,15 +38,15 @@ abstract class ARuntimeDriver implements RuntimeDriver
 
     abstract protected function doFetchSessionMemory(string $key, string $memoryId) : ? string;
 
-    public function cacheProcess(string $cloneId, string $convoId, Process $process, int $expire): bool
+    public function cacheProcess(string $cloneSessionId, string $convoId, Process $process, int $expire): bool
     {
-        $key = $this->getProcessKey($cloneId, $convoId);
+        $key = $this->getProcessKey($cloneSessionId, $convoId);
         return $this->doCacheProcess($key, $process, $expire);
     }
 
-    public function fetchProcess(string $cloneId, string $convoId): ? Process
+    public function fetchProcess(string $cloneSessionId, string $convoId): ? Process
     {
-        $key = $this->getProcessKey($cloneId, $convoId);
+        $key = $this->getProcessKey($cloneSessionId, $convoId);
         return $this->doFetchProcess($key);
     }
 
