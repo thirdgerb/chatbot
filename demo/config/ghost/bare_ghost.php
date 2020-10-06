@@ -65,12 +65,6 @@ return new \Commune\Ghost\IGhostConfig([
 
         // clone service
         GhostProviders\ClonerServiceProvider::class,
-
-        // nlu service
-        \Commune\NLU\NLUServiceProvider::class,
-
-        // 通过数组实现的 messenger 组件.
-        FrameworkProviders\MessengerFakeByArrProvider::class,
     ],
 
     'options' => [],

@@ -399,6 +399,10 @@ class ICloner extends ASession implements Cloner
         HostMsg ...$messages
     ) : void
     {
+        // 如果没有绑定 Broadcaster
+        if (!$this->container->bound(Broadcaster::class)) {
+            return;
+        }
         $creatorId = $creatorId ?? $this->avatar->getId();
         $creatorName = $creatorName ?? $this->avatar->getName();
 

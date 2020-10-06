@@ -46,7 +46,7 @@ use Commune\Blueprint\Ghost\Cloner\ClonerDispatcher;
  *
  * # Session
  * @property-read Cloner\ClonerLogger $logger       日志
- * @property-read Cloner\ClonerStorage $storage     Session Storage
+ * @property-read Cloner\ClonerStorage $storage     Session 级 Storage
  *
  * # 容器
  * @property-read ReqContainer $container           容器
@@ -88,7 +88,7 @@ interface Cloner extends Session
     /*----- status -----*/
 
     /**
-     * 设置为无状态请求
+     * 将当前会话设置为无状态请求
      */
     public function noState() : void;
 
@@ -101,6 +101,20 @@ interface Cloner extends Session
     /*----- conversation -----*/
 
     /**
+     * 每个分身拥有一个独立的 Session
+     * 可以是和一个人对话, 也可以是同时和多人对话.
+     * Session 掌握了通信渠道.
+     *
+     * @return string
+     */
+    public function getSessionId(): string;
+
+    /**
+     * 每个分身可以同时进行多个对话, 同时又分享对话的记忆.
+     * 例如在群聊场景中, 每个用户都在分别和这个分身对话.
+     *
+     * ConversationId 用来标记不同的子会话.
+     *
      * @return string
      */
     public function getConversationId() : string;
@@ -111,21 +125,22 @@ interface Cloner extends Session
     public function endConversation() : void;
 
     /**
-     * 当前多轮对话是否已经结束.
+     * 判断当前多轮对话是否已经结束.
      * @return bool
      */
     public function isConversationEnd() : bool;
 
     /**
-     * 多轮对话不记录状态 (主要是 Runtime), 但不影响 Session
+     * 设置当前 Conversation 多轮对话不记录状态 (主要是 Runtime), 但不影响 Session
      */
     public function noConversationState(): void;
 
     /**
-     * 是否是子进程.
+     * 判断当前是否是一个子对话.
+     * 一个 Session 仅仅有一个主对话.
      * @return bool
      */
-    public function isSubProcess() : bool;
+    public function isSubConversation() : bool;
     /**
      * @param string $sessionId
      * @return bool
@@ -135,6 +150,10 @@ interface Cloner extends Session
     /*----- 触发理解 -----*/
 
     /**
+     * 运行多轮对话逻辑.
+     * 默认从 OStart 开始
+     * @see \Commune\Ghost\IOperate\OStart
+     *
      * @param Operate\Operator|null $start
      * @throws CommuneRuntimeException
      */
@@ -144,7 +163,7 @@ interface Cloner extends Session
 
     /**
      * 设置是否拒绝接受输入消息.
-     * 这样尽管经过了对话流程, 却不会接受消息.
+     * 这样尽管经过了对话流程, 却不会把机器人生产的消息发送出去
      * @param bool $silent
      */
     public function silence(bool $silent = true) : void;
@@ -184,6 +203,7 @@ interface Cloner extends Session
     public function asyncDeliver(InputMsg $input, InputMsg ...$inputs) : void;
 
     /**
+     * 获取所有的异步投递消息
      * @return InputMsg[]
      */
     public function getAsyncDeliveries() : array;
@@ -231,6 +251,8 @@ interface Cloner extends Session
      *
      * 具体实现 @see CloneLockerPipe
      *
+     * Lock 的粒度是 Conversation.
+     *
      * @param int $second
      * @return bool
      */
@@ -248,6 +270,8 @@ interface Cloner extends Session
     public function unlock() : bool;
 
     /**
+     * 判断 Cloner 的某一个组件是否已经实例化了.
+     *
      * @param $name
      * @return bool
      */

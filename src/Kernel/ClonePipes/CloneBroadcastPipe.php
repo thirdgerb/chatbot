@@ -50,6 +50,7 @@ class CloneBroadcastPipe extends AClonePipe
             return $response;
         }
 
+
         // 获取所有的输出.
         $outputs = $this->cloner->getOutputs();
 
@@ -60,21 +61,28 @@ class CloneBroadcastPipe extends AClonePipe
         $input = $request->getInput();
         $this->setConvoId($input, ...$outputs);
 
-        // 保存消息.
-        $this->recordBatch(
-            $request->getTraceId(),
-            $request->getFromApp(),
-            $request->getFromSession(),
-            $input,
-            ...$outputs
-        );
+        $container = $this->cloner->container;
 
+        // 保存消息.
+        if ($container->bound(MessageDB::class)) {
+            $this->recordBatch(
+                $request->getTraceId(),
+                $request->getFromApp(),
+                $request->getFromSession(),
+                $input,
+                ...$outputs
+            );
+        }
 
         // 处理异步消息.
-        $this->sendAsyncMessages($request);
+        if ($container->bound(GhostMessenger::class)) {
+            $this->sendAsyncMessages($request);
+        }
 
         // 广播消息
-        $this->broadcast($request, $response);
+        if ($container->bound(Broadcaster::class)) {
+            $this->broadcast($request, $response);
+        }
 
         // 返回响应给客户端处理.
         return $response;
