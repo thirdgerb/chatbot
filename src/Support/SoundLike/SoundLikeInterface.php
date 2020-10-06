@@ -8,9 +8,11 @@
 namespace Commune\Support\SoundLike;
 
 
+use Commune\Contracts\Trans\Translator;
+
 interface SoundLikeInterface
 {
-    const ZH = 'zh';
+    const ZH = Translator::ZH_CN_LOCALE;
 
     // 精确匹配
     const COMPARE_EXACTLY = 0;

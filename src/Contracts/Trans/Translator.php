@@ -22,7 +22,8 @@ namespace Commune\Contracts\Trans;
  */
 interface Translator
 {
-    const DEFAULT_LOCALE = 'zh-cn';
+    const ZH_CN_LOCALE = 'zh-cn';
+    const DEFAULT_LOCALE = self::ZH_CN_LOCALE;
     const DEFAULT_DOMAIN = 'messages';
 
     public function trans(
