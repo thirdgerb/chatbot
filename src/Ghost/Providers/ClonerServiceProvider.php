@@ -29,6 +29,9 @@ use Psr\Log\LoggerInterface;
 
 
 /**
+ * 注册 Ghost Cloner 的相关组件.
+ * 开发者可以注册自己的组件以覆盖它们.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 class ClonerServiceProvider extends ServiceProvider
@@ -66,6 +69,10 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerCloneMatcher(Container $app) : void
     {
+        if ($app->bound(Matcher::class)) {
+            return;
+        }
+
         $app->bind(Matcher::class, function(Container $app) {
             $cloner = $app->get(Cloner::class);
             return new IMatcher($cloner, []);
@@ -78,6 +85,10 @@ class ClonerServiceProvider extends ServiceProvider
      */
     protected function registerCloneScene(Container $app) : void
     {
+        if ($app->bound(Cloner\ClonerScene::class)) {
+            return;
+        }
+
         $app->singleton(
             Cloner\ClonerScene::class,
             function(Container $app) {
@@ -88,6 +99,9 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerCloneScope(Container $app) : void
     {
+        if ($app->bound(Cloner\ClonerScope::class)) {
+            return;
+        }
         $app->singleton(
             Cloner\ClonerScope::class,
             function(ReqContainer $app) {
@@ -107,6 +121,9 @@ class ClonerServiceProvider extends ServiceProvider
      */
     protected function registerCloneLogger(Container $app) : void
     {
+        if ($app->bound(Cloner\ClonerLogger::class)) {
+            return;
+        }
         $app->singleton(
             Cloner\ClonerLogger::class,
             function(Container $app) {
@@ -124,17 +141,27 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerAuth(Container $app) : void
     {
-        $app->singleton(Authority::class, IAuthority::class);
-        $app->singleton(Supervise::class, ISupervise::class);
+        if (!$app->bound(Authority::class)) {
+            $app->singleton(Authority::class, IAuthority::class);
+        }
+        if (!$app->bound(Supervise::class)) {
+            $app->singleton(Supervise::class, ISupervise::class);
+        }
     }
 
     protected function registerRuntime(Container $app) : void
     {
+        if ($app->bound(Runtime::class)) {
+            return;
+        }
         $app->singleton(Runtime::class, IRuntime::class);
     }
 
     protected function registerStorage(Container $app) : void
     {
+        if ($app->bound(Cloner\ClonerStorage::class)) {
+            return;
+        }
         $app->singleton(
         Cloner\ClonerStorage::class,
         ICloner\IClonerStorage::class
@@ -143,6 +170,9 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerAvatar(Container $app) : void
     {
+        if ($app->bound(Cloner\ClonerAvatar::class)) {
+            return;
+        }
         $app->singleton(
             Cloner\ClonerAvatar::class,
             ICloner\IClonerAvatar::class
@@ -151,10 +181,13 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerDispatcher(Container $app) : void
     {
+        if ($app->bound(Cloner\ClonerDispatcher::class)) {
+            return;
+        }
+
         $app->singleton(
             Cloner\ClonerDispatcher::class,
             ICloner\IClonerDispatcher::class
         );
-
     }
 }
