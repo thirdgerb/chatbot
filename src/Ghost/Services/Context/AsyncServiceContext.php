@@ -90,7 +90,7 @@ class AsyncServiceContext extends ACodeContext
              */
             $service = $dialog->container()->make($serviceName);
 
-            $auth = $service->auth();
+            $auth = $service->policies();
             $authority = $dialog->cloner->auth;
             foreach ($auth as $ability) {
                 if (!$authority->allow($ability)) {

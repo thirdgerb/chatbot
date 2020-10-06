@@ -30,16 +30,22 @@ abstract class AbsRedirect extends AbsOperator
         $cloner = $this->dialog->cloner;
 
         // 权限校验.
-        $auth = $target
+        $policies = $target
             ->findContextDef($cloner)
             ->getStrategy()
-            ->auth;
+            ->policies;
 
 
-        if (!empty($auth)) {
+        if (!empty($policies)) {
             $await = $this->dialog->process->getAwait();
-            foreach ($auth as $ability) {
-                if (!$cloner->auth->allow($ability)) {
+            foreach ($policies as $policyLine) {
+                // 支持用 policy?a=1&b=2 的语法定义 payload
+                $policyParts = explode('?', $policyLine, 2);
+                $ability = $policyParts[0];
+                $paramStr = $policyParts[1] ?? '';
+                $payload = [];
+                parse_str($paramStr, $payload);
+                if (!$cloner->auth->allow($ability, $payload)) {
                     $dialog = $this
                         ->dialog
                         ->send()

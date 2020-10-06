@@ -34,7 +34,7 @@ abstract class AbsDialogicService implements DialogicService
      * @see \Commune\Blueprint\Framework\Auth\Policy
      * @var array
      */
-    protected $auth = [];
+    protected $policies = [];
 
     /**
      * 定义任务的逻辑.
@@ -50,9 +50,9 @@ abstract class AbsDialogicService implements DialogicService
      * 权限校验
      * @return array
      */
-    public function auth(): array
+    public function policies(): array
     {
-        return $this->auth;
+        return $this->policies;
     }
 
     /**

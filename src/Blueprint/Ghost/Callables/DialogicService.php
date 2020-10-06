@@ -25,7 +25,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
  */
 interface DialogicService
 {
-    public function auth() : array;
+    public function policies() : array;
 
     public function __invoke(Dialog $dialog, array $payload) : ? Operator;
 }

@@ -34,7 +34,7 @@ class NLUSaveMetaService extends AbsDialogicService
      */
     protected $cloner;
 
-    protected $auth = [
+    protected $policies = [
         // Supervise::class,
     ];
 

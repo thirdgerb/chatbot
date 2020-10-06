@@ -29,7 +29,7 @@ class TranslationSaveService extends AbsDialogicService
     protected $translator;
 
 
-    protected $auth = [
+    protected $policies = [
         Supervise::class,
     ];
 

@@ -27,7 +27,7 @@ class MindsetSaveService extends AbsDialogicService
      */
     protected $mindset;
 
-    protected $auth = [
+    protected $policies = [
         Supervise::class,
     ];
 
