@@ -201,8 +201,8 @@ class ICloner extends ASession implements Cloner
             // 将新建的 conversation id 保存当主进程里.
             $this->cacheConvoId($convoId);
 
-        // 输入没有带 conversation id, 认为访问的是主进程.
-        } elseif(empty($inputCid)) {
+        // 判断当前访问的是 Session 的主进程.
+        } elseif(empty($inputCid) || $inputCid === $cachedCid) {
             $convoId = $cachedCid;
 
         // 输入携带了 conversation id, 则认为访问的是子进程.
@@ -525,7 +525,7 @@ class ICloner extends ASession implements Cloner
         $this->noConvoState = true;
     }
 
-    public function isSubProcess() : bool
+    public function isSubConversation() : bool
     {
         return $this->isSubProcess;
     }
@@ -536,7 +536,7 @@ class ICloner extends ASession implements Cloner
      * 这个方法是 CommuneChatbot 项目精华中的精华之一
      * 通过反复的实践和试错才成型, 当然仍然需要不断完善.
      *
-     * 这个方法实现了对话机器人的 多进程, 从而实现了基于多进程的异步任务.
+     * 这个方法实现了对话机器人的 多进程, 从而实现了基于多进程的异步任务与平行对话.
      *
      * 只需要投递一个携带了 conversationId 的异步 input, 就可以开启一个子进程.
      * 而这个子进程又能够共享当前的 session, 对用户进行广播.
@@ -574,21 +574,30 @@ class ICloner extends ASession implements Cloner
             return $steps;
         }
 
+        // 当前对话是 Session 的子进程
         if ($this->isSubProcess) {
-            return $this->saveSubProcessSession($steps);
+            return $this->saveSubConversation($steps);
+        // 当前对话是 session 的主进程.
         } else {
-            return $this->saveMainProcessSession($steps);
+            return $this->saveMainConversation($steps);
         }
     }
 
-    protected function saveMainProcessSession(array $steps) : array
+    /**
+     * 保存主对话进程.
+     * @param array $steps
+     * @return array
+     */
+    protected function saveMainConversation(array $steps) : array
     {
+        // 如果进程结束, 清空 session 相关数据.
         if ($this->isConversationEnd()) {
             $this->setSessionExpire(0);
             $steps[] = 'set session expire 0';
             $this->storage->save();
-            $steps[] = 'save storage';
+            $steps[] = 'delete storage data';
 
+        // 保存 storage
         } elseif ($this->isSingletonInstanced('storage')) {
             $this->storage->save();
             $steps[] = 'save storage';
@@ -599,7 +608,7 @@ class ICloner extends ASession implements Cloner
         return $steps;
     }
 
-    protected function saveSubProcessSession(array $steps) : array
+    protected function saveSubConversation(array $steps) : array
     {
         if ($this->isSingletonInstanced('storage')) {
             $this->storage->save();
@@ -611,6 +620,11 @@ class ICloner extends ASession implements Cloner
         return $steps;
     }
 
+    /**
+     * 保存当前的 Conversation Id
+     * @param array $steps
+     * @return array
+     */
     protected function saveConvoId(array $steps) : array
     {
         // 如果是主进程, 会话又结束时, 删除主进程的 conversationId 缓存.
@@ -619,7 +633,7 @@ class ICloner extends ASession implements Cloner
             $this->ioDeleteConvoIdCache();
             $steps[] = 'del convo id cache';
 
-            //  给当前 conversation id 续命.
+        //  给当前 conversation id 续命.
         } elseif (
             !$this->noConvoState
             && isset($this->conversationId)
@@ -630,9 +644,13 @@ class ICloner extends ASession implements Cloner
         return $steps;
     }
 
+    /**
+     * 保存 Runtime 状态.
+     * @param array $steps
+     * @return array
+     */
     protected function saveRuntime(array $steps) : array
     {
-
         // 会话结束, 删除会话缓存
         if ($this->isConversationEnd()) {
             $runtime = $this->__get('runtime');

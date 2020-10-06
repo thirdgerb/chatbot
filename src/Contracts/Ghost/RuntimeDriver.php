@@ -21,6 +21,8 @@ interface RuntimeDriver
 {
 
     /**
+     * 保存 Process. 很明显, Process 是 Conversation 级别的.
+     *
      * @param string $cloneSessionId
      * @param string $convoId
      * @param Process $process
@@ -30,6 +32,8 @@ interface RuntimeDriver
     public function cacheProcess(string $cloneSessionId, string $convoId, Process $process, int $expire) : bool;
 
     /**
+     * 获取指定会话的 Conversation.
+     *
      * @param string $cloneSessionId
      * @param string $convoId
      * @return Process|null
@@ -37,6 +41,9 @@ interface RuntimeDriver
     public function fetchProcess(string $cloneSessionId, string $convoId) : ? Process;
 
     /**
+     * 保存所有的短期记忆. 显然短期记忆也是 Conversation 级别的.
+     * 而不是 Session 级别的.
+     *
      * @param string $cloneId
      * @param string $convoId
      * @param Memory[] $memories
@@ -63,6 +70,8 @@ interface RuntimeDriver
     ) : ? Memory;
 
     /**
+     * 长程记忆是 Session 级别的, 相互之间共享.
+     *
      * @param string $clonerId
      * @param Memory[] $memories
      * @return bool

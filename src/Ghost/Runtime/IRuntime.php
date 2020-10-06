@@ -219,7 +219,7 @@ class IRuntime implements Runtime
         }
 
         // 关键, 不能让子进程变更会话状态.
-        if ($this->cloner->isSubProcess()) {
+        if ($this->cloner->isSubConversation()) {
             return null;
         }
 
