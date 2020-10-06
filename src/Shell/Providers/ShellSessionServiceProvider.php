@@ -64,7 +64,7 @@ class ShellSessionServiceProvider extends ServiceProvider
         ];
 
         foreach ($singletons as $abstract => $concrete) {
-            if (!$app->bound($abstract)) {
+            if (!$app->has($abstract)) {
                 $app->singleton(
                     $abstract,
                     $concrete

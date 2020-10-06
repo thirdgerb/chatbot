@@ -79,7 +79,7 @@ class LoggerByMonologProvider extends ServiceProvider
 
     public function register(ContainerContract $app): void
     {
-        if ($app->bound(LoggerInterface::class) && !$this->forceRegister) {
+        if ($app->has(LoggerInterface::class) && !$this->forceRegister) {
             return;
         }
         

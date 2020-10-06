@@ -46,7 +46,7 @@ class IAuthority implements Authority
         }
 
         // 没有绑定过就算不允许, 严格权限检查.
-        if (!$this->container->bound($policy)) {
+        if (!$this->container->has($policy)) {
             return false;
         }
 

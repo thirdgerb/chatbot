@@ -59,7 +59,7 @@ class SoundLikeServiceProvider extends ServiceProvider
 
     public function register(ContainerContract $app): void
     {
-        if ($app->bound(SoundLikeInterface::class)) {
+        if ($app->has(SoundLikeInterface::class)) {
             return;
         }
 

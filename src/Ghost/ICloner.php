@@ -405,7 +405,7 @@ class ICloner extends ASession implements Cloner
     ) : void
     {
         // 如果没有绑定 Broadcaster
-        if (!$this->container->bound(Broadcaster::class)) {
+        if (!$this->container->has(Broadcaster::class)) {
             return;
         }
         $creatorId = $creatorId ?? $this->avatar->getId();

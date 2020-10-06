@@ -71,7 +71,7 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerCloneMatcher(Container $app) : void
     {
-        if ($app->bound(Matcher::class)) {
+        if ($app->has(Matcher::class)) {
             return;
         }
 
@@ -87,7 +87,7 @@ class ClonerServiceProvider extends ServiceProvider
      */
     protected function registerCloneScene(Container $app) : void
     {
-        if ($app->bound(Cloner\ClonerScene::class)) {
+        if ($app->has(Cloner\ClonerScene::class)) {
             return;
         }
 
@@ -105,7 +105,7 @@ class ClonerServiceProvider extends ServiceProvider
      */
     protected function registerCloneGuest(Container $app) : void
     {
-        if ($app->bound(Cloner\ClonerGuest::class)) {
+        if ($app->has(Cloner\ClonerGuest::class)) {
             return;
         }
 
@@ -121,7 +121,7 @@ class ClonerServiceProvider extends ServiceProvider
      */
     protected function registerCloneEnv(Container $app) : void
     {
-        if ($app->bound(Cloner\ClonerEnv::class)) {
+        if ($app->has(Cloner\ClonerEnv::class)) {
             return;
         }
 
@@ -135,7 +135,7 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerCloneScope(Container $app) : void
     {
-        if ($app->bound(Cloner\ClonerScope::class)) {
+        if ($app->has(Cloner\ClonerScope::class)) {
             return;
         }
         $app->singleton(
@@ -157,7 +157,7 @@ class ClonerServiceProvider extends ServiceProvider
      */
     protected function registerCloneLogger(Container $app) : void
     {
-        if ($app->bound(Cloner\ClonerLogger::class)) {
+        if ($app->has(Cloner\ClonerLogger::class)) {
             return;
         }
         $app->singleton(
@@ -177,17 +177,17 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerAuth(Container $app) : void
     {
-        if (!$app->bound(Authority::class)) {
+        if (!$app->has(Authority::class)) {
             $app->singleton(Authority::class, IAuthority::class);
         }
-        if (!$app->bound(Supervise::class)) {
+        if (!$app->has(Supervise::class)) {
             $app->singleton(Supervise::class, ISupervise::class);
         }
     }
 
     protected function registerRuntime(Container $app) : void
     {
-        if ($app->bound(Runtime::class)) {
+        if ($app->has(Runtime::class)) {
             return;
         }
         $app->singleton(Runtime::class, IRuntime::class);
@@ -195,7 +195,7 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerStorage(Container $app) : void
     {
-        if ($app->bound(Cloner\ClonerStorage::class)) {
+        if ($app->has(Cloner\ClonerStorage::class)) {
             return;
         }
         $app->singleton(
@@ -206,7 +206,7 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerAvatar(Container $app) : void
     {
-        if ($app->bound(Cloner\ClonerAvatar::class)) {
+        if ($app->has(Cloner\ClonerAvatar::class)) {
             return;
         }
         $app->singleton(
@@ -217,7 +217,7 @@ class ClonerServiceProvider extends ServiceProvider
 
     protected function registerDispatcher(Container $app) : void
     {
-        if ($app->bound(Cloner\ClonerDispatcher::class)) {
+        if ($app->has(Cloner\ClonerDispatcher::class)) {
             return;
         }
 

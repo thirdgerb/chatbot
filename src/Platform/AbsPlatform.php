@@ -177,7 +177,7 @@ abstract class AbsPlatform implements Platform
 
     public function catchExp(\Throwable $e): void
     {
-        $this->host->getProcContainer()->get(ExceptionReporter::class)->report($e);
+        $this->getContainer()->get(ExceptionReporter::class)->report($e);
     }
 
 

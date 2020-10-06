@@ -64,7 +64,7 @@ class CloneBroadcastPipe extends AClonePipe
         $container = $this->cloner->container;
 
         // 保存消息.
-        if ($container->bound(MessageDB::class)) {
+        if ($container->has(MessageDB::class)) {
             $this->recordBatch(
                 $request->getTraceId(),
                 $request->getFromApp(),
@@ -75,12 +75,12 @@ class CloneBroadcastPipe extends AClonePipe
         }
 
         // 处理异步消息.
-        if ($container->bound(GhostMessenger::class)) {
+        if ($container->has(GhostMessenger::class)) {
             $this->sendAsyncMessages($request);
         }
 
         // 广播消息
-        if ($container->bound(Broadcaster::class)) {
+        if ($container->has(Broadcaster::class)) {
             $this->broadcast($request, $response);
         }
 
