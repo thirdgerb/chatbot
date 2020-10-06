@@ -5,10 +5,11 @@ use Commune\Platform\Shell\Tcp;
 use Commune\Platform\Libs;
 
 return new Platform\Shell\TcpSyncShellPlatformConfig([
-
     'id' => 'sync',
+    'name' => 'SyncTcpShell',
+    'desc' => '同步的 tcp Shell 端, 只能接受同步消息',
 
-    'bootShell' => 'sync_shell',
+    'bootShell' => 'demo_shell',
     'bootGhost' => false,
 
     'providers' => [

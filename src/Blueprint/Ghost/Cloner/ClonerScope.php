@@ -18,7 +18,7 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * 当前 Ghost 分身的作用域. 可以用于定义记忆体的长程作用域.
  *
- * ## 消息相关维度
+ * ## 系统默认长程维度
  *
  * @property-read string $shellId
  * @property-read string $sessionId         Clone 的 Id.

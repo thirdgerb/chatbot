@@ -45,9 +45,6 @@ return new IHostConfig([
         // sound like 模块
         Framework\Providers\SoundLikeServiceProvider::class,
 
-        // 假的消息发送器.
-        // Framework\Providers\MessengerFakeByArrProvider::class,
-
         // 基于 redis 连接池实现的消息广播
         Framework\Providers\BroadcasterBySwlRedisProvider::class => [
             'listeningShells' => ['listener_shell'],
@@ -74,26 +71,18 @@ return new IHostConfig([
 
     // shell 的配置
     'shells' => [
-
-        'stdio_shell' => new \Commune\Host\Prototype\ShellProtoConfig([
-            'id' => 'stdio_shell',
-            'name' => 'stdio_shell',
-        ]),
-
-        'sync_shell' => new \Commune\Host\Prototype\ShellProtoConfig([
-            'id' => 'sync_shell',
-            'name' => 'sync_shell',
-        ]),
-
-        'duplex_shell' => new \Commune\Host\Prototype\ShellProtoConfig([
-            'id' => 'duplex_shell',
-            'name' => 'duplex_shell',
+        'demo_shell' => new \Commune\Host\Prototype\ShellProtoConfig([
+            'id' => 'demo_shell',
+            'name' => 'DemoShell',
+            'desc' => '测试用的 shell',
         ]),
 
         'listener_shell' => new \Commune\Host\Prototype\ShellProtoConfig([
             'id' => 'listener_shell',
-            'name' => 'listener_shell',
+            'name' => 'DemoShell',
+            'desc' => '测试用的 shell',
         ]),
+
     ],
 
     // 平台的配置.

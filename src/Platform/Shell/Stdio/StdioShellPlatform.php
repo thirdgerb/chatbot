@@ -103,7 +103,7 @@ class StdioShellPlatform extends AbsPlatform
                 /**
                  * @var Broadcaster $broadcaster
                  */
-                $broadcaster = $this->host->getProcContainer()->get(Broadcaster::class);
+                $broadcaster = $this->getContainer()->get(Broadcaster::class);
 
                 $broadcaster->subscribe(
                     [$this, 'subscribe'],

@@ -6,6 +6,8 @@ use Commune\Framework\Providers;
 return new Platform\Ghost\TcpCoGhostPlatformConfig([
 
     'id' => 'tcp_ghost',
+    'name' => 'SwooleTcpShell',
+    'desc' => '使用swoole 协程 tcp 实现的 ghost',
 
     'bootShell' => null,
     'bootGhost' => true,

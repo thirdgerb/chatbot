@@ -5,8 +5,10 @@ use Commune\Platform\Shell;
 
 return new Shell\TcpDuplexShellPlatformConfig([
     'id' => 'duplex',
+    'name' => 'DuplexTcpPlatform',
+    'desc' => '双工的 TCP Platform',
     'concrete' => Shell\Tcp\SwlDuplexShellPlatform::class,
-    'bootShell' => 'duplex_shell',
+    'bootShell' => 'demo_shell',
     'bootGhost' => false,
     'providers' => [
 

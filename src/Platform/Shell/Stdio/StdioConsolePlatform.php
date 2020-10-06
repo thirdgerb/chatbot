@@ -150,7 +150,7 @@ class StdioConsolePlatform extends AbsPlatform
         /**
          * @var Ghost $ghost
          */
-        $ghost = $this->host->getProcContainer()->make(Ghost::class);
+        $ghost = $this->getContainer()->make(Ghost::class);
         while ($request = $ghostMessenger->receiveAsyncRequest()) {
             $ghost->handleRequest(
                 $request,
@@ -158,8 +158,6 @@ class StdioConsolePlatform extends AbsPlatform
             );
         }
     }
-
-
 
     protected function makePacker(string $line) : StdioPacker
     {
