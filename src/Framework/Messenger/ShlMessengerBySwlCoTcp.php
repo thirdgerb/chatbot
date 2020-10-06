@@ -81,6 +81,11 @@ class ShlMessengerBySwlCoTcp implements ShellMessenger
     {
         $client = new Client(SWOOLE_SOCK_TCP);
 
+        $client->set([
+            'open_eof_split' => true, // 启用 EOF 自动分包
+            'package_eof' => "\r\n",
+        ]);
+
         $client->connect(
             $this->option->host,
             $this->option->port,
@@ -110,6 +115,8 @@ class ShlMessengerBySwlCoTcp implements ShellMessenger
         }
 
         $se = Babel::serialize($request);
+        $se .= "\r\n"; // eof 协议
+
         $success = $client->send($se);
         if (!$success) {
             return $this->fail($request, 'send request to ghost fail');
@@ -117,6 +124,7 @@ class ShlMessengerBySwlCoTcp implements ShellMessenger
 
         $timeout = $this->option->receiveTimeout;
         $response = $client->recv($timeout);
+        
         if (empty($response)) {
             return $this->fail($request, "send request to ghost timeout after $timeout second");
         }

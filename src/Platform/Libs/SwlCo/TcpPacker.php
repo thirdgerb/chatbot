@@ -62,7 +62,7 @@ class TcpPacker implements Packer
 
     public function output(string $message) : void
     {
-        $this->conn->send($message);
+        $this->conn->send($message . "\r\n");
     }
 
     public function isInvalidInput(): ? string

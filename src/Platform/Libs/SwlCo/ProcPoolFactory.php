@@ -57,6 +57,11 @@ class ProcPoolFactory
         return $this->pool;
     }
 
+    public function getOption() : ServerOption
+    {
+        return $this->option;
+    }
+
 
     /**
      * 创建一个 Server
@@ -74,6 +79,8 @@ class ProcPoolFactory
             $option->ssl,
             true
         );
+
+        $server->set($this->option->serverSettings->toArray());
 
         //收到15信号关闭服务
         Process::signal(SIGTERM, function () use ($server) {
@@ -97,12 +104,8 @@ class ProcPoolFactory
     {
         $pool = new Process\Pool($option->workerNum);
 
-        // 设置 Server 的配置.
-        $serverOption = $option->serverSettings;
-
         // 必须允许协程.
-        $serverOption['enable_coroutine'] = true;
-        $pool->set($serverOption->toArray());
+        $pool->set(['enable_coroutine' => true]);
 
         return $pool;
     }

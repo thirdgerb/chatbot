@@ -104,6 +104,10 @@ class SwlCoGhostPlatform extends AbsPlatform
             // 使用一个协程来处理异步的消息.
             Coroutine::create([$this, 'receiveAsync']);
 
+            $host = $this->poolFactory->getOption()->host;
+            $port = $this->poolFactory->getOption()->port;
+
+            $this->host->getConsoleLogger()->info("server start on host $host, port $port");
             //开始监听端口
             $server->start();
         });
