@@ -105,6 +105,7 @@ class MDGroupContextLoader extends ServiceProvider
             $filePath = $file->getRealPath();
             $markdownId = $this->getMarkdownId($path, $group, $filePath);
 
+            // 判断是否要 update
             $update = $this->reset
                 || $this->checkShouldUpdate($markdownId, $file->getMTime(), $registry);
 
@@ -156,7 +157,7 @@ class MDGroupContextLoader extends ServiceProvider
         $parser = call_user_func(
             [$parserName, MDParser::FUNC_PARSE],
             $markdownId,
-            TreeContextDef::FIRST_STAGE,
+            MDContextDef::ROOT_STAGE,
             $content,
             // 将静态的注解从原来的正文中抽离出来.
             $staticComments = $group->getStaticComments()
