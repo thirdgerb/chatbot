@@ -39,44 +39,45 @@ class IStageReg extends AbsDefRegistry implements StageReg
     }
 
 
-    protected function hasRegisteredMeta(string $defName): bool
-    {
-        // 已经注册过了.
-        if (parent::hasRegisteredMeta($defName)) {
-            return true;
-        }
-
-        list($contextName, $stageName) = ContextUtils::separateContextAndStageFromFullname($defName);
-
-        // 如果当前 def 名就是 context 的 name
-        $contextReg = $this->mindset->contextReg();
-        if (
-            StringUtils::isEmptyStr($stageName)
-            && $contextReg->hasDef($contextName)
-        ) {
-            $contextDef = $contextReg->getDef($defName);
-            $this->registerDef($contextDef->asStageDef());
-            return true;
-        }
-
-        if (empty($contextName)) {
-            return false;
-        }
-
-        if (!$contextReg->hasDef($contextName)) {
-            return false;
-        }
-
-        $contextDef = $contextReg->getDef($contextName);
-        $stageDef = $contextDef->getPredefinedStage($stageName);
-
-        if (isset($stageDef)) {
-            $this->registerDef($stageDef);
-            return true;
-        }
-
-        return false;
-    }
+//  现在已无好处.
+//    protected function hasRegisteredMeta(string $defName): bool
+//    {
+//        // 已经注册过了.
+//        if (parent::hasRegisteredMeta($defName)) {
+//            return true;
+//        }
+//
+//        list($contextName, $stageName) = ContextUtils::separateContextAndStageFromFullname($defName);
+//
+//        // 如果当前 def 名就是 context 的 name
+//        $contextReg = $this->mindset->contextReg();
+//        if (
+//            StringUtils::isEmptyStr($stageName)
+//            && $contextReg->hasDef($contextName)
+//        ) {
+//            $contextDef = $contextReg->getDef($defName);
+//            $this->registerDef($contextDef->asStageDef());
+//            return true;
+//        }
+//
+//        if (empty($contextName)) {
+//            return false;
+//        }
+//
+//        if (!$contextReg->hasDef($contextName)) {
+//            return false;
+//        }
+//
+//        $contextDef = $contextReg->getDef($contextName);
+//        $stageDef = $contextDef->getPredefinedStage($stageName);
+//
+//        if (isset($stageDef)) {
+//            $this->registerDef($stageDef);
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     /**
      * @param StageDef $def

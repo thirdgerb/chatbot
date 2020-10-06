@@ -21,7 +21,10 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Components\Demo\Git\GitContext;
 use Commune\Components\Demo\Maze\Maze;
 use Commune\Components\HeedFallback\Context\TeachTasks;
+use Commune\Components\HeedFallback\HeedFallbackComponent;
+use Commune\Components\Markdown\MarkdownComponent;
 use Commune\Components\Tree\Demo\TreeDemoContext;
+use Commune\Components\Tree\TreeComponent;
 use Commune\Ghost\Context\ACodeContext;
 use Commune\Ghost\Predefined\Manager\NLUManagerContext;
 use Commune\Support\Registry\OptRegistry;
@@ -98,15 +101,32 @@ class DemoHome extends ACodeContext
         return $stage
             ->onActivate(function(Activate $dialog){
 
+                $menu = [
+                    FeatureTest::genUcl(),
+                    $this->getStage('maze'),
+                    GitContext::genUcl(),
+                    NLUManagerContext::genUcl(),
+                ];
+
+                $container = $dialog->cloner->container;
+
+                if ($container->has(TreeComponent::class)) {
+                    $menu[] = Ucl::make(TreeDemoContext::NAME);
+                }
+
+                if ($container->has(MarkdownComponent::class)) {
+                    $menu[] = Ucl::make('md.demo.commune_v2_intro');
+                }
+
+                if ($container->has(HeedFallbackComponent::class)) {
+                    $menu[] = TeachTasks::genUcl();
+                }
+
                 return $dialog
                     ->await()
                     ->askChoose(
                         '请您选择',
-                        [
-                            FeatureTest::genUcl(),
-                            $this->getStage('maze'),
-                            GitContext::genUcl(),
-                        ]
+                        $menu
                     );
 
             });

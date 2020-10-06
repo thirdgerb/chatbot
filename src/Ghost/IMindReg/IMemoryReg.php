@@ -36,21 +36,22 @@ class IMemoryReg extends AbsDefRegistry implements MemoryReg
         return MemoryMeta::class;
     }
 
-    protected function hasRegisteredMeta(string $defName): bool
-    {
-        if (parent::hasRegisteredMeta($defName)) {
-            return true;
-        }
-
-        $contextReg = $this->mindset->contextReg();
-        if ($contextReg->hasDef($defName)) {
-            $def = $contextReg->getDef($defName)->asMemoryDef();
-            $this->registerDef($def);
-            return true;
-        }
-
-        return false;
-    }
+//  懒加载现在已无好处.
+//    protected function hasRegisteredMeta(string $defName): bool
+//    {
+//        if (parent::hasRegisteredMeta($defName)) {
+//            return true;
+//        }
+//
+//        $contextReg = $this->mindset->contextReg();
+//        if ($contextReg->hasDef($defName)) {
+//            $def = $contextReg->getDef($defName)->asMemoryDef();
+//            $this->registerDef($def);
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
 
 }

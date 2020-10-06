@@ -51,27 +51,29 @@ class IIntentReg extends AbsDefRegistry implements IntentReg
         return parent::registerDef($def, $notExists);
     }
 
-    protected function hasRegisteredMeta(string $defName): bool
-    {
-        // 先检查 Stage, 会尝试注册 Context
-        $stageReg = $this->mindset->stageReg();
-
-        if (parent::hasRegisteredMeta($defName)) {
-            return true;
-        }
-
-        if (!$stageReg->hasDef($defName)) {
-            return false;
-        }
-
-        $stageDef = $stageReg->getDef($defName);
-        $intentDef = $stageDef->asIntentDef();
-        if ($intentDef->isEmpty()) {
-            return false;
-        }
-        $this->registerDef($intentDef);
-        return true;
-    }
+//  懒加载现在已无好处
+//
+//    protected function hasRegisteredMeta(string $defName): bool
+//    {
+//        // 先检查 Stage, 会尝试注册 Context
+//        $stageReg = $this->mindset->stageReg();
+//
+//        if (parent::hasRegisteredMeta($defName)) {
+//            return true;
+//        }
+//
+//        if (!$stageReg->hasDef($defName)) {
+//            return false;
+//        }
+//
+//        $stageDef = $stageReg->getDef($defName);
+//        $intentDef = $stageDef->asIntentDef();
+//        if ($intentDef->isEmpty()) {
+//            return false;
+//        }
+//        $this->registerDef($intentDef);
+//        return true;
+//    }
 
     /**
      * @param IntentDef $def
