@@ -11,6 +11,7 @@
 
 namespace Commune\Framework\Bootstrap;
 
+use Commune\Blueprint\Framework\ServiceRegistry;
 use Commune\Support\Struct\Struct;
 use Commune\Blueprint\Framework\App;
 use Commune\Blueprint\Framework\Bootstrapper;
@@ -28,14 +29,19 @@ abstract class LoadComponents implements Bootstrapper
     {
         $configs = $this->getComponentConfigs($app);
         $registrar = $app->getServiceRegistry();
-
-        foreach ($configs as $key => $value) {
-            $component = $this->wrapComponent($key, $value);
-            $registrar->registerComponent($component);
-        }
+        static::registerComponents($registrar, $configs);
     }
 
-    public function wrapComponent($name, $value) : ComponentOption
+    public static function registerComponents(ServiceRegistry $registrar, array $componentsSetting) : void
+    {
+        foreach ($componentsSetting as $key => $value) {
+            $component = static::wrapComponent($key, $value);
+            $registrar->registerComponent($component);
+        }
+
+    }
+
+    public static function wrapComponent($name, $value) : ComponentOption
     {
         if (
             is_string($value)
