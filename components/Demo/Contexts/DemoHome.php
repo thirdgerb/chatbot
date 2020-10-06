@@ -106,10 +106,6 @@ class DemoHome extends ACodeContext
                             FeatureTest::genUcl(),
                             $this->getStage('maze'),
                             GitContext::genUcl(),
-                            Ucl::make('md.demo.commune_v2_intro'),
-                            Ucl::make(TreeDemoContext::NAME),
-                            NLUManagerContext::genUcl(),
-                            TeachTasks::genUcl(),
                         ]
                     );
 
