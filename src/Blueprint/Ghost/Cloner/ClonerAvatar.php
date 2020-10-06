@@ -38,13 +38,6 @@ interface ClonerAvatar
      * 分身的完整配置.
      * @return array
      */
-    public function getConfig() : array;
+    public function getInfo() : array;
 
-    /**
-     * 通过预定义的 Presenter 来呈现分身, 暴露更精确的方法和属性.
-     *
-     * @param string $presenter
-     * @return AvatarPresenter
-     */
-    public function present(string $presenter) : AvatarPresenter;
 }

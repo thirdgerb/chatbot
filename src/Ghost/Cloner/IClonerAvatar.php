@@ -12,9 +12,7 @@
 namespace Commune\Ghost\Cloner;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Ghost\Cloner\AvatarPresenter;
 use Commune\Blueprint\Ghost\Cloner\ClonerAvatar;
-use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 
 
 /**
@@ -66,22 +64,9 @@ class IClonerAvatar implements ClonerAvatar
             ?? $this->name = $this->cloner->ghost->getName();
     }
 
-    public function getConfig(): array
+    public function getInfo(): array
     {
         return [];
-    }
-
-    public function present(string $presenter): AvatarPresenter
-    {
-        if (!is_a($presenter, AvatarPresenter::class, TRUE)) {
-            $expect = AvatarPresenter::class;
-            throw new InvalidArgumentException(
-                static::class . '::'. __FUNCTION__
-                . " only accept subclass of $expect, $presenter given"
-            );
-        }
-
-        return $this->cloner->container->make($presenter);
     }
 
 
