@@ -11,7 +11,6 @@
 
 namespace Commune\Blueprint;
 
-use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Contracts;
 use Commune\Protocals;
@@ -22,29 +21,49 @@ use Commune\Support\SoundLike\SoundLikeInterface;
 use Psr\Log\LoggerInterface;
 
 /**
+ * 系统启动时默认的功能模块定义.
+ * 可以用于启动自检.
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  */
 interface DependInjections
 {
+    /*------- 所有 App 启动时都必须有的 -------*/
 
+    // App 启动前的基础绑定.
     const BASIC_APP_BINDINGS = [
+        // 服务的注册中心
         Framework\ServiceRegistry::class,
+        // console 日志
         Contracts\Log\ConsoleLogger::class,
+        // 系统日志的格式定义.
         Contracts\Log\LogInfo::class,
     ];
 
+    // App 的进程级绑定
     const APP_PROC_BINDINGS = [
+        // 进程级容器
+        Framework\ProcContainer::class,
+        // 异常报告
         Contracts\Log\ExceptionReporter::class,
-        Contracts\Trans\Translator::class,
+        // 注册表
         OptRegistry::class,
+        // 文本翻译模块
+        Contracts\Trans\Translator::class,
+        // 日志模块
         LoggerInterface::class,
-        SoundLikeInterface::class,
+        // 缓存模块
+        Contracts\Cache::class,
+        // 权限管理
+        Framework\Auth\Authority::class,
     ];
 
     /*------- host -------*/
 
     const HOST_PROC_BINDINGS = [
+        // Host 自身.
         Host::class,
+        // host 的配置.
         Configs\HostConfig::class,
     ];
 
@@ -52,26 +71,37 @@ interface DependInjections
 
     // ghost 的进程级绑定
     const GHOST_PROC_BINDINGS = [
+        // ghost 本体
         Ghost::class,
+        // ghost 的配置
         Configs\GhostConfig::class,
+        // 思维模块, 注册所有多轮对话逻辑
         Mindset::class,
+        // 拼音模块, 用于拼音校验.
+        SoundLikeInterface::class,
     ];
 
     // ghost 的请求级绑定.
     const GHOST_REQ_BINDINGS = [
-        Contracts\Cache::class,
         Ghost\Cloner\ClonerScene::class,
         Ghost\Cloner\ClonerScope::class,
         Ghost\Cloner\ClonerLogger::class,
         Ghost\Cloner\ClonerStorage::class,
+        Ghost\Cloner\ClonerAvatar::class,
+        Ghost\Cloner\ClonerStorage::class,
+        Ghost\Cloner\ClonerDispatcher::class,
+
+        Ghost\Tools\Matcher::class,
+
         Ghost\Runtime\Runtime::class,
         Contracts\Ghost\RuntimeDriver::class,
-        Ghost\Auth\Authority::class,
+        // 广播模块
+        Contracts\Messenger\Broadcaster::class,
     ];
 
     // ghost 请求创建时绑定的实例.
     const GHOST_REQ_INSTANCES = [
-        Cloner::class,
+        Ghost\Cloner::class,
         Framework\ReqContainer::class,
         Protocals\Intercom\InputMsg::class,
         Protocals\Comprehension::class,
@@ -86,7 +116,6 @@ interface DependInjections
 
     const SHELL_REQ_BINDINGS = [
         Shell::class,
-        Contracts\Cache::class,
         Shell\Session\ShellLogger::class,
         Shell\Session\ShellStorage::class,
     ];
