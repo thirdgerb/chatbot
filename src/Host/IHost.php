@@ -139,6 +139,7 @@ class IHost extends AbsApp implements Host
         } catch (\Throwable $e) {
             $this->getConsoleLogger()->critical(strval($e));
             $this->fail();
+            return null;
         }
     }
 
@@ -166,15 +167,17 @@ class IHost extends AbsApp implements Host
                 ->getProcContainer()
                 ->make(Platform::class);
 
+
+            $id = $platformConfig->id;
+            $this->getConsoleLogger()->info("serve platform [$id]");
+            // 启动服务
+            $platform->serve();
+
         } catch (\Throwable $e) {
             $this->getConsoleLogger()->critical(strval($e));
             $this->fail();
         }
 
-        $id = $platformConfig->id;
-        $this->getConsoleLogger()->info("serve platform [$id]");
-        // 启动服务
-        $platform->serve();
     }
 
 
@@ -258,11 +261,16 @@ class IHost extends AbsApp implements Host
 
             // 配置加载.
             $registry = $this->getServiceRegistry();
+
+            // 注册 providers
             RegisterProviders::registerProviderByConfig(
                 $registry,
                 $this->platformConfig->providers
             );
 
+            // 注册 components ? Components 应该是 ghost 或者全局的. 最好注册到 host 内.
+
+            // 绑定 options
             LoadConfigOption::registerConfigBinding(
                 $this,
                 $this->platformConfig->options

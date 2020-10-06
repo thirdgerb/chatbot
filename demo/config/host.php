@@ -64,15 +64,13 @@ return new IHostConfig([
         // 完全基于缓存, 无法获取长期存储的消息数据库.
         Framework\Providers\MessageDBCacheOnlyProvider::class,
 
-        // 用数组实现的缓存.
-        // Framework\Providers\CacheByArrProvider::class,
 
 
     ],
 
     // ghost 的配置
     // 监听端口 9501
-    'ghost' => include __DIR__ . '/ghost/tcp_co_ghost.php',
+    'ghost' => include __DIR__ . '/ghost/demo.php',
 
     // shell 的配置
     'shells' => [
@@ -105,7 +103,7 @@ return new IHostConfig([
         'stdio' => include __DIR__ . '/platforms/stdio.php',
 
         // ghost 端, 监听 9501 端口
-        'ghost' => include __DIR__ . '/platforms/ghost.php',
+        'ghost' => include __DIR__ . '/platforms/tcp_ghost.php',
 
         // 同步 shell 端, 监听 9502 端口.
         'sync' => include __DIR__ . '/platforms/sync.php',

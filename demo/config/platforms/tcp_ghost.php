@@ -5,7 +5,7 @@ use Commune\Framework\Providers;
 
 return new Platform\Ghost\TcpCoGhostPlatformConfig([
 
-    'id' => 'ghost',
+    'id' => 'tcp_ghost',
 
     'bootShell' => null,
     'bootGhost' => true,
