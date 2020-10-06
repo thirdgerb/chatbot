@@ -33,6 +33,7 @@ use Commune\Support\Uuid\IdGeneratorHelper;
  * @property string $scene              场景.
  * @property int $createdAt             createdAt: 创建时间.
  * @property int $deliverAt             deliverAt: 发送时间. 默认为0.
+ * @property bool $fromBot
  *
  */
 abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGenerator
@@ -82,6 +83,9 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
 
             // 创建时间
             'createdAt' => $now,
+
+            // 是否来自机器人
+            'fromBot' => false,
         ];
     }
 
@@ -103,6 +107,13 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
     {
         return false;
     }
+
+    public function isFromBot(): bool
+    {
+        return $this->fromBot;
+    }
+
+
 
     /*------- clone -------*/
 

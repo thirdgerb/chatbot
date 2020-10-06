@@ -237,6 +237,8 @@ class IDeliver implements Deliver
     ) : array
     {
 
+        $fromBot = !isset($this->creatorId);
+
         // Id 为空是对话机器人消息的标志.
         // 由客户端去判断用什么身份来代表机器人.
         $creatorId = $this->creatorId ?? $this->cloner->avatar->getId();
@@ -250,7 +252,8 @@ class IDeliver implements Deliver
                 $deliverAt, // 投递时间
                 $sessionId, // 投递的目标 Session
                 $creatorId, // 投递的 creator 信息
-                $creatorName
+                $creatorName,
+                $fromBot
             ){
                 // 异步时发送的都是 inputMsg
                 // 因此用 divide 来克隆消息体.
@@ -261,7 +264,8 @@ class IDeliver implements Deliver
                         '',
                         $creatorId,
                         $creatorName,
-                        $deliverAt
+                        $deliverAt,
+                        $fromBot
                     );
                     return $asyncInput;
                 }

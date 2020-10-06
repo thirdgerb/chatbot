@@ -28,6 +28,7 @@ use Commune\Support\Utils\TypeUtils;
  * @property int $deliverAt        发送时间. 默认为0.
  * @property HostMsg $message      输入消息
  * @property string $convoId       多轮会话的 ID. 允许为空. 除非客户端有指定的 conversation.
+ * @property bool $fromBot
  */
 class IInputMsg extends AIntercomMsg implements InputMsg
 {
@@ -40,7 +41,8 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         string $convoId = '',
         int $deliverAt = null,
         string $messageId = null,
-        string $scene = ''
+        string $scene = '',
+        bool $fromBot = false
     ) : self
     {
         $deliverAt = $deliverAt ?? intval(microtime(true) * 1000);
@@ -53,6 +55,7 @@ class IInputMsg extends AIntercomMsg implements InputMsg
             'messageId' => $messageId ?? '',
             'deliverAt' => $deliverAt,
             'scene' => $scene,
+            'fromBot' => $fromBot,
         ];
 
         return new static($data);
@@ -82,7 +85,8 @@ class IInputMsg extends AIntercomMsg implements InputMsg
         string $creatorName = '',
         int $deliverAt = null,
         string $sessionId = null,
-        string $scene = null
+        string $scene = null,
+        bool $fromBot = true
     ): OutputMsg
     {
         $deliverAt = $deliverAt ?? intval(microtime(true) * 1000);
@@ -94,7 +98,8 @@ class IInputMsg extends AIntercomMsg implements InputMsg
             $creatorName,
             $this->getConvoId(),
             $deliverAt,
-            $scene ?? $this->scene
+            $scene ?? $this->scene,
+            $fromBot
         );
 
         // 为防止客户端和服务端时间戳不一致, 强制回复消息大于输入消息

@@ -27,13 +27,25 @@ interface InputMsg extends IntercomMsg
     public function setSessionId(string $sessionId) : void;
 
 
+    /**
+     * 基于 Input, 输出一个 output
+     * @param HostMsg $message
+     * @param string $creatorId
+     * @param string $creatorName
+     * @param int|null $deliverAt
+     * @param string|null $sessionId
+     * @param string|null $scene
+     * @param bool $fromBot
+     * @return OutputMsg
+     */
     public function output(
         HostMsg $message,
         string $creatorId = '',
         string $creatorName = '',
         int $deliverAt = null,
         string $sessionId = null,
-        string $scene = null
+        string $scene = null,
+        bool $fromBot = true
     ) : OutputMsg;
 
 }

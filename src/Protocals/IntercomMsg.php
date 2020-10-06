@@ -34,6 +34,13 @@ interface IntercomMsg extends Message, Protocal
      */
     public function isInvalid() : ? string;
 
+
+    /**
+     * 消息是否来自机器人
+     * @return bool
+     */
+    public function isFromBot() : bool;
+
     /*------- properties -------*/
 
     /**

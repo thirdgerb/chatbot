@@ -39,7 +39,8 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
         string $creatorName = '',
         string $convoId = '',
         int $deliverAt = null,
-        string $scene = ''
+        string $scene = '',
+        bool $fromBot = true
     ) : self
     {
         $deliverAt = $deliverAt ?? intval(microtime(true) * 1000);
@@ -52,6 +53,7 @@ class IOutputMsg extends AIntercomMsg implements OutputMsg
             'convoId' => $convoId,
             'deliverAt' => $deliverAt,
             'scene' => $scene,
+            'fromBot' => $fromBot,
         ]);
     }
 
