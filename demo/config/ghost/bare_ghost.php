@@ -65,6 +65,8 @@ return new \Commune\Ghost\IGhostConfig([
 
         // clone service
         GhostProviders\ClonerServiceProvider::class,
+
+        \Commune\NLU\NLUServiceProvider::class,
     ],
 
     'options' => [],
