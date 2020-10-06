@@ -21,6 +21,8 @@ use Commune\Message\Host\SystemInt\SessionSyncInt;
 
 
 /**
+ * @title 加入其它会话的申请
+ *
  * @author thirdgerb <thirdgerb@gmail.com>
  *
  * @property-read string $session

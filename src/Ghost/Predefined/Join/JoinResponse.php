@@ -22,7 +22,7 @@ use Commune\Protocals\HostMsg\Convo\ContextMsg;
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  *
- * @title 确认加入会话的申请.
+ * @title 接受到加入其它会话的申请.
  *
  * @property-read string $session
  * @property-read string $userId
