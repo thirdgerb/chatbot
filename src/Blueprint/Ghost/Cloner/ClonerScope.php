@@ -18,10 +18,14 @@ use Commune\Support\Arr\ArrayAndJsonAble;
  *
  * 当前 Ghost 分身的作用域. 可以用于定义记忆体的长程作用域.
  *
+ * ## 消息相关维度
+ *
  * @property-read string $shellId
  * @property-read string $sessionId         Clone 的 Id.
  * @property-read string $convoId
  * @property-read string $guestId           消息发送者在 Clone 里的 GuestId, 平台无关.
+ *
+ * ## 时间相关维度
  *
  * @property-read string $year
  * @property-read string $month
@@ -55,6 +59,8 @@ interface ClonerScope extends ArrayAndJsonAble
         self::SESSION_ID,
         self::GUEST_ID,
         self::CONVO_ID,
+
+        ## 时间维度
         self::YEAR,
         self::MONTH,
         self::MONTH_DAY,

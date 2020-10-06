@@ -58,7 +58,8 @@ class JoinRequest extends ACodeContext
         return $stage
             ->onActivate(function(Dialog $dialog) {
                 $cloner = $dialog->cloner;
-                $scene = $cloner->scene;
+                // $scene = $cloner->scene;
+                $guest = $cloner->guest;
 
                 $currentSession = $cloner->getSessionId();
                 if ($currentSession === $this->session) {
@@ -77,9 +78,9 @@ class JoinRequest extends ACodeContext
 
                 $join = JoinResponse::genUcl([
                    'session' => $this->session,
-                    'userId' => $scene->userId,
-                    'userName' => $scene->userName,
-                    'fromApp' => $scene->fromApp,
+                    'userId' => $guest->getId(),
+                    'userName' => $guest->getName(),
+                    'fromApp' => $guest->fromApp(),
                     'fromSession' => $cloner->getSessionId(),
                ]);
 
