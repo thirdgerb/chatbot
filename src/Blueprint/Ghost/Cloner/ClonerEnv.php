@@ -24,7 +24,9 @@ namespace Commune\Blueprint\Ghost\Cloner;
  *
  * @property-read int $userLevel            用户等级信息
  * @property-read array $userInfo           用户更多信息. 视客户端决定是否存在.
+ * 
  * @property-read string|null $lang         语言类型
+ * @property-read array $clientInfo         更详细的客户端场景数据. 
  *
  * @property-read string|null $botId        机器人Id
  * @property-read string|null $botName      机器人名称
@@ -33,9 +35,15 @@ namespace Commune\Blueprint\Ghost\Cloner;
  */
 interface ClonerEnv extends \ArrayAccess
 {
+    // 更多用户信息
     const USER_LEVEL_KEY = 'userLevel';
     const USER_INFO_KEY = 'userInfo';
+    
+    // 环境语言
     const LANG_LOCALE_KEY = 'lang';
+    const CLIENT_INFO = 'clientInfo';
+    
+    // 更多机器人信息
     const BOT_NAME_KEY = 'botName';
     const BOT_ID_KEY = 'botId';
     const BOT_INFO_KEY = 'botInfo';
