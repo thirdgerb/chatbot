@@ -37,7 +37,7 @@ use Monolog\Logger as Monolog;
  * @property-read bool|null $permission 文件的权限设置
  * @property-read bool $locking 是否文件锁
  * 
- * @property-read bool $forceRegister 是否强制注册.
+ * @property-read bool $forceRegister 是否强制注册. 会覆盖掉默认的配置 
  */
 class LoggerByMonologProvider extends ServiceProvider
 {

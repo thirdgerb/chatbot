@@ -97,6 +97,8 @@ interface DependInjections
         Contracts\Ghost\RuntimeDriver::class,
         // 广播模块
         Contracts\Messenger\Broadcaster::class,
+        // ghost 自己发送异步消息
+        Contracts\Messenger\GhostMessenger::class,
     ];
 
     // ghost 请求创建时绑定的实例.
@@ -118,6 +120,9 @@ interface DependInjections
         Shell::class,
         Shell\Session\ShellLogger::class,
         Shell\Session\ShellStorage::class,
+        // 发送消息给 ghost
+        Contracts\Messenger\ShellMessenger::class,
+        Contracts\Messenger\Broadcaster::class,
     ];
 
     const SHELL_REQ_INSTANCES = [
