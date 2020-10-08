@@ -40,6 +40,7 @@ interface MemoryDef extends Def
 
 
     /**
+     * 在上下文中生成 Memory 的唯一 id
      * @param Cloner $cloner
      * @return string
      */

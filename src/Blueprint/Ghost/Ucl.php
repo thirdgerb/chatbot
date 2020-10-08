@@ -13,16 +13,15 @@ namespace Commune\Blueprint\Ghost;
 
 use Commune\Blueprint\Ghost\Cloner\ClonerInstanceStub;
 use Commune\Blueprint\Ghost\Exceptions\DefNotDefinedException;
+use Commune\Blueprint\Ghost\Exceptions\InvalidQueryException;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Support\Arr\ArrayAbleToJson;
-use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Utils\StringUtils;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
 use Commune\Blueprint\Ghost\MindDef\StageDef;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
-use Commune\Blueprint\Ghost\Exceptions\InvalidQueryException;
 use Commune\Support\Utils\TypeUtils;
 
 /**
@@ -69,12 +68,12 @@ class Ucl implements UclInterface
      */
     protected $_asIntent;
 
-    /**
-     * @var bool
-     */
-    protected $instanced = false;
-
     /*---- cached ---*/
+
+    /**
+     * @var string|false|null
+     */
+    protected $invalid;
 
     /**
      * @var string|null
@@ -128,6 +127,13 @@ class Ucl implements UclInterface
         SpyAgency::incr(static::class);
     }
 
+    /**
+     * 生成一个 Ucl 对象.
+     * @param string $contextName
+     * @param array $query
+     * @param string $stageName
+     * @return Ucl
+     */
     public static function make(
         string $contextName,
         array $query = [],
@@ -139,38 +145,10 @@ class Ucl implements UclInterface
         return new static($contextName, $stageName, $query);
     }
 
-
-    public static function newInstance(Cloner $cloner, string $contextName, array $query = null, string $stageName = '')  : Ucl
-    {
-        $contextName = ContextUtils::normalizeContextName($contextName);
-        $stageName = ContextUtils::normalizeStageName($stageName);
-
-        $ucl = new static($contextName, $stageName, $query);
-        return $ucl->toInstance($cloner);
-    }
-
-    public static function parseIntentName($ucl): ? string
-    {
-        if ($ucl instanceof Ucl) {
-            return $ucl->getStageFullname();
-        }
-
-        $parts = explode(self::QUERY_SEPARATOR, $ucl, 2);
-        $first = $parts[0] ?? '';
-
-        // 生成合法的 intentName
-        $intentName = str_replace(
-            self::STAGE_SEPARATOR,
-            Context::CONTEXT_STAGE_DELIMITER,
-            $first
-        );
-
-        return ContextUtils::isValidIntentName($intentName)
-            ? $intentName
-            : null;
-    }
-
-
+    /**
+     * 获取当前 Context 的唯一 Id
+     * @return string
+     */
     public function getContextId() : string
     {
         return $this->contextId
@@ -182,12 +160,20 @@ class Ucl implements UclInterface
 
     /*------- compare -------*/
 
+    /**
+     * 判断两个 Ucl 是否在相同的 Context 下.
+     * 即便相同, 也不一定在同一个实例.
+     *
+     * @param Ucl $ucl
+     * @return bool
+     */
     public function atSameContext(Ucl $ucl) : bool
     {
         return $this->_contextName === $ucl->contextName;
     }
 
     /**
+     * 判断两个 Ucl 是否在相同的 Context 实例下.
      * @param Ucl $ucl
      * @return bool
      */
@@ -197,6 +183,11 @@ class Ucl implements UclInterface
             && $this->getContextId() === $ucl->getContextId();
     }
 
+    /**
+     * 判断两个 Ucl 是否完全一致
+     * @param string $ucl
+     * @return bool
+     */
     public function equals($ucl) : bool
     {
         $decoded = Ucl::decode($ucl);
@@ -204,18 +195,61 @@ class Ucl implements UclInterface
             && $this->_stageName === $decoded->stageName;
     }
 
-    public function isInstanced(): bool
-    {
-        return $this->instanced;
-    }
 
+    /**
+     * 判断当前的 Ucl 是否合法.
+     * 需要 实例化 + 合法格式 + 定义的 stage def 存在.
+     * @param Cloner $cloner
+     * @return bool
+     */
     public function isValid(Cloner $cloner): bool
     {
-        return $this->isInstanced()
-            && $this->isValidPattern()
-            && $this->stageExists($cloner);
+        $invalid = $this->isInvalid($cloner);
+        return is_null($invalid);
     }
 
+    public function isInvalid(Cloner $cloner) : ? string
+    {
+        if ($this->invalid === false) {
+            return null;
+        } elseif (is_string($this->invalid)) {
+            return $this->invalid;
+        }
+
+        $encoded = $this->encode();
+        if (!$this->isValidPattern()) {
+            return $this->invalid = "ucl $encoded pattern is invalid";
+        }
+
+        if (!$this->stageExists($cloner)) {
+            return $this->invalid = "ucl $encoded stage not defined";
+        }
+
+        $def = $this->findContextDef($cloner);
+        $names = $def->getQueryNames();
+        foreach ($names as $name) {
+            $isList = TypeUtils::isListTypeHint($name);
+            $key = $isList
+                ? TypeUtils::pureListTypeHint($name)
+                : $name;
+
+            if (!isset($key, $this->query)) {
+                return $this->invalid = "ucl $encoded miss query value of $key";
+            }
+
+            if ($isList && !is_array($this->query[$key])) {
+                return $this->invalid = "ucl $encoded expect key $key as array";
+            }
+        }
+
+        $this->invalid = false;
+        return null;
+    }
+
+    /**
+     * 判断当前 Ucl 是否符合预设的字符串格式.
+     * @return bool
+     */
     public function isValidPattern() : bool
     {
         return ContextUtils::isValidContextName($this->_contextName)
@@ -226,6 +260,11 @@ class Ucl implements UclInterface
 
     /*------- redirect -------*/
 
+    /**
+     * 当前 Ucl 给出另一个 stage 的 ucl
+     * @param string $stageName
+     * @return Ucl
+     */
     public function goStage(string $stageName = ContextDef::START_STAGE_NAME) : Ucl
     {
         $isWildcardPattern = StringUtils::isWildcardPattern($stageName);
@@ -240,7 +279,13 @@ class Ucl implements UclInterface
         return new static($this->_contextName, $stageName, $this->_query);
     }
 
-
+    /**
+     * 使用相同 Context 下 stage 的全名来获得一个新的 Ucl
+     * 主要是为了传递 Query 等参数.
+     *
+     * @param string $fullname
+     * @return Ucl
+     */
     public function goStageByFullname(string $fullname) : Ucl
     {
         if (!ContextUtils::isValidStageFullName($fullname)) {
@@ -258,6 +303,7 @@ class Ucl implements UclInterface
     /*------- create -------*/
 
     /**
+     * 将一个字符串解码成 Ucl 对象, 如果解码不成功, 抛出异常.
      * @param string|Ucl $string
      * @return Ucl
      * @throws InvalidArgumentException
@@ -291,6 +337,11 @@ class Ucl implements UclInterface
         return static::make($contextName, $query, $stageName);
     }
 
+    /**
+     * 将一个字符串反解为 query 数组.
+     * @param string $str
+     * @return array
+     */
     public static function decodeQueryStr(string $str) : array
     {
         if (empty($str)) {
@@ -302,6 +353,10 @@ class Ucl implements UclInterface
         return $query;
     }
 
+    /**
+     * 当前 Ucl 生成 ucl 字符串.
+     * @return string
+     */
     public function encode() : string
     {
         if (isset($this->encoded)) {
@@ -316,11 +371,13 @@ class Ucl implements UclInterface
             );
     }
 
-    public function toString(): string
-    {
-        return $this->encode();
-    }
-
+    /**
+     * 将 ucl 的参数合成为 ucl 字符串.
+     * @param string $contextName
+     * @param string $stageName
+     * @param array $query
+     * @return string
+     */
     public static function encodeUcl(
         string $contextName,
         string $stageName = '',
@@ -342,6 +399,11 @@ class Ucl implements UclInterface
         return $ucl;
     }
 
+    /**
+     * 将 query 序列化
+     * @param array $query
+     * @return string
+     */
     public static function encodeQueryStr(array $query) : string
     {
         return http_build_query($query);
@@ -349,17 +411,31 @@ class Ucl implements UclInterface
 
     /*------- property -------*/
 
+    /**
+     * 为 Ucl 手动设置一个另外的意图名
+     * @param string $intentName
+     * @return Ucl
+     */
     public function asIntent(string $intentName) : self
     {
         $this->_asIntent = $intentName;
         return $this;
     }
 
+    /**
+     * 获取意图的名称.
+     * @return string
+     */
     public function getIntentName() : string
     {
         return $this->_asIntent ?? $this->getStageFullname();
     }
 
+    /**
+     * 获取 Stage 的完整名称.
+     * @param string|null $stage
+     * @return string
+     */
     public function getStageFullname(string $stage = null) : string
     {
         $stage = $stage ?? $this->_stageName;
@@ -370,63 +446,13 @@ class Ucl implements UclInterface
         );
     }
 
-    /*------- instance -------*/
-
-    public function toInstance(Cloner $cloner): Ucl
-    {
-        if (!$this->stageExists($cloner)) {
-            throw new DefNotDefinedException(
-                StageDef::class,
-                $this->getStageFullname()
-            );
-        }
-
-        if ($this->instanced) {
-            return $this;
-        }
-
-        $contextDef = $this->findContextDef($cloner);
-        $queryNames = $contextDef->getQueryNames();
-        $query = $this->mergeQuery($queryNames, $contextDef, $cloner);
-
-        $instance = new static($this->_contextName, $this->_stageName, $query);
-        $instance->instanced = true;
-
-        return $instance;
-    }
-
-    protected function mergeQuery(array $queryNames, ContextDef $contextDef, Cloner $cloner) : array
-    {
-        $query = empty($queryNames)
-            ? []
-            : ArrayUtils::parseValuesByKeysWithListMark(
-                $this->_query,
-                $queryNames
-            );
-
-        $scopes = $contextDef->getScopes();
-        $map = $cloner->scope->getLongTermDimensionsDict($scopes);
-
-        // query 定义值的优先级高于当前作用域的值.
-        $query = $query + $map;
-
-        // query 值不能为 null.
-        array_walk($query, function ($value, $index) {
-            if (is_null($value)) {
-                throw new InvalidQueryException(
-                    $this->contextName,
-                    $index,
-                    'is required'
-                );
-            }
-        });
-
-        return $query;
-    }
-
-
     /*------- find -------*/
 
+    /**
+     * 寻找当前 Ucl 是否定义了意图
+     * @param Cloner $cloner
+     * @return IntentDef|null
+     */
     public function findIntentDef(Cloner $cloner) : ? IntentDef
     {
         $intentName = $this->getIntentName();
@@ -454,12 +480,22 @@ class Ucl implements UclInterface
 
     }
 
+    /**
+     * 当前 Ucl 对应的 stage 是否定义过.
+     * @param Cloner $cloner
+     * @return bool
+     */
     public function stageExists(Cloner $cloner) : bool
     {
         return $this->exists
             ?? $this->exists = $cloner->mind->stageReg()->hasDef($this->getStageFullname());
     }
 
+    /**
+     * 通过 Ucl 获取 stage def
+     * @param Cloner $cloner
+     * @return StageDef
+     */
     public function findStageDef(Cloner $cloner) : StageDef
     {
         return $this->stageDef
@@ -469,6 +505,11 @@ class Ucl implements UclInterface
                 ->getDef($this->getStageFullname());
     }
 
+    /**
+     * 通过 Ucl 获取 ContextDef
+     * @param Cloner $cloner
+     * @return ContextDef
+     */
     public function findContextDef(Cloner $cloner) : ContextDef
     {
         return $this->contextDef
@@ -478,22 +519,28 @@ class Ucl implements UclInterface
                 ->getDef($this->_contextName);
     }
 
+    /**
+     * 通过 Ucl 获取 Context 对象
+     * @param Cloner $cloner
+     * @return Context
+     * @throws InvalidArgumentException
+     */
     public function findContext(Cloner $cloner): Context
     {
-        if (!$this->instanced) {
-            $ucl = $this->toInstance($cloner);
-            return $ucl->findContext($cloner);
-        }
-
+        $contextId = $this->getContextId();
         $runtime = $cloner->runtime;
-        $context = $runtime->getCachedContext($this->getContextId());
+        $context = $runtime->getCachedContext($contextId);
 
         if (isset($context)) {
             return $context;
         }
 
-        // 如果没有缓存, 创建一个新的 context.
+        $invalid = $this->isInvalid($cloner);
+        if (isset($invalid)) {
+            throw new InvalidQueryException($invalid);
+        }
 
+        // 如果没有缓存, 创建一个新的 context.
         $def = $this->findContextDef($cloner);
         $context = $def->wrapContext($cloner, $this);
 
@@ -530,12 +577,46 @@ class Ucl implements UclInterface
         ];
     }
 
-    /*------- dependable -------*/
 
+
+    /*------- cloner instance -------*/
+
+
+    /**
+     * 判断当前的 Ucl 是否已经在 Cloner 中实例化过了.
+     * @return bool
+     */
+    public function isInstanced(): bool
+    {
+        return true;
+    }
+
+    /**
+     * 将一个临时生成的 Ucl 进行实例化.
+     * @param Cloner $cloner
+     * @return Ucl
+     */
+    public function toInstance(Cloner $cloner): Ucl
+    {
+        if (!$this->stageExists($cloner)) {
+            throw new DefNotDefinedException(
+                StageDef::class,
+                $this->getStageFullname()
+            );
+        }
+        return $this;
+    }
+
+    /**
+     * 获取 ClonerInstanceStub, 也就是 memory 中存储的对象.
+     * @return ClonerInstanceStub
+     */
     public function toInstanceStub(): ClonerInstanceStub
     {
         return $this;
     }
+
+    /*------- dependable -------*/
 
     public function isFulfilled(): bool
     {
@@ -582,6 +663,12 @@ class Ucl implements UclInterface
             'instanced',
         ];
     }
+
+    public function toString(): string
+    {
+        return $this->encode();
+    }
+
 
     public function __destruct()
     {

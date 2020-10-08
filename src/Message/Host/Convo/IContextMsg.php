@@ -55,7 +55,7 @@ class IContextMsg extends AbsMessage implements ContextMsg
 
     public function toContext(Cloner $cloner): Context
     {
-        $ucl = Ucl::newInstance($cloner, $this->contextName, $this->query);
+        $ucl = Ucl::make($this->contextName, $this->query);
         $context = $ucl->findContext($cloner);
         $context->merge($this->data);
         return $context;
