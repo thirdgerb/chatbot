@@ -116,7 +116,7 @@ abstract class AbsHelpCmd extends ARequestCmd
         );
     }
 
-    protected function rangeMessages(array $lines) : string
+    public static function rangeMessages(array $lines) : string
     {
         $keys = array_keys($lines);
 

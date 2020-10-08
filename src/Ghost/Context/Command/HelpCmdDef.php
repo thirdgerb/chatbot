@@ -16,6 +16,7 @@ use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
+use Commune\Framework\Command\AbsHelpCmd;
 use Commune\Ghost\Context\ACommandContext;
 use Commune\Message\Host\SystemInt\CommandDescInt;
 use Commune\Message\Host\SystemInt\CommandListInt;
@@ -168,28 +169,7 @@ class HelpCmdDef extends AContextCmdDef
 
     protected function rangeMessages(array $lines) : string
     {
-        $keys = array_keys($lines);
-
-        $maxLength = 0;
-        foreach ($keys as $key) {
-            $len = strlen($key);
-            if ($len > $maxLength) {
-                $maxLength = $len;
-            }
-        }
-
-        $str = '';
-
-        foreach ($lines as $key => $value) {
-            $line = '';
-
-            for ($i = 0; $i < $maxLength ; $i ++ ) {
-                $line .= $key[$i] ?? ' ';
-            }
-            $str.="  $line : $value\n";
-        }
-
-        return $str;
+        return AbsHelpCmd::rangeMessages($lines);
     }
 
 }
