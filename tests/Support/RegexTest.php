@@ -6,6 +6,12 @@ use PHPUnit\Framework\TestCase;
 
 class RegexTest extends TestCase
 {
+    public function testPregReplace()
+    {
+        $t = "abc\ndef\n\nhij\n\n\nklmn\n";
+        $r = preg_replace('/\n+/', "\n\n", $t);
+        $this->assertEquals("abc\n\ndef\n\nhij\n\nklmn\n\n", $r);
+    }
 
     public function testAffirm()
     {
