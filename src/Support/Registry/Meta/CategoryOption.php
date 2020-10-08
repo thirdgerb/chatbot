@@ -21,10 +21,13 @@ use Commune\Support\Option\AbsOption;
  * @property-read string $desc                  分类的简介.
  *
  * @property string $optionClass                storage 里存储的 option的类名
+ * 
  *
  * @property StorageMeta|null $storage          获取数据的 storage. 如果没有定义, 则使用 initStorage.
  *
  * @property StorageMeta|null $initialStorage   初始化时使用的 Storage
+ * 
+ * @property bool $temporary                    标记为临时的资源, 备份时不会备份它. 
  *
  */
 class CategoryOption extends AbsOption
@@ -40,6 +43,7 @@ class CategoryOption extends AbsOption
             'desc' => '',
             'storage' => null,
             'initialStorage' => null,
+            'temporary' => false
         ];
     }
 

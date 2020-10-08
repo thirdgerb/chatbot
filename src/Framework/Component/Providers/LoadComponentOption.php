@@ -117,8 +117,8 @@ class LoadComponentOption extends ServiceProvider
                 . $this->componentName,
 
             'storage' => null,
-
             'initialStorage' => $this->getStorageOption()->toMeta(),
+            'temporary' => true,
         ]));
     }
 
