@@ -13,6 +13,8 @@ namespace Commune\Framework\Providers;
 
 use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Exceptions\CommuneBootingException;
+use Commune\Blueprint\Ghost;
+use Commune\Blueprint\Shell;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Framework\Log\MonologWriter;
 use Monolog\Handler\RotatingFileHandler;
@@ -44,10 +46,10 @@ class LoggerByMonologProvider extends ServiceProvider
     public static function stub(): array
     {
         return [
-            'name' => 'commune',
+            'name' => '',
             'logDir' => CommuneEnv::getLogPath(),
             'days' => 7,
-            'level' => LogLevel::DEBUG,
+            'level' => CommuneEnv::isDebug() ? LogLevel::DEBUG : LogLevel::INFO,
             'bubble' => true,
             'permission' => null,
             'locking' => false,
@@ -85,7 +87,7 @@ class LoggerByMonologProvider extends ServiceProvider
         
         $app->singleton(
             LoggerInterface::class,
-            function($app) {
+            function(ContainerContract $app) {
                 return $this->makeLogger($app);
             }
         );
@@ -104,6 +106,7 @@ class LoggerByMonologProvider extends ServiceProvider
             . DIRECTORY_SEPARATOR
             . ltrim($this->file, DIRECTORY_SEPARATOR);
 
+        // 使用循环文件
         if ($this->days > 0) {
             $handler = new RotatingFileHandler(
                 $path,
@@ -114,6 +117,7 @@ class LoggerByMonologProvider extends ServiceProvider
                 $this->locking
             );
 
+        // 使用单一文件. 
         } else {
             try {
 
@@ -133,8 +137,21 @@ class LoggerByMonologProvider extends ServiceProvider
             }
         }
 
+        // 确定日志的名称. 会根据 shell 或 ghost 重新命名.
+        if (!empty($this->name)) {
+            $name = $this->name;
+        } elseif ($app->has(Shell::class)) {
+            $shell = $app->get(Shell::class);
+            $name = $shell->getId();
+        } elseif ($app->has(Ghost::class)) {
+            $ghost = $app->get(Ghost::class);
+            $name = $ghost->getId();
+        } else {
+            $name = 'commune';
+        }
+
         $logger = new Monolog(
-            $this->name,
+            $name,
             [$handler]
         );
 
