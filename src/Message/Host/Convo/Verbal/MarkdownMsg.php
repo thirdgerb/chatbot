@@ -12,12 +12,13 @@
 namespace Commune\Message\Host\Convo\Verbal;
 
 use Commune\Message\Host\Convo\IText;
+use Commune\Protocals\HostMsg\Tags\Markdown;
 use Commune\Support\Markdown\MarkdownUtils;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
  */
-class MarkdownMsg extends IText
+class MarkdownMsg extends IText implements Markdown
 {
 
     /**
@@ -33,5 +34,11 @@ class MarkdownMsg extends IText
     {
         return static::instance(MarkdownUtils::code($text, $type));
     }
+
+    public function toMarkdownText(): string
+    {
+        return $this->getText();
+    }
+
 
 }
