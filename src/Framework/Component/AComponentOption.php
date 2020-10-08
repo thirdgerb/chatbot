@@ -51,6 +51,7 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
 
 
     /**
+     * 将 $resourcePath 下的资源加载到 OptRegistry 里的 $categoryName 分类里.
      * @param App $app
      * @param string $categoryName
      * @param string $optionClass
@@ -88,6 +89,11 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
     }
 
 
+    /**
+     * 获取和组件相关的某个 OptionClass 的 ID
+     * @param string $optionClass
+     * @return string
+     */
     public function getResourceOptionId(string $optionClass) : string
     {
         return LoadComponentOption::makeComponentOptionId(
@@ -97,6 +103,13 @@ abstract class AComponentOption extends AbsOption implements ComponentOption
     }
 
 
+    /**
+     * 加载文本资源. 
+     * @param App $app
+     * @param string $langDir
+     * @param bool $intl
+     * @param bool $force
+     */
     public function loadTranslation(
         App $app,
         string $langDir,
