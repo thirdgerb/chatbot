@@ -32,7 +32,6 @@ use Monolog\Logger as Monolog;
  *
  * @property-read string $name 日志的名称
  * @property-read string $logDir 日志文件所在的目录.
- * @property-read string $file   日志文件的相对路径.
  * @property-read int $days  为0 表示不轮换, 否则会按日换文件.
  * @property-read string $level 日志级别.
  * @property-read bool $bubble 是否冒泡到别的handler
@@ -60,13 +59,6 @@ class LoggerByMonologProvider extends ServiceProvider
     public function getId(): string
     {
         return LoggerInterface::class;
-    }
-    
-    public function __get_file() : string
-    {
-        return empty($this->_data['file'])
-            ? $this->name . '.log'
-            : $this->_data['file'];
     }
 
     public function getDefaultScope(): string
@@ -101,10 +93,24 @@ class LoggerByMonologProvider extends ServiceProvider
     public function makeLogger(ContainerContract $app) : LoggerInterface
     {
         $level = Monolog::toMonologLevel($this->level);
+        // 确定日志的名称. 会根据 shell 或 ghost 重新命名.
+        if (!empty($this->name)) {
+            $name = $this->name;
+        } elseif ($app->has(Shell::class)) {
+            $shell = $app->get(Shell::class);
+            $name = $shell->getId();
+        } elseif ($app->has(Ghost::class)) {
+            $ghost = $app->get(Ghost::class);
+            $name = $ghost->getId();
+        } else {
+            $name = 'commune';
+        }
 
+
+        $file = $name . '.log';
         $path = rtrim($this->logDir, DIRECTORY_SEPARATOR)
             . DIRECTORY_SEPARATOR
-            . ltrim($this->file, DIRECTORY_SEPARATOR);
+            . ltrim($file, DIRECTORY_SEPARATOR);
 
         // 使用循环文件
         if ($this->days > 0) {
@@ -135,19 +141,6 @@ class LoggerByMonologProvider extends ServiceProvider
                     $e
                 );
             }
-        }
-
-        // 确定日志的名称. 会根据 shell 或 ghost 重新命名.
-        if (!empty($this->name)) {
-            $name = $this->name;
-        } elseif ($app->has(Shell::class)) {
-            $shell = $app->get(Shell::class);
-            $name = $shell->getId();
-        } elseif ($app->has(Ghost::class)) {
-            $ghost = $app->get(Ghost::class);
-            $name = $ghost->getId();
-        } else {
-            $name = 'commune';
         }
 
         $logger = new Monolog(
