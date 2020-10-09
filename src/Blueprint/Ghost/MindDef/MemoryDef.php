@@ -12,8 +12,6 @@
 namespace Commune\Blueprint\Ghost\MindDef;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Support\Parameter\ParamDefs;
-use Commune\Blueprint\Ghost\Memory\Memory;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 
 

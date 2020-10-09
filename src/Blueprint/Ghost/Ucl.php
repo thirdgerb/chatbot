@@ -68,6 +68,13 @@ class Ucl implements UclInterface
      */
     protected $_asIntent;
 
+
+    /**
+     * @var bool
+     */
+    protected $_instanced = false;
+
+
     /*---- cached ---*/
 
     /**
@@ -527,6 +534,8 @@ class Ucl implements UclInterface
      */
     public function findContext(Cloner $cloner): Context
     {
+        $this->toInstance($cloner);
+
         $contextId = $this->getContextId();
         $runtime = $cloner->runtime;
         $context = $runtime->getCachedContext($contextId);
@@ -588,7 +597,7 @@ class Ucl implements UclInterface
      */
     public function isInstanced(): bool
     {
-        return true;
+        return $this->_instanced;
     }
 
     /**
@@ -598,12 +607,20 @@ class Ucl implements UclInterface
      */
     public function toInstance(Cloner $cloner): Ucl
     {
-        if (!$this->stageExists($cloner)) {
-            throw new DefNotDefinedException(
-                StageDef::class,
-                $this->getStageFullname()
-            );
+        if ($this->isInstanced()) {
+            return $this;
         }
+
+        // 重新定义 query.
+        $def = $this->findContextDef($cloner);
+        $scopes = $def->asMemoryDef()->getScopes();
+        if (empty($scopes)) {
+            return $this;
+        }
+
+        $scopeValues = $cloner->scope->getLongTermDimensionsDict($scopes);
+        $this->_query = $this->_query + $scopeValues;
+        $this->_instanced = true;
         return $this;
     }
 
@@ -660,7 +677,7 @@ class Ucl implements UclInterface
             '_stageName',
             '_query',
             '_asIntent',
-            'instanced',
+            '_instanced',
         ];
     }
 
