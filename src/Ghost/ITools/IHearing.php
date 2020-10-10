@@ -15,7 +15,7 @@ use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Tools\Hearing;
 use Commune\Blueprint\Ghost\Tools\Matcher;
-use Commune\Protocals\HostMsg\Convo\EventMsg;
+use Commune\Protocols\HostMsg\Convo\EventMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

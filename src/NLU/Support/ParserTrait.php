@@ -12,10 +12,10 @@
 namespace Commune\NLU\Support;
 
 use Commune\Blueprint\Framework\Session;
-use Commune\Protocals\Abstracted\Intention;
-use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocols\Abstracted\Intention;
+use Commune\Protocols\Comprehension;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\Intercom\InputMsg;
 
 
 /**

@@ -11,9 +11,9 @@
 
 namespace Commune\Message\Host\Convo;
 
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\HostMsg\Convo\UnsupportedMsg;
+use Commune\Protocols\HostMsg\Convo\UnsupportedMsg;
 use Commune\Support\Utils\StringUtils;
 
 /**
@@ -48,7 +48,7 @@ class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
         return $this->type;
     }
 
-    public function getProtocalId(): string
+    public function getProtocolId(): string
     {
         return StringUtils::namespaceSlashToDot(UnsupportedMsg::class);
     }
@@ -56,7 +56,7 @@ class IUnsupportedMsg extends AbsMessage implements UnsupportedMsg
 
     public function getText(): string
     {
-        return $this->getProtocalId();
+        return $this->getProtocolId();
     }
 
     public function isEmpty(): bool

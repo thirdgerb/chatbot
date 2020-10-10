@@ -11,8 +11,8 @@
 
 namespace Commune\Blueprint\Platform;
 
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
 
 /**
  * 获取 Packer, 将 packer 的数据转化为 Commune 所需要的 AppRequest

@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Components\Demo\Maze\Logic\Manager;
 use Commune\Components\Demo\Maze\Memories\UserPlayHistory;
 use Commune\Ghost\Context\ACodeContext;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
 
 
 /**

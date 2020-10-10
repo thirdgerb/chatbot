@@ -15,8 +15,8 @@ use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Blueprint\Exceptions\CommuneLogicException;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Kernel\Protocals\LogContext;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Kernel\Protocols\LogContext;
 use Commune\Support\Utils\TypeUtils;
 use Psr\Log\LoggerInterface;
 

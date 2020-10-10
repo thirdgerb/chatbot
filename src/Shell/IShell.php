@@ -18,23 +18,23 @@ use Commune\Blueprint\Framework\ProcContainer;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\ServiceRegistry;
 use Commune\Blueprint\Framework\Session;
-use Commune\Blueprint\Kernel\Protocals\AppProtocal;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\HasInput;
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Kernel\Protocols\AppProtocol;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\HasInput;
+use Commune\Blueprint\Kernel\Protocols\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
 use Commune\Blueprint\Shell;
 use Commune\Blueprint\Shell\ShellSession;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
 use Commune\Framework\App\AbsAppKernel;
-use Commune\Kernel\Protocals\IShellOutputResponse;
-use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Kernel\Protocols\IShellOutputResponse;
+use Commune\Protocols\Comprehension;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\Intercom\InputMsg;
 use Commune\Shell\Bootstrap;
 use Commune\Support\Utils\TypeUtils;
 
@@ -105,10 +105,10 @@ class IShell extends AbsAppKernel implements Shell
 
     /*------- session -------*/
 
-    protected function getProtocalOptions(): array
+    protected function getProtocolOptions(): array
     {
-        $protocals = $this->getConfig()->protocals;
-        return $protocals;
+        $Protocols = $this->getConfig()->Protocols;
+        return $Protocols;
     }
 
     protected function failResponse(
@@ -195,9 +195,9 @@ class IShell extends AbsAppKernel implements Shell
         return $session;
     }
 
-    protected function isValidFinaleResponse(AppProtocal $protocal): bool
+    protected function isValidFinaleResponse(AppProtocol $Protocol): bool
     {
-        return $protocal instanceof ShellOutputResponse;
+        return $Protocol instanceof ShellOutputResponse;
     }
 
 

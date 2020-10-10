@@ -12,7 +12,7 @@
 namespace Commune\Test\Message;
 
 use Commune\Message\Abstracted\IComprehension;
-use Commune\Protocals\Comprehension;
+use Commune\Protocols\Comprehension;
 use Commune\Support\Babel\Babel;
 use PHPUnit\Framework\TestCase;
 

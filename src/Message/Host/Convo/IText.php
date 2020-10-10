@@ -11,9 +11,9 @@
 
 namespace Commune\Message\Host\Convo;
 
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
 use Commune\Support\Utils\StringUtils;
 
 /**
@@ -50,7 +50,7 @@ class IText extends AbsMessage implements VerbalMsg
         return [];
     }
 
-    public function getProtocalId(): string
+    public function getProtocolId(): string
     {
         return $this->getText();
     }

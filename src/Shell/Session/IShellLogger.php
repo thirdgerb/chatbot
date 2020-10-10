@@ -11,7 +11,7 @@
 
 namespace Commune\Shell\Session;
 
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
 use Commune\Blueprint\Shell;
 use Commune\Blueprint\Shell\Session\ShellLogger;
 use Commune\Container\ContainerContract;

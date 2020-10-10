@@ -15,7 +15,7 @@
     - Storage
     - StorageMeta
     - StorageDriver
-- protocal 机制
+- Protocol 机制
 - 各级会话
     - shell session
     - cloner

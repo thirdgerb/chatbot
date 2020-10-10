@@ -19,9 +19,9 @@ use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Support\Swoole\SwooleUtils;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Host;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
 use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputRequest;
 use Commune\Blueprint\Shell;
 use Psr\Log\LoggerInterface;
 

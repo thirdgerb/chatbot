@@ -86,7 +86,7 @@ class INLUManager implements NLUManager
 
     public function asyncSaveMeta(Cloner $cloner, DefMeta $meta): void
     {
-        $protocal = new MindSavePayload([
+        $Protocol = new MindSavePayload([
             'metaName' => get_class($meta),
             'metaData' => $meta->toArray(),
             'force' => true
@@ -96,7 +96,7 @@ class INLUManager implements NLUManager
             ->dispatcher
             ->asyncService(
                 NLUSaveMetaService::class,
-                $protocal->toArray()
+                $Protocol->toArray()
             );
     }
 

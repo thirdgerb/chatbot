@@ -12,14 +12,14 @@
 namespace Commune\Message\Host\Convo\QA;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Protocals\HostMsg\Convo\EventMsg;
-use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
-use Commune\Protocals\HostMsg\Convo\QA\Step;
-use Commune\Protocals\HostMsg\Convo\QA\Stepper;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
-use Commune\Protocals\HostMsg\DefaultEvents;
-use Commune\Protocals\HostMsg\DefaultIntents;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocols\HostMsg\Convo\EventMsg;
+use Commune\Protocols\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocols\HostMsg\Convo\QA\Step;
+use Commune\Protocols\HostMsg\Convo\QA\Stepper;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\HostMsg\DefaultEvents;
+use Commune\Protocols\HostMsg\DefaultIntents;
+use Commune\Protocols\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

@@ -15,7 +15,7 @@ use Commune\Blueprint\Shell\Render\Renderer;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Host\IIntentMsg;
 use Commune\Message\Host\SystemInt\DialogStageEventInt;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 
 
 /**

@@ -14,7 +14,7 @@ namespace Commune\Ghost\IMindDef;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindMeta\EmotionMeta;
 use Commune\Blueprint\Ghost\MindDef\EmotionDef;
-use Commune\Protocals\Comprehension;
+use Commune\Protocols\Comprehension;
 use Commune\Support\Option\Meta;
 use Commune\Support\Option\Wrapper;
 

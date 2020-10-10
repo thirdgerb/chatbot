@@ -15,9 +15,9 @@ use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerScope;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
 use Commune\Framework\Spy\SpyAgency;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocols\Intercom\InputMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
 
 /**

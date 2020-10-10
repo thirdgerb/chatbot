@@ -11,7 +11,7 @@
 
 namespace Commune\Kernel\GhostCmd\User;
 
-use Commune\Protocals\HostMsg\DefaultIntents;
+use Commune\Protocols\HostMsg\DefaultIntents;
 
 
 /**

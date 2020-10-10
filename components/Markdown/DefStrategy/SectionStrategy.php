@@ -23,7 +23,7 @@ use Commune\Components\Markdown\MarkdownComponent;
 use Commune\Components\Markdown\Mindset\SectionStageDef;
 use Commune\Components\Markdown\Options\MDGroupOption;
 use Commune\Message\Host\Convo\Verbal\MarkdownMsg;
-use Commune\Protocals\HostMsg\Convo\QA\Step;
+use Commune\Protocols\HostMsg\Convo\QA\Step;
 use Commune\Support\Markdown\Data\MDSectionData;
 use Commune\Support\Markdown\MarkdownUtils;
 use Commune\Support\Registry\OptRegistry;

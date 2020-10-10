@@ -13,7 +13,7 @@ namespace Commune\Components\Markdown\Analysers\Message;
 
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Message\Host\Convo\Media\BiliVideoMsg;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 
 
 /**

@@ -22,7 +22,7 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Ghost\RuntimeDriver;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Ghost\Memory\IMemory;
-use Commune\Protocals\HostMsg\Convo\ContextMsg;
+use Commune\Protocols\HostMsg\Convo\ContextMsg;
 use Commune\Blueprint\Exceptions\IO\SaveDataException;
 
 

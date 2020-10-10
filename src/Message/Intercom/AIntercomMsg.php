@@ -12,8 +12,8 @@
 namespace Commune\Message\Intercom;
 
 use Commune\Message\Host\Convo\IText;
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\IntercomMsg;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\IntercomMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Utils\StringUtils;
 use Commune\Support\Uuid\HasIdGenerator;
@@ -156,7 +156,7 @@ abstract class AIntercomMsg extends AbsMessage implements IntercomMsg, HasIdGene
 
     /*------- properties -------*/
 
-    public function getProtocalId(): string
+    public function getProtocolId(): string
     {
         return get_class($this->getMessage());
     }

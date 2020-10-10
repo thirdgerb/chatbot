@@ -25,9 +25,9 @@ use Commune\Components\SpaCyNLU\Configs\ChatModuleConfig;
 use Commune\Components\SpaCyNLU\Managers\SimpleChatManager;
 use Commune\Message\Host\Convo\IText;
 use Commune\NLU\Support\ParserTrait;
-use Commune\Protocals\Abstracted\Replies;
-use Commune\Protocals\Comprehension;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocols\Abstracted\Replies;
+use Commune\Protocols\Comprehension;
+use Commune\Protocols\Intercom\InputMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 

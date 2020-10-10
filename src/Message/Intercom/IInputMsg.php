@@ -11,9 +11,9 @@
 
 namespace Commune\Message\Intercom;
 
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\InputMsg;
-use Commune\Protocals\Intercom\OutputMsg;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\Intercom\InputMsg;
+use Commune\Protocols\Intercom\OutputMsg;
 use Commune\Support\Utils\TypeUtils;
 
 /**

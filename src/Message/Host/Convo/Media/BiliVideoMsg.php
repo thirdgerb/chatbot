@@ -3,8 +3,8 @@
 namespace Commune\Message\Host\Convo\Media;
 
 
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\HostMsg\Convo\Media\VideoMsg;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\HostMsg\Convo\Media\VideoMsg;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Utils\StringUtils;
 
@@ -62,7 +62,7 @@ class BiliVideoMsg extends AbsMessage implements VideoMsg
         return [];
     }
 
-    public function getProtocalId(): string
+    public function getProtocolId(): string
     {
         return $this->getResource();
     }

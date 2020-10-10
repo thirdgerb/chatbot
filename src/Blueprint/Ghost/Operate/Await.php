@@ -12,9 +12,9 @@
 namespace Commune\Blueprint\Ghost\Operate;
 
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Protocals\HostMsg\Convo\QA\Confirm;
-use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
-use Commune\Protocals\HostMsg\DefaultIntents;
+use Commune\Protocols\HostMsg\Convo\QA\Confirm;
+use Commune\Protocols\HostMsg\Convo\QA\QuestionMsg;
+use Commune\Protocols\HostMsg\DefaultIntents;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

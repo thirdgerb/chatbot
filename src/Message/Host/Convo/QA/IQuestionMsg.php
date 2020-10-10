@@ -16,13 +16,13 @@ use Commune\Blueprint\Ghost\Ucl;
 use Commune\Contracts\Trans\Translator;
 use Commune\Ghost\Support\ContextUtils;
 use Commune\Message\Intercom\IInputMsg;
-use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocols\Comprehension;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocols\Intercom\InputMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\HostMsg\Convo\QA\QuestionMsg;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
 use Commune\Support\Struct\Struct;
 use Commune\Support\Utils\StringUtils;
 
@@ -450,7 +450,7 @@ class IQuestionMsg extends AbsMessage implements QuestionMsg
         return empty($this->_data['query']);
     }
 
-    public function getProtocalId(): string
+    public function getProtocolId(): string
     {
         return $this->query;
     }

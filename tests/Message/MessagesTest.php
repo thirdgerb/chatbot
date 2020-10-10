@@ -13,7 +13,7 @@ namespace Commune\Test\Message;
 
 use Commune\Message;
 use Commune\Support\Message\MessageTestCase;
-use Commune\Kernel\Protocals;
+use Commune\Kernel\Protocols;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -62,13 +62,13 @@ class MessagesTest extends MessageTestCase
         // api
         Message\Host\IApiMsg::class,
 
-        // kernel protocals
-        Protocals\IGhostRequest::class,
-        Protocals\IGhostResponse::class,
-        Protocals\IShellInputRequest::class,
-        Protocals\IShellInputResponse::class,
-        Protocals\IShellOutputRequest::class,
-        Protocals\IShellOutputResponse::class,
+        // kernel Protocols
+        Protocols\IGhostRequest::class,
+        Protocols\IGhostResponse::class,
+        Protocols\IShellInputRequest::class,
+        Protocols\IShellInputResponse::class,
+        Protocols\IShellOutputRequest::class,
+        Protocols\IShellOutputResponse::class,
     ];
 
 

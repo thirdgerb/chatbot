@@ -17,7 +17,7 @@ use Commune\Blueprint\Platform;
 use Commune\Contracts\Log\ExceptionReporter;
 use Psr\Log\LoggerInterface;
 use Commune\Blueprint\Configs\PlatformConfig;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
 
 
 /**

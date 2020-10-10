@@ -13,7 +13,7 @@ namespace Commune\Ghost\Cloner;
 
 use Commune\Blueprint\Ghost\Cloner\ClonerEnv;
 use Commune\Blueprint\Ghost\Cloner\ClonerGuest;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
 use Commune\Container\ContainerContract;
 use Commune\Support\Arr\TArrayData;
 

@@ -11,9 +11,9 @@
 
 namespace Commune\Contracts\Api;
 
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Protocals\HostMsg\ApiMsg;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Protocols\HostMsg\ApiMsg;
 
 
 /**

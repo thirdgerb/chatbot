@@ -15,7 +15,7 @@ use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Runtime\Waiter;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Message\Host\Convo\QA\IQuestionMsg;
-use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
+use Commune\Protocols\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Support\Message\Message;
 
 /**

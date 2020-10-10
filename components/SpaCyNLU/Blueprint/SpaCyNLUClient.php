@@ -13,8 +13,8 @@ namespace Commune\Components\SpaCyNLU\Blueprint;
 
 use Commune\Blueprint\Ghost\MindDef\ChatDef;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
-use Commune\Components\SpaCyNLU\Protocals\ChatReplyData;
-use Commune\Components\SpaCyNLU\Protocals\IntentPredictionData;
+use Commune\Components\SpaCyNLU\Protocols\ChatReplyData;
+use Commune\Components\SpaCyNLU\Protocols\IntentPredictionData;
 
 
 /**

@@ -13,7 +13,7 @@ namespace Commune\Message\Host\SystemInt;
 
 
 use Commune\Message\Host\IIntentMsg;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 
 /**
  * 用 event + stage 的方式来定义输出结果.

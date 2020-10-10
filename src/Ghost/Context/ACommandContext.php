@@ -19,7 +19,7 @@ use Commune\Ghost\Context\Command\AContextCmdDef;
 use Commune\Ghost\Context\Command\HelpCmdDef;
 use Commune\Ghost\Support\CommandUtils;
 use Commune\Message\Host\SystemInt\CommandErrorInt;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
 
 /**
  * 可以使用命令行的 Context.

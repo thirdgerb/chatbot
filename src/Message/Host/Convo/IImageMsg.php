@@ -11,9 +11,9 @@
 
 namespace Commune\Message\Host\Convo;
 
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\HostMsg\Convo\Media\ImageMsg;
+use Commune\Protocols\HostMsg\Convo\Media\ImageMsg;
 use Commune\Support\Utils\StringUtils;
 
 
@@ -47,7 +47,7 @@ class IImageMsg extends AbsMessage implements ImageMsg
         return '';
     }
 
-    public function getProtocalId(): string
+    public function getProtocolId(): string
     {
         return $this->resource;
     }

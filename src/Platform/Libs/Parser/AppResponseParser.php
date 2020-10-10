@@ -11,11 +11,11 @@
 
 namespace Commune\Platform\Libs\Parser;
 
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\HasOutputs;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\HasOutputs;
 use Commune\Framework\Log\IConsoleLogger;
-use Commune\Protocals\HostMsg\DefaultIntents;
-use Commune\Protocals\HostMsg\IntentMsg;
+use Commune\Protocols\HostMsg\DefaultIntents;
+use Commune\Protocols\HostMsg\IntentMsg;
 use Psr\Log\LogLevel;
 
 

@@ -13,7 +13,7 @@ namespace Commune\Blueprint\Ghost\MindDef;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindDef\Intent\IntentExample;
-use Commune\Protocals\HostMsg\IntentMsg;
+use Commune\Protocols\HostMsg\IntentMsg;
 
 /**
  * 关于意图的定义.

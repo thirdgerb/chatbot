@@ -11,7 +11,7 @@
 
 namespace Commune\Contracts\Messenger;
 
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
 
 /**
  * Ghost 转发异步输入消息的模块.

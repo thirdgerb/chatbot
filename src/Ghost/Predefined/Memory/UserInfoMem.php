@@ -16,7 +16,7 @@ use Commune\Blueprint\Ghost\Context\Depending;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Context\StageBuilder as Stage;
 use Commune\Ghost\Context\AMemoryContext;
-use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocols\HostMsg\Convo\QA\AnswerMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

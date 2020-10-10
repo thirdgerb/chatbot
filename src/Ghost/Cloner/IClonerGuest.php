@@ -13,7 +13,7 @@ namespace Commune\Ghost\Cloner;
 
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Cloner\ClonerGuest;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

@@ -11,8 +11,8 @@
 
 namespace Commune\Contracts\Messenger;
 
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 
 /**
  * Shell 发送消息给 Ghost 的模块.

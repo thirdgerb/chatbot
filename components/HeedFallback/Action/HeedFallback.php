@@ -25,7 +25,7 @@ use Commune\Components\HeedFallback\Libs\FallbackStrategy;
 use Commune\Components\HeedFallback\Libs\FallbackSceneRepository;
 use Commune\Components\HeedFallback\Support\HeedFallbackUtils;
 use Commune\NLU\Support\NLUUtils;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
 use Commune\Support\Registry\Category;
 use Commune\Support\Registry\OptRegistry;
 

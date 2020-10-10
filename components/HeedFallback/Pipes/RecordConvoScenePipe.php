@@ -11,11 +11,11 @@
 
 namespace Commune\Components\HeedFallback\Pipes;
 
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 use Commune\Components\HeedFallback\Data\FallbackSceneOption;
 use Commune\Kernel\ClonePipes\AClonePipe;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
 
 
 /**

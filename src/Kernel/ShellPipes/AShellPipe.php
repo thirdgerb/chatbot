@@ -13,12 +13,12 @@ namespace Commune\Kernel\ShellPipes;
 
 use Commune\Blueprint\CommuneEnv;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellInputResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
 use Commune\Blueprint\Shell\ShellSession;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
 use Commune\Framework\Spy\SpyAgency;

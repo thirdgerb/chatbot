@@ -12,10 +12,10 @@
 namespace Commune\Platform\Libs\SwlAsync;
 
 use Commune\Blueprint\Exceptions\CommuneLogicException;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
 use Commune\Blueprint\Platform\Adapter;
-use Commune\Kernel\Protocals\LogContext;
+use Commune\Kernel\Protocols\LogContext;
 use Commune\Support\Utils\TypeUtils;
 
 

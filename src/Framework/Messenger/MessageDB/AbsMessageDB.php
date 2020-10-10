@@ -13,7 +13,7 @@ namespace Commune\Framework\Messenger\MessageDB;
 
 use Commune\Contracts\Cache;
 use Commune\Contracts\Messenger\MessageDB;
-use Commune\Protocals\IntercomMsg;
+use Commune\Protocols\IntercomMsg;
 use Commune\Support\Babel\Babel;
 use Commune\Support\Utils\TypeUtils;
 use Psr\Log\LoggerInterface;

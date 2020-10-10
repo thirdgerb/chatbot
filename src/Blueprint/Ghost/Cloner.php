@@ -22,11 +22,11 @@ use Commune\Blueprint\Ghost\Runtime\Runtime;
 use Commune\Blueprint\Framework\Auth\Authority;
 use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Kernel\ClonePipes\CloneLockerPipe;
-use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\InputMsg;
-use Commune\Protocals\Intercom\OutputMsg;
-use Commune\Protocals\IntercomMsg;
+use Commune\Protocols\Comprehension;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\Intercom\InputMsg;
+use Commune\Protocols\Intercom\OutputMsg;
+use Commune\Protocols\IntercomMsg;
 use Commune\Support\Registry\OptRegistry;
 use Commune\Blueprint\Ghost\Cloner\ClonerDispatcher;
 

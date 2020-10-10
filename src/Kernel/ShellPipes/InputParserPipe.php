@@ -11,10 +11,10 @@
 
 namespace Commune\Kernel\ShellPipes;
 
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellInputResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
 use Commune\Blueprint\Shell\Parser\InputParser;
 
 
@@ -30,7 +30,7 @@ class InputParserPipe extends AShellPipe
     {
         $input = $request->getInput();
         $message = $input->getMessage();
-        $handler = $this->session->shell->firstProtocalHandler(
+        $handler = $this->session->shell->firstProtocolHandler(
             $this->session->container,
             $message,
             InputParser::class

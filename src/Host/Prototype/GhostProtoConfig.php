@@ -21,7 +21,7 @@ use Commune\Ghost\IGhostConfig;
 use Commune\Ghost\Providers as GhostProviders;
 use Commune\Ghost\Predefined\Intent\Navigation;
 use Commune\Kernel\Handlers\IGhostRequestHandler;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
 use Commune\NLU\NLUServiceProvider;
 use Commune\Components\Demo\Maze\Maze;
 
@@ -76,10 +76,10 @@ class GhostProtoConfig extends IGhostConfig
                 Components\SpaCyNLU\SpaCyNLUComponent::class,
             ],
 
-            // request protocals
-            'protocals' => [
+            // request Protocols
+            'Protocols' => [
                 [
-                    'protocal' => GhostRequest::class,
+                    'Protocol' => GhostRequest::class,
                     // interface
                     'interface' => GhostRequestHandler::class,
                     // 默认的

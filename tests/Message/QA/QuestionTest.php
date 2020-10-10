@@ -16,8 +16,8 @@ use Commune\Message\Host\Convo\QA\IConfirm;
 use Commune\Message\Host\Convo\QA\IConfirmation;
 use Commune\Message\Host\Convo\QA\IQuestionMsg;
 use Commune\Message\Intercom\IInputMsg;
-use Commune\Protocals\HostMsg\Convo\QA\Confirmation;
-use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
+use Commune\Protocols\HostMsg\Convo\QA\Confirmation;
+use Commune\Protocols\HostMsg\Convo\QA\QuestionMsg;
 use PHPUnit\Framework\TestCase;
 
 

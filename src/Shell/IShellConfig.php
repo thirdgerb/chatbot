@@ -13,7 +13,7 @@ namespace Commune\Shell;
 
 use Commune\Support\Option\AbsOption;
 use Commune\Blueprint\Configs\ShellConfig;
-use Commune\Support\Protocal\ProtocalOption;
+use Commune\Support\Protocol\ProtocolOption;
 
 
 /**
@@ -33,7 +33,7 @@ class IShellConfig extends AbsOption implements ShellConfig
             'options' => [],
             'components' => [],
 
-            'protocals' => [
+            'Protocols' => [
             ],
             'sessionExpire' => 864000,
         ];
@@ -42,7 +42,7 @@ class IShellConfig extends AbsOption implements ShellConfig
     public static function relations(): array
     {
         return [
-            'protocals[]' => ProtocalOption::class,
+            'Protocols[]' => ProtocolOption::class,
         ];
     }
 

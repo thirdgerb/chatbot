@@ -21,8 +21,8 @@ use Commune\Components\Demo\Recall\Sandbox;
 use Commune\Contracts\Trans\Translator;
 use Commune\Ghost\Context\ACodeContext;
 use Commune\Message\Host\Convo\Verbal\MarkdownMsg;
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\HostMsg\Convo\QA\AnswerMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

@@ -14,7 +14,7 @@ namespace Commune\Kernel\GhostCmd\User;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Kernel\GhostCmd\AGhostCmd;
-use Commune\Protocals\HostMsg\DefaultIntents;
+use Commune\Protocols\HostMsg\DefaultIntents;
 
 
 /**

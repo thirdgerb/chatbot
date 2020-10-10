@@ -11,11 +11,11 @@
 
 namespace Commune\Platform\Shell\Tcp;
 
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
-use Commune\Kernel\Protocals\IShellInputRequest;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
+use Commune\Kernel\Protocols\IShellInputRequest;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Platform\Libs\Parser\AppResponseParser;

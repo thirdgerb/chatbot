@@ -14,8 +14,8 @@ namespace Commune\Shell\Render;
 use Commune\Blueprint\Shell\Render\Renderer;
 use Commune\Blueprint\Shell\ShellSession;
 use Commune\Message\Host\SystemInt\SessionSyncInt;
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\HostMsg\DefaultIntents;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\HostMsg\DefaultIntents;
 
 
 /**

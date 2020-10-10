@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Runtime\Task;
 use IteratorAggregate;
 use Commune\Blueprint\Ghost\MindDef\ContextDef;
-use Commune\Protocals\HostMsg\Convo\ContextMsg;
+use Commune\Protocols\HostMsg\Convo\ContextMsg;
 use Commune\Support\DI\Injectable;
 
 /**

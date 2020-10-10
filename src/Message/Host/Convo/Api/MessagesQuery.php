@@ -13,7 +13,7 @@ namespace Commune\Message\Host\Convo\Api;
 
 use Commune\Contracts\Messenger\MessageDB;
 use Commune\Message\Host\Convo\IApiMsg;
-use Commune\Protocals\HostMsg\DefaultApi;
+use Commune\Protocols\HostMsg\DefaultApi;
 
 
 /**

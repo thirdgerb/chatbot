@@ -23,8 +23,8 @@ use Commune\Components\HeedFallback\Libs\FallbackStrategyManager;
 use Commune\Components\HeedFallback\Support\HeedFallbackUtils;
 use Commune\Ghost\IMindDef\IIntentDef;
 use Commune\Ghost\Support\ContextUtils;
-use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
-use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
+use Commune\Protocols\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocols\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Support\Utils\StringUtils;
 
 

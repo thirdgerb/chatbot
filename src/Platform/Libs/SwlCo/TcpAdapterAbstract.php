@@ -11,8 +11,8 @@
 
 namespace Commune\Platform\Libs\SwlCo;
 
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
 use Commune\Blueprint\Platform\Adapter;
 use Commune\Support\Utils\TypeUtils;
 use Commune\Blueprint\Exceptions\CommuneLogicException;
@@ -87,7 +87,7 @@ abstract class TcpAdapterAbstract implements Adapter
         // 不合法请求
         } elseif (! TypeUtils::isA($un, $interface)) {
             $type = TypeUtils::getType($un);
-            $this->error = "input is not $interface protocal, $type given";
+            $this->error = "input is not $interface Protocol, $type given";
 
             // 合法请求
         } else {

@@ -11,7 +11,7 @@
 
 namespace Commune\Framework\Messenger\Fake;
 
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
 use Commune\Contracts\Messenger\GhostMessenger;
 
 

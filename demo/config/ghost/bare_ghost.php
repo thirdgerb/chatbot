@@ -76,10 +76,10 @@ return new \Commune\Ghost\IGhostConfig([
         DemoComponent::class,
     ],
 
-    // request protocals
-    'protocals' => [
+    // request Protocols
+    'Protocols' => [
         [
-            'protocal' => \Commune\Blueprint\Kernel\Protocals\GhostRequest::class,
+            'Protocol' => \Commune\Blueprint\Kernel\Protocols\GhostRequest::class,
             // interface
             'interface' => \Commune\Blueprint\Kernel\Handlers\GhostRequestHandler::class,
             // 默认的

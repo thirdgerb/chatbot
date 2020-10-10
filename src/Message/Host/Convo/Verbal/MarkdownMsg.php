@@ -12,7 +12,7 @@
 namespace Commune\Message\Host\Convo\Verbal;
 
 use Commune\Message\Host\Convo\IText;
-use Commune\Protocals\HostMsg\Tags\Markdown;
+use Commune\Protocols\HostMsg\Tags\Markdown;
 use Commune\Support\Markdown\MarkdownUtils;
 
 /**

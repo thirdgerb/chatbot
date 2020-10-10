@@ -11,7 +11,7 @@
 
 namespace Commune\Framework\Messenger\Fake;
 
-use Commune\Protocals\IntercomMsg;
+use Commune\Protocols\IntercomMsg;
 use Commune\Support\Utils\ArrayUtils;
 use Commune\Contracts\Messenger\Condition;
 use Commune\Contracts\Messenger\MessageDB;

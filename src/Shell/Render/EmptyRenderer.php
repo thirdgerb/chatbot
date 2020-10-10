@@ -12,7 +12,7 @@
 namespace Commune\Shell\Render;
 
 use Commune\Blueprint\Shell\Render\Renderer;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -39,7 +39,7 @@ class EmptyRenderer implements Renderer
     public function __invoke(HostMsg $message): ? array
     {
         $class = get_class($message);
-        $id = $message->getProtocalId();
+        $id = $message->getProtocolId();
 
         $this->logger->info(
             static::class . '::'. __FUNCTION__

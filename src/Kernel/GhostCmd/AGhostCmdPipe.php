@@ -11,9 +11,9 @@
 
 namespace Commune\Kernel\GhostCmd;
 
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 use Commune\Container\ContainerContract;
 use Commune\Framework\Command\TRequestCmdPipe;
 use Commune\Kernel\ClonePipes\AClonePipe;

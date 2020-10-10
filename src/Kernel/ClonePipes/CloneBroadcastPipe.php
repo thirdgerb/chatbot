@@ -11,15 +11,15 @@
 
 namespace Commune\Kernel\ClonePipes;
 
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 use Commune\Contracts\Messenger\Broadcaster;
 use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Contracts\Messenger\MessageDB;
-use Commune\Kernel\Protocals\IGhostRequest;
-use Commune\Protocals\Intercom\InputMsg;
-use Commune\Protocals\Intercom\OutputMsg;
-use Commune\Protocals\IntercomMsg;
+use Commune\Kernel\Protocols\IGhostRequest;
+use Commune\Protocols\Intercom\InputMsg;
+use Commune\Protocols\Intercom\OutputMsg;
+use Commune\Protocols\IntercomMsg;
 
 
 /**

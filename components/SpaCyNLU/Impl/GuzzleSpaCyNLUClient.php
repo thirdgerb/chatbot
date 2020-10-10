@@ -14,14 +14,14 @@ namespace Commune\Components\SpaCyNLU\Impl;
 use Commune\Blueprint\CommuneEnv;
 use GuzzleHttp\Client;
 use Commune\Blueprint\Framework\Session;
-use Commune\Components\SpaCyNLU\Protocals\IntentPredictionData;
+use Commune\Components\SpaCyNLU\Protocols\IntentPredictionData;
 use Commune\Support\Struct\InvalidStructException;
 use Commune\Blueprint\Ghost\MindDef\ChatDef;
 use Commune\Blueprint\Ghost\MindDef\Intent\IntentExample;
 use Commune\Blueprint\Ghost\MindDef\IntentDef;
-use Commune\Components\SpaCyNLU\Protocals\ChatReplyData;
+use Commune\Components\SpaCyNLU\Protocols\ChatReplyData;
 use Commune\Components\SpaCyNLU\Blueprint\SpaCyNLUClient;
-use Commune\Components\SpaCyNLU\Protocals\NLUResponse;
+use Commune\Components\SpaCyNLU\Protocols\NLUResponse;
 use Commune\Components\SpaCyNLU\SpaCyNLUComponent;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
@@ -121,7 +121,7 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
             if (!is_array($resProto)) {
                 $error = json_last_error();
                 $this->logger->warning(
-                    static::class . '::'. __FUNCTION__. " invalid response protocal: $error"
+                    static::class . '::'. __FUNCTION__. " invalid response Protocol: $error"
                 );
             }
 
@@ -143,7 +143,7 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
             $this->logger->error($e);
             return new NLUResponse([
                 'code' => 500,
-                'msg' => 'invalid protocal: ' . $e->getMessage()
+                'msg' => 'invalid Protocol: ' . $e->getMessage()
             ]);
 
         } catch (GuzzleException $e) {
@@ -204,7 +204,7 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
             ['body' => $body]
         );
 
-        $proto = $response->getProtocalData();
+        $proto = $response->getProtocolData();
         if (empty($proto)) {
             return [];
         }
@@ -263,7 +263,7 @@ class GuzzleSpaCyNLUClient implements SpaCyNLUClient
         );
 
         try {
-            $reply = new ChatReplyData($response->getProtocalData());
+            $reply = new ChatReplyData($response->getProtocolData());
             if ($reply->isEmpty()) {
                 return null;
             }

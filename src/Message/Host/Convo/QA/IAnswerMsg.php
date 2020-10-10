@@ -11,9 +11,9 @@
 
 namespace Commune\Message\Host\Convo\QA;
 
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocols\HostMsg\Convo\QA\AnswerMsg;
 use Commune\Support\Utils\StringUtils;
 
 /**
@@ -52,7 +52,7 @@ class IAnswerMsg extends AbsMessage implements AnswerMsg
             : null;
     }
 
-    public function getProtocalId(): string
+    public function getProtocolId(): string
     {
         return $this->answer;
     }

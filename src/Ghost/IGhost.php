@@ -13,27 +13,27 @@ namespace Commune\Ghost;
 
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 use Commune\Blueprint\Framework\ProcContainer;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
 use Commune\Ghost\Bootstrap;
 use Commune\Framework\App\AbsAppKernel;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Exceptions\CommuneBootingException;
 use Commune\Blueprint\Framework\ReqContainer;
-use Commune\Blueprint\Kernel\Protocals\AppProtocal;
+use Commune\Blueprint\Kernel\Protocols\AppProtocol;
 use Commune\Blueprint\Framework\ServiceRegistry;
 use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 use Commune\Contracts\Log\ConsoleLogger;
 use Commune\Contracts\Log\LogInfo;
-use Commune\Kernel\Protocals\IGhostResponse;
-use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\InputMsg;
-use Commune\Support\Protocal\ProtocalMatcher;
+use Commune\Kernel\Protocols\IGhostResponse;
+use Commune\Protocols\Comprehension;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\Intercom\InputMsg;
+use Commune\Support\Protocol\ProtocolMatcher;
 use Commune\Support\Utils\TypeUtils;
 
 
@@ -58,12 +58,12 @@ class IGhost extends AbsAppKernel implements Ghost
     protected $config;
 
     /**
-     * @var ProtocalMatcher
+     * @var ProtocolMatcher
      */
     protected $requestProtoMatcher;
 
     /**
-     * @var ProtocalMatcher
+     * @var ProtocolMatcher
      */
     protected $apiProtoMatcher;
 
@@ -180,15 +180,15 @@ class IGhost extends AbsAppKernel implements Ghost
     }
 
 
-    /*--------- protocals ---------*/
+    /*--------- Protocols ---------*/
 
-    protected function getProtocalOptions(): array
+    protected function getProtocolOptions(): array
     {
-        return $this->getConfig()->protocals;
+        return $this->getConfig()->Protocols;
     }
 
-    protected function isValidFinaleResponse(AppProtocal $protocal): bool
+    protected function isValidFinaleResponse(AppProtocol $Protocol): bool
     {
-        return $protocal instanceof GhostResponse;
+        return $Protocol instanceof GhostResponse;
     }
 }

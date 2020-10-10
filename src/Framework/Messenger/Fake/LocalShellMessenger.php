@@ -13,8 +13,8 @@ namespace Commune\Framework\Messenger\Fake;
 
 use Commune\Blueprint\Ghost;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 use Commune\Contracts\Messenger\ShellMessenger;
 
 /**

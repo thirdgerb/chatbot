@@ -13,7 +13,7 @@ namespace Commune\Blueprint\Ghost\Runtime;
 
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Support\Arr\ArrayAndJsonAble;
-use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
+use Commune\Protocols\HostMsg\Convo\QA\QuestionMsg;
 
 
 /**

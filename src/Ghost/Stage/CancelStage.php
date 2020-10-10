@@ -18,7 +18,7 @@ use Commune\Blueprint\Ghost\Dialog\Resume;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Message\Host\SystemInt\DialogStageEventInt;
-use Commune\Protocals\HostMsg\DefaultIntents;
+use Commune\Protocols\HostMsg\DefaultIntents;
 
 
 /**

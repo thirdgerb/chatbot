@@ -14,7 +14,7 @@ namespace Commune\Ghost\Predefined\Join;
 use Commune\Blueprint\Framework\Command\CommandMsg;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
 use Commune\Kernel\GhostCmd\AGhostCmd;
-use Commune\Protocals\HostMsg\Convo\ContextMsg;
+use Commune\Protocols\HostMsg\Convo\ContextMsg;
 
 
 /**

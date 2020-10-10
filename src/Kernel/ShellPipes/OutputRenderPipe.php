@@ -12,13 +12,13 @@
 namespace Commune\Kernel\ShellPipes;
 
 use Commune\Blueprint\Framework\ReqContainer;
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellInputResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
 use Commune\Blueprint\Shell;
 use Commune\Blueprint\Shell\Render\Renderer;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 
 
 /**
@@ -114,7 +114,7 @@ class OutputRenderPipe extends AShellPipe
     {
 
         // 遍历寻找所有的 renderer
-        $gen = $shell->eachProtocalHandler(
+        $gen = $shell->eachProtocolHandler(
             $container,
             $message,
             Renderer::class

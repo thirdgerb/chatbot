@@ -12,11 +12,11 @@
 namespace Commune\Message\Abstracted;
 
 use Commune\Ghost\Support\CommandUtils;
-use Commune\Protocals\Abstracted;
-use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\Abstracted;
+use Commune\Protocols\Comprehension;
+use Commune\Protocols\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocols\HostMsg\Convo\QA\AnswerMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

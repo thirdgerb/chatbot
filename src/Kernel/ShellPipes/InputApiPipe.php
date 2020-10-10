@@ -12,12 +12,12 @@
 namespace Commune\Kernel\ShellPipes;
 
 use Commune\Contracts\Api\ApiController;
-use Commune\Protocals\HostMsg\ApiMsg;
+use Commune\Protocols\HostMsg\ApiMsg;
 use Commune\Support\Utils\TypeUtils;
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellInputResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -85,7 +85,7 @@ class InputApiPipe extends AShellPipe
             return null;
         }
 
-        $controller = $this->session->shell->firstProtocalHandler(
+        $controller = $this->session->shell->firstProtocolHandler(
             $this->session->container,
             $message,
             ApiController::class

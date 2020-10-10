@@ -11,11 +11,11 @@
 
 namespace Commune\Kernel\ClonePipes;
 
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 use Commune\Contracts\Api\ApiController;
-use Commune\Protocals\HostMsg\ApiMsg;
+use Commune\Protocols\HostMsg\ApiMsg;
 use Commune\Support\Utils\TypeUtils;
 
 
@@ -71,7 +71,7 @@ class CloneApiHandlePipe extends AClonePipe
             return null;
         }
 
-        $controller = $this->cloner->ghost->firstProtocalHandler(
+        $controller = $this->cloner->ghost->firstProtocolHandler(
             $this->cloner->container,
             $message,
             ApiController::class

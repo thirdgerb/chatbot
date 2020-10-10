@@ -12,12 +12,12 @@
 namespace Commune\Kernel\GhostCmd;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Container\ContainerContract;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

@@ -19,7 +19,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Host\SystemInt\DialogRequireInt;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
 
 /**
  * 默认的属性类节点, 通常用于定义 Context 的 Entity 属性

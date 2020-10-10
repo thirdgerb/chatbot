@@ -14,10 +14,10 @@ use Commune\Platform\Libs;
 use Commune\Blueprint\CommuneEnv;
 use Clue\React\Stdio\Stdio;
 use React\EventLoop\Factory;
-use Commune\Protocals\HostMsg;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
-use Commune\Protocals\HostMsg\DefaultEvents;
+use Commune\Protocols\HostMsg;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
+use Commune\Protocols\HostMsg\DefaultEvents;
 use Commune\Message\Host\Convo\IEventMsg;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -27,7 +27,7 @@ require __DIR__ . '/../vendor/autoload.php';
 function createRequest(HostMsg $message) : GhostRequest
 {
     $input = \Commune\Message\Intercom\IInputMsg::instance($message, 'test', 'test', 'test');
-    return \Commune\Kernel\Protocals\IGhostRequest::instance('ghost', false, $input);
+    return \Commune\Kernel\Protocols\IGhostRequest::instance('ghost', false, $input);
 }
 
 function renderResponse(Stdio $stdio, GhostResponse $response) : void
@@ -67,7 +67,7 @@ $stdio->on('data', function($line) use ($stdio, $ghost) {
     $request = createRequest($message);
 
     /**
-     * @var \Commune\Blueprint\Kernel\Protocals\GhostResponse $response
+     * @var \Commune\Blueprint\Kernel\Protocols\GhostResponse $response
      */
     $response = $ghost->handleRequest($request);
     renderResponse($stdio, $response);

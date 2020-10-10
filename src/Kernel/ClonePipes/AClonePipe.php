@@ -15,10 +15,10 @@ use Commune\Blueprint\CommuneEnv;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 use Commune\Blueprint\Exceptions\Logic\InvalidArgumentException;
 use Commune\Support\Utils\TypeUtils;
 

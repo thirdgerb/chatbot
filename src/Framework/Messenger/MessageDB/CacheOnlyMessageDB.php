@@ -12,7 +12,7 @@
 namespace Commune\Framework\Messenger\MessageDB;
 
 use Commune\Contracts\Messenger\Condition;
-use Commune\Protocals\IntercomMsg;
+use Commune\Protocols\IntercomMsg;
 
 
 /**

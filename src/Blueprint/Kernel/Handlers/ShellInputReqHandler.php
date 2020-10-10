@@ -11,8 +11,8 @@
 
 namespace Commune\Blueprint\Kernel\Handlers;
 
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

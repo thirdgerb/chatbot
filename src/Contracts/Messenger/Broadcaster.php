@@ -11,9 +11,9 @@
 
 namespace Commune\Contracts\Messenger;
 
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputRequest;
 
 /**
  * 消息广播, 最廉价的异构解决方案.

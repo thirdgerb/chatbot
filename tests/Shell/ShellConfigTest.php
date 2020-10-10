@@ -12,7 +12,7 @@
 namespace Commune\Test\Shell;
 
 use Commune\Host\Prototype\ShellProtoConfig;
-use Commune\Support\Protocal\ProtocalOption;
+use Commune\Support\Protocol\ProtocolOption;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,16 +21,16 @@ use PHPUnit\Framework\TestCase;
 class ShellConfigTest extends TestCase
 {
 
-    public function testProtocals()
+    public function testProtocols()
     {
         $c = new ShellProtoConfig();
 
-        $protocals = $c->protocals;
+        $Protocols = $c->Protocols;
 
-        $this->assertTrue(count($protocals) > 0);
+        $this->assertTrue(count($Protocols) > 0);
 
-        $protocal = current($protocals);
-        $this->assertTrue($protocal instanceof ProtocalOption);
+        $Protocol = current($Protocols);
+        $this->assertTrue($Protocol instanceof ProtocolOption);
     }
 
 }

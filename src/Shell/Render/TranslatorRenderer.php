@@ -17,7 +17,7 @@ use Commune\Contracts\Trans\SelfTranslatable;
 use Commune\Contracts\Trans\Translatable;
 use Commune\Contracts\Trans\Translator;
 use Commune\Message\Host\Convo\IText;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 
 
 /**
@@ -74,7 +74,7 @@ class TranslatorRenderer implements Renderer
         // 可以翻译的协议有 temp 和 slots
         if ($message instanceof Translatable) {
             $slots = $message->getSlots();
-            $id = $message->getProtocalId();
+            $id = $message->getProtocolId();
             $text = $this->translate($id, $slots);
             return [IText::instance($text, $message->getLevel())];
         }

@@ -12,12 +12,12 @@
 namespace Commune\Ghost\Cloner;
 
 use Commune\Blueprint\Ghost\Cloner\ClonerLogger;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
 use Commune\Container\ContainerContract;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Framework\Log\ContextLogger;
 use Commune\Framework\Spy\SpyAgency;
-use Commune\Kernel\Protocals\LogContext;
+use Commune\Kernel\Protocols\LogContext;
 use Psr\Log\LoggerInterface;
 
 /**

@@ -22,12 +22,12 @@ use Commune\Ghost\Context\Command\CommandDefMap;
 use Commune\Ghost\Dialog\IReceive;
 use Commune\Ghost\IOperate\OExiting\OCancel;
 use Commune\Ghost\IOperate\OExiting\OFulfill;
-use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg\Convo\ContextMsg;
-use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
-use Commune\Protocals\HostMsg\ConvoMsg;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocols\Comprehension;
+use Commune\Protocols\HostMsg\Convo\ContextMsg;
+use Commune\Protocols\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\HostMsg\ConvoMsg;
+use Commune\Protocols\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

@@ -13,20 +13,20 @@ namespace Commune\Platform\Libs\Stdio;
 
 use Commune\Blueprint\Framework\Auth\Supervise;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
 use Commune\Blueprint\Platform\Adapter;
 use Commune\Framework\Log\IConsoleLogger;
-use Commune\Kernel\Protocals\IShellInputRequest;
+use Commune\Kernel\Protocols\IShellInputRequest;
 use Commune\Message\Host\Convo\IEventMsg;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
-use Commune\Protocals\HostMsg\Convo\ContextMsg;
-use Commune\Protocals\HostMsg\DefaultEvents;
-use Commune\Protocals\HostMsg\DefaultIntents;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocols\HostMsg\Convo\ContextMsg;
+use Commune\Protocols\HostMsg\DefaultEvents;
+use Commune\Protocols\HostMsg\DefaultIntents;
+use Commune\Protocols\Intercom\InputMsg;
 use Commune\Support\Utils\TypeUtils;
 
 
@@ -159,7 +159,7 @@ class StdioTextAdapter implements Adapter
         $intents = $response->getIntents();
 
         foreach ($intents as $message) {
-            if ($message->getProtocalId() === DefaultIntents::SYSTEM_SESSION_QUIT) {
+            if ($message->getProtocolId() === DefaultIntents::SYSTEM_SESSION_QUIT) {
                 $this->packer->quit = true;
             }
         }

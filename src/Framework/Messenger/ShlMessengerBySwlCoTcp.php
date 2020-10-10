@@ -11,17 +11,17 @@
 
 namespace Commune\Framework\Messenger;
 
-use Commune\Kernel\Protocals\LogContext;
+use Commune\Kernel\Protocols\LogContext;
 use Commune\Support\Babel\Babel;
 use Commune\Support\Swoole\ClientOption;
 use Commune\Support\Utils\TypeUtils;
 use Psr\Log\LoggerInterface;
 use Swoole\ConnectionPool;
 use Swoole\Coroutine\Client;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Kernel\Protocals\IGhostResponse;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Kernel\Protocols\IGhostResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 use Commune\Contracts\Messenger\ShellMessenger;
 
 

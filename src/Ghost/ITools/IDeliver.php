@@ -15,9 +15,9 @@ use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Message\Host\IIntentMsg;
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\InputMsg;
-use Commune\Protocals\IntercomMsg;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\Intercom\InputMsg;
+use Commune\Protocols\IntercomMsg;
 
 /**
  * 投递消息的链式调用工具.

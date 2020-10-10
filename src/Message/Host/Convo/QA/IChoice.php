@@ -11,7 +11,7 @@
 
 namespace Commune\Message\Host\Convo\QA;
 
-use Commune\Protocals\HostMsg\Convo\QA\Choice;
+use Commune\Protocols\HostMsg\Convo\QA\Choice;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

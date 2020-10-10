@@ -11,7 +11,7 @@
 
 namespace Commune\Message\Host\SystemInt;
 
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Commune\Message\Host\IIntentMsg;
 
 /**

@@ -11,16 +11,16 @@
 
 namespace Commune\Framework\Command;
 
-use Commune\Blueprint\Kernel\Protocals\HasInput;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Blueprint\Kernel\Protocols\HasInput;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\Intercom\InputMsg;
 use Psr\Log\LoggerInterface;
-use Commune\Protocals\Comprehension;
+use Commune\Protocols\Comprehension;
 use Commune\Ghost\Support\CommandUtils;
 use Commune\Container\ContainerContract;
 use Commune\Blueprint\Framework\Pipes\RequestCmd;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
 use Commune\Blueprint\Exceptions\Logic\InvalidClassException;
 
 /**

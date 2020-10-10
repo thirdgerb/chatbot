@@ -123,7 +123,7 @@ class FakeHearing implements Hearing
         return $this;
     }
 
-    public function isProtocal(string $protocalName): Matcher
+    public function isProtocol(string $ProtocolName): Matcher
     {
         return $this;
     }

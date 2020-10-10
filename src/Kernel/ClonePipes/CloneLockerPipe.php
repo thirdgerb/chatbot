@@ -12,8 +12,8 @@
 namespace Commune\Kernel\ClonePipes;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 use Commune\Contracts\Messenger\GhostMessenger;
 use Commune\Contracts\Messenger\ShellMessenger;
 use Commune\Framework\Event\FinishRequest;

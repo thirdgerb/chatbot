@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Runtime\Waiter;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Framework\Spy\SpyAgency;
-use Commune\Protocals\HostMsg\Convo\QA\QuestionMsg;
+use Commune\Protocols\HostMsg\Convo\QA\QuestionMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Utils\ArrayUtils;
 use Commune\Support\Uuid\HasIdGenerator;

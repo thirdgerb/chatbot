@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Configs;
 
 use Commune\Support\Option\Option;
-use Commune\Support\Protocal\ProtocalOption;
+use Commune\Support\Protocol\ProtocolOption;
 
 /**
  * 对话机器人消息层的配置.
@@ -48,7 +48,7 @@ use Commune\Support\Protocal\ProtocalOption;
  *
  * ## 协议定义.
  *
- * @property-read ProtocalOption[] $protocals               Shell 处理协议的配置.
+ * @property-read ProtocolOption[] $Protocols               Shell 处理协议的配置.
 
  * ## Session 配置
  *

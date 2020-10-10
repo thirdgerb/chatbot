@@ -14,19 +14,19 @@ namespace Commune\Kernel\Handlers;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
 use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
 use Commune\Blueprint\Kernel\Handlers\ShellInputReqHandler;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellInputResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellInputResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
 use Commune\Blueprint\Shell\ShellSession;
 use Commune\Contracts\Messenger\ShellMessenger;
 use Commune\Framework\Spy\SpyAgency;
-use Commune\Kernel\Protocals\IGhostRequest;
-use Commune\Kernel\Protocals\IShellOutputRequest;
-use Commune\Kernel\Protocals\IShellOutputResponse;
+use Commune\Kernel\Protocols\IGhostRequest;
+use Commune\Kernel\Protocols\IShellOutputRequest;
+use Commune\Kernel\Protocols\IShellOutputResponse;
 use Commune\Kernel\ShellPipes;
 
 /**
@@ -105,7 +105,7 @@ class IShellInputReqHandler implements ShellInputReqHandler
         /**
          * @var ShellOutputReqHandler $handler
          */
-        $handler = $this->session->shell->firstProtocalHandler(
+        $handler = $this->session->shell->firstProtocolHandler(
             $this->session->container,
             $outputRequest,
             ShellOutputReqHandler::class

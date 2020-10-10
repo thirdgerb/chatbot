@@ -14,7 +14,7 @@ namespace Commune\Ghost\Cloner;
 use Commune\Blueprint\Configs\GhostConfig;
 use Commune\Blueprint\Ghost\Cloner\ClonerScene;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
 use Commune\Container\ContainerContract;
 
 /**

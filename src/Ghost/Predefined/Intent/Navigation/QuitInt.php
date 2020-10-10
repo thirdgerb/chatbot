@@ -14,7 +14,7 @@ namespace Commune\Ghost\Predefined\Intent\Navigation;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\Context\AIntentContext;
-use Commune\Protocals\HostMsg\DefaultIntents;
+use Commune\Protocols\HostMsg\DefaultIntents;
 
 
 /**

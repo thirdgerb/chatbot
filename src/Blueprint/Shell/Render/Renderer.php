@@ -11,7 +11,7 @@
 
 namespace Commune\Blueprint\Shell\Render;
 
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 
 
 /**

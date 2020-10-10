@@ -11,9 +11,9 @@
 
 namespace Commune\Message\Host;
 
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\HostMsg\IntentMsg;
+use Commune\Protocols\HostMsg\IntentMsg;
 use Commune\Support\Utils\StringUtils;
 use Illuminate\Support\Arr;
 
@@ -65,7 +65,7 @@ class IIntentMsg extends AbsMessage implements IntentMsg
         return [];
     }
 
-    public function getProtocalId(): string
+    public function getProtocolId(): string
     {
         return $this->intentName;
     }

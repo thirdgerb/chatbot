@@ -13,9 +13,9 @@ namespace Commune\Kernel\Handlers;
 
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
 use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
 use Commune\Blueprint\Shell\ShellSession;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Kernel\ShellPipes;

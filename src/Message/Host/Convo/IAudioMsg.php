@@ -11,9 +11,9 @@
 
 namespace Commune\Message\Host\Convo;
 
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\HostMsg\Convo\Media\AudioMsg;
+use Commune\Protocols\HostMsg\Convo\Media\AudioMsg;
 
 
 /**
@@ -40,7 +40,7 @@ class IAudioMsg extends AbsMessage implements AudioMsg
         return [];
     }
 
-    public function getProtocalId(): string
+    public function getProtocolId(): string
     {
         return $this->resource;
     }

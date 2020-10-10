@@ -12,8 +12,8 @@
 namespace Commune\Message\Host\SystemInt;
 
 use Commune\Message\Host\IIntentMsg;
-use Commune\Protocals\HostMsg;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Protocols\HostMsg;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
 
 
 /**

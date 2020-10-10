@@ -12,7 +12,7 @@
 namespace Commune\Message\Abstracted;
 
 use Commune\Ghost\Support\ContextUtils;
-use Commune\Protocals\Abstracted\Intention;
+use Commune\Protocols\Abstracted\Intention;
 use Commune\Support\Message\AbsMessage;
 use Commune\Support\Utils\ArrayUtils;
 

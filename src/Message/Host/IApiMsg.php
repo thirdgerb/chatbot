@@ -11,8 +11,8 @@
 
 namespace Commune\Message\Host;
 
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\HostMsg\ApiMsg;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\HostMsg\ApiMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 use Commune\Support\Message\AbsMessage;
 
@@ -46,7 +46,7 @@ class IApiMsg extends AbsMessage implements ApiMsg
         return [];
     }
 
-    public function getProtocalId(): string
+    public function getProtocolId(): string
     {
         return $this->getApiName();
     }

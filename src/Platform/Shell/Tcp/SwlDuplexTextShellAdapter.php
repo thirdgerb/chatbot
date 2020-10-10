@@ -11,17 +11,17 @@
 
 namespace Commune\Platform\Shell\Tcp;
 
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\ShellInputRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\ShellInputRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputResponse;
 use Commune\Message\Host\Convo\IEventMsg;
 use Commune\Platform\Libs\SwlAsync\TcpAdapterAbstract;
 use Commune\Message\Host\Convo\IText;
 use Commune\Message\Intercom\IInputMsg;
 use Commune\Platform\Libs\Parser\AppResponseParser;
 use Commune\Support\Utils\StringUtils;
-use Commune\Kernel\Protocals\IShellInputRequest;
+use Commune\Kernel\Protocols\IShellInputRequest;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

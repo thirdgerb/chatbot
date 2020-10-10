@@ -2,7 +2,7 @@
 
 use Commune\Ghost\Predefined\Join\JoinLang;
 use Commune\Shell\Render\StageEventRenderer;
-use Commune\Protocals\HostMsg\DefaultIntents;
+use Commune\Protocols\HostMsg\DefaultIntents;
 
 
 return [

@@ -12,12 +12,12 @@
 namespace Commune\Message\Host\Convo\QA;
 
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Protocals\Comprehension;
+use Commune\Protocols\Comprehension;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindDef\EmotionDef;
-use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
-use Commune\Protocals\HostMsg\Convo\QA\Confirm;
-use Commune\Protocals\HostMsg\Convo\QA\Confirmation;
+use Commune\Protocols\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocols\HostMsg\Convo\QA\Confirm;
+use Commune\Protocols\HostMsg\Convo\QA\Confirmation;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

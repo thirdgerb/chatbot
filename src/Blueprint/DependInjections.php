@@ -13,7 +13,7 @@ namespace Commune\Blueprint;
 
 use Commune\Blueprint\Ghost\Mindset;
 use Commune\Contracts;
-use Commune\Protocals;
+use Commune\Protocols;
 use Commune\Blueprint\Framework;
 use Commune\Blueprint\Configs;
 use Commune\Support\Registry\OptRegistry;
@@ -105,8 +105,8 @@ interface DependInjections
     const GHOST_REQ_INSTANCES = [
         Ghost\Cloner::class,
         Framework\ReqContainer::class,
-        Protocals\Intercom\InputMsg::class,
-        Protocals\Comprehension::class,
+        Protocols\Intercom\InputMsg::class,
+        Protocols\Comprehension::class,
     ];
 
     /*------- shell -------*/
@@ -128,7 +128,7 @@ interface DependInjections
     const SHELL_REQ_INSTANCES = [
         Shell\ShellSession::class,
         Framework\ReqContainer::class,
-        Protocals\Intercom\InputMsg::class,
-        Protocals\Comprehension::class,
+        Protocols\Intercom\InputMsg::class,
+        Protocols\Comprehension::class,
     ];
 }

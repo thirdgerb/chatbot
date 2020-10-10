@@ -21,12 +21,12 @@ use Commune\Blueprint\Ghost\Tools\Matcher;
 use Commune\Framework\Command\ICommandDef;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Message\Host\IIntentMsg;
-use Commune\Protocals\Comprehension;
-use Commune\Protocals\HostMsg\Convo\EventMsg;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
-use Commune\Protocals\HostMsg\IntentMsg;
-use Commune\Protocals\Intercom\InputMsg;
-use Commune\Support\Protocal\Protocal;
+use Commune\Protocols\Comprehension;
+use Commune\Protocols\HostMsg\Convo\EventMsg;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\HostMsg\IntentMsg;
+use Commune\Protocols\Intercom\InputMsg;
+use Commune\Support\Protocol\Protocol;
 use Commune\Support\SoundLike\SoundLikeInterface;
 use Commune\Support\Utils\ArrayUtils;
 use Commune\Ghost\Support\ContextUtils;
@@ -219,12 +219,12 @@ class IMatcher implements Matcher
         return $this;
     }
 
-    public function isProtocal(string $protocalName): Matcher
+    public function isProtocol(string $ProtocolName): Matcher
     {
         $message = $this->input->getMessage();
         if (
-            $message instanceof Protocal
-            && is_a($message, $protocalName, TRUE)
+            $message instanceof Protocol
+            && is_a($message, $ProtocolName, TRUE)
         ) {
             $this->matched = true;
             $this->matchedParams[__FUNCTION__] = $message;

@@ -11,7 +11,7 @@
 
 namespace Commune\Components\Markdown\Analysers\Message;
 
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 
 
 /**

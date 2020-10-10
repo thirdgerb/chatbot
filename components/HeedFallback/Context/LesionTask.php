@@ -26,7 +26,7 @@ use Commune\Components\HeedFallback\Libs\FallbackSceneRepository;
 use Commune\Ghost\Context\ACodeContext;
 use Commune\Ghost\IMindDef\IChatDef;
 use Commune\Message\Host\Convo\Verbal\ReplyMsg;
-use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocols\HostMsg\Convo\QA\AnswerMsg;
 use Commune\Support\Utils\StringUtils;
 
 

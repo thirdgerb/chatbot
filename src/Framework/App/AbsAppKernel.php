@@ -15,8 +15,8 @@ use Commune\Framework\AbsApp;
 use Commune\Blueprint\Kernel\AppKernel;
 use Commune\Blueprint\Framework\ReqContainer;
 use Commune\Blueprint\Framework\Session;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
 use Commune\Contracts\Log\ExceptionReporter;
 use Commune\Framework\Event\FinishRequest;
 use Commune\Framework\Event\StartRequest;
@@ -25,9 +25,9 @@ use Commune\Support\Utils\TypeUtils;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Psr\Log\LoggerInterface;
 use Commune\Blueprint\Exceptions\CommuneLogicException;
-use Commune\Support\Protocal\Protocal;
-use Commune\Support\Protocal\ProtocalMatcher;
-use Commune\Support\Protocal\ProtocalOption;
+use Commune\Support\Protocol\Protocol;
+use Commune\Support\Protocol\ProtocolMatcher;
+use Commune\Support\Protocol\ProtocolOption;
 use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 
 
@@ -39,22 +39,22 @@ use Commune\Blueprint\Exceptions\CommuneRuntimeException;
 abstract class AbsAppKernel extends AbsApp implements AppKernel
 {
     /**
-     * 对 protocal 进行通配时, 只匹配 . 与 \w.
-     * 更复杂的匹配规则请自行定义, 或者定义到 protocal handler interface 内部.
+     * 对 Protocol 进行通配时, 只匹配 . 与 \w.
+     * 更复杂的匹配规则请自行定义, 或者定义到 Protocol handler interface 内部.
      *
      * @var string
      */
     protected $wildcardPattern = '[\.\w]+';
 
     /**
-     * @var ProtocalMatcher
+     * @var ProtocolMatcher
      */
-    protected $protocalMatcher;
+    protected $ProtocolMatcher;
 
     /**
-     * @return ProtocalOption[]
+     * @return ProtocolOption[]
      */
-    abstract protected function getProtocalOptions() : array;
+    abstract protected function getProtocolOptions() : array;
 
 
     /**
@@ -76,27 +76,27 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
      */
     abstract protected function validateAppRequest(AppRequest $request) : void;
 
-    /*------ protocal ------*/
+    /*------ Protocol ------*/
 
-    public function getProtocalMatcher() : ProtocalMatcher
+    public function getProtocolMatcher() : ProtocolMatcher
     {
-        return $this->protocalMatcher
-            ?? $this->protocalMatcher = new ProtocalMatcher(
+        return $this->ProtocolMatcher
+            ?? $this->ProtocolMatcher = new ProtocolMatcher(
                 $this->getConsoleLogger(),
-                $this->getProtocalOptions(),
+                $this->getProtocolOptions(),
                 $this->wildcardPattern
             );
     }
 
-    public function eachProtocalHandler(
+    public function eachProtocolHandler(
         ReqContainer $container,
-        Protocal $protocal,
+        Protocol $Protocol,
         string $handlerInterface = null
     ): \Generator
     {
-        $matcher = $this->getProtocalMatcher();
+        $matcher = $this->getProtocolMatcher();
 
-        foreach ($matcher->matchEach($protocal, $handlerInterface) as $handlerOption) {
+        foreach ($matcher->matchEach($Protocol, $handlerInterface) as $handlerOption) {
             $handlerName = $handlerOption->handler;
             $params = $handlerOption->params;
 
@@ -105,7 +105,7 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
             if (isset($handlerInterface) && !is_a($handler, $handlerInterface, TRUE)) {
                 $actual = TypeUtils::getType($handler);
                 throw new CommuneLogicException(
-                    "invalid protocal handler, expect $handlerInterface, $actual given"
+                    "invalid Protocol handler, expect $handlerInterface, $actual given"
                 );
             }
 
@@ -113,15 +113,15 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
         }
     }
 
-    public function firstProtocalHandler(
+    public function firstProtocolHandler(
         ReqContainer $container,
-        Protocal $protocal,
+        Protocol $Protocol,
         string $handlerInterface = null
     ): ? callable
     {
-        $each = $this->eachProtocalHandler(
+        $each = $this->eachProtocolHandler(
             $container,
-            $protocal,
+            $Protocol,
             $handlerInterface
         );
 
@@ -183,7 +183,7 @@ abstract class AbsAppKernel extends AbsApp implements AppKernel
             $this->getServiceRegistry()->bootReqServices($container);
 
             // 寻找 handler
-            $handler = $this->firstProtocalHandler(
+            $handler = $this->firstProtocolHandler(
                 $container,
                 $request,
                 $interface

@@ -12,8 +12,8 @@
 namespace Commune\Message\Host\Convo\QA;
 
 use Commune\Blueprint\Ghost\Cloner;
-use Commune\Protocals\HostMsg\Convo\QA\AnswerMsg;
-use Commune\Protocals\HostMsg\Convo\VerbalMsg;
+use Commune\Protocols\HostMsg\Convo\QA\AnswerMsg;
+use Commune\Protocols\HostMsg\Convo\VerbalMsg;
 
 
 /**

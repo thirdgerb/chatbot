@@ -12,8 +12,8 @@
 namespace Commune\Blueprint\Framework\Pipes;
 
 use Closure;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
 
 /**
  * App 处理请求的管道.

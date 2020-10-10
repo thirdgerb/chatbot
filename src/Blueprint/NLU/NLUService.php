@@ -15,8 +15,8 @@ use Commune\Blueprint\Framework\Session;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\MindMeta\DefMeta;
 use Commune\Blueprint\Ghost\Mindset;
-use Commune\Protocals\Comprehension;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocols\Comprehension;
+use Commune\Protocols\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

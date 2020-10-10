@@ -12,8 +12,8 @@
 namespace Commune\Framework\Messenger\Broadcaster;
 
 use Commune\Blueprint\CommuneEnv;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 use Commune\Contracts\Messenger\Broadcaster;
 use Psr\Log\LoggerInterface;
 
@@ -107,7 +107,7 @@ abstract class AbsBroadcaster implements Broadcaster
         $traceId = empty($traceId) ? $batchId : $traceId;
 
 
-        $publish = BroadcastProtocal::serializePublish(
+        $publish = BroadcastProtocol::serializePublish(
             $shellId,
             $shellSessionId,
             $batchId,
@@ -159,7 +159,7 @@ abstract class AbsBroadcaster implements Broadcaster
         $this->doSubscribe(
             function($chan, string $send) use ($callback){
 
-                $request = BroadcastProtocal::unserializePublish($send);
+                $request = BroadcastProtocol::unserializePublish($send);
                 if (empty($request)) {
                     return;
                 }

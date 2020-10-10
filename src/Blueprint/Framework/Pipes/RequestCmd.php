@@ -13,10 +13,10 @@ namespace Commune\Blueprint\Framework\Pipes;
 
 use Commune\Container\ContainerContract;
 use Psr\Log\LoggerInterface;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Commune\Blueprint\Framework\Command\CommandDef;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

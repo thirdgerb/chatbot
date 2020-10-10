@@ -14,9 +14,9 @@ namespace Commune\Message\Host\Convo;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Ghost\Context;
 use Commune\Blueprint\Ghost\Ucl;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Commune\Support\Message\AbsMessage;
-use Commune\Protocals\HostMsg\Convo\ContextMsg;
+use Commune\Protocols\HostMsg\Convo\ContextMsg;
 
 
 /**
@@ -48,7 +48,7 @@ class IContextMsg extends AbsMessage implements ContextMsg
         return [];
     }
 
-    public function getProtocalId(): string
+    public function getProtocolId(): string
     {
         return $this->contextName;
     }

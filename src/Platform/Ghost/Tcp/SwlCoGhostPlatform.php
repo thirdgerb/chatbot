@@ -11,7 +11,7 @@
 
 namespace Commune\Platform\Ghost\Tcp;
 
-use Commune\Kernel\Protocals\LogContext;
+use Commune\Kernel\Protocols\LogContext;
 use Swoole;
 use Swoole\Coroutine;
 use Commune\Blueprint\Ghost;
@@ -22,12 +22,12 @@ use Commune\Blueprint\Platform;
 use Commune\Support\Swoole\SwooleUtils;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Contracts\Messenger\GhostMessenger;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
 use Commune\Platform\Libs\SwlCo\ProcPoolFactory;
 use Commune\Platform\Libs\SwlCo\TcpPlatformOption;
 use Commune\Platform\Libs\SwlCo\TcpPlatformServeTrait;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
 
 
 

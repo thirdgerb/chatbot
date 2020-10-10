@@ -20,8 +20,8 @@ use Commune\Blueprint\Ghost\Tools\DialogContainer;
 use Commune\Blueprint\Ghost\Tools\Deliver;
 use Commune\Blueprint\Ghost\Memory\Recollection;
 use Commune\Blueprint\Ghost\Tools\Hearing;
-use Commune\Protocals\HostMsg;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocols\HostMsg;
+use Commune\Protocols\Intercom\InputMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

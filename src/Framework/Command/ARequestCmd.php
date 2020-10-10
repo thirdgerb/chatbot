@@ -12,12 +12,12 @@
 namespace Commune\Framework\Command;
 
 use Psr\Log\LoggerTrait;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Commune\Message\Host\IIntentMsg;
 use Commune\Blueprint\Framework\Command\CommandDef;
 use Commune\Blueprint\Framework\Pipes\RequestCmdPipe;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
 use Commune\Message\Host\SystemInt\CommandErrorInt;
 use Commune\Blueprint\Framework\Pipes\RequestCmd;
 use Symfony\Component\Console\Input\InputOption;

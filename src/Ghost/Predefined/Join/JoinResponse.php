@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Context\StageBuilder;
 use Commune\Blueprint\Ghost\Dialog;
 use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Ghost\Context\ACodeContext;
-use Commune\Protocals\HostMsg\Convo\ContextMsg;
+use Commune\Protocols\HostMsg\Convo\ContextMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>

@@ -26,8 +26,8 @@ use Commune\Components\SpaCyNLU\Blueprint\SpaCyNLUClient;
 use Commune\Components\SpaCyNLU\Configs\NLUModuleConfig;
 use Commune\Components\SpaCyNLU\Managers\NLUServiceManager;
 use Commune\NLU\Support\ParserTrait;
-use Commune\Protocals\Comprehension;
-use Commune\Protocals\Intercom\InputMsg;
+use Commune\Protocols\Comprehension;
+use Commune\Protocols\Intercom\InputMsg;
 use Commune\Support\Arr\ArrayAndJsonAble;
 
 

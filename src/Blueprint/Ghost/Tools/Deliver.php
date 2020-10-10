@@ -12,7 +12,7 @@
 namespace Commune\Blueprint\Ghost\Tools;
 
 use Commune\Blueprint\Ghost\Dialog;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 
 /**
  * 对话模块

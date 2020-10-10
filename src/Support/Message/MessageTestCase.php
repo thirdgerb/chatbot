@@ -28,8 +28,8 @@ class MessageTestCase extends TestCase
     public function testMessages()
     {
         foreach ($this->messages as $name) {
-                     // 必须是 Message 类
-            $this->assertTrue(is_a($name, Message::class, TRUE));
+            // 必须是 Message 类
+            $this->assertTrue(is_a($name, Message::class, TRUE), $name);
 
             // 构建数据.
             $data = call_user_func([$name, 'stub']);

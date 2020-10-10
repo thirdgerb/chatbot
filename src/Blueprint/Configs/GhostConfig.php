@@ -13,7 +13,7 @@ namespace Commune\Blueprint\Configs;
 
 use Commune\Components;
 use Commune\Support\Option\Option;
-use Commune\Support\Protocal\ProtocalOption;
+use Commune\Support\Protocol\ProtocolOption;
 
 /**
  * 机器人多轮对话内核的配置.
@@ -48,7 +48,7 @@ use Commune\Support\Protocal\ProtocalOption;
  *
  * ## 协议定义.
  *
- * @property-read ProtocalOption[] $protocals               Ghost 处理协议的配置.
+ * @property-read ProtocolOption[] $Protocols               Ghost 处理协议的配置.
  *
  * ## 管道配置
  *

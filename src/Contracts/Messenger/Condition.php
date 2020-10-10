@@ -11,7 +11,7 @@
 
 namespace Commune\Contracts\Messenger;
 
-use Commune\Protocals\IntercomMsg;
+use Commune\Protocols\IntercomMsg;
 
 /**
  * MessageDB 的复杂查询逻辑

@@ -14,9 +14,9 @@ namespace Commune\Kernel\Handlers;
 use Commune\Blueprint\Ghost\Cloner;
 use Commune\Blueprint\Framework\Pipes\RequestPipe;
 use Commune\Blueprint\Kernel\Handlers\GhostRequestHandler;
-use Commune\Blueprint\Kernel\Protocals\AppResponse;
-use Commune\Blueprint\Kernel\Protocals\GhostRequest;
-use Commune\Blueprint\Kernel\Protocals\GhostResponse;
+use Commune\Blueprint\Kernel\Protocols\AppResponse;
+use Commune\Blueprint\Kernel\Protocols\GhostRequest;
+use Commune\Blueprint\Kernel\Protocols\GhostResponse;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Kernel\ClonePipes;
 

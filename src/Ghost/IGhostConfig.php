@@ -14,7 +14,7 @@ namespace Commune\Ghost;
 use Commune\Components;
 use Commune\Support\Option\AbsOption;
 use Commune\Blueprint\Configs\GhostConfig;
-use Commune\Support\Protocal\ProtocalOption;
+use Commune\Support\Protocol\ProtocolOption;
 use Commune\Support\Utils\TypeUtils;
 
 /**
@@ -48,7 +48,7 @@ use Commune\Support\Utils\TypeUtils;
  *
  * ## 协议定义.
  *
- * @property-read ProtocalOption[] $protocals               Ghost 处理协议的配置.
+ * @property-read ProtocolOption[] $Protocols               Ghost 处理协议的配置.
  *
  * ## 管道配置
  *
@@ -88,7 +88,7 @@ class IGhostConfig extends AbsOption implements GhostConfig
             'providers' => [],
             'components' => [],
             'options' => [],
-            'protocals' => [],
+            'Protocols' => [],
             'userCommands' => [],
             'superCommands' => [],
             'comprehendPipes' => [],
@@ -108,7 +108,7 @@ class IGhostConfig extends AbsOption implements GhostConfig
     public static function relations(): array
     {
         return [
-            'protocals[]' => ProtocalOption::class,
+            'Protocols[]' => ProtocolOption::class,
         ];
     }
 

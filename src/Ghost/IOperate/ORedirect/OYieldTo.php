@@ -17,7 +17,7 @@ use Commune\Blueprint\Ghost\Operate\Operator;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Ghost\IOperate\AbsOperator;
 use Commune\Ghost\IOperate\Flows\FallbackFlow;
-use Commune\Protocals\HostMsg\Convo\ContextMsg;
+use Commune\Protocols\HostMsg\Convo\ContextMsg;
 
 
 /**

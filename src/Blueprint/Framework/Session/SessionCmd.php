@@ -12,9 +12,9 @@
 namespace Commune\Blueprint\Framework\Session;
 
 use Commune\Blueprint\Framework\Command\CommandDef;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
 use Commune\Blueprint\Framework\Session;
-use Commune\Protocals\HostMsg;
+use Commune\Protocols\HostMsg;
 use Psr\Log\LoggerInterface;
 
 

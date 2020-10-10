@@ -21,7 +21,7 @@ use Commune\Blueprint\Ghost\Runtime\Task;
 use Commune\Blueprint\Ghost\Ucl;
 use Commune\Framework\Spy\SpyAgency;
 use Commune\Message\Host\Convo\IContextMsg;
-use Commune\Protocals\HostMsg\Convo\ContextMsg;
+use Commune\Protocols\HostMsg\Convo\ContextMsg;
 use Commune\Support\Arr\ArrayAbleToJson;
 use Commune\Support\Arr\TArrayAccessToMutator;
 use Commune\Blueprint\Exceptions\CommuneLogicException;

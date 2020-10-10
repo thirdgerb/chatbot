@@ -26,8 +26,8 @@ use Swoole\Coroutine;
 use Commune\Blueprint\Host;
 use Commune\Blueprint\Configs\PlatformConfig;
 use Commune\Blueprint\Kernel\Handlers\ShellOutputReqHandler;
-use Commune\Blueprint\Kernel\Protocals\AppRequest;
-use Commune\Blueprint\Kernel\Protocals\ShellOutputRequest;
+use Commune\Blueprint\Kernel\Protocols\AppRequest;
+use Commune\Blueprint\Kernel\Protocols\ShellOutputRequest;
 use Swoole\Runtime;
 
 /**

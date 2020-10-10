@@ -129,7 +129,7 @@ class AnnotationFactory
         // relations 补遗.
         $relationNames = call_user_func([$className, Struct::FUNC_GET_RELATIONS]);
         foreach ($relationNames as $relationName) {
-            // 如果忘记定义了 protocals
+            // 如果忘记定义了 Protocols
             if (!array_key_exists($relationName, $properties)) {
 
                 $relationsClass = call_user_func([$className, Struct::FUNC_GET_RELATION_CLASS], $relationName);

@@ -125,11 +125,11 @@ interface Matcher
 
     /**
      * 符合某个协议
-     * @param string $protocalName
+     * @param string $ProtocolName
      * @return static
-     * @matched Protocal $isProtocal
+     * @matched Protocol $isProtocol
      */
-    public function isProtocal(string $protocalName) : Matcher;
+    public function isProtocol(string $ProtocolName) : Matcher;
 
     /*------- sound like -------*/
 
@@ -177,7 +177,7 @@ interface Matcher
      * $matches = [ string $answer]
      *
      * @return static
-     * @matched \Commune\Protocals\HostMsg\Convo\QA\AnswerMsg $isAnswered
+     * @matched \Commune\Protocols\HostMsg\Convo\QA\AnswerMsg $isAnswered
      */
     public function isAnswered() : Matcher;
 

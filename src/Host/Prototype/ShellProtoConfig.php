@@ -15,13 +15,13 @@ use Commune\Blueprint\Shell\Parser\InputParser;
 use Commune\Blueprint\Shell\Render\Renderer;
 use Commune\Kernel;
 use Commune\Shell\IShellConfig;
-use Commune\Protocals\HostMsg;
-use Commune\Blueprint\Kernel\Protocals;
+use Commune\Protocols\HostMsg;
+use Commune\Blueprint\Kernel\Protocols;
 use Commune\Blueprint\Kernel\Handlers;
 use Commune\Shell\Providers\ShellSessionServiceProvider;
 use Commune\Shell\Render\SystemIntentRenderer;
 use Commune\Shell\Render\TranslatorRenderer;
-use Commune\Support\Protocal\ProtocalOption;
+use Commune\Support\Protocol\ProtocolOption;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
@@ -44,10 +44,10 @@ class ShellProtoConfig extends IShellConfig
             /**
              * App 可以处理的各种协议.
              *
-             * @see ProtocalOption
+             * @see ProtocolOption
              * key 可以自己定义, 方便子类修改. 也可以不定义.
              */
-            'protocals' => [
+            'Protocols' => [
 
                 /**
                  * App Request Handler
@@ -55,13 +55,13 @@ class ShellProtoConfig extends IShellConfig
                  */
 
                 [
-                    'protocal' => Protocals\ShellInputRequest::class,
+                    'Protocol' => Protocols\ShellInputRequest::class,
                     'interface' => Handlers\ShellInputReqHandler::class,
                     // 默认的 handler
                     'default' => Kernel\Handlers\IShellInputReqHandler::class,
                 ],
                 [
-                    'protocal' => Protocals\ShellOutputRequest::class,
+                    'Protocol' => Protocols\ShellOutputRequest::class,
                     'interface' => Handlers\ShellOutputReqHandler::class,
                     // 默认的 handler
                     'default' => Kernel\Handlers\IShellOutputReqHandler::class,
@@ -73,7 +73,7 @@ class ShellProtoConfig extends IShellConfig
                  */
                 [
                     'interface' => InputParser::class,
-                    'protocal' => HostMsg::class,
+                    'Protocol' => HostMsg::class,
                 ],
 
                 /**
@@ -81,7 +81,7 @@ class ShellProtoConfig extends IShellConfig
                  */
                 // 系统命令的 handler
                 [
-                    'protocal' => HostMsg\IntentMsg::class,
+                    'Protocol' => HostMsg\IntentMsg::class,
                     'interface' => Renderer::class,
                     'handlers' => [
                         [
@@ -97,7 +97,7 @@ class ShellProtoConfig extends IShellConfig
 
                 // 默认 handler
                 [
-                    'protocal' => HostMsg::class,
+                    'Protocol' => HostMsg::class,
                     'interface' => Renderer::class,
                     'default' => TranslatorRenderer::class,
                 ],

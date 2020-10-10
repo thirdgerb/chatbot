@@ -13,7 +13,7 @@ namespace Commune\Framework\Messenger\MessageDB;
 
 use Commune\Contracts\Messenger\Condition;
 use Commune\Contracts\Messenger\MessageDB;
-use Commune\Protocals\IntercomMsg;
+use Commune\Protocols\IntercomMsg;
 
 /**
  * @author thirdgerb <thirdgerb@gmail.com>
